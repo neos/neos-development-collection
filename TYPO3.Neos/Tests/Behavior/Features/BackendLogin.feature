@@ -3,12 +3,13 @@ Feature: Backend Login
   As a user of the system
   I need a way to authenticate
 
+  @remote
   Scenario: Show login form for not authenticated user
     Given I am not authenticated
     When I go to "/neos"
     Then I should see a login form
 
-  @fixtures
+  @fixtures @remote
   Scenario Outline: Login to backend with different roles
     Given I imported the site "TYPO3.NeosDemoTypo3Org"
     And I am not authenticated
@@ -27,7 +28,7 @@ Feature: Backend Login
       | Editor        |
       | Administrator |
 
-  @fixtures
+  @fixtures @remote
   Scenario: Logout from backend stays on last edited page
     Given I imported the site "TYPO3.NeosDemoTypo3Org"
     And the following users exist:

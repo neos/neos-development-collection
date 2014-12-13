@@ -19,9 +19,13 @@ trait HistoryDefinitionsTrait {
 	 * @return void
 	 */
 	public function resetHistory() {
-		$eventRepository = $this->getEventRepository();
-		$eventRepository->removeAll();
-		$this->getTYPO3CRIntegrationService()->reset();
+		try {
+			$eventRepository = $this->getEventRepository();
+			$eventRepository->removeAll();
+			$this->getTYPO3CRIntegrationService()->reset();
+		} catch (\Doctrine\DBAL\DBALException $e) {
+			// Ignore DB exceptions, because the trait runs before applying migrations in FlowContext
+		}
 	}
 
 	/**
@@ -37,7 +41,6 @@ trait HistoryDefinitionsTrait {
 	 * @param TableNode $table
 	 */
 	public function iShouldHaveTheFollowingHistoryEntries($ignoringOrder, TableNode $table) {
-
 		$allEvents = $this->getEventRepository()->findAll()->toArray();
 		$eventsByInternalId = array();
 		$unmatchedParentEvents = array();
@@ -140,13 +143,13 @@ trait HistoryDefinitionsTrait {
 	}
 
 	/**
-	 * @Given /^I have the following EntityIntegration Configuration:$/
+	 * @Given /^I have the following "monitorEntities" configuration:$/
 	 */
-	public function iHaveTheFollowingEntityintegrationConfiguration(PyStringNode $string) {
+	public function iHaveTheFollowingMonitorEntitiesConfiguration(PyStringNode $string) {
 		$configuration = Yaml::parse($string->getRaw());
 		/* @var $entityIntegrationService \TYPO3\Neos\EventLog\Integrations\EntityIntegrationService */
 		$entityIntegrationService = $this->getObjectManager()->get('TYPO3\Neos\EventLog\Integrations\EntityIntegrationService');
-		$entityIntegrationService->injectSettings($configuration);
+		$entityIntegrationService->setMonitorEntitiesSetting($configuration);
 	}
 
 	/**

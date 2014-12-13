@@ -4,24 +4,23 @@ Feature: Accounts / User Entity Monitoring
 
   Background:
     Given I have an empty history
-    Given I have the following EntityIntegration Configuration:
+    Given I have the following "monitorEntities" configuration:
     """
-    monitorEntities:
-      'TYPO3\Flow\Security\Account':
-        events:
-          created: ACCOUNT_CREATED
-        data:
-          accountIdentifier: '${entity.accountIdentifier}'
-          authenticationProviderName: '${entity.authenticationProviderName}'
-          expirationDate: '${entity.expirationDate}'
-          roles: '${entity.roles}'
-          party: '${entity.party.name.fullName}'
-      'TYPO3\Neos\Domain\Model\User':
-        events:
-          created: PERSON_CREATED
-        data:
-          name: '${entity.name.fullName}'
-          electronicAddresses: '${entity.electronicAddresses}'
+    'TYPO3\Flow\Security\Account':
+      events:
+        created: ACCOUNT_CREATED
+      data:
+        accountIdentifier: '${entity.accountIdentifier}'
+        authenticationProviderName: '${entity.authenticationProviderName}'
+        expirationDate: '${entity.expirationDate}'
+        roles: '${entity.roles}'
+        party: '${entity.party.name.fullName}'
+    'TYPO3\Neos\Domain\Model\User':
+      events:
+        created: PERSON_CREATED
+      data:
+        name: '${entity.name.fullName}'
+        electronicAddresses: '${entity.electronicAddresses}'
     """
 
     # TODO: subclasses in monitorEntities

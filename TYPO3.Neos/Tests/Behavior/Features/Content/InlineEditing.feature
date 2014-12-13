@@ -3,7 +3,7 @@ Feature: Content module / Inline editing
   As an editor
   I need a way to edit content inline
 
-  @fixtures @javascript
+  @fixtures @javascript @remote
   Scenario: Edit text of a content element with automatic save
     Given I imported the site "TYPO3.NeosDemoTypo3Org"
     And the following users exist:
