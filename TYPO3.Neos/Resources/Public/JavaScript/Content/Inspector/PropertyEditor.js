@@ -5,11 +5,13 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Shared/Configuration'
+	'Shared/Configuration',
+	'Shared/Notification'
 ], function(
 	Ember,
 	$,
-	Configuration
+	Configuration,
+	Notification
 ) {
 	return Ember.ContainerView.extend({
 		propertyDefinition: null,
@@ -60,8 +62,15 @@ define(
 				typeDefinition = Configuration.get('UserInterface.inspector.dataTypes.' + propertyDefinition.type),
 				editor;
 
+			if (!typeDefinition) {
+				if (window.console && console.error) {
+					console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '". Type defaults for "' + propertyDefinition.type + '" not found! Please check your NodeTypes.yaml configuration.');
+				}
+				Notification.error('Error loading inspector', 'Inspector property "' + propertyDefinition.key + '" could not be loaded because of a missing type definition. See console for further details.');
+				return;
+			}
+
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
-			Ember.assert('Type defaults for "' + propertyDefinition.type + '" not found!', !!typeDefinition);
 
 			var editorOptions = $.extend(true,
 				{
