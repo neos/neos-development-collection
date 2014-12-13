@@ -182,6 +182,8 @@ class SiteImportService {
 				$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
 			}
 		}
+
+		$this->emitSiteImported($site);
 	}
 
 	/**
@@ -202,4 +204,15 @@ class SiteImportService {
 
 		return $site;
 	}
+
+
+	/**
+	 * Signal that is triggered when a site has been imported successfully
+	 *
+	 * @Flow\Signal
+	 * @param Site $site The site that has been imported
+	 * @return void
+	 */
+	protected function emitSiteImported(Site $site) {}
+
 }
