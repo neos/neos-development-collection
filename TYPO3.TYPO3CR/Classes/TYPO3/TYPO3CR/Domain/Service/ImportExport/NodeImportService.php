@@ -369,6 +369,10 @@ class NodeImportService {
 					$currentIdentifier = $reader->getAttribute('__identifier');
 					$currentClassName = $reader->getAttribute('__classname');
 					$currentEncoding = $reader->getAttribute('__encoding');
+
+					if ($reader->isEmptyElement) {
+						$currentType = NULL;
+					}
 					break;
 				case \XMLReader::END_ELEMENT:
 					if ($reader->name == 'properties') {
