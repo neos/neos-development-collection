@@ -129,17 +129,17 @@
 						font-weight: normal;
 						display: inline-block;
 						position: relative;
-						@include rotate(-90deg);
+						@include rotate(90deg);
 						top: 5px;
-						left: 13px;
+						left: 16px;
 						line-height: 0;
 					}
 				}
 
 				&.expanded {
 					.neos-notification-heading::after {
-						@include rotate(90deg);
-						left: 19px;
+						@include rotate(-90deg);
+						left: 10px;
 					}
 				}
 			}
