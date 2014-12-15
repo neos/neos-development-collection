@@ -95,6 +95,7 @@ define(
 									requests.push(HttpRestClient.getResource('neos-service-nodes', null, {data: {
 										workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 										dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
+										contextNode: $('#neos-document-metadata').data('neos-site-node-context-path'),
 										searchTerm: query.term,
 										nodeTypes: that.get('nodeTypes')
 									}}));

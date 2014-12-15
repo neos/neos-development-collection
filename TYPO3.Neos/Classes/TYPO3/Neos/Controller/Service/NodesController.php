@@ -95,9 +95,10 @@ class NodesController extends ActionController {
 	 * @param string $workspaceName Name of the workspace to search in, "live" by default
 	 * @param array $dimensions Optional list of dimensions and their values which should be used for querying
 	 * @param array $nodeTypes A list of node types the list should be filtered by
+	 * @param NodeInterface $contextNode a node to use as context for the search
 	 * @return string
 	 */
-	public function indexAction($searchTerm = '', $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('TYPO3.Neos:Document')) {
+	public function indexAction($searchTerm = '', $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('TYPO3.Neos:Document'), NodeInterface $contextNode = NULL) {
 		$searchableNodeTypeNames = array();
 		foreach ($nodeTypes as $nodeTypeName) {
 			if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
@@ -112,7 +113,7 @@ class NodesController extends ActionController {
 		}
 
 		$contentContext = $this->createContentContext($workspaceName, $dimensions);
-		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext);
+		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
 
 		$this->view->assign('nodes', $nodes);
 	}
