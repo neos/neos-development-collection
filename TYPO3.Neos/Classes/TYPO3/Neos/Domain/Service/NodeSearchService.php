@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 
@@ -51,12 +51,16 @@ class NodeSearchService implements NodeSearchServiceInterface {
 	 * @param string $term
 	 * @param array $searchNodeTypes
 	 * @param Context $context
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+	 * @param NodeInterface $startingPoint
+	 * @return array <\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
 	 */
-	public function findByProperties($term, array $searchNodeTypes, Context $context) {
+	public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = NULL) {
+		if (strlen($term) === 0) {
+			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
+		}
 		$searchResult = array();
 		$nodeTypeFilter = implode(',', $searchNodeTypes);
-		$nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions());
+		$nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : NULL);
 		foreach ($nodeDataRecords as $nodeData) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 			if ($node !== NULL) {

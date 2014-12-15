@@ -15,10 +15,12 @@ define(
 
 		workspaceName: null,
 		dimensions: null,
+		siteNode: null,
 
-		_constructor: function(workspaceName, dimensions) {
+		_constructor: function(workspaceName, dimensions, siteNode) {
 			this.workspaceName = workspaceName;
 			this.dimensions = dimensions;
+			this.siteNode = siteNode;
 			this._super(this._repositoryIdentifier);
 		},
 
@@ -31,7 +33,8 @@ define(
 			return {
 				searchTerm: searchTerm,
 				workspaceName: this.workspaceName,
-				dimensions: this.dimensions
+				dimensions: this.dimensions,
+				contextNode: this.siteNode
 			};
 		},
 

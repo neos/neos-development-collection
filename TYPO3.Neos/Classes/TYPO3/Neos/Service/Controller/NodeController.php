@@ -16,6 +16,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Domain\Service\NodeSearchService;
 use TYPO3\Neos\Service\View\NodeView;
 use TYPO3\Neos\View\TypoScriptView;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -54,6 +55,12 @@ class NodeController extends AbstractServiceController {
 	 * @var NodeSearchService
 	 */
 	protected $nodeSearchService;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeFactory
+	 */
+	protected $nodeFactory;
 
 	/**
 	 * @Flow\Inject
@@ -112,9 +119,22 @@ class NodeController extends AbstractServiceController {
 	 */
 	public function filterChildNodesForTreeAction(Node $node, $term, $nodeType) {
 		$nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', FALSE));
+		$context = $node->getContext();
+		if ($term !== '') {
+			$nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
+		} else {
+			$nodes = array();
+			$nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
+			foreach ($nodeDataRecords as $nodeData) {
+				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if ($node !== NULL) {
+					$nodes[$node->getPath()] = $node;
+				}
+			}
+		}
 		$this->view->assignFilteredChildNodes(
 			$node,
-			$this->nodeSearchService->findByProperties($term, $nodeTypes, $node->getContext())
+			$nodes
 		);
 	}
 
