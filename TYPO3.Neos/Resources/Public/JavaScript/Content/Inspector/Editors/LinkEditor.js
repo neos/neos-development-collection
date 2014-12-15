@@ -39,9 +39,14 @@ define(
 						return markup;
 					},
 					formatResult: function(item, container, query, escapeMarkup) {
+						var info = item.data.path ? item.data.path : item.data.identifier;
 						var markup = [];
+						var $itemContent;
+
 						window.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
-						var $itemContent = $('<span>' + markup.join('') + '</span>');
+						$itemContent = $('<span>' + markup.join('') + '</span>');
+
+						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
@@ -51,20 +56,17 @@ define(
 							$itemContent.prepend($('<img />').attr({src: item.data.thumbnail, alt: item.text}));
 						}
 
-						var info = item.data.path ? item.data.path : item.data.identifier;
-						$itemContent.attr('title', $(item.text).text().trim() + (info ? ' (' + info + ')' : ''));
-
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
+						var info = item.data.path ? item.data.path : item.data.identifier;
 						var $itemContent = $('<span>' + item.text + '</span>');
+
+						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
 						}
-
-						var info = item.data.path ? item.data.path : item.data.identifier;
-						$itemContent.attr('title', $(item.text).text().trim() + (info ? ' (' + info + ')' : ''));
 
 						return $itemContent.get(0).outerHTML;
 					},
