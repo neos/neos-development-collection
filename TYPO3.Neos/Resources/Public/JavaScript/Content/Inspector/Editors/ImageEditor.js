@@ -366,6 +366,12 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			this.set('_imageFullyLoaded', false);
 			this.set('_imageFullyLoaded', true);
 			this._updateValue();
+
+			if (SecondaryInspectorController.get('_viewClass') === this.get('_cropView')) {
+				// Set empty view for secondary inspector to re-initialize crop view
+				SecondaryInspectorController.toggle(Ember.View.extend());
+				SecondaryInspectorController.hide();
+			}
 		},
 
 		_resetCropPropertiesToCurrentPreviewImageDimensions: function() {
