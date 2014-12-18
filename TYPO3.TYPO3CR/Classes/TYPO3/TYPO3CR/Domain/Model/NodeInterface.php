@@ -409,13 +409,12 @@ interface NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 * @api
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL);
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
@@ -426,12 +425,11 @@ interface NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL);
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL);
 
 	/**
 	 * Creates and persists a node from the given $nodeTemplate as child node

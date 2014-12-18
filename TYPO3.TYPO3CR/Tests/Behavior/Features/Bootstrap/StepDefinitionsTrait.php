@@ -82,21 +82,7 @@ trait StepDefinitionsTrait {
 				throw new Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
 			}
 
-			$dimensions = NULL;
-			// If Language is set we pass them as explicit dimensions
-			if (isset($row['Language'])) {
-				$dimensions['language'] = explode(',', $row['Language']);
-			} elseif (isset($row['Language'])) {
-				$dimensions['language'] = array($row['Language']);
-			}
-			// Add flexible dimensions to explicit dimensions
-			foreach ($row as $propertyName => $propertyValue) {
-				if (strpos($propertyName, 'Dimension: ') === 0) {
-					$dimensions[substr($propertyName, strlen('Dimension: '))] = Arrays::trimExplode(',', $propertyValue);
-				}
-			}
-
-			$node = $parentNode->createNode($name, $nodeType, $identifier, $dimensions);
+			$node = $parentNode->createNode($name, $nodeType, $identifier);
 
 			if (isset($row['Properties']) && $row['Properties'] !== '') {
 				$properties = json_decode($row['Properties'], TRUE);

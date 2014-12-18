@@ -277,11 +277,16 @@ class Context {
 		}
 
 		$existingNode = $this->getNodeByIdentifier($node->getIdentifier());
-		if ($existingNode !== NULL && $existingNode->dimensionsAreMatchingTargetDimensionValues()) {
-			return $existingNode;
+		if ($existingNode !== NULL) {
+			if ($existingNode->dimensionsAreMatchingTargetDimensionValues()) {
+				$adoptedNode = $existingNode;
+			} else {
+				$adoptedNode = $existingNode->createVariantForContext($this);
+			}
+		} else {
+			$adoptedNode = $node->createVariantForContext($this);
 		}
 
-		$adoptedNode = $node->createVariantForContext($this);
 		$this->firstLevelNodeCache->setByIdentifier($adoptedNode->getIdentifier(), $adoptedNode);
 		return $adoptedNode;
 	}

@@ -426,7 +426,11 @@ class NodeData extends AbstractNodeData {
 		$newNodeData = $this->createSingleNodeData($name, $nodeType, $identifier, $workspace, $dimensions);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-				$newNodeData->setProperty($propertyName, $propertyValue);
+				if (substr($propertyName, 0, 1) === '_') {
+					ObjectAccess::setProperty($newNodeData, substr($propertyName, 1), $propertyValue);
+				} else {
+					$newNodeData->setProperty($propertyName, $propertyValue);
+				}
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
