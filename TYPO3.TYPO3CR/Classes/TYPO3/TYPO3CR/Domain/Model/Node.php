@@ -972,13 +972,12 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name Name of the new node
 	 * @param NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return NodeInterface
 	 * @api
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
-		$this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier, $dimensions);
-		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $dimensions);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
+		$this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
+		$newNode = $this->createSingleNode($name, $nodeType, $identifier);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
 				if (substr($propertyName, 0, 1) === '_') {
@@ -990,7 +989,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
 				$childNodeIdentifier = $this->buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
-				$newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier, $dimensions);
+				$newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
 			}
 		}
 
@@ -1026,18 +1025,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name Name of the new node
 	 * @param NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return Node
 	 * @throws NodeConstraintException
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
 		if ($nodeType !== NULL && !$this->willChildNodeBeAutoCreated($name) && !$this->isNodeTypeAllowedAsChildNode($nodeType)) {
 			throw new NodeConstraintException('Cannot create new node "' . $name . '" of Type "' . $nodeType->getName() . '" in ' . $this->__toString(), 1400782413);
 		}
 
-		if ($dimensions === NULL || $dimensions === array()) {
-			$dimensions = $this->context->getTargetDimensionValues();
-		}
+		$dimensions = $this->context->getTargetDimensionValues();
 
 		$nodeData = $this->nodeData->createSingleNodeData($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
@@ -1539,7 +1535,12 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$nodeData = new NodeData($this->nodeData->getPath(), $context->getWorkspace(), $this->nodeData->getIdentifier(), $context->getTargetDimensionValues());
 		$nodeData->similarize($this->nodeData);
 
-		$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+		if ($this->context !== $context) {
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+		} else {
+			$this->setNodeData($nodeData);
+			$node = $this;
+		}
 
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($node);
@@ -1670,10 +1671,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name
 	 * @param string $nodeType
 	 * @param string $identifier
-	 * @param array $dimensions
 	 * @return void
 	 */
-	protected function emitBeforeNodeCreate(NodeInterface $node, $name, $nodeType, $identifier, $dimensions) {
+	protected function emitBeforeNodeCreate(NodeInterface $node, $name, $nodeType, $identifier) {
 	}
 
 	/**
