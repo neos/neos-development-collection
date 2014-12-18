@@ -206,7 +206,7 @@ TYPO3:
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
             editorOptions:
               multiple: TRUE
-          'date':
+          'DateTime':
             editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
             editorOptions:
               format: 'd-m-Y'

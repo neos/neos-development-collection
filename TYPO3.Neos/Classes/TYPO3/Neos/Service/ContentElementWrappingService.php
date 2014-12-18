@@ -203,7 +203,7 @@ class ContentElementWrappingService {
 		}
 
 		// Serialize date values to String
-		if ($dataType === 'date') {
+		if ($dataType === 'DateTime') {
 			if (!$propertyValue instanceof \DateTime) {
 				return '';
 			}
