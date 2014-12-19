@@ -145,7 +145,7 @@ class LegacySiteImportService {
 	 * Imports one or multiple sites from the XML file at $pathAndFilename
 	 *
 	 * @param string $pathAndFilename
-	 * @return void
+	 * @return Site The imported site or NULL if not successful
 	 * @throws UnknownPackageException
 	 * @throws InvalidPackageStateException
 	 */
@@ -158,6 +158,7 @@ class LegacySiteImportService {
 		} else {
 			$options = 0;
 		}
+		$site = NULL;
 		$sitesXml = new \SimpleXMLElement($sitesXmlString, $options);
 		foreach ($sitesXml->site as $siteXml) {
 			$site = $this->getSiteByNodeName((string)$siteXml['nodeName']);
@@ -187,6 +188,7 @@ class LegacySiteImportService {
 
 			$this->importNode($siteXml, $sitesNode);
 		}
+		return $site;
 	}
 
 	/**

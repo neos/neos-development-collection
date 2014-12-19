@@ -16,9 +16,11 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
@@ -74,6 +76,18 @@ class SiteImportService {
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var EventEmittingService
+	 */
+	protected $eventEmittingService;
+
+	/**
 	 * @var string
 	 */
 	protected $resourcesPath = NULL;
@@ -100,18 +114,6 @@ class SiteImportService {
 	protected $dateTimeClassNames = array();
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\EventLog\Domain\Service\EventEmittingService
-	 */
-	protected $eventEmittingService;
-
-	/**
 	 * @return void
 	 */
 	public function initializeObject() {
@@ -128,7 +130,7 @@ class SiteImportService {
 	 * Checks for the presence of Sites.xml in the given package and imports it if found.
 	 *
 	 * @param string $packageKey
-	 * @return void
+	 * @return Site the imported site
 	 * @throws NeosException
 	 */
 	public function importFromPackage($packageKey) {
@@ -140,7 +142,7 @@ class SiteImportService {
 			throw new NeosException(sprintf('Error: No content found in package "%s".', $packageKey), 1384192955);
 		}
 		try {
-			$this->importFromFile($contentPathAndFilename);
+			return $this->importFromFile($contentPathAndFilename);
 		} catch (\Exception $exception) {
 			throw new NeosException(sprintf('Error: During import an exception occurred: "%s".', $exception->getMessage()), 1300360480, $exception);
 		}
@@ -150,46 +152,53 @@ class SiteImportService {
 	 * Imports one or multiple sites from the XML file at $pathAndFilename
 	 *
 	 * @param string $pathAndFilename
-	 * @return void
-	 * @throws UnknownPackageException
-	 * @throws InvalidPackageStateException
+	 * @return Site The imported site
+	 * @throws UnknownPackageException|InvalidPackageStateException|NeosException
 	 */
 	public function importFromFile($pathAndFilename) {
-		$this->eventEmittingService->withoutEventLog(function() use ($pathAndFilename) {
+		/** @var Site $importedSite */
+		$site = NULL;
+		$this->eventEmittingService->withoutEventLog(function() use ($pathAndFilename, &$site) {
 			$xmlReader = new \XMLReader();
 			$xmlReader->open($pathAndFilename, NULL, LIBXML_PARSEHUGE);
 
 			while ($xmlReader->read()) {
-				if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name === 'site') {
-					$isLegacyFormat = $xmlReader->getAttribute('nodeName') !== NULL && $xmlReader->getAttribute('state') === NULL && $xmlReader->getAttribute('siteResourcesPackageKey') === NULL;
-					if ($isLegacyFormat) {
-						$this->legacySiteImportService->importSitesFromFile($pathAndFilename);
-						return;
-					}
-
-					$site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
-					$site->setName($xmlReader->getAttribute('name'));
-					$site->setState((integer)$xmlReader->getAttribute('state'));
-
-					$siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
-					if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-						throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
-					}
-					if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
-						throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
-					}
-					$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
-
-					$rootNode = $this->contextFactory->create()->getRootNode();
-					$sitesNode = $rootNode->getNode('/sites');
-					if ($sitesNode === NULL) {
-						$sitesNode = $rootNode->createSingleNode('sites');
-					}
-
-					$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
+				if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
+					continue;
 				}
+				$isLegacyFormat = $xmlReader->getAttribute('nodeName') !== NULL && $xmlReader->getAttribute('state') === NULL && $xmlReader->getAttribute('siteResourcesPackageKey') === NULL;
+				if ($isLegacyFormat) {
+					$site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
+					return;
+				}
+
+				$site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
+				$site->setName($xmlReader->getAttribute('name'));
+				$site->setState((integer)$xmlReader->getAttribute('state'));
+
+				$siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
+				if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
+					throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
+				}
+				if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+					throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
+				}
+				$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
+
+				$rootNode = $this->contextFactory->create()->getRootNode();
+				$sitesNode = $rootNode->getNode('/sites');
+				if ($sitesNode === NULL) {
+					$sitesNode = $rootNode->createSingleNode('sites');
+				}
+
+				$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
 			}
 		});
+
+		if ($site === NULL) {
+			throw new NeosException(sprintf('The XML file did not contain a valid site node.'), 1418999522);
+		}
+		return $site;
 	}
 
 	/**

@@ -66,25 +66,27 @@ class SiteCommandController extends CommandController {
 	 * @return void
 	 */
 	public function importCommand($packageKey = NULL, $filename = NULL) {
+		if ($packageKey === NULL && $filename === NULL) {
+			$this->outputLine('You have to specify either "--package-key" or "--filename"');
+			$this->quit(1);
+		}
+		$site = NULL;
 		if ($filename !== NULL) {
 			try {
-				$this->siteImportService->importFromFile($filename);
+				$site = $this->siteImportService->importFromFile($filename);
 			} catch (\Exception $exception) {
 				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s', array($filename, $exception->getMessage()));
 				$this->quit(1);
 			}
-		} elseif ($packageKey !== NULL) {
+		} else {
 			try {
-				$this->siteImportService->importFromPackage($packageKey);
+				$site = $this->siteImportService->importFromPackage($packageKey);
 			} catch (\Exception $exception) {
 				$this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', array($packageKey, $exception->getMessage()));
 				$this->quit(1);
 			}
-		} else {
-			$this->outputLine('You have to specify either "--package-key" or "--filename"');
-			$this->quit(1);
 		}
-		$this->outputLine('Import finished.');
+		$this->outputLine('Import of site "%s" finished.', array($site->getName()));
 	}
 
 	/**
