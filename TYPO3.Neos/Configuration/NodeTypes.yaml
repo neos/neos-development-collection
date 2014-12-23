@@ -242,6 +242,9 @@
     - 'TYPO3.Neos:Hidable'
     - 'TYPO3.Neos:Timable'
   abstract: TRUE
+  constraints:
+    nodeTypes:
+      '*': FALSE
   ui:
     label: 'Content'
     icon: 'icon-unchecked'
