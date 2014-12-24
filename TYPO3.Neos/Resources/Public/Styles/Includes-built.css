@@ -11041,22 +11041,22 @@
   font-weight: normal;
   display: inline-block;
   position: relative;
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  top: 5px;
-  left: 13px;
-  line-height: 0;
-}
-.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable.expanded .neos-notification-heading::after {
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
-  left: 19px;
+  top: 5px;
+  left: 16px;
+  line-height: 0;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable.expanded .neos-notification-heading::after {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: 10px;
 }
 .neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-notification-heading {
   padding: 12px 49px 12px;
