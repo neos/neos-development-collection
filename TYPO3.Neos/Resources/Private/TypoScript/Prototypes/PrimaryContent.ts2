@@ -8,12 +8,10 @@ prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
 	@ignoreProperties = ${['nodePath']}
 
 	default {
-		prototype(TYPO3.Neos:ContentCollection) {
+		condition = TRUE
+		renderer = TYPO3.Neos:ContentCollection {
 			nodePath = ${nodePath}
 		}
-
-		condition = TRUE
-		type = 'TYPO3.Neos:ContentCollection'
 		@position = 'end'
 	}
 }
