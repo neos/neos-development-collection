@@ -198,6 +198,7 @@ class SiteImportService {
 		if ($site === NULL) {
 			throw new NeosException(sprintf('The XML file did not contain a valid site node.'), 1418999522);
 		}
+		$this->emitSiteImported($site);
 		return $site;
 	}
 
@@ -219,4 +220,15 @@ class SiteImportService {
 
 		return $site;
 	}
+
+
+	/**
+	 * Signal that is triggered when a site has been imported successfully
+	 *
+	 * @Flow\Signal
+	 * @param Site $site The site that has been imported
+	 * @return void
+	 */
+	protected function emitSiteImported(Site $site) {}
+
 }
