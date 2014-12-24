@@ -11,10 +11,8 @@ namespace TYPO3\Neos;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
