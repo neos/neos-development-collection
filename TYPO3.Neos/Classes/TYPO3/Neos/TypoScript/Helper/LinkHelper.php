@@ -13,6 +13,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 
 use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
@@ -66,7 +67,7 @@ class LinkHelper implements ProtectedContextAwareInterface {
 	/**
 	 * @param string|Uri $uri
 	 * @param NodeInterface $contextNode
-	 * @return string
+	 * @return NodeInterface|AssetInterface|NULL
 	 */
 	public function convertUriToObject($uri, NodeInterface $contextNode = NULL) {
 		return $this->linkingService->convertUriToObject($uri, $contextNode);
