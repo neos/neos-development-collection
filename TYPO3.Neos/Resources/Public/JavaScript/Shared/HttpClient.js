@@ -94,17 +94,18 @@ define([
 		 */
 		_request: function(url, requestMethod, optionsOverride) {
 			var that = this,
+				isSafeRequest = (requestMethod === 'GET' || requestMethod === 'HEAD'),
 				options = {
-				type: requestMethod,
-				url: url,
-				data: {}
-			};
+					type: requestMethod,
+					url: url,
+					data: {}
+				};
 
 			if (optionsOverride) {
 				$.extend(options, optionsOverride);
 			}
 
-			if (requestMethod !== 'GET' && requestMethod !== 'HEAD') {
+			if (!isSafeRequest) {
 				options.data.__csrfToken = Configuration.get('CsrfToken');
 			}
 
@@ -116,21 +117,25 @@ define([
 				promise = Ember.RSVP.Promise(function(resolve, reject) {
 					options = $.extend(options, {
 						success: function(data, textStatus, xhr) {
-							RequestManager.remove(xhr);
-							if (requestMethod === 'POST' || requestMethod === 'PUT') {
+							if (!isSafeRequest) {
+								RequestManager.remove(xhr);
+							} else {
 								that.set('_lastSuccessfulTransfer', new Date());
 							}
 							that.set('_failedRequest', false);
 							that._success(resolve, data, textStatus, xhr);
 						},
 						error: function(xhr, textStatus, errorThrown) {
-							RequestManager.remove(xhr);
+							if (!isSafeRequest) {
+								RequestManager.remove(xhr);
+							}
 							if (xhr.status === 401) {
 								LoginDialog.show(function() {
-									if (requestMethod !== 'GET' && requestMethod !== 'HEAD') {
+									if (isSafeRequest) {
 										options.data.__csrfToken = Configuration.get('CsrfToken');
+									} else {
+										RequestManager.add($.ajax(options));
 									}
-									RequestManager.add($.ajax(options));
 								});
 							} else {
 								that.set('_failedRequest', true);
@@ -140,7 +145,9 @@ define([
 						}
 					});
 					request = $.ajax(options);
-					RequestManager.add(request);
+					if (!isSafeRequest) {
+						RequestManager.add(request);
+					}
 
 					if (window.localStorage.showDevelopmentFeatures) {
 						window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
