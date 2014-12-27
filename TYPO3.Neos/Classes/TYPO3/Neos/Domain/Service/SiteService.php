@@ -68,6 +68,8 @@ class SiteService {
 			$this->domainRepository->remove($domain);
 		}
 		$this->siteRepository->remove($site);
+
+		$this->emitSitePruned($site);
 	}
 
 	/**
@@ -76,9 +78,24 @@ class SiteService {
 	 * @return void
 	 */
 	public function pruneAll() {
+		$sites = $this->siteRepository->findAll();
+
 		$this->nodeDataRepository->removeAll();
 		$this->workspaceRepository->removeAll();
 		$this->domainRepository->removeAll();
 		$this->siteRepository->removeAll();
+
+		foreach ($sites as $site) {
+			$this->emitSitePruned($site);
+		}
 	}
+
+	/**
+	 * Signal that is triggered whenever a site has been pruned
+	 *
+	 * @Flow\Signal
+	 * @param Site $site The site that was pruned
+	 * @return void
+	 */
+	protected function emitSitePruned(Site $site) {}
 }
