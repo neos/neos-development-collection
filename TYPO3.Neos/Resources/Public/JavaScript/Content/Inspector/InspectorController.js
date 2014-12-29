@@ -125,7 +125,7 @@ define(
 			// properties
 			propertiesArray = [];
 			for (var property in selectedNodeSchema.properties) {
-				if (selectedNodeSchema.properties.hasOwnProperty(property)) {
+				if (selectedNodeSchema.properties.hasOwnProperty(property) && selectedNodeSchema.properties[property]) {
 					var isBoolean = selectedNodeSchema.properties[property].type === 'boolean';
 					propertiesArray.push($.extend({
 						key: property,
@@ -175,7 +175,7 @@ define(
 			sortedPropertiesArray.forEach(function(property) {
 				var groupIdentifier = Ember.get(property, 'ui.inspector.group');
 				if (groupIdentifier in groupsObject) {
-					if (groupsObject.hasOwnProperty(groupIdentifier)) {
+					if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]) {
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
@@ -188,7 +188,7 @@ define(
 			sortedViewsArray.forEach(function(view) {
 				var groupIdentifier = Ember.get(view, 'group');
 				if (groupIdentifier in groupsObject) {
-					if (groupsObject.hasOwnProperty(groupIdentifier)) {
+					if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]) {
 						if (!groupsObject[groupIdentifier].views) {
 							groupsObject[groupIdentifier].views = [];
 						}
@@ -200,7 +200,7 @@ define(
 			// 3. transform object into array
 			groupsArray = [];
 			for (var groupIdentifier in groupsObject) {
-				if (groupsObject.hasOwnProperty(groupIdentifier)
+				if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]
 					&& ((groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length)
 					|| (groupsObject[groupIdentifier].views && groupsObject[groupIdentifier].views.length))) {
 					groupsArray.push($.extend({group: groupIdentifier}, groupsObject[groupIdentifier]));
@@ -226,7 +226,7 @@ define(
 					tabIdentifier = 'default';
 				}
 				if (tabIdentifier in tabsObject) {
-					if (tabsObject.hasOwnProperty(tabIdentifier)) {
+					if (tabsObject.hasOwnProperty(tabIdentifier) && tabsObject[tabIdentifier]) {
 						if (!tabsObject[tabIdentifier].groups) {
 							tabsObject[tabIdentifier].groups = [];
 						}
@@ -240,7 +240,7 @@ define(
 			// 2. transform object into array
 			tabsArray = [];
 			for (var tabIdentifier in tabsObject) {
-				if (tabsObject.hasOwnProperty(tabIdentifier) && tabsObject[tabIdentifier].groups && tabsObject[tabIdentifier].groups.length) {
+				if (tabsObject.hasOwnProperty(tabIdentifier) && tabsObject[tabIdentifier] && tabsObject[tabIdentifier].groups && tabsObject[tabIdentifier].groups.length) {
 					var inspectorTab = InspectorTab.create($.extend({tab: tabIdentifier, _inspectorController: this}, tabsObject[tabIdentifier]));
 					tabsArray.push(inspectorTab);
 				}
