@@ -155,11 +155,7 @@ define(
 				title: 'Publish all',
 				labelIcon: '<i class="icon-upload"></i> ',
 				label: function() {
-					if (this.get('_noWorkspaceWideChanges')) {
-						return (this.get('labelIcon') + ' Published').htmlSafe();
-					} else {
-						return (this.get('labelIcon') + ' Publish all (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
-					}
+					return (this.get('labelIcon') + ' Publish all' + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
 				}.property('_numberOfWorkspaceWideChanges'),
 				controller: PublishableNodes,
 
