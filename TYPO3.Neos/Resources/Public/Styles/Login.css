@@ -2801,8 +2801,9 @@ body {
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.neos input[type="text"]:focus,
-.neos input[type="password"]:focus {
+.neos input[type="text"]:focus, .neos input[type="text"]:invalid:focus,
+.neos input[type="password"]:focus,
+.neos input[type="password"]:invalid:focus {
   background-color: #fff;
   border: 2px solid #fff;
   color: #252525;
