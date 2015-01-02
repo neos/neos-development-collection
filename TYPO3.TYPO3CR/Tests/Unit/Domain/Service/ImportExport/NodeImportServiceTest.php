@@ -150,6 +150,7 @@ class NodeImportServiceTest extends UnitTestCase {
 												),
 										),
 								),
+							'Persistence_Object_Identifier' => NULL
 						),
 					'imageTitleText' => 'Photo by www.daniel-bischoff.photo',
 				),
@@ -185,6 +186,7 @@ class NodeImportServiceTest extends UnitTestCase {
 											'__identity' => '3640b4ba-a68b-7e2f-4199-d4e3a2b684c3',
 										),
 								),
+							'Persistence_Object_Identifier' => '08aaeb84-dccc-6af4-0086-93499de4e1bc'
 						),
 						1 => array(
 							'targetType' => 'TYPO3\\Media\\Domain\\Model\\Asset',
@@ -198,6 +200,7 @@ class NodeImportServiceTest extends UnitTestCase {
 											'__identity' => '8a4496e4-fa0d-8550-0995-01fd869728bf',
 										),
 								),
+							'Persistence_Object_Identifier' => '89cd85cc-270e-0902-7113-d14ac7539c75'
 						)
 					)
 				),
