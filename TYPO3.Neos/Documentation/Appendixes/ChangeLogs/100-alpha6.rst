@@ -1,8 +1,8 @@
 .. _1.0.0-alpha6:
 
-============
-1.0.0-alpha6
-============
+=========================
+1.0.0-alpha6 (2013-10-15)
+=========================
 
 TYPO3 Neos Alpha 6 contains lots of improvements, where most of them were incorporated at the code sprint at  `de-cix
 <http://de-cix.net>`_.

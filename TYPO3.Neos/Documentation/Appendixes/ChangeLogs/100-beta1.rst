@@ -1,8 +1,8 @@
 .. _1.0.0-beta1:
 
-===========
-1.0.0-beta1
-===========
+========================
+1.0.0-beta1 (2013-11-13)
+========================
 
 **With the release of the beta we're getting even closer to our final release on December 10th. This release marks the finalizing
 of the features that will be included in the first official release. The release includes a lot of general improvements, both for the

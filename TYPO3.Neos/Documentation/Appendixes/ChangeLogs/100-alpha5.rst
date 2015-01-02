@@ -1,8 +1,8 @@
 .. _1.0.0-alpha5:
 
-============
-1.0.0-alpha5
-============
+=========================
+1.0.0-alpha5 (2013-08-05)
+=========================
 
 In accordance with our plan to release more often we are happy to announce the release of TYPO3 Neos Alpha 5.
 
