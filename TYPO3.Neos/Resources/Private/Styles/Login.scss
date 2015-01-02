@@ -42,7 +42,8 @@ body {
 		@include transition(none);
 		@include font;
 
-		&:focus {
+		&:focus,
+		&:invalid:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
