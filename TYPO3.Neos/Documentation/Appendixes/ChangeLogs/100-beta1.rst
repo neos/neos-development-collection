@@ -10,9 +10,8 @@ editor and the integrator. Some of these improvements stems from actual project 
 emphasized some of the most needed features. We've tried our best to include all breaking features in this release, so adjusting
 your projects from this release to the final release will be as easy as possible.**
 
-===================
 Main highlights are
-===================
+-------------------
 
 Node References
 ---------------
