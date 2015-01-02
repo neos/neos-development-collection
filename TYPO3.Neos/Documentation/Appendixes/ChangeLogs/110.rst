@@ -1,6 +1,6 @@
-====================
-1.1.0
-====================
+==================
+1.1.0 (2014-06-19)
+==================
 
 **The goals for the 1.1 version were performance and stability improvements while providing a proper base
 for localization support in the next version. The new content cache and other performance improvements will

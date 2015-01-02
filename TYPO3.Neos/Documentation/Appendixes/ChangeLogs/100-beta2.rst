@@ -1,7 +1,7 @@
 .. _1.0.0-beta2:
 
-1.0.0-beta2
-===========
+1.0.0-beta2 (2013-12-03)
+========================
 
 **This second beta will be the last one before the final release. It contains numerous bugfixes as well
 as a bunch of breaking changes that we wanted to have in a beta before the release.**
