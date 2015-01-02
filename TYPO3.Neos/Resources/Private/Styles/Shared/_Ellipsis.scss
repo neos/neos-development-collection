@@ -1,0 +1,20 @@
+@-webkit-keyframes dot {
+	0% { text-indent: -20px; }
+	25% { text-indent: -15px; }
+	50% { text-indent: -7px; }
+	75% { text-indent: 0px; }
+	100% { text-indent: -20px; }
+}
+
+.neos-ellipsis,
+%ellipsis {
+	&::after {
+		display: inline-block;
+		width: 11px;
+		content: '...';
+		overflow: hidden;
+		vertical-align: top;
+		-webkit-animation: dot 1.3s infinite;
+		-webkit-animation-timing-function: step-start;
+	}
+}
