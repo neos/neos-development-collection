@@ -295,7 +295,7 @@ define(
 				}
 
 				var croppedTitle = node.data.title,
-					prevTitle = node.data.tooltip,
+					prevTitle = node.data.fullTitle,
 					tree = node.tree,
 					that = this;
 
@@ -349,7 +349,7 @@ define(
 										InspectorController.set('nodeProperties.title', title);
 										InspectorController.apply();
 									}
-									node.data.tooltip = title;
+									node.data.fullTitle = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
 								} else {
 									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
