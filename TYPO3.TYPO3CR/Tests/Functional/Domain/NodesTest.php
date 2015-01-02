@@ -1148,7 +1148,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$variantNodeB = $nodeFactory->createFromNodeData($nodeDataB, $this->context);
 
 		$this->assertSame($variantNodeA1, $variantNodeA2);
-		$this->assertNotSame($variantNodeA1, $variantNodeB);
+		$this->assertSame($variantNodeA1, $variantNodeB);
 	}
 
 	/**
@@ -1224,14 +1224,12 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$identifier = '30e893c1-caef-0ca5-b53d-e5699bb8e506';
 		$variantNodeA = $variantContextA->getRootNode()->createNode('test', NULL, $identifier);
-		$variantNodeAWithDifferentDimensionValues = $variantContextA->getRootNode()->createNode('test2', NULL, $identifier, array('test' => array('x')));
 
 		// Same context
 		$this->assertSame($variantContextA->adoptNode($variantNodeA), $variantNodeA);
-		$this->assertNotSame($variantContextA->adoptNode($variantNodeAWithDifferentDimensionValues), $variantNodeAWithDifferentDimensionValues);
 
 		// Different context with fallback
-		$this->assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions());
+		$this->assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions(), 'Dimensions of $variantNodeA should change when adopted in $variantContextB');
 	}
 
 	/**
@@ -1278,7 +1276,10 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'targetDimensions' => array('test' => 'b')
 		));
 
-		$variantNodeA = $variantContextA->getRootNode()->createNode('test', NULL, NULL, array('test' => array('a', 'b')));
+		$variantContextA->getRootNode()->getNodeData()->createNodeData('test', NULL, NULL, $variantContextA->getWorkspace(), array('test' => array('a', 'b')));
+		$this->persistenceManager->persistAll();
+
+		$variantNodeA = $variantContextA->getRootNode()->getNode('test');
 		$variantNodeB = $variantContextB->adoptNode($variantNodeA);
 
 		$this->assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());

@@ -50,7 +50,7 @@ class NodeFactory {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeConfigurationException if a configured 'class' for a Node does not exist or does not inherit NodeInterface
 	 */
 	public function createFromNodeData(NodeData $nodeData, Context $context) {
-		$internalNodeIdentifier = $nodeData->getIdentifier() . $nodeData->getDimensionsHash() . spl_object_hash($context);
+		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
 
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			// Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
