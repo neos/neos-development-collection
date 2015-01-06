@@ -33,7 +33,6 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	const DOCUMENT_PUBLISHED = 'Node.Published';
 	const NODE_COPY = 'Node.Copy';
 	const NODE_MOVE = 'Node.Move';
-	const NODE_DISCARDED = 'Node.Discarded';
 	const NODE_ADOPT = 'Node.Adopt';
 
 	/**
@@ -219,22 +218,6 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function beforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace) {
-	}
-
-	/**
-	 * Emits a "Node Discarded" event
-	 *
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function nodeDiscarded(NodeInterface $node) {
-		if (!$this->eventEmittingService->isEnabled()) {
-			return;
-		}
-
-		/* @var $nodeEvent NodeEvent */
-		$nodeEvent = $this->eventEmittingService->emit(self::NODE_DISCARDED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
-		$nodeEvent->setNode($node);
 	}
 
 	/**
