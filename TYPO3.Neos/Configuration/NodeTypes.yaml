@@ -48,7 +48,7 @@
           tab: meta
   properties:
     _hiddenBeforeDateTime:
-      type: date
+      type: DateTime
       ui:
         label: 'Hide before'
         inspector:
@@ -59,7 +59,7 @@
       validation:
         'TYPO3.Neos/Validation/DateTimeValidator': []
     _hiddenAfterDateTime:
-      type: date
+      type: DateTime
       ui:
         label: 'Hide after'
         inspector:
