@@ -94,40 +94,21 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 		/** @var $appliedMigration MigrationStatus */
 		$this->outputLine();
 
-		$appliedMigrations = $this->migrationStatusRepository->findAll();
-
-		$appliedMigrationsDictionary = array();
-		foreach ($appliedMigrations as $appliedMigration) {
-			$appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
-		}
-
 		$availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
-		if (count($availableMigrations) > 0) {
-			$this->outputLine('<b>Available migrations</b>');
-			$this->outputLine();
-			foreach ($availableMigrations as $version => $migration) {
-				$this->outputLine($version . '   ' . $migration['formattedVersionNumber'] . '   ' . $migration['package']->getPackageKey());
-
-				if (isset($appliedMigrationsDictionary[$version])) {
-					$migrationsInVersion = $appliedMigrationsDictionary[$version];
-					usort($migrationsInVersion, function(MigrationStatus $migrationA, MigrationStatus $migrationB) {
-						return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
-					});
-					foreach ($migrationsInVersion as $appliedMigration) {
-						$this->outputFormatted('%s applied on %s to workspace "%s"',
-							array(
-								str_pad(strtoupper($appliedMigration->getDirection()), 4, ' ', STR_PAD_LEFT),
-								$appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s')
-							),
-							2
-						);
-						$this->outputLine();
-					}
-				}
-			}
-		} else {
+		if (count($availableMigrations) === 0) {
 			$this->outputLine('No migrations available.');
+			$this->quit();
 		}
+
+		$tableRows = array();
+		foreach ($availableMigrations as $version => $migration) {
+			$migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration();
+			$tableRows[] = array($version, $migration['formattedVersionNumber'], $migration['package']->getPackageKey(), $migrationConfiguration->getComments());
+		}
+
+		$this->outputLine('<b>Available migrations</b>');
+		$this->outputLine();
+		$this->output->outputTable($tableRows, array('Version', 'Date', 'Package', 'Comments'));
 	}
 
 	/**
