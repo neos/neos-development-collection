@@ -217,7 +217,7 @@ class NodeConverter extends AbstractTypeConverter {
 						throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
 					}
 				break;
-				case 'date':
+				case 'DateTime':
 					if ($nodePropertyValue !== '') {
 						$nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue);
 						$nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
@@ -254,7 +254,7 @@ class NodeConverter extends AbstractTypeConverter {
 				}
 			}
 
-			if ($this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
+			if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
 				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType);
 			}
 			$nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
