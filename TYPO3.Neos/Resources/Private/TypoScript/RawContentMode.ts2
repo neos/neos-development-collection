@@ -34,7 +34,7 @@ rawContent = TYPO3.Neos:Page {
 
 		allContentCollections = TYPO3.Neos:PrimaryContent {
 			nodePath = '.'
-			default.type = 'TYPO3.Neos:RawContent'
+			default.renderer = TYPO3.Neos:RawContent
 		}
 	}
 }
