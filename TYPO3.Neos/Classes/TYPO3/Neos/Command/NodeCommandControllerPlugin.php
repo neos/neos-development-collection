@@ -103,7 +103,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 */
 	public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = NULL, $workspaceName = 'live', $dryRun = FALSE) {
 		$this->output = $output;
-		$this->generateUriPathSegments($workspaceName, $dryRun);
+		switch ($controllerCommandName) {
+			case 'repair':
+				$this->generateUriPathSegments($workspaceName, $dryRun);
+		}
 	}
 
 	/**
