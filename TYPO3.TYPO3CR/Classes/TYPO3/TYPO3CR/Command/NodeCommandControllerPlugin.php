@@ -80,8 +80,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	static public function getSubCommandShortDescription($controllerCommandName) {
 		switch ($controllerCommandName) {
 			case 'repair':
-				return 'Check and fix possibly missing child nodes';
-			break;
+				return 'Check and fix possibly missing child nodes & missing default values';
 		}
 	}
 
@@ -99,8 +98,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					PHP_EOL .
 					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
 					'command) which currently don\'t have child nodes as configured by the node type\'s' . PHP_EOL .
-					'configuration new child nodes will be created.' . PHP_EOL;
-			break;
+					'configuration new child nodes will be created.' . PHP_EOL . PHP_EOL .
+					'<u>Missing default properties</u>' . PHP_EOL .
+					PHP_EOL .
+					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
+					'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
+					'the default value for that property will be set.' . PHP_EOL;
 		}
 	}
 
@@ -117,6 +120,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = NULL, $workspaceName = 'live', $dryRun = FALSE) {
 		$this->output = $output;
 		$this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
+		$this->addMissingDefaultValues($nodeType, $workspaceName, $dryRun);
 	}
 
 	/**
@@ -205,6 +209,84 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 				}
 			} else {
 				$this->output->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
+			}
+		}
+	}
+
+	/**
+	 * Performs checks for unset properties that has default values and sets them if necessary.
+	 *
+	 * @param NodeType $nodeType Only for this node type, if specified
+	 * @param string $workspaceName Name of the workspace to consider
+	 * @param boolean $dryRun Simulate?
+	 * @return void
+	 */
+	public function addMissingDefaultValues(NodeType $nodeType = NULL, $workspaceName, $dryRun) {
+		if ($nodeType !== NULL) {
+			$this->output->outputLine('Checking nodes of type "%s" for missing default values ...', array($nodeType->getName()));
+			$this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
+		} else {
+			$this->output->outputLine('Checking for missing default values ...');
+			foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+				/** @var NodeType $nodeType */
+				if ($nodeType->isAbstract()) {
+					continue;
+				}
+				$this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
+			}
+		}
+	}
+
+	/**
+	 * Adds missing default values for the given node type
+	 *
+	 * @param NodeType $nodeType
+	 * @param string $workspaceName
+	 * @param boolean $dryRun
+	 * @return void
+	 */
+	public function addMissingDefaultValuesByNodeType(NodeType $nodeType = NULL, $workspaceName, $dryRun) {
+		$addedMissingDefaultValuesCount = 0;
+
+		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), FALSE);
+		$nodeTypes[$nodeType->getName()] = $nodeType;
+
+		if ($this->nodeTypeManager->hasNodeType((string)$nodeType)) {
+			$nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
+			$nodeTypeNames[$nodeType->getName()] = $nodeType;
+		} else {
+			$this->output->outputLine('Node type "%s" does not exist', array((string)$nodeType));
+			exit(1);
+		}
+
+		$context = $this->createContext($workspaceName);
+		/** @var $nodeType NodeType */
+		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+			$defaultValues = $nodeType->getDefaultValuesForProperties();
+			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if (!$node instanceof NodeInterface) {
+					continue;
+				}
+				foreach ($defaultValues as $propertyName => $defaultValue) {
+					if (!$node->hasProperty($propertyName)) {
+						$addedMissingDefaultValuesCount++;
+						if (!$dryRun) {
+							$node->setProperty($propertyName, $defaultValue);
+							$this->output->outputLine('Set default value for property named "%s" in "%s" (%s)', array($propertyName, $node->getPath(), $node->getNodeType()->getName()));
+						} else {
+							$this->output->outputLine('Found missing default value for property named "%s" in "%s" (%s)', array($propertyName, $node->getPath(), $node->getNodeType()->getName()));
+						}
+					}
+				}
+			}
+		}
+
+		if ($addedMissingDefaultValuesCount !== 0) {
+			if ($dryRun === FALSE) {
+				$this->output->outputLine('Added %s new default values', array($addedMissingDefaultValuesCount));
+			} else {
+				$this->output->outputLine('%s missing default values need to be set', array($addedMissingDefaultValuesCount));
 			}
 		}
 	}
