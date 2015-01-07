@@ -11,12 +11,12 @@ namespace TYPO3\TYPO3CR\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -33,12 +33,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -62,6 +56,15 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @var ConsoleOutput
 	 */
 	protected $output;
+
+	/**
+	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
+	 * interface ...
+	 *
+	 * @Flow\Inject
+	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 */
+	protected $entityManager;
 
 	/**
 	 * @var array
@@ -145,11 +148,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * Create missing child nodes for the given node type
 	 *
 	 * @param NodeType $nodeType
-	 * @param string $workspace
+	 * @param string $workspaceName
 	 * @param boolean $dryRun
 	 * @return void
 	 */
-	protected function createChildNodesByNodeType(NodeType $nodeType, $workspace, $dryRun) {
+	protected function createChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun) {
 		$createdNodesCount = 0;
 		$nodeCreationExceptions = 0;
 
@@ -164,13 +167,13 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			exit(1);
 		}
 
+		$context = $this->createContext($workspaceName);
 		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
-			$context = $this->createContext($workspace);
-			foreach ($this->nodeDataRepository->findByNodeType($nodeTypeName) as $nodeData) {
+			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-				if (!$node instanceof NodeInterface || $node->isRemoved() === TRUE) {
+				if (!$node instanceof NodeInterface) {
 					continue;
 				}
 				foreach ($childNodes as $childNodeName => $childNodeType) {
@@ -218,6 +221,31 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE
 		));
+	}
+
+	/**
+	 * Retrieves all NodeData objects of a certain node type inside a given workspace.
+	 *
+	 * Shadow nodes are excluded, because they will be published when publishing the moved node.
+	 *
+	 * @param string $nodeType
+	 * @param string $workspaceName
+	 * @return array<NodeData>
+	 */
+	protected function getNodeDataByNodeTypeAndWorkspace($nodeType, $workspaceName) {
+		/** @var QueryBuilder $queryBuilder */
+		$queryBuilder = $this->entityManager->createQueryBuilder();
+
+		$queryBuilder->select('n')
+			->distinct()
+			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+			->where('n.nodeType = :nodeType')
+			->andWhere('n.workspace = :workspace')
+			->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+			->setParameter('nodeType', $nodeType)
+			->setParameter('workspace', $workspaceName)
+			->setParameter('removed', FALSE, \PDO::PARAM_BOOL);
+		return $queryBuilder->getQuery()->getResult();
 	}
 
 }
