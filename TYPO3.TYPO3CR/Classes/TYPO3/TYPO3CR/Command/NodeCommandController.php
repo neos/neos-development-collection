@@ -87,12 +87,13 @@ class NodeCommandController extends CommandController implements DescriptionAwar
 	 * @param string $nodeType Node type name, if empty update all declared node types
 	 * @param string $workspace Workspace name, default is 'live'
 	 * @param boolean $dryRun Don't do anything, but report actions
+	 * @param boolean $cleanup If FALSE, cleanup tasks are skipped
 	 * @return void
 	 */
-	public function repairCommand($nodeType = NULL, $workspace = 'live', $dryRun = FALSE) {
+	public function repairCommand($nodeType = NULL, $workspace = 'live', $dryRun = FALSE, $cleanup = TRUE) {
 		$this->pluginConfigurations = self::detectPlugins($this->objectManager);
 
-		if ($this->workspaceRepository->findByName($workspace)->count() === 0) {
+		if ($this->workspaceRepository->countByName($workspace) === 0) {
 			$this->outputLine('Workspace "%s" does not exist', array($workspace));
 			exit(1);
 		}
@@ -110,11 +111,12 @@ class NodeCommandController extends CommandController implements DescriptionAwar
 			$this->outputLine('Dry run, not committing any changes.');
 		}
 
-		foreach($this->pluginConfigurations as $pluginConfiguration) {
+		foreach ($this->pluginConfigurations as $pluginConfiguration) {
 			/** @var NodeCommandControllerPluginInterface $plugin */
 			$plugin = $pluginConfiguration['object'];
 			$this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
-			$plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
+			$this->outputLine();
+			$plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup);
 			$this->outputLine();
 		}
 
