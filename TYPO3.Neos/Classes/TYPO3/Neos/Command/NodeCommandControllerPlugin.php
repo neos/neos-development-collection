@@ -69,7 +69,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 		switch ($controllerCommandName) {
 			case 'repair':
 				return 'Generate missing URI path segments';
-				break;
 		}
 	}
 
@@ -87,7 +86,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					PHP_EOL .
 					'Generates URI path segment properties for all document nodes which don\'t have a path' . PHP_EOL .
 					'segment set yet.' . PHP_EOL;
-			break;
 		}
 	}
 
@@ -99,9 +97,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @param NodeType $nodeType Only handle this node type (if specified)
 	 * @param string $workspaceName Only handle this workspace (if specified)
 	 * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
+	 * @param boolean $cleanup If FALSE, cleanup tasks are skipped
 	 * @return void
 	 */
-	public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = NULL, $workspaceName = 'live', $dryRun = FALSE) {
+	public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = NULL, $workspaceName = 'live', $dryRun = FALSE, $cleanup = TRUE) {
 		$this->output = $output;
 		switch ($controllerCommandName) {
 			case 'repair':
