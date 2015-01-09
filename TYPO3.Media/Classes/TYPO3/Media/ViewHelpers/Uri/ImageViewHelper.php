@@ -21,7 +21,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  * = Examples =
  *
  * <code title="Rendering an asset path as-is">
- * {m:uri.image(asset: assetObject)}
+ * {typo3.media:uri.image(asset: assetObject)}
  * </code>
  * <output>
  * (depending on the asset)
@@ -30,7 +30,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  *
  *
  * <code title="Rendering an asset path with scaling at a given width only">
- * {m:uri.image(asset: assetObject, maximumWidth: 80)}
+ * {typo3.media:uri.image(asset: assetObject, maximumWidth: 80)}
  * </code>
  * <output>
  * (depending on the asset; has scaled keeping the aspect ratio)

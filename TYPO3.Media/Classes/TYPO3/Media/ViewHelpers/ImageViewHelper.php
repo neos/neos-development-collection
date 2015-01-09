@@ -23,7 +23,7 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  * = Examples =
  *
  * <code title="Rendering an asset as-is">
- * <m:image asset="{assetObject}" alt="a sample image without scaling" />
+ * <typo3.media:image asset="{assetObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
@@ -32,7 +32,7 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <m:image asset="{assetObject}" maximumWidth="80" alt="sample" />
+ * <typo3.media:image asset="{assetObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -41,7 +41,7 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <m:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <typo3.media:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -50,7 +50,7 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <m:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <typo3.media:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -58,7 +58,7 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <m:image asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <typo3.media:image asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled up or down to a width 5000 pixels, keeping aspect ratio)
