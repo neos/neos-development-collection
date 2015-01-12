@@ -78,13 +78,20 @@ class RenameDimension extends AbstractTransformation {
 	public function execute(NodeData $nodeData) {
 		$dimensions = $nodeData->getDimensions();
 		if ($dimensions !== array()) {
+			$hasChanges = FALSE;
+			$newDimensions  = array();
 			foreach ($dimensions as $dimension) {
 				/** @var NodeDimension $dimension */
 				if ($dimension->getName() === $this->oldDimensionName) {
-					$dimension->setName($this->newDimensionName);
+					$dimension = new NodeDimension($dimension->getNodeData(), $this->newDimensionName, $dimension->getValue());
+					$hasChanges = TRUE;
+				} else {
+					$dimension = new NodeDimension($dimension->getNodeData(), $dimension->getName(), $dimension->getValue());
 				}
 			}
-			$nodeData->setDimensions($dimensions);
+			if ($hasChanges) {
+				$nodeData->setDimensions($newDimensions);
+			}
 		}
 	}
 }
