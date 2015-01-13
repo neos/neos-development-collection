@@ -151,6 +151,11 @@ class NodeType {
 			$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
 		}
 		$this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
+
+		if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
+			$sorter = new \TYPO3\Flow\Utility\PositionalArraySorter($this->fullConfiguration['childNodes']);
+			$this->fullConfiguration['childNodes'] = $sorter->toArray();
+		}
 	}
 
 	/**
