@@ -16,6 +16,7 @@ use TYPO3\Flow\Package\MetaData;
 use TYPO3\Flow\Package\MetaData\PackageConstraint;
 use TYPO3\Flow\Package\MetaDataInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
@@ -52,6 +53,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$this->generateSitesTypoScript($packageKey, $siteName);
 		$this->generateSitesTemplate($packageKey, $siteName);
 		$this->generateNodeTypesConfiguration($packageKey);
+		$this->generateAdditionalFolders($packageKey);
 
 		return $this->generatedFiles;
 	}
@@ -137,5 +139,19 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
+	}
+
+	/**
+	 * Generate additional folders for site packages.
+	 *
+	 * @param string $packageKey
+	 * @throws \TYPO3\Flow\Utility\Exception
+	 */
+	protected function generateAdditionalFolders($packageKey) {
+		$resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
+		$publicResourcesPath = Files::concatenatePaths(array($resourcesPath, 'Public'));
+		foreach (array('Images', 'JavaScript', 'Styles') as $publicResourceFolder) {
+			Files::createDirectoryRecursively(Files::concatenatePaths(array($publicResourcesPath, $publicResourceFolder)));
+		}
 	}
 }
