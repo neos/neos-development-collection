@@ -88,8 +88,8 @@ class NodeImportServiceTest extends UnitTestCase {
 				'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
 				'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
 				'workspace' => 'live',
-				'sortingIndex' => 100,
-				'version' => 14,
+				'sortingIndex' => '100',
+				'version' => '14',
 				'removed' => FALSE,
 				'hidden' => FALSE,
 				'hiddenInIndex' => FALSE,
@@ -152,6 +152,7 @@ class NodeImportServiceTest extends UnitTestCase {
 								),
 						),
 					'imageTitleText' => 'Photo by www.daniel-bischoff.photo',
+					'relatedDocuments' => array()
 				),
 				'accessRoles' => array(),
 				'dimensionValues' => array(
@@ -162,8 +163,8 @@ class NodeImportServiceTest extends UnitTestCase {
 				'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
 				'nodeType' => 'TYPO3.Neos.NodeTypes:AssetList',
 				'workspace' => 'live',
-				'sortingIndex' => 300,
-				'version' => 3,
+				'sortingIndex' => '300',
+				'version' => '3',
 				'removed' => FALSE,
 				'hidden' => FALSE,
 				'hiddenInIndex' => FALSE,
@@ -199,7 +200,69 @@ class NodeImportServiceTest extends UnitTestCase {
 										),
 								),
 						)
-					)
+					),
+					'relatedDocuments' => array()
+				),
+				'accessRoles' => array(),
+				'dimensionValues' => array(
+					'language' => array('en_US')
+				)
+			)
+		);
+		$nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
+			unset($nodeData['Persistence_Object_Identifier']);
+			$actualNodeDatas[] = $nodeData;
+			return TRUE;
+		}));
+		$mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+			return array(
+				'targetType' => $targetType,
+				'source' => $source
+			);
+		}));
+
+		$nodeImportService->import($xmlReader, '/');
+
+		$this->assertEquals($expectedNodeDatas, $actualNodeDatas);
+	}
+
+	/**
+	 * @test
+	 */
+	public function importWithArrayPropertiesImportsCorrectly() {
+		$xmlReader = new \XMLReader();
+		$result = $xmlReader->open(__DIR__ . '/Fixtures/NodesWithArrayProperties.xml', NULL, LIBXML_PARSEHUGE);
+
+		$this->assertTrue($result);
+
+		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
+
+		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
+		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
+		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
+
+		$expectedNodeDatas = array(
+			array(
+				'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
+				'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
+				'workspace' => 'live',
+				'sortingIndex' => '300',
+				'version' => '3',
+				'removed' => FALSE,
+				'hidden' => FALSE,
+				'hiddenInIndex' => FALSE,
+				'path' => 'node53a18fb53bdf2',
+				'pathHash' => '3f1d4fea7c0b21d21098960149de9c80',
+				'parentPath' => '/',
+				'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
+				'properties' => array(
+					'foos' => array(
+						0 => 'content of entry0',
+						1 => 'content of entry1'
+					),
+					'bar' => 'a bar walks into a foo',
+					'empty' => NULL,
+					'bars' => array()
 				),
 				'accessRoles' => array(),
 				'dimensionValues' => array(
