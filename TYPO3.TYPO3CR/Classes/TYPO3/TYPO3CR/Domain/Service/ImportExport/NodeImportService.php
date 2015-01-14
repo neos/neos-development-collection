@@ -305,8 +305,9 @@ class NodeImportService {
 	 *
 	 * @param \XMLReader $reader reader positioned just after an opening array-tag
 	 * @return array the array values
+	 * @throws \Exception
 	 */
-	protected function parseArrayElements(\XMLReader $reader) {
+	protected function parseArrayElements(\XMLReader $reader, $elementName) {
 		$values = array();
 		$currentKey = NULL;
 		$depth = 0;
@@ -322,10 +323,8 @@ class NodeImportService {
 					$currentEncoding = $reader->getAttribute('__encoding');
 					break;
 				case \XMLReader::END_ELEMENT:
-					if ($depth === 0) {
+					if ($reader->name == $elementName) {
 						return $values;
-					} else {
-						$depth--;
 					}
 					break;
 				case \XMLReader::CDATA:
@@ -352,12 +351,6 @@ class NodeImportService {
 		while ($reader->read()) {
 			switch ($reader->nodeType) {
 				case \XMLReader::ELEMENT:
-					// __type="object" __identifier="uuid goes here" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
-					if ($currentType === 'array') {
-						$value = $this->parseArrayElements($reader);
-						$properties[$currentProperty] = $value;
-					}
-
 					$currentProperty = $reader->name;
 					$currentType = $reader->getAttribute('__type');
 					$currentIdentifier = $reader->getAttribute('__identifier');
@@ -365,7 +358,23 @@ class NodeImportService {
 					$currentEncoding = $reader->getAttribute('__encoding');
 
 					if ($reader->isEmptyElement) {
+						switch ($currentType) {
+							case 'array':
+								$properties[$currentProperty] = array();
+								break;
+							case 'string':
+								$properties[$currentProperty] = '';
+								break;
+							default:
+								$properties[$currentProperty] = NULL;
+						}
 						$currentType = NULL;
+					}
+
+					// __type="object" __identifier="uuid goes here" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
+					if ($currentType === 'array') {
+						$value = $this->parseArrayElements($reader, $currentProperty);
+						$properties[$currentProperty] = $value;
 					}
 					break;
 				case \XMLReader::END_ELEMENT:
