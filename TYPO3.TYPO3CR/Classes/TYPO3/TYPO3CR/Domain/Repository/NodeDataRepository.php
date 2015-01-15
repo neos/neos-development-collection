@@ -820,8 +820,6 @@ class NodeDataRepository extends Repository {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
 
-		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
-
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -842,6 +840,7 @@ class NodeDataRepository extends Repository {
 
 		$pathConstraints = array();
 		$constraintPath = $pathStartingPoint;
+		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
 		foreach ($pathSegments as $pathSegment) {
 			$constraintPath .= $pathSegment;
 			$pathConstraints[] = $constraintPath;
@@ -878,9 +877,13 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter Node type filter
 	 * @param Workspace $workspace
 	 * @param array $dimensions
+	 * @param string $pathStartingPoint
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
-	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions) {
+	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = NULL) {
+		if (strlen($term) === 0) {
+			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
+		}
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -891,6 +894,10 @@ class NodeDataRepository extends Repository {
 		$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
 		$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 		$queryBuilder->andWhere('n.properties LIKE :term')->setParameter('term', '%' . $term . '%');
+
+		if (strlen($pathStartingPoint) > 0) {
+			$this->addParentPathConstraintToQueryBuilder($queryBuilder, $pathStartingPoint, TRUE);
+		}
 
 		$query = $queryBuilder->getQuery();
 		$foundNodes = $query->getResult();
