@@ -35,12 +35,6 @@ TYPO3:
           Json: 'TYPO3\Eel\Helper\JsonHelper'
 
   Flow:
-     # disable reflection for non psr-0 compliant 3rd party packages
-    object:
-      excludeClasses:
-       'gedmo.doctrineextensions' : ['Gedmo\\.*']
-       'Behat.Transliterator' : ['Behat\\Transliterator\\.*']
-
      # register soft deletable filter & event listeners
     persistence:
       doctrine:
