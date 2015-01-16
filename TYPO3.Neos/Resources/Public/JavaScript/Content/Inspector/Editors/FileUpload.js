@@ -52,6 +52,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 				container : this._containerId,
 				max_file_size : this.get('maximumFileSize') ? this.get('maximumFileSize') : Configuration.get('maximumFileUploadSize'),
 				url : $('link[rel="neos-asset-upload"]').attr('href'),
+				file_data_name: 'asset[resource]',
 				multipart_params: {}
 			});
 			if (this.allowedFileTypes) {
@@ -70,8 +71,6 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
-				uploader.settings.multipart_params['asset[type]'] = 'plupload';
-				uploader.settings.multipart_params['asset[fileName]'] = file.name;
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {

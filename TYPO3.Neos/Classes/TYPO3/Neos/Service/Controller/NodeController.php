@@ -323,6 +323,17 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
+	 * Set PropertyMappingConfiguration for updating the node (and attached objects)
+	 */
+	public function initializeUpdateAction() {
+		$propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->allowOverrideTargetType();
+		$propertyMappingConfiguration->allowAllProperties();
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+	}
+
+	/**
 	 * Updates the specified node.
 	 *
 	 * Returns the following data:
