@@ -14,3 +14,6 @@ TYPO3\Media\Domain\Service\ImageService:
 # This is just to have a fallback default, you will probably want to create a ImageInterface type converter that converts to your implementation.
 TYPO3\Media\Domain\Model\ImageInterface:
   className: TYPO3\Media\Domain\Model\Image
+
+TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface:
+  className: TYPO3\Media\Domain\Strategy\ConfigurationAssetModelMappingStrategy

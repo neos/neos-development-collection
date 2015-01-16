@@ -14,7 +14,9 @@ namespace TYPO3\Media\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Media\Domain\Model\AssetInterface;
 
 /**
@@ -53,6 +55,12 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	protected $persistenceManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface
+	 */
+	protected $assetModelMappingStrategy;
+
+	/**
 	 * If creating a new asset from this converter this defines the default type as fallback.
 	 *
 	 * @var string
@@ -75,11 +83,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
-		if (is_string($source) && preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, $source)) {
+		if (is_string($source) && preg_match(UuidValidator::PATTERN_MATCH_UUID, $source)) {
 			return TRUE;
 		}
 		// TODO: The check for "originalImage" is necessary for smooth migration to the new resource/media management. "originalImage" is deprecated, it can be removed in 3 versions.
-		if (is_array($source) && ((isset($source['__identity']) && preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, $source['__identity'])) || isset($source['resource']) || isset($source['originalAsset']) || isset($source['originalImage']))) {
+		if (is_array($source) && ((isset($source['__identity']) && preg_match(UuidValidator::PATTERN_MATCH_UUID, $source['__identity'])) || isset($source['resource']) || isset($source['originalAsset']) || isset($source['originalImage']))) {
 			return TRUE;
 		}
 
@@ -133,10 +141,19 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 */
 	public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$targetType = $originalTargetType;
+
 		if (is_array($source) && array_key_exists('__type', $source)) {
 			$targetType = $source['__type'];
+
+			if ($configuration === NULL) {
+				throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1421443628);
+			}
+			if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
+				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1421443641);
+			}
+
 			if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, TRUE) === FALSE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
+				throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1421443648);
 			}
 		}
 
@@ -147,7 +164,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * Convert an object from $source to an \TYPO3\Media\Domain\Model\AssetInterface implementation
 	 *
 	 * @param mixed $source
-	 * @param string $targetType must be 'TYPO3\Media\Domain\Model\Image'
+	 * @param string $targetType must implement 'TYPO3\Media\Domain\Model\AssetInterface'
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\Flow\Validation\Error|\TYPO3\Media\Domain\Model\Image The converted Image, a Validation Error or NULL
@@ -163,12 +180,15 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 			if (isset($this->resourcesAlreadyConvertedToAssets[$resourceIdentifier])) {
 				return $this->resourcesAlreadyConvertedToAssets[$resourceIdentifier];
 			}
+
+			// This is pretty late to override the targetType, but usually you want to determine the model type from the resource when a new resource was uploaded...
+			$targetType = $this->applyModelMappingStrategy($targetType, $convertedChildProperties['resource'], $source);
 		}
 		$object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
 		if ($object instanceof AssetInterface) {
 			if (isset($source['__identity'])) {
-				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, 'persistence_object_identifier', $source['__identity'], TRUE);
+				ObjectAccess::setProperty($object, 'persistence_object_identifier', $source['__identity'], TRUE);
 			}
 			$this->applyTypeSpecificHandling($object, $source, $convertedChildProperties, $configuration);
 
@@ -235,4 +255,22 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @return void
 	 */
 	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {}
+
+	/**
+	 * Applies the model mapping strategy for a converted resource to determine the final target type.
+	 * The strategy is NOT applied if $source['__type'] is set (overriding was allowed then, otherwise an exception would have been thrown earlier).
+	 *
+	 * @param string $originalTargetType The original target type determined so far
+	 * @param Resource $resource The resource that is to be converted to a media file.
+	 * @param array $source the original source properties for this type converter.
+	 * @return string Class name of the media model to use for the given resource
+	 */
+	protected function applyModelMappingStrategy($originalTargetType, Resource $resource, array $source = array()) {
+		$finalTargetType = $originalTargetType;
+		if (!isset($source['__type'])) {
+			$finalTargetType = $this->assetModelMappingStrategy->map($resource, $source);
+		}
+
+		return $finalTargetType;
+	}
 }
