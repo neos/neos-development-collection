@@ -329,8 +329,10 @@ TYPO3:
             name: '${entity.party.name.fullName}'
 
   Setup:
-    stepOrder: ['database', 'administrator', 'siteimport', 'final']
+    stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:
+      neosRequirements:
+        className: 'TYPO3\Neos\Setup\Step\NeosSpecificRequirementsStep'
       administrator:
         className: 'TYPO3\Neos\Setup\Step\AdministratorStep'
         requiredConditions:
