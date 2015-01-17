@@ -21,11 +21,13 @@ trait DimensionsTrait {
 
 	/**
 	 * @var integer
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $width = 0;
 
 	/**
 	 * @var integer
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $height = 0;
 
@@ -48,12 +50,25 @@ trait DimensionsTrait {
 	}
 
 	/**
+	 * Does the asset have dimensions
+	 *
+	 * @return boolean
+	 */
+	public function hasDimensions() {
+		return ($this->width !== NULL && $this->height !== NULL);
+	}
+
+	/**
 	 * Edge / aspect ratio of the image
 	 *
 	 * @param boolean $respectOrientation If false (the default), orientation is disregarded and always a value >= 1 is returned (like usual in "4 / 3" or "16 / 9")
 	 * @return float
 	 */
 	public function getAspectRatio($respectOrientation = FALSE) {
+		if (!$this->hasDimensions()) {
+			return 0;
+		}
+
 		$aspectRatio = $this->getWidth() / $this->getHeight();
 		if ($respectOrientation === FALSE && $aspectRatio < 1) {
 			$aspectRatio = 1 / $aspectRatio;
