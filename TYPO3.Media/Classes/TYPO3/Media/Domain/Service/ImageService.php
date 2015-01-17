@@ -82,9 +82,22 @@ class ImageService {
 	public function processImage(FlowResource $originalResource, array $adjustments) {
 		$additionalOptions = array();
 		$adjustmentsApplied = FALSE;
+
+		// TODO: Special handling for SVG should be refactored at a later point.
+		if ($originalResource->getMediaType() === 'image/svg+xml') {
+			$resource = $this->resourceManager->importResource($originalResource->getStream(), $originalResource->getCollectionName());
+			$resource->setFilename($originalResource->getFilename());
+			return [
+				'width' => NULL,
+				'height' => NULL,
+				'resource' => $resource
+			];
+		}
+
 		$resourceUri = $originalResource->createTemporaryLocalCopy();
 
-		$transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $originalResource->getFileExtension();
+		$resultingFileExtension = $originalResource->getFileExtension();
+		$transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $resultingFileExtension;
 
 		if (!file_exists($resourceUri)) {
 			throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
@@ -176,20 +189,27 @@ class ImageService {
 	 */
 	public function getImageSize(FlowResource $resource) {
 		$cacheIdentifier = $resource->getCacheEntryIdentifier();
-		$size = $this->imageSizeCache->get($cacheIdentifier);
-		if ($size === FALSE) {
-			$imageSize = getimagesize($resource->createTemporaryLocalCopy());
-			if ($imageSize === FALSE) {
-				throw new ImageFileException('The given resource was not a valid image file', 1336662898);
-			}
-			$width = (integer)$imageSize[0];
-			$height = (integer)$imageSize[1];
 
-			$this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $width, 'height' => $height));
-			$size = array('width' => $width, 'height' => $height);
+		$imageSize = $this->imageSizeCache->get($cacheIdentifier);
+		if ($imageSize !== FALSE) {
+			return $imageSize;
 		}
 
-		return $size;
+		// TODO: Special handling for SVG should be refactored at a later point.
+		if ($resource->getMediaType() === 'image/svg+xml') {
+			$imageSize = ['width' => NULL, 'height' => NULL];
+		} else {
+			try {
+				$imagineImage = $this->imagineService->read($resource->getStream());
+				$sizeBox = $imagineImage->getSize();
+				$imageSize = array('width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight());
+			} catch (\Exception $e) {
+				throw new ImageFileException(sprintf('The given resource was not an image file your choosen driver can open. The original error was: %s', $e->getMessage()), 1336662898);
+			}
+		}
+
+		$this->imageSizeCache->set($cacheIdentifier, $imageSize);
+		return $imageSize;
 	}
 
 	/**
