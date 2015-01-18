@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1408190103') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1411678594') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1411678594') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1411678594') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1411678594') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -11608,6 +11608,151 @@ td.aloha-table-selectrow {
 
 .aloha-block-dropzone {
   background-color: #CCC;
+}
+
+.neos-backend .ui-widget-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10040;
+  background: none;
+  background-color: #000;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=35);
+  opacity: 0.35;
+}
+.neos-backend .ui-dialog {
+  position: fixed;
+  top: 120px !important;
+  left: 50% !important;
+  z-index: 10050;
+  margin: 0px 0px 0px -17.5%;
+  color: #fff;
+  background: #222;
+  border: 1px solid #3f3f3f;
+  padding: 0px;
+  width: 35% !important;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+}
+.neos-backend .ui-dialog .ui-widget-header {
+  padding: 0px;
+  border: 0px;
+  background: none;
+  color: #fff;
+  font-weight: normal;
+}
+.neos-backend .ui-dialog .ui-widget-header .ui-button {
+  position: absolute;
+  right: 0;
+  top: 16px;
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 100%;
+  width: 40px;
+  height: 40px;
+  margin-left: 16px;
+  margin-top: -16px;
+  background: none;
+  border: none;
+  text-shadow: none;
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos-backend .ui-dialog .ui-widget-header .ui-button span {
+  display: none;
+}
+.neos-backend .ui-dialog .ui-widget-header .ui-button:before {
+  content: "";
+}
+.neos-backend .ui-dialog .ui-widget-header .ui-button:hover {
+  background: #00b5ff;
+}
+.neos-backend .ui-dialog .ui-widget-header span {
+  font-size: 16px;
+  margin: 16px;
+  line-height: 20px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane {
+  background: transparent;
+  -webkit-box-shadow: 0px 0px 0px transparent;
+  -moz-box-shadow: 0px 0px 0px transparent;
+  box-shadow: 0px 0px 0px transparent;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border: 0px;
+  padding: 16px;
+  text-align: right;
+  *zoom: 1;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane:before, .neos-backend .ui-dialog .ui-dialog-buttonpane:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane:after {
+  clear: both;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane .ui-button {
+  display: inline-block;
+  padding: 0 16px;
+  margin-left: 5px;
+  margin-bottom: 0;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  width: auto;
+  height: 40px;
+  line-height: 40px;
+  background-color: #3f3f3f;
+  background-image: none;
+  border: none;
+  text-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0 ease 0;
+  -moz-transition: all 0 ease 0;
+  -o-transition: all 0 ease 0;
+  transition: all 0 ease 0;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane .ui-button:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+  outline: 1px dotted #fff;
+  outline-offset: 0;
+}
+.neos-backend .ui-dialog .ui-dialog-buttonpane .ui-button:hover, .neos-backend .ui-dialog .ui-dialog-buttonpane .ui-button:active {
+  color: #fff;
+  background-color: #00b5ff;
+  text-decoration: none;
 }
 
 /* This file is autogenerated using the Gruntfile.*/
