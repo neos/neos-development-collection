@@ -186,3 +186,130 @@ td.aloha-table-selectrow {
 .aloha-block-dropzone {
 	background-color: #CCC;
 }
+
+.neos-backend {
+	.ui-widget-overlay {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: $zindexModalBackdrop;
+		background: none;
+		background-color: $black;
+		@include opacity(.35);
+	}
+
+	// Base modal
+	.ui-dialog {
+		position: fixed;
+		top: 120px !important;
+		left: 50% !important;
+		z-index: $zindexModal;
+		margin: 0px 0px 0px -17.5%;
+		color: $textOnGray;
+		background: $grayDark;
+		border: 1px solid $grayLight;
+		padding: 0px;
+		width: 35% !important;
+		@include border-radius(0);
+		@include font();
+		// Remove focus outline from opened modal
+		outline: none;
+
+		.ui-widget-header {
+			padding: 0px;
+			border: 0px;
+			background: none;
+			color: #fff;
+			font-weight: normal;
+
+			.ui-button {
+				position: absolute;
+				right: 0;
+				top: 16px;
+				margin: 0;
+				color: #fff;
+				font-size: 18px;
+				line-height: 100%;
+				width: $unit;
+				height: $unit;
+				margin-left: $defaultMargin;
+				margin-top: -$defaultMargin;
+				background: none;
+				border: none;
+				@include text-shadow(none);
+				@include opacity(1);
+				@include icon-FontAwesome();
+				@include box-sizing(border-box);
+
+				span {
+					display: none;
+				}
+
+				&:before {
+					content: $remove;
+				}
+
+				&:hover {
+					background: $blue;
+				}
+			}
+
+			span {
+				font-size: 16px;
+				margin: $defaultMargin;
+				line-height: $unit / 2;
+				@include box-sizing(border-box);
+			}
+		}
+
+		// Footer area
+		.ui-dialog-buttonpane {
+			background: transparent;
+			@include box-shadow(0px 0px 0px transparent);
+			@include border-radius(0px);
+			border: 0px;
+			padding: $defaultMargin;
+			text-align: right;
+			@include clearfix(); // clear it in case folks use .neos-pull-* classes on buttons
+
+			// Properly space out buttons
+			.ui-button {
+				display: inline-block;
+				padding: 0 $defaultMargin;
+				margin-left: 5px;
+				margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+				@include font;
+				color: #fff;
+				font-size: $generalFontSize;
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				width: auto;
+				height: $unit;
+				line-height: $unit;
+				background-color: $grayLight;
+				background-image: none;
+				border: none;
+				@include text-shadow(none);
+				@include box-shadow(none);
+				@include box-sizing(border-box);
+				@include transition(all 0 ease 0);
+
+				&:focus {
+					@include tab-focus();
+					outline: 1px dotted #fff;
+					outline-offset: 0;
+				}
+
+				&:hover,
+				&:active {
+					color: #fff;
+					background-color: $blue;
+					text-decoration: none;
+				}
+			}
+		}
+	}
+}
