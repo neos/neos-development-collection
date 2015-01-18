@@ -173,7 +173,7 @@ class NodeConverter extends AbstractTypeConverter {
 				$targetNodeType = $source['_nodeType'];
 			}
 		}
-		$this->setNodeProperties($node, $node->getNodeType(), $source, $context);
+		$this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
 		if ($targetNodeType !== NULL) {
 			$this->nodeService->setDefaultValues($node, $targetNodeType);
 			$this->nodeService->createChildNodes($node, $targetNodeType);
@@ -189,10 +189,11 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @param NodeType $nodeType
 	 * @param array $properties
 	 * @param TYPO3CRContext $context
-	 * @throws TypeConverterException
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return void
+	 * @throws TypeConverterException
 	 */
-	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context) {
+	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$nodeTypeProperties = $nodeType->getProperties();
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
@@ -255,7 +256,7 @@ class NodeConverter extends AbstractTypeConverter {
 			}
 
 			if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
-				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType);
+				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType, $configuration);
 			}
 			$nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
 		}
