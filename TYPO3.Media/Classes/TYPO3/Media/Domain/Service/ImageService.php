@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use TYPO3\Media\Exception\ImageFileException;
 use TYPO3\Media\Exception\ImageServiceException;
@@ -119,7 +120,7 @@ class ImageService {
 
 		unlink($transformedImageTemporaryPathAndFilename);
 
-		$pathInfo = pathinfo($originalResource->getFilename());
+		$pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
 		$resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $width, $height, $pathInfo['extension']));
 
 		$result = $this->getImageSize($resource);
