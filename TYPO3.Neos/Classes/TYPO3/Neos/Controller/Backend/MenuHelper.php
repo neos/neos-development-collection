@@ -67,7 +67,7 @@ class MenuHelper {
 				$uri = sprintf('%s://%s%s%s',
 					$requestUri->getScheme(),
 					$site->getFirstActiveDomain()->getHostPattern(),
-					$baseUri->getPath(),
+					rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
 					$uri
 				);
 				$domainsFound = TRUE;
