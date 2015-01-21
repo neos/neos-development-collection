@@ -77,7 +77,7 @@ class MenuHelper {
 				'name' => $site->getName(),
 				'nodeName' => $site->getNodeName(),
 				'uri' => $uri,
-				'active' => stristr($uri, $requestUri->getHost()) !== FALSE ? TRUE : FALSE
+				'active' => parse_url($uri, PHP_URL_HOST) === $requestUri->getHost() ? TRUE : FALSE
 			);
 		}
 
