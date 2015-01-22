@@ -162,6 +162,15 @@ class NodeViewHelperTest extends FunctionalTestCase {
 		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home@live'));
 		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
 		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+
+		// The tests should also work in a regular fluid view, so we set that and repeat the tests
+		$mockView = $this->getAccessibleMock('TYPO3\Fluid\View\TemplateView', array(), array(), '', FALSE);
+		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer->setView($mockView);
+		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
+		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 	}
 
 	/**

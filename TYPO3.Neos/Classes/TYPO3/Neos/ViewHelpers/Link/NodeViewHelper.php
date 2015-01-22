@@ -143,23 +143,18 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 		$baseNode = NULL;
 		if (!$node instanceof NodeInterface) {
 			$view = $this->viewHelperVariableContainer->getView();
-			if (!$view instanceof TypoScriptAwareViewInterface) {
-				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
-			}
-			/** @var TemplateImplementation $typoScriptObject */
-			$typoScriptObject = $view->getTypoScriptObject();
-			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-			if (isset($currentContext[$baseNodeName])) {
-				$baseNode = $currentContext[$baseNodeName];
-			} else {
-				throw new ViewHelperException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+			if ($view instanceof TypoScriptAwareViewInterface) {
+				$typoScriptObject = $view->getTypoScriptObject();
+				$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+				if (isset($currentContext[$baseNodeName])) {
+					$baseNode = $currentContext[$baseNodeName];
+				}
 			}
 		}
-		$controllerContext = $this->controllerContext;
 
 		try {
 			$uri = $this->linkingService->createNodeUri(
-				$controllerContext,
+				$this->controllerContext,
 				$node,
 				$baseNode,
 				$format,

@@ -18,6 +18,7 @@ use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -106,22 +107,19 @@ class NodeViewHelper extends AbstractViewHelper {
 		$baseNode = NULL;
 		if (!$node instanceof NodeInterface) {
 			$view = $this->viewHelperVariableContainer->getView();
-			if (!$view instanceof TypoScriptAwareViewInterface) {
-				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element, if you don\'t specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
-			}
-			$typoScriptObject = $view->getTypoScriptObject();
-			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-			if (isset($currentContext[$baseNodeName])) {
-				$baseNode = $currentContext[$baseNodeName];
-			} else {
-				throw new ViewHelperException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+			if ($view instanceof TypoScriptAwareViewInterface) {
+				/** @var TemplateImplementation $typoScriptObject */
+				$typoScriptObject = $view->getTypoScriptObject();
+				$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+				if (isset($currentContext[$baseNodeName])) {
+					$baseNode = $currentContext[$baseNodeName];
+				}
 			}
 		}
-		$controllerContext = $this->controllerContext;
 
 		try {
 			return $this->linkingService->createNodeUri(
-				$controllerContext,
+				$this->controllerContext,
 				$node,
 				$baseNode,
 				$format,
