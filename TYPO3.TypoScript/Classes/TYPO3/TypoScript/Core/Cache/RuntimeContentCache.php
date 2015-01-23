@@ -234,8 +234,10 @@ class RuntimeContentCache {
 	protected function buildCacheIdentifierValues($configuration, $typoScriptPath, $tsObject) {
 		$cacheIdentifierValues = array();
 		if (isset($configuration['entryIdentifier'])) {
-			foreach ($configuration['entryIdentifier'] as $identifierKey => $identifierValue) {
-				$cacheIdentifierValues[$identifierKey] = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier/' . $identifierKey, $tsObject);
+			if (isset($configuration['entryIdentifier']['__objectType'])) {
+				$cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier', $tsObject);
+			} else {
+				$cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier<TYPO3.TypoScript:GlobalCacheIdentifiers>', $tsObject);
 			}
 		} else {
 			foreach ($this->runtime->getCurrentContext() as $key => $value) {

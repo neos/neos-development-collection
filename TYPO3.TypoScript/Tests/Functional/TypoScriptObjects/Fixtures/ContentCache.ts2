@@ -2,6 +2,10 @@ prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects
 prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
 prototype(TYPO3.TypoScript:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
 
+prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) >
+prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) < prototype(TYPO3.TypoScript:RawArray)
+
 contentCache.cachedSegment = TYPO3.TypoScript:Array {
 	5 = 'Cached segment|'
 
@@ -422,4 +426,38 @@ contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = TYPO3.TypoScript:Ar
 		maximumLifetime = 30
 	}
 
+}
+
+
+
+contentCache.entryIdentifiersAreMergedWithGlobalIdentifiers < contentCache.cachedSegment {
+	prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryIdentifier {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = ${site}
+		}
+	}
+}
+
+contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegment {
+	prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryIdentifier = TYPO3.TypoScript:RawArray {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = ${site}
+		}
+	}
 }

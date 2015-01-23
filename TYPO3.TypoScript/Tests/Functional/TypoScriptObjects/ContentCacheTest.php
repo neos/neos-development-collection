@@ -413,4 +413,103 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		), $entriesWritten);
 	}
 
+	/**
+	 * @test
+	 */
+	public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier() {
+		$entriesWritten = array();
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$mockCache->expects($this->any())->method('get')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+			$entriesWritten[$entryIdentifier] = array(
+				'tags' => $tags
+			);
+		}));
+		$this->inject($this->contentCache, 'cache', $mockCache);
+
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/entryIdentifiersAreMergedWithGlobalIdentifiers');
+
+		$view->assign('object', $object);
+		$view->assign('site', 'site1');
+
+		$firstRenderResult = $view->render();
+
+		$this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+
+		// As the site should be added to the entry identifier because it is in the TYPO3.TypoScript:GlobalCacheIdentifiers prototype, changing the value should give us a different identifier
+		$view->assign('site', 'site2');
+		$secondRenderResult = $view->render();
+		$this->assertSame($firstRenderResult, $secondRenderResult);
+		$this->assertCount(2, $entriesWritten);
+		$this->assertEquals(array(
+			'f064f9b64c442e4b76c083efd22c8b78' => array(
+				'tags' => array('site1')
+			),
+			'94e9f536930e7e11d389d50508128aec' => array(
+				'tags' => array('site2')
+			),
+		), $entriesWritten);
+	}
+
+	/**
+	 * @test
+	 */
+	public function cacheIdentifierPrototypeCanBeOverwritten() {
+		$entriesWritten = array();
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$mockCache->expects($this->any())->method('get')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+			if (isset($entriesWritten[$entryIdentifier])) {
+				return $entriesWritten[$entryIdentifier]['data'];
+			} else {
+				return FALSE;
+			}
+		}));
+		$mockCache->expects($this->any())->method('has')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+			if (isset($entriesWritten[$entryIdentifier])) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+		}));
+		$mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+			if (!isset($entriesWritten[$entryIdentifier])) {
+				$entriesWritten[$entryIdentifier] = array(
+					'tags' => $tags,
+					'data' => $data
+				);
+			}
+		}));
+		$this->inject($this->contentCache, 'cache', $mockCache);
+
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/entryIdentifierPrototypeCanBeOverwritten');
+
+		$view->assign('object', $object);
+		$view->assign('site', 'site1');
+
+		$firstRenderResult = $view->render();
+
+		$this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+
+		// We overwrote the prototype for cacheIdentifier, so site is not part of the identifier and therefor the same identifier should be created.
+		$view->assign('site', 'site2');
+		$secondRenderResult = $view->render();
+		$this->assertSame($firstRenderResult, $secondRenderResult);
+		$this->assertCount(1, $entriesWritten);
+		$this->assertEquals(array(
+			'cba635414d60300928e97e1413a9f7d4' => array(
+				'tags' => array('site1'),
+				'data' => 'Cached segment|Object value 1'
+			),
+		), $entriesWritten);
+	}
+
 }
