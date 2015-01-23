@@ -28,6 +28,11 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		init: function() {
 			this._super();
 
+			// Create new instance per asset editor to avoid side effects
+			this.set('_mediaBrowserView', Ember.View.extend({
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
+			})),
+
 			this.set('assets', Ember.A());
 			this.set('_assetMetadataEndpointUri', $('link[rel="neos-asset-metadata"]').attr('href'));
 		},
@@ -96,9 +101,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		/****************************************
 		 * MEDIA BROWSER
 		 ***************************************/
-		_mediaBrowserView: Ember.View.extend({
-			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
-		}),
+		_mediaBrowserView: null,
 
 		_beforeMediaBrowserIsShown: function() {
 			var that = this;
