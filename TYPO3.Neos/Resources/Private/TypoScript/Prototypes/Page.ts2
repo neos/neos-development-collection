@@ -164,7 +164,6 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		mode = 'cached'
 		entryIdentifier {
 			documentNode = ${node}
-			domain = ${site.context.currentDomain}
 		}
 		entryTags {
 			1 = ${'Node_' + node.identifier}
