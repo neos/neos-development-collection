@@ -162,7 +162,7 @@ class TypoScriptService {
 	 * @return string The content of the .ts2 file, plus one chr(10) at the end
 	 */
 	protected function readExternalTypoScriptFile($pathAndFilename) {
-		return (file_exists($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
+		return (is_file($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
 	}
 
 	/**
