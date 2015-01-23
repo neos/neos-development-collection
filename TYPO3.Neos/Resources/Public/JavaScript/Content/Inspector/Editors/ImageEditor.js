@@ -129,6 +129,11 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			var that = this;
 			this._super();
 
+			// Create new instance per image editor to avoid side effects
+			this.set('_mediaBrowserView', Ember.View.extend({
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+			}));
+
 			this.set('_imageServiceEndpointUri', $('link[rel="neos-images"]').attr('href'));
 
 			this.set('_finalImageDimensions', Ember.Object.extend({
@@ -282,9 +287,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/****************************************
 		 * MEDIA BROWSER
 		 ***************************************/
-		_mediaBrowserView: Ember.View.extend({
-			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
-		}),
+		_mediaBrowserView: null,
 
 		_beforeMediaBrowserIsShown: function() {
 			var that = this;
@@ -625,7 +628,6 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				}
 			});
 		}.property(),
-
 
 		/**
 		 * Update the preview image when the crop options change or the preview image
