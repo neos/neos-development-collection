@@ -12,20 +12,21 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Repository;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
  * Repository for MigrationStatus instances.
  *
  * @Flow\Scope("singleton")
  */
-class MigrationStatusRepository extends \TYPO3\Flow\Persistence\Repository {
+class MigrationStatusRepository extends Repository {
 
 	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
-		'workspaceName' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
-		'version' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING
+		'version' => QueryInterface::ORDER_ASCENDING
 	);
 
 }
