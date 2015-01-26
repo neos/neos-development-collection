@@ -38,7 +38,7 @@ class UserService {
 	protected $workspaceRepository;
 
 	/**
-	 * @Flow\Inject(setting="userInterface.defaultLanguage")
+	 * @Flow\InjectConfiguration("userInterface.defaultLanguage")
 	 * @var string
 	 */
 	protected $defaultLanguageIdentifier;

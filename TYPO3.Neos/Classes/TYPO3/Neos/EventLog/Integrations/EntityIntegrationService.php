@@ -47,7 +47,7 @@ class EntityIntegrationService extends AbstractIntegrationService {
 	protected $eelEvaluator;
 
 	/**
-	 * @Flow\Inject(setting="eventLog.monitorEntities")
+	 * @Flow\InjectConfiguration("eventLog.monitorEntities")
 	 * @var array
 	 */
 	protected $monitorEntitiesSetting;

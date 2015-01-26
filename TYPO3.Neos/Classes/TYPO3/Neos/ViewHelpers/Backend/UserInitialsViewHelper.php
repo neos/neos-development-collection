@@ -46,7 +46,7 @@ class UserInitialsViewHelper extends AbstractViewHelper {
 	protected $translator;
 
 	/**
-	 * @Flow\Inject(setting="userInterface.defaultLanguage")
+	 * @Flow\InjectConfiguration("userInterface.defaultLanguage")
 	 * @var string
 	 */
 	protected $defaultLanguageIdentifier;
