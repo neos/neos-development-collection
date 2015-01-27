@@ -876,9 +876,23 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		},
 
 		/**
+		 * Computed property to decide if cropping is available in the editor
+		 */
+		shouldRenderCrop: function() {
+			return (this.get('features.crop') && this.get('_originalImageUri'));
+		}.property('features.crop', '_originalImageUri'),
+
+		/**
+		 * Computed property to decide if resizing is available in the editor
+		 */
+		shouldRenderResize: function() {
+			return (this.get('features.resize') && this.get('_originalImageUri'));
+		}.property('features.resize', '_originalImageUri'),
+
+		/**
 		 * Image Loader
 		 */
-		_displayImageLoader: function () {
+		_displayImageLoader: function() {
 			if (this.loadingIndicator !== null) {
 				this.loadingIndicator.spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
 				return;
