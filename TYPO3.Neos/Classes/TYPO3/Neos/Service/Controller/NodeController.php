@@ -257,9 +257,9 @@ class NodeController extends AbstractServiceController {
 	/**
 	 * Copy $node before, into or after $targetNode
 	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @param string $position where the node should be added (allowed: before, into, after)
+	 * @param Node $node the node to be copied
+	 * @param Node $targetNode the target node to be copied "to", see $position
+	 * @param string $position where the node should be added in relation to $targetNode (allowed: before, into, after)
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @throws NodeException

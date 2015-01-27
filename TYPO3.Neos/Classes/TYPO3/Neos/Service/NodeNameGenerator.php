@@ -13,10 +13,9 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
- * Class NodeNameGenerator
+ * A NodeNameGenerator to generate unique node names
  *
  * @Flow\Scope("singleton")
  */
@@ -29,7 +28,7 @@ class NodeNameGenerator {
 	protected $nodeService;
 
 	/**
-	 * Generate a Node
+	 * Generate a node name, optionally based on a suggested "ideal" name
 	 *
 	 * @param NodeInterface $parentNode
 	 * @param string $idealNodeName Can be any string, doesn't need to be a valid node name.

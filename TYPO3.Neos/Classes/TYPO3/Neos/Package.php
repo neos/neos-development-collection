@@ -11,6 +11,7 @@ namespace TYPO3\Neos;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -41,11 +42,22 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', function(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document') && !$node->hasProperty('uriPathSegment')) {
-				$node->setProperty('uriPathSegment', $node->getName());
+		$uriPathSegmentGenerator = function(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+				if(!$node->hasProperty('uriPathSegment')) {
+					$node->setProperty('uriPathSegment', $node->getName());
+				}
+
+				$q = new FlowQuery(array($node));
+				$possibleUriPathSegment = $node->getProperty('uriPathSegment');
+				while (count($q->siblings('[uriPathSegment=' . $possibleUriPathSegment . ']')->get())) {
+					$possibleUriPathSegment = $node->getProperty('uriPathSegment') . '-' . uniqid();
+				}
+				$node->setProperty('uriPathSegment', $possibleUriPathSegment);
 			}
-		});
+		};
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', $uriPathSegmentGenerator);
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', $uriPathSegmentGenerator);
 
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
