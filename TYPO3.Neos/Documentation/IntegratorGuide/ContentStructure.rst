@@ -282,6 +282,8 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
+.. tip:: Unset a property by setting the property configuration to null (~).
+
 Here is one of the standard Neos node types (slightly shortened)::
 
 	'TYPO3.Neos.NodeTypes:Image':

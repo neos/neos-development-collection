@@ -121,7 +121,6 @@ class VieSchemaBuilder {
 
 		if (isset($nodeTypeConfiguration['properties'])) {
 			foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
-
 				// TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
 				$this->addProperty('typo3:' . $nodeTypeName, 'typo3:' . $property, $propertyConfiguration);
 				$nodeTypeProperties[] = 'typo3:' . $property;

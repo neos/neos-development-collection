@@ -26,30 +26,30 @@ function(
 		var nodeTypes = Configuration.get('Schema'),
 			nodeSettings = {},
 			placeholderSettings = {};
-		$.each(nodeTypes, function(nodeTypeName, nodeType) {
+		$.each(nodeTypes, function (nodeTypeName, nodeType) {
 			if (nodeType.properties && typeof nodeType.properties === 'object') {
-				$.each(nodeType.properties, function(propertyName, property) {
+				$.each(nodeType.properties, function (propertyName, propertyConfiguration) {
 					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]';
-					$.each(['table', 'link', 'list', 'format', 'formatlesspaste'], function(i, mode) {
-						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
+					$.each(['table', 'link', 'list', 'format', 'formatlesspaste'], function (i, mode) {
+						if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha[mode]) {
 							nodeSettings[mode] = nodeSettings[mode] || {};
-							nodeSettings[mode][selector] = property.ui.aloha[mode];
+							nodeSettings[mode][selector] = propertyConfiguration.ui.aloha[mode];
 						}
 					});
 
-					if (property.ui && property.ui.aloha && property.ui.aloha.autoparagraph) {
+					if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha.autoparagraph) {
 						nodeSettings.autoparagraph = nodeSettings.autoparagraph || {};
 						nodeSettings.autoparagraph[selector] = ['autoparagraph'];
 					}
 
-					if (property.ui && property.ui.aloha && property.ui.aloha.placeholder) {
-						placeholderSettings[selector] = property.ui.aloha.placeholder;
+					if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha.placeholder) {
+						placeholderSettings[selector] = propertyConfiguration.ui.aloha.placeholder;
 					}
 
 					// This is a workaround for broken configuration behavior in the Aloha align plugin
-					if (property.ui && property.ui.aloha && property.ui.aloha.alignment) {
+					if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha.alignment) {
 						nodeSettings.alignment = nodeSettings.alignment || {};
-						nodeSettings.alignment[selector] = {alignment: property.ui.aloha.alignment};
+						nodeSettings.alignment[selector] = {alignment: propertyConfiguration.ui.aloha.alignment};
 					}
 				});
 			}

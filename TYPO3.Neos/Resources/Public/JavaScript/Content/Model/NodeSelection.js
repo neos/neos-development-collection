@@ -193,10 +193,10 @@ define(
 					var entity = nodeProxy.get('_vieEntity'),
 						properties = nodeProxy.get('nodeTypeSchema.properties'),
 						propertyValidators = {};
-					_.each(properties, function(propertyDefinition, propertyName) {
-						if (typeof propertyDefinition.validation !== 'undefined') {
+					_.each(properties, function(propertyConfiguration, propertyName) {
+						if (typeof propertyConfiguration.validation !== 'undefined') {
 							var validators = [];
-							_.each(propertyDefinition.validation, function(validatorOptions, validator) {
+							_.each(propertyConfiguration.validation, function(validatorOptions, validator) {
 								var validatorClassName = validator;
 								if (validatorClassName.indexOf('/') === -1) {
 									validatorClassName = 'TYPO3.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
