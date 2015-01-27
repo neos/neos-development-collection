@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Domain\Model;
+namespace TYPO3\Neos\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -10,21 +10,16 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\User;
+
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
- * Test case for the "User" domain model
+ * The User Repository
  *
+ * @Flow\Scope("singleton")
+ * @api
  */
-class UserTest extends UnitTestCase {
+class UserRepository extends Repository {
 
-	/**
-	 * @test
-	 */
-	public function constructorInitializesPreferences() {
-		$user = new User();
-		$this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
-	}
 }

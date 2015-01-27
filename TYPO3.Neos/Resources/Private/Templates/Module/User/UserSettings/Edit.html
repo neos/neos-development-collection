@@ -66,12 +66,12 @@
 				<div class="neos-control-group">
 					<table class="neos-table">
 						<thead>
-							<tr>
-								<th>Username</th>
-								<th>Roles</th>
-								<th>Authentication Provider</th>
-								<th/>
-							</tr>
+						<tr>
+							<th>Username</th>
+							<th>Roles</th>
+							<th>Authentication Provider</th>
+							<th/>
+						</tr>
 						</thead>
 						<tbody>
 						<f:for each="{user.accounts}" as="account">
@@ -159,7 +159,7 @@
 		</div>
 
 		<div class="neos-footer">
-			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+			<neos:link.module path="management" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</neos:link.module>
 			<f:form.submit value="{neos:backend.translate(id: 'userSettings.saveUser', value: 'Save user')}" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>

@@ -89,8 +89,8 @@ class FeatureContext extends MinkContext {
 	 */
 	public function theFollowingUsersExist(TableNode $table) {
 		$rows = $table->getHash();
-		/** @var \TYPO3\Neos\Domain\Factory\UserFactory $userFactory */
-		$userFactory = $this->objectManager->get('TYPO3\Neos\Domain\Factory\UserFactory');
+		/** @var \TYPO3\Neos\Domain\Service\UserService $userService */
+		$userService = $this->objectManager->get('\TYPO3\Neos\Domain\Service\UserService');
 		/** @var \TYPO3\Party\Domain\Repository\PartyRepository $partyRepository */
 		$partyRepository = $this->objectManager->get('TYPO3\Party\Domain\Repository\PartyRepository');
 		/** @var \TYPO3\Flow\Security\AccountRepository $accountRepository */
@@ -99,13 +99,7 @@ class FeatureContext extends MinkContext {
 			$roleIdentifiers = array_map(function ($role) {
 				return 'TYPO3.Neos:' . $role;
 			}, Arrays::trimExplode(',', $row['roles']));
-			$user = $userFactory->create($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
-
-			$partyRepository->add($user);
-			$accounts = $user->getAccounts();
-			foreach ($accounts as $account) {
-				$accountRepository->add($account);
-			}
+			$userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
 		}
 		$this->getSubcontext('flow')->persistAll();
 	}

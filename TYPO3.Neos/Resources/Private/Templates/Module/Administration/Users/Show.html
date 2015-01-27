@@ -1,87 +1,81 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<h2>Details for user: {account.accountIdentifier}</h2>
+	<h2>Details for user: {user.username}</h2>
 </f:section>
 <f:section name="content">
 	<div class="neos-row-fluid neos-module-container">
 		<div class="neos-span5">
-			<legend>User Data</legend>
-
-			<table class="neos-info-table">
-				<tbody>
-					<tr>
-						<th>Username</th>
-						<td>{account.accountIdentifier}</td>
-					</tr>
-					<tr>
-						<th>Alias</th>
-						<td>{account.party.name.alias}</td>
-					</tr>
-					<tr>
-						<th>Creation date</th>
-						<td><f:format.date format="d.m.Y - H:i:s">{account.creationDate}</f:format.date></td>
-					</tr>
-					<f:if condition="{account.roles}">
-						<tr>
-							<th>Roles</th>
-							<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
-						</tr>
-					</f:if>
-				</tbody>
-			</table>
-		</div>
-		<div class="neos-span5 neos-offset1">
 			<legend>Personal Data</legend>
 
 			<table class="neos-info-table">
 				<tbody>
-					<f:if condition="{account.party.name.title}">
+					<f:if condition="{user.name.title}">
 						<tr>
 							<th>Title</th>
-							<td>{account.party.name.title}</td>
+							<td>{user.name.title}</td>
 						</tr>
 					</f:if>
-					<f:if condition="{account.party.name.firstName}">
+					<f:if condition="{user.name.firstName}">
 						<tr>
 							<th>First Name</th>
-							<td>{account.party.name.firstName}</td>
+							<td>{user.name.firstName}</td>
 						</tr>
 					</f:if>
-					<f:if condition="{account.party.name.MiddleName}">
+					<f:if condition="{user.name.MiddleName}">
 						<tr>
 							<th>Middle Name</th>
-							<td>{account.party.name.middleName}</td>
+							<td>{user.name.middleName}</td>
 						</tr>
 					</f:if>
-					<f:if condition="{account.party.name.lastName}">
+					<f:if condition="{user.name.lastName}">
 						<tr>
 							<th>Last Name</th>
-							<td>{account.party.name.lastName}</td>
+							<td>{user.name.lastName}</td>
 						</tr>
 					</f:if>
-					<f:if condition="{account.party.name.otherName}">
+					<f:if condition="{user.name.otherName}">
 						<tr>
 							<th>Other Name</th>
-							<td>{account.party.name.otherName}</td>
+							<td>{user.name.otherName}</td>
 						</tr>
 					</f:if>
 				</tbody>
 			</table>
 		</div>
+
+		<div class="neos-span5 neos-offset1">
+			<legend>Accounts</legend>
+
+			<table class="neos-info-table">
+				<tbody>
+				<tr>
+					<th>Username</th>
+					<th>Roles</th>
+				</tr>
+				<f:for each="{user.accounts}" as="account">
+				<tr>
+					<td>{account.accountIdentifier}</td>
+					<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
+				</tr>
+				</f:for>
+				</tbody>
+			</table>
+		</div>
+
 	</div>
 
 	<div class="neos-row-fluid neos-module-container">
 		<div class="neos-span5">
 			<legend>Electronic Addresses</legend>
-			<f:if condition="{account.party.electronicAddresses}">
+			<f:if condition="{user.electronicAddresses}">
 				<f:then>
 
 					<table class="neos-info-table">
 						<tbody>
-							<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
+							<f:for each="{user.electronicAddresses}" as="electronicAddress">
 								<tr>
-									<th>{electronicAddress.type} <f:if condition="{account.party.primaryElectronicAddress} == {electronicAddress}"><span>(Primary)</span></f:if></th>
+									<th>{electronicAddress.type} <f:if condition="{user.primaryElectronicAddress} == {electronicAddress}"><span>(Primary)</span></f:if></th>
 									<td>{electronicAddress.identifier}</td>
 								</tr>
 							</f:for>
@@ -97,7 +91,7 @@
 
 	<div class="neos-footer">
 		<f:link.action action="index" class="neos-button">Back</f:link.action>
-		<f:if condition="{currentAccount} == {account}">
+		<f:if condition="{currentUser} == {user}">
 			<f:then>
 				<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself.">
 					<i class="icon-trash icon-white"></i> Delete User
@@ -109,24 +103,24 @@
 				</button>
 			</f:else>
 		</f:if>
-		<f:link.action action="edit" arguments="{account: account}" class="neos-button">
+		<f:link.action action="edit" arguments="{user: user}" class="neos-button">
 			<i class="icon-pencil icon-white"></i> Edit User
 		</f:link.action>
 		<div class="neos-hide" id="delete">
 			<div class="neos-modal">
 				<div class="neos-modal-header">
 					<button type="button" class="neos-close" data-dismiss="modal"></button>
-					<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
+					<div class="neos-header">Do you really want to delete the user "{user.name}"?</div>
 					<div>
 						<div class="neos-subheader">
-							This will delete the user and his personal workspace, including all unpublished content.
+							This will delete the user, the related accounts and his personal workspace, including all unpublished content.
 							This operation cannot be undone.
 						</div>
 					</div>
 				</div>
 				<div class="neos-modal-footer">
 					<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-					<f:form action="delete" arguments="{account: account}" class="neos-inline">
+					<f:form action="delete" arguments="{user: user}" class="neos-inline">
 						<button type="submit" class="neos-button neos-button-danger" title="Delete User">
 							Yes, delete the user
 						</button>

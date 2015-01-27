@@ -157,19 +157,13 @@ trait HistoryDefinitionsTrait {
 	 */
 	public function iCreateTheFollowingAccounts(TableNode $table) {
 		foreach ($table->getHash() as $row) {
-			$user = $this->getObjectManager()->get('TYPO3\Neos\Domain\Factory\UserFactory')->create(
+			$user = $this->getObjectManager()->get('TYPO3\Neos\Domain\Service\UserService')->createUser(
 				$row['User'],
 				$row['Password'],
 				$row['First Name'],
 				$row['Last Name'],
 				Arrays::trimExplode(',', $row['Roles'])
 			);
-
-			$this->getObjectManager()->get('TYPO3\Party\Domain\Repository\PartyRepository')->add($user);
-			$accounts = $user->getAccounts();
-			foreach ($accounts as $account) {
-				$this->getObjectManager()->get('TYPO3\Flow\Security\AccountRepository')->add($account);
-			}
 		}
 
 		$this->getSubcontext('flow')->persistAll();

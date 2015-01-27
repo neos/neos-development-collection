@@ -12,136 +12,172 @@ namespace TYPO3\Neos\Controller\Module\User;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Service\UserService;
+use TYPO3\Party\Domain\Model\ElectronicAddress;
 
 /**
- * The TYPO3 Neos User Settings module controller
+ * The Neos User Settings module controller
  *
  * @Flow\Scope("singleton")
  */
 class UserSettingsController extends AbstractModuleController {
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\AccountRepository
-	 */
-	protected $accountRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $partyRepository;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var UserService
 	 */
-	protected $securityContext;
+	protected $userService;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @var User
 	 */
-	protected $hashService;
+	protected $currentUser;
 
 	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
 		parent::initializeAction();
-		if ($this->arguments->hasArgument('account')) {
-			$propertyMappingConfigurationForAccount = $this->arguments->getArgument('account')->getPropertyMappingConfiguration();
-			$propertyMappingConfigurationForAccountParty = $propertyMappingConfigurationForAccount->forProperty('party');
-			$propertyMappingConfigurationForAccountPartyName = $propertyMappingConfigurationForAccount->forProperty('party.name');
-			$propertyMappingConfigurationForAccountParty->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\Neos\Domain\Model\User');
-			foreach (array($propertyMappingConfigurationForAccountParty, $propertyMappingConfigurationForAccountPartyName) as $propertyMappingConfiguration) {
-				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
-				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
+		if ($this->arguments->hasArgument('user')) {
+			$propertyMappingConfigurationForUser = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
+			$propertyMappingConfigurationForUserName = $propertyMappingConfigurationForUser->forProperty('user.name');
+			$propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
+			$propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\Flow\Security\Account');
+			/** @var PropertyMappingConfiguration $propertyMappingConfiguration */
+			foreach (array($propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount) as $propertyMappingConfiguration) {
+				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 			}
 		}
+		$this->currentUser = $this->userService->getCurrentUser();
 	}
 
 	/**
+	 * Index
+	 *
 	 * @return void
 	 */
 	public function indexAction() {
+		$this->forward('edit');
+	}
+
+	/**
+	 * Edit settings of the current user
+	 *
+	 * @return void
+	 */
+	public function editAction() {
 		$this->assignElectronicAddressOptions();
-		$account = $this->securityContext->getAccount();
+
 		$this->view->assignMultiple(array(
-			'account' => $account,
-			'user' => $account->getParty()
+			'user' => $this->currentUser
 		));
 	}
 
 	/**
+	 * Update the current user
+	 *
+	 * @param User $user The user to update, including updated data already (name, email address etc)
+	 * @return void
+	 */
+	public function updateAction(User $user) {
+		$this->userService->updateUser($user);
+		$this->addFlashMessage('Your user has been updated.', 'User updated', Message::SEVERITY_OK);
+		$this->redirect('edit');
+	}
+
+	/**
+	 * Edit the given account
+	 *
 	 * @param Account $account
-	 * @param User $user
-	 * @param array $password
+	 * @return void
+	 */
+	public function editAccountAction(Account $account) {
+		$this->view->assignMultiple(array(
+			'account' => $account,
+			'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
+		));
+	}
+
+	/**
+	 * Update a given account, ie. the password
+	 *
+	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
 	 * @return void
-	 * @todo Handle validation errors for account (accountIdentifier) & check if there's another account with the same accountIdentifier when changing it
-	 * @todo Security
 	 */
-	public function updateAction(Account $account, User $user, array $password = array()) {
+	public function updateAccountAction(array $password = array()) {
+		$user = $this->currentUser;
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
-			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
-			$this->accountRepository->update($account);
+			$this->userService->setUserPassword($user, $password);
+			$this->addFlashMessage('The password has been updated.', 'Password updated', Message::SEVERITY_OK);
 		}
-
-		$this->partyRepository->update($user);
-
-		$this->addFlashMessage('The user profile has been updated.', NULL, NULL, array(), 1412375330);
 		$this->redirect('index');
 	}
 
 	/**
 	 * The add new electronic address action
 	 *
+	 * @param User $user
+	 * @Flow\IgnoreValidation("$user")
 	 * @return void
 	 */
-	public function newElectronicAddressAction() {
+	public function newElectronicAddressAction(User $user) {
 		$this->assignElectronicAddressOptions();
+		$this->view->assign('user', $user);
 	}
 
 	/**
-	 * Create a new electronic address
+	 * Create an new electronic address
 	 *
-	 * @param \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress
+	 * @param User $user
+	 * @param ElectronicAddress $electronicAddress
 	 * @return void
-	 * @todo Security
 	 */
-	public function createElectronicAddressAction(\TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress) {
-		$party = $this->securityContext->getAccount()->getParty();
-		$party->addElectronicAddress($electronicAddress);
-		$this->partyRepository->update($party);
-		$this->addFlashMessage('An electronic "%s" (%s) address has been added.', NULL, NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412375475);
-		$this->redirect('index');
+	public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress) {
+		/** @var User $user */
+		$user->addElectronicAddress($electronicAddress);
+		$this->userService->updateUser($user);
+
+		$this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412374814);
+		$this->redirect('edit', NULL, NULL, array('user' => $user));
 	}
 
 	/**
 	 * Delete an electronic address action
 	 *
-	 * @param \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress
+	 * @param User $user
+	 * @param ElectronicAddress $electronicAddress
 	 * @return void
-	 * @todo Security
 	 */
-	public function deleteElectronicAddressAction(\TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress) {
-		$party = $this->securityContext->getAccount()->getParty();
-		$party->removeElectronicAddress($electronicAddress);
-		$this->partyRepository->update($party);
-		$this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', NULL, NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $party->getName()), 1412375529);
-		$this->redirect('index');
+	public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress) {
+		$user->removeElectronicAddress($electronicAddress);
+		$this->userService->updateUser($user);
+
+		$this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $user->getName()), 1412374678);
+		$this->redirect('edit', NULL, NULL, array('user' => $user));
 	}
 
 	/**
 	 *  @return void
 	 */
 	protected function assignElectronicAddressOptions() {
-		$electronicAddress = new \TYPO3\Party\Domain\Model\ElectronicAddress();
+		$electronicAddress = new ElectronicAddress();
 		$electronicAddressTypes = array();
 		foreach ($electronicAddress->getAvailableElectronicAddressTypes() as $type) {
 			$electronicAddressTypes[$type] = $type;
@@ -150,6 +186,7 @@ class UserSettingsController extends AbstractModuleController {
 		foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
 			$electronicAddressUsageTypes[$type] = $type;
 		}
+		array_unshift($electronicAddressUsageTypes, '');
 		$this->view->assignMultiple(array(
 			'electronicAddressTypes' => $electronicAddressTypes,
 			'electronicAddressUsageTypes' => $electronicAddressUsageTypes

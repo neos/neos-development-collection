@@ -49,10 +49,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
 
     'TYPO3.Neos:Backend.Module.User.UserSettings':
-      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit)Action())'
 
     'TYPO3.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
-      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(account == current.securityContext.account)) && method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(user == current.securityContext.party))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAccountAction(user == current.securityContext.account)) || method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(user == current.securityContext.party))'
 
     'TYPO3.Neos:Backend.EditUserPreferences':
       matcher: 'method(TYPO3\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
@@ -76,7 +76,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
 
     'TYPO3.Neos:Backend.Module.Administration.Users':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|editAccount|updateAccount)Action())'
 
     'TYPO3.Neos:Backend.Module.Administration.Packages':
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'

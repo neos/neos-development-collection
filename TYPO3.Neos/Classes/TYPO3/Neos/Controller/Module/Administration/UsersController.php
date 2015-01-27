@@ -16,51 +16,23 @@ use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Factory\UserFactory;
 use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Party\Domain\Model\ElectronicAddress;
-use TYPO3\Party\Domain\Repository\PartyRepository;
 
 /**
- * The TYPO3 User Admin module controller that allows for managing Neos backend users
+ * The Neos User Admin module controller that allows for managing Neos users
  */
 class UsersController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
-	 * @var AccountRepository
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $accountRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var PartyRepository
-	 */
-	protected $partyRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var UserFactory
-	 */
-	protected $userFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var HashService
-	 */
-	protected $hashService;
-
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -70,16 +42,14 @@ class UsersController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
-	 * @var PrivilegeManagerInterface
+	 * @var UserService
 	 */
-	protected $privilegeManager;
+	protected $userService;
 
 	/**
-	 * The currently authenticated account (= backend user)
-	 *
-	 * @var Account
+	 * @var User
 	 */
-	protected $currentAccount;
+	protected $currentUser;
 
 	/**
 	 * @return void
@@ -87,170 +57,205 @@ class UsersController extends AbstractModuleController {
 	protected function initializeAction() {
 		parent::initializeAction();
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
-		if ($this->arguments->hasArgument('account')) {
-			$propertyMappingConfigurationForAccount = $this->arguments->getArgument('account')->getPropertyMappingConfiguration();
-			$propertyMappingConfigurationForAccountParty = $propertyMappingConfigurationForAccount->forProperty('party');
-			$propertyMappingConfigurationForAccountPartyName = $propertyMappingConfigurationForAccount->forProperty('party.name');
-			$propertyMappingConfigurationForAccountParty->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\Neos\Domain\Model\User');
+		if ($this->arguments->hasArgument('user')) {
+			$propertyMappingConfigurationForUser = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
+			$propertyMappingConfigurationForUserName = $propertyMappingConfigurationForUser->forProperty('user.name');
+			$propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
+			$propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\Flow\Security\Account');
 			/** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-			foreach (array($propertyMappingConfigurationForAccountParty, $propertyMappingConfigurationForAccountPartyName) as $propertyMappingConfiguration) {
+			foreach (array($propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount) as $propertyMappingConfiguration) {
 				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
 				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 			}
 		}
-		$this->currentAccount = $this->securityContext->getAccount();
+		$this->currentUser = $this->userService->getCurrentUser();
 	}
 
 	/**
+	 * Shows a list of all users
+	 *
 	 * @return void
 	 */
 	public function indexAction() {
 		$this->view->assignMultiple(array(
-			'currentAccount' => $this->currentAccount,
-			'accounts' => $this->accountRepository->findByAuthenticationProviderName('Typo3BackendProvider')
+			'currentUser' => $this->currentUser,
+			'users' => $this->userService->getUsers()
 		));
 	}
 
 	/**
-	 * @param Account $account
+	 * Shows details for the specified user
+	 *
+	 * @param User $user
 	 * @return void
 	 */
-	public function showAction(Account $account) {
+	public function showAction(User $user) {
 		$this->view->assignMultiple(array(
-			'account' => $account,
-			'currentAccount' => $this->currentAccount
+			'currentUser' => $this->currentUser,
+			'user' => $user
 		));
 	}
 
 	/**
-	 * @param Account $account
+	 * Renders a form for creating a new user
+	 *
+	 * @param User $user
 	 * @return void
 	 */
-	public function newAction(Account $account = NULL) {
+	public function newAction(User $user = NULL) {
 		$this->view->assignMultiple(array(
-			'account' => $account,
-			'roles' => $this->policyService->getRoles(),
+			'currentUser' => $this->currentUser,
+			'user' => $user,
+			'roles' => $this->policyService->getRoles()
 		));
 	}
 
 	/**
-	 * @param Account $account The account to create
+	 * Create a new user
+	 *
+	 * @param string $username The user name (ie. account identifier) of the new user
 	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-	 * @Flow\Validate(argumentName="account.accountIdentifier", type="\TYPO3\Neos\Validation\Validator\AccountExistsValidator")
+	 * @param User $user The user to create
+	 * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
+	 * @Flow\Validate(argumentName="username", type="\TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator")
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
 	 * @return void
-	 * @todo Security
 	 */
-	public function createAction(Account $account, array $password) {
-		/** @var array $password */
-		$password = array_shift($password);
-		if (strlen(trim(strval($password))) > 0) {
-			$account->setCredentialsSource($this->hashService->hashPassword($password));
-		}
-
-		$this->partyRepository->add($account->getParty());
-		$this->accountRepository->add($account);
-
-		$this->addFlashMessage('The user account "%s" has been created.', 'Account added', Message::SEVERITY_OK, array($account->getAccountIdentifier()), 1416225561);
+	public function createAction($username, array $password, User $user, array $roleIdentifiers) {
+		$this->userService->addUser($username, $password[0], $user, $roleIdentifiers);
+		$this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, array($username), 1416225561);
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param Account $account
+	 * Edit an existing user
+	 *
+	 * @param User $user
 	 * @return void
 	 */
-	public function editAction(Account $account) {
+	public function editAction(User $user) {
 		$this->assignElectronicAddressOptions();
 
 		$this->view->assignMultiple(array(
-			'account' => $account,
-			'roles' => $this->policyService->getRoles(),
+			'user' => $user,
+			'availableRoles' => $this->policyService->getRoles()
 		));
 	}
 
 	/**
-	 * @param Account $account
-	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+	 * Update a given user
+	 *
+	 * @param User $user The user to update, including updated data already (name, email address etc)
 	 * @return void
-	 * @todo Security
 	 */
-	public function updateAction(Account $account, array $password = array()) {
-		if ($account === $this->currentAccount && !$this->privilegeManager->isPrivilegeTargetGrantedForRoles($this->currentAccount->getRoles(), 'TYPO3.Neos:Backend.Module.Administration.Users')) {
-			$this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, array(), 1416501197);
-			$this->forward('edit', NULL, NULL, array('account' => $account));
-		}
-		$password = array_shift($password);
-		if (strlen(trim(strval($password))) > 0) {
-			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
-		}
-
-		$this->accountRepository->update($account);
-		$this->partyRepository->update($account->getParty());
-
-		$this->addFlashMessage('The user account "%s" has been updated.', 'Account updated', Message::SEVERITY_OK, array($account->getAccountIdentifier()), 1412374498);
+	public function updateAction(User $user) {
+		$this->userService->updateUser($user);
+		$this->addFlashMessage('The user "%s" has been updated.', 'User updated', Message::SEVERITY_OK, array($user->getName()->getFullName()), 1412374498);
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param Account $account
+	 * Delete the given user
+	 *
+	 * @param User $user
 	 * @return void
-	 * @todo Security
 	 */
-	public function deleteAction(Account $account) {
-		if ($account === $this->currentAccount) {
-			$this->addFlashMessage('You can not delete the currently logged in user', 'Current account can\'t be removed', Message::SEVERITY_WARNING, array(), 1412374546);
+	public function deleteAction(User $user) {
+		if ($user === $this->currentUser) {
+			$this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, array(), 1412374546);
 			$this->redirect('index');
 		}
-		$this->accountRepository->remove($account);
-		$this->addFlashMessage('The user account "%s" has been deleted.', 'Account removed', Message::SEVERITY_NOTICE, array($account->getAccountIdentifier()), 1412374546);
+		$this->userService->deleteUser($user);
+		$this->addFlashMessage('The user "%s" has been deleted.', 'User deleted', Message::SEVERITY_NOTICE, array($user->getName()->getFullName()), 1412374546);
 		$this->redirect('index');
+	}
+
+	/**
+	 * Edit the given account
+	 *
+	 * @param Account $account
+	 * @return void
+	 */
+	public function editAccountAction(Account $account) {
+		$this->view->assignMultiple(array(
+			'account' => $account,
+			'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName()),
+			'availableRoles' => $this->policyService->getRoles()
+		));
+	}
+
+	/**
+	 * Update a given account
+	 *
+	 * @param Account $account The account to update
+	 * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
+	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+	 * @return void
+	 */
+	public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = array()) {
+		$user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+		if ($user === $this->currentUser) {
+			$roles = array();
+			foreach ($roleIdentifiers as $roleIdentifier) {
+				$roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+			}
+			if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles($roles, 'TYPO3.Neos:Backend.Module.Administration.Users')) {
+				$this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, array(), 1416501197);
+				$this->forward('edit', NULL, NULL, array('user' => $this->currentUser));
+			}
+		}
+		$password = array_shift($password);
+		if (strlen(trim(strval($password))) > 0) {
+			$this->userService->setUserPassword($user, $password);
+		}
+
+		$this->userService->setRolesForAccount($account, $roleIdentifiers);
+		$this->addFlashMessage('The account has been updated.', 'Account updated', Message::SEVERITY_OK);
+		$this->redirect('edit', NULL, NULL, array('user' => $user));
 	}
 
 	/**
 	 * The add new electronic address action
 	 *
-	 * @param Account $account
-	 * @Flow\IgnoreValidation("$account")
+	 * @param User $user
+	 * @Flow\IgnoreValidation("$user")
 	 * @return void
 	 */
-	public function newElectronicAddressAction(Account $account) {
+	public function newElectronicAddressAction(User $user) {
 		$this->assignElectronicAddressOptions();
-		$this->view->assign('account', $account);
+		$this->view->assign('user', $user);
 	}
 
 	/**
 	 * Create an new electronic address
 	 *
-	 * @param Account $account
+	 * @param User $user
 	 * @param ElectronicAddress $electronicAddress
 	 * @return void
-	 * @todo Security
 	 */
-	public function createElectronicAddressAction(Account $account, ElectronicAddress $electronicAddress) {
+	public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress) {
 		/** @var User $user */
-		$user = $account->getParty();
 		$user->addElectronicAddress($electronicAddress);
-		$this->partyRepository->update($user);
+		$this->userService->updateUser($user);
+
 		$this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412374814);
-		$this->redirect('edit', NULL, NULL, array('account' => $account));
+		$this->redirect('edit', NULL, NULL, array('user' => $user));
 	}
 
 	/**
 	 * Delete an electronic address action
 	 *
-	 * @param Account $account
+	 * @param User $user
 	 * @param ElectronicAddress $electronicAddress
 	 * @return void
-	 * @todo Security
 	 */
-	public function deleteElectronicAddressAction(Account $account, ElectronicAddress $electronicAddress) {
-		/** @var User $user */
-		$user = $account->getParty();
+	public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress) {
 		$user->removeElectronicAddress($electronicAddress);
-		$this->partyRepository->update($user);
+		$this->userService->updateUser($user);
+
 		$this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $user->getName()), 1412374678);
-		$this->redirect('edit', NULL, NULL, array('account' => $account));
+		$this->redirect('edit', NULL, NULL, array('user' => $user));
 	}
 
 	/**

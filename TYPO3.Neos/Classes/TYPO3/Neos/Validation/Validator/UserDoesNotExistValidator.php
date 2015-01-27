@@ -12,43 +12,37 @@ namespace TYPO3\Neos\Validation\Validator;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Exception\InvalidSubjectException;
+use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use TYPO3\Neos\Domain\Service\UserService;
 
 /**
- * Validator for accounts
+ * Validator for Neos users
  */
-class AccountExistsValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
-
-	/**
-	 * @var array
-	 */
-	protected $supportedOptions = array(
-		'authenticationProviderName' => array('Typo3BackendProvider', 'The authentication provider to use when checking for an account', 'string')
-	);
+class UserDoesNotExistValidator extends AbstractValidator {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\AccountRepository
+	 * @var UserService
 	 */
-	protected $accountRepository;
+	protected $userService;
 
 	/**
-	 * Returns TRUE, if the given property ($value) does not yet exist in the account repository.
+	 * Returns TRUE, if the specified user ($value) does not exist yet.
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws \TYPO3\Flow\Validation\Exception\InvalidSubjectException
+	 * @throws InvalidSubjectException
 	 */
 	protected function isValid($value) {
 		if (!is_string($value)) {
-			throw new \TYPO3\Flow\Validation\Exception\InvalidSubjectException('The given account identifier was not a string.', 1325155784);
+			throw new InvalidSubjectException('The given username was not a string.', 1325155784);
 		}
 
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($value, $this->options['authenticationProviderName']);
-
-		if ($account !== NULL) {
-			$this->addError('The account identifier (username) is already in use.', 1325156008);
+		if ($this->userService->getUser($value) !== NULL) {
+			$this->addError('The username is already in use.', 1325156008);
 		}
 	}
 

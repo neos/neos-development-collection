@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Security\Account;
 use TYPO3\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -20,6 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  * @Flow\Scope("prototype")
+ * @api
  */
 class User extends Person {
 
@@ -33,7 +35,6 @@ class User extends Person {
 
 	/**
 	 * Constructs this User object
-	 *
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -42,6 +43,7 @@ class User extends Person {
 
 	/**
 	 * @return UserPreferences
+	 * @api
 	 */
 	public function getPreferences() {
 		return $this->preferences;
@@ -50,9 +52,26 @@ class User extends Person {
 	/**
 	 * @param UserPreferences $preferences
 	 * @return void
+	 * @api
 	 */
 	public function setPreferences(UserPreferences $preferences) {
 		$this->preferences = $preferences;
+	}
+
+	/**
+	 * Checks if at least one account of this user ist active
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isActive() {
+		foreach ($this->accounts as $account) {
+			/** @var Account $account */
+			if ($account->isActive()) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 }

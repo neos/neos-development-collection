@@ -14,7 +14,8 @@ namespace TYPO3\Neos\Setup\Step;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
 use TYPO3\Flow\Validation\Validator\StringLengthValidator;
-use TYPO3\Neos\Validation\Validator\AccountExistsValidator;
+use TYPO3\Neos\Domain\Service\UserService;
+use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
 
 /**
  * @Flow\Scope("singleton")
@@ -40,9 +41,9 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Factory\UserFactory
+	 * @var UserService
 	 */
-	protected $userFactory;
+	protected $userService;
 
 	/**
 	 * Returns the form definitions for the step
@@ -76,7 +77,7 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 		$username = $credentialsSection->createElement('username', 'TYPO3.Form:SingleLineText');
 		$username->setLabel('Username');
 		$username->addValidator(new NotEmptyValidator());
-		$username->addValidator(new AccountExistsValidator(array('authenticationProviderName' => 'Typo3BackendProvider')));
+		$username->addValidator(new UserDoesNotExistValidator());
 
 		$password = $credentialsSection->createElement('password', 'TYPO3.Form:PasswordWithConfirmation');
 		$password->addValidator(new NotEmptyValidator());
@@ -94,12 +95,7 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @return void
 	 */
 	public function postProcessFormValues(array $formValues) {
-		$user = $this->userFactory->create($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('TYPO3.Neos:Administrator'));
-		$this->partyRepository->add($user);
-		$accounts = $user->getAccounts();
-		foreach ($accounts as $account) {
-			$this->accountRepository->add($account);
-		}
+		$this->userService->createUser($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('TYPO3.Neos:Administrator'));
 	}
 
 }

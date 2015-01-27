@@ -5,29 +5,29 @@
 		<table class="neos-table">
 			<thead>
 				<tr>
-					<th>Username</th>
 					<th>Name</th>
-					<th>Roles</th>
+					<th>Accounts and Roles</th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<f:for each="{accounts}" key="index" as="account">
+			<f:for each="{users}" key="index" as="user">
 				<tr>
-					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
-					<td title="{account.party.alias}">{account.party.name}</td>
+					<td title="{user.alias}">{user.name}</td>
 					<td>
-						<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
+						<f:for each="{user.accounts}" as="account">
+							<i class="icon-user icon-white"></i>{account.accountIdentifier} (<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />)
+						</f:for>
 					</td>
 					<td class="neos-action">
 						<div class="neos-pull-right">
-							<f:link.action action="show" arguments="{account: account}" class="neos-button neos-button-primary" title="View user">
+							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="View user">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{account: account}" class="neos-button neos-button-primary" title="Edit user">
+							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="Edit user">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
-							<f:if condition="{currentAccount} == {account}">
+							<f:if condition="{currentUser} == {user}">
 								<f:then>
 									<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself."><i class="icon-trash icon-white"></i></button>
 								</f:then>
@@ -39,16 +39,17 @@
 										<div class="neos-modal">
 											<div class="neos-modal-header">
 												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
+												<div class="neos-header">Do you really want to delete the user "{user.name}"?</div>
 												<div>
 													<div class="neos-subheader">
-														<p>This will delete the user and his personal workspace, including all unpublished content.<br />This operation cannot be undone.</p>
+														<p>This will delete the user, the related accounts and his personal workspace, including all unpublished content.
+															This operation cannot be undone.</p>
 													</div>
 												</div>
 											</div>
 											<div class="neos-modal-footer">
 												<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-												<f:form action="delete" arguments="{account: account}" class="neos-inline">
+												<f:form action="delete" arguments="{user: user}" class="neos-inline">
 													<button type="submit" class="neos-button neos-button-danger" title="Delete User">
 														Yes, delete the user
 													</button>
