@@ -812,17 +812,18 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				originalHeight = this.get('_originalImageDimensions.height'),
 				cropProperties = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full'));
 
-			if ((finalWidth > 0 && finalHeight > 0) && (this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] || (finalWidth != originalWidth || finalHeight != originalHeight))) {
+			if ((finalWidth > 0 && finalHeight > 0) && (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] || (finalWidth !== originalWidth || finalHeight !== originalHeight))) {
 				this._applyResizeAdjustment(finalWidth, finalHeight);
 			}
 
-			if (this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || (cropProperties.x != 0 && cropProperties.y != 0 && cropProperties.width != originalWidth && cropProperties.height != originalHeight)) {
+			var isDefaultSettings = JSON.stringify(cropProperties) === JSON.stringify({x: 0, y: 0, width: originalWidth, height: originalHeight});
+			if (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || !isDefaultSettings) {
 				this._applyCropAdjustment(cropProperties);
 			}
 		},
 
 		_applyResizeAdjustment: function(finalWidth, finalHeight) {
-			this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
+			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
 				height: finalHeight,
 				maximumHeight: null,
 				maximumWidth: null,
