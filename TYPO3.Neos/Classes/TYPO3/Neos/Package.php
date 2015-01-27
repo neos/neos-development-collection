@@ -44,14 +44,15 @@ class Package extends BasePackage {
 
 		$uriPathSegmentGenerator = function(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-				if(!$node->hasProperty('uriPathSegment')) {
+				if (!$node->hasProperty('uriPathSegment')) {
 					$node->setProperty('uriPathSegment', $node->getName());
 				}
 
 				$q = new FlowQuery(array($node));
 				$possibleUriPathSegment = $node->getProperty('uriPathSegment');
-				while (count($q->siblings('[uriPathSegment=' . $possibleUriPathSegment . ']')->get())) {
-					$possibleUriPathSegment = $node->getProperty('uriPathSegment') . '-' . uniqid();
+				$i = 1;
+				while (count($q->siblings('[uriPathSegment="' . $possibleUriPathSegment . '"]')->get())) {
+					$possibleUriPathSegment = $node->getProperty('uriPathSegment') . '-' . $i++;
 				}
 				$node->setProperty('uriPathSegment', $possibleUriPathSegment);
 			}
