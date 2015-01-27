@@ -16,6 +16,41 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 		}
 	}
 
+	.typo3-fileupload-dropzone {
+		&.typo3-fileupload-dropzone-active,
+		&.typo3-fileupload-dropzone-hover {
+			width: $maxImageWidth + 2px;
+			height: $maxImageHeight + 2px;
+			margin-bottom: $defaultMargin - $tightMargin;
+			position: relative;
+
+			&:before {
+				color: #fff;
+				@include icon-FontAwesome();
+				content: $arrow-down;
+				position: absolute;
+				top: 50%;
+				font-size: $unit;
+				line-height: $unit;
+				margin-top: -($unit / 2);
+				width: 100%;
+				text-align: center;
+			}
+
+			.neos-inspector-image-thumbnail {
+				border-color: #fff;
+			}
+
+			.neos-inspector-image-thumbnail-inner {
+				display: none;
+			}
+		}
+
+		&.typo3-fileupload-dropzone-hover {
+			background-color: $blue;
+		}
+	}
+
 	.neos-inspector-image-thumbnail {
 		position: relative;
 		border: 1px dashed $grayMedium;

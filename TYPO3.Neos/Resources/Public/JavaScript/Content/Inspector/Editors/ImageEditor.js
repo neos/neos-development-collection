@@ -331,7 +331,6 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * Display before-upload Image preview
 		 */
 		filesScheduledForUpload: function(files) {
-			var that = this;
 			if (files.length > 0) {
 				this._displayImageLoader();
 				this.upload();
