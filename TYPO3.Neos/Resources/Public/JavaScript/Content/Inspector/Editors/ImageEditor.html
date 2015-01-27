@@ -1,10 +1,12 @@
 <div class="neos-inspector-image">
 	<div class="neos-inspector-image-thumbnail">
 		<div class="neos-inspector-image-thumbnail-inner">
-			{{#if view._uploadPreviewShown}}
-				<img {{bindAttr src="view._uploadPreviewImageSource"}} alt="" />
-			{{else}}
+			{{#if view._originalImageUri}}
 				<img {{bindAttr src="view._originalImageUri"}} alt="" />
+			{{else}}
+				{{#unless view._uploadInProgress}}
+					<img {{bindAttr src="view._defaultUploadPreviewImageSource"}} alt="" />
+				{{/unless}}
 			{{/if}}
 		</div>
 	</div>
@@ -28,11 +30,11 @@
 				{{unbound view.removeButtonLabel}}
 			</button>
 		{{/if}}
-		{{#if view.features.crop}}
+		{{#if view.shouldRenderCrop}}
 			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 		{{/if}}
 	</div>
-	{{#if view.features.resize}}
+	{{#if view.shouldRenderResize}}
 	<div class="neos-inspector-image-width">
 		<label {{bindAttr for="view.imageWidthField.elementId"}}>{{translate id='width-ucfirst' value='Width'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
