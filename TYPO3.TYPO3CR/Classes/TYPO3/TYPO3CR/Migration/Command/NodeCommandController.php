@@ -91,7 +91,6 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.typo3cr.migration:node:listavailablemigrations
 	 */
 	public function migrationStatusCommand() {
-		/** @var $appliedMigration MigrationStatus */
 		$this->outputLine();
 
 		$availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
@@ -100,10 +99,30 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit();
 		}
 
+		$appliedMigrations = $this->migrationStatusRepository->findAll();
+		$appliedMigrationsDictionary = array();
+		/** @var $appliedMigration MigrationStatus */
+		foreach ($appliedMigrations as $appliedMigration) {
+			$appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
+		}
+
 		$tableRows = array();
 		foreach ($availableMigrations as $version => $migration) {
-			$migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration();
-			$tableRows[] = array($version, $migration['formattedVersionNumber'], $migration['package']->getPackageKey(), $migrationConfiguration->getComments());
+			$migrationUpConfigurationComments = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration()->getComments();
+
+			if (isset($appliedMigrationsDictionary[$version])) {
+				$applicationInformation = $this->phraseMigrationApplicationInformation($appliedMigrationsDictionary[$version]);
+				if ($applicationInformation !== '') {
+					$migrationUpConfigurationComments .= PHP_EOL . '<b>Applied:</b>' . PHP_EOL . $applicationInformation;
+				}
+			}
+
+			$tableRows[] = array(
+				$version,
+				$migration['formattedVersionNumber'],
+				$migration['package']->getPackageKey(),
+				wordwrap($migrationUpConfigurationComments, 60)
+			);
 		}
 
 		$this->outputLine('<b>Available migrations</b>');
@@ -129,5 +148,26 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('<b><u>Warnings</u></b>');
 			$this->outputFormatted($migrationConfiguration->getWarnings(), array(), 2);
 		}
+	}
+
+	/**
+	 * @param array $migrationsInVersion
+	 * @return string
+	 */
+	protected function phraseMigrationApplicationInformation($migrationsInVersion) {
+		usort($migrationsInVersion, function (MigrationStatus $migrationA, MigrationStatus $migrationB) {
+			return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
+		});
+
+		$applied = array();
+		/** @var MigrationStatus $migrationStatus */
+		foreach ($migrationsInVersion as $migrationStatus) {
+			$applied[] = sprintf(
+				'%s applied on %s',
+				str_pad(strtoupper($migrationStatus->getDirection()), 5, ' ', STR_PAD_LEFT),
+				$migrationStatus->getApplicationTimeStamp()->format('Y-m-d H:i:s')
+			);
+		}
+		return implode(PHP_EOL, $applied);
 	}
 }
