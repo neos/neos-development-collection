@@ -88,7 +88,7 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 					}
 					$adjustment = new $adjustmentType($adjustmentOptions);
 					if ($identity !== NULL) {
-						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identitifer', $identity, TRUE);
+						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identifier', $identity, TRUE);
 					}
 					$asset->addAdjustment($adjustment);
 				}
