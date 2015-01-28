@@ -63,6 +63,12 @@ class NodeExportService {
 	protected $entityManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 */
+	protected $nodeTypeManager;
+
+	/**
 	 * @var ImportExportPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
@@ -261,8 +267,19 @@ class NodeExportService {
 		}
 
 		$this->xmlWriter->startElement('properties');
-		foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
-			$this->writeConvertedElement($nodeData['properties'], $propertyName);
+		if ($this->nodeTypeManager->hasNodeType($nodeData['nodeType'])) {
+			$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
+
+			foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+				if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
+					$declaredPropertyType = $nodeType->getPropertyType($propertyName);
+					$this->writeConvertedElement($nodeData['properties'], $propertyName, NULL, $declaredPropertyType);
+				}
+			}
+		} else {
+			foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+				$this->writeConvertedElement($nodeData['properties'], $propertyName);
+			}
 		}
 		$this->xmlWriter->endElement(); // "properties"
 
@@ -277,36 +294,49 @@ class NodeExportService {
 	 * @param string $elementName an optional name to use, defaults to $propertyName
 	 * @return void
 	 */
-	protected function writeConvertedElement(array &$data, $propertyName, $elementName = NULL) {
+	protected function writeConvertedElement(array &$data, $propertyName, $elementName = NULL, $declaredPropertyType = NULL) {
 		if (array_key_exists($propertyName, $data) && $data[$propertyName] !== NULL) {
+			$propertyValue = $data[$propertyName];
 			$this->xmlWriter->startElement($elementName ?: $propertyName);
 
-			$this->xmlWriter->writeAttribute('__type', gettype($data[$propertyName]));
+			if (!empty($propertyValue)) {
+				switch ($declaredPropertyType) {
+					case NULL:
+					case 'reference':
+					case 'references':
+						break;
+					default:
+						$propertyValue = $this->propertyMapper->convert($propertyValue, $declaredPropertyType);
+						break;
+				}
+			}
+
+			$this->xmlWriter->writeAttribute('__type', gettype($propertyValue));
 			try {
-				if (is_object($data[$propertyName]) && !$data[$propertyName] instanceof \DateTime) {
-					$objectIdentifier = $this->persistenceManager->getIdentifierByObject($data[$propertyName]);
+				if (is_object($propertyValue) && !$propertyValue instanceof \DateTime) {
+					$objectIdentifier = $this->persistenceManager->getIdentifierByObject($propertyValue);
 					if ($objectIdentifier !== NULL) {
 						$this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
 					}
-					if ($data[$propertyName] instanceof \Doctrine\ORM\Proxy\Proxy) {
-						$className = get_parent_class($data[$propertyName]);
+					if ($propertyValue instanceof \Doctrine\ORM\Proxy\Proxy) {
+						$className = get_parent_class($propertyValue);
 					} else {
-						$className = get_class($data[$propertyName]);
+						$className = get_class($propertyValue);
 					}
 					$this->xmlWriter->writeAttribute('__classname', $className);
 					$this->xmlWriter->writeAttribute('__encoding', 'json');
 
-					$converted = json_encode($this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration));
+					$converted = json_encode($this->propertyMapper->convert($propertyValue, 'array', $this->propertyMappingConfiguration));
 					$this->xmlWriter->text($converted);
-				} elseif (is_array($data[$propertyName])) {
-					foreach ($data[$propertyName] as $key => $element) {
-						$this->writeConvertedElement($data[$propertyName], $key, 'entry' . $key);
+				} elseif (is_array($propertyValue)) {
+					foreach ($propertyValue as $key => $element) {
+						$this->writeConvertedElement($propertyValue, $key, 'entry' . $key);
 					}
 				} else {
-					if (is_object($data[$propertyName]) && $data[$propertyName] instanceof \DateTime) {
+					if (is_object($propertyValue) && $data[$propertyName] instanceof \DateTime) {
 						$this->xmlWriter->writeAttribute('__classname', 'DateTime');
 					}
-					$this->xmlWriter->text($this->propertyMapper->convert($data[$propertyName], 'string', $this->propertyMappingConfiguration));
+					$this->xmlWriter->text($this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration));
 				}
 			} catch (\Exception $exception) {
 				$this->xmlWriter->writeComment(sprintf('Could not convert property "%s" to string.', $propertyName));
