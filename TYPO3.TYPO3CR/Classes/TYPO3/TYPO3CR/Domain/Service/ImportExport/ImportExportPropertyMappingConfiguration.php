@@ -15,6 +15,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
 use TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
+use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\StringConverter;
 use TYPO3\Flow\Resource\ResourceTypeConverter;
@@ -83,7 +84,7 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
 			return TRUE;
 		}
 
-		if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ObjectConverter' && $key === self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
+		if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ObjectConverter' && $key === ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
 			return TRUE;
 		}
 
