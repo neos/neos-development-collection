@@ -23,6 +23,12 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 class ImageInterfaceConverter extends AssetInterfaceConverter {
 
 	/**
+	 * @Flow\Inject
+	 * @var ProcessingInstructionsConverter
+	 */
+	protected $processingInstructionsConverter;
+
+	/**
 	 * @var string
 	 */
 	protected $targetType = 'TYPO3\Media\Domain\Model\ImageInterface';
