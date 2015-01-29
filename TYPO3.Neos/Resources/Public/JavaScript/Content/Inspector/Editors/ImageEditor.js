@@ -918,10 +918,10 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				originalImageDimensions = this.get('_originalImageDimensions');
 
 			return {
-				x: Math.round(coordinates.x / (originalImageDimensions.width / previewImageDimensions.width), 10),
-				y: Math.round(coordinates.y / (originalImageDimensions.height / previewImageDimensions.height), 10),
-				width: Math.round(coordinates.width / (originalImageDimensions.width / previewImageDimensions.width), 10),
-				height: Math.round(coordinates.height / (originalImageDimensions.height / previewImageDimensions.height), 10)
+				x: Math.round(coordinates.x / (originalImageDimensions.width / previewImageDimensions.width)),
+				y: Math.round(coordinates.y / (originalImageDimensions.height / previewImageDimensions.height)),
+				width: Math.round(coordinates.width / (originalImageDimensions.width / previewImageDimensions.width)),
+				height: Math.round(coordinates.height / (originalImageDimensions.height / previewImageDimensions.height))
 			};
 		},
 
