@@ -110,4 +110,18 @@ class SiblingsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array($this->firstNodeInLevel), $output);
 	}
 
+	/**
+	 * @test
+	 */
+	public function siblingsWillReturnEmptyArrayForSiteNode() {
+		$context = array($this->siteNode);
+		$q = new FlowQuery($context);
+
+		$operation = new SiblingsOperation();
+		$operation->evaluate($q, array());
+
+		$output = $q->getContext();
+		$this->assertEquals(array(), $output);
+	}
+
 }
