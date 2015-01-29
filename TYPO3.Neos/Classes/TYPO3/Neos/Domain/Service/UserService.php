@@ -203,13 +203,24 @@ class UserService {
 		$this->partyRepository->add($user);
 		$this->accountRepository->add($account);
 
+		$this->emitUserCreated($user);
 		return $user;
 	}
+
+	/**
+	 * Signals that a new user, including a new account has been created.
+	 *
+	 * @param User $user The created user
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitUserCreated(User $user) {}
 
 	/**
 	 * Deletes the specified user
 	 *
 	 * @param User $user The user to delete
+	 * @return void
 	 * @throws Exception
 	 * @api
 	 */
@@ -218,7 +229,17 @@ class UserService {
 			$this->accountRepository->remove($account);
 		}
 		$this->partyRepository->remove($user);
+		$this->emitUserDeleted($user);
 	}
+
+	/**
+	 * Signals that the given user has been deleted.
+	 *
+	 * @param User $user The created user
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitUserDeleted(User $user) {}
 
 	/**
 	 * Sets a new password for the given user
@@ -262,6 +283,7 @@ class UserService {
 	 */
 	public function updateUser(User $user) {
 		$this->partyRepository->update($user);
+		$this->emitUserUpdated($user);
 	}
 
 	/**
@@ -299,6 +321,15 @@ class UserService {
 	}
 
 	/**
+	 * Signals that the given user data has been updated.
+	 *
+	 * @param User $user The created user
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitUserUpdated(User $user) {}
+
+	/**
 	 * Overrides any assigned roles of the given account and potentially carries out further actions which are needed
 	 * to properly reflect these changes.
 	 *
@@ -330,20 +361,33 @@ class UserService {
 	 *
 	 * @param Account $account The account to add roles to
 	 * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
-	 * @return integer Number of times this role actually has been added (1 or 0)
+	 * @return array The roles which effectively have been added.
 	 * @api
 	 */
 	public function addRoleToAccount(Account $account, $roleIdentifier) {
 		$roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
 		$role = $this->policyService->getRole($roleIdentifier);
+		$rolesAdded = array();
 
-		if ($account->hasRole($role)) {
-			return 0;
+		if (!$account->hasRole($role)) {
+			$account->addRole($role);
+			$this->accountRepository->update($account);
+			$rolesAdded[] = $role;
 		}
-		$account->addRole($role);
-		$this->accountRepository->update($account);
-		return 1;
+
+		$this->emitRolesAdded($account, $rolesAdded);
+		return $rolesAdded;
 	}
+
+	/**
+	 * Signals that new roles have been assigned to the given account
+	 *
+	 * @param Account $account The account
+	 * @param array<Role> An array of Role objects which have been added for that account
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitRolesAdded(Account $account, array $roles) {}
 
 	/**
 	 * Removes the specified role from the given account and potentially carries out further actions which are needed to
@@ -351,21 +395,34 @@ class UserService {
 	 *
 	 * @param Account $account The account to remove roles from
 	 * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
-	 * @return integer Number of times this role actually has been removed (1 or 0)
+	 * @return array The role that effectively was removed
 	 * @api
 	 */
 	public function removeRoleFromAccount(Account $account, $roleIdentifier) {
 		$roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
 		$role = $this->policyService->getRole($roleIdentifier);
+		$rolesRemoved = array();
 
 		/** @var Account $account */
-		if (!$account->hasRole($role)) {
-			return 0;
+		if ($account->hasRole($role)) {
+			$account->removeRole($role);
+			$this->accountRepository->update($account);
+			$rolesRemoved[] = $role;
 		}
-		$account->removeRole($role);
-		$this->accountRepository->update($account);
-		return 1;
+
+		$this->emitRolesRemoved($account, $rolesRemoved);
+		return $rolesRemoved;
 	}
+
+	/**
+	 * Signals that roles have been removed to the given account
+	 *
+	 * @param Account $account The account
+	 * @param array<Role> An array of Role objects which have been removed
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitRolesRemoved(Account $account, array $roles) {}
 
 	/**
 	 * Reactivates the given user
@@ -380,7 +437,17 @@ class UserService {
 			$account->setExpirationDate(NULL);
 			$this->accountRepository->update($account);
 		}
+		$this->emitUserActivated($user);
 	}
+
+	/**
+	 * Signals that the given user has been activated
+	 *
+	 * @param User $user The user
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitUserActivated(User $user) {}
 
 	/**
 	 * Deactivates the given user
@@ -395,6 +462,7 @@ class UserService {
 			$account->setExpirationDate($this->now);
 			$this->accountRepository->update($account);
 		}
+		$this->emitUserDeactivated($user);
 	}
 
 	/**
@@ -405,6 +473,15 @@ class UserService {
 	public function getDefaultAuthenticationProviderName() {
 		return $this->defaultAuthenticationProviderName;
 	}
+
+	/**
+	 * Signals that the given user has been activated
+	 *
+	 * @param User $user The user
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitUserDeactivated(User $user) {}
 
 	/**
 	 * Replaces role identifiers not containing a "." into fully qualified role identifiers from the TYPO3.Neos namespace.
