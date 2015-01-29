@@ -889,10 +889,10 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				originalImageSize = this.get('_originalImageSize');
 
 			return {
-				x: previewImageCoordinates.x * (originalImageSize.w / previewImageSize.w),
-				y: previewImageCoordinates.y * (originalImageSize.h / previewImageSize.h),
-				w: previewImageCoordinates.w * (originalImageSize.w / previewImageSize.w),
-				h: previewImageCoordinates.h * (originalImageSize.h / previewImageSize.h)
+				x: Math.round(previewImageCoordinates.x * (originalImageSize.w / previewImageSize.w)),
+				y: Math.round(previewImageCoordinates.y * (originalImageSize.h / previewImageSize.h)),
+				w: Math.round(previewImageCoordinates.w * (originalImageSize.w / previewImageSize.w)),
+				h: Math.round(previewImageCoordinates.h * (originalImageSize.h / previewImageSize.h))
 			};
 		},
 
@@ -910,10 +910,10 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				originalImageSize = this.get('_originalImageSize');
 
 			return {
-				x: parseInt(coordinates.x / (originalImageSize.w / previewImageSize.w), 10),
-				y: parseInt(coordinates.y / (originalImageSize.h / previewImageSize.h), 10),
-				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w), 10),
-				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h), 10)
+				x: Math.round(coordinates.x / (originalImageSize.w / previewImageSize.w)),
+				y: Math.round(coordinates.y / (originalImageSize.h / previewImageSize.h)),
+				w: Math.round(coordinates.w / (originalImageSize.w / previewImageSize.w)),
+				h: Math.round(coordinates.h / (originalImageSize.h / previewImageSize.h))
 			};
 		},
 
