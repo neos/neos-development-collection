@@ -38,6 +38,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	/**
 	 * @var \TYPO3\Media\Domain\Model\Image
 	 * @ORM\ManyToOne(inversedBy="variants")
+	 * @ORM\JoinColumn(nullable=false)
 	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $originalAsset;

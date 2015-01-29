@@ -35,6 +35,7 @@ class Thumbnail implements ImageInterface {
 	/**
 	 * @var Asset
 	 * @ORM\ManyToOne(cascade={"persist", "merge"})
+	 * @ORM\JoinColumn(nullable=false)
 	 */
 	protected $originalAsset;
 
@@ -54,6 +55,7 @@ class Thumbnail implements ImageInterface {
 	 * @var \TYPO3\Flow\Resource\Resource
 	 * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
 	 * @Flow\Validate(type = "NotEmpty")
+	 * @ORM\JoinColumn(nullable=false)
 	 */
 	protected $resource;
 
