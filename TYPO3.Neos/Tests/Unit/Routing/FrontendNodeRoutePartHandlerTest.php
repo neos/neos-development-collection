@@ -10,6 +10,8 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -33,6 +35,11 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
  * good old PHP 3 times ...
  */
 class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
+
+	/**
+	 * @var SystemLoggerInterface
+	 */
+	protected $mockSystemLogger;
 
 	/**
 	 * @var ContextFactoryInterface
@@ -89,6 +96,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		}));
 		$this->mockContextFactory = $mockContextFactory;
 		$this->inject($this->routePartHandler, 'contextFactory', $this->mockContextFactory);
+
+		$this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+		$this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
 
 		$this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
 		$this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);

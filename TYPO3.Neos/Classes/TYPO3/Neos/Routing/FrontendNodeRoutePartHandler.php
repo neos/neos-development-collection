@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -26,6 +27,12 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * A route part handler for finding nodes specifically in the website's frontend.
  */
 class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface {
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * @Flow\Inject
@@ -89,18 +96,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
 	 * @return boolean TRUE if the $requestPath could be matched, otherwise FALSE
 	 * @throws \Exception
-	 * @throws Exception\NoSuchDimensionValueException
 	 * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
 	 */
 	protected function matchValue($requestPath) {
 		try {
 			$node = $this->convertRequestPathToNode($requestPath);
-		} catch (NoSuchDimensionValueException $exception) {
-			throw $exception;
 		} catch (Exception $exception) {
 			if ($requestPath === '') {
 				throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
 			}
+
+			$this->systemLogger->log('FrontendNodeRoutePartHandler matchValue(): ' . $exception->getMessage(), LOG_DEBUG);
 
 			return FALSE;
 		}
