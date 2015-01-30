@@ -2090,7 +2090,7 @@ That's why we are dropping the above syntax completely, replacing it with
 the following:
 
 New Processors
-==============
+~~~~~~~~~~~~~~
 
 ::
 
@@ -2103,7 +2103,7 @@ New Processors
   the to-be-processed content.
 
 Extended Syntax
----------------
+~~~~~~~~~~~~~~~
 
 Furthermore, there exists an extended syntax as follows::
 
@@ -2119,7 +2119,7 @@ Furthermore, there exists an extended syntax as follows::
   "after [otherkey]". That's extremely powerful!
 
 Using TypoScript Objects or Eel Expressions
--------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Instead of using Eel expressions, you can use arbitrary TypoScript
 objects for processing stuff, as in the (contrived) example below::
@@ -2129,7 +2129,7 @@ objects for processing stuff, as in the (contrived) example below::
 	}
 
 Unsetting of Processors
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Unsetting processors was not possible before; now that's
 easily done using the ">" operator::
@@ -2140,7 +2140,7 @@ That also works correctly when being combined with prototype
 inheritance.
 
 Using TypoScript Objects in @override
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Furthermore, this change also adjusts the @override functionality
 such that a context variable's value is the return value of a
@@ -2155,7 +2155,7 @@ TypoScript object::
 	}
 
 Code Cleanup
-------------
+~~~~~~~~~~~~
 
 This feature has been developed in a very test-driven manner, every functionality
 is well-covered with tests. Additionally, the tests and the code of the
@@ -2189,7 +2189,7 @@ with the same topic as well.
 --------------------------------------------------------------------------------------------
 
 Problem Description
-===================
+~~~~~~~~~~~~~~~~~~~
 
 Imagine a TypoScript file Base.ts2 with the following contents::
 
@@ -2209,7 +2209,7 @@ Without this change, this was not the case, because TypoScript
 object prototypes were flattened too early.
 
 Solution
-========
+~~~~~~~~
 
 Just make sure the flattening of the TypoScript prototypes
 happens only at the very end of the full parsing step.

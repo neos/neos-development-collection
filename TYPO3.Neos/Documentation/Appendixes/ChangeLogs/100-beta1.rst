@@ -11,7 +11,7 @@ emphasized some of the most needed features. We've tried our best to include all
 your projects from this release to the final release will be as easy as possible.**
 
 Main highlights are
--------------------
+===================
 
 Node References
 ---------------

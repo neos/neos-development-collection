@@ -141,7 +141,7 @@ The TYPO3 Neos Setup Tool
       :alt: The TYPO3 Neos start page
       :class: screenshot-fullsize
 
-	The TYPO3 Neos start page
+      The TYPO3 Neos start page
 
 .. _TYPO3 Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
 .. _TYPO3 Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html

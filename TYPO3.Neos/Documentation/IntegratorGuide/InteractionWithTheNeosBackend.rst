@@ -59,14 +59,13 @@ Example of listening for the ``LayoutChanged`` event.
   }, false);
 
 .. tip::
+  As an alternative to using the ``LayoutChanged`` event, listening to transition events on the body can be done.
 
-As an alternative to using the ``LayoutChanged`` event, listening to transition events on the body can be done.
+  Example (using jQuery)::
 
-Example (using jQuery)::
-
-  $('body').on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
-  	// Do stuff
-  });
+    $('body').on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+    	// Do stuff
+    });
 
 
 Backend API
