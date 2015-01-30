@@ -69,10 +69,7 @@ root {
 		entryIdentifier {
 			node = ${node}
 			editPreviewMode = ${editPreviewMode}
-			format = ${request.format}
-			domain = ${site.context.currentDomain}
 		}
-
 		entryTags {
 			# Whenever the node changes the matched condition could change
 			1 = ${'Node_' + documentNode.identifier}

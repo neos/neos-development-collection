@@ -24,7 +24,6 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 		mode = 'cached'
 		entryIdentifier {
 			documentNode = ${documentNode}
-			domain = ${site.context.currentDomain}
 		}
 		entryTags {
 			1 = 'NodeType_TYPO3.Neos:Document'
