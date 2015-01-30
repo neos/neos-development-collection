@@ -558,14 +558,14 @@ Depends: Id013f5788a1f11fd9e2c9174e1e0588de0100c39
 [FEATURE] Made menu classes for states configurable
 -----------------------------------------------------------------------------------------
 
-Example:
+Example::
 
-prototype(TYPO3.Neos:Menu) {
-	attributes.class = 'my-menu'
-	active.attributes.class = 'my-active-menu-item'
-	current.attributes.class = 'my-current-menu-item'
-	normal.attributes.class = 'my-normal-menu-item'
-}
+  prototype(TYPO3.Neos:Menu) {
+  	attributes.class = 'my-menu'
+  	active.attributes.class = 'my-active-menu-item'
+  	current.attributes.class = 'my-current-menu-item'
+  	normal.attributes.class = 'my-normal-menu-item'
+  }
 
 Depends on https://review.typo3.org/#/c/26036/
 Depends on https://review.typo3.org/#/c/26102/
@@ -1016,9 +1016,9 @@ Depends: Id3d887094e3a79e58ccfe4a89dff87ca0a96c291
 -----------------------------------------------------------------------------------------
 
 Streamlines the TS implementation classes:
+
 * Remove protected members & setters that were never evaluated
-* Wrap tsValue() calls by getters to make implementations
-  self-describing
+* Wrap tsValue() calls by getters to make implementations self-describing
 * Move required default properties to TypoScript
 * Commit: `eb1af54 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/eb1af54596d68432501b78cb3fc55b8e2ef05c95>`_
 
@@ -1035,8 +1035,7 @@ Streamlines the TS implementation classes:
 [!!!][TASK] Remove Attributes TS object
 -----------------------------------------------------------------------------------------
 
-This removes ``TYPO3.Neos:Attributes`` in favor of
-``TYPO3.TypoScript:Attributes``.
+This removes ``TYPO3.Neos:Attributes`` in favor of ``TYPO3.TypoScript:Attributes``.
 
 This is a breaking change if you referred to
 ``TYPO3.Neos:Attributes`` in your TypoScript. In that case you should
@@ -1077,6 +1076,7 @@ templates.
 
 This is especially useful if you want to make properties of a custom
 document node inline-editable::
+
  <neos:contentElement.wrap>
    <div>
      {neos:contentElement.editable(property: 'someProperty')}
@@ -1378,14 +1378,14 @@ See http://ci.typo3.robertlemke.net/job/typo3-neos-branch/2/
 [FEATURE] Made node types menu classes for states configurable
 -----------------------------------------------------------------------------------------
 
-Example:
+Example::
 
-prototype(TYPO3.Neos.NodeTypes:Menu) {
-	attributes.class = 'my-menu'
-	active.attributes.class = my-'active-menu-item'
-	current.attributes.class = 'my-current-menu-item'
-	normal.attributes.class = 'my-normal-menu-item'
-}
+ prototype(TYPO3.Neos.NodeTypes:Menu) {
+ 	attributes.class = 'my-menu'
+ 	active.attributes.class = my-'active-menu-item'
+ 	current.attributes.class = 'my-current-menu-item'
+ 	normal.attributes.class = 'my-normal-menu-item'
+ }
 
 Depends on https://review.typo3.org/#/c/26036/
 Depends on https://review.typo3.org/#/c/26102/
@@ -1501,14 +1501,14 @@ See http://ci.typo3.robertlemke.net/job/typo3-neos-branch/2/
 [FEATURE] Made node types menu classes for states configurable
 -----------------------------------------------------------------------------------------
 
-Example:
+Example::
 
-prototype(TYPO3.Neos.NodeTypes:Menu) {
-	attributes.class = 'my-menu'
-	active.attributes.class = my-'active-menu-item'
-	current.attributes.class = 'my-current-menu-item'
-	normal.attributes.class = 'my-normal-menu-item'
-}
+ prototype(TYPO3.Neos.NodeTypes:Menu) {
+ 	attributes.class = 'my-menu'
+ 	active.attributes.class = my-'active-menu-item'
+ 	current.attributes.class = 'my-current-menu-item'
+ 	normal.attributes.class = 'my-normal-menu-item'
+ }
 
 Depends on https://review.typo3.org/#/c/26036/
 Depends on https://review.typo3.org/#/c/26102/
@@ -1771,7 +1771,7 @@ This is more robust as you don't have to pass this
 variable around.
 
 This is only breaking if you implement ViewHelpers that need
-access to the TypoScriptObject. I this case you now need to use:
+access to the TypoScriptObject. I this case you now need to use::
 
   $this->viewHelperVariableContainer->getView()
     ->getTypoScriptObject();
@@ -1786,6 +1786,7 @@ You will need to implement the TypoScriptAwareViewInterface.
 -----------------------------------------------------------------------------------------
 
 Streamlines the TS implementation classes:
+
 * Remove protected members & setters that were never evaluated
 * Wrap tsValue() calls by getters to make implementations
   self-describing
@@ -1797,10 +1798,12 @@ Streamlines the TS implementation classes:
 
 Introduces an ``Attributes`` TS object that can be used to render
 valid HTML/XML attributes.
+
 This also adjusts the ``Tag`` TS object to make use of the Attributes
 prototype internally.
 
 usage::
+
  attributes = TYPO3.TypoScript:Attributes {
    foo = 'bar'
    class = TYPO3.TypoScript:RawArray {

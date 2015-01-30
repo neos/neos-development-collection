@@ -46,7 +46,7 @@ Viewhelper include::
 
 The next thing is to iterate through the nodes found by TypoScript.
 
-Iterating through nodes:
+Iterating through nodes::
 
     <f:for each="{items}" as="item">
         ...
