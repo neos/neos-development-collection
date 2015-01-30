@@ -299,9 +299,12 @@ class ImageVariant implements ImageInterface {
 	 * @return void
 	 */
 	public function __wakeup() {
-		if ($this->originalImage->getResource() === NULL) {
-			// hack for working around a bug that is caused by serialization under some (unknown) circumstances
-			$this->originalImage = $this->persistenceManager->getObjectByIdentifier(\TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->originalImage, 'Persistence_Object_Identifier', TRUE), 'TYPO3\Media\Domain\Model\Image');
+		// in some rare cases originalImage may be not set, like when one node has two properties with the same image resource
+		if ($this->originalImage instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
+			if ($this->originalImage->getResource() === NULL) {
+				// hack for working around a bug that is caused by serialization under some (unknown) circumstances
+				$this->originalImage = $this->persistenceManager->getObjectByIdentifier(\TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->originalImage, 'Persistence_Object_Identifier', TRUE), 'TYPO3\Media\Domain\Model\Image');
+			}
 		}
 	}
 
