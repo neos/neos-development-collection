@@ -515,7 +515,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
 		}
 
-		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+		if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
 		}
 
@@ -559,7 +559,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
 		}
 
-		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+		if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
 		}
 
@@ -603,7 +603,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
 		}
 
-		if (!$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+		if (!$referenceNode->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
 		}
 
