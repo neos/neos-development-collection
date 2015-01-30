@@ -1753,7 +1753,7 @@ Resolves: NEOS-535
 The usage and naming of data attributes for the node data
 is very inconsistent and there's no clear rules.
 
-- Renames node attributes from data-neos-* to data-node-*.
+- Renames node attributes from data-neos-\* to data-node-\*.
   Direct properties of the node are prefixed with _ and internal
   non properties are prefixed with __.
 - Replaces all usage of .attr('data with .data('
@@ -2227,7 +2227,7 @@ Fixes: NEOS-123
 [!!!][TASK] Harmonize TypoScript paths
 -----------------------------------------------------------------------------------------
 
-All TypoScript is now in: ``Resources/Private/TypoScript/´´
+All TypoScript is now in: ``Resources/Private/TypoScript/``
 
 The TypoScript ``autoInclude`` will now try to include a file
 ``Resources/Private/TypoScript/Root.ts2`` along with the old path which
@@ -3876,7 +3876,7 @@ selector. The secondary panel should close when the selected
 node changes (for example by changing the page).
 
 * Fixes: `#59452 <http://forge.typo3.org/issues/59452>`_
-Relates: NEOS-124
+* Related: NEOS-124
 
 * Commit: `c30d2f0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c30d2f0d797e9639c22092963567274213dfcc81>`_
 
@@ -4229,6 +4229,7 @@ like the normal input text, but expands when
 focussed allowing for extended lengths of text.
 
 Example usage::
+
   'TYPO3.Neos.NodeTypes:Page':
     properties:
       'description':
@@ -4259,6 +4260,7 @@ to those that have a descendant that matches the
 selector or given elements.
 
 Example::
+
   closestParentWithImageChild = ${q(node).parents()
     .has('[instanceof TYPO3.Neos.NodeTypes:Image]').first()}
 
@@ -7118,7 +7120,7 @@ which findByParentAndNodeType supports.
 -----------------------------------------------------------------------------------------
 
 This fixes an error while doctrine:migrate on a PostgreSQL database when
-adding a NOT NULL column to table typo3_typo3cr_domain_model_nodedata
+adding a NOT NULL column to table typo3\_typo3cr\_domain\_model\_nodedata
 already having rows in it.
 
 * Commit: `231f119 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/231f11946f663bcaab814618a95877b3131af18f>`_
@@ -7343,6 +7345,7 @@ This setting has precedence over the renderPath and type
 settings.
 
 Example::
+
   root {
     fooMatcher {
       condition = ${TRUE}

@@ -950,7 +950,7 @@ state.
 
 A menu could now render an active state on the shortcut
 to the homepage by for example using a custom node type
-for the homepage and adding the following condition:
+for the homepage and adding the following condition::
 
   <f:if condition="{item.node.nodeType.name} == 'My.Package:Homepage'">
       <f:then>
@@ -2430,7 +2430,7 @@ end() on the array which saves some microseconds.
 [BUGFIX] Correctly apply processors to cached and uncached segments
 -----------------------------------------------------------------------------------------
 
-Fixes an issue introduced in a577b9541f35a42747aa98f397f39654a5d23c83 
+Fixes an issue introduced in a577b9541f35a42747aa98f397f39654a5d23c83
 
 * Commit: `eb74d71 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/eb74d71e407aee288f69c2194c994f052222f497>`_
 
@@ -2475,7 +2475,7 @@ option.
 
 The cache entry identifier is auto-generated from the current context if
 not specified explicitly with "entryIdentifier" beneath the @cache
-property:
+property::
 
 	root.myPath.@cache.entryIdentifier {
 		node = ${node}
@@ -2491,14 +2491,14 @@ menu or sidebar that is included on many pages in Neos).
 A cache entry will be tagged with "Everything" if the "entryTags"
 configuration is not given. Custom tags should be set depending on the
 content to have a more intelligent flushing strategy (which depends on
-the application):
+the application)::
 
 	root.myPath.@cache.entryTags {
 		1 = ${'Node_' + documentNode.identifier}
 	}
 
 For dynamic content that should always be evaluated (regardless of being
-nested inside cached content) the caching can explicitly be disabled:
+nested inside cached content) the caching can explicitly be disabled::
 
 	root.myPath.dynamic.@cache.mode = 'uncached'
 
@@ -2506,7 +2506,7 @@ These parts will be rendered using the TypoScript runtime with all
 serialized context values, unless the "storeContext" property is
 configured. This property should be configured to include the minimal
 amount of context variables that are necessary to render the uncached
-path:
+path::
 
 	root.myPath.dynamic.@cache {
 		mode = 'uncached'

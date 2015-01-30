@@ -138,7 +138,7 @@ state.
 
 A menu could now render an active state on the shortcut
 to the homepage by for example using a custom node type
-for the homepage and adding the following condition:
+for the homepage and adding the following condition::
 
   <f:if condition="{item.node.nodeType.name} == 'My.Package:Homepage'">
       <f:then>
@@ -264,6 +264,7 @@ that could break routing in frontend and backend in certain
 circumstances.
 
 Background:
+
 This route was meant to support custom rendering formats (similar to
 the ``typeNum`` feature in TYPO3 CMS). But apparently this is currently
 not used anywhere in the code and the same can be achieved with custom
