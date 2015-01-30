@@ -55,7 +55,6 @@ path::
 			entryIdentifier {
 				node = ${node}
 				editPreviewMode = ${editPreviewMode}
-				format = ${request.format}
 			}
 
 			entryTags {
@@ -68,8 +67,11 @@ path::
 	}
 
 The given configuration will cache the entire page content with a unique identifier defined by the current node
-(the document node), the preview mode and the request format. All the ``entryIdentifier`` values will be evaluated and
-combined to a single string value (the keys will be part of the identifier and sorted alphabetically).
+(the document node), the preview mode and *globally configured* entry identifiers.
+
+.. note::
+  All ``entryIdentifier`` values will be evaluated and combined to a single string value (the keys will be part of the
+  identifier and sorted alphabetically).
 
 In the ``@cache`` meta property the following subproperties are allowed:
 
@@ -91,8 +93,14 @@ In the ``@cache`` meta property the following subproperties are allowed:
   of the current configuration.
 
 ``entryIdentifier``
-  Configure the cache entry identifier for mode ``cached`` based on an array of values. If none is given the identifier
-  is built from all TypoScript context values that are simple values or implement ``CacheAwareInterface``.
+  Configure the cache entry identifier for mode ``cached`` based on an array of values.
+
+  The prototype ``TYPO3.TypoScript:GlobalCacheIdentifiers`` will be used as the base object, so global values that
+  influence *all* cache entries can be added to that prototype, see :ref:`Global cache entry identifiers` for more
+  details.
+
+  If this property is not set, the identifier is built from all TypoScript context values that are simple values or
+  implement ``CacheAwareInterface``.
 
   The identifier string value will be a hash built over all array values including and sorted by their key.
 
@@ -197,7 +205,7 @@ The following list of TypoScript prototypes is uncached by default:
 	cache entry but are embedded in the outer *static* ``ContentCollection``.
 
 Overriding default cache configuration
-======================================
+--------------------------------------
 
 You can override default cache configuration in your TypoScript::
 
@@ -208,6 +216,46 @@ You can also override cache configuration for a specific TypoScript Path::
     page.content.main {
     	prototype(TYPO3.Neos:Plugin).@cache.mode = 'cached'
     }
+
+.. _Global cache entry identifiers:
+
+Global cache entry identifiers
+==============================
+
+Information like the request format or base URI that was used to render a site might have impact on all generated URIs.
+Depending on the site or application other data might influence the uniqueness of cache entries. If an ``entryIdentifier``
+for a cached path is declared without an object type, it will default to ``TYPO3.TypoScript:GlobalCacheIdentifiers``::
+
+	prototype(My.Package:ExampleNode) {
+		@cache {
+			mode = 'cached'
+
+			# This is the default if no object type is specified
+			# entryIdentifier = TYPO3.TypoScript:GlobalCacheIdentifiers
+			entryIdentifier {
+				someValue = ${q(node).property('someValue')}
+			}
+		}
+	}
+
+This prototype can be extended to add or remove custom global values that influence *all* cache entries without a specific
+object type::
+
+	prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+		myRequestArgument = ${request.arguments.myArgument}
+	}
+
+You can use a ``TYPO3.TypoScript:RawArray`` to explicitly specify the values that are used for the entry identifier::
+
+	prototype(My.Package:ExampleNode) {
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier = TYPO3.TypoScript:RawArray {
+				someValue = ${q(node).property('someValue')}
+			}
+		}
+	}
 
 Tuning your cache
 =================
