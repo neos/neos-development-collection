@@ -55,6 +55,11 @@ class NodeDataExportServiceTest extends FunctionalTestCase {
 	protected $workspaceRepository;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 */
+	protected $nodeTypeManager;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -66,7 +71,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function aSingleNodeExportedWithNodeDataExportCanBeImportedWithNodeDataImport() {
-		$originalNode = $this->rootNode->createNode('foo');
+		$originalNode = $this->rootNode->createNode('foo', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:ImportExport'));
 		$originalNode->setProperty('description', 'Some node with a property');
 		$originalNode->setProperty('someDate', new \DateTime());
 		$this->persistenceManager->persistAll();
@@ -97,6 +102,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase {
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
 		$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
 		$this->rootNode = $this->context->getNode('/');
 		$this->persistenceManager->persistAll();
 	}

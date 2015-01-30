@@ -166,3 +166,10 @@
   properties:
     text:
       type: 'string'
+
+'TYPO3.TYPO3CR.Testing:ImportExport':
+  properties:
+    description:
+      type: string
+    someDate:
+      type: \DateTime
