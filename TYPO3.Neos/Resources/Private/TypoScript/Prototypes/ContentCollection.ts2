@@ -1,20 +1,32 @@
-# Default case for ContentCollection TS Object
-#
-prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
-	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
+# This is a helper TypoScript object which is used to render all of the child elements
+# of a current node.
+prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
+	# Set context removedContentShown to get removed nodes too.
+	# Needed for publish function to be able to publish removed nodes.
+	collection = ${q(node).context({'removedContentShown': true}).children()}
+	# Render every item by its own TS object
+	itemRenderer = TYPO3.Neos:ContentCase
+	itemName = 'node'
+	iterationName = 'iterator'
+}
+
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
+	attributes = TYPO3.TypoScript:Attributes
+	attributes.class = 'neos-contentcollection'
+	tagName = 'div'
 
 	nodePath = 'to-be-set-by-user'
-
-	itemName = 'node'
-	itemRenderer = TYPO3.Neos:ContentCase
-
-	attributes.class = 'neos-contentcollection'
 
 	# You may override this to get your content collection from a different place than the current node.
 	# The Eel helper is used to provide a better error message if no content collection could be found.
 	@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
-	@process.contentElementWrapping {
+	content = TYPO3.Neos:ContentCollectionRenderer {
+		@override.node = ${contentCollectionNode}
+	}
+
+	# We have to define contentElementWrapping, because we do not inherit from TYPO3.Neos:Content
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
 		node = ${contentCollectionNode}
 	}
 
