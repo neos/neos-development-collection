@@ -120,6 +120,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
 					'command) which currently don\'t have child nodes as configured by the node type\'s' . PHP_EOL .
 					'configuration new child nodes will be created.' . PHP_EOL . PHP_EOL .
+					'<u>Reorder child nodes</u>' . PHP_EOL .
+					PHP_EOL .
+					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
+					'command) which have configured child nodes, those child nodes are reordered according to the' . PHP_EOL .
+					'position from the parents NodeType configuration.' . PHP_EOL . PHP_EOL .
 					'<u>Missing default properties</u>' . PHP_EOL .
 					PHP_EOL .
 					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
@@ -150,6 +155,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					$this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
 				}
 				$this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
+				$this->reorderChildNodes($nodeType, $workspaceName, $dryRun);
 				$this->addMissingDefaultValues($nodeType, $workspaceName, $dryRun);
 		}
 	}
@@ -652,4 +658,85 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			->execute();
 	}
 
+	/**
+	 * Reorder child nodes according to the current position configuration of child nodes.
+	 *
+	 * @param NodeType $nodeType Only for this node type, if specified
+	 * @param string $workspaceName Name of the workspace to consider
+	 * @param boolean $dryRun Simulate?
+	 * @return void
+	 */
+	protected function reorderChildNodes(NodeType $nodeType = NULL, $workspaceName, $dryRun) {
+		if ($nodeType !== NULL) {
+			$this->output->outputLine('Checking nodes of type "%s" for child nodes that needs reordering ...', array($nodeType->getName()));
+			$this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+		} else {
+			$this->output->outputLine('Checking for child nodes that needs reordering ...');
+			foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+				/** @var NodeType $nodeType */
+				if ($nodeType->isAbstract()) {
+					continue;
+				}
+				$this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+			}
+		}
+	}
+
+	/**
+	 * Reorder child nodes for the given node type
+	 *
+	 * @param NodeType $nodeType
+	 * @param string $workspaceName
+	 * @param boolean $dryRun
+	 * @return void
+	 */
+	protected function reorderChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun) {
+		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), FALSE);
+		$nodeTypes[$nodeType->getName()] = $nodeType;
+
+		if ($this->nodeTypeManager->hasNodeType((string)$nodeType)) {
+			$nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
+			$nodeTypeNames[$nodeType->getName()] = $nodeType;
+		} else {
+			$this->output->outputLine('Node type "%s" does not exist', array((string)$nodeType));
+			exit(1);
+		}
+
+		$context = $this->createContext($workspaceName);
+		/** @var $nodeType NodeType */
+		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+			$childNodes = $nodeType->getAutoCreatedChildNodes();
+			if ($childNodes === array()) {
+				continue;
+			}
+
+			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+				/** @var NodeInterface $childNodeBefore */
+				$childNodeBefore = NULL;
+				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if (!$node instanceof NodeInterface) {
+					continue;
+				}
+				foreach ($childNodes as $childNodeName => $childNodeType) {
+					$childNode = $node->getNode($childNodeName);
+					if ($childNode) {
+						if ($childNodeBefore) {
+							if ($dryRun === FALSE) {
+								if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
+									$childNode->moveAfter($childNodeBefore);
+									$this->output->outputLine('Moved node named "%s" after node named "%s" in "%s"', array($childNodeName, $childNodeBefore->getName(), $node->getPath()));
+								}
+							} else {
+								$this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', array($childNodeName, $childNodeBefore->getName(), $node->getPath()));
+							}
+						}
+					} else {
+						$this->output->outputLine('Missing child node named "%s" in "%s".', array($childNodeName, $node->getPath()));
+					}
+
+					$childNodeBefore = $childNode;
+				}
+			}
+		}
+	}
 }

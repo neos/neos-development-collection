@@ -36,6 +36,9 @@ additionalProperties:
         additionalProperties: FALSE
         properties:
           'type': { type: string, description: "Node Type of this child node." }
+          'position':
+            type: ['string', 'null']
+            description: "Position of this child node."
           'constraints': *constraints
 
     'properties':
