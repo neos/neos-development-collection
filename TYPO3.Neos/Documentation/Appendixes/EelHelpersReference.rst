@@ -566,8 +566,8 @@ Math.getSQRT2()
 
 **Return** (float) Square root of 2, approximately 1.414
 
-Math.hypot(x, y, z_)
-^^^^^^^^^^^^^^^^^^^^
+Math.hypot(x, y, z\_)
+^^^^^^^^^^^^^^^^^^^^^
 
 * ``x`` (float) A number
 * ``y`` (float) A number
@@ -636,16 +636,16 @@ Math.log2(x)
 
 **Return** (float) The base 2 logarithm of the given value
 
-Math.max(x, y_)
-^^^^^^^^^^^^^^^
+Math.max(x, y\_)
+^^^^^^^^^^^^^^^^
 
 * ``x`` (float, *optional*) A number
 * ``y_`` (float, *optional*) Optional variable list of additional numbers
 
 **Return** (float) The largest of the given numbers (zero or more)
 
-Math.min(x, y_)
-^^^^^^^^^^^^^^^
+Math.min(x, y\_)
+^^^^^^^^^^^^^^^^
 
 * ``x`` (float, *optional*) A number
 * ``y_`` (float, *optional*) Optional variable list of additional numbers

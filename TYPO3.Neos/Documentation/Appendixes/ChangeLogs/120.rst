@@ -7125,7 +7125,7 @@ already having rows in it.
 
 * Commit: `231f119 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/231f11946f663bcaab814618a95877b3131af18f>`_
 
-[TASK] Clarify documentation for *NodePublishing signals
+[TASK] Clarify documentation for **NodePublishing signals**
 -----------------------------------------------------------------------------------------
 
 * Commit: `047ed00 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/047ed00c6c75e23f417d03d6abdc5d33731ea8ae>`_

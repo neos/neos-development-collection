@@ -174,7 +174,7 @@ $=
   Value ends with operand (string-based)
 ^=
   Value starts with operand (string-based)
-*=
+\*=
   Value contains operand (string-based)
 instanceof
   Checks if the value is an instance of the operand

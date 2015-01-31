@@ -6,11 +6,12 @@ TYPO3 Neos Documentation
 TYPO3 Neos is a free enterprise web content management system licensed under the GPL.
 
 .. toctree::
-	:maxdepth: 2
+   :maxdepth: 2
 
-	GettingStarted/Index
-	IntegratorGuide/Index
-	IntegratorsCookbook/Index
-	DeveloperGuide/Index
-	Appendixes/Index
-	Contributors
+   GettingStarted/Index
+   IntegratorGuide/Index
+   IntegratorsCookbook/Index
+   DeveloperGuide/Index
+   Appendixes/Index
+   Contributors
+   Targets

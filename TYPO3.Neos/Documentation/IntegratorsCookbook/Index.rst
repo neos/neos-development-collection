@@ -16,27 +16,27 @@ Integrators Cookbook
 
 
 .. toctree::
-	:maxdepth: 2
+   :maxdepth: 2
 
-	WrappingListOfContentElements
-	CreatingContentElement
-	CustomizingInspector
-	SelectingPageTemplate
-	ChangingBodyClassWithCondition
-	RenderingMenu
-	IntegratingJavaScriptSlider
-	RenderingMetaNavigation
-	EditableSharedFooter
-	ExtendingPages
-	RenderingSpecialFormats
-	AddingSimpleContactForm
-	CreatingPlugin
-	TranslatingContent
+   WrappingListOfContentElements
+   CreatingContentElement
+   CustomizingInspector
+   SelectingPageTemplate
+   ChangingBodyClassWithCondition
+   RenderingMenu
+   IntegratingJavaScriptSlider
+   RenderingMetaNavigation
+   EditableSharedFooter
+   ExtendingPages
+   RenderingSpecialFormats
+   AddingSimpleContactForm
+   CreatingPlugin
+   TranslatingContent
 
-.. currently unused:
-..	NavigatingNodesEelFlowQuery
-..	RenderingBreadcrumb
-..	StructuringSitePackage
-..	WellBehavedJavaScriptForContentEditing
-..	WorkingWithConditions
-..	WrappingListOfContentElements
+.. currently excluded from menus:
+
+   NavigatingNodesEelFlowQuery
+   RenderingBreadcrumb
+   StructuringSitePackage
+   WellBehavedJavaScriptForContentEditing
+   WorkingWithConditions
