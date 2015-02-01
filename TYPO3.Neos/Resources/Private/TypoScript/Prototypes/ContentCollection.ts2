@@ -1,18 +1,22 @@
 # This is a helper TypoScript object which is used to render all of the child elements
 # of a current node.
 prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
+	nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
-	collection = ${q(node).context({'removedContentShown': true}).children()}
+	collection = ${this.nodeAvailable ? q(node).context({'removedContentShown': true}).children() : []}
 	# Render every item by its own TS object
 	itemRenderer = TYPO3.Neos:ContentCase
 	itemName = 'node'
 	iterationName = 'iterator'
+
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
 prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
-	attributes = TYPO3.TypoScript:Attributes
-	attributes.class = 'neos-contentcollection'
+	attributes = TYPO3.TypoScript:Attributes {
+		class = 'neos-contentcollection'
+	}
 	tagName = 'div'
 
 	nodePath = 'to-be-set-by-user'
@@ -44,6 +48,8 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 
 		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
 	}
+
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
 prototype(TYPO3.Neos:Content) {
