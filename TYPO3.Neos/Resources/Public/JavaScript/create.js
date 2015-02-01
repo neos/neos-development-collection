@@ -21,6 +21,24 @@ define(
 		return Ember.Object.create({
 				// Initially set state to null
 			_state: null,
+			editableOptions: {
+				disabled: false,
+				vie: vieInstance,
+				widgets: {
+					'default': 'aloha'
+				},
+				collectionWidgets: {
+					'default': 'typo3CollectionWidget'
+				},
+				editors: {
+					aloha: {
+						widget: 'alohaWidget'
+					},
+					'inline-only': {
+						widget: 'editWidget'
+					}
+				}
+			},
 
 			initialize: function() {
 				var that = this;
@@ -47,27 +65,9 @@ define(
 			},
 
 			enableEdit: function() {
-				var editableOptions = {
-					disabled: false,
-					vie: vieInstance,
-					widgets: {
-						'default': 'aloha'
-					},
-					collectionWidgets: {
-						'default': 'typo3CollectionWidget'
-					},
-					editors: {
-						aloha: {
-							widget: 'alohaWidget'
-						},
-						'inline-only': {
-							widget: 'editWidget'
-						}
-					}
-				};
-
+				var that = this;
 				$('[about]').each(function() {
-					$(this).midgardEditable(editableOptions);
+					$(this).midgardEditable(that.get('editableOptions'));
 				});
 
 				this.set('_state', 'edit');
@@ -83,6 +83,10 @@ define(
 					$(this).removeClass('ui-state-disabled');
 				});
 				this.set('_state', 'browse');
+			},
+
+			refreshEdit: function($element) {
+				$element.midgardEditable(this.get('editableOptions'));
 			},
 
 			/**

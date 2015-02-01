@@ -18,7 +18,9 @@ additionalProperties:
 
               'label': { type: string, description: "Human-readable label for this property." }
 
-              'reloadIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
+              'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
+
+              'reloadPageIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
 
               'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
 

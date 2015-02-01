@@ -252,10 +252,10 @@ define(
 			}
 		},
 
-		_createEntityWrapper: function($element) {
+		_createEntityWrapper: function($element, replace) {
 			var subject = vie.service('rdfa').getElementSubject($element);
 
-			if (!this._entitiesBySubject[subject]) {
+			if (!this._entitiesBySubject[subject] || replace === true) {
 				var entity = vie.entities.get(subject);
 				if (entity === undefined) {
 					return;
@@ -267,6 +267,10 @@ define(
 			}
 
 			return this._entitiesBySubject[subject];
+		},
+
+		replaceEntityWrapper: function($element) {
+			this._createEntityWrapper($element, true);
 		},
 
 		selectedNode: function() {
