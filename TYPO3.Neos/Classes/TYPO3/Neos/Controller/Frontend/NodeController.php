@@ -127,7 +127,7 @@ class NodeController extends ActionController {
 			}
 		}
 
-		if ($this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
+		if ($this->session->isStarted() && $this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
 			$this->session->putData('lastVisitedNode', $node->getIdentifier());
 		}
 	}
