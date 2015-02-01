@@ -27,7 +27,7 @@ class Version20141118174901 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-		$this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment ALTER ratiomode TYPE INT");
-		$this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ALTER ratiomode TYPE INT");
+		$this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment ALTER ratiomode TYPE INT USING (ratiomode::integer)");
+		$this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ALTER ratiomode TYPE INT USING (ratiomode::integer)");
 	}
 }
