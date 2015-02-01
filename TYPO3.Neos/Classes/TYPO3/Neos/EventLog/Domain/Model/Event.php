@@ -33,13 +33,10 @@ class Event {
 	/**
 	 * We introduce an auto_increment column to be able to sort events at the same timestamp
 	 *
-	 * Note:
-	 *
-	 * * for MySQL this is defined as INT(11) NOT NULL AUTO_INCREMENT UNIQUE
-	 * * for PostgreSQL it is using a sequence
-	 *
 	 * @var integer
-	 * @ORM\Column(nullable=true)
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(nullable=true, options={"unsigned"=true})
 	 */
 	protected $uid;
 
@@ -89,7 +86,7 @@ class Event {
 	 * @param string $user
 	 * @param Event $parentEvent
 	 */
-	function __construct($eventType, $data, $user = NULL, Event $parentEvent = NULL) {
+	public function __construct($eventType, $data, $user = NULL, Event $parentEvent = NULL) {
 		$this->timestamp = new \DateTime();
 		$this->eventType = $eventType;
 		$this->data = $data;
