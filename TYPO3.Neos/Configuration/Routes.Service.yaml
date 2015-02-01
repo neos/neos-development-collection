@@ -30,7 +30,6 @@
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'index'
-    '@format':     'html'
   httpMethods: ['GET']
 
 -
@@ -41,7 +40,6 @@
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'update'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 # RESTful routes for Assets service
@@ -73,7 +71,6 @@
     '@subpackage': 'Service'
     '@action':     'getWorkspaceWideUnpublishedNodes'
     '@controller': 'Workspace'
-    '@format':     'html'
   appendExceedingArguments: TRUE
   httpMethods: ['GET']
 
@@ -85,7 +82,6 @@
     '@subpackage': 'Service'
     '@action':     'publishNode'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -96,7 +92,6 @@
     '@subpackage': 'Service'
     '@action':     'publishNodes'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -107,7 +102,6 @@
     '@subpackage': 'Service'
     '@action':     'discardNode'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -118,7 +112,6 @@
     '@subpackage': 'Service'
     '@action':     'discardNodes'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -129,7 +122,6 @@
     '@subpackage': 'Service'
     '@action':     'publishAll'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -140,7 +132,6 @@
     '@subpackage': 'Service'
     '@action':     'discardAll'
     '@controller': 'Workspace'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 # NodeController routes
@@ -152,7 +143,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'getChildNodesForTree'
-    '@format':     'html'
   httpMethods: ['GET']
 
 -
@@ -163,7 +153,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'filterChildNodesForTree'
-    '@format':     'html'
   httpMethods: ['GET']
 
 -
@@ -174,7 +163,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'searchPage'
-    '@format':     'html'
   httpMethods: ['GET']
 
 -
@@ -185,7 +173,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'getPageByNodePath'
-    '@format':     'html'
   httpMethods: ['GET']
 
 -
@@ -196,7 +183,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'create'
-    '@format':     'html'
   httpMethods: ['POST']
 
 -
@@ -207,7 +193,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createAndRender'
-    '@format':     'html'
   httpMethods: ['POST']
 
 -
@@ -218,7 +203,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createNodeForTheTree'
-    '@format':     'html'
   httpMethods: ['POST']
 
 -
@@ -229,7 +213,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'discardNode'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -240,7 +223,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'move'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -251,7 +233,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'copy'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -262,7 +243,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'update'
-    '@format':     'html'
   httpMethods: ['PUT']
 
 -
@@ -273,7 +253,6 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'delete'
-    '@format':     'html'
   # TODO: make DELETE method with the full REST implementation
   # For now we can not use DELETE and also pass arguments using the request body,
   # and client side we don\t have a UrlTemplates implementation yet
