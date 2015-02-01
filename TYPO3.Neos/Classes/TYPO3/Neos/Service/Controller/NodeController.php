@@ -40,9 +40,20 @@ class NodeController extends AbstractServiceController {
 	protected $view;
 
 	/**
-	 * @var string
+	 * @var array
 	 */
-	protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
+	protected $viewFormatToObjectNameMap = array(
+		'html' => 'TYPO3\Neos\Service\View\NodeView',
+		'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+	);
+
+	/**
+	 * @var array
+	 */
+	protected $supportedMediaTypes = array(
+		'text/html',
+		'application/json'
+	);
 
 	/**
 	 * @Flow\Inject
@@ -90,6 +101,14 @@ class NodeController extends AbstractServiceController {
 			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 		$this->uriBuilder->setRequest($this->request->getMainRequest());
+		if (in_array($this->request->getControllerActionName(), array('update', 'updateAndRender'), TRUE)) {
+			// Set PropertyMappingConfiguration for updating the node (and attached objects)
+			$propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
+			$propertyMappingConfiguration->allowOverrideTargetType();
+			$propertyMappingConfiguration->allowAllProperties();
+			$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+			$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		}
 	}
 
 	#
@@ -148,7 +167,6 @@ class NodeController extends AbstractServiceController {
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
-	 * @throws \InvalidArgumentException
 	 */
 	public function createAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
@@ -169,23 +187,11 @@ class NodeController extends AbstractServiceController {
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return string
-	 * @throws \InvalidArgumentException
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-
-		$view = new TypoScriptView();
-		$this->controllerContext->getRequest()->setFormat('html');
-		$view->setControllerContext($this->controllerContext);
-		$view->setOption('enableContentCache', FALSE);
-
-		$view->setTypoScriptPath($typoScriptPath);
-		$view->assign('value', $newNode->getParent());
-
-		$result = $view->render();
-		$this->response->setContent(json_encode((object)array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
-
-		return '';
+		$result = $this->renderNode($newNode->getParent(), $typoScriptPath);
+		$this->view->assign('value', array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath()));
 	}
 
 	/**
@@ -195,7 +201,6 @@ class NodeController extends AbstractServiceController {
 	 * @param array $nodeData
 	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
-	 * @throws \InvalidArgumentException
 	 */
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
@@ -264,17 +269,6 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Set PropertyMappingConfiguration for updating the node (and attached objects)
-	 */
-	public function initializeUpdateAction() {
-		$propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
-		$propertyMappingConfiguration->allowOverrideTargetType();
-		$propertyMappingConfiguration->allowAllProperties();
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
-	}
-
-	/**
 	 * Updates the specified node.
 	 *
 	 * Returns the following data:
@@ -299,6 +293,21 @@ class NodeController extends AbstractServiceController {
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Updates the specified node and renders it again.
+	 *
+	 * @param Node $node
+	 * @param string $typoScriptPath
+	 * @return void
+	 */
+	public function updateAndRenderAction(Node $node, $typoScriptPath) {
+		$this->updateAction($node);
+		$q = new FlowQuery(array($node));
+		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
+		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nodePath' => $node->getContextPath()), 'success' => TRUE));
 	}
 
 	/**
@@ -352,6 +361,22 @@ class NodeController extends AbstractServiceController {
 
 		$node = $contentContext->getNode($nodePath);
 		$this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => TRUE));
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @param string $typoScriptPath
+	 * @return string
+	 */
+	protected function renderNode($node, $typoScriptPath) {
+		$view = new TypoScriptView();
+		$this->controllerContext->getRequest()->setFormat('html');
+		$view->setControllerContext($this->controllerContext);
+		$view->setOption('enableContentCache', FALSE);
+
+		$view->setTypoScriptPath($typoScriptPath);
+		$view->assign('value', $node);
+		return $view->render();
 	}
 
 	/**

@@ -24,10 +24,12 @@ define(
 			},
 			'update': function(model, options) {
 				var that = this,
-					nodeJson = this._convertModelToJson(model);
+					nodeJson = this._convertModelToJson(model),
+					method = options.render === true ? 'updateAndRender' : 'update',
+					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
 				NodeEndpoint.set('_saveRunning', true);
-				NodeEndpoint.update(nodeJson).then(
+				NodeEndpoint[method](nodeJson, typoScriptPath).then(
 					function(result) {
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,

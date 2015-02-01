@@ -98,10 +98,10 @@ function(
 						'Content/Application'
 					],
 					function(ContentModule) {
-							ContentModule.reloadPage();
+						ContentModule.reloadPage();
 					}
 				);
-			}
+			};
 			switch (position) {
 				case 'before':
 					NodeActions.addAbove(nodeType, nodeEntity, callBack);

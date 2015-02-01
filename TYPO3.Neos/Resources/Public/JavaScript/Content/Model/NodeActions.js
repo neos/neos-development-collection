@@ -216,7 +216,6 @@ define(
 				position
 			).then(
 				function(result) {
-					result = JSON.parse(result);
 					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
 					callBack(result.nodePath, template);
 
