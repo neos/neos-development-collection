@@ -1,6 +1,6 @@
 window.T3 = {
 	isContentModule: location.pathname.match(/@user-/)
-} || window.T3;
+} || window.T3;
 
 requirePaths = window.T3Configuration.requirejs.paths || {};
 requirePaths['Library'] = '../Library';
