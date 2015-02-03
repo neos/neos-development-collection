@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
@@ -105,6 +106,12 @@ class NodeImportService {
 		'dimensionsHash' => array(),
 		'dimensionValues' => array(),
 		'properties' => array(),
+		'hiddenBeforeDateTime' => array(
+			'columnType' => Type::DATETIME
+		),
+		'hiddenAfterDateTime' => array(
+			'columnType' => Type::DATETIME
+		),
 		'accessRoles' => array()
 	);
 
@@ -261,6 +268,10 @@ class NodeImportService {
 				break;
 			case 'accessRoles':
 				$this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = json_decode($xmlReader->readString());
+				break;
+			case 'hiddenBeforeDateTime':
+			case 'hiddenAfterDateTime':
+				$this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
 				break;
 			default:
 				throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
@@ -542,7 +553,6 @@ class NodeImportService {
 		$nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
 		$nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
 
-
 		$connection->prepare('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
 			. ' WHERE nodedata IN ('
 			. '   SELECT persistence_object_identifier FROM typo3_typo3cr_domain_model_nodedata'
@@ -576,10 +586,12 @@ class NodeImportService {
 		$queryArguments = array();
 		$queryTypes = array();
 		foreach ($this->nodeDataPropertyNames as $propertyName => $propertyConfig) {
-			$queryParts[$propertyName] = ':' . $propertyName;
-			$queryArguments[$propertyName] = $nodeData[$propertyName];
-			if (isset($propertyConfig['columnType'])) {
-				$queryTypes[$propertyName] = $propertyConfig['columnType'];
+			if (isset($nodeData[$propertyName])) {
+				$queryParts[$propertyName] = ':' . $propertyName;
+				$queryArguments[$propertyName] = $nodeData[$propertyName];
+				if (isset($propertyConfig['columnType'])) {
+					$queryTypes[$propertyName] = $propertyConfig['columnType'];
+				}
 			}
 		}
 		$connection->executeUpdate('INSERT INTO typo3_typo3cr_domain_model_nodedata (' . implode(', ', array_keys($queryParts)) . ') VALUES (' . implode(', ', $queryParts) . ')', $queryArguments, $queryTypes);
