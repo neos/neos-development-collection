@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Exception;
 
 /**
  * A tool that can augment HTML for example by adding arbitrary attributes.
@@ -98,6 +99,7 @@ class HtmlAugmenter {
 	 *
 	 * @param array $attributes The attributes to render in the format array('<attributeKey>' => '<attributeValue>', ...)
 	 * @return string
+	 * @throws Exception
 	 */
 	protected function renderAttributes(array $attributes) {
 		$renderedAttributes = '';
@@ -106,7 +108,11 @@ class HtmlAugmenter {
 			if ($attributeValue === NULL) {
 				$renderedAttributes .= ' ' . $encodedAttributeName;
 			} else {
-				$encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', FALSE);
+				if (is_array($attributeValue) || (is_object($attributeValue) && !method_exists($attributeValue, '__toString'))) {
+					throw new Exception(sprintf('Only attributes with string values can be rendered, attribute %s is of type %s', $attributeName, gettype($attributeValue)));
+				}
+
+				$encodedAttributeValue = htmlspecialchars((string)$attributeValue, ENT_COMPAT, 'UTF-8', FALSE);
 				$renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
 			}
 		}

@@ -183,6 +183,12 @@ class ContentElementWrappingService {
 		} else {
 			$propertyValue = $node->getProperty($propertyName);
 		}
+
+		// Enforce an integer value for integer properties as otherwise javascript will give NaN and VIE converts it to an array containing 16 times 'NaN'
+		if ($dataType === 'integer') {
+			$propertyValue = (integer)$propertyValue;
+		}
+
 		// Serialize boolean values to String
 		if ($dataType === 'boolean') {
 			return $propertyValue ? 'true' : 'false';
