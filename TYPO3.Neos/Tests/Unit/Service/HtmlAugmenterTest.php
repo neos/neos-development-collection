@@ -38,7 +38,24 @@ class HtmlAugmenterTest extends UnitTestCase {
 	}
 
 	public function addAttributesDataProvider() {
+		eval('
+			class ClassWithToStringMethod {
+				public function __toString() {
+					return "casted value";
+				}
+			}
+		');
+		$mockObject = new \ClassWithToStringMethod();
+
 		return array(
+			// object values with __toString method
+			array(
+				'html' => '',
+				'attributes' => array('object' => $mockObject),
+				'fallbackTagName' => NULL,
+				'expectedResult' => '<div object="casted value"></div>'
+			),
+
 			// empty source
 			array(
 				'html' => '',
@@ -134,6 +151,24 @@ class HtmlAugmenterTest extends UnitTestCase {
 		);
 	}
 
+	public function invalidAttributesDataProvider() {
+		return array(
+			// invalid attributes
+			array(
+				'html' => '',
+				'attributes' => array('data-foo' => []),
+				'fallbackTagName' => NULL,
+				'expectedResult' => '<root>array value ignored</root>',
+			),
+			array(
+				'html' => '',
+				'attributes' => array('data-foo' => (object)[]),
+				'fallbackTagName' => NULL,
+				'expectedResult' => '<root>array value ignored</root>',
+			),
+		);
+	}
+
 	/**
 	 * @param string $html
 	 * @param array $attributes
@@ -149,5 +184,17 @@ class HtmlAugmenterTest extends UnitTestCase {
 			$actualResult = $this->htmlAugmenter->addAttributes($html, $attributes);
 		}
 		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @param string $html
+	 * @param array $attributes
+	 * @param string $fallbackTagName
+	 * @test
+	 * @dataProvider invalidAttributesDataProvider
+	 * @expectedException \TYPO3\Neos\Exception
+	 */
+	public function invalidAttributesTests($html, array $attributes, $fallbackTagName) {
+		$this->addAttributesTests($html, $attributes, $fallbackTagName, NULL);
 	}
 }
