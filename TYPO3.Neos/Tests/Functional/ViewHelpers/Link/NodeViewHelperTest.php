@@ -181,6 +181,15 @@ class NodeViewHelperTest extends FunctionalTestCase {
 		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
 		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us@live'));
 		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+
+		// The tests should also work in a regular fluid view, so we set that and repeat the tests
+		$mockView = $this->getAccessibleMock('TYPO3\Fluid\View\TemplateView', array(), array(), '', FALSE);
+		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer->setView($mockView);
+		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 	}
 
 	/**
