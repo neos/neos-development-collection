@@ -36,6 +36,7 @@ class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$typoScriptObjectName = 'TYPO3.Neos:PrimaryContent';
 		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\CaseImplementation($mockTsRuntime, $path, $typoScriptObjectName);
+		$renderer->setIgnoreProperties($ignoredProperties);
 
 		$renderer['nodePath'] = 'main';
 		$renderer['default'] = array(

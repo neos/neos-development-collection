@@ -83,5 +83,6 @@ array.advancedStartEndOrdering = TYPO3.TypoScript:Array {
 	g.@position = '90'
 }
 
-
-// same priorities
+array.ignoreProperties < array.positionalOrdering {
+	@ignoreProperties = ${['f']}
+}

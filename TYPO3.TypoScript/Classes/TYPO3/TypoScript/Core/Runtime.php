@@ -569,11 +569,15 @@ class Runtime {
 		if (!class_exists($tsObjectClassName)) {
 			throw new Exception(sprintf('The implementation class "%s" defined for TypoScript object of type "%s" does not exist (defined at %s).', $tsObjectClassName, $typoScriptObjectType, $typoScriptPath), 1347952109);
 		}
-		/**
-		 * @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
-		 */
+
+		/** @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject */
 		$typoScriptObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
 		if ($typoScriptObject instanceof \TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject) {
+			/** @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject */
+			if (isset($typoScriptConfiguration['__meta']['ignoreProperties'])) {
+				$evaluatedIgnores = $this->evaluate($typoScriptPath . '/__meta/ignoreProperties', $typoScriptObject);
+				$typoScriptObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : array());
+			}
 			$this->setPropertiesOnTypoScriptObject($typoScriptObject, $typoScriptConfiguration);
 		}
 		return $typoScriptObject;

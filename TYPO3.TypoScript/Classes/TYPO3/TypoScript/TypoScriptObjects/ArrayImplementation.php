@@ -46,12 +46,13 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject {
 	}
 
 	/**
-	 * Sort the TypoScript objects inside $this->subElements depending on:
+	 * Sort the TypoScript objects inside $this->properties depending on:
 	 * - numerical ordering
 	 * - position meta-property
 	 *
+	 * This will ignore all properties defined in "@ignoreProperties" in TypoScript
+	 *
 	 * @see \TYPO3\Flow\Utility\PositionalArraySorter
-	 * TODO Detect circles in after / before dependencies
 	 *
 	 * @return array an ordered list of keys
 	 * @throws TypoScript\Exception if the positional string has an unsupported format
@@ -62,6 +63,13 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject {
 			$sortedTypoScriptKeys = $arraySorter->getSortedKeys();
 		} catch (InvalidPositionException $exception) {
 			throw new TypoScript\Exception('Invalid position string', 1345126502, $exception);
+		}
+
+		foreach ($this->ignoreProperties as $ignoredPropertyName) {
+			$key = array_search($ignoredPropertyName, $sortedTypoScriptKeys);
+			if ($key !== FALSE) {
+				unset($sortedTypoScriptKeys[$key]);
+			}
 		}
 		return $sortedTypoScriptKeys;
 	}

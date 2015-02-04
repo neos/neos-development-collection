@@ -56,4 +56,15 @@ class TypoScriptArrayTest extends AbstractTypoScriptObjectTest {
 		$view->setTypoScriptPath('array/advancedStartEndOrdering');
 		$this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
 	}
+
+	/**
+	 * @test
+	 */
+	public function ignoredPropertiesWork() {
+		$view = $this->buildView();
+
+		$view->setTypoScriptPath('array/ignoreProperties');
+		$this->assertEquals('XbeforeXafter', $view->render());
+	}
+
 }

@@ -32,6 +32,21 @@ abstract class AbstractArrayTypoScriptObject extends AbstractTypoScriptObject im
 	protected $properties = array();
 
 	/**
+	 * If you iterate over "properties" these in here should usually be ignored. For example additional properties in "Case" that are not "Matchers".
+	 *
+	 * @var array
+	 */
+	protected $ignoreProperties = array();
+
+	/**
+	 * @param array $ignoreProperties
+	 * @return void
+	 */
+	public function setIgnoreProperties($ignoreProperties = array()) {
+		$this->ignoreProperties = $ignoreProperties;
+	}
+
+	/**
 	 * @param mixed $offset
 	 * @return boolean
 	 */

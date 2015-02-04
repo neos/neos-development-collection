@@ -36,7 +36,7 @@ class AttributesImplementation extends AbstractArrayTypoScriptObject {
 
 		$renderedAttributes = '';
 		foreach (array_keys($this->properties) as $attributeName) {
-			if ($attributeName === '__meta') continue;
+			if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) continue;
 
 			$encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', FALSE);
 			$attributeValue = $this->tsValue($attributeName);
