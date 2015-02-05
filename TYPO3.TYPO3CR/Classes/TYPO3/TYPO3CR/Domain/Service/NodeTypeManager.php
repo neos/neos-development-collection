@@ -194,6 +194,18 @@ class NodeTypeManager {
 		}
 		$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $nodeTypeConfiguration);
 
+		// Remove unset properties
+		if (isset($mergedConfiguration['properties'])) {
+			foreach ($mergedConfiguration['properties'] as $propertyName => $propertyConfiguration) {
+				if ($propertyConfiguration === NULL) {
+					unset($mergedConfiguration['properties'][$propertyName]);
+				}
+			}
+			if ($mergedConfiguration['properties'] === array()) {
+				unset($mergedConfiguration['properties']);
+			}
+		}
+
 		$nodeType = new NodeType($nodeTypeName, $superTypes, $mergedConfiguration);
 
 		$this->cachedNodeTypes[$nodeTypeName] = $nodeType;
