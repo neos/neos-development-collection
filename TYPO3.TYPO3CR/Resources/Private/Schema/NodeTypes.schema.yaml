@@ -42,7 +42,7 @@ additionalProperties:
           'constraints': *constraints
 
     'properties':
-      type: dictionary
+      type: ['dictionary', 'null']
       additionalProperties:
 
         # for each property...
