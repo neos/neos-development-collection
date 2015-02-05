@@ -204,6 +204,18 @@ class NodeTypeManager {
 			}
 		}
 
+		// Remove unset properties
+		if (isset($nodeTypeConfiguration['properties'])) {
+			foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {
+				if ($propertyConfiguration === NULL) {
+					unset($nodeTypeConfiguration['properties'][$propertyName]);
+				}
+			}
+			if ($nodeTypeConfiguration['properties'] === array()) {
+				unset($nodeTypeConfiguration['properties']);
+			}
+		}
+
 		$nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration);
 
 		$this->cachedNodeTypes[$nodeTypeName] = $nodeType;
