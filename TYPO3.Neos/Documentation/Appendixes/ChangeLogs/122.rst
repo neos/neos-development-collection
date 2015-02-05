@@ -1,0 +1,437 @@
+==================
+1.2.2 (2015-02-05)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/25/
+
+* Commit: `8157239 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8157239d53dc6f7b45ee63729654e28d3451ace2>`_
+
+[BUGFIX] Unsetting node properties not possible
+-----------------------------------------------------------------------------------------
+
+Correct handling of node properties set to null (unset).
+
+Fixes: NEOS-973
+
+* Commit: `574f7d9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/574f7d9dc5f9e555f1c615496999b91c0d468a2a>`_
+
+[BUGFIX] Empty integer values are converted to array by vie
+-----------------------------------------------------------------------------------------
+
+When a node type has a property of type integer without a default
+value configured the content element wrapping service wraps an
+empty attribute for that property. When vie reads the entity
+from the DOM it converts the attribute to an array containing a
+list of NaN string values.
+
+Besides converting the value it adds an exception to the
+HtmlAugmenter service that will be thrown if invalid attributes
+are passed.
+
+Resolves: NEOS-579
+
+* Commit: `7c3f124 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c3f124309ce942ffc78074eceabcfbfde710e73>`_
+
+[BUGFIX] Resource links breaks across HTTP scheme / domain
+-----------------------------------------------------------------------------------------
+
+If a site is accessed through different HTTP schemes (http/https),
+the cached content contains links with the first one accessed that
+is used for both. Same goes for different domains, if no domains
+have been configured for a site. This leads to errors with
+cross-origin resource sharing and unexpected behavior.
+
+Fixes: NEOS-852
+
+* Commit: `76249c5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/76249c50f195e6b7236f2d6bf6a0cf0fca56cfc8>`_
+
+[BUGFIX] Linking via context path works in non TypoScript environment
+-----------------------------------------------------------------------------------------
+
+Since 1.2 you couldn't link to a node using the context node path outside
+of TypoScript environments. This feature can be useful in lots of
+use-cases where you have a node path but no TypoScript context.
+
+This change fixes that behavior and adds tests that actually test this
+to prevent this kind of regression.
+
+Fixes: NEOS-961
+
+* Commit: `83a1fa6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/83a1fa6967b32a6ce007f73f3243e7438e11e788>`_
+
+[BUGFIX] Aloha list type styles missing in Raw Content Mode
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-889
+
+* Commit: `cfc9999 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cfc99995e74973655b55b9d097fb03eed483986d>`_
+
+[BUGFIX] Configuration module not displaying content
+-----------------------------------------------------------------------------------------
+
+The configuration module does not display any configuration
+when loadMinifiedJavascript is enabled in Firefox. This happens
+due to depending on a global configuration variable which is unset
+when read in the Ember application. This only happens in with the
+minified build due to JavaScript execution order. Instead of relying
+on the global variable, we set the explicit path to be used instead.
+
+Fixes: NEOS-881
+
+* Commit: `2a9ed2d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2a9ed2d1f11f27c45eda5a0eac52efb9205b4ba9>`_
+
+[BUGFIX] Deletion of rows/columns in Aloha tables
+-----------------------------------------------------------------------------------------
+
+Selecting a row or column in an Aloha table and clicking
+to delete it in the inspector, a Javascript error is
+thrown due to jQueryUI missing the dialog widget. This
+change adds that widget and styles the dialog to look
+like the standard dialog boxes.
+
+Fixes: NEOS-810
+
+* Commit: `2b98c45 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2b98c458e67eabde14a1ffae887587fce2c73ee6>`_
+
+[BUGFIX] Media button activated across editors
+-----------------------------------------------------------------------------------------
+
+Having multiple properties using instances of either
+the image or asset editors, clicking the media browser
+button will result in all buttons being shown as active
+at the same time. This is prevented by creating separate
+instances for each editor.
+
+Fixes: NEOS-756
+
+* Commit: `7d4c67c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7d4c67c8f21369c3c4b5ace0b583e6c78ff8f7f2>`_
+
+[TASK] Small doc fix: wrong indentation for note
+-----------------------------------------------------------------------------------------
+
+* Commit: `25e681a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/25e681ac9e978c6f9bba6b0aad1615dfca1df8b0>`_
+
+[BUGFIX] Avoid exceptions in FrontendNodeRoutePartHandler
+-----------------------------------------------------------------------------------------
+
+This change makes the FrontendNodeRoutePartHandler return FALSE in case
+a NoSuchDimensionValueException is thrown in matchValue(). This makes
+it possible to continue with routing to find other possible matches.
+
+Fixes: NEOS-923
+
+* Commit: `8a31301 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8a31301b9f4cde8ec7abe49c8fcca6cc6e312777>`_
+
+[TASK] Append number instead of uniqid to duplicate uriPathSegments
+-----------------------------------------------------------------------------------------
+
+When a uriPathSegment is duplicated on the same level a uniqid is appended
+to avoid conflicts. However this is not very user friendly, so instead a
+number is appended which additionally has a chance of not needing to be
+changed afterwards.
+
+Related: NEOS-970
+
+* Commit: `7c026d6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c026d6e859d2e2f97fc611cad2df83a25690832>`_
+
+[BUGFIX] Avoid broken image adjustments caused by floats
+-----------------------------------------------------------------------------------------
+
+When converting crop options from the preview image coordinates, no
+rounding took place. This could e.g. lead to very small negative numbers
+being used for the start coordinate, resulting in errors.
+
+This is avoided by using Math.round() in the calculation.
+
+* Commit: `1ff4415 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1ff4415d66043acbd46828ea3fbb92a101a2f8bb>`_
+
+[BUGFIX] Copying nodes created duplicate uriPathSegment entries
+-----------------------------------------------------------------------------------------
+
+On duplicating a document (page), the uriPathSegment property was simply
+copied as well, resulting in the same URI for two distinct documents if
+the copy is a sibling of the original nodes.
+
+This change amends the slot used to fill the uriPathSegment so those
+duplicates are avoided upon copy and can also no longer be caused by
+manually passing a used uriPathSegment.
+
+Fixes: NEOS-970
+
+* Commit: `a5b71f6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a5b71f69b05502070fff0e3b5f7299de7df0b1f0>`_
+
+[BUGFIX] Cross-browser compatible ellipsis animation
+-----------------------------------------------------------------------------------------
+
+The current implementation only support webkit browsers. The animation
+is used in various areas like login button, saving/publish button.
+
+Fixes: NEOS-940
+
+* Commit: `aedb2bb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/aedb2bb39d30e9a00339448fa8206e045567b5e6>`_
+
+[BUGFIX] Render service exceptions as JSON
+-----------------------------------------------------------------------------------------
+
+Adjusts the ``AbstractServiceController`` to catch all exceptions that
+occur during request processing in order to convert them to JSON::
+
+    {
+      "error": {
+        "code": 12345,
+        "message": "Exception message",
+        "details": "Optional message details",
+        "referenceCode": "2015012315120876d8b2",
+        "previous": {
+          "code": 54321,
+          "message": "Nested child exception"
+        }
+      }
+    }
+
+"details", "referenceCode" and "previous" are optional.
+
+Note: This is a preliminary solution that improves error handling in
+Backend. In the long term the exception handling of Flow will be
+improved and this hotfix be deprecated.
+
+Related: NEOS-108
+
+* Commit: `fa76b53 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fa76b533304edc99932f1feccd8bad144f8c9f74>`_
+
+[BUGFIX] Loose domain matching check in menu site list
+-----------------------------------------------------------------------------------------
+
+* Commit: `c32a5b1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c32a5b188643385e587a0fab9d94ef9c0102b241>`_
+
+[BUGFIX] Remove doubled slashes in site uri for site menu
+-----------------------------------------------------------------------------------------
+
+In the site menu the uri contained doubled slashes, because path had
+trailing slash and uri had leading slash. Removed the trailing slash
+in path. This only happens for sites with an active domain record.
+
+Resolves: NEOS-450
+
+* Commit: `f7caa8a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f7caa8af772890e2a96d15b7f9b40fe541d2e370>`_
+
+[BUGFIX] "uriPathSegment" not created via auto-created child nodes
+-----------------------------------------------------------------------------------------
+
+Fixes the issue where the property "uriPathSegment" is missing when
+document nodes are created via the auto-create child nodes mechanism.
+
+If a node type triggers creation of a sub node of type
+"TYPO3.Neos.NodeTypes:Page", that new node does not contain a
+"uriPathSegment" property and thus results in exception, for example if
+the sub document nodes are shown in the node tree.
+
+The solution provided by this change registers a simple slot for the
+Node Added signal which sets the uriPathSegment property to the
+node name if that property does not exist yet.
+
+Resolves: NEOS-925
+
+* Commit: `f17b975 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f17b9756775a90d3da3e68a634a10fbad49f1d45>`_
+
+[BUGFIX] Missing safe guard for empty label in NodeView
+-----------------------------------------------------------------------------------------
+
+Fixes an issue in NodeView which causes an exception on rare occasions
+when node type labels are empty.
+
+The original error message was::
+
+  Uncaught exception #1: Warning: strpos(): Empty needle in
+  TYPO3_Neos_Service_View_NodeView.php line 273
+
+* Commit: `8e5fe34 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8e5fe3448f4d647d0f80fc9e62ab41014cb7b560>`_
+
+Revert "[TASK] Refactor PrimaryContent to use 'renderer' instead of 'type'"
+-----------------------------------------------------------------------------------------
+
+This reverts commit 293f2c5cc8fd15ae892360f0cc01eff25f79f1d2 for the
+1.2 branch because it introduced a regression that breaks "Raw content
+editing".
+
+Background:
+Fixing "Raw content editing" is really easy and will be done for master
+(1.3+).
+But chances are that this also affects 3rd party code that added own editing
+modes.
+
+Fixes: NEOS-921
+
+* Commit: `b12991d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b12991d2b83f66b6fbd95cbf7ac056716a89286f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove unset NodeType properties from configuration
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-973
+
+* Commit: `15c0122 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/15c012243738cc946f5040598cde3c798daace56>`_
+
+[BUGFIX] RenameDimension transformation keeps existing dimensions
+-----------------------------------------------------------------------------------------
+
+The RenameDimension transformation was destructive for other existing
+dimensions, so executing a migration with this transformation twice
+would result in a broken state.
+
+Fixes: NEOS-926
+
+* Commit: `cee49b2 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/cee49b23f381c9cd8b601959b4d83be0bf1bc83a>`_
+
+[BUGFIX] Make SiblingsOperation usable on toplevel nodes
+-----------------------------------------------------------------------------------------
+
+The FlowQuery SiblingsOperation assumed that the nodes in the context
+all return a parent node. If that is not true, a fatal error is caused
+by the use of a method call on a non-object.
+
+This change fixes that by checking for the parent node to exist before
+trying to iterate over it's children.
+
+* Commit: `4d91146 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4d911469a426070ae882613487b2b78fad21d608>`_
+
+[TASK] Adjust NodeTypes schema to allow unsetting properties
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-973
+
+* Commit: `f649e09 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/f649e09ee1af2d2fc1c584fa00fa6a84ed737296>`_
+
+[BUGFIX] Correctly import node properties of type array
+-----------------------------------------------------------------------------------------
+
+If a set export contains nodes with array properties, the export cannot
+be imported again. Thus arrays of strings, as produced by references
+properties are rendered unusable.
+
+The change adds a test for this case and fixes it by the way array elements
+are parsed.
+
+Fixes: NEOS-931
+
+* Commit: `c14b6a8 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/c14b6a8a701b1a6bc91f5a11a06890ad6b1e3a0f>`_
+
+[BUGFIX] Allow configured childNodes to be moved
+-----------------------------------------------------------------------------------------
+
+ChildNodes should not be bound to constraints as they are explicitly
+configured. Therefore moving a Node that is a childNode at the target
+place should not be stopped by node constraints.
+
+* Commit: `9b2c03c <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9b2c03c9588d592024ace3a9174a24ecf133877e>`_
+
+[BUGFIX] Remove unpresent property from Repository
+-----------------------------------------------------------------------------------------
+
+This removes the not present property ``workspaceName``
+from the MigrationStatusRepository to make it function
+properly again.
+
+Resolves: NEOS-967
+
+* Commit: `2a87b57 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/2a87b57a05c7c024f4ed83e6698de6deea944835>`_
+
+[TASK] Improve node retrieval in node:repair's child node creation
+-----------------------------------------------------------------------------------------
+
+Improves the retrival of nodes in createChildNodesByNodeType to exclude
+shadow & removed nodes directly in the query as well as only fetching
+nodes for the given workspace.
+
+Related: NEOS-841
+
+* Commit: `c600480 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/c60048082586a27010a61319a6cd73b9fa2f7c11>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Don't catch SecurityExceptions
+-----------------------------------------------------------------------------------------
+
+This adjusts the method
+``AbstractRenderingExceptionHandler::handleRenderingException()`` to
+always rethrow exceptions of type ``TYPO3\\Flow\\Security\\Exception``.
+
+Background:
+
+If a security related exception is thrown, it must always bubble up.
+Otherwise redirection to login forms won't work when an
+``AuthenticationRequiredException`` is thrown in a sub request.
+
+Related: FLOW-130
+
+* Commit: `e47703f <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/e47703f5a5bdceb1b891aaf343a8cb1346e36cf3>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Add check to make sure OriginalImage exists in `__wakup` call
+-----------------------------------------------------------------------------------------
+
+In some rare cases OriginalImage may not be set when
+de-serializng ImageVariant object, like in case when there are
+two image properties pointing to the same image resource.
+Add a check just to be sure it's there before using it.
+
+Related: NEOS-979
+
+* Commit: `37183d0 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/37183d0ef001b9c15ccddae0f042c11f6c0c4271>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Language selector broken in iOS Safari (touch)
+-----------------------------------------------------------------------------------------
+
+Due to the language selector relying on hover state for displaying,
+it's not working on iOS Safari. This can be solved by using the pointer
+cursor.
+
+Fixes: NEOS-971
+
+* Commit: `275523c <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/275523c9eb344834566a8be36ab739861d2c5b6c>`_
+
+[BUGFIX] Link on logo should be to home
+-----------------------------------------------------------------------------------------
+
+The link on the Neos logo is supposed to go to the home page.
+In the template a link to the variable ``site`` is created, but
+as this variable is never set the link is to the current page.
+This change adds the variable to the template, fixing the link.
+
+* Commit: `d8d5b6a <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/d8d5b6ad918b63cd86f6aeb29ea7cbdc810a47e2>`_
+
