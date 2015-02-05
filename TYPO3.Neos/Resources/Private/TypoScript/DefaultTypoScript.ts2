@@ -70,7 +70,7 @@ root {
 			node = ${node}
 			editPreviewMode = ${editPreviewMode}
 			format = ${request.format}
-			domain = ${site.context.currentDomain}
+			baseUri = ${String.toString(request.httpRequest.baseUri)}
 		}
 
 		entryTags {

@@ -15,7 +15,7 @@ prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template) {
 		mode = 'cached'
 		entryIdentifier {
 			documentNode = ${documentNode}
-			domain = ${site.context.currentDomain}
+			baseUri = ${String.toString(request.httpRequest.baseUri)}
 		}
 		entryTags {
 			1 = 'NodeType_TYPO3.Neos:Document'

@@ -23,7 +23,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 
 		entryIdentifier {
 			collection = ${contentCollectionNode}
-			domain = ${site.context.currentDomain}
+			baseUri = ${String.toString(request.httpRequest.baseUri)}
 		}
 
 		entryTags {
