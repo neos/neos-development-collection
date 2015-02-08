@@ -261,7 +261,8 @@ ul.neos-dynatree-container {
 			white-space: nowrap;
 			max-width: $unit * 5.5;
 			padding-right: $relatedMargin;
-
+			font-size: $generalFontSize;
+			@include text-shadow(none);
 			&:hover,
 			&:focus {
 				text-decoration: none;
