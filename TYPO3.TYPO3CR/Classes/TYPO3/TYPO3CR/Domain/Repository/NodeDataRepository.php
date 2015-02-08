@@ -818,11 +818,11 @@ class NodeDataRepository extends Repository {
 		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
 		foreach ($pathSegments as $pathSegment) {
 			$constraintPath .= $pathSegment;
-			$pathConstraints[] = $constraintPath;
+			$pathConstraints[] = md5($constraintPath);
 			$constraintPath .= '/';
 		}
 		if (count($pathConstraints) > 0) {
-			$queryBuilder->andWhere('n.path IN (:paths)')
+			$queryBuilder->andWhere('n.pathHash IN (:paths)')
 				->setParameter('paths', $pathConstraints);
 		}
 
@@ -1078,9 +1078,8 @@ class NodeDataRepository extends Repository {
 		$count = 0;
 		foreach ($dimensions as $dimensionName => $dimensionValues) {
 			$dimensionAlias = 'd' . $count;
-			$queryBuilder->join('n.dimensions', $dimensionAlias, 'WITH', $dimensionAlias . '.name = \'' . $dimensionName . '\'')
-				->andWhere($dimensionAlias . '.value IN (:' . $dimensionAlias . ')')
-				->setParameter($dimensionAlias, $dimensionValues);
+			$queryBuilder->andWhere('n IN (SELECT IDENTITY(' . $dimensionAlias . '.nodeData) FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . '))');
+			$queryBuilder->setParameter($dimensionAlias, $dimensionValues);
 			$count++;
 		}
 	}
@@ -1169,7 +1168,6 @@ class NodeDataRepository extends Repository {
 		$queryBuilder = $this->entityManager->createQueryBuilder();
 
 		$queryBuilder->select('n')
-			->distinct()
 			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 			->where('n.workspace = :workspace')
 			->andWhere('n.movedTo IS NULL OR n.removed = :removed')
@@ -1420,7 +1418,6 @@ class NodeDataRepository extends Repository {
 		$queryBuilder = $this->entityManager->createQueryBuilder();
 
 		$queryBuilder->select('n')
-			->distinct()
 			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 			->where('n.workspace IN (:workspaces)')
 			->setParameter('workspaces', $workspaces);
