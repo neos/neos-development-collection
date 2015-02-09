@@ -105,4 +105,14 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	public function rendererWorksWithEelAndSimpleTypes() {
 		$this->assertMatchingWorks('case/rendererWorksWithEelAndSimpleTypes');
 	}
+
+	/**
+	 * @test
+	 */
+	public function rendererHasAccessToThis() {
+		$view = $this->buildView();
+
+		$view->setTypoScriptPath('case/rendererHasAccessToThis');
+		$this->assertContains('foo', $view->render());
+	}
 }

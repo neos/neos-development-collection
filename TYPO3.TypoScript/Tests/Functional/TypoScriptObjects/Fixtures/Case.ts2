@@ -85,3 +85,11 @@ case.rendererWorksWithEelAndSimpleTypes = TYPO3.TypoScript:Case {
 	default.renderer = ${'Xtestconditionfalse'}
 	default.@position = 'end'
 }
+
+case.rendererHasAccessToThis = TYPO3.TypoScript:Case {
+	test1 {
+		layout = "foo"
+		condition = ${this.layout ? true : false}
+		renderer = ${this.layout}
+	}
+}
