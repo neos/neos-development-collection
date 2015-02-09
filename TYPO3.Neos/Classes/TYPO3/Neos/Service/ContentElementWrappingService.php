@@ -65,9 +65,10 @@ class ContentElementWrappingService {
 	 * @param NodeInterface $node
 	 * @param string $typoScriptPath
 	 * @param string $content
+	 * @param boolean $renderCurrentDocumentMetadata When this flag is set we will render the global metadata for the current document
 	 * @return string
 	 */
-	public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content) {
+	public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content, $renderCurrentDocumentMetadata = FALSE) {
 		/** @var $contentContext ContentContext */
 		$contentContext = $node->getContext();
 		if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
@@ -79,7 +80,13 @@ class ContentElementWrappingService {
 		$attributes['about'] = $node->getContextPath();
 
 		$classNames = array();
-		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
+		if ($renderCurrentDocumentMetadata === TRUE) {
+			$attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
+			$attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
+			// Add the workspace of the TYPO3CR context to the attributes
+			$attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
+			$attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
+		} else {
 			if ($node->isRemoved()) {
 				if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node && $node->isShadowNode()) {
 					return '';
@@ -104,12 +111,6 @@ class ContentElementWrappingService {
 			}
 
 			$attributes['tabindex'] = 0;
-		} else {
-			$attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
-			$attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
-			// Add the workspace of the TYPO3CR context to the attributes
-			$attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
-			$attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
 		}
 
 		if (!$node->dimensionsAreMatchingTargetDimensionValues()) {

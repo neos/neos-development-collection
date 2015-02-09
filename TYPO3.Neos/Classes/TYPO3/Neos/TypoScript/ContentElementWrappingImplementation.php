@@ -73,7 +73,7 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 		if ($node->isRemoved()) {
 			$content = '';
 		}
-		return $this->contentElementWrappingService->wrapContentObject($node, $this->getContentElementTypoScriptPath(), $content);
+		return $this->contentElementWrappingService->wrapContentObject($node, $this->getContentElementTypoScriptPath(), $content, $this->tsValue('renderCurrentDocumentMetadata'));
 	}
 
 	/**

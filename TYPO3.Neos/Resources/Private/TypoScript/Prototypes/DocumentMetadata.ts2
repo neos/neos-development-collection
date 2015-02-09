@@ -9,6 +9,9 @@ prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
 		id = 'neos-document-metadata'
 	}
 
-	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
+		renderCurrentDocumentMetadata = TRUE
+	}
+
 	@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 }
