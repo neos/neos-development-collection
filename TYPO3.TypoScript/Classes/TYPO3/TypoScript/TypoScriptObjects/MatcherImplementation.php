@@ -55,7 +55,7 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 			$renderPath = $this->getRenderPath();
 
 			if ($canRenderWithRenderer) {
-				$renderedElement = $this->tsRuntime->render($rendererPath);
+				$renderedElement = $this->tsRuntime->evaluate($rendererPath, $this);
 			} elseif ($renderPath !== NULL) {
 				if (substr($renderPath, 0, 1) === '/') {
 					$renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
