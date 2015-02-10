@@ -3,9 +3,10 @@ define(
 		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Shared/HttpRestClient',
-		'Shared/NodeTypeService'
+		'Shared/NodeTypeService',
+		'Shared/Utility'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService) {
+	function($, Ember, HttpRestClient, NodeTypeService, Utility) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -31,7 +32,7 @@ define(
 					placeholder: this.get('placeholder'),
 					formatResult: function(item, container, query, escapeMarkup) {
 						var markup = [];
-						window.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
+						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
 						var $itemContent = $('<span>' + markup.join('') + '</span>');
 
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;

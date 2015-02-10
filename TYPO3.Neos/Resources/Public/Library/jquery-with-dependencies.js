@@ -27072,7 +27072,7 @@ var _registerDnd = function() {
   // }}}
 }(jQuery));
 
-/*
+define(["Library/jquery-with-dependencies", "Shared/Utility"], function(jQuery, Utility) {/*
 Copyright 2012 Igor Vaynberg
 
 Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
@@ -27116,7 +27116,7 @@ the specific language governing permissions and limitations under the Apache Lic
     "use strict";
     /*global document, window, jQuery, console */
 
-    if (window.Select2 !== undefined) {
+    if (Utility.Select2 !== undefined) {
         return;
     }
 
@@ -30309,7 +30309,7 @@ the specific language governing permissions and limitations under the Apache Lic
     };
 
     // exports
-    window.Select2 = {
+    Utility.Select2 = {
         query: {
             ajax: ajax,
             local: local,
@@ -30327,7 +30327,7 @@ the specific language governing permissions and limitations under the Apache Lic
     };
 
 }(jQuery));
-
+});
 /*!
  * sly 1.2.3 - 9th Feb 2014
  * https://github.com/darsain/sly

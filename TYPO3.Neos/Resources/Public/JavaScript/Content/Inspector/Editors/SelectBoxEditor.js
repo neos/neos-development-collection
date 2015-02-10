@@ -2,8 +2,9 @@ define([
 	'Library/jquery-with-dependencies',
 	'emberjs',
 	'Shared/HttpClient',
-	'Content/Inspector/InspectorController'
-], function($, Ember, HttpClient, InspectorController) {
+	'Content/Inspector/InspectorController',
+	'Shared/Utility'
+], function($, Ember, HttpClient, InspectorController, Utility) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -186,7 +187,7 @@ define([
 				formatResult: function (result, container, query, escapeMarkup) {
 					var markup = [],
 						icon = $(result.element).attr('icon');
-					window.Select2.util.markMatch(result.text, query.term, markup, escapeMarkup);
+					Utility.Select2.util.markMatch(result.text, query.term, markup, escapeMarkup);
 					container.attr('title', escapeMarkup(result.text));
 					return (icon ? '<i class="' + icon + '"></i>' : '') + markup.join('');
 				}
