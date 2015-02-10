@@ -202,7 +202,7 @@ class NodeImportService {
 					}
 					break;
 				case \XMLReader::END_ELEMENT:
-					if (!$xmlReader->name === 'nodes') {
+					if ((string)$xmlReader->name === 'nodes') {
 						return; // all done, reached the closing </nodes> tag
 					}
 					$this->parseEndElement($xmlReader);
@@ -263,8 +263,7 @@ class NodeImportService {
 				$this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = json_decode($xmlReader->readString());
 				break;
 			default:
-				$value = $xmlReader->readString();
-				$this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $value;
+				throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
 				break;
 		}
 	}
@@ -464,6 +463,9 @@ class NodeImportService {
 				}
 
 				$this->persistNodeData($nodeData);
+				break;
+			default:
+				throw new ImportException(sprintf('Unexpected end element <%s> ', $reader->name), 1423578066);
 				break;
 		}
 	}
