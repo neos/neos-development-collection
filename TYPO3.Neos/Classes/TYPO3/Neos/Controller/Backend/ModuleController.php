@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * The TYPO3 Module
@@ -58,14 +59,14 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$modules = explode('/', $module['module']);
 
-		$moduleConfiguration = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
+		$moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
 		$moduleConfiguration['path'] = $module['module'];
 
 		$moduleBreadcrumb = array();
 		$path = array();
 		foreach ($modules as $moduleIdentifier) {
 			array_push($path, $moduleIdentifier);
-			$config = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
+			$config = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
 			$moduleBreadcrumb[implode('/', $path)] = $config;
 		}
 
