@@ -195,6 +195,10 @@ class NodeImportService {
 	 */
 	protected function importSubtree(\XMLReader $xmlReader) {
 		while ($xmlReader->read()) {
+			if ($xmlReader->nodeType === \XMLReader::COMMENT) {
+				continue;
+			}
+
 			switch ($xmlReader->nodeType) {
 				case \XMLReader::ELEMENT:
 					if (!$xmlReader->isEmptyElement) {
