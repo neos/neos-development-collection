@@ -64,6 +64,12 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $contextFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Import sites content
 	 *
 	 * This command allows for importing one or more sites or partial content from an XML source. The format must
@@ -86,14 +92,16 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			try {
 				$this->siteImportService->importSitesFromFile($filename, $contentContext);
 			} catch (\Exception $exception) {
-				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s', array($filename, $exception->getMessage()));
+				$this->systemLogger->logException($exception);
+				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s, see log for further information.', array($filename, $exception->getMessage()));
 				$this->quit(1);
 			}
 		} elseif ($packageKey !== NULL) {
 			try {
 				$this->siteImportService->importFromPackage($packageKey, $contentContext);
 			} catch (\Exception $exception) {
-				$this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', array($packageKey, $exception->getMessage()));
+				$this->systemLogger->logException($exception);
+				$this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.', array($packageKey, $exception->getMessage()));
 				$this->quit(1);
 			}
 		} else {
