@@ -171,9 +171,10 @@ module.exports = function (grunt) {
 				],
 				dest: libraryPath + 'select2.js',
 				options: {
-					banner: '',
-					footer: '',
+					banner: 'define(["Library/jquery-with-dependencies", "Shared/Utility"], function(jQuery, Utility) {',
+					footer: '});',
 					process: function (src, filepath) {
+						src = src.replace(/window\.Select2/g, 'Utility.Select2');
 						src = src.replace(/select2-(dropdown-open|measure-scrollbar|choice|resizer|chosen|search-choice-close|arrow|focusser|offscreen|drop|display-none|search|input|results|no-results|selected|selection-limit|more-results|match|active|container-active|container|default|allowclear|with-searchbox|focused|sizer|result|disabled|highlighted|locked)/g, 'neos-select2-$1');
 
 						src = src.replace('if (this.indexOf("select2-") === 0) {', 'if (this.indexOf("neos-select2-") === 0) {');

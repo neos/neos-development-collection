@@ -43,7 +43,7 @@ define(
 						var markup = [];
 						var $itemContent;
 
-						window.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
+						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
 						$itemContent = $('<span>' + markup.join('') + '</span>');
 
 						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
