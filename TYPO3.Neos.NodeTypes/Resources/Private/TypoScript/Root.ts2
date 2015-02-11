@@ -66,14 +66,10 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Content) {
 }
 
 # Abstract render definition for a single content column in a multi column element
-prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.TypoScript:Template) {
-	node = ${node}
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/NodeTypes/MultiColumnItem.html'
+prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.Neos:ContentCollection) {
+	nodePath = '.'
 	attributes = TYPO3.TypoScript:Attributes {
 		class = 'column'
-	}
-	columnContent = TYPO3.Neos:ContentCollection {
-		nodePath = '.'
 	}
 }
 
