@@ -34,7 +34,7 @@ class Thumbnail implements ImageInterface {
 
 	/**
 	 * @var Asset
-	 * @ORM\ManyToOne(cascade={"persist", "merge"})
+	 * @ORM\ManyToOne(cascade={"persist", "merge"}, inversedBy="thumbnails")
 	 * @ORM\JoinColumn(nullable=false)
 	 */
 	protected $originalAsset;
