@@ -154,6 +154,15 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	}
 
 	/**
+	 * Returns the caption of the original image
+	 *
+	 * @return string
+	 */
+	public function getCaption() {
+		return $this->originalAsset->getCaption();
+	}
+
+	/**
 	 * Sets a name which can be used for identifying this variant
 	 *
 	 * @param string $name
