@@ -28,7 +28,10 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  *
  * @Flow\Entity
  * @ORM\Table(
- * 	uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"})},
+ * 	uniqueConstraints={
+ * 		@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
+ * 		@ORM\UniqueConstraint(name="identifier_workspace_dimensions",columns={"identifier", "workspace", "dimensionshash"})
+ * 	},
  * 	indexes={
  * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
  * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
