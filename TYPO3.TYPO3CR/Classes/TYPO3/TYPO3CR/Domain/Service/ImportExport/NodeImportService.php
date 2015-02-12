@@ -13,10 +13,9 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
 
 use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
-use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
@@ -35,7 +34,7 @@ class NodeImportService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -468,8 +467,34 @@ class NodeImportService {
 				return $value;
 		}
 
+		$this->persistEntities($value);
 		return $value;
 	}
+
+	/**
+	 * Checks if a propertyValue contains an entity and persists it.
+	 *
+	 * @param mixed $propertyValue
+	 * @return void
+	 */
+	protected function persistEntities($propertyValue) {
+		if (!is_array($propertyValue) && !$propertyValue instanceof \Iterator) {
+			$propertyValue = array($propertyValue);
+		}
+		foreach ($propertyValue as $possibleEntity) {
+			if (is_object($possibleEntity) && $possibleEntity instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
+				$this->persistenceManager->isNewObject($possibleEntity) ? $this->persistenceManager->add($possibleEntity) : $this->persistenceManager->update($possibleEntity);
+
+				// TODO: Needed because the originalAsset will not cascade persist. We should find a generic solution to this.
+				if ($possibleEntity instanceof ImageVariant) {
+					$asset = $possibleEntity->getOriginalAsset();
+					$this->persistenceManager->isNewObject($asset) ? $this->persistenceManager->add($asset) : $this->persistenceManager->update($asset);
+				}
+			}
+		}
+	}
+
+
 
 	/**
 	 * Parses the closing tags writes data to the database then

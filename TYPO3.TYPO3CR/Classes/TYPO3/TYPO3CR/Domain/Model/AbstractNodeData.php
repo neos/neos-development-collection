@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
@@ -108,6 +109,12 @@ abstract class AbstractNodeData {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
 	protected $nodeTypeManager;
@@ -155,15 +162,36 @@ abstract class AbstractNodeData {
 					$value = $nodeIdentifier;
 					break;
 			}
+
+			$this->persistRelatedEntities($value);
+
 			if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
 				return;
 			}
+
 			$this->properties[$propertyName] = $value;
+
 			$this->addOrUpdate();
 		} elseif (ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			$contentObject = $this->contentObjectProxy->getObject();
 			ObjectAccess::setProperty($contentObject, $propertyName, $value);
 			$this->updateContentObject($contentObject);
+		}
+	}
+
+	/**
+	 * Checks if a property value contains an entity and persists it.
+	 *
+	 * @param mixed $value
+	 */
+	protected function persistRelatedEntities($value) {
+		if (!is_array($value) && !$value instanceof \Iterator) {
+			$value = array($value);
+		}
+		foreach ($value as $element) {
+			if (is_object($element) && $element instanceof PersistenceMagicInterface) {
+				$this->persistenceManager->isNewObject($element) ? $this->persistenceManager->add($element) : $this->persistenceManager->update($element);
+			}
 		}
 	}
 

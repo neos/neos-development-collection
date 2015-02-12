@@ -65,4 +65,101 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($identifier, $newNode->getIdentifier());
 	}
 
+	/**
+	 * @test
+	 */
+	public function nodeWithRelatedEntityWillTakeCareOfAddingToPersistence() {
+		$identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
+		$template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+		$template->setName('new-node');
+		$template->setIdentifier($identifier);
+
+		$newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+		$newEntity->setFavoritePlace('Reykjavik');
+		$template->setProperty('entity', $newEntity);
+
+		$rootNode = $this->context->getRootNode();
+
+		$newNode = $rootNode->createNodeFromTemplate($template);
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->inject($this->contextFactory, 'contextInstances', array());
+
+		$newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$newNodeAgain = $newLiveContext->getNode('/new-node');
+
+		$this->assertEquals($newNode->getIdentifier(), $newNodeAgain->getIdentifier());
+		$this->assertEquals('Reykjavik', $newNodeAgain->getProperty('entity')->getFavoritePlace());
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodeWithRelatedEntityWillTakeCareOfUpdatingInPersistence() {
+		$identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
+		$template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+		$template->setName('new-node');
+		$template->setIdentifier($identifier);
+
+		$newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+		$newEntity->setFavoritePlace('Reykjavik');
+		$template->setProperty('entity', $newEntity);
+
+		$rootNode = $this->context->getRootNode();
+
+		$newNode = $rootNode->createNodeFromTemplate($template);
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->inject($this->contextFactory, 'contextInstances', array());
+
+		$newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$newNodeAgain = $newLiveContext->getNode('/new-node');
+		$entity = $newNodeAgain->getProperty('entity');
+		$this->assertEquals('Reykjavik', $entity->getFavoritePlace());
+		$entity->setFavoritePlace('Iceland');
+		$newNodeAgain->setProperty('entity', $entity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->inject($this->contextFactory, 'contextInstances', array());
+
+		$newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$newNodeAgain = $newLiveContext->getNode('/new-node');
+		$entity = $newNodeAgain->getProperty('entity');
+
+		$this->assertEquals('Iceland', $entity->getFavoritePlace());
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function nodeWithRelatedEntitiesWillTakeCareOfAddingToPersistence() {
+		$identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
+		$template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+		$template->setName('new-node');
+		$template->setIdentifier($identifier);
+
+		$newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+		$newEntity->setFavoritePlace('Reykjavik');
+		$anotherNewEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+		$anotherNewEntity->setFavoritePlace('Japan');
+		$template->setProperty('entity', array($newEntity, $anotherNewEntity));
+
+		$rootNode = $this->context->getRootNode();
+
+		$newNode = $rootNode->createNodeFromTemplate($template);
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->inject($this->contextFactory, 'contextInstances', array());
+
+		$newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$newNodeAgain = $newLiveContext->getNode('/new-node');
+
+		$entityArray = $newNodeAgain->getProperty('entity');
+
+		$this->assertCount(2, $entityArray);
+		$this->assertEquals('Japan', $entityArray[1]->getFavoritePlace());
+	}
+
 }
