@@ -14,7 +14,6 @@ namespace TYPO3\Media\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -59,6 +58,12 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @var \TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface
 	 */
 	protected $assetModelMappingStrategy;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceManager
+	 */
+	protected $resourceManager;
 
 	/**
 	 * If creating a new asset from this converter this defines the default type as fallback.
@@ -171,34 +176,32 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
+		$object = NULL;
 		if (is_string($source) && $source !== '') {
 			$source = array('__identity' => $source);
 		}
 
 		if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof Resource) {
-			$resourceIdentifier = $this->persistenceManager->getIdentifierByObject($convertedChildProperties['resource']);
-			if (isset($this->resourcesAlreadyConvertedToAssets[$resourceIdentifier])) {
-				return $this->resourcesAlreadyConvertedToAssets[$resourceIdentifier];
+			$resource = $convertedChildProperties['resource'];
+			if (isset($this->resourcesAlreadyConvertedToAssets[$resource->getSha1()])) {
+				$object = $this->resourcesAlreadyConvertedToAssets[$resource->getSha1()];
 			}
-
 			// This is pretty late to override the targetType, but usually you want to determine the model type from the resource when a new resource was uploaded...
-			$targetType = $this->applyModelMappingStrategy($targetType, $convertedChildProperties['resource'], $source);
+			$targetType = $this->applyModelMappingStrategy($targetType, $resource, $source);
 		}
-		$object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
+
+		if ($object === NULL) {
+			$object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
+		}
 
 		if ($object instanceof AssetInterface) {
-			if (isset($source['__identity'])) {
-				ObjectAccess::setProperty($object, 'persistence_object_identifier', $source['__identity'], TRUE);
+			$object = $this->applyTypeSpecificHandling($object, $source, $convertedChildProperties, $configuration);
+			if ($object !== NULL) {
+				$this->resourcesAlreadyConvertedToAssets[$object->getResource()->getSha1()] = $object;
+				if (isset($resource) && $resource !== $object->getResource()) {
+					$this->resourceManager->deleteResource($resource);
+				}
 			}
-			$this->applyTypeSpecificHandling($object, $source, $convertedChildProperties, $configuration);
-
-			if ($this->persistenceManager->isNewObject($object)) {
-				$this->assetRepository->add($object);
-			} else {
-				$this->assetRepository->update($object);
-			}
-
-			$this->resourcesAlreadyConvertedToAssets[$this->persistenceManager->getIdentifierByObject($object->getResource())] = $object;
 		}
 
 		return $object;
@@ -219,7 +222,8 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
 		$className = $this->objectManager->getClassNameByObjectName($objectType) ?: static::$defaultNewAssetType;
 		if (isset($possibleConstructorArgumentValues['resource'])) {
-			$possibleAsset = $this->assetRepository->findOneByResource($possibleConstructorArgumentValues['resource']);
+			$resource = $possibleConstructorArgumentValues['resource'];
+			$possibleAsset = $this->assetRepository->findOneByResourceSha1($resource->getSha1());
 			if ($possibleAsset !== NULL) {
 				return $possibleAsset;
 				// TODO: Should probably throw an exception if the asset doesn't match the objectType expected.
@@ -252,9 +256,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @param mixed $source
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return void
+	 * @return AssetInterface|NULL
 	 */
-	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {}
+	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {
+		return $asset;
+	}
 
 	/**
 	 * Applies the model mapping strategy for a converted resource to determine the final target type.

@@ -13,6 +13,8 @@ namespace TYPO3\Media\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
  * This converter transforms to \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
@@ -67,14 +69,14 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 	/**
 	 * Converts and adds ImageAdjustments to the ImageVariant
 	 *
-	 * @param \TYPO3\Media\Domain\Model\ImageInterface $asset
+	 * @param ImageInterface $asset
 	 * @param mixed $source
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return void
+	 * @return ImageInterface|NULL
 	 */
 	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {
-		if ($asset instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
+		if ($asset instanceof ImageVariant) {
 			if (isset($source['adjustments'])) {
 				foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {
 					if (isset($adjustmentOptions['__type'])) {
@@ -100,6 +102,10 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 					}
 				}
 			}
+
+			// TODO: Should find Variant here that already has the matching adjustments? But that can be dangerous as an existing variant might be already in use and any change then would apply to all places...
 		}
+
+		return $asset;
 	}
 }

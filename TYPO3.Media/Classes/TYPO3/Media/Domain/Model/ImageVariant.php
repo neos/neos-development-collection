@@ -58,12 +58,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	protected $name = '';
 
 	/**
-	 * @var string
-	 * @Flow\Transient
-	 */
-	protected $cacheIdentifier;
-
-	/**
 	 * Constructs a new Image Variant based on the given original
 	 *
 	 * @param Image $originalAsset The original Image asset this variant is derived from

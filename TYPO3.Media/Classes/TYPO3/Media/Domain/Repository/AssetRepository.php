@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Media\Domain\Model\AssetInterface;
 
 /**
  * A repository for Assets
@@ -137,5 +138,15 @@ class AssetRepository extends Repository {
 		$queryBuilder = $query->getQueryBuilder();
 		$queryBuilder->andWhere('e NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant');
 		return $query;
+	}
+
+	/**
+	 * @param string $sha1
+	 * @return AssetInterface|NULL
+	 */
+	public function findOneByResourceSha1($sha1) {
+		$query = $this->createQuery();
+		$query->matching($query->equals('resource.sha1', $sha1, FALSE))->setLimit(1);
+		return $query->execute()->getFirst();
 	}
 }
