@@ -430,7 +430,6 @@ class Runtime {
 		if (isset($typoScriptConfiguration['__meta']['process'])) {
 			$positionalArraySorter = new PositionalArraySorter($typoScriptConfiguration['__meta']['process'], '__meta.position');
 			foreach ($positionalArraySorter->getSortedKeys() as $key) {
-
 				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
 				if (isset($typoScriptConfiguration['__meta']['process'][$key]['expression'])) {
 					$processorPath .= '/expression';
@@ -465,6 +464,14 @@ class Runtime {
 
 		$configuration = $this->typoScriptConfiguration;
 
+		$simpleTypeToArrayClosure = function($simpleType) {
+			return $simpleType === NULL ? NULL : array(
+				'__eelExpression' => NULL,
+				'__value' => $simpleType,
+				'__objectType' => NULL
+			);
+		};
+
 		$pathUntilNow = '';
 		$currentPrototypeDefinitions = array();
 		if (isset($configuration['__prototypes'])) {
@@ -485,20 +492,13 @@ class Runtime {
 				$currentPathSegment = $matches[1];
 
 				if (isset($configuration[$currentPathSegment])) {
-					if (is_array($configuration[$currentPathSegment])) {
-						$configuration = $configuration[$currentPathSegment];
-					} else {
-							// Needed for simple values (which cannot be arrays)
-						$configuration = array(
-							'__value' => $configuration[$currentPathSegment]
-						);
-					}
+					$configuration = is_array($configuration[$currentPathSegment]) ? $configuration[$currentPathSegment] : $simpleTypeToArrayClosure($configuration[$currentPathSegment]);
 				} else {
 					$configuration = array();
 				}
 
 				if (isset($configuration['__prototypes'])) {
-					$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $configuration['__prototypes']);
+					$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $simpleTypeToArrayClosure);
 				}
 
 				if (isset($matches[3])) {
@@ -522,21 +522,25 @@ class Runtime {
 						$currentPrototypeWithInheritanceTakenIntoAccount = array();
 
 						foreach ($prototypeMergingOrder as $prototypeName) {
-							$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverrule($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName]);
+							$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $simpleTypeToArrayClosure);
 						}
 
 							// We merge the already flattened prototype with the current configuration (in that order),
 							// to make sure that the current configuration (not being defined in the prototype) wins.
-						$configuration = Arrays::arrayMergeRecursiveOverrule($currentPrototypeWithInheritanceTakenIntoAccount, $configuration);
+						$configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $simpleTypeToArrayClosure);
 
 							// If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
 							// we update the current prototype definitions.
 						if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes']);
+							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $simpleTypeToArrayClosure);
 						}
 					}
 
 					$configuration['__objectType'] = $currentPathSegmentType;
+				}
+
+				if (is_array($configuration) && !isset($configuration['__value']) && !isset($configuration['__eelExpression']) && !isset($configuration['__meta']['class']) && !isset($configuration['__objectType']) && isset($configuration['__meta']['process'])) {
+					$configuration['__value'] = '';
 				}
 
 				$this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
