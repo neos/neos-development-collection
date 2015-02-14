@@ -26,6 +26,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 		_uploadInProgress: false,
 		_containerId: null,
 		_browseButtonId: null,
+		_fileDropZoneId: null,
 		_uploadButtonShown: false,
 		_uploadButtonNotShown: function() {
 			return !this.get('_uploadButtonShown');
@@ -37,6 +38,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 			var id = this.get('elementId');
 			this.set('_containerId', 'typo3-fileupload-' + id);
 			this.set('_browseButtonId', 'typo3-fileupload-browsebutton-' + id);
+			this.set('_fileDropZoneId', 'typo3-fileupload-dropzone-' + id);
 			return this._super();
 		},
 
@@ -45,11 +47,32 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 		},
 
 		_initializeUploader: function() {
-			var that = this;
+			var that = this,
+				$fileDropZone = $('#' + this._fileDropZoneId);
+
+			$fileDropZone
+				.on('dragenter', function(e) {
+					e.dataTransfer.dropEffect = 'copy';
+					e.dataTransfer.effectAllowed = 'copy';
+					$fileDropZone.addClass('typo3-fileupload-dropzone-hover');
+				}).on('dragleave drop dragend', function(e) {
+					e.dataTransfer.dropEffect = 'copy';
+					e.dataTransfer.effectAllowed = 'copy';
+					$fileDropZone.removeClass('typo3-fileupload-dropzone-hover');
+				});
+
+			$(document)
+				.on('dragover', function(e) {
+					$fileDropZone.addClass('typo3-fileupload-dropzone-active');
+				}).on('dragleave drop dragend', function(e) {
+					$fileDropZone.removeClass('typo3-fileupload-dropzone-active');
+				});
+
 			this._uploader = new plupload.Uploader({
 				runtimes : 'html5',
 				browse_button : this._browseButtonId,
 				container : this._containerId,
+				drop_element: this._fileDropZoneId,
 				max_file_size : this.get('maximumFileSize') ? this.get('maximumFileSize') : Configuration.get('maximumFileUploadSize'),
 				url : $('link[rel="neos-asset-upload"]').attr('href'),
 				multipart_params: {}
@@ -85,8 +108,8 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 
 		_uploaderInitialized: function() {
 			var that = this;
-			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
-				that.filesScheduledForUpload(event.target.files);
+			this._uploader.bind('FilesAdded', function(uploader) {
+				that.filesScheduledForUpload(uploader.files);
 			});
 		},
 
