@@ -5667,6 +5667,38 @@
   height: 30px;
   line-height: 28px;
 }
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover {
+  width: 290px;
+  height: 218px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before {
+  color: #fff;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
+  position: absolute;
+  top: 50%;
+  font-size: 40px;
+  line-height: 40px;
+  margin-top: -20px;
+  width: 100%;
+  text-align: center;
+}
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active .neos-inspector-image-thumbnail, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover .neos-inspector-image-thumbnail {
+  border-color: #fff;
+}
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active .neos-inspector-image-thumbnail-inner, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover .neos-inspector-image-thumbnail-inner {
+  display: none;
+}
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover {
+  background-color: #00b5ff;
+}
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail {
   position: relative;
   border: 1px dashed #323232;
