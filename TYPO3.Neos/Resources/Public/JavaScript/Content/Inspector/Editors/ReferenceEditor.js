@@ -68,6 +68,7 @@ define(
 								searchTerm: query.term,
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
+								contextNode: $('#neos-document-metadata').data('neos-site-node-context-path'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
