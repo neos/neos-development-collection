@@ -2,9 +2,6 @@
 'TYPO3.Neos:Node':
   label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
   abstract: TRUE
-  properties:
-    _removed:
-      type: boolean
   ui:
     inspector:
       tabs:
@@ -16,6 +13,45 @@
           label: 'Metadata'
           position: 20
           icon: 'icon-cog'
+      groups:
+        nodeInfo:
+          label: 'Additional info'
+          tab: 'meta'
+          position: 990
+        type:
+          label: 'Change type'
+          tab: 'meta'
+          position: 1000
+      views:
+        nodeInfo:
+          label: 'Metadata'
+          group: 'nodeInfo'
+          view: 'Content/Inspector/Views/NodeInfoView'
+  properties:
+    _removed:
+      type: boolean
+    _creationDateTime:
+      type: DateTime
+    _lastModificationDateTime:
+      type: DateTime
+    _lastPublicationDateTime:
+      type: DateTime
+    _path:
+      type: string
+    _name:
+      type: string
+    _nodeType:
+      type: string
+      ui:
+        label: 'Type'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'type'
+          position: 100
+          editor: 'Content/Inspector/Editors/NodeTypeEditor'
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: ''
 
 # Hidable Mixin
 'TYPO3.Neos:Hidable':
@@ -94,20 +130,10 @@
         document:
           label: 'Document options'
           position: 10
-        type:
-          label: 'Change type'
-          position: 1000
-          tab: meta
   properties:
     _nodeType:
-      type: string
       ui:
-        label: 'Type'
-        reloadIfChanged: TRUE
         inspector:
-          group: 'type'
-          position: 100
-          editor: Content/Inspector/Editors/NodeTypeEditor
           editorOptions:
             baseNodeType: 'TYPO3.Neos:Document'
     title:
@@ -259,15 +285,9 @@
           tab: meta
   properties:
     _nodeType:
-      type: string
       ui:
-        label: 'Type'
-        reloadIfChanged: TRUE
         inspector:
-          group: 'type'
-          editor: Content/Inspector/Editors/NodeTypeEditor
           editorOptions:
-            placeholder: 'Loading ...'
             baseNodeType: 'TYPO3.Neos:Content'
 
 # A content collection is a collection of "TYPO3.Neos:Content" (and its subclasses),
