@@ -61,6 +61,8 @@ class ContentCacheTest extends UnitTestCase {
 	 */
 	public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues) {
 		$contentCache = new ContentCache();
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->inject($contentCache, 'securityContext', $mockSecurityContext);
 		$contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
 	}
 
@@ -84,6 +86,8 @@ class ContentCacheTest extends UnitTestCase {
 	 */
 	public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues) {
 		$contentCache = new ContentCache();
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->inject($contentCache, 'securityContext', $mockSecurityContext);
 		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
 		$this->assertNotEmpty($segement);
 	}
@@ -93,6 +97,8 @@ class ContentCacheTest extends UnitTestCase {
 	 */
 	public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata() {
 		$contentCache = new ContentCache();
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->inject($contentCache, 'securityContext', $mockSecurityContext);
 		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
 		$this->assertContains(ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . 'Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
 	}
@@ -102,6 +108,8 @@ class ContentCacheTest extends UnitTestCase {
 	 */
 	public function processCacheSegmentsSetsLifetimeFromMetadata() {
 		$contentCache = new ContentCache();
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->inject($contentCache, 'securityContext', $mockSecurityContext);
 		$this->inject($contentCache, 'parser', new CacheSegmentParser());
 
 		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
