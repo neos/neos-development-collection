@@ -24,7 +24,7 @@ use TYPO3\Flow\Utility\PositionalArraySorter;
 class ConfigurationAssetModelMappingStrategy implements AssetModelMappingStrategyInterface {
 
 	/**
-	 * @Flow\InjectConfiguration(package="TYPO3.Media", setting="asset.modelMappingStrategy")
+	 * @Flow\InjectConfiguration(package="TYPO3.Media", path="asset.modelMappingStrategy")
 	 * @var array
 	 */
 	protected $settings;
