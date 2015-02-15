@@ -74,17 +74,10 @@
 		</div>
 		<div id="neos-login-footer">
 			<p>
-				<neos:backend.translate id="login.footer" arguments="{0: '{f:format.date(format: \'Y\' date: \'now\')}'}" >
-				<a href="http://neos.typo3.org" target="_blank">TYPO3 Neos</a> – ©
-				2006-<f:format.date format="Y" date="now" /> This is free software,
-				licensed under GPL3 or higher, and you are welcome to redistribute
-				it under certain conditions; <a href="http://typo3.org/licenses"
-					target="_blank">click for details.</a> TYPO3 Neos comes with
-				ABSOLUTELY NO WARRANTY; <a href="http://typo3.org/licenses"
-					target="_blank">click for details.</a> See <a
-					href="http://neos.typo3.org" target="_blank">neos.typo3.org</a> for
-				more details. Obstructing the appearance of this notice is
-				prohibited by law. </neos:backend.translate>
+				<a href="http://neos.typo3.org" target="_blank">TYPO3 Neos</a> –
+				© 2006-{f:format.date(date: 'now', format: 'Y')} This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions; <a href="http://typo3.org/licenses" target="_blank">click for details.</a>
+				TYPO3 Neos comes with ABSOLUTELY NO WARRANTY; <a href="http://typo3.org/licenses" target="_blank">click for details.</a>
+				See <a href="http://neos.typo3.org" target="_blank">neos.typo3.org</a> for more details. Obstructing the appearance of this notice is prohibited by law.
 			</p>
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
