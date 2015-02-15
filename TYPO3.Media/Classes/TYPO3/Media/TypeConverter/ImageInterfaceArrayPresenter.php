@@ -13,6 +13,7 @@ namespace TYPO3\Media\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
@@ -78,13 +79,13 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter {
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$data = array(
 			'__identity' => $this->persistenceManager->getIdentifierByObject($source),
-			'__type' => get_class($source)
+			'__type' => TypeHandling::getTypeForValue($source)
 		);
 
 		if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
 			$adjustments = array();
 			foreach ($source->getAdjustments() as $adjustment) {
-				$index = get_class($adjustment);
+				$index = TypeHandling::getTypeForValue($adjustment);
 				$adjustments[$index] = array();
 				foreach (\TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
 					$adjustments[$index][$propertyName] = $propertyValue;
