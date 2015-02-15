@@ -6527,6 +6527,25 @@
 .neos #neos-inspector .neos-timeseriesview .chart-time-series .axis path {
   opacity: 0;
 }
+.neos #neos-inspector .node-info-view ul {
+  margin: 8px 16px 16px;
+  background-color: #323232;
+}
+.neos #neos-inspector .node-info-view ul li {
+  padding: 8px;
+  border-bottom: 1px solid #222;
+  text-align: right;
+  line-height: 20px;
+  min-height: 20px;
+}
+.neos #neos-inspector .node-info-view ul li:first-child {
+  border-top: 1px solid #222;
+}
+.neos #neos-inspector .node-info-view ul li span {
+  float: left;
+  padding-right: 8px;
+  font-weight: bold;
+}
 .neos #neos-inspector-clickprotection {
   position: fixed;
   display: block;
