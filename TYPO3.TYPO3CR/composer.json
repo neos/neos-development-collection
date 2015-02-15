@@ -5,7 +5,8 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
-        "typo3/eel": "*"
+        "typo3/eel": "*",
+        "gedmo/doctrine-extensions": "2.3.*"
     },
     "autoload": {
         "psr-0": {

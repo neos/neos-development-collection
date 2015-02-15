@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR;
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The TYPO3CR Package
@@ -36,10 +37,14 @@ class Package extends BasePackage {
 			$configurationManager->registerConfigurationType('NodeTypes', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT, TRUE);
 		});
 
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Workspace', 'beforeNodePublishing', function(NodeInterface $node, $targetWorkspace) use($bootstrap) {
+			$node->setLastPublicationDateTime(new \DateTime());
+		});
+
 		$context = $bootstrap->getContext();
 		if (!$context->isProduction()) {
 			$dispatcher->connect('TYPO3\Flow\Core\Booting\Sequence', 'afterInvokeStep', function($step) use ($bootstrap) {
-				if  ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
+				if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
 					$nodeTypeConfigurationFileMonitor = \TYPO3\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('TYPO3CR_NodeTypesConfiguration', $bootstrap);
 					$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
 					foreach ($packageManager->getActivePackages() as $packageKey => $package) {

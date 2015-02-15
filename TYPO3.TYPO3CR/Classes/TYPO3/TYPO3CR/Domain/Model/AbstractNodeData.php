@@ -51,6 +51,21 @@ abstract class AbstractNodeData {
 	protected $nodeType = 'unstructured';
 
 	/**
+	 * @var \DateTime
+	 */
+	protected $creationDateTime;
+
+	/**
+	 * @var \DateTime
+	 */
+	protected $lastModificationDateTime;
+
+	/**
+	 * @var \DateTime
+	 */
+	protected $lastPublicationDateTime;
+
+	/**
 	 * If this node is hidden, it is not shown in a public place
 	 *
 	 * @var boolean
@@ -96,6 +111,14 @@ abstract class AbstractNodeData {
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
 	protected $nodeTypeManager;
+
+	/**
+	 * Constructs this node data container
+	 */
+	public function __construct() {
+		$this->creationDateTime = new \DateTime();
+		$this->lastModificationDateTime = new \DateTime();
+	}
 
 	/**
 	 * Sets the specified property.
@@ -353,6 +376,35 @@ abstract class AbstractNodeData {
 	 */
 	public function getNodeType() {
 		return $this->nodeTypeManager->getNodeType($this->nodeType);
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getCreationDateTime() {
+		return $this->creationDateTime;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getLastModificationDateTime() {
+		return $this->lastModificationDateTime;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getLastPublicationDateTime() {
+		return $this->lastPublicationDateTime;
+	}
+
+	/**
+	 * @param \DateTime $lastPublicationDateTime
+	 * @return void
+	 */
+	public function setLastPublicationDateTime(\DateTime $lastPublicationDateTime = NULL) {
+		$this->lastPublicationDateTime = $lastPublicationDateTime;
 	}
 
 	/**

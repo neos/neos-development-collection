@@ -195,6 +195,7 @@ class NodeConverter extends AbstractTypeConverter {
 	 */
 	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$nodeTypeProperties = $nodeType->getProperties();
+		unset($properties['_lastPublicationDateTime']);
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
 				continue;

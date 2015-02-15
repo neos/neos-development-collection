@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
  *                                                                        */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Now;
 
 class NodeImportServiceTest extends UnitTestCase {
 
@@ -30,6 +31,7 @@ class NodeImportServiceTest extends UnitTestCase {
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
 		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
 
+		$now = new Now();
 		$expectedNodeData = array(
 			'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
 			'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
@@ -55,7 +57,9 @@ class NodeImportServiceTest extends UnitTestCase {
 					'en_US',
 					'en_UK'
 				)
-			)
+			),
+			'creationDateTime' => $now,
+			'lastModificationDateTime' => $now
 		);
 		$nodeImportService->expects($this->once())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeData) {
 			unset($nodeData['Persistence_Object_Identifier']);
@@ -83,6 +87,7 @@ class NodeImportServiceTest extends UnitTestCase {
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
 		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
 
+		$now = new Now();
 		$expectedNodeDatas = array(
 			array(
 				'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
@@ -157,7 +162,9 @@ class NodeImportServiceTest extends UnitTestCase {
 				'accessRoles' => array(),
 				'dimensionValues' => array(
 					'language' => array('en_US')
-				)
+				),
+				'creationDateTime' => $now,
+				'lastModificationDateTime' => $now
 			),
 			array(
 				'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
@@ -206,7 +213,9 @@ class NodeImportServiceTest extends UnitTestCase {
 				'accessRoles' => array(),
 				'dimensionValues' => array(
 					'language' => array('en_US')
-				)
+				),
+				'creationDateTime' => $now,
+				'lastModificationDateTime' => $now
 			)
 		);
 		$nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
@@ -241,6 +250,7 @@ class NodeImportServiceTest extends UnitTestCase {
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
 		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
 
+		$now = new Now();
 		$expectedNodeDatas = array(
 			array(
 				'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
@@ -267,7 +277,9 @@ class NodeImportServiceTest extends UnitTestCase {
 				'accessRoles' => array(),
 				'dimensionValues' => array(
 					'language' => array('en_US')
-				)
+				),
+				'creationDateTime' => $now,
+				'lastModificationDateTime' => $now
 			)
 		);
 		$nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
