@@ -30,6 +30,11 @@ use TYPO3\Neos\Cache\CacheManager;
 class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 
 	/**
+	 * @var boolean
+	 */
+	protected $escapeOutput = FALSE;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;

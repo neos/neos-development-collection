@@ -35,6 +35,11 @@ use TYPO3\Flow\Annotations as Flow;
 class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
+	 * @var boolean
+	 */
+	protected $escapeOutput = FALSE;
+
+	/**
 	 * @param string $templatePathAndFilename Path and filename of the template to render
 	 * @param array $arguments Arguments to assign to the template before rendering
 	 * @return string

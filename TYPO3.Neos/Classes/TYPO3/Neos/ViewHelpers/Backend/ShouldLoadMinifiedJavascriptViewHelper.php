@@ -19,6 +19,12 @@ use TYPO3\Flow\Annotations as Flow;
 class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
+	 * @see AbstractViewHelper::isOutputEscapingEnabled()
+	 * @var boolean
+	 */
+	protected $escapeOutput = FALSE;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
