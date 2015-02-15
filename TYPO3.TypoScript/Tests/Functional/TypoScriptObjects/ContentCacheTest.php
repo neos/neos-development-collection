@@ -399,15 +399,15 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertCount(3, $entriesWritten);
 		$this->assertEquals(array(
 			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
-			'46f41cbf610fd5892d847acbdb2c3f4c' => array(
+			'bd35f9d36e0e24992cb4810f759bced4' => array(
 				'lifetime' => 60
 			),
 			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
-			'13535edf2b61c31bc76fc7c09714f10f' => array(
+			'd5bfcc617aa269282dbfa0887b7e1c65' => array(
 				'lifetime' => NULL
 			),
 			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments
-			'6bcf61d298cd47155c5b74bd33a6621c' => array(
+			'a604a8f56ba95f256b3df4769b42bc6a' => array(
 				'lifetime' => 5
 			)
 		), $entriesWritten);
@@ -447,10 +447,10 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame($firstRenderResult, $secondRenderResult);
 		$this->assertCount(2, $entriesWritten);
 		$this->assertEquals(array(
-			'f064f9b64c442e4b76c083efd22c8b78' => array(
+			'49c7f1e2dde942ea9cc6c658a7ece943' => array(
 				'tags' => array('site1')
 			),
-			'94e9f536930e7e11d389d50508128aec' => array(
+			'a932d6d5860b204e82079255e224c613' => array(
 				'tags' => array('site2')
 			),
 		), $entriesWritten);
@@ -505,7 +505,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame($firstRenderResult, $secondRenderResult);
 		$this->assertCount(1, $entriesWritten);
 		$this->assertEquals(array(
-			'cba635414d60300928e97e1413a9f7d4' => array(
+			'21fe7cb71a709292398e766a9bb45662' => array(
 				'tags' => array('site1'),
 				'data' => 'Cached segment|Object value 1'
 			),
