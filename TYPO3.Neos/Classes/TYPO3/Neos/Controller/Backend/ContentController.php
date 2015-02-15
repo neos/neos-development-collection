@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Flow\Mvc\Controller\ActionController;
@@ -61,6 +62,16 @@ class ContentController extends ActionController {
 	protected $imageInterfaceArrayPresenter;
 
 	/**
+	 * Initialize property mapping as the upload usually comes from the Inspector JavaScript
+	 */
+	public function initializeUploadAssetAction() {
+		$propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->allowAllProperties();
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->allowCreationForSubProperty('resource');
+	}
+
+	/**
 	 * Upload a new image, and return its metadata.
 	 *
 	 * Depending on the $metadata argument it will return asset metadata for the AssetEditor
@@ -71,8 +82,6 @@ class ContentController extends ActionController {
 	 * @return string
 	 */
 	public function uploadAssetAction(Asset $asset, $metadata) {
-		$this->assetRepository->add($asset);
-
 		$this->response->setHeader('Content-Type', 'application/json');
 
 		switch ($metadata) {
