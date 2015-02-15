@@ -150,6 +150,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @throws NodeException
 	 */
 	public function setPath($path) {
+		if ($this->getPath() === $path) {
+			return;
+		}
 		$existingNodeData = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
 		if ($existingNodeData !== array()) {
 			throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath() , $path), 1414436551);
