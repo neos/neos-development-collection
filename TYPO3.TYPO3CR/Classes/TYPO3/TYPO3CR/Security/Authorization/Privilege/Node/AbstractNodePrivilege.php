@@ -37,7 +37,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
 	/**
 	 * @var string
 	 */
-	protected $nodeContextClassName = 'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeContext';
+	protected $nodeContextClassName = NodePrivilegeContext::class;
 
 	/**
 	 * @var NodePrivilegeContext

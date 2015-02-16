@@ -1,8 +1,16 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Boostrap;
+namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
 
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
+/*                                                                        *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
@@ -53,7 +61,7 @@ trait NodeOperationsTrait {
 	 * @Given /^I have the following nodes:$/
 	 * @When /^I create the following nodes:$/
 	 */
-	public function iHaveTheFollowingNodes(TableNode $table) {
+	public function iHaveTheFollowingNodes($table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))), TRUE);
 		} else {
@@ -99,7 +107,7 @@ trait NodeOperationsTrait {
 			}
 
 			// Make sure we do not use cached instances
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -107,7 +115,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Given /^I have the following content dimensions:$/
 	 */
-	public function iHaveTheFollowingContentDimensions(TableNode $table) {
+	public function iHaveTheFollowingContentDimensions($table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -125,7 +133,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I copy the node (into|after|before) path "([^"]*)" with the following context:$/
 	 */
-	public function iCopyANodeToPath($position, $path, TableNode $table) {
+	public function iCopyANodeToPath($position, $path, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -141,7 +149,7 @@ trait NodeOperationsTrait {
 			} else {
 				$node->copyBefore($referenceNode, $node->getName() . '-1');
 			}
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -149,7 +157,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I move the node (into|after|before) path "([^"]*)" with the following context:$/
 	 */
-	public function iMoveANodeToPath($position, $path, TableNode $table) {
+	public function iMoveANodeToPath($position, $path, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -171,7 +179,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get a node by path "([^"]*)" with the following context:$/
 	 */
-	public function iGetANodeByPathWithTheFollowingContext($path, TableNode $table) {
+	public function iGetANodeByPathWithTheFollowingContext($path, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -181,7 +189,7 @@ trait NodeOperationsTrait {
 			if ($context->getWorkspace(FALSE) === NULL) {
 				$context->getWorkspace(TRUE);
 
-				$this->getSubcontext('flow')->persistAll();
+				$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 				$this->resetNodeInstances();
 
 				$context = $this->getContextForProperties($rows[0]);
@@ -199,7 +207,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get a node by identifier "([^"]*)" with the following context:$/
 	 */
-	public function iGetANodeByIdentifierWithTheFollowingContext($identifier, TableNode $table) {
+	public function iGetANodeByIdentifierWithTheFollowingContext($identifier, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -218,7 +226,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the child nodes of "([^"]*)" with the following context:$/
 	 */
-	public function iGetTheChildNodesOfWithTheFollowingContext($path, TableNode $table) {
+	public function iGetTheChildNodesOfWithTheFollowingContext($path, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -234,7 +242,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the child nodes of "([^"]*)" with filter "([^"]*)" and the following context:$/
 	 */
-	public function iGetTheChildNodesOfWithFilterAndTheFollowingContext($path, $filter, TableNode $table) {
+	public function iGetTheChildNodesOfWithFilterAndTheFollowingContext($path, $filter, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($filter), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -250,7 +258,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the nodes on path "([^"]*)" to "([^"]*)" with the following context:$/
 	 */
-	public function iGetTheNodesOnPathToWithTheFollowingContext($startingPoint, $endPoint, TableNode $table) {
+	public function iGetTheNodesOnPathToWithTheFollowingContext($startingPoint, $endPoint, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($startingPoint), 'string', escapeshellarg($endPoint), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -273,7 +281,7 @@ trait NodeOperationsTrait {
 			$publishingService = $this->getPublishingService();
 			$publishingService->publishNode($node);
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -293,7 +301,7 @@ trait NodeOperationsTrait {
 
 			$sourceWorkspace->publish($liveWorkspace);
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -320,7 +328,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I use the publishing service to publish nodes in the workspace "([^"]*)" with the following context:$/
 	 */
-	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, TableNode $table) {
+	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -335,7 +343,7 @@ trait NodeOperationsTrait {
 
 			$publishingService->publishNodes($publishingService->getUnpublishedNodes($sourceWorkspace));
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -370,7 +378,7 @@ trait NodeOperationsTrait {
 			$node = $this->iShouldHaveOneNode();
 			$node->remove();
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -423,7 +431,7 @@ trait NodeOperationsTrait {
 					throw new \InvalidArgumentException('Unknown move action "' . $action . '"');
 			}
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -487,7 +495,7 @@ trait NodeOperationsTrait {
 			$currentNode = $this->iShouldHaveOneNode();
 			$currentNode->setProperty($propertyName, $propertyValue);
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -502,7 +510,7 @@ trait NodeOperationsTrait {
 			$currentNode = $this->iShouldHaveOneNode();
 			$currentNode->setName($name);
 
-			$this->getSubcontext('flow')->persistAll();
+			$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			$this->resetNodeInstances();
 		}
 	}
@@ -523,7 +531,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I should have a node with path "([^"]*)" and value "([^"]*)" for property "([^"]*)" for the following context:$/
 	 */
-	public function iShouldHaveANodeWithPathAndValueForPropertyForTheFollowingContext($path, $propertyValue, $propertyName, TableNode $table) {
+	public function iShouldHaveANodeWithPathAndValueForPropertyForTheFollowingContext($path, $propertyValue, $propertyName, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($propertyValue), 'string', escapeshellarg($propertyName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -535,7 +543,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I adopt the node (recursively |)to the following context:$/
 	 */
-	public function iAdoptTheNodeToTheFollowingContext($recursive, TableNode $table) {
+	public function iAdoptTheNodeToTheFollowingContext($recursive, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($recursive), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -550,7 +558,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I should have the following nodes(| in any order):$/
 	 */
-	public function iShouldHaveTheFollowingNodes($orderIndependent, TableNode $table) {
+	public function iShouldHaveTheFollowingNodes($orderIndependent, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($orderIndependent), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -650,7 +658,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Given /^I have the following (additional |)NodeTypes configuration:$/
 	 */
-	public function iHaveTheFollowingNodetypesConfiguration($additional, PyStringNode $nodeTypesConfiguration) {
+	public function iHaveTheFollowingNodetypesConfiguration($additional, $nodeTypesConfiguration) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($additional), 'integer', escapeshellarg($nodeTypesConfiguration)));
 		} else {
@@ -709,7 +717,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get node variants of "([^"]*)" with the following context:$/
 	 */
-	public function iGetNodeVariantsOfWithTheFollowingContext($identifier, TableNode $table) {
+	public function iGetNodeVariantsOfWithTheFollowingContext($identifier, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -805,7 +813,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I expect to have (\d+) unpublished node[s]? for the following context:$/
 	 */
-	public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, TableNode $table) {
+	public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'integer', escapeshellarg($nodeCount), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -814,27 +822,6 @@ trait NodeOperationsTrait {
 
 			$publishingService = $this->getPublishingService();
 			Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
-		}
-	}
-
-	/**
-	 * @Then /^I should (not )?be able to set the "([^"]*)" property to "([^"]*)"$/
-	 */
-	public function iShouldNotBeAbleToSetThePropertyTo($not, $propertyName, $propertyValue) {
-		if ($this->isolated === TRUE) {
-			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName), 'string', escapeshellarg($propertyValue)));
-		} else {
-
-			try {
-				$this->currentNodes[0]->setProperty($propertyName, $propertyValue);
-				if ($not === 'not') {
-					Assert::fail('Property should not be settable on the current node!');
-				}
-			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
-				if ($not !== 'not') {
-					throw $exception;
-				}
-			}
 		}
 	}
 }

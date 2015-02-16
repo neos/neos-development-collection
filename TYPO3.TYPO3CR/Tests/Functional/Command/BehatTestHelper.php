@@ -14,16 +14,16 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Command;
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 
-use TYPO3\TYPO3CR\Tests\Behavior\Features\Boostrap\NodeOperationsTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -40,10 +40,9 @@ use TYPO3\Flow\Utility\Environment;
 class BehatTestHelper {
 
 	use IsolatedBehatStepsTrait;
-
 	use SecurityOperationsTrait;
-
 	use NodeOperationsTrait;
+	use NodeAuthorizationTrait;
 
 	/**
 	 * @var Bootstrap

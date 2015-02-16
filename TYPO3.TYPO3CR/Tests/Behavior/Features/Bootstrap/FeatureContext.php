@@ -1,24 +1,35 @@
 <?php
+/*                                                                        *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
 
 require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
+require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Flowpack\Behat\Tests\Behat\FlowContext;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
-use TYPO3\TYPO3CR\Tests\Behavior\Features\Boostrap\NodeOperationsTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
 /**
  * Features context
  */
-class FeatureContext extends Behat\Behat\Context\BehatContext {
+class FeatureContext extends \Behat\Behat\Context\BehatContext {
 
 	use NodeOperationsTrait;
-
+	use NodeAuthorizationTrait;
 	use SecurityOperationsTrait;
-
 	use IsolatedBehatStepsTrait;
 
 	/**
@@ -33,11 +44,16 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	 */
 	public function __construct(array $parameters) {
 		$this->useContext('flow', new FlowContext($parameters));
+		/** @var FlowContext $flowContext */
 		$flowContext = $this->getSubcontext('flow');
 		$this->objectManager = $flowContext->getObjectManager();
 		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+		$this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
 	}
 
+	/**
+	 * @return ObjectManagerInterface
+	 */
 	protected function getObjectManager() {
 		return $this->objectManager;
 	}
