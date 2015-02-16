@@ -27,6 +27,7 @@ class ContextFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockContentDimensionRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 		$mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
 		$this->inject($contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
+		$this->inject($contextFactory, 'securityContext', $this->getMock('TYPO3\Flow\Security\Context'));
 
 		$context1 = $contextFactory->create(array());
 		$context2 = $contextFactory->create(array('workspaceName' => 'live'));

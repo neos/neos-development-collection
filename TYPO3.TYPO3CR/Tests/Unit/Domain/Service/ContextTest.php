@@ -25,6 +25,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$this->contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
 		$this->inject($this->contextFactory, 'now', new \TYPO3\Flow\Utility\Now());
+		$this->inject($this->contextFactory, 'securityContext', $this->getMock('TYPO3\Flow\Security\Context'));
 
 		$mockContentDimensionRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 		$mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));

@@ -63,8 +63,10 @@ class ContextFactory implements ContextFactoryInterface {
 	/**
 	 * Create the context from the given properties. If a context with those properties was already
 	 * created before then the existing one is returned.
+	 *
 	 * The context properties to give depend on the implementation of the context object, for the
 	 * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
+	 *
 	 * array(
 	 *        'workspaceName' => 'live',
 	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
@@ -74,6 +76,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 *        'removedContentShown' => FALSE,
 	 *        'inaccessibleContentShown' => FALSE
 	 * )
+	 *
 	 * This array also shows the defaults that get used if you don't provide a certain property.
 	 *
 	 * @param array $contextProperties
