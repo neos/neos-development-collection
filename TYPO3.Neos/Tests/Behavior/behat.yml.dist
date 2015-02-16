@@ -8,7 +8,7 @@ default:
     bootstrap: %behat.paths.features%/Bootstrap
   extensions:
     Behat\MinkExtension\Extension:
-      files_path: features/Resources
+      files_path: Features/Resources
       show_cmd: 'open %s'
       goutte: ~
       selenium2: ~
