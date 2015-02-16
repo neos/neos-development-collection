@@ -4,7 +4,7 @@
 define(
 	[
 		'./AbstractValidator',
-		'xregexp'
+		'Library/xregexp'
 	],
 	function(AbstractValidator, XRegExp) {
 		return AbstractValidator.extend({
