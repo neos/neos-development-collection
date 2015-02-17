@@ -136,6 +136,7 @@ class Parser implements ParserInterface {
 	const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
 	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/^(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
 	const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
+	const SPLIT_PATTERN_VALUENULL = '/^\s*(NULL|null)\s*$/';
 
 	const SCAN_PATTERN_VALUEOBJECTTYPE = '/
 		^\s*                      # beginning of line; with numerous whitespace
@@ -639,7 +640,7 @@ class Parser implements ParserInterface {
 			$processedValue = stripslashes(isset($matches['SingleQuoteValue']) ? $matches['SingleQuoteValue'] : $matches['DoubleQuoteValue']);
 			$closingQuoteChar = isset($matches['SingleQuoteChar']) ? $matches['SingleQuoteChar'] : $matches['DoubleQuoteChar'];
 			$regexp = '/(?P<Value>(?:\\\\.|[^\\\\' . $closingQuoteChar . '])*)(?P<QuoteChar>' . $closingQuoteChar . '?)/';
-			while(($typoScriptLine = $this->getNextTypoScriptLine()) !== FALSE) {
+			while (($typoScriptLine = $this->getNextTypoScriptLine()) !== FALSE) {
 				preg_match($regexp, $typoScriptLine, $matches);
 				$processedValue .= "\n" . stripslashes($matches['Value']);
 				if (!empty($matches['QuoteChar'])) {
@@ -648,6 +649,8 @@ class Parser implements ParserInterface {
 			}
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEBOOLEAN, $unparsedValue, $matches) === 1) {
 			$processedValue = (strtolower($matches[1]) === 'true');
+		} elseif (preg_match(self::SPLIT_PATTERN_VALUENULL, $unparsedValue, $matches) === 1) {
+			$processedValue = NULL;
 		} elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
 			if (empty($matches['namespace'])) {
 				$objectTypeNamespace = $this->objectTypeNamespaces['default'];

@@ -39,7 +39,16 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest {
 		$view->setTypoScriptPath('simpleTypes/booleanFalse');
 		$this->assertSame(FALSE, $view->render());
 		$view->setTypoScriptPath('simpleTypes/booleanTrue');
-		$this->assertSame(TRUE, $view->render());
+		$this->assertTrue($view->render());
+	}
+
+	/**
+	 * @test
+	 */
+	public function nullSimpleTypeWorks() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('simpleTypes/null');
+		$this->assertNull($view->render());
 	}
 
 	/**

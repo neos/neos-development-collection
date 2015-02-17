@@ -1,12 +1,13 @@
 //
 // TypoScript Fixture 19
 //
-// This fixture is used to check that simple types (string / boolean) are parsed correctly
+// This fixture is used to check that simple types (string / null / boolean) are parsed correctly
 
 somepath.stringValue = "A string value"
 
 somepath {
 	booleanValueFalse = FALSE
 	booleanValueTrue = TRUE
+	nullValue = NULL
 	integerValue = 42
 }

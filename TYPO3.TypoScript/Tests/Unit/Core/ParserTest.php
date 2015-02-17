@@ -790,6 +790,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'stringValue' => 'A string value',
 				'booleanValueFalse' => FALSE,
 				'booleanValueTrue' => TRUE,
+				'nullValue' => NULL,
 				'integerValue' => 42
 			),
 		);

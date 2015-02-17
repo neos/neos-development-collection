@@ -7,6 +7,9 @@ simpleTypes.booleanTrue = Value {
 simpleTypes.booleanFalse = Value {
 	value = FALSE
 }
+simpleTypes.null = Value {
+	value = NULL
+}
 simpleTypes.wrappedString = Value {
 	value = 'Hello, '
 	value.@process.1 = ${value + 'Foo'}
