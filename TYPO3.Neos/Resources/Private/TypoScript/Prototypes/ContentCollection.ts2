@@ -23,16 +23,12 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 
 	# You may override this to get your content collection from a different place than the current node.
 	# The Eel helper is used to provide a better error message if no content collection could be found.
-	@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
+	@override.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
-	content = TYPO3.Neos:ContentCollectionRenderer {
-		@override.node = ${contentCollectionNode}
-	}
+	content = TYPO3.Neos:ContentCollectionRenderer
 
 	# We have to define contentElementWrapping, because we do not inherit from TYPO3.Neos:Content
-	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
-		node = ${contentCollectionNode}
-	}
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
 
 	@cache {
 		mode = 'cached'
@@ -42,11 +38,11 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 		}
 
 		entryTags {
-			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
-			2 = ${'Node_' + contentCollectionNode.identifier}
+			1 = ${'DescendantOf_' + node.identifier}
+			2 = ${'Node_' + node.identifier}
 		}
 
-		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
+		maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
 	}
 
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
