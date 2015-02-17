@@ -32,7 +32,7 @@
 			{event.accountIdentifier -> neos:backend.userInitials()}
 		</div>
 		<div class="neos-history-event-description">
-			<strong>{neos:backend.translate(id: descriptionTranslationId, source: 'Modules', arguments: descriptionTranslationArguments)}</strong>
+			<strong>{neos:backend.translate(id: descriptionTranslationId, source: 'Modules', arguments: descriptionTranslationArguments) -> f:format.raw()}</strong>
 		</div>
 	</div>
 </f:section>
