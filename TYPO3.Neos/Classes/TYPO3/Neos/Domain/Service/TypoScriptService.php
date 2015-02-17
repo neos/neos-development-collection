@@ -81,7 +81,7 @@ class TypoScriptService {
 	protected $appendTypoScriptIncludes = array();
 
 	/**
-	 * @Flow\Inject(setting="typoScript.autoInclude")
+	 * @Flow\InjectConfiguration("typoScript.autoInclude")
 	 * @var array
 	 */
 	protected $autoIncludeConfiguration = array();

@@ -53,7 +53,7 @@ class EventEmittingService {
 	protected $eventRepository;
 
 	/**
-	 * @Flow\Inject(setting="eventLog.enabled")
+	 * @Flow\InjectConfiguration("eventLog.enabled")
 	 * @var boolean
 	 */
 	protected $enabled;

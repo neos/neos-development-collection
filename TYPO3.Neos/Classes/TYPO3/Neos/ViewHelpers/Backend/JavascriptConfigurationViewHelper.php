@@ -76,7 +76,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	protected $securityContext;
 
 	/**
-	 * @Flow\Inject(setting="userInterface.defaultLocale")
+	 * @Flow\InjectConfiguration("userInterface.defaultLocale")
 	 * @var string
 	 */
 	protected $defaultLocale;
