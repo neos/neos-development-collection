@@ -35,3 +35,5 @@ simpleTypes.valueWithNestedTypoScript = Value {
 		value = 'A simple value'
 	}
 }
+
+simpleTypes.missingImplementation = Acme:Test

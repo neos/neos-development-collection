@@ -53,6 +53,16 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
+	 */
+	public function renderingObjectWithMissingImplementationThrowsException() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('simpleTypes/missingImplementation');
+		$view->render();
+	}
+
+	/**
+	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
 	 */
 	public function renderingNonExistingPathThrowsException() {

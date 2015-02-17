@@ -353,16 +353,13 @@ class Runtime {
 
 		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
 			$finallyClosure();
-			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-				if (!isset($typoScriptConfiguration['__objectType'])) {
-					throw new Exceptions\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
-				} else {
-					throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
-				}
-			} else {
-				$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
-				return NULL;
+			if (isset($typoScriptConfiguration['__objectType'])) {
+				throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
+			} elseif ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
+				throw new Exceptions\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
 			}
+			$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+			return NULL;
 		}
 
 		try {
