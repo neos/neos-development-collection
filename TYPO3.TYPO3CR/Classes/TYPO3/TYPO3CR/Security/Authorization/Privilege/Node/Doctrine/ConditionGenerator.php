@@ -17,7 +17,6 @@ use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerat
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 

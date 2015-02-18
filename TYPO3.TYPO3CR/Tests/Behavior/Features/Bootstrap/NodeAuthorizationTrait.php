@@ -304,7 +304,7 @@ trait NodeAuthorizationTrait {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
 			$rows = $table->getHash();
-			$deniedNodeTypeNames = $this->nodeAuthorizationService->getDeniedNodeTypeNames($this->currentNodes[0]);
+			$deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
 
 			if (count($rows) !== count($deniedNodeTypeNames)) {
 				Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
@@ -313,6 +313,49 @@ trait NodeAuthorizationTrait {
 			foreach ($rows as $row) {
 				if (in_array($row['nodeTypeName'], $deniedNodeTypeNames) === FALSE) {
 					Assert::fail('The following node type name has not been returned by the node authorization service: ' . $row['nodeTypeName']);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param string $not
+	 * @Then /^I should (not )?be granted to remove the node$/
+	 */
+	public function iShouldNotBeGrantedToRemoveTheNode($not = '') {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($not))));
+		} else {
+
+			try {
+				$this->currentNodes[0]->remove();
+				if ($not === 'not') {
+					Assert::fail('Name should not be settable on the current node!');
+				}
+			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+				if ($not !== 'not') {
+					throw $exception;
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param string $expectedResult
+	 * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if removal of the node is granted$/
+	 */
+	public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfRemovalOfTheNodeIsGranted($expectedResult) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($expectedResult))));
+		} else {
+
+			if ($expectedResult === 'TRUE') {
+				if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== TRUE) {
+					Assert::fail('The node authorization service did not return TRUE!');
+				}
+			} else {
+				if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== FALSE) {
+					Assert::fail('The node authorization service did not return FALSE!');
 				}
 			}
 		}

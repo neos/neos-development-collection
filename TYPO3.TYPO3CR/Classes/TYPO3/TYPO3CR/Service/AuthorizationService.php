@@ -20,6 +20,7 @@ use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
 
 /**
  * This service provides API methods to check for privileges
@@ -42,6 +43,8 @@ class AuthorizationService {
 	protected $privilegeManager;
 
 	/**
+	 * Returns TRUE if the currently authenticated user is allowed to edit the given $node, otherwise FALSE
+	 *
 	 * @param NodeInterface $node
 	 * @return boolean
 	 */
@@ -50,31 +53,34 @@ class AuthorizationService {
 	}
 
 	/**
-	 * @param NodeInterface $node
+	 * Returns TRUE if the currently authenticated user is allowed to create a node of type $typeOfNewNode within the given $referenceNode
+	 *
+	 * @param NodeInterface $referenceNode
 	 * @param NodeType $typeOfNewNode
 	 * @return boolean
 	 */
-	public function isGrantedToCreateNode(NodeInterface $node, NodeType $typeOfNewNode = NULL) {
-		return $this->privilegeManager->isGranted(CreateNodePrivilege::class, new CreateNodePrivilegeSubject($node, $typeOfNewNode));
+	public function isGrantedToCreateNode(NodeInterface $referenceNode, NodeType $typeOfNewNode = NULL) {
+		return $this->privilegeManager->isGranted(CreateNodePrivilege::class, new CreateNodePrivilegeSubject($referenceNode, $typeOfNewNode));
 	}
 
 	/**
-	 * @param NodeInterface $node
-	 * @return array<string> Array of granted node type names
+	 * Returns the node types that the currently authenticated user is *denied* to create within the given $referenceNode
+	 *
+	 * @param NodeInterface $referenceNode
+	 * @return string[] Array of granted node type names
 	 */
-	public function getDeniedNodeTypeNames(NodeInterface $node) {
-		$privilegeSubject = new CreateNodePrivilegeSubject($node);
+	public function getNodeTypeNamesDeniedForCreation(NodeInterface $referenceNode) {
+		$privilegeSubject = new CreateNodePrivilegeSubject($referenceNode);
 
 		$deniedCreationNodeTypes = array();
 		$grantedCreationNodeTypes = array();
 		$abstainedCreationNodeTypes = array();
 		foreach ($this->securityContext->getRoles() as $role) {
-			foreach ($role->getPrivilegesByType('TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege') as $createNodePrivilege) {
-
+			/** @var CreateNodePrivilege $createNodePrivilege */
+			foreach ($role->getPrivilegesByType(CreateNodePrivilege::class) as $createNodePrivilege) {
 				if (!$createNodePrivilege->matchesSubject($privilegeSubject)) {
 					continue;
 				}
-
 				if ($createNodePrivilege->isGranted()) {
 					$grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $createNodePrivilege->getCreationNodeTypes());
 				} elseif ($createNodePrivilege->isDenied()) {
@@ -86,5 +92,16 @@ class AuthorizationService {
 		}
 		$implicitlyDeniedNodeTypes = array_diff($abstainedCreationNodeTypes, $grantedCreationNodeTypes);
 		return array_merge($implicitlyDeniedNodeTypes, $deniedCreationNodeTypes);
+	}
+
+	/**
+	 * Returns TRUE if the currently authenticated user is allowed to remove the given $node
+	 *
+	 * @param NodeInterface $node
+	 * @return boolean
+	 */
+	public function isGrantedToRemoveNode(NodeInterface $node) {
+		$privilegeSubject = new NodePrivilegeSubject($node);
+		return $this->privilegeManager->isGranted(RemoveNodePrivilege::class, $privilegeSubject);
 	}
 }

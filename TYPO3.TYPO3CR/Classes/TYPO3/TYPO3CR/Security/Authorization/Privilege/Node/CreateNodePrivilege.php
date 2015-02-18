@@ -11,7 +11,6 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\Context;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -56,7 +55,9 @@ class CreateNodePrivilege extends AbstractNodePrivilege {
 				return FALSE;
 			}
 
-			$nodePrivilegeSubject = new NodePrivilegeSubject($joinPoint->getProxy());
+			/** @var NodeInterface $node */
+			$node = $joinPoint->getProxy();
+			$nodePrivilegeSubject = new NodePrivilegeSubject($node);
 			$result = parent::matchesSubject($nodePrivilegeSubject);
 			return $result;
 		}

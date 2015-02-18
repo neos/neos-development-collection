@@ -12,7 +12,6 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  *                                                                        */
 
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
