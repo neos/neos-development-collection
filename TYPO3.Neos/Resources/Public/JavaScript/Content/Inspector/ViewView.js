@@ -3,9 +3,11 @@
  */
 define(
 [
-	'emberjs'
+	'emberjs',
+	'Library/jquery-with-dependencies'
 ], function(
-	Ember
+	Ember,
+	$
 ) {
 	return Ember.ContainerView.extend({
 		viewDefinition: null,
