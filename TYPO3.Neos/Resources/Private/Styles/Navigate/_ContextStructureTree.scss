@@ -1,268 +1,63 @@
 #neos-context-structure {
 	position: relative;
+}
 
-	#neos-context-structure-toolbar {
-		position: relative;
-		height: $unit;
-		font-size: 14px;
-		line-height: $unit;
-		text-indent: $defaultMargin;
-		border-top: 1px solid $grayLight;
-		border-bottom: 1px solid $grayLight;
-		margin-top: -1px;
+.neos-node-tree-toolbar.neos-context-structure-toolbar {
+	position: relative;
+	height: $unit;
+	top: 0;
+	font-size: 14px;
+	line-height: $unit;
+	border-top: 1px solid $grayLight;
+	margin-top: -1px;
+	text-indent: $defaultMargin;
+}
 
-		[class^="icon-"], [class*=" icon-"] {
-			@include icon-FontAwesome();
-			height: $unit;
-			font-size: 14px;
-			color: $textOnGray;
-			line-height: $unit;
-			width: $unit;
-			text-align: center;
-			float: right;
-			cursor: pointer;
-			text-indent: 0;
-			border: none;
-			padding: 0;
-			margin: 0;
-			background-color: transparent;
-			background-image: none;
+#neos-context-structure-tree-container {
+	position: relative;
+	white-space: nowrap;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	padding: $relatedMargin 0;
+	@include box-sizing(border-box);
 
-			&[disabled] {
-				color: $textSubtle;
-				cursor: not-allowed;
+	ul.neos-dynatree-container {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
 
-				&:hover {
-					color: $textSubtle;
-				}
-			}
+.neos-context-structure-collapse {
+	float: right;
+	width: $unit;
+	height: $unit;
+	cursor: pointer;
+	text-indent: 0;
 
-			&.neos-pressed,
-			&:hover {
-				color: $blue;
-			}
-		}
-
-		.neos-node-tree-new-node {
-			position: relative;
-
-			&.neos-disabled {
-				color: $textSubtle;
-				cursor: not-allowed;
-
-				&:hover,
-				&::after {
-					color: $textSubtle;
-				}
-
-				.neos-arrow {
-					border-bottom-color: $textSubtle;
-				}
-			}
-
-			&.node-node-tree-new-node-into::after {
-				content: $long-arrow-right;
-				left: 18px;
-				top: 9px;
-			}
-
-			&.node-node-tree-new-node-before::after {
-				content: $level-up;
-				left: 24px;
-				top: 6px;
-			}
-
-			&.node-node-tree-new-node-after::after {
-				content: $level-down;
-				left: 24px;
-				top: 7px;
-			}
-
-			&::after {
-				@include icon-FontAwesome();
-				position: absolute;
-				font-size: 14px;
-				color: $blue;
-			}
-
-			&.neos-expanded {
-				.neos-node-tree-new-node-position {
-					display: block;
-				}
-
-				.neos-arrow {
-					display: none;
-				}
-			}
-
-			.neos-arrow {
-				position: absolute;
-				bottom: $tightMargin;
-				right: $tightMargin;
-				border-left: $tightMargin solid transparent;
-				border-bottom: $tightMargin solid $blue;
-				@include transform(rotate(45deg));
-			}
-
-			.neos-node-tree-new-node-position {
-				display: none;
-				position: absolute;
-				top: $unit;
-				left: 0;
-				z-index: 1;
-				background-color: $grayDark;
-				border-right: 1px solid $grayLight;
-				border-bottom: 1px solid $grayLight;
-
-				button {
-					color: #fff;
-
-					&.neos-active {
-						color: $blue;
-					}
-
-					&:hover {
-						background-color: $blue;
-						color: #fff;
-					}
-				}
-			}
-		}
-
-		.neos-node-tree-paste-node {
-			position: relative;
-
-			&.neos-disabled {
-				color: $textSubtle;
-				cursor: not-allowed;
-
-				&:hover,
-				&::after {
-					color: $textSubtle;
-				}
-
-				.neos-arrow {
-					border-bottom-color: $textSubtle;
-				}
-			}
-
-			&.node-node-tree-paste-node-into::after {
-				content: $long-arrow-right;
-				left: 18px;
-				top: 9px;
-			}
-
-			&.node-node-tree-paste-node-before::after {
-				content: $level-up;
-				left: 24px;
-				top: 5px;
-			}
-
-			&.node-node-tree-paste-node-after::after {
-				content: $level-down;
-				left: 24px;
-				top: 6px;
-			}
-
-			&::after {
-				@include icon-FontAwesome();
-				position: absolute;
-				font-size: 14px;
-				color: $blue;
-			}
-
-			&.neos-expanded {
-				.neos-node-tree-paste-node-position {
-					display: block;
-				}
-
-				.neos-arrow {
-					display: none;
-				}
-			}
-
-			.neos-arrow {
-				position: absolute;
-				bottom: $tightMargin;
-				right: $tightMargin;
-				border-left: $tightMargin solid transparent;
-				border-bottom: $tightMargin solid $blue;
-				@include transform(rotate(45deg));
-			}
-
-			.neos-node-tree-paste-node-position {
-				display: none;
-				position: absolute;
-				top: $unit;
-				left: 0;
-				z-index: 1;
-				background-color: $grayDark;
-				border-left: 1px solid $grayLight;
-				border-right: 1px solid $grayLight;
-				border-bottom: 1px solid $grayLight;
-
-				button {
-					color: #fff;
-
-					&.neos-active {
-						color: $blue;
-					}
-
-					&:hover {
-						background-color: $blue;
-						color: #fff;
-					}
-				}
-			}
-		}
-
-		#neos-context-structure-collapse {
-			float: right;
-			width: $unit;
-			height: $unit;
-			cursor: pointer;
-			text-indent: 0;
-
-			&:hover {
-				background-color: $blue;
-				color: #fff;
-			}
-
-			&::before {
-				content: "›";
-				font-size: 26px;
-				font-weight: normal;
-				display: inline-block;
-				position: relative;
-				top: 0;
-				line-height: $unit;
-			}
-
-			&.collapsed::before {
-				@include rotate(-90deg);
-				left: 13px;
-			}
-
-			&.open::before {
-				@include rotate(90deg);
-				left: 19px;
-			}
-		}
+	&:hover {
+		background-color: $blue;
+		color: #fff;
 	}
 
-	#neos-context-structure-tree-container {
+	&::before {
+		content: "›";
+		font-size: 26px;
+		font-weight: normal;
+		display: inline-block;
 		position: relative;
-		white-space: nowrap;
-		margin: 0;
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-		padding: $relatedMargin 0;
-		@include box-sizing(border-box);
+		top: 0;
+		line-height: $unit;
+	}
 
-		ul.neos-dynatree-container {
-			padding-top: 0;
-			padding-bottom: 0;
-		}
+	&.collapsed::before {
+		@include rotate(-90deg);
+		left: 13px;
+	}
+
+	&.open::before {
+		@include rotate(90deg);
+		left: 19px;
 	}
 }

@@ -18,6 +18,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 
@@ -128,7 +129,7 @@ class ContentElementWrappingService {
 			$attributes['tabindex'] = 0;
 		}
 
-		if (!$node->dimensionsAreMatchingTargetDimensionValues()) {
+		if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
 			$classNames[] = 'neos-contentelement-shine-through';
 		}
 
@@ -149,9 +150,11 @@ class ContentElementWrappingService {
 
 		if ($node->isAutoCreated()) {
 			$attributes['data-node-_name'] = $node->getName();
+			$attributes['data-node-_is-autocreated'] = 'true';
 		}
 
 		if ($node->getParent() && $node->getParent()->isAutoCreated()) {
+			$attributes['data-node-_parent-is-autocreated'] = 'true';
 			// we shall only add these properties if the parent is actually auto-created; as the Node-Type-Switcher in the UI relies on that.
 			$attributes['data-node-__parent-node-name'] = $node->getParent()->getName();
 			$attributes['data-node-__grandparent-node-type'] = $node->getParent()->getParent()->getNodeType()->getName();

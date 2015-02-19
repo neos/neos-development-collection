@@ -49,26 +49,14 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * Opens the create new node dialog. Given position, referenceNode
 		 * and index are optional.
 		 *
-		 * If no reference is given the reference will be based on the current
-		 * node selection.
-		 *
-		 * @param {string} position could be after or into
-		 * @param {node} referenceNode node which will be used as reference for positioning
-		 * @param {integer} index the index to add the new node (overrides the position based on referenceNode)
+		 * @param {string} position could be after, before or into
 		 * @return {void}
 		 */
-		create: function(position, referenceNode, index) {
-			if (!referenceNode) {
-				referenceNode = NodeSelection.get('selectedNode');
-			}
+		create: function(position) {
+			var selectedNode = NodeSelection.get('selectedNode');
 
-			if (this.isDocument(referenceNode)) {
-				Notification.info('Select a content element or section for adding content');
-				return;
-			}
-
-			if (typeof index === 'undefined') {
-				index = this._collectionIndex(referenceNode);
+			if (typeof position === 'undefined') {
+				position = 'into';
 			}
 
 			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
@@ -77,8 +65,8 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				}
 
 				InsertNodePanel.create({
-					_node: referenceNode,
-					_index: position === 'after' ? index : 0
+					_node: selectedNode,
+					_position: position
 				});
 			});
 		},
@@ -114,19 +102,21 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		/**
 		 * Paste node from clipboard
 		 *
-		 * @param {string} position Could be after or into
-		 * @param {object} referenceNode Node used as reference to find the location to paste, if left out the currently selected node is used
+		 * @param {string} position Could be after, before or into
 		 * @return {boolean}
 		 */
-		paste: function(position, referenceNode) {
-			if (!referenceNode) {
-				referenceNode = NodeSelection.get('selectedNode');
-			}
-
-			if (this.isCollection(referenceNode)) {
-				return NodeActions.pasteInto(referenceNode);
-			} else {
-				return NodeActions.pasteAfter(referenceNode);
+		paste: function(position) {
+			var referenceNode = NodeSelection.get('selectedNode');
+			switch (position) {
+				case 'before':
+					return NodeActions.pasteBefore(referenceNode);
+				break;
+				case 'after':
+					return NodeActions.pasteAfter(referenceNode);
+				break;
+				case 'into':
+					return NodeActions.pasteInto(referenceNode);
+				break;
 			}
 		},
 
@@ -150,25 +140,56 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			});
 		},
 
+		_getAllowedChildNodeTypes: function(nodeName, nodeType, parentNodeType, isAutoCreated) {
+			var types = null;
+			if (typeof isAutoCreated !== 'undefined') {
+				if ((typeof parentNodeType !== 'undefined') && (typeof nodeName !== 'undefined')) {
+					types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
+						parentNodeType,
+						nodeName
+					);
+				}
+			} else if (typeof nodeType !== 'undefined') {
+				types = NodeTypeService.getAllowedChildNodeTypes(nodeType);
+			}
+
+			if (types) {
+				var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+					contentTypesArray = Object.keys(contentTypes);
+				return types.filter(function(n) {
+					return contentTypesArray.indexOf(n) !== -1;
+				});
+			}
+
+			return [];
+		},
+
 		/**
-		 * Returns the index of the content element in the current section
+		 * Get allowed child node types.
+		 *
+		 * @param {object} node The node for which to determine allowed child node types
+		 * @return {array}
 		 */
-		_collectionIndex: function(node) {
-			if (!node) {
-				return 0;
-			}
+		getAllowedChildNodeTypesForNode: function(node) {
+			var isAutoCreated = node.$element.data('node-_is-autocreated');
+			var nodeName = node.$element.data('node-_name');
+			var nodeType = node.$element.data('node-_node-type');
+			var parentNodeType = node.$element.data('node-__parent-node-type');
+			return this._getAllowedChildNodeTypes(nodeName, nodeType, parentNodeType, isAutoCreated);
+		},
 
-			var entity = node.get('_vieEntity'),
-				enclosingCollectionWidget = entity._enclosingCollectionWidget,
-				entityIndex = enclosingCollectionWidget.options.collection.indexOf(entity);
-
-			if (entityIndex === -1) {
-				entityIndex = enclosingCollectionWidget.options.collection.length;
-			} else {
-				entityIndex++;
-			}
-			return entityIndex;
+		/**
+		 * Get allowed sibling node types.
+		 *
+		 * @param {object} node The node for which to determine allowed sibling node types
+		 * @return {array}
+		 */
+		getAllowedSiblingNodeTypesForNode: function(node) {
+			var isAutoCreated = node.$element.data('node-_parent-is-autocreated');
+			var nodeName = node.$element.data('node-__parent-node-name');
+			var nodeType = node.$element.data('node-__parent-node-type');
+			var parentNodeType = node.$element.data('node-__grandparent-node-type');
+			return this._getAllowedChildNodeTypes(nodeName, nodeType, parentNodeType, isAutoCreated);
 		}
-
 	});
 });

@@ -8,6 +8,7 @@ define(
 	'Shared/Configuration',
 	'Content/Model/NodeActions',
 	'Shared/NodeTypeService',
+	'InlineEditing/ContentCommands',
 	'LibraryExtensions/Mousetrap'
 ],
 function(
@@ -18,18 +19,24 @@ function(
 	ContentModule,
 	Configuration,
 	NodeActions,
-	NodeTypeService
+	NodeTypeService,
+	ContentCommands
 ) {
 	return AbstractInsertNodePanel.extend({
 		_node: null,
-		_index: null,
+		_position: null,
 
 		nodeTypeGroups: function() {
 			var groups = {},
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				$collectionElement = this.get('_node._vieEntity._enclosingCollectionWidget').element,
-				// $collectionElement is currently *ALWAYS* autocreated!!!
-				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.data('node-__parent-node-type'), $collectionElement.data('node-_name'));
+				node = this.get('_node');
+				position = this.get('_position');
+
+			if (position === 'into') {
+				var types = ContentCommands.getAllowedChildNodeTypesForNode(node);
+			} else {
+				var types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
+			}
 
 			types = _.map(types, function(nodeType) {
 				return 'typo3:' + nodeType;
@@ -82,11 +89,30 @@ function(
 
 		insertNode: function(nodeType) {
 			NodeActions.set('_elementIsAddingNewContent', this.get('_node.nodePath'));
-
-			this.get('_node._vieEntity._enclosingCollectionWidget').options.collection.add({
-				'@type': 'typo3:' + nodeType
-			}, {at: this.get('_index')});
-
+			var position = this.get('_position');
+			var nodeEntity = this.get('_node._vieEntity');
+			var callBack = function () {
+				require(
+					{context: 'neos'},
+					[
+						'Content/Application'
+					],
+					function(ContentModule) {
+							ContentModule.reloadPage();
+					}
+				);
+			}
+			switch (position) {
+				case 'before':
+					NodeActions.addAbove(nodeType, nodeEntity, callBack);
+				break;
+				case 'after':
+					NodeActions.addBelow(nodeType, nodeEntity, callBack);
+				break;
+				case 'into':
+					NodeActions.addInside(nodeType, nodeEntity, callBack);
+				break;
+			}
 			this.destroy();
 		}
 	});

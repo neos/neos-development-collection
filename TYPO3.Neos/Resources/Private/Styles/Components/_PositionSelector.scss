@@ -1,0 +1,94 @@
+.neos-position-selector {
+	position: relative;
+	text-indent: 0;
+
+	&.neos-disabled {
+		color: $textSubtleLight;
+		cursor: not-allowed;
+
+		&:hover,
+		&::after {
+			color: $textSubtleLight !important;
+		}
+
+		.neos-arrow {
+			border-bottom-color: $textSubtle;
+		}
+	}
+
+	&::before {
+		font-size: 14px;
+	}
+
+	&::after {
+		@include icon-FontAwesome();
+		position: absolute;
+		font-size: 14px;
+		color: $blue;
+	}
+
+	&.neos-position-selector-node-into::after {
+		content: $long-arrow-right;
+		left: 18px;
+		top: 9px;
+	}
+
+	&.neos-position-selector-node-before::after {
+		content: $level-up;
+		left: 24px;
+		top: 6px;
+	}
+
+	&.neos-position-selector-node-after::after {
+		content: $level-down;
+		left: 24px;
+		top: 7px;
+	}
+
+	&.neos-expanded {
+		.neos-position-selector-position {
+			display: block;
+		}
+
+		.neos-arrow {
+			display: none;
+		}
+	}
+
+	.neos-arrow {
+		position: absolute;
+		bottom: $tightMargin;
+		right: $tightMargin;
+		border-left: $tightMargin solid transparent;
+		border-bottom: $tightMargin solid $blue;
+		@include transform(rotate(45deg));
+	}
+}
+
+.neos-position-selector-position {
+	display: none;
+	position: absolute;
+	top: $unit - 1px;
+	left: -1px;
+	z-index: 1;
+	background-color: $grayDark;
+	border: 1px solid $grayLight;
+	border-top: 0;
+
+	.neos-button {
+		width: $unit - 2px;
+		height: $unit;
+		color: #fff;
+		border: 0;
+
+		&.neos-active {
+			color: $blue;
+			background-color: inherit;
+		}
+
+		&:hover {
+			color: $blue;
+			background-color: inherit;
+		}
+	}
+}

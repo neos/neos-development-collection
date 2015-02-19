@@ -29,20 +29,20 @@ define(
 ) {
 	return Ember.Object.extend({
 		// TODO: Move this to a separate controller
-		_clipboard: null,
+		clipboard: null,
 		_elementIsAddingNewContent: null,
 		_elementIsPastingContent: null,
 
 		clipboardContainsContent: function() {
-			return this.get('_clipboard') !== null;
-		}.property('_clipboard'),
+			return this.get('clipboard') !== null;
+		}.property('clipboard'),
 
 		/**
 		 * Initialization lifecycle method. Here, we re-fill the clipboard as needed
 		 */
 		init: function() {
 			if (LocalStorage.getItem('clipboard')) {
-				this.set('_clipboard', LocalStorage.getItem('clipboard'));
+				this.set('clipboard', LocalStorage.getItem('clipboard'));
 			}
 		},
 
@@ -53,10 +53,10 @@ define(
 		 * @return {void}
 		 */
 		cut: function(node) {
-			if (this.get('_clipboard.type') === 'cut' && this.get('_clipboard.nodePath') === node.get('nodePath')) {
-				this.set('_clipboard', null);
+			if (this.get('clipboard.type') === 'cut' && this.get('clipboard.nodePath') === node.get('nodePath')) {
+				this.set('clipboard', null);
 			} else {
-				this.set('_clipboard', {
+				this.set('clipboard', {
 					type: 'cut',
 					nodePath: node.get('nodePath'),
 					nodeType: node.get('nodeType')
@@ -70,10 +70,10 @@ define(
 		 * @return {void}
 		 */
 		copy: function(node) {
-			if (this.get('_clipboard.type') === 'copy' && this.get('_clipboard.nodePath') === node.get('nodePath')) {
-				this.set('_clipboard', null);
+			if (this.get('clipboard.type') === 'copy' && this.get('clipboard.nodePath') === node.get('nodePath')) {
+				this.set('clipboard', null);
 			} else {
-				this.set('_clipboard', {
+				this.set('clipboard', {
 					type: 'copy',
 					nodePath: node.get('nodePath'),
 					nodeType: node.get('nodeType')
@@ -119,7 +119,7 @@ define(
 		 */
 		_paste: function(node, position) {
 			var that = this,
-				clipboard = this.get('_clipboard');
+				clipboard = this.get('clipboard');
 
 			if (!clipboard.nodePath) {
 				Notification.info('No node found on the clipboard');
@@ -140,7 +140,7 @@ define(
 			).then(
 				function (result) {
 					if (result.success) {
-						that.set('_clipboard', null);
+						that.set('clipboard', null);
 						require(
 							{context: 'neos'},
 							[
@@ -232,12 +232,12 @@ define(
 		},
 
 		/**
-		 * Observes the _clipboard property and processes changes
+		 * Observes the clipboard property and processes changes
 		 * @return {void}
 		 */
 		onClipboardChange: function() {
-			var clipboard = this.get('_clipboard');
+			var clipboard = this.get('clipboard');
 			LocalStorage.setItem('clipboard', clipboard);
-		}.observes('_clipboard')
+		}.observes('clipboard')
 	}).create();
 });

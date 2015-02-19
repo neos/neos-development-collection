@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1424185514') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1428863081') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1424185514') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1428863081') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1424185514') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1428863081') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1424185514') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1428863081') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -9111,238 +9111,17 @@
 .neos #neos-navigate-panel #neos-context-structure {
   position: relative;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar {
+.neos #neos-navigate-panel .neos-node-tree-toolbar.neos-context-structure-toolbar {
   position: relative;
   height: 40px;
-  font-size: 14px;
-  line-height: 40px;
-  text-indent: 16px;
-  border-top: 1px solid #3f3f3f;
-  border-bottom: 1px solid #3f3f3f;
-  margin-top: -1px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"], .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"] {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  height: 40px;
-  font-size: 14px;
-  color: #fff;
-  line-height: 40px;
-  width: 40px;
-  text-align: center;
-  float: right;
-  cursor: pointer;
-  text-indent: 0;
-  border: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  background-image: none;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"][disabled], .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"][disabled] {
-  color: #5b5b5b;
-  cursor: not-allowed;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"][disabled]:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"][disabled]:hover {
-  color: #5b5b5b;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"].neos-pressed, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"]:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"].neos-pressed, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"]:hover {
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node {
-  position: relative;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled {
-  color: #5b5b5b;
-  cursor: not-allowed;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled::after {
-  color: #5b5b5b;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled .neos-arrow {
-  border-bottom-color: #5b5b5b;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
-  content: "";
-  left: 18px;
-  top: 9px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before::after {
-  content: "";
-  left: 24px;
-  top: 6px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after::after {
-  content: "";
-  left: 24px;
-  top: 7px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node::after {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  position: absolute;
-  font-size: 14px;
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-expanded .neos-node-tree-new-node-position {
-  display: block;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-expanded .neos-arrow {
-  display: none;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-arrow {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  border-left: 4px solid transparent;
-  border-bottom: 4px solid #00b5ff;
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
-  display: none;
-  position: absolute;
-  top: 40px;
-  left: 0;
-  z-index: 1;
-  background-color: #222;
-  border-right: 1px solid #3f3f3f;
-  border-bottom: 1px solid #3f3f3f;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button {
-  color: #fff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button.neos-active {
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button:hover {
-  background-color: #00b5ff;
-  color: #fff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node {
-  position: relative;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled {
-  color: #5b5b5b;
-  cursor: not-allowed;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled::after {
-  color: #5b5b5b;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled .neos-arrow {
-  border-bottom-color: #5b5b5b;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
-  content: "";
-  left: 18px;
-  top: 9px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before::after {
-  content: "";
-  left: 24px;
-  top: 5px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after::after {
-  content: "";
-  left: 24px;
-  top: 6px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node::after {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  position: absolute;
-  font-size: 14px;
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-expanded .neos-node-tree-paste-node-position {
-  display: block;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-expanded .neos-arrow {
-  display: none;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-arrow {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  border-left: 4px solid transparent;
-  border-bottom: 4px solid #00b5ff;
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position {
-  display: none;
-  position: absolute;
-  top: 40px;
-  left: 0;
-  z-index: 1;
-  background-color: #222;
-  border-left: 1px solid #3f3f3f;
-  border-right: 1px solid #3f3f3f;
-  border-bottom: 1px solid #3f3f3f;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button {
-  color: #fff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button.neos-active {
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button:hover {
-  background-color: #00b5ff;
-  color: #fff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar #neos-context-structure-collapse {
-  float: right;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  text-indent: 0;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar #neos-context-structure-collapse:hover {
-  background-color: #00b5ff;
-  color: #fff;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar #neos-context-structure-collapse::before {
-  content: "›";
-  font-size: 26px;
-  font-weight: normal;
-  display: inline-block;
-  position: relative;
   top: 0;
+  font-size: 14px;
   line-height: 40px;
+  border-top: 1px solid #3f3f3f;
+  margin-top: -1px;
+  text-indent: 16px;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar #neos-context-structure-collapse.collapsed::before {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  left: 13px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar #neos-context-structure-collapse.open::before {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  left: 19px;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-tree-container {
+.neos #neos-navigate-panel #neos-context-structure-tree-container {
   position: relative;
   white-space: nowrap;
   margin: 0;
@@ -9354,9 +9133,45 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-tree-container ul.neos-dynatree-container {
+.neos #neos-navigate-panel #neos-context-structure-tree-container ul.neos-dynatree-container {
   padding-top: 0;
   padding-bottom: 0;
+}
+.neos #neos-navigate-panel .neos-context-structure-collapse {
+  float: right;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  text-indent: 0;
+}
+.neos #neos-navigate-panel .neos-context-structure-collapse:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
+.neos #neos-navigate-panel .neos-context-structure-collapse::before {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  line-height: 40px;
+}
+.neos #neos-navigate-panel .neos-context-structure-collapse.collapsed::before {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: 13px;
+}
+.neos #neos-navigate-panel .neos-context-structure-collapse.open::before {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 19px;
 }
 .neos #neos-navigate-panel #neos-node-tree {
   height: 50%;
@@ -9564,55 +9379,40 @@
 .neos .neos-handle-container {
   position: absolute;
   z-index: 10001;
+  /** Reset stuff fron Neos icons **/
 }
-.neos .neos-handle-container .neos-button-toolbar {
-  text-align: right !important;
-  margin-top: 0;
-  position: relative;
-}
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group {
+.neos .neos-handle-container .neos-button-group {
   position: absolute;
   right: -8px;
-  top: -43px;
-  border: 2px solid #00b5ff;
-  border-bottom: 0px;
-  background-color: #eee;
+  top: -41px;
+  background-color: #222;
 }
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button {
-  background-color: transparent;
-  width: 32px;
-  height: 32px;
-}
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button:hover {
-  background-color: #e6e6e6;
-}
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button.neos-active {
-  background-color: #00b5ff;
-  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button.neos-active i {
+.neos .neos-handle-container .neos-button {
+  width: 40px;
+  height: 40px;
   color: #fff;
+  background-color: transparent;
+  padding: 0;
+  text-align: center;
+  border: 1px solid #3f3f3f;
+  border-bottom: 0;
 }
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button [class^="icon-"],
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button [class*=" icon-"] {
-  margin-left: -7px;
-  margin-top: -11px;
+.neos .neos-handle-container .neos-button.neos-active {
+  color: #00b5ff;
+  background-color: inherit;
 }
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button i {
-  color: #000;
-  text-shadow: none;
+.neos .neos-handle-container .neos-button:hover {
+  color: #00b5ff;
+  background-color: inherit;
 }
-.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button i.neos-handle-loading {
+.neos .neos-handle-container [class^="icon-"],
+.neos .neos-handle-container [class*=" icon-"] {
+  width: inherit;
+  height: inherit;
+  line-height: inherit;
+  vertical-align: inherit;
+  margin: 0;
   display: block;
-  width: 16px;
-  height: 16px;
-  margin-top: 1px;
-  margin-left: -8px;
-  background-image: url("../Images/ajax-preloader.gif") !important;
-  background-repeat: no-repeat !important;
-  background-position: 50% 50% !important;
 }
 .neos.neos-empty-contentcollection-overlay {
   height: 20px;
@@ -11851,6 +11651,90 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.neos .neos-position-selector {
+  position: relative;
+  text-indent: 0;
+}
+.neos .neos-position-selector.neos-disabled {
+  color: #adadad;
+  cursor: not-allowed;
+}
+.neos .neos-position-selector.neos-disabled:hover, .neos .neos-position-selector.neos-disabled::after {
+  color: #adadad !important;
+}
+.neos .neos-position-selector.neos-disabled .neos-arrow {
+  border-bottom-color: #5b5b5b;
+}
+.neos .neos-position-selector::before {
+  font-size: 14px;
+}
+.neos .neos-position-selector::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  position: absolute;
+  font-size: 14px;
+  color: #00b5ff;
+}
+.neos .neos-position-selector.neos-position-selector-node-into::after {
+  content: "";
+  left: 18px;
+  top: 9px;
+}
+.neos .neos-position-selector.neos-position-selector-node-before::after {
+  content: "";
+  left: 24px;
+  top: 6px;
+}
+.neos .neos-position-selector.neos-position-selector-node-after::after {
+  content: "";
+  left: 24px;
+  top: 7px;
+}
+.neos .neos-position-selector.neos-expanded .neos-position-selector-position {
+  display: block;
+}
+.neos .neos-position-selector.neos-expanded .neos-arrow {
+  display: none;
+}
+.neos .neos-position-selector .neos-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid #00b5ff;
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.neos .neos-position-selector-position {
+  display: none;
+  position: absolute;
+  top: 39px;
+  left: -1px;
+  z-index: 1;
+  background-color: #222;
+  border: 1px solid #3f3f3f;
+  border-top: 0;
+}
+.neos .neos-position-selector-position .neos-button {
+  width: 38px;
+  height: 40px;
+  color: #fff;
+  border: 0;
+}
+.neos .neos-position-selector-position .neos-button.neos-active {
+  color: #00b5ff;
+  background-color: inherit;
+}
+.neos .neos-position-selector-position .neos-button:hover {
+  color: #00b5ff;
+  background-color: inherit;
 }
 .neos .page-navigation ul {
   border-top: 1px solid #3f3f3f;

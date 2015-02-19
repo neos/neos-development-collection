@@ -3,64 +3,43 @@
 	position: absolute;
 	z-index: 10001;
 
-	.neos-button-toolbar {
-		text-align: right !important;
-		margin-top: 0;
-		position: relative;
+	.neos-button-group {
+		position: absolute;
+		right: -8px;
+		top: -41px;
+		background-color: $grayDark;
+	}
 
-		.neos-button-group {
-			position: absolute;
-			right: -8px;
-			top: -43px;
-			border: 2px solid $blue;
-			border-bottom: 0px;
-			background-color: $grayLighter;
+	.neos-button {
+		width: $unit;
+		height: $unit;
+		color: #fff;
+		background-color: transparent;
+		padding: 0;
+		text-align: center;
+		border: 1px solid $grayLight;
+		border-bottom: 0;
 
-			.neos-button {
-				background-color: transparent;
-				width: 32px;
-				height: 32px;
-
-				&:hover {
-					background-color: #e6e6e6;
-				}
-
-				&.neos-active {
-					background-color: $blue;
-					@include box-shadow(inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05));
-
-					i {
-						color: #fff;
-					}
-				}
-
-				[class^="icon-"],
-				[class*=" icon-"] {
-					margin-left: -7px;
-					margin-top: -11px;
-				}
-
-				i {
-					color: #000;
-					@include text-shadow(none);
-
-					&.neos-handle-loading {
-						display: block;
-						width: 16px;
-						height: 16px;
-						margin-top: 1px;
-						margin-left: -8px;
-						background-image: url('../Images/ajax-preloader.gif') !important;
-						background-repeat: no-repeat !important;
-						background-position: 50% 50% !important;
-					}
-				}
-			}
-
-			.neos-button:last-child {
-				//@include border-radius(0);
-			}
+		&.neos-active {
+			color: $blue;
+			background-color: inherit;
 		}
+
+		&:hover {
+			color: $blue;
+			background-color: inherit;
+		}
+	}
+
+	/** Reset stuff fron Neos icons **/
+	[class^="icon-"],
+	[class*=" icon-"] {
+		width: inherit;
+		height: inherit;
+		line-height: inherit;
+		vertical-align: inherit;
+		margin: 0;
+		display: block;
 	}
 }
 

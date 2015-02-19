@@ -3,7 +3,7 @@ define(
 		'Library/jquery-with-dependencies',
 		'Library/underscore',
 		'vie',
-		'InlineEditing/InlineEditingHandles/EmptyContentCollectionOverlay',
+		'InlineEditing/EmptyContentCollectionOverlay',
 		'InlineEditing/NotInlineEditableOverlay',
 		'Library/create'
 	],
