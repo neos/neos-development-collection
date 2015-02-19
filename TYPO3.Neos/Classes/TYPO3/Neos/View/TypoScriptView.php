@@ -88,7 +88,6 @@ class TypoScriptView extends AbstractView {
 			'node' => $currentNode,
 			'documentNode' => $this->getClosestDocumentNode($currentNode),
 			'site' => $currentSiteNode,
-			'account' => $this->securityContext->canBeInitialized() ? $this->securityContext->getAccount() : NULL,
 			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
 		));
 		try {

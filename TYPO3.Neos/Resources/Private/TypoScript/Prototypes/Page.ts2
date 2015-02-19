@@ -71,13 +71,12 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			@position = 'end 10001'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
 			node = ${node}
-			account = ${account}
+			account = ${Security.getAccount()}
 
 			@cache {
 				mode = 'uncached'
 				context {
 					1 = 'node'
-					2 = 'account'
 				}
 			}
 			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
