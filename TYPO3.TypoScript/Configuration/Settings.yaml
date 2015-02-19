@@ -34,3 +34,4 @@ TYPO3:
       Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
       Math: 'TYPO3\Eel\Helper\MathHelper'
       Json: 'TYPO3\Eel\Helper\JsonHelper'
+      Security: 'TYPO3\Eel\Helper\SecurityHelper'
