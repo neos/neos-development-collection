@@ -21,7 +21,6 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Neos\Cache\CacheManager;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -38,12 +37,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	 * @var array
 	 */
 	protected $settings;
-
-	/**
-	 * @Flow\Inject
-	 * @var CacheManager
-	 */
-	protected $cacheManager;
 
 	/**
 	 * @Flow\Inject

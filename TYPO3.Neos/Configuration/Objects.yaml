@@ -1,4 +1,4 @@
-TYPO3\Neos\Cache\CacheManager:
+TYPO3\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
   properties:
     configurationCache:
       object:
