@@ -34,7 +34,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 		mode = 'cached'
 
 		entryIdentifier {
-			collection = ${contentCollectionNode}
+			collection = ${node}
 		}
 
 		entryTags {
