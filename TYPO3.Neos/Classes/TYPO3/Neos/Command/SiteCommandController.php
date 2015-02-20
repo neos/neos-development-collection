@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -51,6 +52,12 @@ class SiteCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
+	 * @var PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -72,6 +79,15 @@ class SiteCommandController extends CommandController {
 	 * @return void
 	 */
 	public function importCommand($packageKey = NULL, $filename = NULL) {
+		$exceedingArguments = $this->request->getExceedingArguments();
+		if (isset($exceedingArguments[0]) && $packageKey === NULL && $filename === NULL) {
+			if (file_exists($exceedingArguments[0])) {
+				$filename = $exceedingArguments[0];
+			} elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+				$packageKey = $exceedingArguments[0];
+			}
+		}
+
 		if ($packageKey === NULL && $filename === NULL) {
 			$this->outputLine('You have to specify either "--package-key" or "--filename"');
 			$this->quit(1);
