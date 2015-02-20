@@ -414,6 +414,37 @@
 		}
 	}
 
+	#filelist {
+		margin-bottom: $wideMargin;
+
+		.progress {
+			background-color: $grayMedium;
+			border: 1px solid $grayLight;
+			width: 100%;
+			height: $unit;
+			margin-bottom: $relatedMargin;
+			position: relative;
+
+			.label {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				line-height: $unit;
+				text-align: center;
+			}
+
+			.bar {
+				background-color: $blue;
+				height: $unit;
+			}
+		}
+	}
+
+	#uploader .plupload {
+		display: none;
+	}
+
 	#resource {
 		visibility: hidden;
 		position: absolute;
