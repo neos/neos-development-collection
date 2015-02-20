@@ -94,3 +94,7 @@
 		}
 	}
 }
+
+label.neos-inline + label:not(.neos-inline) {
+	margin-top: $defaultMargin - $tightMargin;
+}

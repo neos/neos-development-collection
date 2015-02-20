@@ -15,6 +15,9 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
@@ -37,10 +40,28 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 	protected $configurationManager;
 
 	/**
-	 *
+	 * @Flow\Inject
+	 * @var SiteRepository
+	 */
+	protected $siteRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var DomainRepository
+	 */
+	protected $domainRepository;
+
+	/**
+	 * @return void
 	 */
 	public function initializeObject() {
 		$this->settings = $this->configurationManager->getConfiguration('Settings', 'TYPO3.Media');
+		$domain = $this->domainRepository->findOneByActiveRequest();
+		// Set active asset collection to the current site's asset collection, if it has one, on the first view if a matching domain is found
+		if ($domain !== NULL && !$this->browserState->get('activeAssetCollection') && $this->browserState->get('automaticAssetCollectionSelection') !== TRUE && $domain->getSite()->getAssetCollection() !== NULL) {
+			$this->browserState->set('activeAssetCollection', $domain->getSite()->getAssetCollection());
+			$this->browserState->set('automaticAssetCollectionSelection', TRUE);
+		}
 	}
 
 	/**
@@ -73,6 +94,18 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 		$this->assetRepository->remove($asset);
 		$this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), NULL, NULL, array(), 1412375050);
 		$this->redirect('index');
+	}
+
+	/**
+	 * @param AssetCollection $assetCollection
+	 * @return void
+	 */
+	public function deleteAssetCollectionAction(AssetCollection $assetCollection) {
+		foreach ($this->siteRepository->findByAssetCollection($assetCollection) as $site) {
+			$site->setAssetCollection(NULL);
+			$this->siteRepository->update($site);
+		}
+		parent::deleteAssetCollectionAction($assetCollection);
 	}
 
 }

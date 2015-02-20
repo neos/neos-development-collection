@@ -96,6 +96,7 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
+				uploader.settings.multipart_params['__siteNodeName'] = $('link[rel="neos-site"]').data('node-name');
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {
