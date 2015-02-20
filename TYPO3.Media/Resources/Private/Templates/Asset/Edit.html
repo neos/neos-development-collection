@@ -21,6 +21,14 @@
 							</label>
 						</f:for>
 					</f:if>
+					<f:if condition="{assetCollections}">
+						<label>Collections</label>
+						<f:for each="{assetCollections}" as="assetCollection">
+							<label class="neos-checkbox neos-inline">
+								<m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
+							</label>
+						</f:for>
+					</f:if>
 				</fieldset>
 				<fieldset>
 					<legend>Metadata</legend>
