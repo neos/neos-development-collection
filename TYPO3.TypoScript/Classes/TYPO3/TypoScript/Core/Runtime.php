@@ -308,13 +308,16 @@ class Runtime {
 	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
 	 */
 	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = NULL) {
+		$needToPopContext = FALSE;
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
 		$runtimeContentCache = $this->runtimeContentCache;
 
 		$cacheCtx = $runtimeContentCache->enter(isset($typoScriptConfiguration['__meta']['cache']) ? $typoScriptConfiguration['__meta']['cache'] : array(), $typoScriptPath);
 
 		// A closure that needs to be called for every return path in this method
-		$finallyClosure = function() use ($cacheCtx, $runtimeContentCache) {
+		$self = $this;
+		$finallyClosure = function($needToPopContext = FALSE) use ($cacheCtx, $runtimeContentCache, $self) {
+			if ($needToPopContext) $self->popContext();
 			$runtimeContentCache->leave($cacheCtx);
 		};
 
@@ -345,25 +348,26 @@ class Runtime {
 					$contextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 				}
 				$this->pushContextArray($contextArray);
+				$needToPopContext = TRUE;
 			}
 
 			list($cacheHit, $cachedResult) = $runtimeContentCache->preEvaluate($cacheCtx, $tsObject);
 			if ($cacheHit) {
-				$finallyClosure();
+				$finallyClosure($needToPopContext);
 				return $cachedResult;
 			}
 
 			$output = $tsObject->evaluate();
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
-			$finallyClosure();
+			$finallyClosure($needToPopContext);
 			throw $stopActionException;
 		} catch (SecurityException $securityException) {
 			throw $securityException;
 		} catch (Exceptions\RuntimeException $runtimeException) {
-			$finallyClosure();
+			$finallyClosure($needToPopContext);
 			throw $runtimeException;
 		} catch (\Exception $exception) {
-			$finallyClosure();
+			$finallyClosure($needToPopContext);
 			throw new Exceptions\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
 		}
 
@@ -383,12 +387,7 @@ class Runtime {
 		}
 
 		$output = $runtimeContentCache->postProcess($cacheCtx, $tsObject, $output);
-
-		if (isset($typoScriptConfiguration['__meta']['override'])) {
-			$this->popContext();
-		}
-
-		$finallyClosure();
+		$finallyClosure($needToPopContext);
 
 		return $output;
 	}
