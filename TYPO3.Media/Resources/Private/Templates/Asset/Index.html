@@ -46,10 +46,6 @@
 		<f:form.textfield id="neos-tags-create-textfield" name="label" placeholder="Enter tag label" /><br /><br />
 		<f:form.submit value="Create tag" class="neos-button neos-button-primary" />
 	</f:form>
-
-	<div id="uploader">
-		<div id="filelist"></div>
-	</div>
 </f:section>
 
 <f:section name="Content">
@@ -58,6 +54,9 @@
 		<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
 			<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
 		</f:form>
+	</div>
+	<div id="uploader">
+		<div id="filelist"></div>
 	</div>
 	<f:if condition="{assets}">
 		<f:then>

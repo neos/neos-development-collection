@@ -18,7 +18,7 @@
 		uploader.bind('FilesAdded', function(up, files) {
 			$('#dropzone').hide();
 			$.each(files, function(i, file) {
-				$('#filelist').append('<div class="progress"><div class="bar" style="width: 0%;"></div></div>');
+				$('#filelist').append('<div class="progress" id="' + file.id + '"><div class="bar" style="width: 0%;"></div><div class="label">' + file.name + ' <span>0</span>%</div></div>');
 			});
 
 			up.refresh(); // Reposition Flash
@@ -26,7 +26,9 @@
 		});
 
 		uploader.bind('UploadProgress', function(up, file) {
-			$('#progress').find('div.progress div.bar').width(file.percent + '%');
+			var $progress = $('#' + file.id);
+			$('div.bar', $progress).width(file.percent + '%').find('span').text(file.percent);
+			$('div.label span', $progress).text(file.percent);
 		});
 
 		uploader.bind('Error', function(up, err) {
