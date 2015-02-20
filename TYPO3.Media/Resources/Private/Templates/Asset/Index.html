@@ -65,62 +65,130 @@
 			<input type="search" name="{f:if(condition: argumentNamespace, then: '{argumentNamespace}[searchTerm]', else: 'searchTerm')}" placeholder="Search" value="{searchTerm}" />
 		</div>
 	</form>
-	<h2>
-		Tags
-		<span id="neos-tags-list-edit-toggle" title="Edit tags" data-neos-toggle="tooltip" class="neos-button"><i class="icon-pencil"></i></span>
-	</h2>
-	<ul class="neos-tags-list">
-		<li class="neos-media-list-all">
-			<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
-				All
-				<span class="count">{allCount}</span>
-			</f:link.action>
-		</li>
-		<li class="neos-media-list-untagged">
-			<f:link.action action="index" title="Untagged assets" class="{f:if(condition: '{tagMode} == 2', then: 'neos-active')}" arguments="{tagMode: 2}">
-				Untagged
-				<span class="count">{untaggedCount}</span>
-			</f:link.action>
-		</li>
-		<f:for each="{tags}" as="tag">
-			<li>
-				<f:link.action action="index" title="{tag.tag.label}" class="droppable-tag{f:if(condition: '{tag.tag} == {activeTag}', then: ' neos-active')}" arguments="{tag: tag.tag}" data="{tag-identifier: '{tag.tag -> f:format.identifier()}'}">
-					{tag.tag.label}
-					<span class="count">{tag.count}</span>
-				</f:link.action>
-				<div class="neos-sidelist-edit-actions">
-					<f:form action="editTag" arguments="{tag: tag.tag}" title="Edit tag" data="{neos-toggle: 'tooltip'}"><button type="submit"><i class="icon-pencil"></i></button></f:form>
-					<button class="neos-button-danger" title="Delete tag" data-neos-toggle="tooltip" data-toggle="modal" href="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
-				</div>
-				<div class="neos-hide" id="tag-{tag.tag -> f:format.identifier()}">
-					<div class="neos-modal">
-						<div class="neos-modal-header">
-							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">Do you really want to delete tag "{tag.tag.label}"?</div>
-							<div>
-								<div class="neos-subheader">
-									<p>This will delete the tag, but not the assets that has it.<br />This operation cannot be undone.</p>
+	<div class="neos-media-aside-group">
+		<f:security.ifAccess privilegeTarget="TYPO3.Media:ManageAssetCollections">
+			<f:then>
+				<h2>
+					Collections
+					<span class="neos-media-aside-list-edit-toggle neos-button" title="Edit collections" data-neos-toggle="tooltip"><i class="icon-pencil"></i></span>
+				</h2>
+			</f:then>
+			<f:else>
+				<f:if condition="{assetCollections}">
+					<h2>Collections</h2>
+				</f:if>
+			</f:else>
+		</f:security.ifAccess>
+		<f:if condition="{assetCollections}">
+			<ul class="neos-media-aside-list">
+				<li>
+					<f:link.action action="index" class="{f:if(condition: activeAssetCollection, else: ' neos-active')}" title="All collections" arguments="{view: view, collectionMode: 1}">
+						All
+						<span class="count">{allCollectionsCount}</span>
+					</f:link.action>
+				</li>
+				<f:for each="{assetCollections}" as="assetCollection">
+					<li>
+						<f:link.action action="index" title="{assetCollection.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection} == {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection}" data="{assetcollection-identifier: '{assetCollection -> f:format.identifier()}'}">
+							{assetCollection.title}
+							<span class="count">{assetCollection.assets -> f:count()}</span>
+						</f:link.action>
+						<div class="neos-sidelist-edit-actions">
+							<f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection}" title="Edit collection" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
+							<button type="submit" class="neos-button-danger" title="Delete collection" data-neos-toggle="tooltip" data-toggle="modal" href="#collection-{assetCollection -> f:format.identifier()}"><i class="icon-trash"></i></button>
+						</div>
+						<div class="neos-hide" id="collection-{assetCollection -> f:format.identifier()}">
+							<div class="neos-modal">
+								<div class="neos-modal-header">
+									<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+									<div class="neos-header">Do you really want to delete collection "{assetCollection.title}"?</div>
+									<div>
+										<div class="neos-subheader">
+											<p>This will delete the collection, but not the assets that it contains.<br />This operation cannot be undone.</p>
+										</div>
+									</div>
+								</div>
+								<div class="neos-modal-footer">
+									<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+									<f:form action="deleteAssetCollection" arguments="{assetCollection: assetCollection}" class="neos-inline">
+										<button type="submit" class="neos-button neos-button-danger" title="Delete the collection">
+											Yes, delete the collection
+										</button>
+									</f:form>
 								</div>
 							</div>
+							<div class="neos-modal-backdrop neos-in"></div>
 						</div>
-						<div class="neos-modal-footer">
-							<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-							<f:form action="deleteTag" arguments="{tag: tag.tag}" class="neos-inline">
-								<button type="submit" class="neos-button neos-button-danger" title="Delete the tag">
-									Yes, delete the tag
-								</button>
-							</f:form>
-						</div>
-					</div>
-					<div class="neos-modal-backdrop neos-in"></div>
-				</div>
+					</li>
+				</f:for>
+			</ul>
+		</f:if>
+		<f:security.ifAccess privilegeTarget="TYPO3.Media:ManageAssetCollections">
+			<f:form action="createAssetCollection" id="neos-assetcollections-create-form">
+				<f:form.textfield name="title" placeholder="Enter collection title" /><br /><br />
+				<button type="submit" class="neos-button neos-button-primary">Create collection</button>
+			</f:form>
+		</f:security.ifAccess>
+	</div>
+
+	<div class="neos-media-aside-group">
+		<h2>
+			Tags
+			<span class="neos-media-aside-list-edit-toggle neos-button" title="Edit tags" data-neos-toggle="tooltip"><i class="icon-pencil"></i></span>
+		</h2>
+		<ul class="neos-media-aside-list">
+			<li class="neos-media-list-all">
+				<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
+					All
+					<span class="count">{allCount}</span>
+				</f:link.action>
 			</li>
-		</f:for>
-	</ul>
-	<f:form action="createTag" id="neos-tags-create-form">
-		<f:form.textfield id="neos-tags-create-textfield" name="label" placeholder="Enter tag label" /><br /><br />
-		<button type="submit" class="neos-button neos-button-primary">Create tag</button>
-	</f:form>
+			<li class="neos-media-list-untagged">
+				<f:link.action action="index" title="Untagged assets" class="{f:if(condition: '{tagMode} == 2', then: 'neos-active')}" arguments="{tagMode: 2}">
+					Untagged
+					<span class="count">{untaggedCount}</span>
+				</f:link.action>
+			</li>
+			<f:for each="{tags}" as="tag">
+				<li>
+					<f:link.action action="index" title="{tag.tag.label}" class="droppable-tag{f:if(condition: '{tag.tag} == {activeTag}', then: ' neos-active')}" arguments="{tag: tag.tag}" data="{tag-identifier: '{tag.tag -> f:format.identifier()}'}">
+						{tag.tag.label}
+						<span class="count">{tag.count}</span>
+					</f:link.action>
+					<div class="neos-sidelist-edit-actions">
+						<f:link.action class="neos-button" action="editTag" arguments="{tag: tag.tag}" title="Edit tag" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
+						<button class="neos-button-danger" title="Delete tag" data-neos-toggle="tooltip" data-toggle="modal" href="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
+					</div>
+					<div class="neos-hide" id="tag-{tag.tag -> f:format.identifier()}">
+						<div class="neos-modal">
+							<div class="neos-modal-header">
+								<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+								<div class="neos-header">Do you really want to delete tag "{tag.tag.label}"?</div>
+								<div>
+									<div class="neos-subheader">
+										<p>This will delete the tag, but not the assets that has it.<br />This operation cannot be undone.</p>
+									</div>
+								</div>
+							</div>
+							<div class="neos-modal-footer">
+								<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+								<f:form action="deleteTag" arguments="{tag: tag.tag}" class="neos-inline">
+									<button type="submit" class="neos-button neos-button-danger" title="Delete the tag">
+										Yes, delete the tag
+									</button>
+								</f:form>
+							</div>
+						</div>
+						<div class="neos-modal-backdrop neos-in"></div>
+					</div>
+				</li>
+			</f:for>
+		</ul>
+		<f:form action="createTag" id="neos-tags-create-form">
+			<f:form.textfield name="label" placeholder="Enter tag label" /><br /><br />
+			<button type="submit" class="neos-button neos-button-primary">Create tag</button>
+		</f:form>
+	</div>
 </f:section>
 
 <f:section name="Content">
@@ -152,8 +220,12 @@
 		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
 		<f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
 	</f:form>
+	<f:form action="addAssetToCollection" id="link-asset-to-assetcollection-form" format="json">
+		<f:form.hidden name="asset[__identity]" id="link-asset-to-assetcollection-form-asset" />
+		<f:form.hidden name="assetCollection[__identity]" id="link-asset-to-assetcollection-form-assetcollection" />
+	</f:form>
 	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Libraries/plupload/plupload.full.js')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/upload.js')}"></script>
-	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/tagging.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/collections-and-tagging.js')}"></script>
 </f:section>

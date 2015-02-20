@@ -101,11 +101,22 @@ class Asset implements AssetInterface {
 	/**
 	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
 	 * @ORM\ManyToMany
+	 * @ORM\OrderBy({"label"="ASC"})
+	 * @Flow\Lazy
 	 */
 	protected $tags;
 
 	/**
-	 * Constructs an asset
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\AssetCollection>
+	 * @ORM\ManyToMany(mappedBy="assets", cascade={"persist"})
+	 * @ORM\OrderBy({"title"="ASC"})
+	 * @Flow\Lazy
+	 */
+	protected $assetCollections;
+
+	/**
+	 * Constructs an asset. The resource is set internally and then initialize()
+	 * is called.
 	 *
 	 * @param FlowResource $resource
 	 */
@@ -114,6 +125,7 @@ class Asset implements AssetInterface {
 		$this->thumbnails = new ArrayCollection();
 		$this->resource = $resource;
 		$this->lastModified = new \DateTime();
+		$this->assetCollections = new ArrayCollection();
 	}
 
 	/**
@@ -337,6 +349,37 @@ class Asset implements AssetInterface {
 		}
 
 		return FALSE;
+	}
+
+	/**
+	 * Return the asset collections this asset is included in
+	 *
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getAssetCollections() {
+		return $this->assetCollections;
+	}
+
+	/**
+	 * Set the asset collections that include this asset
+	 *
+	 * @param \Doctrine\Common\Collections\Collection $assetCollections
+	 * @return void
+	 */
+	public function setAssetCollections(\Doctrine\Common\Collections\Collection $assetCollections) {
+		$this->lastModified = new \DateTime();
+		foreach ($this->assetCollections as $existingAssetCollection) {
+			$existingAssetCollection->removeAsset($this);
+		}
+		foreach ($assetCollections as $newAssetCollection) {
+			$newAssetCollection->addAsset($this);
+		}
+		foreach ($this->assetCollections as $assetCollection) {
+			if (!$assetCollections->contains($assetCollection)) {
+				$assetCollections->add($assetCollection);
+			}
+		}
+		$this->assetCollections = $assetCollections;
 	}
 
 }

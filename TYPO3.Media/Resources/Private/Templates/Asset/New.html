@@ -21,6 +21,14 @@
 						</label>
 					</f:for>
 				</f:if>
+				<f:if condition="{assetCollections}">
+					<label>Collections</label>
+					<f:for each="{assetCollections}" as="assetCollection">
+						<label class="neos-checkbox neos-inline">
+							<f:form.checkbox name="asset[assetCollections][]" value="{assetCollection -> f:format.identifier()}" checked="{f:if(condition: '{assetCollection} == {activeAssetCollection}', then: 'checked')}" /><span></span> {assetCollection.title}
+						</label>
+					</f:for>
+				</f:if>
 			</div>
 		</fieldset>
 		<div class="neos-footer">

@@ -35,7 +35,7 @@
 					count = parseInt(countElement.text());
 				assetField.val(assetIdentifier);
 				tagField.val(tag.data('tag-identifier'));
-				countElement.html('<div class="neos-ellipsis" />');
+				countElement.html('<span class="neos-ellipsis" />');
 				$.post(
 					tagAssetForm.attr('action'),
 					$('#tag-asset-form').serialize(),
@@ -66,15 +66,57 @@
 		});
 	});
 
-	$('#neos-tags-list-edit-toggle').click(function() {
-		$(this).toggleClass('neos-active');
-		$('.neos-tags-list, #neos-tags-create-form').toggleClass('neos-tags-list-editing-active');
+	var linkAssetToCollectionForm = $('#link-asset-to-assetcollection-form'),
+		linkAssetToCollectionAssetField = $('#link-asset-to-assetcollection-form-asset', linkAssetToCollectionForm),
+		linkAssetToCollectionField = $('#link-asset-to-assetcollection-form-assetcollection', linkAssetToCollectionForm);
+	$('.droppable-assetcollection').each(function() {
+		$(this).droppable({
+			addClasses: false,
+			activeClass: 'neos-drag-active',
+			hoverClass: 'neos-drag-hover',
+			tolerance: 'pointer',
+			drop: function (event, ui) {
+				var assetCollection = $(this),
+					asset = $(ui.draggable[0]),
+					assetIdentifier = asset.data('asset-identifier'),
+					countElement = assetCollection.children('span'),
+					count = parseInt(countElement.text());
+				linkAssetToCollectionAssetField.val(assetIdentifier);
+				linkAssetToCollectionField.val(assetCollection.data('assetcollection-identifier'));
+				countElement.html('<span class="neos-ellipsis" />');
+				$.post(
+					linkAssetToCollectionForm.attr('action'),
+					$('#link-asset-to-assetcollection-form').serialize(),
+					'json'
+				).done(function(result) {
+					if (result === true) {
+						countElement.html(count + 1);
+						var text = assetCollection.clone();
+						text.children().remove();
+					} else {
+						countElement.html(count);
+					}
+				}).fail(function() {
+					var message = 'Adding the asset to the collection failed.';
+					if (window.Typo3Neos) {
+						window.Typo3Neos.Notification.error(message);
+					} else {
+						alert(message);
+					}
+				});
+			}
+		});
 	});
 
-	$('#neos-tags-create-form').submit(function(e) {
-		var tag = $('#neos-tags-create-textfield');
-		if ($.trim(tag.val()) === '') {
-			tag.focus();
+	$('.neos-media-aside-list-edit-toggle').click(function() {
+		$(this).toggleClass('neos-active');
+		$(this).closest('.neos-media-aside-group').children('ul, form').toggleClass('neos-media-aside-list-editing-active');
+	});
+
+	$('.neos-media-aside-group > form').submit(function(e) {
+		var value = $('input[type="text"]', this);
+		if ($.trim(value.val()) === '') {
+			value.focus();
 			e.preventDefault();
 		} else {
 			$('button[type="submit"]', this).addClass('neos-disabled').html('Creating<span class="neos-ellipsis" />');

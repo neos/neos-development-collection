@@ -10,6 +10,16 @@
 				<fieldset>
 					<label for="label">Label</label>
 					<f:form.textfield property="label" placeholder="Label" id="label" />
+					<f:security.ifAccess privilegeTarget="TYPO3.Media:ManageAssetCollections">
+						<f:if condition="{assetCollections}">
+							<label>Collections</label>
+							<f:for each="{assetCollections}" as="assetCollection">
+								<label class="neos-checkbox neos-inline">
+									<m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
+								</label>
+							</f:for>
+						</f:if>
+					</f:security.ifAccess>
 				</fieldset>
 			</div>
 		</div>
