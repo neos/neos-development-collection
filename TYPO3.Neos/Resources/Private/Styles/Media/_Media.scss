@@ -3,97 +3,145 @@
 		margin-top: $wideMargin;
 		@include clearfix;
 
-		> h2 {
-			border-bottom: 1px solid $grayLight;
-			margin-bottom: $relatedMargin;
-		}
+		.neos-media-aside-group {
+			+ .neos-media-aside-group .neos-media-aside-list.neos-media-aside-list-editing-active {
+				li:first-child + li {
+					a > span {
+						display: inline;
+					}
+				}
 
-		.neos-tags-list {
-			font-size: 0;
-			background-color: transparent;
-
-			&.neos-tags-list-editing-active {
 				li:first-child + li ~ li {
-					a span {
+					a > span {
 						display: none;
+					}
+				}
+			}
+
+			> h2 {
+				border-bottom: 1px solid $grayLight;
+				margin-bottom: $relatedMargin;
+			}
+
+			.neos-media-aside-list {
+				font-size: 0;
+				background-color: transparent;
+				border-top: none;
+
+				&.neos-media-aside-list-editing-active {
+					li:first-child ~ li {
+						a > span {
+							display: none;
+						}
+					}
+
+					li {
+						a {
+							display: inline-block;
+
+							&.neos-active + .neos-sidelist-edit-actions {
+								> a,
+								button {
+									background-color: #fff;
+									color: $blue;
+
+									&.neos-button-danger:hover {
+										background-color: #fff;
+									}
+								}
+							}
+						}
+
+						.neos-sidelist-edit-actions {
+							display: inline-block;
+							position: static;
+							vertical-align: top;
+
+							form {
+								display: inline-block;
+							}
+
+							> a,
+							button {
+								position: static;
+								padding: 0 $tightMargin 0 0;
+								line-height: 29px;
+								height: 29px;
+								background-color: $blue;
+
+								i {
+									background-color: #fff;
+									color: $blue;
+									padding: 2px;
+									margin-top: 0;
+
+									&:hover {
+										background-color: $blue;
+										color: #fff;
+									}
+								}
+
+								&.neos-button-danger {
+									&:hover {
+										background-color: $blue;
+									}
+
+									i:hover {
+										background-color: $warning;
+										color: #fff;
+									}
+								}
+							}
+						}
 					}
 				}
 
 				li {
-					a {
-						display: inline-block;
-					}
+					display: inline-block;
+					margin-right: $relatedMargin;
+					margin-bottom: $relatedMargin;
 
-					.neos-sidelist-edit-actions {
-						display: inline-block;
-						position: static;
-						vertical-align: top;
+					> a {
+						border-top: none;
+						background-color: $blue;
+						padding: $tightMargin;
+						font-size: $generalFontSize;
 
-						form {
-							display: inline-block;
+						&.neos-active {
+							background-color: #fff;
 						}
 
-						button {
-							position: static;
-							padding: 0 $tightMargin 0 0;
-							line-height: 29px;
-							height: 29px;
-							background-color: $blue;
-
-							i {
+						&:not(.neos-active) {
+							&:hover {
 								background-color: #fff;
 								color: $blue;
-								padding: 2px;
-
-								&:hover {
-									background-color: $blue;
-									color: #fff;
-								}
 							}
 
-							&.neos-button-danger i:hover {
-								background-color: $warning;
+							&.neos-drag-active::after {
+								position: static;
+							}
+						}
+
+						> span {
+							background-color: #fff;
+							color: $blue;
+							position: static;
+							padding: 0 2px;
+							font-size: 13px;
+
+							.neos-ellipsis::after {
+								vertical-align: baseline;
 							}
 						}
 					}
 				}
 			}
 
-			li {
-				display: inline-block;
-				margin-right: $relatedMargin;
-				margin-bottom: $relatedMargin;
-
-				> a {
-					border-top: none;
-					background-color: $blue;
-					padding: $tightMargin;
-					font-size: 14px;
-
-					&:hover {
-						background-color: #fff;
-						color: $blue;
-					}
-
-					&.neos-active {
-						background-color: #fff;
-					}
-
-					span {
-						background-color: #fff;
-						color: $blue;
-						position: static;
-						padding: 0 2px;
-						font-size: 13px;
-					}
+			> form {
+				input,
+				button {
+					max-width: $unit * 8;
 				}
-			}
-		}
-
-		#neos-tags-create-form {
-			input,
-			button {
-				max-width: $unit * 8;
 			}
 		}
 	}
@@ -194,6 +242,8 @@
 			ul {
 				li {
 					a {
+						min-width: 24px;
+						line-height: $unit;
 						text-align: left;
 						padding: 0 $defaultMargin;
 
@@ -270,151 +320,158 @@
 	}
 
 	aside.neos-media-aside {
-		> h2 {
-			line-height: $unit;
-
-			#neos-tags-list-edit-toggle {
-				float: right;
-				background-color: $grayDark;
-				@include user-select(none);
-
-				&.neos-active {
-					background-color: $blue;
-				}
-
-				&:hover {
-					background-color: $blue;
-				}
+		.neos-media-aside-group {
+			+ .neos-media-aside-group {
+				margin-top: $defaultMargin;
 			}
 
-			.neos-tooltip {
-				font-weight: normal;
-			}
-		}
+			> h2 {
+				line-height: $unit;
 
-		.neos-tags-list {
-			background-color: $grayLight;
-			border-top: 1px solid $grayLight;
-			margin-bottom: $defaultMargin;
-
-			&.neos-tags-list-editing-active {
-				li .neos-sidelist-edit-actions {
-					display: block;
-				}
-			}
-
-			li {
-				position: relative;
-				background-color: $grayDark;
-
-				+ li {
-					margin-top: 1px;
-				}
-
-				> a {
-					display: block;
-					color: #fff;
-					padding: ($tightMargin * 2 + 1) ($unit * 2.5) ($tightMargin * 2 + 2) $tightMargin;
-					border-radius: 0;
-					text-shadow: none;
-					font-weight: 400;
-					font-size: $baseFontSize;
-					line-height: 1.5;
+				.neos-media-aside-list-edit-toggle {
+					float: right;
+					background-color: $grayDark;
+					@include user-select(none);
 
 					&.neos-active {
-						color: $blue;
-
-						&.neos-drag-active {
-							&:hover {
-								background-color: $warning;
-							}
-						}
-					}
-
-					&:not(.neos-active) {
-						&.neos-drag-active {
-							outline: 1px dashed #fff;
-							outline-offset: -1px;
-
-							span {
-								display: none;
-							}
-
-							&::after {
-								@include icon-FontAwesome();
-								content: $arrow-down;
-								position: absolute;
-								right: $relatedMargin + $tightMargin;
-							}
-
-							&:hover,
-							&.neos-drag-hover {
-								outline: 1px solid #fff;
-								outline-offset: -1px;
-
-								background-color: $blue;
-								color: #fff;
-							}
-						}
-					}
-
-					&:hover:not(.neos-drag-active) {
 						background-color: $blue;
-						color: #fff;
-
-						span {
-							background-color: #fff;
-							color: $blue;
-
-							.neos-ellipsis {
-								color: $textOnWhite;
-							}
-						}
 					}
 
-					span {
-						position: absolute;
-						top: $relatedMargin + 2;
-						right: $relatedMargin;
+					&:hover {
 						background-color: $blue;
-						color: #fff;
-						padding: $tightMargin;
-						line-height: 1;
 					}
 				}
 
-				.neos-sidelist-edit-actions {
-					display: none;
-					position: absolute;
-					top: 0;
-					right: 0;
-					font-size: 0;
+				.neos-tooltip {
+					font-weight: normal;
+				}
+			}
 
-					button {
-						background-color: $grayDark;
-						width: auto;
+			.neos-media-aside-list {
+				background-color: $grayLight;
+				border-top: 1px solid $grayLight;
+				margin-bottom: $defaultMargin;
 
-						&:hover {
-							background-color: $blue;
+				&.neos-media-aside-list-editing-active {
+					li .neos-sidelist-edit-actions {
+						display: block;
+					}
+				}
 
-							&.neos-button-danger {
-								background-color: $warning;
+				li {
+					position: relative;
+					background-color: $grayDark;
+
+					+ li {
+						margin-top: 1px;
+					}
+
+					> a {
+						display: block;
+						color: #fff;
+						padding: ($tightMargin * 2 + 1) ($unit * 2.5) ($tightMargin * 2 + 2) $tightMargin;
+						border-radius: 0;
+						text-shadow: none;
+						font-weight: 400;
+						font-size: $generalFontSize;
+						line-height: 1.5;
+
+						&.neos-active {
+							color: $blue;
+
+							&.neos-drag-active {
+								&:hover {
+									background-color: $warning;
+								}
 							}
+						}
+
+						&:not(.neos-active) {
+							&.neos-drag-active {
+								outline: 1px dashed #fff;
+								outline-offset: -1px;
+
+								span {
+									display: none;
+								}
+
+								&::after {
+									@include icon-FontAwesome();
+									content: $arrow-down;
+									position: absolute;
+									right: $relatedMargin + $tightMargin;
+								}
+
+								&:hover,
+								&.neos-drag-hover {
+									outline: 1px solid #fff;
+									outline-offset: -1px;
+
+									background-color: $blue;
+									color: #fff;
+								}
+							}
+						}
+
+						&:hover:not(.neos-drag-active) {
+							background-color: $blue;
+							color: #fff;
+
+							> span {
+								background-color: #fff;
+								color: $blue;
+
+								.neos-ellipsis {
+									color: $textOnWhite;
+								}
+							}
+						}
+
+						> span {
+							position: absolute;
+							top: $relatedMargin + 2;
+							right: $relatedMargin;
+							background-color: $blue;
+							color: #fff;
+							padding: $tightMargin;
+							line-height: 1;
 						}
 					}
 
-					form {
-						display: inline-block;
+					.neos-sidelist-edit-actions {
+						display: none;
+						position: absolute;
+						top: 0;
+						right: 0;
+						font-size: 0;
+
+						a,
+						button {
+							background-color: $grayDark;
+							width: auto;
+
+							&:hover {
+								background-color: $blue;
+
+								&.neos-button-danger {
+									background-color: $warning;
+								}
+							}
+						}
+
+						form {
+							display: inline-block;
+						}
 					}
 				}
 			}
-		}
 
-		#neos-tags-create-form {
-			display: none;
+			> form {
+				display: none;
 
-			&.neos-tags-list-editing-active {
-				display: block;
+				&.neos-media-aside-list-editing-active {
+					display: block;
+				}
 			}
 		}
 

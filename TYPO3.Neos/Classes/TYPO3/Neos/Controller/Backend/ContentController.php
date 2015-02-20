@@ -20,6 +20,9 @@ use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -41,6 +44,18 @@ class ContentController extends ActionController {
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
 	 */
 	protected $imageRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var AssetCollectionRepository
+	 */
+	protected $assetCollectionRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * @Flow\Inject
@@ -91,6 +106,13 @@ class ContentController extends ActionController {
 	 */
 	public function uploadAssetAction(Asset $asset, $metadata) {
 		$this->response->setHeader('Content-Type', 'application/json');
+
+		/** @var Site $currentSite */
+		$currentSite = $this->siteRepository->findOneByNodeName($this->request->getInternalArgument('__siteNodeName'));
+		if ($currentSite !== NULL && $currentSite->getAssetCollection() !== NULL) {
+			$currentSite->getAssetCollection()->addAsset($asset);
+			$this->assetCollectionRepository->update($currentSite->getAssetCollection());
+		}
 
 		switch ($metadata) {
 			case 'Asset':
