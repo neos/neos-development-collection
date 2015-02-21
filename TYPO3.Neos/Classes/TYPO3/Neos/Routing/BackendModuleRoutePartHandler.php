@@ -47,6 +47,10 @@ class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoute
 	 * @return boolean|integer
 	 */
 	protected function matchValue($value) {
+		$format = pathinfo($value, PATHINFO_EXTENSION);
+		if ($format !== '') {
+			$value = substr($value, 0, strlen($value) - strlen($format) - 1);
+		}
 		$segments = Arrays::trimExplode('/', $value);
 
 		$currentModuleBase = $this->settings['modules'];
@@ -97,6 +101,10 @@ class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoute
 			'controller' => $moduleController,
 			'action' => $moduleAction
 		);
+
+		if ($format !== '') {
+			$this->value['format'] = $format;
+		}
 
 		return self::MATCHRESULT_FOUND;
 	}

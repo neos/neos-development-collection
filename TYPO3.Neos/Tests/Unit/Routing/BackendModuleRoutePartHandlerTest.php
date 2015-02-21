@@ -31,7 +31,12 @@ class BackendModuleRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'submodule' => array('administration/users', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => 'TYPO3\Neos\Controller\Module\Administration\UsersController', 'action' => 'index')),
 			'submodule with action' => array('administration/users/new', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => 'TYPO3\Neos\Controller\Module\Administration\UsersController', 'action' => 'new')),
 			'module without controller' => array('nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, NULL),
-			'submodule without controller' => array('administration/nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, NULL)
+			'submodule without controller' => array('administration/nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, NULL),
+
+			// Json requests
+			'root module in json' =>  array('administration.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration', 'controller' => 'TYPO3\Neos\Controller\Module\AdministrationController', 'action' => 'index', 'format' => 'json')),
+			'submodule in json' => array('administration/users.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => 'TYPO3\Neos\Controller\Module\Administration\UsersController', 'action' => 'index', 'format' => 'json')),
+			'submodule with action in json' => array('administration/users/new.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => 'TYPO3\Neos\Controller\Module\Administration\UsersController', 'action' => 'new', 'format' => 'json')),
 		);
 	}
 
