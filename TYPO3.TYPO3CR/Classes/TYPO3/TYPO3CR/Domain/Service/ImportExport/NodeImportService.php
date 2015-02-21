@@ -280,7 +280,7 @@ class NodeImportService {
 				$this->nodeDataStack[count($this->nodeDataStack) - 1]['properties'] = $this->parsePropertiesElement($xmlReader);
 				break;
 			case 'accessRoles':
-				$this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = json_decode($xmlReader->readString());
+				$this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = $this->parseArrayElements($xmlReader, 'accessRoles');
 				break;
 			case 'hiddenBeforeDateTime':
 			case 'hiddenAfterDateTime':
@@ -330,6 +330,7 @@ class NodeImportService {
 	 * Parses the content of exported array and returns the values
 	 *
 	 * @param \XMLReader $reader reader positioned just after an opening array-tag
+	 * @param string $elementName
 	 * @return array the array values
 	 * @throws \Exception
 	 */
@@ -477,6 +478,7 @@ class NodeImportService {
 			case 'creationDateTime':
 			case 'lastModificationDateTime':
 			case 'lastPublicationDateTime':
+			case 'accessRoles':
 				break;
 			case 'node':
 				// update current path
