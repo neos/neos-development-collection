@@ -10,18 +10,20 @@
 
 -
   name: 'Content Module - Media Browser'
-  uriPattern: 'content/assets(/{@action})'
+  uriPattern: 'content/assets(/{@action}).{@format}'
   defaults:
     '@package':    'TYPO3.Neos'
     '@controller': 'Backend\MediaBrowser'
+    '@format': 'html'
   appendExceedingArguments: TRUE
 
 -
   name: 'Content Module - Image Browser'
-  uriPattern: 'content/images(/{@action})'
+  uriPattern: 'content/images(/{@action}).{@format}'
   defaults:
     '@package':    'TYPO3.Neos'
     '@controller': 'Backend\ImageBrowser'
+    '@format': 'html'
   appendExceedingArguments: TRUE
 
 -
