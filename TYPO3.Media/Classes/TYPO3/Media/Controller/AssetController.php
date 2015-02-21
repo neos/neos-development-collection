@@ -144,7 +144,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function updateAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$this->addFlashMessage('Asset has been updated.');
+		$this->addFlashMessage(sprintf('Asset "%s" has been updated.', $asset->getLabel()));
 		$this->redirect('index');
 	}
 
@@ -166,7 +166,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function createAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$this->addFlashMessage('Asset has been added.');
+		$this->addFlashMessage(sprintf('Asset "%s" has been added.', $asset->getLabel()));
 		$this->redirect('index', NULL, NULL, array(), 0, 201);
 	}
 
@@ -191,7 +191,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (($tag = $this->browserState->get('activeTag')) !== NULL) {
 			$asset->addTag($tag);
 		}
-		$this->addFlashMessage('Asset has been added.');
+		$this->addFlashMessage(sprintf('Asset "%s" has been added.', $asset->getLabel()));
 		$this->response->setStatus(201);
 		return '';
 	}
@@ -221,7 +221,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
 		$this->assetRepository->remove($asset);
-		$this->addFlashMessage('Asset has been deleted.');
+		$this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()));
 		$this->redirect('index');
 	}
 
