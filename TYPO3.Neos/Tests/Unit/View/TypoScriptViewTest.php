@@ -114,28 +114,6 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function accountIsNotPushedToContextIfSecurityContextCanNotBeInitialized() {
-		$this->setUpMockView();
-		$this->mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(FALSE));
-		$this->mockSecurityContext->expects($this->never())->method('getAccount');
-		$this->mockView->render();
-	}
-
-	/**
-	 * @test
-	 */
-	public function accountIsPushedToContextIfSecurityContextCanBeInitialized() {
-		$this->setUpMockView();
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account', array(), array(), '', FALSE);
-
-		$this->mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(TRUE));
-		$this->mockSecurityContext->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
-		$this->mockView->render();
-	}
-
-	/**
-	 * @test
-	 */
 	public function renderMergesHttpResponseIfOutputIsHttpMessage() {
 		$mockContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
 
