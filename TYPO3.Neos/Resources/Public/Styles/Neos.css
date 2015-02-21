@@ -5699,6 +5699,9 @@
 .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover {
   background-color: #00b5ff;
 }
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover .neos-inspector-image-thumbnail {
+  border-style: solid;
+}
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail {
   position: relative;
   border: 1px dashed #323232;

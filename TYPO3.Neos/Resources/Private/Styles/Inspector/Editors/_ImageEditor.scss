@@ -48,6 +48,10 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 
 		&.typo3-fileupload-dropzone-hover {
 			background-color: $blue;
+
+			.neos-inspector-image-thumbnail {
+				border-style: solid;
+			}
 		}
 	}
 
