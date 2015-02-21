@@ -20,7 +20,6 @@
 	</h2>
 	<ul class="neos-tags-list">
 		<li>
-		<li>
 			<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{view: view, tagMode: 1}">
 				All
 				<span class="count">{allCount}</span>
@@ -75,8 +74,8 @@
 		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
 		<f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
 	</f:form>
-	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3.Media', path:'Libraries/plupload/plupload.full.js')}"></script>
-	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3.Media', path:'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
-	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3.Media', path:'Scripts/upload.js')}"></script>
-	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3.Media', path:'Scripts/tagging.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Libraries/plupload/plupload.full.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/upload.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/tagging.js')}"></script>
 </f:section>
