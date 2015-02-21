@@ -80,5 +80,25 @@
 				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
 			</f:else>
 		</f:if>
+
+		<script>
+			$(function() {
+				require(
+					{
+						baseUrl: 'resource://TYPO3.Neos/Public/JavaScript',
+						paths: requirePaths,
+						context: 'neos',
+						locale: 'en'
+					},
+					[
+						'Library/jquery-with-dependencies'
+					],
+					function($) {
+						$('[data-neos-toggle="popover"]').popover();
+						$('[data-neos-toggle="tooltip"]').tooltip();
+					}
+				)
+			});
+		</script>
 	</body>
 </f:section>
