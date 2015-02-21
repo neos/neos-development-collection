@@ -39,6 +39,7 @@
 					</f:if>
 						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
 					</div>
+					<i class="icon-move"></i>
 				</td>
 				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
 				<td>{asset.lastModified -> m:format.relativeDate()}</td>

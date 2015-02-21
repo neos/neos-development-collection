@@ -53,6 +53,14 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $browserState;
 
 	/**
+	 * @var array
+	 */
+	protected $viewFormatToObjectNameMap = array(
+		'html' => 'TYPO3\Fluid\View\TemplateView',
+		'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+	);
+
+	/**
 	 * Set common variables on the view
 	 *
 	 * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
@@ -247,11 +255,12 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return boolean
 	 */
 	public function tagAssetAction(\TYPO3\Media\Domain\Model\Asset $asset, \TYPO3\Media\Domain\Model\Tag $tag) {
-		if (!$asset->addTag($tag)) {
-			return FALSE;
+		$success = FALSE;
+		if ($asset->addTag($tag)) {
+			$this->assetRepository->update($asset);
+			$success = TRUE;
 		}
-		$this->assetRepository->update($asset);
-		return TRUE;
+		$this->view->assign('value', $success);
 	}
 
 	/**

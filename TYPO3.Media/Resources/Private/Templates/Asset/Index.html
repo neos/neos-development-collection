@@ -95,7 +95,7 @@
 	<br /><br />
 	<f:form action="createTag" id="neos-tags-create-form">
 		<f:form.textfield id="neos-tags-create-textfield" name="label" placeholder="Enter tag label" /><br /><br />
-		<f:form.submit value="Create tag" class="neos-button neos-button-primary" />
+		<button type="submit" class="neos-button neos-button-primary">Create tag</button>
 	</f:form>
 </f:section>
 
@@ -120,7 +120,7 @@
 	<script type="text/javascript">
 		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
 	</script>
-	<f:form action="tagAsset" id="tag-asset-form">
+	<f:form action="tagAsset" id="tag-asset-form" format="json">
 		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
 		<f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
 	</f:form>

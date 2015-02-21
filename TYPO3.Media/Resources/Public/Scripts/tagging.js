@@ -1,11 +1,10 @@
 (function($) {
 	$('.draggable-asset').each(function() {
 		$(this).draggable({
-			addClasses: false,
-			cursorAt: {left: 5, top: 5},
 			helper: 'clone',
 			opacity: 0.3,
-			revert: true,
+			revert: 'invalid',
+			revertDuration: 200,
 			start: function(event, ui) {
 				$(event.toElement).closest('a').one('click', function(e) {
 					e.preventDefault();
@@ -30,17 +29,25 @@
 			tolerance: 'pointer',
 			drop: function (event, ui) {
 				var tag = $(this),
-					assetIdentifier = $(ui.draggable[0]).data('asset-identifier');
+					assetIdentifier = $(ui.draggable[0]).data('asset-identifier'),
+					countElement = tag.children('span'),
+					count = parseInt(countElement.text());
 				assetField.val(assetIdentifier);
 				tagField.val(tag.data('tag-identifier'));
+				countElement.html('<div class="neos-ellipsis" />');
 				$.post(
 					tagAssetForm.attr('action'),
-					$('#tag-asset-form').serialize()
-				).done(function() {
-					tag.effect('highlight');
-					var text = tag.clone();
-					text.children().remove();
-					$('[data-asset-identifier="' + assetIdentifier + '"]').children('.tags').append('<span class="neos-label">' + text.text() + '</span>');
+					$('#tag-asset-form').serialize(),
+					'json'
+				).done(function(result) {
+					if (result === true) {
+						countElement.html(count + 1);
+						var text = tag.clone();
+						text.children().remove();
+						$('[data-asset-identifier="' + assetIdentifier + '"]').children('.tags').append('\n<span class="neos-label">' + text.text() + '</span>');
+					} else {
+						countElement.html(count);
+					}
 				}).fail(function() {
 					alert('Tagging the asset failed.');
 				});
@@ -58,6 +65,8 @@
 		if ($.trim(tag.val()) === '') {
 			tag.focus();
 			e.preventDefault();
+		} else {
+			$('button[type="submit"]', this).addClass('neos-disabled').html('Creating<span class="neos-ellipsis" />');
 		}
 	});
 })(jQuery);
