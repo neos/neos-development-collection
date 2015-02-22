@@ -15,20 +15,37 @@
 
 	// Styles for Media view Options
 	.neos-media-options {
-		overflow: hidden;
 		margin-bottom: $wideMargin;
 		border-bottom: 1px solid $grayLight;
+
+		a {
+			display: block;
+			height: $unit;
+			line-height: $unit;
+			min-width: 24px;
+			text-align: center;
+			padding: 0 $relatedMargin;
+			color: $blue;
+
+			&:hover {
+				color: #fff;
+				text-decoration: none;
+			}
+		}
 
 		.neos-file-options {
 			float: left;
 
 			.count {
-				float: left;
-				display: block;
+				display: inline-block;
 				height: $unit;
 				line-height: $unit;
 				padding: 0 $relatedMargin 0 0;
 				border-right: 1px solid $grayLight;
+			}
+
+			a {
+				display: inline-block;
 			}
 
 			i {
@@ -40,10 +57,22 @@
 
 		.neos-view-options {
 			float: right;
+			white-space: nowrap;
+			font-size: 0;
 
-			> a {
+			> a,
+			> .neos-dropdown {
+				display: inline-block;
 				border-right: 1px solid $grayLight;
+
+				&:first-child {
+					border-left: 1px solid $grayLight;
+				}
+			}
+
+			a {
 				color: #fff;
+				font-size: $generalFontSize;
 
 				&.neos-active {
 					color: $blue;
@@ -54,28 +83,23 @@
 					color: #fff;
 				}
 
-				&:first-child {
-					border-left: 1px solid $grayLight;
-				}
-
 				i {
-					line-height: 21px;
+					line-height: $unit;
+					vertical-align: top;
 				}
 			}
-		}
 
-		a {
-			display: block;
-			float: left;
-			height: $unit;
-			min-width: 24px;
-			line-height: $unit;
-			text-align: center;
-			padding: 0 $relatedMargin;
-			color: $blue;
+			ul {
+				li {
+					a {
+						text-align: left;
+						padding: 0 $defaultMargin;
 
-			&:hover {
-				text-decoration: none;
+						&.neos-active {
+							color: #fff;
+						}
+					}
+				}
 			}
 		}
 	}
