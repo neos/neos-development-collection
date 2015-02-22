@@ -35,7 +35,7 @@ class AssetRepository extends Repository {
 	/**
 	 * @var array
 	 */
-	protected $defaultOrderings = array('title' => QueryInterface::ORDER_ASCENDING);
+	protected $defaultOrderings = array('lastModified' => QueryInterface::ORDER_DESCENDING);
 
 	/**
 	 * Find assets by title or given tags

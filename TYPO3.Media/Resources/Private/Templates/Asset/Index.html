@@ -8,8 +8,53 @@
 		<f:link.action action="new"><i class="icon-upload"></i> Upload</f:link.action>
 	</div>
 	<div class="neos-view-options">
-		<f:link.action action="index" title="Thumbnail view" class="{f:if(condition: '{view} == \'Thumbnail\'', then: ' neos-active')}" arguments="{view: 'Thumbnail', tag: activeTag}" addQueryString="TRUE"><i class="icon-th"></i></f:link.action>
-		<f:link.action action="index" title="List view" class="{f:if(condition: '{view} == \'List\'', then: ' neos-active')}" arguments="{view: 'List', tag: activeTag}" addQueryString="TRUE"><i class="icon-th-list"></i></f:link.action>
+		<div class="neos-dropdown" id="neos-filter-menu">
+			<span title="Filter options" data-neos-toggle="tooltip">
+				<a class="dropdown-toggle{f:if(condition: '{filter} != \'All\'', then: ' neos-active')}" href="#" data-neos-toggle="dropdown" data-target="#neos-filter-menu">
+					<i class="icon-filter"></i>
+				</a>
+			</span>
+			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
+				<li>
+					<f:link.action action="index" title="Display all asset types" arguments="{filter: 'All'}" addQueryString="TRUE" class="{f:if(condition: '{filter} == \'All\'', then: 'neos-active')}"><i class="icon-filter"></i> All</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Only display image assets" arguments="{filter: 'Image'}" addQueryString="TRUE" class="{f:if(condition: '{filter} == \'Image\'', then: 'neos-active')}"><i class="icon-picture"></i> Images</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Only display document assets" arguments="{filter: 'Document'}" addQueryString="TRUE" class="{f:if(condition: '{filter} == \'Document\'', then: 'neos-active')}"><i class="icon-file-text"></i> Documents</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Only display video assets" arguments="{filter: 'Video'}" addQueryString="TRUE" class="{f:if(condition: '{filter} == \'Video\'', then: 'neos-active')}"><i class="icon-film"></i> Video</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Only display audio assets" arguments="{filter: 'Audio'}" addQueryString="TRUE" class="{f:if(condition: '{filter} == \'Audio\'', then: 'neos-active')}"><i class="icon-music"></i> Audio</f:link.action>
+				</li>
+			</ul>
+		</div>
+		<div class="neos-dropdown" id="neos-sort-menu">
+			<span title="Sort options" data-neos-toggle="tooltip">
+				<a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
+					<i class="icon-{f:if(condition: '{sort} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+				</a>
+			</span>
+			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
+				<li>
+					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
+				</li>
+			</ul>
+		</div>
+		<f:if condition="{view} == 'Thumbnail'">
+			<f:then>
+				<f:link.action action="index" title="List view" arguments="{view: 'List'}" addQueryString="TRUE" data="{neos-toggle: 'tooltip'}"><i class="icon-th-list"></i></f:link.action>
+			</f:then>
+			<f:else>
+				<f:link.action action="index" title="Thumbnail view" arguments="{view: 'Thumbnail'}" addQueryString="TRUE" data="{neos-toggle: 'tooltip'}"><i class="icon-th"></i></f:link.action>
+			</f:else>
+		</f:if>
 	</div>
 </f:section>
 

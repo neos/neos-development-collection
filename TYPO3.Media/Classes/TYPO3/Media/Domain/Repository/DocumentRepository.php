@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Domain\Session;
+namespace TYPO3\Media\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -14,41 +14,10 @@ namespace TYPO3\Media\Domain\Session;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A container for the state the media browser is in.
+ * A repository for Documents
  *
- * @Flow\Scope("session")
+ * @Flow\Scope("singleton")
  */
-class BrowserState {
+class DocumentRepository extends AssetRepository {
 
-	/**
-	 * @var array
-	 */
-	protected $data = array(
-		'activeTag' => NULL,
-		'view' => 'Thumbnail',
-		'sort' => 'Modified',
-		'filter' => 'All'
-	);
-
-	/**
-	 * Set a $value for $key
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 * @Flow\Session(autoStart = TRUE)
-	 */
-	public function set($key, $value) {
-		$this->data[$key] = $value;
-	}
-
-	/**
-	 * Return a value for $key.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
-	}
 }

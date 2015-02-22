@@ -12,6 +12,10 @@ namespace TYPO3\Media\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Repository\AudioRepository;
+use TYPO3\Media\Domain\Repository\DocumentRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
+use TYPO3\Media\Domain\Repository\VideoRepository;
 
 /**
  * Controller for asset handling
@@ -57,6 +61,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
 		$view->assignMultiple(array(
 			'view' => $this->browserState->get('view'),
+			'sort' => $this->browserState->get('sort'),
+			'filter' => $this->browserState->get('filter'),
 			'activeTag' => $this->browserState->get('activeTag')
 		));
 	}
@@ -65,14 +71,24 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * List existing assets
 	 *
 	 * @param string $view
+	 * @param string $sort
+	 * @param string $filter
 	 * @param integer $tagMode
 	 * @param \TYPO3\Media\Domain\Model\Tag $tag
 	 * @return void
 	 */
-	public function indexAction($view = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL) {
+	public function indexAction($view = NULL, $sort = NULL, $filter = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL) {
 		if ($view !== NULL) {
 			$this->browserState->set('view', $view);
 			$this->view->assign('view', $view);
+		}
+		if ($sort !== NULL) {
+			$this->browserState->set('sort', $sort);
+			$this->view->assign('sort', $sort);
+		}
+		if ($filter !== NULL) {
+			$this->browserState->set('filter', $filter);
+			$this->view->assign('filter', $filter);
 		}
 		if ($tagMode === self::TAG_GIVEN && $tag !== NULL) {
 			$this->browserState->set('activeTag', $tag);
@@ -89,6 +105,25 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$tags[] = array('tag' => $tag, 'count' => $this->assetRepository->countByTag($tag));
 		}
 
+		if ($this->browserState->get('filter') !== 'All') {
+			switch ($this->browserState->get('filter')) {
+				case 'Image':
+					$this->assetRepository = new ImageRepository();
+					break;
+				case 'Document':
+					$this->assetRepository = new DocumentRepository();
+					break;
+				case 'Video':
+					$this->assetRepository = new VideoRepository();
+					break;
+				case 'Audio':
+					$this->assetRepository = new AudioRepository();
+					break;
+			}
+		}
+		if ($this->browserState->get('sort') !== 'Modified') {
+			$this->assetRepository->setDefaultOrderings(array('resource.filename' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING));
+		}
 		if ($this->browserState->get('tagMode') === self::TAG_NONE) {
 			$assets = $this->assetRepository->findUntagged();
 		} elseif ($this->browserState->get('activeTag') !== NULL) {
