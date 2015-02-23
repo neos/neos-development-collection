@@ -75,9 +75,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $filter
 	 * @param integer $tagMode
 	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @param string $searchTerm
 	 * @return void
 	 */
-	public function indexAction($view = NULL, $sort = NULL, $filter = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL) {
+	public function indexAction($view = NULL, $sort = NULL, $filter = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL, $searchTerm = NULL) {
 		if ($view !== NULL) {
 			$this->browserState->set('view', $view);
 			$this->view->assign('view', $view);
@@ -124,7 +125,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if ($this->browserState->get('sort') !== 'Modified') {
 			$this->assetRepository->setDefaultOrderings(array('resource.filename' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING));
 		}
-		if ($this->browserState->get('tagMode') === self::TAG_NONE) {
+
+		if ($searchTerm !== NULL) {
+			$assets = $this->assetRepository->findBySearchTermOrTags($searchTerm);
+			$this->view->assign('searchTerm', $searchTerm);
+		} elseif ($this->browserState->get('tagMode') === self::TAG_NONE) {
 			$assets = $this->assetRepository->findUntagged();
 		} elseif ($this->browserState->get('activeTag') !== NULL) {
 			$assets = $this->assetRepository->findByTag($this->browserState->get('activeTag'));
@@ -137,7 +142,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			'tags' => $tags,
 			'allCount' => $this->assetRepository->countAll(),
 			'untaggedCount' => $this->assetRepository->countUntagged(),
-			'tagMode' => $tagMode
+			'tagMode' => $tagMode,
+			'argumentNamespace' => $this->request->getArgumentNamespace()
 		));
 	}
 

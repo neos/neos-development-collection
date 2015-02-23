@@ -4,7 +4,7 @@
 
 <f:section name="Options">
 	<div class="neos-file-options">
-		<span class="count">{assets -> f:count()} items</span>
+		<span class="count">{assets -> f:count()} items<f:if condition="{searchTerm}"> found matching "{searchTerm}"</f:if></span>
 		<f:link.action action="new"><i class="icon-upload"></i> Upload</f:link.action>
 	</div>
 	<div class="neos-view-options">
@@ -59,6 +59,12 @@
 </f:section>
 
 <f:section name="Sidebar">
+	<div class="neos-input-append">
+		<form action="{f:uri.action(action: 'index')}" method="get" class="neos-search">
+			<input type="search" name="{f:if(condition: argumentNamespace, then: '{argumentNamespace}[searchTerm]', else: 'searchTerm')}" placeholder="Search" value="{searchTerm}" />
+			<button type="submit"><i class="icon-search"></i></button>
+		</form>
+	</div>
 	<h2>
 		Tags
 		<span id="neos-tags-list-edit-toggle" class="neos-button"><i class="icon-pencil"></i></span>
