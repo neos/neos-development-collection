@@ -630,7 +630,7 @@ class NodeData extends AbstractNodeData {
 		if (!is_array($this->accessRoles) || empty($this->accessRoles)) {
 			return FALSE;
 		}
-		if (count($this->accessRoles) === 1 && in_array('Everybody', $this->accessRoles)) {
+		if (count($this->accessRoles) === 1 && in_array('TYPO3.Flow:Everybody', $this->accessRoles)) {
 			return FALSE;
 		}
 		return TRUE;
