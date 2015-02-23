@@ -105,7 +105,7 @@
 	</div>
 	<f:if condition="{assets}">
 		<f:then>
-			<f:render partial="{view}View" arguments="{assets: assets}" />
+			<f:render partial="{view}View" arguments="{assets: assets, sort: sort}" />
 		</f:then>
 		<f:else>
 			<p>No Assets found. You can drag files here to upload them.</p>

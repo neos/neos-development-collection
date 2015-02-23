@@ -4,7 +4,23 @@
 		<thead>
 			<tr>
 				<th></th>
-				<th>Title</th>
+				<th>
+					<f:if condition="{sort} == 'Name'">
+						<f:then>Name <i class="icon-caret-down"></i></th></f:then>
+						<f:else>
+							<f:link.action action="index" title="Sort by name" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Name'}" addQueryString="TRUE">Name</f:link.action>
+						</f:else>
+					</f:if>
+				</th>
+				<th>
+					<f:if condition="{sort} == 'Modified'">
+						<f:then>Last modified <i class="icon-caret-down"></i></th></f:then>
+						<f:else>
+							<f:link.action action="index" title="Sort by last modified" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Modified'}" addQueryString="TRUE">Last modified</f:link.action>
+						</f:else>
+					</f:if>
+				</th>
+				<th>File size</th>
 				<th>Type</th>
 				<th>Tags</th>
 				<th class="neos-action"></th>
@@ -25,10 +41,13 @@
 					</div>
 				</td>
 				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
+				<td>{asset.lastModified -> m:format.relativeDate()}</td>
+				<td>{asset.resource.fileSize -> f:format.bytes()}</td>
 				<td>{asset.resource.mediatype}</td>
-				<td class="tags"><f:for each="{asset.tags}" as="tag">
-					<span class="neos-label">{tag.label}</span>
-				</f:for>
+				<td class="tags">
+					<f:for each="{asset.tags}" as="tag">
+						<span class="neos-label">{tag.label}</span>
+					</f:for>
 				</td>
 				<td class="neos-action">
 					<f:form action="delete" method="post" object="{asset}" objectName="asset">
