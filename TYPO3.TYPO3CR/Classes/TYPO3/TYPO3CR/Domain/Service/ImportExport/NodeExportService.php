@@ -88,6 +88,11 @@ class NodeExportService {
 	protected $exceptionsDuringExport;
 
 	/**
+	 * @var array Node paths that have been exported, this is used for consistency checks of broken node rootlines
+	 */
+	protected $exportedNodePaths;
+
+	/**
 	 * Exports the node data of all nodes in the given sub-tree
 	 * by writing them to the given XMLWriter.
 	 *
@@ -102,6 +107,11 @@ class NodeExportService {
 	public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = NULL, $tidy = TRUE, $endDocument = TRUE, $resourceSavePath = NULL) {
 		$this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
 		$this->exceptionsDuringExport = array();
+		$this->exportedNodePaths = array();
+		if ($startingPointNodePath !== '/') {
+			$startingPointParentPath = substr($startingPointNodePath, 0, strrpos($startingPointNodePath, '/'));
+			$this->exportedNodePaths[$startingPointParentPath] = TRUE;
+		}
 
 		$this->xmlWriter = $xmlWriter;
 		if ($this->xmlWriter === NULL) {
@@ -209,6 +219,13 @@ class NodeExportService {
 	 * @return void The result is written directly into $this->xmlWriter
 	 */
 	protected function exportNodeData(array &$nodeData, array &$nodesStack) {
+		if ($nodeData['path'] !== '/' && !isset($this->exportedNodePaths[$nodeData['parentPath']])) {
+			$this->xmlWriter->writeComment(sprintf('Skipped node with identifier "%s" and path "%s" because of a missing parent path. This is caused by a broken rootline and needs to be fixed with the "node:repair" command.', $nodeData['identifier'], $nodeData['path']));
+			return;
+		}
+
+		$this->exportedNodePaths[$nodeData['path']] = TRUE;
+
 		if ($nodeData['parentPath'] === '/') {
 			$nodeName = substr($nodeData['path'], 1);
 		} else {
