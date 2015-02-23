@@ -10709,6 +10709,12 @@
 .neos.media-browser .neos-sort-tags {
   margin-bottom: 32px;
 }
+.neos.media-browser .neos-sort-tags .neos-search input {
+  width: auto;
+}
+.neos.media-browser .neos-sort-tags .neos-search button i {
+  vertical-align: baseline;
+}
 .neos.media-browser .neos-sort-tags > h2 {
   line-height: 40px;
 }

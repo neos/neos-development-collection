@@ -84,6 +84,16 @@
 	.neos-sort-tags {
 		margin-bottom: $wideMargin;
 
+		.neos-search {
+			input {
+				width: auto;
+			}
+
+			button i {
+				vertical-align: baseline;
+			}
+		}
+
 		> h2 {
 			line-height: $unit;
 
