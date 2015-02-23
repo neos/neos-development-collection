@@ -365,8 +365,26 @@
 	}
 
 	table.neos-table {
+		th {
+			white-space: nowrap;
+
+			a:hover {
+				color: $blue;
+			}
+
+			i {
+				vertical-align: baseline;
+			}
+		}
+
+		th,
+		td {
+			padding: $relatedMargin;
+			line-height: $unit - ($relatedMargin * 2);
+		}
+
 		tbody tr.asset td:first-child {
-			padding-left: 0 !important;
+			padding: 0 !important;
 		}
 
 		.neos-list-thumbnail {
@@ -385,6 +403,7 @@
 
 		.neos-action {
 			width: 10%;
+			font-size: 0;
 
 			form {
 				text-align: right;
