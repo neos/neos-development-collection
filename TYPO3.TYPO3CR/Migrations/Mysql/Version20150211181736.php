@@ -16,7 +16,7 @@ class Version20150211181736 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("CREATE UNIQUE INDEX UNIQ_60A956B9772E836A8D94001992F8FB01 ON typo3_typo3cr_domain_model_nodedata (identifier, workspace, dimensionshash)");
+		$this->addSql("CREATE UNIQUE INDEX UNIQ_60A956B9772E836A8D94001992F8FB012D45FE4D ON typo3_typo3cr_domain_model_nodedata (identifier, workspace, dimensionshash, movedto)");
 	}
 
 	/**
@@ -26,6 +26,6 @@ class Version20150211181736 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("DROP INDEX UNIQ_60A956B9772E836A8D94001992F8FB01 ON typo3_typo3cr_domain_model_nodedata");
+		$this->addSql("DROP INDEX UNIQ_60A956B9772E836A8D94001992F8FB012D45FE4D ON typo3_typo3cr_domain_model_nodedata");
 	}
 }
