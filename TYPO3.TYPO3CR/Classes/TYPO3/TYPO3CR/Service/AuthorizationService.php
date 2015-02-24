@@ -14,8 +14,9 @@ namespace TYPO3\TYPO3CR\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 
 /**
  * This service provides API methods to check for privileges
@@ -36,4 +37,12 @@ class AuthorizationService {
 	 * @var PrivilegeManagerInterface
 	 */
 	protected $privilegeManager;
+
+	/**
+	 * @param NodeInterface $node
+	 * @return boolean
+	 */
+	public function isGrantedToEditNode(NodeInterface $node) {
+		return $this->privilegeManager->isGranted(EditNodePrivilege::class, new NodePrivilegeSubject($node));
+	}
 }
