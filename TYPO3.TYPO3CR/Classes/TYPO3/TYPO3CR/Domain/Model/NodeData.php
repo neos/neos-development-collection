@@ -31,7 +31,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(
  * 	uniqueConstraints={
  * 		@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
- * 		@ORM\UniqueConstraint(name="identifier_workspace_dimensions",columns={"identifier", "workspace", "dimensionshash"})
+ * 		@ORM\UniqueConstraint(name="identifier_workspace_dimensions_movedto",columns={"identifier", "workspace", "dimensionshash", "movedto"})
  * 	},
  * 	indexes={
  * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
