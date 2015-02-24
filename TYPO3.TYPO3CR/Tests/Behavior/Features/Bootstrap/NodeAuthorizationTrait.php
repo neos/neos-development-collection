@@ -241,4 +241,80 @@ trait NodeAuthorizationTrait {
 			}
 		}
 	}
+
+	/**
+	 * @param string $not
+	 * @param string $nodeName
+	 * @param string $nodeType
+	 * @throws \Exception
+	 * @Then /^I should (not )?be granted to create a new "([^"]*)" child node of type "([^"]*)"$/
+	 */
+	public function iShouldNotBeGrantedToCreateANewChildNodeOfType($not, $nodeName, $nodeType) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
+		} else {
+			/** @var NodeTypeManager $nodeTypeManager */
+			$nodeTypeManager = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+
+			try {
+				$this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
+				if ($not === 'not') {
+					Assert::fail('Should not be able to create a child node of type "' . $nodeType . '"!');
+				}
+			} catch (AccessDeniedException $exception) {
+				if ($not !== 'not') {
+					throw $exception;
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param string $expectedResult
+	 * @param string $nodeName
+	 * @param string $nodeTypeName
+	 * @throws NodeTypeNotFoundException
+	 * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if creating a new "([^"]*)" child node of type "([^"]*)" is granted$/
+	 */
+	public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfCreatingAChildNodeOfTypeIsGranted($expectedResult, $nodeName, $nodeTypeName) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
+		} else {
+			/** @var NodeTypeManager $nodeTypeManager */
+			$nodeTypeManager = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+			$nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
+
+			if ($expectedResult === 'TRUE') {
+				if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== TRUE) {
+					Assert::fail('The node authorization service did not return TRUE!');
+				}
+			} else {
+				if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== FALSE) {
+					Assert::fail('The node authorization service did not return FALSE!');
+				}
+			}
+		}
+	}
+
+	/**
+	 * @Then /^I should get the following list of denied node types for this node from the node authorization service:$/
+	 */
+	public function iShouldGetTheFollowingListOfDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService($table) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
+		} else {
+			$rows = $table->getHash();
+			$deniedNodeTypeNames = $this->nodeAuthorizationService->getDeniedNodeTypeNames($this->currentNodes[0]);
+
+			if (count($rows) !== count($deniedNodeTypeNames)) {
+				Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+			}
+
+			foreach ($rows as $row) {
+				if (in_array($row['nodeTypeName'], $deniedNodeTypeNames) === FALSE) {
+					Assert::fail('The following node type name has not been returned by the node authorization service: ' . $row['nodeTypeName']);
+				}
+			}
+		}
+	}
 }

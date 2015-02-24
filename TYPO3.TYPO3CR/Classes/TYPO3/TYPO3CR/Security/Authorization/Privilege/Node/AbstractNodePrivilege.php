@@ -29,7 +29,6 @@ use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
 abstract class AbstractNodePrivilege extends AbstractPrivilege implements MethodPrivilegeInterface {
 
 	/**
-	 * @Flow\Inject
 	 * @var CompilingEvaluator
 	 */
 	protected $eelCompilingEvaluator;
@@ -63,12 +62,12 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
 		}
 		$this->initialized = TRUE;
 
-		$eelEvaluator = new CompilingEvaluator();
-
 		$this->nodeContext = new $this->nodeContextClassName();
 		$eelContext = new Context($this->nodeContext);
 
-		$eelEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
+		$this->eelCompilingEvaluator = new CompilingEvaluator();
+
+		$this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
 
 		$methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
 
@@ -102,7 +101,6 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
 		if ($subject instanceof MethodPrivilegeSubject) {
 			return $this->methodPrivilege->matchesSubject($subject);
 		}
-		/** @var NodePrivilegeSubject $subject */
 
 		$nodeContext = new $this->nodeContextClassName($subject->getNode());
 		$eelContext = new Context($nodeContext);

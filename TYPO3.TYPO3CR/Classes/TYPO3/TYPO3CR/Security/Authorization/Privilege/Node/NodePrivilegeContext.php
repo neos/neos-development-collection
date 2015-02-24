@@ -28,7 +28,6 @@ class NodePrivilegeContext {
 
 	/**
 	 * @param NodeInterface $node
-	 * @param string $overrideWorkspaceName Use this workspaceName to match the privilege
 	 */
 	function __construct(NodeInterface $node = NULL) {
 		$this->node = $node;
