@@ -20,6 +20,8 @@ use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
 
 /**
@@ -103,5 +105,15 @@ class AuthorizationService {
 	public function isGrantedToRemoveNode(NodeInterface $node) {
 		$privilegeSubject = new NodePrivilegeSubject($node);
 		return $this->privilegeManager->isGranted(RemoveNodePrivilege::class, $privilegeSubject);
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @param string $propertyName
+	 * @return boolean
+	 */
+	public function isGrantedToReadNodeProperty(NodeInterface $node, $propertyName) {
+		$privilegeSubject = new PropertyAwareNodePrivilegeSubject($node, NULL, $propertyName);
+		return $this->privilegeManager->isGranted(ReadNodePropertyPrivilege::class, $privilegeSubject);
 	}
 }

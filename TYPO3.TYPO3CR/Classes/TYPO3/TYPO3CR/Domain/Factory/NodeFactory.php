@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -37,6 +38,13 @@ class NodeFactory {
 	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var SecurityContext
+	 */
+	protected $securityContext;
+
 
 	/**
 	 * Creates a node from the given NodeData container.
@@ -89,15 +97,19 @@ class NodeFactory {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface|NULL
 	 */
 	protected function filterNodeByContext(NodeInterface $node, Context $context) {
-		if (!$context->isRemovedContentShown() && $node->isRemoved()) {
-			return NULL;
-		}
-		if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
-			return NULL;
-		}
-		if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
-			return NULL;
-		}
+		$this->securityContext->withoutAuthorizationChecks(function() use (&$node, $context) {
+			if (!$context->isRemovedContentShown() && $node->isRemoved()) {
+				$node = NULL;
+				return;
+			}
+			if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
+				$node = NULL;
+				return;
+			}
+			if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
+				$node = NULL;
+			}
+		});
 		return $node;
 	}
 

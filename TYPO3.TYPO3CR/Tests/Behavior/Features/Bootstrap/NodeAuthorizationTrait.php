@@ -15,6 +15,7 @@ use Behat\Gherkin\Node\TableNode;
 use TYPO3\Flow\Annotations as Flow;
 use PHPUnit_Framework_Assert as Assert;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -355,6 +356,69 @@ trait NodeAuthorizationTrait {
 				}
 			} else {
 				if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== FALSE) {
+					Assert::fail('The node authorization service did not return FALSE!');
+				}
+			}
+		}
+	}
+
+	/**
+	 * @Then /^I should (not )?be granted to get the "([^"]*)" property$/
+	 */
+	public function iShouldNotBeGrantedToGetTheProperty($not, $propertyName) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName)));
+		} else {
+			/** @var NodeInterface $currentNode */
+			$currentNode = $this->currentNodes[0];
+			try {
+				switch ($propertyName) {
+					case 'name':
+						$propertyValue = $currentNode->getName();
+						break;
+					case 'hidden':
+						$propertyValue = $currentNode->isHidden();
+						break;
+					case 'hiddenBeforeDateTime':
+						$propertyValue = $currentNode->getHiddenBeforeDateTime();
+						break;
+					case 'hiddenAfterDateTime':
+						$propertyValue = $currentNode->getHiddenAfterDateTime();
+						break;
+					case 'hiddenInIndex':
+						$propertyValue = $currentNode->isHiddenInIndex();
+						break;
+					case 'accessRoles':
+						$propertyValue = $currentNode->getAccessRoles();
+						break;
+					default:
+						$propertyValue = $currentNode->getProperty($propertyName);
+						break;
+				}
+				if ($not === 'not') {
+					Assert::fail('Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"');
+				}
+			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+				if ($not !== 'not') {
+					throw $exception;
+				}
+			}
+		}
+	}
+
+	/**
+	 * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if getting the "([^"]*)" property is granted$/
+	 */
+	public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfGettingThePropertyIsGranted($expectedResult, $propertyName) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
+		} else {
+			if ($expectedResult === 'TRUE') {
+				if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== TRUE) {
+					Assert::fail('The node authorization service did not return TRUE!');
+				}
+			} else {
+				if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== FALSE) {
 					Assert::fail('The node authorization service did not return FALSE!');
 				}
 			}
