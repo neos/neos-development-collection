@@ -168,8 +168,9 @@ class NodeExportService {
 			->innerJoin('n.workspace', 'w', 'WITH', 'n.workspace=w.name')
 			->where('n.workspace = :workspace')
 			->setParameter('workspace', $workspace)
-			->andWhere('n.path like :childpath')
-			->setParameter('childpath', ($pathStartingPoint === '/' ? '%' : $pathStartingPoint . '%'))
+			->andWhere('n.path = :pathPrefix OR n.path LIKE :pathPrefixMatch')
+			->setParameter('pathPrefix', $pathStartingPoint)
+			->setParameter('pathPrefixMatch', ($pathStartingPoint === '/' ? '%' : $pathStartingPoint . '/%'))
 			->orderBy('n.identifier', 'ASC')
 			->orderBy('n.path', 'ASC');
 
