@@ -7176,6 +7176,49 @@
 .neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos .neos-secondary-inspector {
   padding-left: 373px;
 }
+.neos .neos-secondary-inspector .neos-close {
+  position: absolute;
+  top: 41px;
+  right: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 100%;
+  width: 41px;
+  height: 41px;
+  background-color: #222;
+  border: 1px solid #3f3f3f;
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  -moz-transition-property: top, right;
+  -o-transition-property: top, right;
+  -webkit-transition-property: top, right;
+  transition-property: top, right;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+}
+.neos .neos-secondary-inspector .neos-close:before {
+  content: "";
+}
+.neos .neos-secondary-inspector .neos-close:hover {
+  background: #00b5ff;
+}
+.neos-inspector-panel-open .neos .neos-secondary-inspector .neos-close {
+  width: 42px;
+  height: 42px;
+  top: 0;
+  right: 320px;
+}
+.neos-edit-preview-panel-open .neos .neos-secondary-inspector .neos-close {
+  top: -1px;
+}
 .neos .neos-secondary-inspector > div {
   height: 100%;
 }
