@@ -71,6 +71,12 @@ class SiteImportExportServiceTest extends FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->inject($this->contextFactory, 'contextInstances', array());
+	}
+
 	/**
 	 * @test
 	 */
