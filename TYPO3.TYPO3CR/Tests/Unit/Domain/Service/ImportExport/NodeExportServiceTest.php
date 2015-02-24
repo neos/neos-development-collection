@@ -39,6 +39,9 @@ class NodeExportServiceTest extends UnitTestCase {
 	public function exportRootNodeCreatesSingleNode() {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService $nodeExportService */
 		$nodeExportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService', array('findNodeDataListToExport'));
+		$nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
+		$nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(FALSE);
 
 		$nodeData = $this->buildNodeDataArray(
 			'/',
@@ -73,6 +76,9 @@ class NodeExportServiceTest extends UnitTestCase {
 	public function exportNodeWithoutParentSkipsBrokenNode() {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService $nodeExportService */
 		$nodeExportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService', array('findNodeDataListToExport'));
+		$nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
+		$nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(FALSE);
 
 		$nodeData1 = $this->buildNodeDataArray(
 			'/sites/foo',
