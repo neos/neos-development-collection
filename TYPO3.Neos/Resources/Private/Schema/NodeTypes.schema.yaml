@@ -154,6 +154,23 @@ additionalProperties:
 
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
+            'views':
+              type: dictionary
+              additionalProperties:
+
+                # for each inspector view:
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'label': { type: string, description: "Human-readable label for this view." }
+
+                  'group': { type: string, description: "Name of the group this view is grouped into" }
+
+                  'view': { type: string, description: "The view implementation" }
+
+                  'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
+
         'search':
           type: dictionary
           additionalProperties: FALSE
