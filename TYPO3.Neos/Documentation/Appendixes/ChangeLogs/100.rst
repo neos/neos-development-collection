@@ -2,9 +2,9 @@
 1.0.0 (2013-12-10)
 ==================
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 Base Distribution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 [BUGFIX] Pull in 2.1.x-dev of typo3/eel (contains needed change)
 -----------------------------------------------------------------------------------------
@@ -65,9 +65,9 @@ Mink Extension.
 * Resolves: `#54171 <http://forge.typo3.org/issues/54171>`_
 * Commit: `e236a8f <https://git.typo3.org/Neos/Distributions/Base.git/commit/e236a8f4a3285f72f5e127b1e10d634b8ceb25d1>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 TYPO3.Neos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 [TASK] Update references in documentation
 -----------------------------------------------------------------------------------------
@@ -1343,9 +1343,9 @@ there needs to be an empty line after the "::".
 
 * Commit: `e285158 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e285158bc7afa77bdf0c5656121cf08f1f1a056b>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 TYPO3.Neos.NodeTypes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 [TASK] Mark TYPO3.Neos:Page as abstract
 -----------------------------------------------------------------------------------------
@@ -1466,9 +1466,9 @@ to configure if the cropping or up scaling is allowed.
 * Resolves: `#51980 <http://forge.typo3.org/issues/51980>`_
 * Commit: `bae0cfe <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/bae0cfe054c6a028e1031e2660dd6b88068e623c>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 TYPO3.SiteKickstarter
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 [TASK] Mark TYPO3.Neos:Page as abstract
 -----------------------------------------------------------------------------------------
@@ -1589,9 +1589,9 @@ to configure if the cropping or up scaling is allowed.
 * Resolves: `#51980 <http://forge.typo3.org/issues/51980>`_
 * Commit: `bae0cfe <https://git.typo3.org/Packages/TYPO3.SiteKickstarter.git/commit/bae0cfe054c6a028e1031e2660dd6b88068e623c>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 TYPO3.TYPO3CR
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 [FEATURE] Allow to preset node identifier in NodeTemplate
 -----------------------------------------------------------------------------------------
@@ -1721,9 +1721,9 @@ performance boost.
 * Related: `#54080 <http://forge.typo3.org/issues/54080>`_
 * Commit: `9f3b3b9 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9f3b3b94594148e89b6d44200a25c537996a4bac>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 TYPO3.TypoScript
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 [TASK] Prevent Exceptions in TypoScriptPathProxy
 -----------------------------------------------------------------------------------------
@@ -1915,9 +1915,9 @@ object that can be used to generate URLs::
 
 * Commit: `4a387a5 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/4a387a51c1cbc93cbb74b8e2a03ce43331dad588>`_
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.NeosDemoTypo3Org
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 [BUGFIX] Demo site pages use the page from nodetypes
 -----------------------------------------------------------------------------------------
