@@ -50,15 +50,22 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 		$output = $handler->handleRenderingException($typoScriptPath, $exception);
 		$currentContext = $this->runtime->getCurrentContext();
 		/** @var NodeInterface $documentNode */
-		$documentNode = $currentContext['documentNode'];
+		$documentNode = isset($currentContext['documentNode']) ? isset($currentContext['documentNode']) : NULL;
+
 		/** @var NodeInterface $node */
-		$node = $currentContext['node'];
+		$node = isset($currentContext['node']) ? $currentContext['node'] : NULL;
 
 		$fluidView = $this->prepareFluidView();
 		$isBackend = FALSE;
 		/** @var NodeInterface $siteNode */
-		$siteNode = $currentContext['site'];
-		if ($this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') && $siteNode->getContext()->getWorkspace()->getName() !== 'live') {
+		$siteNode = isset($currentContext['site']) ? $currentContext['site'] : NULL;
+
+		if ($documentNode === NULL) {
+			// Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
+			$documentNode = $siteNode ? $siteNode : $node;
+		}
+
+		if ($documentNode !== NULL && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
 			$isBackend = TRUE;
 			$fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>'));
 		}
