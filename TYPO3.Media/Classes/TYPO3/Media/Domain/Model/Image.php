@@ -115,7 +115,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface {
 		try {
 			$imageSize = $this->imageService->getImageSize($resource);
 		} catch (ImageFileException $imageFileException) {
-			throw new ImageFileException(sprintf('Tried to refresh the dimensions and meta data of Image asset "%s" but the file of resource "%s" does not exist or is not a valid image.', $this->getTitle(), $resource->getUri()), 1381141468);
+			throw new ImageFileException(sprintf('Tried to refresh the dimensions and meta data of Image asset "%s" but the file of resource "%s" does not exist or is not a valid image.', $this->getTitle(), $resource->getSha1()), 1381141468);
 		}
 
 		$this->width = $imageSize['width'] ?: 0;
