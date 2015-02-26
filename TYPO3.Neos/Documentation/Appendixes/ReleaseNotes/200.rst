@@ -1,0 +1,161 @@
+========================
+2.0.0 (not released yet)
+========================
+
+*Note*: some of these release notes have been written as if the feature was already in master, although it is not fully
+        the case yet. For each feature, the first paragraph highlights the current implementation status -- that
+        paragraph will be removed for the final release notes.
+
+Fine-grained Access Control
+===========================
+
+*Current Status: FIXME*
+
+A common requirement, especially for larger websites with many editors, is the possibility to selectively control access
+to certain backend tools and parts of the content. For example so that editors can only edit certain pages or content
+types or that they are limited to specific workspaces. These access restrictions are used to enforce certain workflows
+and to reduce complexity for editors.
+
+With Neos 2.0, we introduce a way to define Access Control Lists (ACL) in a very fine-grained manner, enabling the
+following use-cases:
+
+- hide parts of the node tree completely (useful for multi-site websites and frontend-login) (in progress)
+- protect arbitrary method calls (as possible before)
+- define the visibility of arbitrary elements depending on the authenticated user (as possible before; currently being
+  worked on)
+- show only specific Backend Modules
+- allow to create only specific TYPO3CR Node Types (being worked on currently)
+- allow to only edit parts of the Node Tree (being worked on currently)
+- allow to hide certain properties in the Content Inspector (being worked on currently)
+
+The above examples are all based upon specific *privilege types*; defining *what can be access-restricted*.
+
+Furthermore, the way Neos and Flow handle *roles* has been rewritten: A user is assigned to one or more specific
+roles, defining *who the user is*. For each role, a list of *privileges* is specified, defining the exact permissions of
+users assigned to each role.
+
+In the Neos user interface, it is possible to assign not just a single role to a user, but instead a list of multiple
+roles. This allows to define the permissions a user actually has on a much more fine-grained level than before, where
+only the distinction between Editor and Administrator was made.
+
+
+Cloud Capable Resource and Media Management
+===========================================
+
+*Current Status: The foundational change in Flow (Resource Management) has been merged. A prototype of uploading
+assets to Rackspace and Dropbox is functional but probably won't make it into the final release. CSS path rewriting
+is not yet implemented and would be needed for really using cloud resources.*
+
+In today's world, the use of cloud services is very prevalent. People use Google drive, Dropbox or Box.com to share
+files and assets. Furthermore, applications of today should be deployable on PAAS systems like Heroku or AWS EC2.
+Because these platforms do not contain a writable and persistent file system, alternative storage systems for assets
+are needed. For highly scalable websites, the use of Content Delivery Networks for serving static content helps to
+keep sites performant and fast.
+
+With Neos 2.0 and Flow 3.0, we introduce a completely written core of resource management, which has built-in
+support for various cloud providers.
+
+On the one hand, this now allows to store persistent resources like images which the user has uploaded in Amazon S3;
+making Flow and Neos a lot more straightforward to run on PAAS.
+
+On the other hand, resources which are used on the website output (like cropped and resized images) can be *published*
+to a CDN like Akamai or Rackspace CloudFiles.
+
+The cloud providers supported with Neos 2.0 will be:
+- Rackspace CloudFiles / Akamai
+- Dropbox
+- S3??
+- ???
+
+This feature is also the basis for seamlessly choosing assets from Google Drive or Dropbox in the Neos Media Management,
+which will be implemented in a later version of Neos.
+
+
+Translation & Content Variants
+==============================
+
+*Current Status: all merged into master*
+
+While translation of content, or more broadly, content variants, are the flagship feature of Neos 1.2, there were still
+some missing spots to fill to make working with content variants really awesome. Neos 2.0 includes quite some of these
+improvements.
+
+First, we re-implemented the way an initial translation of a document from one language to another works. If you wanted
+to translate from English to German in Neos 1.2, you needed to define that the German-language version of your page falls
+back to the "English" version -- effectively showing English content if it has not been translated in German yet.
+With Neos 2.0, you do not need these fall-backs anymore. Instead, if you choose a content variant which does not exist yet,
+you are asked whether you want to start with an empty page or copy the original content and start modifying it.
+
+Second, we re-thought how the node tree should behave in Neos: In order to reduce confusion, if you move a page to a
+different position in the hierarchy, it is moved *in all variants*. However, if you move *content* from left to right column,
+this only affects the current variant. After having tried numerous options in the last months, we believe that this
+way leads to the most predictable editing experience.
+
+Third, if you copy content from one variant to another (e.g. a content element which has been created in English, but
+not yet in German), the link between the original content and the translation is now preserved. This is an important
+technical foundation, based on which features such as a "list of changes in the original language" will be implemented
+in later Neos releases.
+
+
+Translated Neos User Interface
+==============================
+
+*Current Status: The most important change merged into Master, followups (e.g. for translating Node Type Names and JS)
+still in the works.*
+
+The User Interface of Neos is now translatable into multiple languages -- making it easier to use for non-English speakers.
+
+Now, we need *your help*, as we still need the actual translation. Please head over to https://crowdin.com/project/typo3-neos
+and https://crowdin.com/project/typo3-flow and translate the labels as you see them :)
+
+
+
+SEO Improvements
+================
+
+*Current Status: mostly merged, except for the XML sitemap generation*
+
+With Neos 2.0, we've added some first tools which help in improving search engine ranks:
+
+- Separation of page and navigation title
+- allow to set description, keywords and robots information per-page
+- machine-readable links to alternative-language versions
+- XML sitemap generation
+
+In the longer run, we'll add some more functionality and helpers in this area.
+
+
+
+Google Analytics
+================
+
+*Current Status: merged*
+
+For many websites, getting key insights on their usage patterns is a requirement for improving content. That's why we started
+a basic integration with Google Analytics; showing the current access numbers in an inspector tab of the current page.
+
+
+History / Event Log
+===================
+
+*Current Status: Merged, but some instabilities and missing event types*
+
+For Neos 2.0, we have explored to add an event log, which records all kinds of changes to a Neos instance. Initially,
+the event log helps to answer the following questions:
+
+- What content has changed since I have last used the system?
+- Audit Logging: Which users have been created or modified?
+
+A small History module is included which allows to browse the history.
+
+By default, this feature is currently disabled, as the history grows quite quickly and there is no function to prune the
+history yet. We also imagine that the history can be used to enable functionality like more intelligent publishing or
+merging of changes.
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- tbd.
+
+**Further details can be found in the commit messages of the changes**
