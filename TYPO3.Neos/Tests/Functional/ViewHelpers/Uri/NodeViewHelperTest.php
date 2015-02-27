@@ -111,6 +111,7 @@ class NodeViewHelperTest extends FunctionalTestCase {
 		parent::tearDown();
 
 		$this->inject($this->contextFactory, 'contextInstances', array());
+		$this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
 	}
 
 	/**
