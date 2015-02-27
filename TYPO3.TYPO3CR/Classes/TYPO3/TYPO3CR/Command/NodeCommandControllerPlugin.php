@@ -22,6 +22,7 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * Plugin for the TYPO3CR NodeCommandController which provides functionality for creating missing child nodes.
@@ -554,22 +555,26 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 		$undefinedPropertiesCount = 0;
 		$nodes = $nodeType !== NULL ? $this->getNodeDataByNodeTypeAndWorkspace($nodeType, $workspaceName) : $this->nodeDataRepository->findByWorkspace($workspace);
 		foreach ($nodes as $nodeData) {
-			/** @var NodeData $nodeData */
-			if ($nodeData->getNodeType()->getName() === 'unstructured') {
-				continue;
-			}
-			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-			if (!$node instanceof NodeInterface) {
-				continue;
-			}
-			$nodeType = $node->getNodeType();
-			$undefinedProperties = array_diff(array_keys($node->getProperties()), array_keys($nodeType->getProperties()));
-			if ($undefinedProperties !== array()) {
-				$nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = array('node' => $node, 'undefinedProperties' => $undefinedProperties);
-				foreach ($undefinedProperties as $undefinedProperty) {
-					$undefinedPropertiesCount++;
-					$this->output->outputLine('Found undefined property named "%s" in "%s" (%s)', array($undefinedProperty, $node->getPath(), $node->getNodeType()->getName()));
+			try {
+				/** @var NodeData $nodeData */
+				if ($nodeData->getNodeType()->getName() === 'unstructured') {
+					continue;
 				}
+				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if (!$node instanceof NodeInterface) {
+					continue;
+				}
+				$nodeType = $node->getNodeType();
+				$undefinedProperties = array_diff(array_keys($node->getProperties()), array_keys($nodeType->getProperties()));
+				if ($undefinedProperties !== array()) {
+					$nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = array('node' => $node, 'undefinedProperties' => $undefinedProperties);
+					foreach ($undefinedProperties as $undefinedProperty) {
+						$undefinedPropertiesCount++;
+						$this->output->outputLine('Found undefined property named "%s" in "%s" (%s)', array($undefinedProperty, $node->getPath(), $node->getNodeType()->getName()));
+					}
+				}
+			} catch (NodeTypeNotFoundException $exception) {
+				$this->output->outputLine('Skipped undefined node type in "%s"', array($nodeData->getPath()));
 			}
 		}
 
