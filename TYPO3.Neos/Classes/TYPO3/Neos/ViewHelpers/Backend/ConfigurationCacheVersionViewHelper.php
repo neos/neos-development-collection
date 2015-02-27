@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -21,16 +22,20 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 class ConfigurationCacheVersionViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @var \TYPO3\Neos\Cache\CacheManager
-	 * @Flow\Inject
+	 * @var StringFrontend
 	 */
-	protected $cacheManager;
+	protected $configurationCache;
 
 	/**
 	 * @return string The current cache version identifier
 	 */
 	public function render() {
-		return $this->cacheManager->getConfigurationCacheVersion();
+		$version = $this->configurationCache->get('ConfigurationVersion');
+		if ($version === FALSE) {
+			$version = time();
+			$this->configurationCache->set('ConfigurationVersion', (string)$version);
+		}
+		return $version;
 	}
 
 }
