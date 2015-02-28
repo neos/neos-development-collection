@@ -50,7 +50,7 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 		$output = $handler->handleRenderingException($typoScriptPath, $exception);
 		$currentContext = $this->runtime->getCurrentContext();
 		/** @var NodeInterface $documentNode */
-		$documentNode = isset($currentContext['documentNode']) ? isset($currentContext['documentNode']) : NULL;
+		$documentNode = isset($currentContext['documentNode']) ? $currentContext['documentNode'] : NULL;
 
 		/** @var NodeInterface $node */
 		$node = isset($currentContext['node']) ? $currentContext['node'] : NULL;
