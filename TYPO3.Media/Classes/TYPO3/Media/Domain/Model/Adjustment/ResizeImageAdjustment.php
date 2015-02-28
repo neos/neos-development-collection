@@ -216,6 +216,21 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	}
 
 	/**
+	 * Check if this Adjustment can or should be applied to its ImageVariant.
+	 *
+	 * @param ImagineImageInterface $image
+	 * @return boolean
+	 */
+	public function canBeApplied(ImagineImageInterface $image) {
+		$expectedDimensions = $this->calculateDimensions($image->getSize());
+		if ($expectedDimensions->contains($image->getSize())) {
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	/**
 	 * Applies this adjustment to the given Imagine Image object
 	 *
 	 * @param ImagineImageInterface $image

@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Imagine\Image\Box;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Resource\Resource as FlowResource;
@@ -80,6 +81,7 @@ class ImageService {
 	 */
 	public function processImage(FlowResource $originalResource, array $adjustments) {
 		$additionalOptions = array();
+		$adjustmentsApplied = FALSE;
 		$resourceUri = $originalResource->createTemporaryLocalCopy();
 
 		$transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $originalResource->getFileExtension();
@@ -94,7 +96,7 @@ class ImageService {
 			$layers = $imagineImage->layers();
 			$newLayers = array();
 			foreach ($layers as $index => $imagineFrame) {
-				$imagineFrame = $this->applyAdjustments($imagineFrame, $adjustments);
+				$imagineFrame = $this->applyAdjustments($imagineFrame, $adjustments, $adjustmentsApplied);
 				$newLayers[] = $imagineFrame;
 			}
 
@@ -105,26 +107,35 @@ class ImageService {
 			}
 			$additionalOptions['animated'] = TRUE;
 		} else {
-			$imagineImage = $this->applyAdjustments($imagineImage, $adjustments);
-		}
-		$imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
-		$imageSize = getimagesize($transformedImageTemporaryPathAndFilename);
-		$width = (integer)$imageSize[0];
-		$height = (integer)$imageSize[1];
-
-		// TODO: In the future the collectionName of the new resource should be configurable.
-		$resource = $this->resourceManager->importResource($transformedImageTemporaryPathAndFilename, $originalResource->getCollectionName());
-		if ($resource === FALSE) {
-			throw new ImageFileException('An error occurred while importing a generated image file as a resource.', 1413562208);
+			$imagineImage = $this->applyAdjustments($imagineImage, $adjustments, $adjustmentsApplied);
 		}
 
-		unlink($transformedImageTemporaryPathAndFilename);
+		if ($adjustmentsApplied === TRUE) {
+			$imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
+			$imageSize = $imagineImage->getSize();
 
-		$pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
-		$resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $width, $height, $pathInfo['extension']));
+			// TODO: In the future the collectionName of the new resource should be configurable.
+			$resource = $this->resourceManager->importResource($transformedImageTemporaryPathAndFilename, $originalResource->getCollectionName());
+			if ($resource === FALSE) {
+				throw new ImageFileException('An error occurred while importing a generated image file as a resource.', 1413562208);
+			}
+			unlink($transformedImageTemporaryPathAndFilename);
 
-		$result = $this->getImageSize($resource);
-		$result['resource'] = $resource;
+			$pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
+			$resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
+		} else {
+			$resource = $this->resourceManager->importResource($originalResource->getStream(), $originalResource->getCollectionName());
+			$resource->setFilename($originalResource->getFilename());
+			$imageSize = $this->getImageSize($originalResource);
+			$imageSize = new Box($imageSize['width'], $imageSize['height']);
+		}
+		$this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()));
+
+		$result = array (
+			'width' => $imageSize->getWidth(),
+			'height' => $imageSize->getHeight(),
+			'resource' => $resource
+		);
 
 		return $result;
 	}
@@ -157,33 +168,39 @@ class ImageService {
 	}
 
 	/**
+	 * Get the size of a Flow Resource object that contains an image file.
+	 *
 	 * @param FlowResource $resource
 	 * @return array width and height as keys
 	 * @throws ImageFileException
 	 */
 	public function getImageSize(FlowResource $resource) {
 		$cacheIdentifier = $resource->getCacheEntryIdentifier();
-		if ($this->imageSizeCache->has($cacheIdentifier)) {
-			return $this->imageSizeCache->get($cacheIdentifier);
-		}
-		$imageSize = getimagesize($resource->createTemporaryLocalCopy());
-		if ($imageSize === FALSE) {
-			throw new ImageFileException('The given resource was not a valid image file', 1336662898);
+		$size = $this->imageSizeCache->get($cacheIdentifier);
+		if ($size === FALSE) {
+			$imageSize = getimagesize($resource->createTemporaryLocalCopy());
+			if ($imageSize === FALSE) {
+				throw new ImageFileException('The given resource was not a valid image file', 1336662898);
+			}
+			$width = (integer)$imageSize[0];
+			$height = (integer)$imageSize[1];
+
+			$this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $width, 'height' => $height));
+			$size = array('width' => $width, 'height' => $height);
 		}
 
-		$width = (integer)$imageSize[0];
-		$height = (integer)$imageSize[1];
-		return array('width' => $width, 'height' => $height);
+		return $size;
 	}
 
 	/**
 	 *
 	 * @param \Imagine\Image\ImageInterface $image
 	 * @param array $adjustments
+	 * @param boolean $adjustmentsApplied Reference to a variable that will hold information if an adjustment was actually applied.
 	 * @return \Imagine\Image\ImageInterface
 	 * @throws ImageServiceException
 	 */
-	protected function applyAdjustments(\Imagine\Image\ImageInterface $image, array $adjustments) {
+	protected function applyAdjustments(\Imagine\Image\ImageInterface $image, array $adjustments, &$adjustmentsApplied) {
 		// FIXME: this sorts adjustments by classname, to avoid resize being done before crop - which would break,
 		// if the image is resized to be smaller and the crop area start coordinates would end up outside the bounding box
 		// TODO: find a proper and extensible way to define the needed adjustment order
@@ -195,7 +212,10 @@ class ImageService {
 			if (!$adjustment instanceof ImageAdjustmentInterface) {
 				throw new ImageServiceException(sprintf('Could not apply the %s adjustment to image because it does not implement the ImageAdjustmentInterface.', get_class($adjustment)), 1381400362);
 			}
-			$image = $adjustment->applyToImage($image);
+			if ($adjustment->canBeApplied($image)) {
+				$image = $adjustment->applyToImage($image);
+				$adjustmentsApplied = TRUE;
+			}
 		}
 
 		return $image;

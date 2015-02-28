@@ -37,4 +37,11 @@ interface ImageAdjustmentInterface extends AdjustmentInterface {
 	 */
 	public function setImageVariant(ImageVariant $imageVariant);
 
+	/**
+	 * Check if this Adjustment can or should be applied to its ImageVariant.
+	 *
+	 * @param ImageInterface $image
+	 * @return boolean
+	 */
+	public function canBeApplied(ImageInterface $image);
 }
