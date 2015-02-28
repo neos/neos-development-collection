@@ -14,13 +14,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 		attributes {
 			version = 'HTML+RDFa 1.1'
-			version.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			version.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns = 'http://www.w3.org/1999/xhtml'
-			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns:typo3 = 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/'
-			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns:xsd = 'http://www.w3.org/2001/XMLSchema#'
-			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 	}
 
@@ -64,7 +64,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 					1 = 'node'
 				}
 			}
-			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
 		neosBackendEndpoints = TYPO3.TypoScript:Template {
@@ -79,7 +79,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 					1 = 'node'
 				}
 			}
-			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
 		# Script includes in the head should go here
@@ -102,7 +102,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	# Required for the backend to work.
 	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
 		@position = 'before body'
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	# Content of the body tag. To be defined by the integrator.
@@ -129,7 +129,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 				1 = 'node'
 			}
 		}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	# This enables redirecting to the last visited page after login
@@ -149,7 +149,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		@position = 'after lastVisitedNodeScript 10000'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
 		node = ${node}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	closingBodyTag = '</body>'

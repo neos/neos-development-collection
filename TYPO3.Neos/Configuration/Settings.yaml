@@ -224,7 +224,14 @@ TYPO3:
           'references':
             editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
 
+      defaultEditPreviewMode: 'inPlace'
       editPreviewModes:
+        # Live mode is only configured here for consistency. You shouldn't change it.
+        live:
+          isEditingMode: FALSE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: ''
+          title: 'Live'
         inPlace:
           isEditingMode: TRUE
           isPreviewMode: FALSE

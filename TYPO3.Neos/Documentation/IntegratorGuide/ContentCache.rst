@@ -54,7 +54,7 @@ path::
 
 			entryIdentifier {
 				node = ${node}
-				editPreviewMode = ${editPreviewMode}
+				editPreviewMode = ${node.context.currentRenderingMode.name}
 			}
 
 			entryTags {
