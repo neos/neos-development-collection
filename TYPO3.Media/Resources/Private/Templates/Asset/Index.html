@@ -141,6 +141,9 @@
 			<p>No Assets found. You can drag files here to upload them.</p>
 		</f:else>
 	</f:if>
+</f:section>
+
+<f:section name="Scripts">
 	<script type="text/javascript">
 		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
 	</script>

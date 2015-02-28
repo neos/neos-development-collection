@@ -1,5 +1,5 @@
 {namespace m=TYPO3\Media\ViewHelpers}
-<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
+<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 5}">
 	<ul class="neos-thumbnails asset-list">
 		<f:for each="{paginatedAssets}" as="asset">
 			<li class="asset">
