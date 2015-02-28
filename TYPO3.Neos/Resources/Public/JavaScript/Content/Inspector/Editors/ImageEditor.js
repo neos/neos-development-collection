@@ -832,24 +832,27 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		},
 
 		_applyResizeAdjustment: function(finalWidth, finalHeight) {
+			// in order for change detection to work the order of these properties needs to be exactly like received from the server side (which is alphabetically ordered)
 			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
 				height: finalHeight,
 				maximumHeight: null,
 				maximumWidth: null,
 				minimumHeight: null,
 				minimumWidth: null,
+				position: 20,
 				ratioMode: null,
 				width: finalWidth
 			};
 		},
 
 		_applyCropAdjustment: function(cropProperties) {
+			// in order for change detection to work the order of these properties needs to be exactly like received from the server side (which is alphabetically ordered)
 			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = {
 				height: cropProperties.height,
+				position: 10,
 				width: cropProperties.width,
 				x: cropProperties.x,
 				y: cropProperties.y
-
 			};
 		},
 
