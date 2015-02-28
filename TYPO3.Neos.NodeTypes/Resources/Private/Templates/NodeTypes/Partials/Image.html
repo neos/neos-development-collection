@@ -15,11 +15,9 @@
 			</f:if>
 		</f:then>
 		<f:else>
-			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
-				<f:if condition="{node.context.workspace.name} != 'live'">
-					<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" class="neos-handle" />
-				</f:if>
-			</f:security.ifAccess>
+			<f:if condition="{neos:rendering.inEditMode()}">
+				<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" class="neos-handle" />
+			</f:if>
 		</f:else>
 	</f:if>
 	<f:if condition="{hasCaption}">
