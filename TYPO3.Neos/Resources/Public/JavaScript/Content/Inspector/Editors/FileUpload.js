@@ -14,8 +14,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 		/**
 		 * Label of the file chooser button
 		 */
-		fileChooserLabel: 'Choose file',
-		uploaderLabel: 'Upload',
+		fileChooserLabel: 'Upload',
 
 		// File filters
 		allowedFileTypes: null,

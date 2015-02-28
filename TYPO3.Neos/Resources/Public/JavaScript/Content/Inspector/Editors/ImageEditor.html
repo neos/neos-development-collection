@@ -18,20 +18,9 @@
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled"}}>
 			{{unbound view.fileChooserLabel}}
 		</button>
-		{{#if view._uploadButtonShown}}
-			<button class="neos-button neos-inspector-image-upload-button" allowed-file-types="{{unbound view.allowedFileTypes}}" {{bindAttr disabled="view._uploadInProgress"}} {{action "upload" target="view"}}>
-				{{unbound view.uploaderLabel}}
-			</button>
-			{{#if view._uploadPreviewShown}}
-				<button class="neos-button neos-inspector-image-upload-cancel-button" {{action "cancel" target="view"}}>
-					{{unbound view.uploadCancelLabel}}
-				</button>
-			{{/if}}
-		{{else}}
-			<button class="neos-button neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress"}} {{action "remove" target="view"}}>
-				{{unbound view.removeButtonLabel}}
-			</button>
-		{{/if}}
+		<button class="neos-button neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress"}} {{action "remove" target="view"}}>
+			{{unbound view.removeButtonLabel}}
+		</button>
 		{{#if view.shouldRenderCrop}}
 			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 		{{/if}}

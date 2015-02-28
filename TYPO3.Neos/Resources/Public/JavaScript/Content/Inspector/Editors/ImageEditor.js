@@ -22,9 +22,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/****************************************
 		 * GENERAL SETUP
 		 ***************************************/
-		fileChooserLabel: 'Choose',
+		fileChooserLabel: 'Upload',
 
-		uploaderLabel: 'Upload!',
 		removeButtonLabel: 'Remove',
 		uploadCancelLabel: 'Cancel',
 		cropLabel: 'Crop',
