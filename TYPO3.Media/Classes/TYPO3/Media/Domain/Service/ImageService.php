@@ -193,21 +193,13 @@ class ImageService {
 	}
 
 	/**
-	 *
 	 * @param \Imagine\Image\ImageInterface $image
-	 * @param array $adjustments
+	 * @param array $adjustments Ordered list of adjustments to apply.
 	 * @param boolean $adjustmentsApplied Reference to a variable that will hold information if an adjustment was actually applied.
 	 * @return \Imagine\Image\ImageInterface
 	 * @throws ImageServiceException
 	 */
 	protected function applyAdjustments(\Imagine\Image\ImageInterface $image, array $adjustments, &$adjustmentsApplied) {
-		// FIXME: this sorts adjustments by classname, to avoid resize being done before crop - which would break,
-		// if the image is resized to be smaller and the crop area start coordinates would end up outside the bounding box
-		// TODO: find a proper and extensible way to define the needed adjustment order
-		usort($adjustments, function ($a, $b) {
-			return strcmp(get_class($a), get_class($b));
-		});
-
 		foreach ($adjustments as $adjustment) {
 			if (!$adjustment instanceof ImageAdjustmentInterface) {
 				throw new ImageServiceException(sprintf('Could not apply the %s adjustment to image because it does not implement the ImageAdjustmentInterface.', get_class($adjustment)), 1381400362);

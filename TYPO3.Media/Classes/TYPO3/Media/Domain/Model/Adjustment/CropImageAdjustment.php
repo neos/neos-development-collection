@@ -26,6 +26,11 @@ class CropImageAdjustment extends AbstractImageAdjustment {
 
 	/**
 	 * @var integer
+	 */
+	protected $position = 10;
+
+	/**
+	 * @var integer
 	 * @ORM\Column(nullable = TRUE)
 	 */
 	protected $x;

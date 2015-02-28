@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 
 /**
@@ -44,8 +45,9 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	protected $originalAsset;
 
 	/**
-	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
+	 * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
 	 * @ORM\OneToMany(mappedBy="imageVariant", cascade={"all"}, orphanRemoval=TRUE)
+	 * @ORM\OrderBy({"position" = "ASC"})
 	 */
 	protected $adjustments;
 
@@ -254,10 +256,10 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	 */
 	public function addAdjustment(ImageAdjustmentInterface $adjustment) {
 		$existingAdjustmentFound = FALSE;
-		$newAdjustmentClassName = get_class($adjustment);
+		$newAdjustmentClassName = TypeHandling::getTypeForValue($adjustment);
 
 		foreach ($this->adjustments as $existingAdjustment) {
-			if (get_class($existingAdjustment) === $newAdjustmentClassName) {
+			if (TypeHandling::getTypeForValue($existingAdjustment) === $newAdjustmentClassName) {
 				foreach (ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
 					ObjectAccess::setProperty($existingAdjustment, $propertyName, $propertyValue);
 				}
@@ -267,6 +269,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 		if (!$existingAdjustmentFound) {
 			$this->adjustments->add($adjustment);
 			$adjustment->setImageVariant($this);
+			$this->adjustments = $this->adjustments->matching(new \Doctrine\Common\Collections\Criteria(NULL, array('position' => 'ASC')));
 		}
 
 		$this->lastModified = new \DateTime();

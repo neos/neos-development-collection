@@ -26,6 +26,11 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 
 	/**
 	 * @var integer
+	 */
+	protected $position = 20;
+
+	/**
+	 * @var integer
 	 * @ORM\Column(nullable = TRUE)
 	 */
 	protected $width;
