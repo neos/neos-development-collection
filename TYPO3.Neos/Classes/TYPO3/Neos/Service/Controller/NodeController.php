@@ -14,7 +14,6 @@ namespace TYPO3\Neos\Service\Controller;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Domain\Service\NodeSearchService;
-use TYPO3\Neos\Service\NodeNameGenerator;
 use TYPO3\Neos\Service\View\NodeView;
 use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
@@ -25,7 +24,6 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
-use TYPO3\TYPO3CR\Utility;
 
 /**
  * Service Controller for managing Nodes
@@ -72,15 +70,15 @@ class NodeController extends AbstractServiceController {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeNameGenerator
-	 */
-	protected $nodeNameGenerator;
-
-	/**
-	 * @Flow\Inject
 	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Service\NodeOperations
+	 */
+	protected $nodeOperations;
 
 	/**
 	 * Select special error action
@@ -143,15 +141,22 @@ class NodeController extends AbstractServiceController {
 	/**
 	 * Creates a new node
 	 *
+	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 * because they might be connected to images / resources which need to be updated at the same time.
+	 *
 	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
 	 * @throws \InvalidArgumentException
-	 * @todo maybe the actual creation should be put in a helper / service class
 	 */
 	public function createAction(Node $referenceNode, array $nodeData, $position) {
-		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
+
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
@@ -167,7 +172,7 @@ class NodeController extends AbstractServiceController {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
-		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
 		$view = new TypoScriptView();
 		$this->controllerContext->getRequest()->setFormat('html');
@@ -193,58 +198,8 @@ class NodeController extends AbstractServiceController {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
-		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 		$this->view->assign('value', array('data' => $this->view->collectTreeNodeData($newNode), 'success' => TRUE));
-	}
-
-	/**
-	 * Helper method for creating a new node.
-	 *
-	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
-	 * because they might be connected to images / resources which need to be updated at the same time.
-	 *
-	 * @param Node $referenceNode
-	 * @param array $nodeData
-	 * @param string $position
-	 * @return Node
-	 * @throws \InvalidArgumentException
-	 */
-	protected function createNewNode(Node $referenceNode, array $nodeData, $position) {
-		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
-		}
-		$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
-
-		if ($nodeType->isOfType('TYPO3.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
-			$nodeData['properties']['uriPathSegment'] = Utility::renderValidNodeName($nodeData['properties']['title']);
-		}
-
-		$proposedNodeName = isset($nodeData['nodeName']) ? $nodeData['nodeName'] : NULL;
-		$nodeData['nodeName'] = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position), $proposedNodeName);
-
-		if ($position === 'into') {
-			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeType);
-		} else {
-			$parentNode = $referenceNode->getParent();
-			$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeType);
-
-			if ($position === 'before') {
-				$newNode->moveBefore($referenceNode);
-			} else {
-				$newNode->moveAfter($referenceNode);
-			}
-		}
-
-		if (isset($nodeData['properties']) && is_array($nodeData['properties'])) {
-			foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
-				$newNode->setProperty($propertyName, $propertyValue);
-			}
-		}
-
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
-			$this->persistenceManager->persistAll();
-		}
-		return $newNode;
 	}
 
 	/**
@@ -260,20 +215,7 @@ class NodeController extends AbstractServiceController {
 	 * @throws NodeException
 	 */
 	public function moveAction(Node $node, Node $targetNode, $position) {
-		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
-		}
-
-		switch ($position) {
-			case 'before':
-				$node->moveBefore($targetNode);
-			break;
-			case 'into':
-				$node->moveInto($targetNode);
-			break;
-			case 'after':
-				$node->moveAfter($targetNode);
-		}
+		$node = $this->nodeOperations->move($node, $targetNode, $position);
 
 		if ($this->request->getHttpRequest()->isMethodSafe()) {
 			$this->persistenceManager->persistAll();
@@ -300,27 +242,7 @@ class NodeController extends AbstractServiceController {
 	 * @throws NodeException
 	 */
 	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = NULL) {
-		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
-		}
-
-		if (!empty($nodeName)) {
-			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position), $nodeName);
-		} else {
-			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position));
-		}
-
-		switch ($position) {
-			case 'before':
-				$copiedNode = $node->copyBefore($targetNode, $nodeName);
-			break;
-			case 'after':
-				$copiedNode = $node->copyAfter($targetNode, $nodeName);
-			break;
-			case 'into':
-			default:
-				$copiedNode = $node->copyInto($targetNode, $nodeName);
-		}
+		$copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
 		if ($this->request->getHttpRequest()->isMethodSafe()) {
 			$this->persistenceManager->persistAll();
@@ -460,19 +382,5 @@ class NodeController extends AbstractServiceController {
 		);
 
 		return $this->contextFactory->create($contextProperties);
-	}
-
-	/**
-	 * @param NodeInterface $targetNode
-	 * @param string $position
-	 * @return NodeInterface
-	 */
-	protected function getDesignatedParentNode(NodeInterface $targetNode, $position) {
-		$referenceNode = $targetNode;
-		if (in_array($position, array('before', 'after'))) {
-			$referenceNode = $targetNode->getParent();
-		}
-
-		return $referenceNode;
 	}
 }
