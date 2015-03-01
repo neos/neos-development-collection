@@ -173,6 +173,9 @@ TYPO3:
               # Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb"
               # If not set, the maximum upload size is used as configured in php.ini
               maximumFileSize: ~
+              features:
+                crop: TRUE
+                resize: FALSE
               crop:
                 aspectRatio:
                   options:
