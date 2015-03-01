@@ -50,6 +50,7 @@
 		height: $unit + 1;
 		background-color: $grayDark;
 		border: 1px solid $grayLight;
+		z-index: 10015;
 		@include opacity(1);
 		@include icon-FontAwesome();
 		@include transition-property(top, right);
