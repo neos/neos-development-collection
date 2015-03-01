@@ -4,7 +4,7 @@
 		<f:if condition="{iterator.index} > 0">/</f:if>
 		<f:if condition="{iterator.isLast}">
 			<f:then>
-				{neos:backend.translate( id: '{item.label}', source="Modules", value="{item.label}")}
+				{neos:backend.translate(id: item.label, source: 'Modules', value: item.label)}
 			</f:then>
 			<f:else>
 				<neos:link.node node="{item.node}" />

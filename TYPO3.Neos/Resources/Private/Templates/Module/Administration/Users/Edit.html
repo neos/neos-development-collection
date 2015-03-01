@@ -139,7 +139,7 @@
 												</div>
 												<div class="neos-modal-footer">
 													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-													<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{user: user, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'electronicAddress.delete', value: 'Yes, delete electronic address')}</button>
+													<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: {user: user, electronicAddress: electronicAddress})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'electronicAddress.delete', value: 'Yes, delete electronic address')}</button>
 												</div>
 											</div>
 											<div class="neos-modal-backdrop neos-in"></div>

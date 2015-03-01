@@ -13,7 +13,7 @@
 					<span class="contentdimension-icon">{contentDimensionPresetConfiguration.icon}</span>
 					<h2>Presets</h2>
 					<ol class="contentdimension-presets"><f:for each="{contentDimensionPresetConfiguration.presets}" key="presetIdentifier" as="preset">
-						<li class="contentdimension-preset{f:if(condition: '{0:presetIdentifier} == {0:contentDimensionPresetConfiguration.defaultPreset}', then: ' contentdimension-defaultpreset')}">
+						<li class="contentdimension-preset{f:if(condition: '{presetIdentifier} == {contentDimensionPresetConfiguration.defaultPreset}', then: ' contentdimension-defaultpreset')}">
 							<label class="contentdimension-preset-label">{preset.label}</label>
 							<span class="contentdimension-preset-identifier">{presetIdentifier}</span>
 							<ol class="contentdimension-preset-values">

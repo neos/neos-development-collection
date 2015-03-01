@@ -82,7 +82,7 @@
 													</f:if>
 												</label>
 											</td>
-											<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: "<em>{neos:backend.translate(id: 'workspaces.noTitle', value: '[No title]')}</em>')}")}</label></td>
+											<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>{neos:backend.translate(id: "workspaces.noTitle", value: "[No title]")}</em>')}</label></td>
 											<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
 												<label for="{change.node.identifier}">
 													<f:if condition="{change.configuration.ui.icon}">
@@ -93,10 +93,10 @@
 											</td>
 											<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
 											<td class="neos-action neos-aRight neos-priority1">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'publish', value: 'Publish')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'publish', value: 'Publish')}">
 													<i class="icon-check icon-white"></i>
 												</button>
-												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'discard', value: 'Discard')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'discard', value: 'Discard')}">
 													<i class="icon-trash icon-white"></i>
 												</button>
 											</td>
@@ -129,11 +129,11 @@
 		<div class="neos-modal">
 			<div class="neos-modal-header">
 				<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-				<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspace', arguments: "{0: '{workspace.name}'}", value: 'Do you really want to discard all changes in the "{workspace.name}" workspace?')}</div>
+				<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspace', arguments: {0: workspace.name}, value: 'Do you really want to discard all changes in the "{workspace.name}" workspace?')}</div>
 			</div>
 			<div class="neos-modal-footer">
 				<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspace: workspace}')}" type="submit" class="neos-button neos-button-danger">
+				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: workspace})}" type="submit" class="neos-button neos-button-danger">
 					<i class="icon-trash icon-white"></i>
 					{neos:backend.translate(id: 'discardAllChanges', value: 'Discard all changes')}
 				</button>
@@ -176,6 +176,6 @@
 		<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'publishSeletedChanges', value: 'Publish selected changes')}</button>
 		<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'discardSelectedChanges', value: 'Discard selected changes')}</button>
 		<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'discardAllChanges', value: 'Discard all changes')}</button>
-		<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspace: workspace}')}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'publishAllChanges', value: 'Publish all changes')}</button>
+		<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: workspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'publishAllChanges', value: 'Publish all changes')}</button>
 	</div>
 </f:section>

@@ -9,7 +9,7 @@
 			<ul class="neos-error">
 				<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
 					<li>
-						<f:for each="{errors}" as="error">{neos:backend.translate(id: '{error.code}', source: 'ValidationErrors', arguments: "{error.arguments}", value:'{error}')}</f:for>
+						<f:for each="{errors}" as="error">{neos:backend.translate(id: error.code, source: 'ValidationErrors', arguments: error.arguments, value: error)}</f:for>
 					</li>
 				</f:for>
 			</ul>

@@ -1,5 +1,5 @@
 <f:for each="{roles}" as="role" iteration="iteration">
-	<span title="{f:render(section: 'tooltip', arguments: '{role: role}')}">
+	<span title="{f:render(section: 'tooltip', arguments: {role: role})}">
 		{role.name}{f:if(condition: iteration.isLast, else: ', ')}
 	</span>
 </f:for>

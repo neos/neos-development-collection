@@ -47,7 +47,7 @@
 	<div class="neos-menu-section">
 		<neos:link.module path="{module.modulePath}" class="neos-menu-headline{f:if(condition: '{module.modulePath} == {modulePath}', then: ' neos-active')}">
 			<i class="{f:if(condition: module.icon, then: module.icon, else: 'icon-puzzle-piece')}"></i>
-			{neos:backend.translate(id: '{module.label}' source="Modules" value="{module.label}"}
+			{neos:backend.translate(id: module.label, source: 'Modules', value: module.label)}
 		</neos:link.module>
 		<f:if condition="{module.submodules}">
 			<div class="neos-menu-list">
@@ -66,6 +66,6 @@
 <f:section name="submoduleMenu">
 	<neos:link.module path="{submodule.modulePath}" class="{f:if(condition: '{submodule.modulePath} == {modulePath}', then: ' neos-active')}">
 		<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'icon-puzzle-piece')}"></i>
-		{neos:backend.translate(id: '{submodule.label}' source="Modules" value="{submodule.label}"}
+		{neos:backend.translate(id: submodule.label, source: 'Modules', value: submodule.label)}
 	</neos:link.module>
 </f:section>

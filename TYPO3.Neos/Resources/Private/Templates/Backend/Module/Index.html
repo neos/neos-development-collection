@@ -2,7 +2,7 @@
 <f:layout name="Default" />
 
 <f:section name="head">
-	<title><neos:backend.translate source="Modules" id="{f:if(condition: '{submodule}', then: '{submodule}.label', else: '{rootModule}.label')}">{title}</neos:backend.translate></title>
+	<title><neos:backend.translate source="Modules" id="{f:if(condition: submodule, then: '{submodule}.label', else: '{rootModule}.label')}">{title}</neos:backend.translate></title>
 
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
 		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
@@ -22,11 +22,11 @@
 		{neos:backend.javascriptConfiguration()}
 	</script>
 
-	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
+	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
-	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
-	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
-	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
+	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 
 	<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes{f:if(condition: \'{neos:backend.shouldLoadMinifiedJavascript()}\', then: \'-built\')}.css', package: 'TYPO3.Neos')}" />
 </f:section>

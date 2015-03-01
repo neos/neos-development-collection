@@ -2,55 +2,55 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<h2>{neos:backend.translate(id: 'sites.new', value:'New site')}</h2>
+	<h2>{neos:backend.translate(id: 'sites.new', value: 'New site')}</h2>
 	<f:form action="createSite">
 
 		<div class="neos-row-fluid">
 
 			<fieldset class="neos-span5">
-				<legend>{neos:backend.translate(id: 'sites.import', value:'Import a site')}</legend>
+				<legend>{neos:backend.translate(id: 'sites.import', value: 'Import a site')}</legend>
 				<f:if condition="{sitePackages -> f:count()} > 0">
 					<f:then>
 						<div class="neos-control-group">
-							<label class="neos-control-label" for="site">{neos:backend.translate(id: 'sites.select', value:'Select a site')}</label>
+							<label class="neos-control-label" for="site">{neos:backend.translate(id: 'sites.select', value: 'Select a site')}</label>
 							<div class="neos-controls neos-select">
 								<f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
 							</div>
 						</div>
 					</f:then>
 					<f:else>
-						<p>{neos:backend.translate(id: 'sites.noPackackeInfo', value:'No site packages are available. Make sure you have an active site package.')}
+						<p>{neos:backend.translate(id: 'sites.noPackackeInfo', value: 'No site packages are available. Make sure you have an active site package.')}
 						</p>
 					</f:else>
 				</f:if>
 			</fieldset>
 			<fieldset class="neos-span5 neos-offset1">
-				<legend>{neos:backend.translate(id: 'sites.createBlank', value:'Create a blank site')}</legend>
+				<legend>{neos:backend.translate(id: 'sites.createBlank', value: 'Create a blank site')}</legend>
 				<f:if condition="{generatorServiceIsAvailable}">
 					<f:then>
 						<div class="neos-control-group">
-							<label class="neos-control-label" for="package-key">{neos:backend.translate(id: 'packageKey', value:'Package key')}</label>
+							<label class="neos-control-label" for="package-key">{neos:backend.translate(id: 'packageKey', value: 'Package key')}</label>
 							<div class="neos-controls">
 								<f:form.textfield name="packageKey" value="{packageKey}" id="package-key" class="neos-span12" />
-								<span class="neos-help-block">{neos:backend.translate(id: 'sites.validPackageKeyInfo', value:'A valid package key should be in the form <em>VendorName.MyPackageKey</em>.')}</span>
+								<span class="neos-help-block">{neos:backend.translate(id: 'sites.validPackageKeyInfo', value: 'A valid package key should be in the form <em>VendorName.MyPackageKey</em>.') -> f:format.raw()}</span>
 							</div>
 						</div>
 						<div class="neos-control-group">
-							<label class="neos-control-label" for="site-name">{neos:backend.translate(id: 'sites.name', value:'site name')}</label>
+							<label class="neos-control-label" for="site-name">{neos:backend.translate(id: 'sites.name', value: 'site name')}</label>
 							<div class="neos-controls">
 								<f:form.textfield name="siteName" value="{siteName}" id="site-name" />
 							</div>
 						</div>
 					</f:then>
 					<f:else>
-						<p>{neos:backend.translate(id: 'sites.noNeosKickstarterInfo', value:'The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.')}</p>
+						<p>{neos:backend.translate(id: 'sites.noNeosKickstarterInfo', value: 'The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.') -> f:format.raw()}</p>
 					</f:else>
 				</f:if>
 			</fieldset>
 		</div>
 		<div class="neos-footer">
-			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value:'Cancel')}</f:link.action>
-			<f:form.submit value="{neos:backend.translate(id: 'sites.create', value:'Create Site')}" class="neos-button neos-button-primary" />
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+			<f:form.submit value="{neos:backend.translate(id: 'sites.create', value: 'Create Site')}" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 </f:section>
