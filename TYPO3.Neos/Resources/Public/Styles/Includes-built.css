@@ -7276,6 +7276,7 @@
   height: 41px;
   background-color: #222;
   border: 1px solid #3f3f3f;
+  z-index: 10015;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
   font-family: FontAwesome;
