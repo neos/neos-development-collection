@@ -68,10 +68,6 @@
         inspector:
           group: 'image'
           position: 50
-          editorOptions:
-            features:
-              crop: TRUE
-              resize: TRUE
     alternativeText:
       type: string
       ui:
