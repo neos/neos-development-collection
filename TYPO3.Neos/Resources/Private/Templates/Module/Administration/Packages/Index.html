@@ -21,7 +21,7 @@
 				</thead>
 				<tbody>
 					<f:for each="{packageGroups}" key="packageGroup" as="packages">
-						<tr class="neos-folder">
+						<tr class="neos-folder" id="{packageGroup}">
 							<td colspan="2" class="neos-priority1">
 								<strong>{packageGroup}</strong>
 							</td>
@@ -42,6 +42,11 @@
 								<td class="package-name neos-priority1">
 									<label for="{packageKey}">
 										{package.name}
+										<f:if condition="{package.isActive}">
+											<f:else>
+												<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span>
+											</f:else>
+										</f:if>
 									</label>
 								</td>
 								<td class="package-version neos-priority2">
