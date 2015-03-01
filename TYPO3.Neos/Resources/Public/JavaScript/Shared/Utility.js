@@ -1,15 +1,11 @@
 /**
  * A set of utility functions
  */
-define(
-[
-	'emberjs'
-],
-function(Ember) {
+define(function() {
 	/**
 	 * @singleton
 	 */
-	return Ember.Object.extend({
+	return {
 		/**
 		 * The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 		 *
@@ -59,5 +55,5 @@ function(Ember) {
 		isExternalUrl: function(value) {
 			return /^([a-z-]){2,}:.{2,}$/.test(value);
 		}
-	}).create();
+	};
 });
