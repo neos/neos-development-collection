@@ -267,9 +267,11 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
 			});
 
-			this.$().find('.neos-inspector-image-thumbnail').click(function() {
-				SecondaryInspectorController.toggle(that.get('_cropView'));
-			});
+			if (this.get('features.crop') === true) {
+				this.$().find('.neos-inspector-image-thumbnail').click(function() {
+					SecondaryInspectorController.toggle(that.get('_cropView'));
+				});
+			}
 
 			this._readAndDeserializeValue();
 		},
@@ -843,7 +845,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		},
 
 		_applyCropAdjustment: function(cropProperties) {
-			this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = {
+			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = {
 				height: cropProperties.height,
 				width: cropProperties.width,
 				x: cropProperties.x,
