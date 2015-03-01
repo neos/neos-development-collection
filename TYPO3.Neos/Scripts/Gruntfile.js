@@ -126,6 +126,7 @@ module.exports = function (grunt) {
 					libraryPath + 'twitter-bootstrap/js/bootstrap-alert.js',
 					libraryPath + 'twitter-bootstrap/js/bootstrap-dropdown.js',
 					libraryPath + 'twitter-bootstrap/js/bootstrap-tooltip.js',
+					libraryPath + 'twitter-bootstrap/js/bootstrap-popover.js',
 					libraryPath + 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.js'
 				],
 				dest: libraryPath + 'bootstrap-components.js',
@@ -146,10 +147,14 @@ module.exports = function (grunt) {
 						// Dropdown
 						src = src.replace(/' dropdown-menu'/g, "' neos-dropdown-menu'");
 						src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
+						src = src.replace('data-toggle', 'data-neos-toggle');
 
 						// Tooltip
 						src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 						src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
+
+						// Popover
+						src = src.replace(/fade top bottom left right in/g, 'neos-fade neos-top neos-bottom neos-left neos-right neos-in');
 
 						// Datetimepicker
 						src = src.replace(/case '(switch|prev|next|today)'/g, "case 'neos-$1'");

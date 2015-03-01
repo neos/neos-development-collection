@@ -82,17 +82,6 @@
 
 	.neos-dropdown-menu {
 		.neos-publish-all-button {
-			&.neos-button {
-				width: 100%;
-				font-size: $generalFontSize;
-				background-color: $grayMedium;
-				text-align: left;
-			}
-
-			&:hover {
-				background-color: $blue;
-			}
-
 			&.disabled {
 				color: $textSubtle;
 				cursor: not-allowed;
