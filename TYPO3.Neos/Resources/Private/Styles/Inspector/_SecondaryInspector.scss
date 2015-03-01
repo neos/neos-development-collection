@@ -39,8 +39,45 @@
 		padding-left: $menuButtonWidth + $navigatePanelWidth - 1px;
 	}
 
+	.neos-close {
+		position: absolute;
+		top: $unit + 1;
+		right: 0;
+		color: #fff;
+		font-size: 18px;
+		line-height: 100%;
+		width: $unit + 1;
+		height: $unit + 1;
+		background-color: $grayDark;
+		border: 1px solid $grayLight;
+		@include opacity(1);
+		@include icon-FontAwesome();
+		@include transition-property(top, right);
+		@include transition-duration(.2s);
+
+		&:before {
+			content: $remove;
+		}
+
+		&:hover {
+			background: $blue;
+		}
+
+		.neos-inspector-panel-open & {
+			width: $unit + 2;
+			height: $unit + 2;
+			top: 0;
+			right: $inspectorWidth;
+		}
+
+		.neos-edit-preview-panel-open & {
+			top: -1px;
+		}
+	}
+
 	> div {
 		height: 100%;
+
 		> div {
 			height: 100%;
 		}
