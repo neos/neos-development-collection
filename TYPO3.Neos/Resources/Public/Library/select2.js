@@ -1,4 +1,4 @@
-define(["Library/jquery-with-dependencies", "Shared/Utility"], function(jQuery, Utility) {/*
+/*
 Copyright 2012 Igor Vaynberg
 
 Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
@@ -3253,4 +3253,3 @@ the specific language governing permissions and limitations under the Apache Lic
     };
 
 }(jQuery));
-});

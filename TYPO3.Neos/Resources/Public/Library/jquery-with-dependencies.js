@@ -1,4 +1,5 @@
-define(function() {/*!
+define(["Shared/Utility"], function(Utility) {
+/*!
  * jQuery JavaScript Library v2.0.3
  * http://jquery.com/
  *
@@ -27072,7 +27073,7 @@ var _registerDnd = function() {
   // }}}
 }(jQuery));
 
-define(["Library/jquery-with-dependencies", "Shared/Utility"], function(jQuery, Utility) {/*
+/*
 Copyright 2012 Igor Vaynberg
 
 Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
@@ -30327,7 +30328,7 @@ the specific language governing permissions and limitations under the Apache Lic
     };
 
 }(jQuery));
-});
+
 /*!
  * sly 1.2.3 - 9th Feb 2014
  * https://github.com/darsain/sly
@@ -34625,4 +34626,6 @@ the specific language governing permissions and limitations under the Apache Lic
 		$('[data-provide="datetimepicker-inline"]').datetimepicker();
 	});
 
-}( window.jQuery );return jQuery.noConflict(true);});
+}( window.jQuery );
+return jQuery.noConflict(true);
+});
