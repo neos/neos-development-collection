@@ -134,15 +134,16 @@ TYPO3:
 
       # the languages the backend user can choose from (the xliff file for this language should be present!)
       availableLanguages:
+        'dk': 'Dansk'
+        'de': 'Deutsch'
         'en': 'English'
         'es': 'Español'
         'fr': 'Français'
-        'de': 'Deutsch'
+        'lv': 'Latviski'
         'nl': 'Nederlands'
-        'dk': 'Dansk'
+        'pl': 'Polski'
         'ru': 'Pусский'
         'sv': 'Svenska'
-        'lv': 'Latviski'
 
       navigateComponent:
         nodeTree:
