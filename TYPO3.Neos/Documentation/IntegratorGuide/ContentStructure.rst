@@ -781,8 +781,8 @@ Options Reference:
   Defaults to the maximum allowed upload size configured in php.ini
 
 * ``features``
-	* ``crop`` (boolean): if ``TRUE``, enable image cropping
-	* ``resize`` (boolean): if ``TRUE``, enable image resizing
+	* ``crop`` (boolean): If ``TRUE``, enable image cropping. Default ``TRUE``.
+	* ``resize`` (boolean): If ``TRUE``, enable image resizing. Default ``FALSE``.
 
 * ``crop``: crop-related options. Only relevant if ``features.crop`` is enabled.
 	* ``aspectRatio``

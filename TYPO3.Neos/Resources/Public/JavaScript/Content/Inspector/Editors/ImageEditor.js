@@ -44,7 +44,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * Feature flags for this editor. Currently we have cropping and resize which can be enabled/disabled via NodeTypes editorOptions.
 		 */
 		features: {
-			crop: false,
+			crop: true,
 			resize: false
 		},
 
