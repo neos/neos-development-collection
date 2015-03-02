@@ -351,11 +351,34 @@
 			width: $unit;
 			position: relative;
 
+			&[data-content] {
+				cursor: zoom-in;
+			}
+
 			img {
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				@include translate(-50%, -50%);
+			}
+		}
+
+		.neos-popover {
+			width: auto;
+			height: auto;
+
+			.neos-popover-content {
+				width: 250px;
+				height: 250px;
+				position: relative;
+				padding: 0;
+
+				img {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					@include translate(-50%, -50%);
+				}
 			}
 		}
 

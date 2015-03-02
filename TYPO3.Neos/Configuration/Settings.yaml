@@ -351,6 +351,7 @@ TYPO3:
     scripts:
       - resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js
       - resource://TYPO3.Neos/Public/Library/bootstrap-components.js
+      - resource://TYPO3.Neos/Public/JavaScript/Modules/media-browser.js
     styles:
       - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
       - resource://TYPO3.Media/Public/Styles/Main.css
