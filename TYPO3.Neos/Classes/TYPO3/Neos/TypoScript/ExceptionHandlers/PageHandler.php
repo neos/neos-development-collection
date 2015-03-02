@@ -17,6 +17,7 @@ use TYPO3\Fluid\View\StandaloneView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\Neos\Service\ContentElementWrappingService;
+use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
