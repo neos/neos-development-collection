@@ -95,7 +95,26 @@ class SitesController extends AbstractModuleController {
 	 * @return void
 	 */
 	public function indexAction() {
-		$this->view->assign('sites', $this->siteRepository->findAll());
+		$sitePackagesAndSites = array();
+		foreach ($this->packageManager->getFilteredPackages('available', NULL, 'typo3-flow-site') as $sitePackageKey => $sitePackage) {
+			/** \TYPO3\Flow\Package\PackageInterface $sitePackage */
+			$sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
+		}
+		$sites = $this->siteRepository->findAll();
+		foreach ($sites as $site) {
+			$siteResourcePackageKey = strtolower(str_replace('.', '_', $site->getSiteResourcesPackageKey()));
+			if (!isset($sitePackagesAndSites[$siteResourcePackageKey])) {
+				$sitePackagesAndSites[$siteResourcePackageKey] = array('packageKey' => $site->getSiteResourcesPackageKey());
+			}
+			if (!isset($sitePackagesAndSites[$siteResourcePackageKey]['sites'])) {
+				$sitePackagesAndSites[$siteResourcePackageKey]['sites'] = array();
+			}
+			$sitePackagesAndSites[$siteResourcePackageKey]['sites'][] = $site;
+		}
+		$this->view->assignMultiple(array(
+			'sitePackagesAndSites' => $sitePackagesAndSites,
+			'multipleSites' => count($sites) > 1
+		));
 	}
 
 	/**

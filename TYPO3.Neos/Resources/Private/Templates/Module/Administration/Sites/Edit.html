@@ -30,7 +30,7 @@
 								<span class="neos-badge neos-badge-success">{neos:backend.translate(id: 'active', value:'Active')}</span>
 							</f:then>
 							<f:else>
-								<span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'inactive', value:'Inactive')}</span>
+								<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 							</f:else>
 						</f:if>
 					</p>
@@ -41,21 +41,15 @@
 						<thead>
 							<tr>
 								<th>{neos:backend.translate(id: 'domain', value:'Domain')}</th>
-								<th colspan="3">{neos:backend.translate(id: 'state', value:'Status')}</th>
 							</tr>
 						</thead>
 						<tbody>
 						<f:for each="{domains}" as="domain" key="number">
 							<tr>
-								<td>{domain.hostPattern}</td>
 								<td>
-									<f:if condition="{domain.active} == 1">
-										<f:then>
-											<span class="neos-badge neos-badge-success">{neos:backend.translate(id: 'active', value:'Active')}</span>
-										</f:then>
-										<f:else>
-											<span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'inactive', value:'Inactive')}</span>
-										</f:else>
+									{domain.hostPattern}
+									<f:if condition="{domain.active} == 0">
+										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 									</f:if>
 								</td>
 								<td class="neos-action aRight">

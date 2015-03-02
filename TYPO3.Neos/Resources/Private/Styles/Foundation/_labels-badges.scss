@@ -53,7 +53,7 @@ a {
   // Important (red)
   .#{$item}-important         { background-color: $warning; }
   // Warnings (orange)
-  .#{$item}-warning           { background-color: $warning; }
+  .#{$item}-warning           { background-color: $orange; }
   // Success (green)
   .#{$item}-success           { background-color: $green; }
   // Info (turquoise)

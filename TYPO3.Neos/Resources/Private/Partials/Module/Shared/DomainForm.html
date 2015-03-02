@@ -14,11 +14,15 @@
 			<label class="neos-control-label" for="active">{neos:backend.translate(id: 'domainform.state', value: 'State')}</label>
 			<div class="neos-controls">
 				<label class="neos-radio neos-inline">
-					<f:form.radio property="active" value="1" id="active" /><span></span>
+					<f:if condition="{domain}">
+						<f:then><f:form.radio property="active" value="1" id="active" checked="{f:if(condition: domain.active, then: 'checked')}"/></f:then>
+						<f:else><f:form.radio property="active" value="1" id="active" checked="checked" /></f:else>
+					</f:if>
+					<span></span>
 					{neos:backend.translate(id: 'active', value: 'Active')}
 				</label>
 				<label class="neos-radio neos-inline">
-					<f:form.radio property="active" value="0" checked="{f:if(condition: domain.active, else: 'checked')}" /><span></span>
+					<f:form.radio property="active" value="0" /><span></span>
 					{neos:backend.translate(id: 'inactive', value: 'Inactive')}
 				</label>
 			</div>
