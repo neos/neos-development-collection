@@ -198,13 +198,13 @@
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
-				<source>This will delete the page</source>
+				<source>This will delete the element</source>
 			<target xml:lang="de">Dadurch wird die Seite gelöscht</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
-				<source>and it's subpages</source>
+				<source>and it's children</source>
 			<target xml:lang="de">und ihre Unterseiten</target><alt-trans><target xml:lang="de">als auch die Unterseiten</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
-				<source>This operation can be undone in the workspace management.</source>
+				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve" approved="yes">
 				<source>Height</source>
