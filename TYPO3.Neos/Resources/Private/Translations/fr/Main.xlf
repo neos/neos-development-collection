@@ -197,15 +197,18 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="fr">Contenu</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="fr" state="needs-translation">Do you really want to delete</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="fr">Cela supprimera la page</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
+			<target xml:lang="fr" state="translated">Cela supprimera la page</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="fr">et ses sous-pages</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+			<target xml:lang="fr" state="translated">et ses sous-pages</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="fr">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="fr">Hauteur</target></trans-unit>
@@ -226,7 +229,7 @@
 			<target xml:lang="fr">Largeur </target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="fr">Propriété requise manquante:</target></trans-unit>
+			<target xml:lang="fr">Propriété requise manquante: </target><alt-trans><target xml:lang="fr">Propriété requise manquante:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="fr">Espaces de travail</target></trans-unit>

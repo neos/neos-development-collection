@@ -82,6 +82,27 @@
       <trans-unit id="users.new.title" xml:space="preserve">
 				<source>Create a new user</source>
 			<target xml:lang="sr" state="needs-translation">Create a new user</target></trans-unit>
+      <trans-unit id="users.editAccount.title" xml:space="preserve">
+				<source>Edit account "{accountIdentifier}"</source>
+			<target xml:lang="sr" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
+      <trans-unit id="users.account" xml:space="preserve">
+				<source>Account</source>
+			<target xml:lang="sr" state="needs-translation">Account</target></trans-unit>
+      <trans-unit id="users.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="sr" state="needs-translation">Username</target></trans-unit>
+      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
+				<source>The username can't be changed via the user interface</source>
+			<target xml:lang="sr" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
+      <trans-unit id="users.saveAccount" xml:space="preserve">
+				<source>Save account</source>
+			<target xml:lang="sr" state="needs-translation">Save account</target></trans-unit>
+      <trans-unit id="users.repeatPassword" xml:space="preserve">
+				<source>Repeat password</source>
+			<target xml:lang="sr" state="needs-translation">Repeat password</target></trans-unit>
+      <trans-unit id="users.roles" xml:space="preserve">
+				<source>Roles</source>
+			<target xml:lang="sr" state="needs-translation">Roles</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="sr" state="needs-translation">Package Management</target></trans-unit>

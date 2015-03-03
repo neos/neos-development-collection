@@ -2,10 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="ja">
     <body>
-      <!-- AccountExistsValidator -->
+      <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
-				<source>The account identifier (username) is already in use.</source>
-			<target xml:lang="ja" state="needs-translation">The account identifier (username) is already in use.</target></trans-unit>
+				<source>The username is already in use.</source>
+			<target xml:lang="ja" state="needs-translation">The username is already in use.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>

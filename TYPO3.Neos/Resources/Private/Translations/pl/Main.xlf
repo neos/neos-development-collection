@@ -197,6 +197,9 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="pl" state="translated">Treść</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="pl" state="needs-translation">Do you really want to delete</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="pl" state="translated">To spowoduje usunięcie strony</target></trans-unit>
@@ -226,7 +229,7 @@
 			<target xml:lang="pl" state="translated">Szerokość</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="pl" state="translated">Brak wymaganej właściwości:</target></trans-unit>
+			<target xml:lang="pl" state="translated">Brak wymaganej właściwości: </target><alt-trans><target xml:lang="pl">Brak wymaganej właściwości:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="pl" state="translated">Obszary robocze</target></trans-unit>
