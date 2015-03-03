@@ -33,7 +33,22 @@ class Package extends BasePackage {
 			$cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
 		};
 
-		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', $flushConfigurationCache);
+		$flushXliffServiceCache = function () use ($bootstrap) {
+			$cacheManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager');
+			$cacheManager->getCache('TYPO3_Neos_XliffToJsonTranslations')->flush();
+		};
+
+		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', function($fileMonitorIdentifier, array $changedFiles) use ($flushConfigurationCache, $flushXliffServiceCache) {
+			switch ($fileMonitorIdentifier) {
+				case 'TYPO3CR_NodeTypesConfiguration':
+				case 'Flow_ConfigurationFiles':
+					$flushConfigurationCache();
+					break;
+				case 'Flow_TranslationFiles':
+					$flushConfigurationCache();
+					$flushXliffServiceCache();
+			}
+		});
 
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', $flushConfigurationCache);
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
