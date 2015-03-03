@@ -11096,8 +11096,22 @@
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+.neos.media-browser table.neos-table th {
+  white-space: nowrap;
+}
+.neos.media-browser table.neos-table th a:hover {
+  color: #00b5ff;
+}
+.neos.media-browser table.neos-table th i {
+  vertical-align: baseline;
+}
+.neos.media-browser table.neos-table th,
+.neos.media-browser table.neos-table td {
+  padding: 8px;
+  line-height: 24px;
+}
 .neos.media-browser table.neos-table tbody tr.asset td:first-child {
-  padding-left: 0 !important;
+  padding: 0 !important;
 }
 .neos.media-browser table.neos-table .neos-list-thumbnail {
   background-color: #141414;
@@ -11140,6 +11154,7 @@
 }
 .neos.media-browser table.neos-table .neos-action {
   width: 10%;
+  font-size: 0;
 }
 .neos.media-browser table.neos-table .neos-action form {
   text-align: right;
