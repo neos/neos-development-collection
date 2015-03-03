@@ -84,25 +84,25 @@
 			<target xml:lang="pl" state="translated">Utwórz nowego użytkownika</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="pl" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj konto "{accountIdentifier}"</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
-			<target xml:lang="pl" state="needs-translation">Account</target></trans-unit>
+			<target xml:lang="pl" state="translated">Konto</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="pl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nazwa użytkownika</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="pl" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nazwa użytkownika nie może zostać zmieniona za pomocą interfejsu użytkownika</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
-			<target xml:lang="pl" state="needs-translation">Save account</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zapisz konto</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
-			<target xml:lang="pl" state="needs-translation">Repeat password</target></trans-unit>
+			<target xml:lang="pl" state="translated">Powtórz hasło</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="pl" state="needs-translation">Roles</target></trans-unit>
+			<target xml:lang="pl" state="translated">Role</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="pl" state="translated">Zarządzanie pakietami</target></trans-unit>
