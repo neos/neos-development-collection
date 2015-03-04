@@ -5,7 +5,7 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
-        "typo3/imagine": "*"
+        "typo3/imagine": "1.1.*"
     },
     "autoload": {
         "psr-0": {
