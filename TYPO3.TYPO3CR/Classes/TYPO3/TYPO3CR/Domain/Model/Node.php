@@ -356,6 +356,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if ($this->getWorkspace()->getName() === $workspace->getName()) {
+			return;
+		}
 		$this->nodeData->setWorkspace($workspace);
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
@@ -392,6 +395,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function setIndex($index) {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
+		}
+		if ($this->getIndex() === $index) {
+			return;
 		}
 		$this->nodeData->setIndex($index);
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -671,6 +677,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		// Arrays could potentially contain entities and objects could be entities. In that case even if the object is the same it needs to be persisted in NodeData.
+		if (!is_object($value) && !is_array($value) && $this->getProperty($propertyName) === $value) {
+			return;
+		}
 		$oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : NULL;
 		$this->nodeData->setProperty($propertyName, $value);
 
@@ -741,6 +751,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if (!$this->hasProperty($propertyName)) {
+			return;
+		}
 		$this->nodeData->removeProperty($propertyName);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -786,6 +799,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if ($this->getContentObject() === $contentObject) {
+			return;
+		}
 		$this->nodeData->setContentObject($contentObject);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -828,6 +844,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function setNodeType(NodeType $nodeType) {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
+		}
+		if ($this->getNodeType() === $nodeType) {
+			return;
 		}
 		$this->nodeData->setNodeType($nodeType);
 
@@ -1084,6 +1103,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if ($this->isHidden() === $hidden) {
+			return;
+		}
 		$this->nodeData->setHidden($hidden);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -1110,6 +1132,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
+		}
+		if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+			return;
 		}
 		$this->nodeData->setHiddenBeforeDateTime($dateTime);
 
@@ -1138,6 +1163,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if ($this->getHiddenAfterDateTime() instanceof \DateTime && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+			return;
+		}
 		$this->nodeData->setHiddenAfterDateTime($dateTime);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -1165,6 +1193,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		if ($this->isHiddenInIndex() === $hidden) {
+			return;
+		}
 		$this->nodeData->setHiddenInIndex($hidden);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -1191,6 +1222,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function setAccessRoles(array $accessRoles) {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
+		}
+		if ($this->getAccessRoles() === $accessRoles) {
+			return;
 		}
 		$this->nodeData->setAccessRoles($accessRoles);
 
