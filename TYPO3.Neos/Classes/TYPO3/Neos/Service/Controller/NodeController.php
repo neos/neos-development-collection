@@ -214,14 +214,12 @@ class NodeController extends AbstractServiceController {
 		}
 		$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
-		$expectedNodeName = NULL;
-		if (isset($nodeData['nodeName'])) {
-			$expectedNodeName = $nodeData['nodeName'];
-		} elseif ($nodeType->isOfType('TYPO3.Neos:Document') && isset($nodeData['properties']['title'])) {
-			$expectedNodeName = $nodeData['properties']['title'];
+		if ($nodeType->isOfType('TYPO3.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
+			$nodeData['properties']['uriPathSegment'] = $nodeData['properties']['title'];
 		}
 
-		$nodeData['nodeName'] = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position), $expectedNodeName);
+		$proposedNodeName = isset($nodeData['nodeName']) ? $nodeData['nodeName'] : NULL;
+		$nodeData['nodeName'] = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position), $proposedNodeName);
 
 		if ($position === 'into') {
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeType);

@@ -14,6 +14,7 @@ namespace TYPO3\Neos;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -59,21 +60,30 @@ class Package extends BasePackage {
 
 		$uriPathSegmentGenerator = function(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-				if (!$node->hasProperty('uriPathSegment')) {
-					$node->setProperty('uriPathSegment', $node->getName());
-				}
-
 				$q = new FlowQuery(array($node));
-				$possibleUriPathSegment = $node->getProperty('uriPathSegment');
+				$possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
 				$i = 1;
 				while (count($q->siblings('[uriPathSegment="' . $possibleUriPathSegment . '"]')->get())) {
-					$possibleUriPathSegment = $node->getProperty('uriPathSegment') . '-' . $i++;
+					$possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
 				}
 				$node->setProperty('uriPathSegment', $possibleUriPathSegment);
 			}
 		};
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', $uriPathSegmentGenerator);
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', $uriPathSegmentGenerator);
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function(NodeInterface $node, $propertyName) use($uriPathSegmentGenerator) {
+			if ($propertyName === 'uriPathSegment') {
+				$uriPathSegmentGenerator($node);
+			}
+		});
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', function(NodeData $nodeData) use($bootstrap, $uriPathSegmentGenerator) {
+			if ($nodeData->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+				$contextFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+				$nodeFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+				$context = $contextFactory->create(array('workspaceName' => $nodeData->getWorkspace()->getName()));
+				$node = $nodeFactory->createFromNodeData($nodeData, $context);
+				$uriPathSegmentGenerator($node);
+			}
+		});
 
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 
