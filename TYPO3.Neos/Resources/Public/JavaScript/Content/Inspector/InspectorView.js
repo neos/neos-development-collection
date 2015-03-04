@@ -38,6 +38,8 @@ define(
 
 		controller: InspectorController,
 
+		classNameBindings: ['controller.selectedNode.attributes.__readOnly:neos-node-is-read-only'],
+
 		/**
 		 * When we are in edit mode, the click protection layer is intercepting
 		 * every click outside the Inspector.
