@@ -361,22 +361,21 @@ class UserService {
 	 *
 	 * @param Account $account The account to add roles to
 	 * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
-	 * @return array The roles which effectively have been added.
+	 * @return integer How often this role has been added to the given account (effectively can be 1 or 0)
 	 * @api
 	 */
 	public function addRoleToAccount(Account $account, $roleIdentifier) {
 		$roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
 		$role = $this->policyService->getRole($roleIdentifier);
-		$rolesAdded = array();
 
 		if (!$account->hasRole($role)) {
 			$account->addRole($role);
 			$this->accountRepository->update($account);
-			$rolesAdded[] = $role;
+			$this->emitRolesAdded($account, array($role));
+			return 1;
 		}
 
-		$this->emitRolesAdded($account, $rolesAdded);
-		return $rolesAdded;
+		return 0;
 	}
 
 	/**
@@ -395,23 +394,22 @@ class UserService {
 	 *
 	 * @param Account $account The account to remove roles from
 	 * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
-	 * @return array The role that effectively was removed
+	 * @return integer How often this role has been removed from the given account (effectively can be 1 or 0)
 	 * @api
 	 */
 	public function removeRoleFromAccount(Account $account, $roleIdentifier) {
 		$roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
 		$role = $this->policyService->getRole($roleIdentifier);
-		$rolesRemoved = array();
 
 		/** @var Account $account */
 		if ($account->hasRole($role)) {
 			$account->removeRole($role);
 			$this->accountRepository->update($account);
-			$rolesRemoved[] = $role;
+			$this->emitRolesRemoved($account, array($role));
+			return 1;
 		}
 
-		$this->emitRolesRemoved($account, $rolesRemoved);
-		return $rolesRemoved;
+		return 0;
 	}
 
 	/**
