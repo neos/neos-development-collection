@@ -67,7 +67,7 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 
 		if ($documentNode !== NULL && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
 			$isBackend = TRUE;
-			$fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>'));
+			$fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>', TRUE));
 		}
 
 		$fluidView->assignMultiple(array(
