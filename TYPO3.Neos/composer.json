@@ -7,7 +7,7 @@
         "typo3/flow": "2.3.*",
         "typo3/media": "1.2.*",
         "typo3/setup": "1.1.*",
-        "typo3/twitter-bootstrap": "*",
+        "typo3/twitter-bootstrap": "1.0.*",
         "typo3/typo3cr": "1.2.*",
         "typo3/typoscript": "1.2.*"
     },
