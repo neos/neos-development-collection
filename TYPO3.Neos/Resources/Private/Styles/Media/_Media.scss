@@ -109,12 +109,21 @@
 		margin-bottom: $wideMargin;
 
 		.neos-search {
-			input {
-				width: auto;
+			@include clearfix;
+			width: 100%;
+			margin-bottom: $defaultMargin;
+
+			div {
+				overflow: hidden;
 			}
 
-			button i {
-				vertical-align: baseline;
+			button[type="submit"] {
+				width: auto;
+				float: right;
+
+				i {
+					vertical-align: baseline;
+				}
 			}
 		}
 
@@ -138,6 +147,7 @@
 		.neos-tags-list {
 			background-color: $grayLight;
 			border-top: 1px solid $grayLight;
+			margin-bottom: $defaultMargin;
 
 			&.neos-tags-list-editing-active {
 				li button[type="submit"] {
