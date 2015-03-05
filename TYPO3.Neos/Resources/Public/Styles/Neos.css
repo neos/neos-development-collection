@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1408190103') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1393580789') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1393580789') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1393580789') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1393580789') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -3983,17 +3983,12 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #3f3f3f;
 }
-.neos .neos-label {
+.neos .neos-badge {
+  padding-left: 4px;
+  padding-right: 4px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-}
-.neos .neos-badge {
-  padding-left: 9px;
-  padding-right: 9px;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
 }
 .neos .neos-label:empty,
 .neos .neos-badge:empty {
@@ -10863,11 +10858,19 @@
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle:hover {
   background-color: #00b5ff;
 }
+.neos.media-browser .neos-sort-tags .neos-tags-list {
+  background-color: #3f3f3f;
+  border-top: 1px solid #3f3f3f;
+}
 .neos.media-browser .neos-sort-tags .neos-tags-list.neos-tags-list-editing-active li button[type="submit"] {
   display: block;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li {
   position: relative;
+  background-color: #222;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li + li {
+  margin-top: 1px;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li a {
   display: block;
@@ -10878,21 +10881,47 @@
   font-weight: 400;
   font-size: 100%;
   line-height: 1.5;
-  border-top: 1px solid #3f3f3f;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-active {
   color: #00b5ff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-drag-active {
-  background-color: #00a338;
+.neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-active.neos-drag-active:hover {
+  background-color: #ff460d;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover, .neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-drag-hover {
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active {
+  outline: 1px dashed #fff;
+  outline-offset: -1px;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active span {
+  display: none;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
+  position: absolute;
+  right: 12px;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active:hover, .neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active.neos-drag-hover {
+  outline: 1px solid #fff;
+  outline-offset: -1px;
   background-color: #00b5ff;
   color: #fff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover span, .neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-drag-hover span {
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) {
+  background-color: #00b5ff;
+  color: #fff;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) span {
   background-color: #fff;
   color: #00b5ff;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) span .neos-ellipsis {
+  color: #252525;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li a span {
   position: absolute;
@@ -10911,15 +10940,17 @@
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"] {
   position: absolute;
-  top: 1px;
+  top: 0;
   right: 0;
   background-color: #222;
   display: none;
+  width: auto;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"]:hover {
   background-color: #ff460d;
 }
-.neos.media-browser .neos-sort-tags input {
+.neos.media-browser .neos-sort-tags input,
+.neos.media-browser .neos-sort-tags button[type="submit"] {
   width: 100%;
 }
 .neos.media-browser .neos-thumbnails {
@@ -10997,6 +11028,35 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.neos.media-browser .neos-thumbnails li .neos-img-container:hover::after {
+  opacity: .9;
+}
+.neos.media-browser .neos-thumbnails li .neos-img-container.ui-draggable-dragging {
+  width: 250px;
+  height: 250px;
+}
+.neos.media-browser .neos-thumbnails li .neos-img-container::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  height: 40px;
+  background-color: #222;
+  opacity: .5;
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  cursor: move;
+}
 .neos.media-browser .neos-thumbnails li .neos-caption {
   padding: 0;
   display: block;
@@ -11031,7 +11091,7 @@
   max-height: 100%;
   max-width: 100%;
 }
-.neos.media-browser:not(.media-module) .neos-thumbnails li .neos-img-container:hover {
+.neos.media-browser .neos-thumbnails li .neos-img-container:hover {
   cursor: pointer;
   outline: 4px solid #00b5ff;
 }
@@ -11124,6 +11184,8 @@
   height: 40px;
   width: 40px;
   position: relative;
+  display: inline-block;
+  float: left;
 }
 .neos.media-browser table.neos-table .neos-list-thumbnail[data-content] {
   cursor: zoom-in;
@@ -11158,6 +11220,14 @@
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+.neos.media-browser table.neos-table .icon-move, .neos.media-browser table.neos-table #neos-aloha-topmenu .aloha .ui-button .aloha-icon-toggledragdrop, .neos.media-browser #neos-aloha-topmenu .aloha .ui-button table.neos-table .aloha-icon-toggledragdrop {
+  float: left;
+  line-height: 40px;
+  padding-left: 12px;
+}
+.neos.media-browser table.neos-table .tags .neos-label {
+  background-color: #5b5b5b;
+}
 .neos.media-browser table.neos-table .neos-action {
   width: 10%;
   font-size: 0;
@@ -11171,6 +11241,9 @@
 .neos.media-browser:not(.media-module) table.neos-table tbody tr:hover td {
   background-color: #00b5ff;
   cursor: pointer;
+}
+.neos.media-browser:not(.media-module) table.neos-table .icon-move, .neos.media-browser:not(.media-module) table.neos-table #neos-aloha-topmenu .aloha .ui-button .aloha-icon-toggledragdrop, .neos.media-browser:not(.media-module) #neos-aloha-topmenu .aloha .ui-button table.neos-table .aloha-icon-toggledragdrop {
+  cursor: move;
 }
 .neos.media-browser:not(.media-module) table.neos-table .neos-action {
   display: none;

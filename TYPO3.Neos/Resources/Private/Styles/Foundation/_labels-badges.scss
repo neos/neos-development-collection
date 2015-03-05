@@ -17,14 +17,11 @@
   text-shadow: 0 -1px 0 rgba(0,0,0,.25);
   background-color: $grayLight;
 }
-// Set unique padding and border-radii
-.neos-label {
-  @include border-radius(3px);
-}
+// Set unique padding and border-radius
 .neos-badge {
-  padding-left: 9px;
-  padding-right: 9px;
-  @include border-radius(9px);
+  padding-left: 4px;
+  padding-right: 4px;
+  @include border-radius(3px);
 }
 
 // Empty labels/badges collapse

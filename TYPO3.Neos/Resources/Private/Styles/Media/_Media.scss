@@ -136,6 +136,9 @@
 		}
 
 		.neos-tags-list {
+			background-color: $grayLight;
+			border-top: 1px solid $grayLight;
+
 			&.neos-tags-list-editing-active {
 				li button[type="submit"] {
 					display: block;
@@ -144,6 +147,11 @@
 
 			li {
 				position: relative;
+				background-color: $grayDark;
+
+				+ li {
+					margin-top: 1px;
+				}
 
 				a {
 					display: block;
@@ -154,24 +162,55 @@
 					font-weight: 400;
 					font-size: $baseFontSize;
 					line-height: 1.5;
-					border-top: 1px solid $grayLight;
 
 					&.neos-active {
 						color: $blue;
+
+						&.neos-drag-active {
+							&:hover {
+								background-color: $warning;
+							}
+						}
 					}
 
-					&.neos-drag-active {
-						background-color: $green;
+					&:not(.neos-active) {
+						&.neos-drag-active {
+							outline: 1px dashed #fff;
+							outline-offset: -1px;
+
+							span {
+								display: none;
+							}
+
+							&::after {
+								@include icon-FontAwesome();
+								content: $arrow-down;
+								position: absolute;
+								right: $relatedMargin + $tightMargin;
+							}
+
+							&:hover,
+							&.neos-drag-hover {
+								outline: 1px solid #fff;
+								outline-offset: -1px;
+
+								background-color: $blue;
+								color: #fff;
+							}
+						}
 					}
 
-					&:hover,
-					&.neos-drag-hover {
+					&:hover:not(.neos-drag-active) {
 						background-color: $blue;
 						color: #fff;
 
 						span {
 							background-color: #fff;
 							color: $blue;
+
+							.neos-ellipsis {
+								color: $textOnWhite;
+							}
 						}
 					}
 
@@ -196,10 +235,11 @@
 
 				button[type="submit"] {
 					position: absolute;
-					top: 1px;
+					top: 0;
 					right: 0;
 					background-color: $grayDark;
 					display: none;
+					width: auto;
 
 					&:hover {
 						background-color: $warning;
@@ -208,7 +248,8 @@
 			}
 		}
 
-		input {
+		input,
+		button[type="submit"] {
 			width: 100%;
 		}
 	}
@@ -260,6 +301,35 @@
 				height: 0;
 				margin-bottom: $relatedMargin * 1.5;
 				@include box-sizing(border-box);
+
+				&:hover {
+					&::after {
+						opacity: .9;
+					}
+				}
+
+				&.ui-draggable-dragging {
+					width: 250px;
+					height: 250px;
+				}
+
+				&::after {
+					@include icon-FontAwesome();
+					content: $move;
+					display: block;
+					position: absolute;
+					right: 0;
+					bottom: 0;
+					width: $unit;
+					height: $unit;
+					background-color: $grayDark;
+					opacity: .5;
+					color: #fff;
+					font-size: 16px;
+					text-align: center;
+					line-height: $unit;
+					cursor: move;
+				}
 			}
 
 			.neos-caption {
@@ -298,11 +368,9 @@
 		}
 	}
 
-	&:not(.media-module) {
-		.neos-thumbnails li .neos-img-container:hover {
-			cursor: pointer;
-			outline: $tightMargin solid $blue;
-		}
+	.neos-thumbnails li .neos-img-container:hover {
+		cursor: pointer;
+		outline: $tightMargin solid $blue;
 	}
 
 	//Styles for upload/edit image
@@ -325,6 +393,7 @@
 			padding: $relatedMargin;
 			@include font();
 			@include box-sizing(border-box);
+
 			&:focus {
 				background: #fff;
 				outline: 0;
@@ -402,6 +471,8 @@
 			height: $unit;
 			width: $unit;
 			position: relative;
+			display: inline-block;
+			float: left;
 
 			&[data-content] {
 				cursor: zoom-in;
@@ -434,6 +505,18 @@
 			}
 		}
 
+		.icon-move {
+			float: left;
+			line-height: $unit;
+			padding-left: $relatedMargin + $tightMargin;
+		}
+
+		.tags {
+			.neos-label {
+				background-color: $textSubtle;
+			}
+		}
+
 		.neos-action {
 			width: 10%;
 			font-size: 0;
@@ -453,6 +536,10 @@
 			tbody tr:hover td {
 				background-color: $blue;
 				cursor: pointer;
+			}
+
+			.icon-move {
+				cursor: move;
 			}
 
 			.neos-action {
