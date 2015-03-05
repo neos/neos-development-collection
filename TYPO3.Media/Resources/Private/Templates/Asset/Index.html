@@ -59,12 +59,12 @@
 </f:section>
 
 <f:section name="Sidebar">
-	<div class="neos-input-append">
-		<form action="{f:uri.action(action: 'index')}" method="get" class="neos-search">
+	<form action="{f:uri.action(action: 'index')}" method="get" class="neos-search">
+		<button type="submit"><i class="icon-search"></i></button>
+		<div>
 			<input type="search" name="{f:if(condition: argumentNamespace, then: '{argumentNamespace}[searchTerm]', else: 'searchTerm')}" placeholder="Search" value="{searchTerm}" />
-			<button type="submit"><i class="icon-search"></i></button>
-		</form>
-	</div>
+		</div>
+	</form>
 	<h2>
 		Tags
 		<span id="neos-tags-list-edit-toggle" class="neos-button"><i class="icon-pencil"></i></span>
@@ -92,7 +92,6 @@
 			</li>
 		</f:for>
 	</ul>
-	<br /><br />
 	<f:form action="createTag" id="neos-tags-create-form">
 		<f:form.textfield id="neos-tags-create-textfield" name="label" placeholder="Enter tag label" /><br /><br />
 		<button type="submit" class="neos-button neos-button-primary">Create tag</button>
