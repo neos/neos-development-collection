@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\MediaTypes;
 
 /**
  * The TYPO3 Module
@@ -43,13 +44,16 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @param array $module
-	 * @return void
+	 * @return mixed
 	 */
 	public function indexAction(array $module) {
 		$moduleRequest = new ActionRequest($this->request);
 		$moduleRequest->setArgumentNamespace('moduleArguments');
 		$moduleRequest->setControllerObjectName($module['controller']);
 		$moduleRequest->setControllerActionName($module['action']);
+		if (isset($module['format'])) {
+			$moduleRequest->setFormat($module['format']);
+		}
 		if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === TRUE && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))) {
 			$moduleRequest->setArguments($this->request->getArgument($moduleRequest->getArgumentNamespace()));
 		}
@@ -78,6 +82,12 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		if ($moduleResponse->hasHeader('Location')) {
 			$this->redirectToUri($moduleResponse->getHeader('Location'));
+		} elseif ($moduleRequest->getFormat() !== 'html') {
+			$mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
+			if ($mediaType !== 'application/octet-stream') {
+				$this->controllerContext->getResponse()->setHeader('Content-Type', $mediaType);
+			}
+			return $moduleResponse->getContent();
 		} else {
 			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
