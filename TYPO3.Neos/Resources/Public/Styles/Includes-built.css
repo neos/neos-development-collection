@@ -10839,10 +10839,27 @@
 .neos.media-browser .neos-sort-tags {
   margin-bottom: 32px;
 }
-.neos.media-browser .neos-sort-tags .neos-search input {
-  width: auto;
+.neos.media-browser .neos-sort-tags .neos-search {
+  *zoom: 1;
+  width: 100%;
+  margin-bottom: 16px;
 }
-.neos.media-browser .neos-sort-tags .neos-search button i {
+.neos.media-browser .neos-sort-tags .neos-search:before, .neos.media-browser .neos-sort-tags .neos-search:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos.media-browser .neos-sort-tags .neos-search:after {
+  clear: both;
+}
+.neos.media-browser .neos-sort-tags .neos-search div {
+  overflow: hidden;
+}
+.neos.media-browser .neos-sort-tags .neos-search button[type="submit"] {
+  width: auto;
+  float: right;
+}
+.neos.media-browser .neos-sort-tags .neos-search button[type="submit"] i {
   vertical-align: baseline;
 }
 .neos.media-browser .neos-sort-tags > h2 {
@@ -10861,6 +10878,7 @@
 .neos.media-browser .neos-sort-tags .neos-tags-list {
   background-color: #3f3f3f;
   border-top: 1px solid #3f3f3f;
+  margin-bottom: 16px;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list.neos-tags-list-editing-active li button[type="submit"] {
   display: block;
