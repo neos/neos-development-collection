@@ -1297,11 +1297,23 @@ class NodeDataRepository extends Repository {
 
 		// TODO: This is dirty, but the best way to detect entity relations. When we change the storage type from serialized to something better we need to adapt this.
 		$query = $this->createQuery();
-		$possibleNodeData = $query->matching(
-			$query->logicalOr(
+		/** @var $queryBuilder \Doctrine\ORM\QueryBuilder */
+		$queryBuilder = ObjectAccess::getProperty($query, 'queryBuilder', TRUE);
+		/** @var \TYPO3\Flow\Persistence\Doctrine\Query $query */
+		if ($queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform()->getName() === 'postgresql') {
+			// we know that properties is of type objectarray and on PostgreSQL that is encoded with hex2bin.
+			$constraint = $query->logicalOr(
+				$query->like('properties', '%' . bin2hex('"Persistence_Object_Identifier";s:36:"' . $identifier . '"') . '%', TRUE),
+				$query->like('properties', '%' . bin2hex('"__identifier";s:36:"' . $identifier . '"') . '%', TRUE)
+			);
+		} else {
+			$constraint = $query->logicalOr(
 				$query->like('properties', '%Persistence_Object_Identifier";s:36:"' . $identifier . '%', TRUE),
 				$query->like('properties', '%__identifier";s:36:"' . $identifier . '%', TRUE)
-			)
+			);
+		}
+		$possibleNodeData = $query->matching(
+			$constraint
 		)->execute()->toArray();
 
 		/** @var NodeData $nodeData */
