@@ -183,7 +183,7 @@ can contain two texts and two videos.
    video and text elements will be created directly upon element creation::
 
 	'Acme.Demo:VideoGrid':
-	  superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
+	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    group: 'structure'
 	    label: 'Video Grid'
@@ -199,9 +199,7 @@ can contain two texts and two videos.
 
 #. The needed TypoScript is created::
 
-	prototype(Acme.Demo:VideoGrid) < prototype(TYPO3.Neos:Content) {
-		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/VideoGrid.html'
-
+	prototype(Acme.Demo:VideoGrid) {
 		videoRenderer = Acme.Demo:YouTube
 		textRenderer = TYPO3.Neos.NodeTypes:Text
 
