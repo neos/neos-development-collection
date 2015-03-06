@@ -18,6 +18,7 @@ use TYPO3\Flow\Utility\Environment;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
  * Provides a nicely formatted html error message
