@@ -169,7 +169,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	protected function askBeforeExecutingTask($question, \Closure $task) {
 		$response = NULL;
 		while (!in_array($response, array('y', 'n'))) {
-			$response = $this->output->ask('<comment>' . $question . ' (y/n)</comment>');
+			$response = strtolower($this->output->ask('<comment>' . $question . ' (y/n)</comment>'));
 		}
 		$this->output->outputLine();
 
