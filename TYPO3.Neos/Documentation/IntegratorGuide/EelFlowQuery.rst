@@ -78,6 +78,19 @@ For Eel inside TypoScript, the semantics are as follows:
 * The function ``q()`` is available, which wraps its argument into a FlowQuery
   object. `FlowQuery`_ is explained below.
 
+By default the following Eel helpers are available in the default context for Eel expressions:
+
+* ``String``, exposing ``TYPO3\Eel\Helper\StringHelper``
+* ``Array``, exposing ``TYPO3\Eel\Helper\ArrayHelper``
+* ``Date``, exposing ``TYPO3\Eel\Helper\DateHelper``
+* ``Configuration``, exposing ``TYPO3\Eel\Helper\ConfigurationHelper``
+* ``Math``, exposing ``TYPO3\Eel\Helper\MathHelper``
+* ``Json``, exposing ``TYPO3\Eel\Helper\JsonHelper``
+
+* ``Neos.Node``, exposing ``TYPO3\Neos\TypoScript\Helper\NodeHelper``
+* ``Neos.Link``, exposing ``TYPO3\Neos\TypoScript\Helper\LinkHelper``
+
+This is configured via the setting ``TYPO3.TypoScript.defaultContext``.
 
 FlowQuery
 =========
