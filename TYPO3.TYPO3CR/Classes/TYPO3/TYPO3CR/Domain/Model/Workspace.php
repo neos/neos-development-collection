@@ -239,6 +239,12 @@ class Workspace {
 	 */
 	protected function moveNodeVariantToTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
 		$nodeData = $node->getNodeData();
+
+		$movedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($nodeData);
+		if ($movedShadowNodeData instanceof NodeData && $movedShadowNodeData->isRemoved()) {
+			$this->nodeDataRepository->remove($movedShadowNodeData);
+		}
+
 		if ($targetWorkspace->getBaseWorkspace() === NULL && $node->isRemoved()) {
 			$this->nodeDataRepository->remove($nodeData);
 		} else {
