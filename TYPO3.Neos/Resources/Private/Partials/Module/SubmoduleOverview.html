@@ -2,7 +2,7 @@
 <f:if condition="{moduleConfiguration.submodules}">
 	<div class="neos-row-fluid">
 		<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration" iteration="iterator">
-			<f:if condition="{submoduleConfiguration.resource}">
+			<f:if condition="{submoduleConfiguration.privilegeTarget}">
 				<f:then>
 					<f:security.ifAccess privilegeTarget="{submoduleConfiguration.privilegeTarget}">
 						<f:render section="submodule" arguments="{_all}" />
