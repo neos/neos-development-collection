@@ -71,13 +71,13 @@
 	</h2>
 	<ul class="neos-tags-list">
 		<li>
-			<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{view: view, tagMode: 1}">
+			<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
 				All
 				<span class="count">{allCount}</span>
 			</f:link.action>
 		</li>
 		<li>
-			<f:link.action action="index" title="Untagged assets" class="{f:if(condition: '{tagMode} == 2', then: 'neos-active')}" arguments="{view: view, tagMode: 2}">
+			<f:link.action action="index" title="Untagged assets" class="{f:if(condition: '{tagMode} == 2', then: 'neos-active')}" arguments="{tagMode: 2}">
 				Untagged
 				<span class="count">{untaggedCount}</span>
 			</f:link.action>

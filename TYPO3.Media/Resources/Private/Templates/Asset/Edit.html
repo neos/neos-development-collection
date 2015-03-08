@@ -44,7 +44,7 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" title="Cancel editing" class="neos-button">Cancel</f:link.action>
-			<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: '{asset: asset}')}" class="neos-button neos-button-danger" title="Delete asset">Delete</button>
+			<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" class="neos-button neos-button-danger" title="Delete asset">Delete</button>
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="Save" />
 		</div>
 	</f:form>
