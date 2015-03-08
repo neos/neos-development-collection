@@ -70,13 +70,13 @@
 		<span id="neos-tags-list-edit-toggle" title="Edit tags" data-neos-toggle="tooltip" class="neos-button"><i class="icon-pencil"></i></span>
 	</h2>
 	<ul class="neos-tags-list">
-		<li>
+		<li class="neos-media-list-all">
 			<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
 				All
 				<span class="count">{allCount}</span>
 			</f:link.action>
 		</li>
-		<li>
+		<li class="neos-media-list-untagged">
 			<f:link.action action="index" title="Untagged assets" class="{f:if(condition: '{tagMode} == 2', then: 'neos-active')}" arguments="{tagMode: 2}">
 				Untagged
 				<span class="count">{untaggedCount}</span>

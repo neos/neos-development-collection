@@ -27,7 +27,7 @@
 			</tr>
 		</thead>
 		<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
-			<tr class="asset draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
+			<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>
 					<f:if condition="{asset.width}">
 						<f:then>
