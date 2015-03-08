@@ -348,7 +348,7 @@
 				font-size: 12px;
 				line-height: 1.2;
 				color: $textSubtleLight;
-				word-break: break-word;
+				word-break: break-all;
 			}
 
 			a {
@@ -434,7 +434,7 @@
 			overflow: hidden;
 			height: 0;
 			padding-bottom: 100%;
-			background: #323232;
+			background: $grayDarker;
 			position: relative;
 
 			img {
