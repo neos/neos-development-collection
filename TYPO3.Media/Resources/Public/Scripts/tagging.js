@@ -29,7 +29,8 @@
 			tolerance: 'pointer',
 			drop: function (event, ui) {
 				var tag = $(this),
-					assetIdentifier = $(ui.draggable[0]).data('asset-identifier'),
+					asset = $(ui.draggable[0]),
+					assetIdentifier = asset.data('asset-identifier'),
 					countElement = tag.children('span'),
 					count = parseInt(countElement.text());
 				assetField.val(assetIdentifier);
@@ -45,6 +46,11 @@
 						var text = tag.clone();
 						text.children().remove();
 						$('[data-asset-identifier="' + assetIdentifier + '"]').children('.tags').append('\n<span class="neos-label">' + text.text() + '</span>');
+						if (asset.hasClass('neos-media-untagged')) {
+							var untagged = $('.count', '.neos-media-list-untagged');
+							untagged.text(parseInt(untagged.text()) - 1);
+							asset.removeClass('neos-media-untagged');
+						}
 					} else {
 						countElement.html(count);
 					}
