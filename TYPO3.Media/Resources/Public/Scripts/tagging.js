@@ -57,7 +57,7 @@
 
 	$('#neos-tags-list-edit-toggle').click(function() {
 		$(this).toggleClass('neos-active');
-		$('.neos-tags-list').toggleClass('neos-tags-list-editing-active');
+		$('.neos-tags-list, #neos-tags-create-form').toggleClass('neos-tags-list-editing-active');
 	});
 
 	$('#neos-tags-create-form').submit(function(e) {

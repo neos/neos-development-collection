@@ -12,6 +12,9 @@ namespace TYPO3\Media\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -82,11 +85,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $sort
 	 * @param string $filter
 	 * @param integer $tagMode
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @param Tag $tag
 	 * @param string $searchTerm
 	 * @return void
 	 */
-	public function indexAction($view = NULL, $sort = NULL, $filter = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL, $searchTerm = NULL) {
+	public function indexAction($view = NULL, $sort = NULL, $filter = NULL, $tagMode = self::TAG_GIVEN, Tag $tag = NULL, $searchTerm = NULL) {
 		if ($view !== NULL) {
 			$this->browserState->set('view', $view);
 			$this->view->assign('view', $view);
@@ -167,10 +170,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Edit an asset
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param Asset $asset
 	 * @return void
 	 */
-	public function editAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+	public function editAction(Asset $asset) {
 		$this->view->assignMultiple(array(
 			'tags' => $this->tagRepository->findAll(),
 			'asset' => $asset
@@ -183,16 +186,16 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeUpdateAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
 	}
 
 	/**
 	 * Update an asset
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param Asset $asset
 	 * @return void
 	 */
-	public function updateAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+	public function updateAction(Asset $asset) {
 		$this->assetRepository->update($asset);
 		$this->addFlashMessage(sprintf('Asset "%s" has been updated.', $asset->getLabel()));
 		$this->redirect('index');
@@ -206,16 +209,16 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeCreateAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
 	}
 
 	/**
 	 * Create a new asset
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param Asset $asset
 	 * @return void
 	 */
-	public function createAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+	public function createAction(Asset $asset) {
 		$this->assetRepository->add($asset);
 		$this->addFlashMessage(sprintf('Asset "%s" has been added.', $asset->getLabel()));
 		$this->redirect('index', NULL, NULL, array(), 0, 201);
@@ -229,16 +232,16 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeUploadAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
 	}
 
 	/**
 	 * Upload a new asset. No redirection and no response body, for use by plupload (or similar).
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param Asset $asset
 	 * @return string
 	 */
-	public function uploadAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+	public function uploadAction(Asset $asset) {
 		if (($tag = $this->browserState->get('activeTag')) !== NULL) {
 			$asset->addTag($tag);
 		}
@@ -253,11 +256,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * No redirection and no response body, no flash message, for use by plupload (or similar).
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @param Asset $asset
+	 * @param Tag $tag
 	 * @return boolean
 	 */
-	public function tagAssetAction(\TYPO3\Media\Domain\Model\Asset $asset, \TYPO3\Media\Domain\Model\Tag $tag) {
+	public function tagAssetAction(Asset $asset, Tag $tag) {
 		$success = FALSE;
 		if ($asset->addTag($tag)) {
 			$this->assetRepository->update($asset);
@@ -269,10 +272,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Delete an asset
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param Asset $asset
 	 * @return void
 	 */
-	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+	public function deleteAction(Asset $asset) {
 		$this->assetRepository->remove($asset);
 		$this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()));
 		$this->redirect('index');
@@ -285,22 +288,41 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @Flow\Validate(argumentName="label", type="Label")
 	 */
 	public function createTagAction($label) {
-		$existingTag = $this->tagRepository->findByLabel($label);
-		if (count($existingTag) > 0) {
+		$tag = $this->tagRepository->findByLabel($label);
+		if (count($tag) > 0) {
 			$this->addFlashMessage(sprintf('Tag "%s" already exists.', $label), '', \TYPO3\Flow\Error\Message::SEVERITY_ERROR);
 		} else {
-			$this->tagRepository->add(new \TYPO3\Media\Domain\Model\Tag($label));
+			$tag = new Tag($label);
+			$this->tagRepository->add($tag);
 			$this->addFlashMessage(sprintf('Tag "%s" has been created.', $label));
 		}
 
+		$this->redirect('index', NULL, NULL, array('tag' => $tag));
+	}
+
+	/**
+	 * @param Tag $tag
+	 * @return void
+	 */
+	public function editTagAction(Tag $tag) {
+		$this->view->assign('tag', $tag);
+	}
+
+	/**
+	 * @param Tag $tag
+	 * @return void
+	 */
+	public function updateTagAction(Tag $tag) {
+		$this->tagRepository->update($tag);
+		$this->addFlashMessage(sprintf('Tag "%s" has been updated.', $tag->getLabel()));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @param Tag $tag
 	 * @return void
 	 */
-	public function deleteTagAction(\TYPO3\Media\Domain\Model\Tag $tag) {
+	public function deleteTagAction(Tag $tag) {
 		$taggedAssets = $this->assetRepository->findByTag($tag);
 		foreach ($taggedAssets as $asset) {
 			$asset->removeTag($tag);
