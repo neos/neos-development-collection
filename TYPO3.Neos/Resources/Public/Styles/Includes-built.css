@@ -11081,7 +11081,7 @@
   font-size: 12px;
   line-height: 1.2;
   color: #adadad;
-  word-break: break-word;
+  word-break: break-all;
 }
 .neos.media-browser .neos-thumbnails li a {
   border: 0;
@@ -11160,7 +11160,7 @@
   overflow: hidden;
   height: 0;
   padding-bottom: 100%;
-  background: #323232;
+  background: #141414;
   position: relative;
 }
 .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image img {
