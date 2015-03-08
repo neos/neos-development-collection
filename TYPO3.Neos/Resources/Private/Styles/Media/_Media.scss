@@ -133,6 +133,7 @@
 			#neos-tags-list-edit-toggle {
 				float: right;
 				background-color: $grayDark;
+				@include user-select(none);
 
 				&.neos-active {
 					background-color: $blue;
@@ -150,7 +151,7 @@
 			margin-bottom: $defaultMargin;
 
 			&.neos-tags-list-editing-active {
-				li button[type="submit"] {
+				li .neos-sidelist-edit-actions {
 					display: block;
 				}
 			}
@@ -163,10 +164,10 @@
 					margin-top: 1px;
 				}
 
-				a {
+				> a {
 					display: block;
 					color: #fff;
-					padding: ($tightMargin * 2 + 1) ($unit + $tightMargin) ($tightMargin * 2 + 2) $tightMargin;
+					padding: ($tightMargin * 2 + 1) ($unit * 2.5) ($tightMargin * 2 + 2) $tightMargin;
 					border-radius: 0;
 					text-shadow: none;
 					font-weight: 400;
@@ -235,26 +236,38 @@
 					}
 				}
 
-				button {
-					background-color: $grayDark;
-
-					&:hover {
-						background-color: $blue;
-					}
-				}
-
-				button[type="submit"] {
+				.neos-sidelist-edit-actions {
+					display: none;
 					position: absolute;
 					top: 0;
 					right: 0;
-					background-color: $grayDark;
-					display: none;
-					width: auto;
+					font-size: 0;
 
-					&:hover {
-						background-color: $warning;
+					button {
+						background-color: $grayDark;
+						width: auto;
+
+						&:hover {
+							background-color: $blue;
+
+							&.neos-button-danger {
+								background-color: $warning;
+							}
+						}
+					}
+
+					form {
+						display: inline-block;
 					}
 				}
+			}
+		}
+
+		#neos-tags-create-form {
+			display: none;
+
+			&.neos-tags-list-editing-active {
+				display: block;
 			}
 		}
 
