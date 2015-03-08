@@ -346,8 +346,9 @@ class Runtime {
 		$cacheCtx = $runtimeContentCache->enter(isset($typoScriptConfiguration['__meta']['cache']) ? $typoScriptConfiguration['__meta']['cache'] : array(), $typoScriptPath);
 
 		// A closure that needs to be called for every return path in this method
-		$finallyClosure = function($needToPopContext = FALSE) use ($cacheCtx, $runtimeContentCache) {
-			if ($needToPopContext) $this->popContext();
+		$self = $this;
+		$finallyClosure = function($needToPopContext = FALSE) use ($cacheCtx, $runtimeContentCache, $self) {
+			if ($needToPopContext) $self->popContext();
 			$runtimeContentCache->leave($cacheCtx);
 		};
 
