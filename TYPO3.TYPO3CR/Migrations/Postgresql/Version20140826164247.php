@@ -29,7 +29,5 @@ class Version20140826164247 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP movedto");
-		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP CONSTRAINT FK_60A956B92D45FE4D");
-		$this->addSql("DROP INDEX IDX_60A956B92D45FE4D");
 	}
 }
