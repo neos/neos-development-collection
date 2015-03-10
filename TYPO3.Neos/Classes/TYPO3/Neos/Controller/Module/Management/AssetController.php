@@ -61,7 +61,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 
 		// FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
 		$this->assetRepository->remove($asset);
-		$this->addFlashMessage('Asset has been deleted.', NULL, NULL, array(), 1412375050);
+		$this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), NULL, NULL, array(), 1412375050);
 		$this->redirect('index');
 	}
 
