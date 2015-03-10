@@ -887,7 +887,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
 				$childNodeIdentifier = $this->buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
-				$newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+				$alreadyPresentChildNode = $newNode->getNode($childNodeName);
+				if ($alreadyPresentChildNode === NULL) {
+					$newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+				}
 			}
 		}
 
