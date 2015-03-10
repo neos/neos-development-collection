@@ -2,6 +2,7 @@
 	$(function() {
 		var uploader = new plupload.Uploader({
 			runtimes: 'html5,flash',
+			browse_button: 'dropzone',
 			container: 'uploader',
 			multipart: true,
 			url: uploadUrl,
@@ -77,22 +78,26 @@
 			}
 		});
 
-		// Show the dropzone when dragging files (not folders or page
-		// elements). The dropzone is hidden after a timer to prevent
-		// flickering to occur as 'dragleave' is fired constantly.
-		var dragTimer;
-		$(document).on('dragover', function(e) {
-			var dataTransfer = e.originalEvent.dataTransfer;
-			if(dataTransfer.types != null && (dataTransfer.types.indexOf ? dataTransfer.types.indexOf('Files') != -1 : dataTransfer.types.contains('application/x-moz-file'))) {
-				$('#dropzone').show();
-				window.clearTimeout(dragTimer);
-			}
-		});
-		$(document).on('dragleave', function(e) {
-			dragTimer = window.setTimeout(function() {
-				$('#dropzone').hide();
-			}, 25);
-		});
+		var $fileDropZone = $('#dropzone');
+		$fileDropZone
+			.on('dragenter dragover', function(e) {
+				var dataTransfer = e.originalEvent.dataTransfer;
+				dataTransfer.dropEffect = 'copy';
+				dataTransfer.effectAllowed = 'copy';
+				$fileDropZone.addClass('neos-upload-area-hover');
+			}).on('dragleave drop dragend', function(e) {
+				var dataTransfer = e.originalEvent.dataTransfer;
+				dataTransfer.dropEffect = 'copy';
+				dataTransfer.effectAllowed = 'copy';
+				$fileDropZone.removeClass('neos-upload-area-hover');
+			});
+
+		$(document)
+			.on('dragover', function(e) {
+				$fileDropZone.addClass('neos-upload-area-active');
+			}).on('dragleave drop dragend', function(e) {
+				$fileDropZone.removeClass('neos-upload-area-active');
+			});
 
 		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks) {
 			// we are inside iframe

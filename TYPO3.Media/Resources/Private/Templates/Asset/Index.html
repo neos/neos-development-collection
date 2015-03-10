@@ -125,7 +125,7 @@
 
 <f:section name="Content">
 	<div id="dropzone" class="neos-upload-area">
-		<span title="Max. upload size {humanReadableMaximumFileUploadSize} per file" data-neos-toggle="tooltip">Drop files here</span>
+		<div title="Max. upload size {humanReadableMaximumFileUploadSize} per file" data-neos-toggle="tooltip">Drop files here<i class="icon-arrow-down"></i><span> or click to upload</span></div>
 		<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
 			<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
 		</f:form>
@@ -138,7 +138,7 @@
 			<f:render partial="{view}View" arguments="{assets: assets, sort: sort}" />
 		</f:then>
 		<f:else>
-			<p>No Assets found. You can drag files here to upload them.</p>
+			<p>No Assets found.</p>
 		</f:else>
 	</f:if>
 </f:section>
