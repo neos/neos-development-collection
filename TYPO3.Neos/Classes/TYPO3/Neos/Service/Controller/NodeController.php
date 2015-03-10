@@ -25,6 +25,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Service Controller for managing Nodes
@@ -215,7 +216,7 @@ class NodeController extends AbstractServiceController {
 		$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
 		if ($nodeType->isOfType('TYPO3.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
-			$nodeData['properties']['uriPathSegment'] = $nodeData['properties']['title'];
+			$nodeData['properties']['uriPathSegment'] = Utility::renderValidNodeName($nodeData['properties']['title']);
 		}
 
 		$proposedNodeName = isset($nodeData['nodeName']) ? $nodeData['nodeName'] : NULL;
