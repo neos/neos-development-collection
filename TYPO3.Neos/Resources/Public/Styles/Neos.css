@@ -11218,25 +11218,33 @@
 .neos.media-browser .neos-upload-area {
   text-align: center;
   padding: 32px;
-  border: 2px dashed #3f3f3f;
+  border: 1px dashed #3f3f3f;
   margin-bottom: 32px;
+  cursor: pointer;
+}
+.neos.media-browser .neos-upload-area.neos-upload-area-active {
+  border-color: #fff;
+}
+.neos.media-browser .neos-upload-area.neos-upload-area-active i {
+  display: inline;
+}
+.neos.media-browser .neos-upload-area.neos-upload-area-active span {
+  display: none;
+}
+.neos.media-browser .neos-upload-area.neos-upload-area-hover {
+  border-style: solid;
+  background-color: #00b5ff;
+}
+.neos.media-browser .neos-upload-area i {
+  display: none;
+  vertical-align: baseline;
+  padding-left: 4px;
 }
 .neos.media-browser .neos-upload-area #resource {
   display: none;
 }
 .neos.media-browser .neos-upload-area:hover {
   border-color: #00b5ff;
-}
-.neos.media-browser .neos-upload-area > span {
-  display: block;
-  margin-bottom: 8px;
-  color: #adadad;
-}
-.neos.media-browser .neos-upload-area > span:first-child {
-  color: #fff;
-}
-.neos.media-browser .neos-upload-area label {
-  margin-bottom: 0;
 }
 .neos.media-browser #filelist {
   margin-bottom: 32px;
