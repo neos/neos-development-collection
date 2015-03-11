@@ -266,6 +266,33 @@ Feature: Move node
     Then I should have 0 nodes
 
   @fixtures
+  Scenario: Move a new document node in user workspace and publish
+    Given I have the following nodes:
+      | Identifier                           | Path                                 | Node Type                     | Workspace  |
+      | 646ea354-c421-11e4-9f08-14109fd7a2dd | /sites/typo3cr/service/breaking-news | TYPO3.TYPO3CR.Testing:Chapter | user-admin |
+    When I get a node by path "/sites/typo3cr/service/breaking-news" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/company"
+
+    When I get a node by path "/sites/typo3cr/company/breaking-news" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+    When I get a node by path "/sites/typo3cr/service/breaking-news" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+    When I publish the workspace "user-admin"
+
+    And I get a node by identifier "646ea354-c421-11e4-9f08-14109fd7a2dd" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+  @fixtures
   Scenario: Move a published node twice and publish
     Given I have the following nodes:
       | Identifier                           | Path                      | Node Type                  | Workspace |
