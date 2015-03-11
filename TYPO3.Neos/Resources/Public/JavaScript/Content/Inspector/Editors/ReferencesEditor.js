@@ -4,14 +4,17 @@ define(
 		'emberjs',
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
+		'Shared/I18n',
 		'Shared/Utility'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: 'Type to search',
+			placeholder: function () {
+				return I18n.translate('Main:TYPO3.Neos:typeToSearch', 'Type to search');
+			}.property(),
 
 			// lazily initialized content – will be an array of select2 datums [{id: '12a9837…', text: 'My Node'}, …]:
 			content: [],
@@ -118,7 +121,9 @@ define(
 					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
 						var item = Ember.Object.extend({
 							id: nodeIdentifier,
-							text: 'Loading ...'
+							text: function() {
+								return I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...');
+							}.property()
 						}).create();
 
 						that.get('content').pushObject(item);

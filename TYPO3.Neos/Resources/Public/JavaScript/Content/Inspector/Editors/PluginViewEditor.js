@@ -3,17 +3,19 @@ define(
 	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Content/Inspector/Editors/SelectBoxEditor',
-	'Content/Inspector/InspectorController'
+	'Content/Inspector/InspectorController',
+	'Shared/I18n'
 ],
 function(
 	Ember,
 	$,
 	SelectBoxEditor,
-	InspectorController
+	InspectorController,
+	I18n
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
-			this.set('placeholder', 'Loading ...');
+			this.set('placeholder', I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...'));
 			this._loadOptionsOnChange();
 			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
 
@@ -52,15 +54,15 @@ function(
 							i++;
 						}
 						if (i > 0) {
-							placeholder = 'Select a View';
+							placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
 						} else {
-							placeholder = 'No view configured for this plugin';
+							placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
 							values = {};
 						}
 						that.setProperties({
 							placeholder: placeholder,
 							values: values
-						});
+					   });
 					}
 				);
 			} else {

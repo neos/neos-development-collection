@@ -10,9 +10,10 @@ define(
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Notification',
 	'Shared/Utility',
-	'Shared/HttpClient'
+	'Shared/HttpClient',
+	'Shared/I18n'
 ],
-function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
+function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient, I18n) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -22,11 +23,19 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/****************************************
 		 * GENERAL SETUP
 		 ***************************************/
-		fileChooserLabel: 'Upload',
+		fileChooserLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:choose', 'Choose');
+		}.property(),
 
-		removeButtonLabel: 'Remove',
-		uploadCancelLabel: 'Cancel',
-		cropLabel: 'Crop',
+		removeButtonLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:remove', 'Remove');
+		}.property(),
+		uploadCancelLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:cancel', 'Cancel');
+		}.property(),
+		cropLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:crop', 'Crop');
+		}.property(),
 
 		/**
 		 * Size of the image preview. Public configuration.

@@ -5,16 +5,19 @@ define(
 	'text!./FileUpload.html',
 	'Library/plupload',
 	'Shared/Notification',
-	'Shared/Configuration'
+	'Shared/Configuration',
+	'Shared/I18n'
 ],
-function(Ember, $, template, plupload, Notification, Configuration) {
+function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 	return Ember.View.extend({
 		value: '',
 
 		/**
 		 * Label of the file chooser button
 		 */
-		fileChooserLabel: 'Upload',
+		fileChooserLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:chooseFile', 'Choose file');
+		}.property(),
 
 		// File filters
 		allowedFileTypes: null,

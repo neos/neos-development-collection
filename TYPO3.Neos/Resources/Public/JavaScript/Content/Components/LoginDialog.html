@@ -16,9 +16,9 @@
 				<div class="neos-controls">
 					<button {{bind-attr class=":neos-button :neos-button-primary view.authenticating:neos-disabled"}} type="submit">
 						{{#if view.authenticating}}
-							{{translate id="authenticating" value="Authenticating"}}<span class="neos-ellipsis"></span>
+							{{translate id="authenticating" fallback="Authenticating"}}<span class="neos-ellipsis"></span>
 						{{else}}
-							{{translate id="login" value="Login"}}
+							{{translate id="login" fallback="Login"}}
 						{{/if}}
 					</button>
 				</div>

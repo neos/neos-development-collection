@@ -1,6 +1,6 @@
 <div class="neos-menu-section">
 	<a href="{{unbound items.contentModuleUri}}" title="Content view" class="neos-menu-headline">
-		<i class="icon-file"></i> {{translate id="content-menu-menuPanel-content" value="Content"}}
+		<i class="icon-file"></i> {{translate id="content-menu-menuPanel-content" fallback="Content"}}
 	</a>
 	{{view view.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group="content"}}
 	{{#collection tagName="div" classNames="neos-menu-list" contentBinding="items.sites"}}

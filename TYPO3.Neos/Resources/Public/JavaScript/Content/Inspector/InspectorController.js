@@ -11,7 +11,8 @@ define(
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
 	'Content/Application',
-	'Content/LoadingIndicator'
+	'Content/LoadingIndicator',
+	'Shared/I18n'
 ], function(
 	Ember,
 	$,
@@ -21,7 +22,8 @@ define(
 	LocalStorage,
 	NodeSelection,
 	ContentModule,
-	LoadingIndicator
+	LoadingIndicator,
+	I18n
 ) {
 
 	/**
@@ -157,6 +159,9 @@ define(
 
 			// groups
 			groupsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.groups'));
+			for (groupName in groupsObject) {
+				groupsObject[groupName].label = I18n.translate('content-inspector-groups-' + groupName, groupsObject[groupName].label);
+			}
 
 			// tabs
 			tabsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.tabs'));
@@ -179,6 +184,16 @@ define(
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
+
+						var translationId = 'nodetypes-' + NodeSelection.get('selectedNode.nodeType').replace(/[.: ]/g, '-') + '-properties-' + property.key,
+							nodeTypeSpecificLabelTranslation = I18n.translate(translationId);
+
+						if (nodeTypeSpecificLabelTranslation) {
+							property.ui.label = nodeTypeSpecificLabelTranslation;
+						} else if (property.ui.labelTranslationId) {
+							property.ui.label = I18n.translate(property.ui.labelTranslationId, property.ui.label);
+						}
+
 						groupsObject[groupIdentifier].properties.push(property);
 					}
 				}

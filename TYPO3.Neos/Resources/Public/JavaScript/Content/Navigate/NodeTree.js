@@ -18,7 +18,8 @@ define(
 		'./NavigatePanelController',
 		'../Inspector/InspectorController',
 		'text!./NodeTree.html',
-		'Shared/Endpoint/NodeEndpoint'
+		'Shared/Endpoint/NodeEndpoint',
+		'Shared/I18n'
 	], function(
 		Ember,
 		$,
@@ -35,7 +36,8 @@ define(
 		NavigatePanelController,
 		InspectorController,
 		template,
-		NodeEndpoint
+		NodeEndpoint,
+		I18n
 	) {
 		var documentMetadata = $('#neos-document-metadata');
 
@@ -83,7 +85,10 @@ define(
 				_delay: 300,
 				_value: '',
 				_timeout: null,
-
+				attributeBindings: ['placeholder'],
+				placeholder: function() {
+					return I18n.translate('Main:TYPO3.Neos:search', 'Search');
+				}.property(),
 				keyUp: function() {
 					var that = this,
 						value = this.get('value');

@@ -4,20 +4,24 @@ define(
 		'emberjs',
 		'Shared/HttpRestClient',
 		'Shared/Utility',
-		'Shared/NodeTypeService'
+		'Shared/NodeTypeService',
+		'Shared/I18n'
 	],
 	function(
 		$,
 		Ember,
 		HttpRestClient,
 		Utility,
-		NodeTypeService
+		NodeTypeService,
+		I18n
 	) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: 'Paste a link, or type to search',
+			placeholder: function() {
+				return I18n.translate('Main:TYPO3.Neos:content.inspector.editors.linkEditor.search', 'Paste a link, or type to search');
+			}.property(),
 
 			content: null,
 			searchRequest: null,
@@ -176,7 +180,9 @@ define(
 					that = this;
 					item = Ember.Object.extend({
 						id: value,
-						text: 'Loading ...',
+						text: function() {
+							return I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...');
+						}.property(),
 						data: {}
 					}).create();
 					that.set('content', item);

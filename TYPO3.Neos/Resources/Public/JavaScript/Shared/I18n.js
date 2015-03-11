@@ -1,81 +1,126 @@
 /**
  * Localization for the UserInterface
+ *
+ * Usage examples:
+ *
+ * Value data bind or parsed as string::
+ *
+ *   {{translate value="Default label"}}
+ *
+ * Fallback and id::
+ *
+ *   {{translate fallback="Default label" id="button.createNew"}}
+ *
+ * Value, id and package::
+ *
+ *   {{translate fallback="Default label" id="createNew" package="Your.Package"}}
+ *
+ * Data binding::
+ *
+ *   {{translate idBinding="view.label" fallback="Default label"}}
+ *   {{translate idBinding="view.label" fallbackBinding="view.fallbackLabel"}}
+ *
+ * All arguments are allowed to data bind.
+ * Allowed identifier combinations::
+ *
+ *   i18n:Catalog:Package.Key:Identifier
+ *   i18n:Package.Key:Identifier
+ *   i18n:Catalog:Identifier
+ *   i18n:Identifier
+ *   Identifier
  */
 define(
 [
 	'emberjs',
-	'Library/jquery-with-dependencies',
-	'Library/underscore',
-	'Shared/Configuration',
-	'Library/handlebars'
+	'Library/underscore'
 ], function(
 	Ember,
-	$,
-	_,
-	Configuration,
-	Handlebars
-) {
-	var localeIncludes = Configuration.get('localeIncludes'),
-		promise = Ember.Deferred.create();
+	_
+	) {
 
-		Handlebars.registerHelper('translate', function() {
-			var options = arguments[0].hash,
-				translateId = options['id'].replace(/\./g, "-"),
-				defaultContent = options['value'] ? options['value'] : '',
-				packageKey = options['package'] ? options['package'] : 'TYPO3.Neos',
-				sourceCatalog = options['source'] ? options['source'] : 'Main',
-				translatedById;
+	function identifierFormatHelper(id) {
+		id = id.replace(/\./g, "-");
+		if (id.length <= 1) {
+			id = id.toLowerCase();
+		} else {
+			id = id.substring(0, 1).toLowerCase() + id.substring(1);
+		}
+		return id;
+	}
 
-			// {{translate}}
-			if (!options['id']) {
-				return Ember.I18n.translate('TYPO3.Neos.translate.requiredProperty') + 'id';
+	function translate(id, fallback, packageKey, source) {
+		var translatedValue, translationParts, identifier;
+		packageKey = packageKey || 'TYPO3.Neos';
+		source = source || 'Main';
+
+		if (_.isUndefined(id) || id === '' || _.isObject(id)) {
+			/**
+			 * Only default content given
+			 */
+			return fallback;
+		}
+
+		if (!id) {
+			/**
+			 * No identifier and default value given
+			 */
+			return Ember.I18n.translate('TYPO3.Neos.translate.requiredProperty') + 'id';
+		}
+		/**
+		 * i18n path given
+		 *
+		 * The identifier.replace() calls, converts the dots used in the fluid templates to match the generated
+		 * json file where dashes are used
+		 *
+		 * Current implementation allow only the given:
+		 * i18n:Catalog:Package.Key:Identifier
+		 * i18n:Package.Key:Identifier
+		 * i18n:Catalog:Identifier
+		 * i18n:Identifier
+		 * Identifier
+		 *
+		 * Defaults are:
+		 » packageKey = 'TYPO3.Neos'
+		 » source = 'Main'
+		 */
+		id = id.trim().replace('i18n:', '');
+		translationParts = id.split(':');
+		if (translationParts.length === 3) {
+			// i18n:Catalog:Package.Key:Identifier
+			identifier = identifierFormatHelper(translationParts[2]);
+			id = translationParts[1] + '.' + translationParts[0] + '.' + identifier;
+		} else if (translationParts.length === 2) {
+			if (translationParts[0].indexOf('.') === -1) {
+				// i18n:Catalog:Identifier
+				identifier = identifierFormatHelper(translationParts[1]);
+				id = packageKey + '.' + translationParts[0] + '.' + identifier;
+			} else {
+				// i18n:Package.Key:Identifier
+				identifier = identifierFormatHelper(translationParts[1]);
+				id = translationParts[0] + '.' + source + '.' + identifier;
 			}
-			// {{translate id="foo"}}
-			if (translateId.length > 0) {
-				// Set the translateId to the correct path
-				translateId = packageKey + '.' + sourceCatalog + '.' + translateId;
+		} else {
+			// i18n:Identifier or Identifier
+			identifier = identifierFormatHelper(translationParts[0]);
+			id = packageKey + '.' + source + '.' + identifier;
+		}
 
-				// Handle the actual translation in case defaultContent is empty
-				if (translateId && defaultContent == '' && !arguments[0].fn) {
-					translatedById = Ember.I18n.translate(translateId);
-					return translatedById;
-				}
-				// {{#translate id="foo"}}this is the default content{{/translate}}
-				if (arguments[0].fn) {
-					defaultContent = arguments[0].fn(this);
-				}
-				// Handle the actual translation
-				if (translateId && defaultContent) {
-					translatedById = Ember.I18n.translate(translateId);
-					// Make sure Embers.I18n output does not interfere with ours
-					if (translatedById.substr(0, 21) === 'Missing translation: ') {
-						return defaultContent;
-					}
-					return translatedById;
-				}
+		translatedValue = Ember.I18n.translate(id);
+		if (translatedValue.indexOf('Missing translation:') !== -1) {
+			return fallback;
+		}
 
-			}
+		return translatedValue;
+	}
 
-			return '';
-		});
+	Ember.Handlebars.registerBoundHelper('translate', function (options) {
 
-	localeIncludes = _.map(localeIncludes, function(filename) {
-		return 'text!' + filename;
+		var attrs;
+		attrs = options.hash;
+		return translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
 	});
 
-	// Get all translations and merge them
-	require({context: 'neos'}, localeIncludes, function() {
-		_.each(arguments, function(localeInclude, iterator) {
-			try {
-				$.extend(Ember.I18n.translations, $.parseJSON(localeInclude));
-			} catch (exception) {
-				if ('localStorage' in window && 'showDevelopmentFeatures' in window.localStorage) {
-					console.error('Could not parse JSON for locale file ' + localeIncludes[iterator].substr(5));
-				}
-			}
-		});
-		promise.resolve();
-	});
-
-	return promise;
+	return Ember.Object.extend({
+		translate: translate
+	}).create();
 });

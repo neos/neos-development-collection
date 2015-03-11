@@ -16,10 +16,10 @@
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
 		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" label="Media" action="_beforeMediaBrowserIsShown" target="view"}}
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled"}}>
-			{{unbound view.fileChooserLabel}}
+			{{translate fallbackBinding="view.fileChooserLabel" idBinding="view.fileChooserLabel"}}
 		</button>
 		<button class="neos-button neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress"}} {{action "remove" target="view"}}>
-			{{unbound view.removeButtonLabel}}
+			{{translate fallbackBinding="view.removeButtonLabel" idBinding="view.removeButtonLabel"}}
 		</button>
 		{{#if view.shouldRenderCrop}}
 			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
@@ -27,7 +27,7 @@
 	</div>
 	{{#if view.shouldRenderResize}}
 	<div class="neos-inspector-image-width">
-		<label {{bindAttr for="view.imageWidthField.elementId"}}>{{translate id='width-ucfirst' value='Width'}}:</label>
+		<label {{bindAttr for="view.imageWidthField.elementId"}}>{{translate id='width' fallback='Width'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
 			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-width-check">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle" elementId="neos-inspector-image-width-check"}}</label></span>
 			<span>
@@ -37,7 +37,7 @@
 		</div>
 	</div>
 	<div class="neos-inspector-image-height">
-		<label {{bindAttr for="view.imageHeightField.elementId"}}>{{translate id='height-ucfirst' value='Height'}}:</label>
+		<label {{bindAttr for="view.imageHeightField.elementId"}}>{{translate id='height' fallback='Height'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
 			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle" elementId="neos-inspector-image-height-check"}}</span>
 			<span>

@@ -4,14 +4,17 @@ define(
 		'emberjs',
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
+		'Shared/I18n',
 		'Shared/Utility'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: 'Type to search',
+			placeholder: function() {
+				return I18n.translate('Main:TYPO3.Neos:typeToSearch.typeToSearch', 'Type to search');
+			}.property(),
 
 			content: null,
 
@@ -117,7 +120,9 @@ define(
 				if (value && value !== this.get('content.id')) {
 					var item = Ember.Object.extend({
 						id: value,
-						text: 'Loading ...'
+						text: function() {
+							return I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...');
+						}.property()
 					}).create();
 					that.set('content', item);
 

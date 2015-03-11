@@ -89,7 +89,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		$configuration = array(
 			'window.T3Configuration = {};',
 			'window.T3Configuration.locale = "' . $this->defaultLocale . '";',
-			'window.T3Configuration.localeIncludes = ' . json_encode($this->getXliffAsJsonUri()) . ';',
+			'window.T3Configuration.localeInclude = ' . json_encode($this->getXliffAsJsonUri()) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
@@ -111,7 +111,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	}
 
 	/**
-	 * Returns array with the I18n json uri
+	 * Returns the I18n json uri
 	 *
 	 * @return array
 	 */
@@ -119,7 +119,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$uriBuilder->setCreateAbsoluteUri(TRUE);
 
-		return array($uriBuilder->uriFor('getXliffAsJson', array(), 'Backend\\Backend', 'TYPO3.Neos'));
+		return $uriBuilder->uriFor('getXliffAsJson', array(), 'Backend\\Backend', 'TYPO3.Neos');
 	}
 
 	/**
