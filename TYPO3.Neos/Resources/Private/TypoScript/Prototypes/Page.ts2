@@ -58,12 +58,6 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 			node = ${node}
 
-			@cache {
-				mode = 'uncached'
-				context {
-					1 = 'node'
-				}
-			}
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
@@ -73,12 +67,6 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			node = ${node}
 			account = ${Security.getAccount()}
 
-			@cache {
-				mode = 'uncached'
-				context {
-					1 = 'node'
-				}
-			}
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
@@ -123,12 +111,6 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 		node = ${node}
 
-		@cache {
-			mode = 'uncached'
-			context {
-				1 = 'node'
-			}
-		}
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
