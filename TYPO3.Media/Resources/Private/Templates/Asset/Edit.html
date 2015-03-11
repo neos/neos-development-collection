@@ -54,6 +54,6 @@
 <f:section name="ContentImage">
 	<label>Preview</label>
 	<div class="neos-preview-image">
-		<m:image asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid" />
+		<m:image asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{asset.label}" class="img-polaroid" />
 	</div>
 </f:section>

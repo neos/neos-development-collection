@@ -3,11 +3,11 @@
 	<ul class="neos-thumbnails asset-list">
 		<f:for each="{paginatedAssets}" as="asset">
 			<li class="asset">
-				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail" arguments="{asset: asset}">
+				<f:link.action action="edit" title="Edit {asset.label}" class="neos-thumbnail" arguments="{asset: asset}">
 					<div class="neos-img-container draggable-asset" data-asset-identifier="{asset->f:format.identifier()}">
-						<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
+						<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{asset.label}" />
 					</div>
-					<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: asset.caption, else: asset.resource.filename)}</f:format.crop></span>
+					<span class="neos-caption"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
 				</f:link.action>
 			</li>
 		</f:for>

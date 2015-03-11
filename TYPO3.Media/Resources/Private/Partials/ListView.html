@@ -31,17 +31,17 @@
 				<td>
 					<f:if condition="{asset.width}">
 						<f:then>
-							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:image(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: '{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}') -> f:format.htmlentities()}">
+							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:image(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: asset.label) -> f:format.htmlentities()}">
 						</f:then>
 						<f:else>
 							<div class="neos-list-thumbnail">
 						</f:else>
 					</f:if>
-						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
+						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
 					</div>
 					<i class="icon-move"></i>
 				</td>
-				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
+				<td><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
 				<td>{asset.lastModified -> m:format.relativeDate()}</td>
 				<td>{asset.resource.fileSize -> f:format.bytes()}</td>
 				<td>{asset.resource.mediatype}</td>
