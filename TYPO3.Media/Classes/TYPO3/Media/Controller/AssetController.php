@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Tag;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -148,13 +149,16 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$assets = $this->assetRepository->findAll();
 		}
 
+		$maximumFileUploadSize = $this->maximumFileUploadSize();
 		$this->view->assignMultiple(array(
 			'assets' => $assets,
 			'tags' => $tags,
 			'allCount' => $this->assetRepository->countAll(),
 			'untaggedCount' => $this->assetRepository->countUntagged(),
 			'tagMode' => $tagMode,
-			'argumentNamespace' => $this->request->getArgumentNamespace()
+			'argumentNamespace' => $this->request->getArgumentNamespace(),
+			'maximumFileUploadSize' => $maximumFileUploadSize,
+			'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
 		));
 	}
 
@@ -164,7 +168,12 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function newAction() {
-		$this->view->assign('tags', $this->tagRepository->findAll());
+		$maximumFileUploadSize = $this->maximumFileUploadSize();
+		$this->view->assignMultiple(array(
+			'tags' => $this->tagRepository->findAll(),
+			'maximumFileUploadSize' => $maximumFileUploadSize,
+			'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
+		));
 	}
 
 	/**
@@ -331,5 +340,14 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->tagRepository->remove($tag);
 		$this->addFlashMessage(sprintf('Tag "%s" has been deleted.', $tag->getLabel()));
 		$this->redirect('index');
+	}
+
+	/**
+	 * Returns the lowest configured maximum upload file size
+	 *
+	 * @return integer
+	 */
+	protected function maximumFileUploadSize() {
+		return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
 	}
 }

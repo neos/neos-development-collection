@@ -7,7 +7,7 @@
 		<fieldset>
 			<div class="neos-span6 neos-image-inputs">
 				<legend>Basics</legend>
-				<label class="neos-button neos-button-primary" for="resource"><i class="icon-file"></i> Choose file</label>
+				<label class="neos-button neos-button-primary" for="resource" title="Max. upload size {humanReadableMaximumFileUploadSize} per file" data-neos-toggle="tooltip">Choose file <i class="icon-file"></i></label>
 				<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
 				<label for="title">Title</label>
 				<f:form.textfield property="title" placeholder="Title" />
@@ -31,5 +31,8 @@
 </f:section>
 
 <f:section name="Scripts">
+	<script type="text/javascript">
+		var maximumFileUploadSize = {maximumFileUploadSize};
+	</script>
 	<script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/new.js')}"></script>
 </f:section>
