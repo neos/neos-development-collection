@@ -5,6 +5,7 @@
 			container: 'uploader',
 			multipart: true,
 			url: uploadUrl,
+			max_file_size: maximumFileUploadSize,
 			file_data_name: $('#resource').attr('name'),
 			drop_element: 'dropzone'
 		});
@@ -31,18 +32,49 @@
 			$('div.label span', $progress).text(file.percent);
 		});
 
+		var preventReload = false;
 		uploader.bind('Error', function(up, err) {
+			preventReload = true;
 			$('#filelist').html('');
-			alert('Error: ' + err.code +
-				', Message: ' + err.message +
-				(err.file ? ', File: ' + err.file.name : '')
-			);
+
+			function readablizeBytes(bytes) {
+				var s = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'];
+				var e = Math.floor(Math.log(bytes) / Math.log(1024));
+				return (bytes / Math.pow(1024, e)).toFixed(2) + " " + s[e];
+			}
+
+			var message;
+			switch (err.code) {
+				case -600:
+					message = 'The file size of ' + readablizeBytes(err.file.size) + ' exceeds the allowed limit of ' + readablizeBytes(maximumFileUploadSize);
+					break;
+				default:
+					message = err.message;
+			}
+			if (err.file) {
+				message += ' for the file ' + err.file.name;
+			}
+			if (window.Typo3Neos) {
+				window.Typo3Neos.Notification.error(message);
+			} else {
+				alert(message);
+			}
 
 			up.refresh(); // Reposition Flash
 		});
 
 		uploader.bind('UploadComplete', function(up, file) {
-			location.reload(false);
+			if (preventReload) {
+				$('#filelist').html('');
+				var message = 'Only some of the files were successfully uploaded. Refresh the page to see the those.';
+				if (window.Typo3Neos) {
+					window.Typo3Neos.Notification.warning(message);
+				} else {
+					alert(message);
+				}
+			} else {
+				location.reload(false);
+			}
 		});
 
 		// Show the dropzone when dragging files (not folders or page

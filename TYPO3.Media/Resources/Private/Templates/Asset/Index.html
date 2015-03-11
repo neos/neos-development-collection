@@ -125,7 +125,7 @@
 
 <f:section name="Content">
 	<div id="dropzone" class="neos-upload-area">
-		<span>Drop files here</span>
+		<span title="Max. upload size {humanReadableMaximumFileUploadSize} per file" data-neos-toggle="tooltip">Drop files here</span>
 		<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
 			<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
 		</f:form>
@@ -146,6 +146,7 @@
 <f:section name="Scripts">
 	<script type="text/javascript">
 		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
+		var maximumFileUploadSize = {maximumFileUploadSize};
 	</script>
 	<f:form action="tagAsset" id="tag-asset-form" format="json">
 		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />

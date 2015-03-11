@@ -49,7 +49,12 @@
 						countElement.html(count);
 					}
 				}).fail(function() {
-					alert('Tagging the asset failed.');
+					var message = 'Tagging the asset failed.';
+					if (window.Typo3Neos) {
+						window.Typo3Neos.Notification.error(message);
+					} else {
+						alert(message);
+					}
 				});
 			}
 		});
