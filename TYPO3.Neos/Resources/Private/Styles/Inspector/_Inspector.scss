@@ -50,6 +50,10 @@
 	@include transition-duration(.2s);
 	@include font;
 
+	&.neos-node-is-read-only * {
+		display: none;
+	}
+
 	.neos-inspector-panel-open & {
 		right: 0;
 	}

@@ -19,6 +19,7 @@ use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -46,6 +47,12 @@ class ContentElementWrappingService {
 	 * @var PrivilegeManagerInterface
 	 */
 	protected $privilegeManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var AuthorizationService
+	 */
+	protected $nodeAuthorizationService;
 
 	/**
 	 * @Flow\Inject
@@ -86,7 +93,19 @@ class ContentElementWrappingService {
 			// Add the workspace of the TYPO3CR context to the attributes
 			$attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
 			$attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
+
+			if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+				$attributes['data-node-__read-only'] = 'true';
+				$attributes['data-nodedatatype-__read-only'] = 'boolean';
+			}
+
 		} else {
+
+			if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+				return $content;
+			}
+
+
 			if ($node->isRemoved()) {
 				if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node && $node->isShadowNode()) {
 					return '';
