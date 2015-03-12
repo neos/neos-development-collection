@@ -5498,6 +5498,9 @@
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+.neos #neos-inspector.neos-node-is-read-only * {
+  display: none;
+}
 .neos-inspector-panel-open .neos #neos-inspector {
   right: 0;
 }
