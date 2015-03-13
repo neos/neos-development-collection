@@ -19,6 +19,7 @@ use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
@@ -37,6 +38,11 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 * @var PrivilegeManagerInterface
 	 */
 	protected $mockPrivilegeManager;
+
+	/**
+	 * @var AuthorizationService
+	 */
+	protected $mockNodeAuthorizationService;
 
 	/**
 	 * @var TemplateImplementation
@@ -79,6 +85,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 
 		$this->mockPrivilegeManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface')->getMock();
 		$this->inject($this->editableViewHelper, 'privilegeManager', $this->mockPrivilegeManager);
+
+		$this->mockNodeAuthorizationService = $this->getMockBuilder(AuthorizationService::class)->getMock();
+		$this->inject($this->editableViewHelper, 'nodeAuthorizationService', $this->mockNodeAuthorizationService);
 
 		$this->mockTemplateImplementation = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation')->disableOriginalConstructor()->getMock();
 
@@ -206,14 +215,33 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	/**
 	 * @test
 	 */
-	public function renderAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasNoAccessToBackend() {
+	public function renderAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasAccessToBackendAndEditNodePrivilegeIsGranted() {
 		$this->templateVariables = array(
 			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
 		$this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(TRUE));
+		$this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(TRUE));
 		$this->tagBuilder->expects($this->atLeastOnce())->method('addAttribute');
+
+		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
+		$this->editableViewHelper->render('someProperty');
+	}
+
+	/**
+	 * @test
+	 */
+	public function renderDoesNotAddEditingMetaDataIfEditNodePrivilegeIsNotGranted() {
+		$this->templateVariables = array(
+			'someProperty' => 'somePropertyValue'
+		);
+
+		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
+		$this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(TRUE));
+		$this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(FALSE));
+		$this->tagBuilder->expects($this->never())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
 		$this->injectTypoScriptObject();
