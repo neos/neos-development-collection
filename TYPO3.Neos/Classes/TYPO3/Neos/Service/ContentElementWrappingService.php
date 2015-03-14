@@ -107,10 +107,6 @@ class ContentElementWrappingService {
 
 
 			if ($node->isRemoved()) {
-				if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node && $node->isShadowNode()) {
-					return '';
-				}
-
 				$classNames[] = 'neos-contentelement-removed';
 			}
 
