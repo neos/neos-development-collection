@@ -251,15 +251,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
-		$mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
-
-		$context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
-
-		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array(), '', FALSE);
-
-		$this->inject($node, 'context', $context);
-
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove', 'addOrUpdate'), array(), '', FALSE);
 		$node->expects($this->once())->method('remove');
 		$node->setRemoved(TRUE);
 	}
@@ -322,11 +314,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @param array $configurableMethods
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function setUpNodeWithNonMatchingContext($configurableMethods = array()) {
+	protected function setUpNodeWithNonMatchingContext(array $configurableMethods = array()) {
 		$userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('user'));
 		$liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+		$liveWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+		$liveWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(NULL));
 
 		$nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$nodeData->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
