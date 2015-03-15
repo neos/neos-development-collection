@@ -15,16 +15,16 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Model\Domain;use TYPO3\Neos\Domain\Model\Site;use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * The TYPO3 Neos Sites Management module controller
@@ -69,21 +69,15 @@ class SitesController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
-	 * @var PropertyMapper
+	 * @var SiteService
 	 */
-	protected $propertyMapper;
+	protected $siteService;
 
 	/**
 	 * @Flow\Inject
 	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * @Flow\Inject
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
@@ -209,13 +203,7 @@ class SitesController extends AbstractModuleController {
 
 		if ($packageKey !== '') {
 			try {
-				/** @var $contentContext ContentContext */
-				$contentContext = $this->contextFactory->create(array(
-					'workspaceName' => 'live',
-					'invisibleContentShown' => TRUE,
-					'inaccessibleContentShown' => TRUE
-				));
-				$this->siteImportService->importFromPackage($packageKey, $contentContext);
+				$this->siteImportService->importFromPackage($packageKey);
 				$this->addFlashMessage('The site has been created.' ,'', NULL, array(), 1412372266);
 			} catch (\Exception $exception) {
 				$this->systemLogger->logException($exception);
@@ -237,15 +225,7 @@ class SitesController extends AbstractModuleController {
 	 * @return void
 	 */
 	public function deleteSiteAction(Site $site) {
-		$domains = $this->domainRepository->findBySite($site);
-		if (count($domains) > 0) {
-			foreach ($domains as $domain) {
-				$this->domainRepository->remove($domain);
-			}
-		}
-		$this->siteRepository->remove($site);
-		$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$siteNode->remove();
+		$this->siteService->pruneSite($site);
 		$this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()), 1412372689);
 		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
