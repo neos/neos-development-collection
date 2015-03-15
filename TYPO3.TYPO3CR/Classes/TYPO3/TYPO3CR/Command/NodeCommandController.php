@@ -15,10 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
@@ -27,18 +24,6 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  * @Flow\Scope("singleton")
  */
 class NodeCommandController extends CommandController implements DescriptionAwareCommandControllerInterface {
-
-	/**
-	 * @Flow\Inject
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -51,12 +36,6 @@ class NodeCommandController extends CommandController implements DescriptionAwar
 	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
 
 	/**
 	 * @Flow\Inject
