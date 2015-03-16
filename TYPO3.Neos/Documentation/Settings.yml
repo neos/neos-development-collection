@@ -1,7 +1,7 @@
 conf.py:
   copyright: '2006-2014, respective authors'
   project: 'TYPO3 Neos'
-  release: '1.1.0'
+  release: '1.1'
   version: '1.1'
   latex_documents:
   - - Index
