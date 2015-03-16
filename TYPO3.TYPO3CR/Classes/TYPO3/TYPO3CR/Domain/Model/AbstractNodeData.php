@@ -15,6 +15,7 @@ use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 
 /**
@@ -140,46 +141,51 @@ abstract class AbstractNodeData
      */
     public function setProperty($propertyName, $value)
     {
-        if (!is_object($this->contentObjectProxy)) {
-            switch ($this->getNodeType()->getPropertyType($propertyName)) {
-                case 'references':
-                    $nodeIdentifiers = array();
-                    if (is_array($value)) {
-                        foreach ($value as $nodeIdentifier) {
-                            if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
-                                $nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
-                            } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
-                                $nodeIdentifiers[] = $nodeIdentifier;
-                            }
+        switch ($this->getNodeType()->getPropertyType($propertyName)) {
+            case 'references':
+                $nodeIdentifiers = array();
+                if (is_array($value)) {
+                    foreach ($value as $nodeIdentifier) {
+                        if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
+                            $nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
+                        } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
+                            $nodeIdentifiers[] = $nodeIdentifier;
                         }
                     }
-                    $value = $nodeIdentifiers;
-                    break;
-                case 'reference':
-                    $nodeIdentifier = null;
-                    if ($value instanceof NodeInterface || $value instanceof AbstractNodeData) {
-                        $nodeIdentifier = $value->getIdentifier();
-                    } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
-                        $nodeIdentifier = $value;
-                    }
-                    $value = $nodeIdentifier;
-                    break;
-            }
+                }
+                $value = $nodeIdentifiers;
+                break;
+            case 'reference':
+                $nodeIdentifier = null;
+                if ($value instanceof NodeInterface || $value instanceof AbstractNodeData) {
+                    $nodeIdentifier = $value->getIdentifier();
+                } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
+                    $nodeIdentifier = $value;
+                }
+                $value = $nodeIdentifier;
+                break;
+        }
 
-            $this->persistRelatedEntities($value);
+        $this->persistRelatedEntities($value);
 
-            if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
+        $contentObject = $this->getContentObject();
+        if ($contentObject !== null && ObjectAccess::isPropertySettable($contentObject, $propertyName)) {
+            if (ObjectAccess::getProperty($contentObject, $propertyName) === $value) {
                 return;
             }
 
-            $this->properties[$propertyName] = $value;
-
-            $this->addOrUpdate();
-        } elseif (ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
-            $contentObject = $this->contentObjectProxy->getObject();
             ObjectAccess::setProperty($contentObject, $propertyName, $value);
             $this->updateContentObject($contentObject);
+            return;
         }
+
+        if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
+            return;
+        }
+
+        $this->properties[$propertyName] = $value;
+
+        $this->addOrUpdate();
     }
 
     /**
@@ -210,8 +216,9 @@ abstract class AbstractNodeData
      */
     public function hasProperty($propertyName)
     {
-        if (is_object($this->contentObjectProxy)) {
-            return ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
+        $contentObject = $this->getContentObject();
+        if ($contentObject && ObjectAccess::isPropertyGettable($contentObject, $propertyName)) {
+            return true;
         }
         return isset($this->properties[$propertyName]);
     }
@@ -228,20 +235,19 @@ abstract class AbstractNodeData
      */
     public function getProperty($propertyName)
     {
-        if (!is_object($this->contentObjectProxy)) {
-            $value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : null;
-            if (!empty($value)) {
-                if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
-                    if (!is_array($value)) {
-                        $value = array();
-                    }
+        $contentObject = $this->getContentObject();
+        if ($contentObject && ObjectAccess::isPropertyGettable($contentObject, $propertyName)) {
+            return ObjectAccess::getProperty($this->getContentObject(), $propertyName);
+        }
+        $value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : null;
+        if (!empty($value)) {
+            if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
+                if (!is_array($value)) {
+                    $value = array();
                 }
             }
-            return $value;
-        } elseif (ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
-            return ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
         }
-        throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
+        return $value;
     }
 
     /**
@@ -253,10 +259,11 @@ abstract class AbstractNodeData
      * @param string $propertyName Name of the property
      * @return void
      * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+     * @todo check how to handle this in ContentObjectProxy
      */
     public function removeProperty($propertyName)
     {
-        if (!is_object($this->contentObjectProxy)) {
+        if ($this->getContentObject() === null) {
             if (isset($this->properties[$propertyName])) {
                 unset($this->properties[$propertyName]);
                 $this->addOrUpdate();
@@ -274,15 +281,14 @@ abstract class AbstractNodeData
      *
      * @return array Property values, indexed by their name
      */
-    public function getProperties()
+    public function getProperties($returnNodesAsIdentifiers = false, \TYPO3\TYPO3CR\Domain\Service\Context $context = null)
     {
-        if (is_object($this->contentObjectProxy)) {
-            return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
-        }
-
         $properties = array();
         foreach (array_keys($this->properties) as $propertyName) {
             $properties[$propertyName] = $this->getProperty($propertyName);
+        }
+        if ($this->getContentObject()) {
+            $properties = Arrays::arrayMergeRecursiveOverrule($properties, ObjectAccess::getGettableProperties($this->getContentObject()));
         }
         return $properties;
     }
@@ -294,10 +300,11 @@ abstract class AbstractNodeData
      */
     public function getPropertyNames()
     {
-        if (is_object($this->contentObjectProxy)) {
-            return ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
+        $propertyNames = array_keys($this->properties);
+        if ($this->getContentObject()) {
+            $propertyNames = array_merge($propertyNames, ObjectAccess::getGettablePropertyNames($this->getContentObject()));
         }
-        return array_keys($this->properties);
+        return $propertyNames;
     }
 
     /**
@@ -312,7 +319,7 @@ abstract class AbstractNodeData
         if (!is_object($contentObject)) {
             throw new \InvalidArgumentException('Argument must be an object, ' . \gettype($contentObject) . ' given.', 1283522467);
         }
-        if ($this->contentObjectProxy === null || $this->contentObjectProxy->getObject() !== $contentObject) {
+        if ($this->getContentObject() !== $contentObject) {
             $this->contentObjectProxy = new ContentObjectProxy($contentObject);
             $this->addOrUpdate();
         }
@@ -325,7 +332,7 @@ abstract class AbstractNodeData
      */
     public function getContentObject()
     {
-        return ($this->contentObjectProxy !== null ? $this->contentObjectProxy->getObject() : null);
+        return ($this->contentObjectProxy instanceof ContentObjectProxy ? $this->contentObjectProxy->getObject() : null);
     }
 
     /**
@@ -335,7 +342,7 @@ abstract class AbstractNodeData
      */
     public function unsetContentObject()
     {
-        if ($this->contentObjectProxy !== null) {
+        if ($this->getContentObject()) {
             $this->contentObjectProxy = null;
             $this->addOrUpdate();
         }
