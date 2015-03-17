@@ -5133,6 +5133,8 @@
   white-space: nowrap;
   max-width: 220px;
   padding-right: 8px;
+  font-size: 14px;
+  text-shadow: none;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
   text-decoration: none;
