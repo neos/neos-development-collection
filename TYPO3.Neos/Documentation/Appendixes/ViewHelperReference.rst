@@ -3,7 +3,45 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-09-07
+This reference was automatically generated from code on 2015-03-17
+
+
+neos:backend.authenticationProviderLabel
+----------------------------------------
+
+Renders a label for the given authentication provider identifier
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\AuthenticationProviderLabelViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``identifier`` (string)
+
+
+
+
+neos:backend.colorOfString
+--------------------------
+
+Generates a color code for a given string
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ColorOfStringViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``string`` (string, *optional*)
+
+* ``minimalBrightness`` (integer, *optional*)
+
+
 
 
 neos:backend.configurationCacheVersion
@@ -14,6 +52,26 @@ configuration cache.
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationCacheVersionViewHelper
 
+
+
+
+
+neos:backend.configurationTree
+------------------------------
+
+Render HTML markup for the full configuration tree in the Neos Administration -> Configuration Module.
+
+For performance reasons, this is done inside a ViewHelper instead of Fluid itself.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationTreeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``configuration`` (array)
 
 
 
@@ -32,7 +90,7 @@ the Neos backend into a website.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface)
 
 
 
@@ -60,14 +118,14 @@ Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE oth
 
 
 
-neos:contentElement
--------------------
+neos:backend.translate
+----------------------
 
-View helper to wrap nodes for editing in the backend
+Returns translated message using source message or key ID.
+uses the selected backend language
+* Also replaces all placeholders with formatted versions of provided values.
 
-**Deprecated!** This ViewHelper is no longer needed as wrapping is now done with a TypoScript processor.
-
-:Implementation: TYPO3\\Neos\\ViewHelpers\\ContentElementViewHelper
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\TranslateViewHelper
 
 
 
@@ -75,33 +133,104 @@ View helper to wrap nodes for editing in the backend
 Arguments
 *********
 
-* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+* ``id`` (string, *optional*): Id to use for finding translation (trans-unit id in XLIFF)
 
-* ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
+* ``value`` (string, *optional*): If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
+* ``arguments`` (array, *optional*): Numerically indexed array of values to be inserted into placeholders
 
-* ``page`` (boolean, *optional*):
+* ``source`` (string, *optional*): Name of file with translations
 
-* ``tag`` (string, *optional*):
+* ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
-* ``class`` (string, *optional*): CSS class(es) for this element
+* ``quantity`` (mixed, *optional*): A number to find plural form for (float or int), NULL to not use plural forms
 
-* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+* ``languageIdentifier`` (string, *optional*): An identifier of a language to use (NULL for using the default language)
 
-* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
 
-* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
 
-* ``style`` (string, *optional*): Individual CSS styles for this element
 
-* ``title`` (string, *optional*): Tooltip text of element
+Examples
+********
 
-* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+**Translation by id**::
 
-* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+	<neos:backend.translate id="user.unregistered">Unregistered User</neos:backend.translate>
 
-* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+Expected result::
+
+	translation of label with the id "user.unregistered" and a fallback to "Unregistered User"
+
+
+**Inline notation**::
+
+	{neos:backend.translate(id: 'some.label.id', value: 'fallback result')}
+
+
+Expected result::
+
+	translation of label with the id "some.label.id" and a fallback to "fallback result"
+
+
+**Custom source and locale**::
+
+	<neos:backend.translate id="some.label.id" source="SomeLabelsCatalog" locale="de_DE"/>
+
+
+Expected result::
+
+	translation from custom source "SomeLabelsCatalog" for locale "de_DE"
+
+
+**Custom source from other package**::
+
+	<neos:backend.translate id="some.label.id" source="LabelsCatalog" package="OtherPackage"/>
+
+
+Expected result::
+
+	translation from custom source "LabelsCatalog" in "OtherPackage"
+
+
+**Arguments**::
+
+	<neos:backend.translate arguments="{0: 'foo', 1: '99.9'}"><![CDATA[Untranslated {0} and {1,number}]]></neos:backend.translate>
+
+
+Expected result::
+
+	translation of the label "Untranslated foo and 99.9"
+
+
+**Translation by label**::
+
+	<neos:backend.translate>Untranslated label</neos:backend.translate>
+
+
+Expected result::
+
+	translation of the label "Untranslated label"
+
+
+
+
+neos:backend.userInitials
+-------------------------
+
+Render user initials for a given username
+
+This ViewHelper is *WORK IN PROGRESS* and *NOT STABLE YET*
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\UserInitialsViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``format`` (string, *optional*): Supported are "fullFirstName" and "initials
 
 
 
@@ -384,9 +513,11 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths (defaults to "documentNode")
+* ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
-* ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content (defaults to "linkedNode")
+* ``nodeVariableName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -618,13 +749,15 @@ Arguments
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*):
+* ``section`` (string, *optional*)
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
 
 

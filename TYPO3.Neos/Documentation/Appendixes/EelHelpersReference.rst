@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2014-08-29
+This reference was automatically generated from code on 2015-03-17
 
 
 Array
@@ -16,8 +16,10 @@ The implementation uses the JavaScript specificiation where applicable, includin
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
 specification of the JavaScript implementation.
 
-Array.concat(array1, array2, array_)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Implemented in: ``TYPO3\Eel\Helper\ArrayHelper``
+
+Array.concat(array1, array2, array\_)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Concatenate arrays or values to a new array
 
@@ -34,16 +36,16 @@ Get the first element of an array
 
 * ``array`` (array) The array
 
-**Return** (mixed) 
+**Return** (mixed)
 
 Array.indexOf(array, searchElement, fromIndex)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``array`` (array) 
-* ``searchElement`` (mixed) 
-* ``fromIndex`` (integer, *optional*) 
+* ``array`` (array)
+* ``searchElement`` (mixed)
+* ``fromIndex`` (integer, *optional*)
 
-**Return** (mixed) 
+**Return** (mixed)
 
 Array.isEmpty(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -71,7 +73,7 @@ Get the array keys
 
 * ``array`` (array) The array
 
-**Return** (array) 
+**Return** (array)
 
 Array.last(array)
 ^^^^^^^^^^^^^^^^^
@@ -80,7 +82,7 @@ Get the last element of an array
 
 * ``array`` (array) The array
 
-**Return** (mixed) 
+**Return** (mixed)
 
 Array.length(array)
 ^^^^^^^^^^^^^^^^^^^
@@ -89,7 +91,7 @@ Get the length of an array
 
 * ``array`` (array) The array
 
-**Return** (integer) 
+**Return** (integer)
 
 Array.pop(array)
 ^^^^^^^^^^^^^^^^
@@ -100,7 +102,7 @@ Note: This differs from the JavaScript behavior of Array.pop which will return t
 
 An empty array will result in an empty array again.
 
-* ``array`` (array) 
+* ``array`` (array)
 
 **Return** (array) The array without the last element
 
@@ -113,8 +115,8 @@ Allows to push multiple elements at once::
 
     Array.push(array, e1, e2)
 
-* ``array`` (array) 
-* ``element`` (mixed) 
+* ``array`` (array)
+* ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
 
@@ -123,7 +125,7 @@ Array.random(array)
 
 Picks a random element from the array
 
-* ``array`` (array) 
+* ``array`` (array)
 
 **Return** (mixed) A random entry or NULL if the array is empty
 
@@ -134,7 +136,7 @@ Returns an array in reverse order
 
 * ``array`` (array) The array
 
-**Return** (array) 
+**Return** (array)
 
 Array.shift(array)
 ^^^^^^^^^^^^^^^^^^
@@ -145,7 +147,7 @@ Note: This differs from the JavaScript behavior of Array.shift which will return
 
 An empty array will result in an empty array again.
 
-* ``array`` (array) 
+* ``array`` (array)
 
 **Return** (array) The array without the first element
 
@@ -157,7 +159,7 @@ Shuffle an array
 Randomizes entries an array with the option to preserve the existing keys.
 When this option is set to FALSE, all keys will be replaced
 
-* ``array`` (array) 
+* ``array`` (array)
 * ``preserveKeys`` (boolean, *optional*) Wether to preserve the keys when shuffling the array
 
 **Return** (array) The shuffled array
@@ -168,10 +170,10 @@ Array.slice(array, begin, end)
 Extract a portion of an indexed array
 
 * ``array`` (array) The array (with numeric indices)
-* ``begin`` (string) 
-* ``end`` (string, *optional*) 
+* ``begin`` (string)
+* ``end`` (string, *optional*)
 
-**Return** (array) 
+**Return** (array)
 
 Array.sort(array)
 ^^^^^^^^^^^^^^^^^
@@ -183,7 +185,7 @@ The sorting is done first by numbers, then by characters.
 Internally natsort() is used as it most closely resembles javascript's sort().
 Because there are no real associative arrays in Javascript, keys of the array will be preserved.
 
-* ``array`` (array) 
+* ``array`` (array)
 
 **Return** (array) The sorted array
 
@@ -196,7 +198,7 @@ Allows to give multiple replacements at once::
 
     Array.splice(array, 3, 2, 'a', 'b')
 
-* ``array`` (array) 
+* ``array`` (array)
 * ``offset`` (integer) Index of the first element to remove
 * ``length`` (integer, *optional*) Number of elements to remove
 * ``replacements`` (mixed, *optional*) Elements to insert instead of the removed range
@@ -212,8 +214,8 @@ Allows to insert multiple elements at once::
 
     Array.unshift(array, e1, e2)
 
-* ``array`` (array) 
-* ``element`` (mixed) 
+* ``array`` (array)
+* ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
 
@@ -227,6 +229,8 @@ Configuration
 
 Configuration helpers for Eel contexts
 
+Implemented in: ``TYPO3\Eel\Helper\ConfigurationHelper``
+
 Configuration.setting(settingPath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -238,9 +242,9 @@ Examples::
 
     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
 
-* ``settingPath`` (string) 
+* ``settingPath`` (string)
 
-**Return** (mixed) 
+**Return** (mixed)
 
 
 
@@ -252,22 +256,24 @@ Date
 
 Date helpers for Eel contexts
 
+Implemented in: ``TYPO3\Eel\Helper\DateHelper``
+
 Date.add(date, interval)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Add an interval to a date and return a new DateTime object
 
-* ``date`` (\DateTime) 
-* ``interval`` (string|\DateInterval) 
+* ``date`` (\DateTime)
+* ``interval`` (string|\DateInterval)
 
-**Return** (\DateTime) 
+**Return** (\DateTime)
 
 Date.dayOfMonth(dateTime)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Get the day of month of a date
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The day of month of the given date
 
@@ -276,10 +282,10 @@ Date.diff(dateA, dateB)
 
 Get the difference between two dates as a \DateInterval object
 
-* ``dateA`` (\DateTime) 
-* ``dateB`` (\DateTime) 
+* ``dateA`` (\DateTime)
+* ``dateB`` (\DateTime)
 
-**Return** (\DateInterval) 
+**Return** (\DateInterval)
 
 Date.format(date, format)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -288,17 +294,17 @@ Format a date (or interval) to a string with a given format
 
 See formatting options as in PHP date()
 
-* ``date`` (integer|string|\DateTime|\DateInterval) 
-* ``format`` (string) 
+* ``date`` (integer|string|\DateTime|\DateInterval)
+* ``format`` (string)
 
-**Return** (string) 
+**Return** (string)
 
 Date.hour(dateTime)
 ^^^^^^^^^^^^^^^^^^^
 
 Get the hour of a date (24 hour format)
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The hour of the given date
 
@@ -307,7 +313,7 @@ Date.minute(dateTime)
 
 Get the minute of a date
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The minute of the given date
 
@@ -316,7 +322,7 @@ Date.month(dateTime)
 
 Get the month of a date
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The month of the given date
 
@@ -329,24 +335,24 @@ Examples::
 
     Date.now().timestamp
 
-**Return** (\DateTime) 
+**Return** (\DateTime)
 
 Date.parse(string, format)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Parse a date from string with a format to a DateTime object
 
-* ``string`` (string) 
-* ``format`` (string) 
+* ``string`` (string)
+* ``format`` (string)
 
-**Return** (\DateTime) 
+**Return** (\DateTime)
 
 Date.second(dateTime)
 ^^^^^^^^^^^^^^^^^^^^^
 
 Get the second of a date
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The second of the given date
 
@@ -355,24 +361,24 @@ Date.subtract(date, interval)
 
 Subtract an interval from a date and return a new DateTime object
 
-* ``date`` (\DateTime) 
-* ``interval`` (string|\DateInterval) 
+* ``date`` (\DateTime)
+* ``interval`` (string|\DateInterval)
 
-**Return** (\DateTime) 
+**Return** (\DateTime)
 
 Date.today()
 ^^^^^^^^^^^^
 
 Get the current date
 
-**Return** (\DateTime) 
+**Return** (\DateTime)
 
 Date.year(dateTime)
 ^^^^^^^^^^^^^^^^^^^
 
 Get the year of a date
 
-* ``dateTime`` (\DateTime) 
+* ``dateTime`` (\DateTime)
 
 **Return** (integer) The year of the given date
 
@@ -386,24 +392,26 @@ Json
 
 JSON helpers for Eel contexts
 
+Implemented in: ``TYPO3\Eel\Helper\JsonHelper``
+
 Json.parse(json, associativeArrays)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 JSON decode the given string
 
-* ``json`` (string) 
-* ``associativeArrays`` (boolean, *optional*) 
+* ``json`` (string)
+* ``associativeArrays`` (boolean, *optional*)
 
-**Return** (mixed) 
+**Return** (mixed)
 
 Json.stringify(value)
 ^^^^^^^^^^^^^^^^^^^^^
 
 JSON encode the given value
 
-* ``value`` (mixed) 
+* ``value`` (mixed)
 
-**Return** (string) 
+**Return** (string)
 
 
 
@@ -419,6 +427,8 @@ The implementation sticks to the JavaScript specificiation including EcmaScript 
 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
 specification of the JavaScript implementation.
+
+Implemented in: ``TYPO3\Eel\Helper\MathHelper``
 
 Math.abs(x)
 ^^^^^^^^^^^
@@ -556,8 +566,8 @@ Math.getPI()
 
 **Return** (float) Ratio of the circumference of a circle to its diameter, approximately 3.14159
 
-Math.getSQRT1_2()
-^^^^^^^^^^^^^^^^^
+Math.getSQRT1\_2()
+^^^^^^^^^^^^^^^^^^
 
 **Return** (float) Square root of 1/2; equivalently, 1 over the square root of 2, approximately 0.707
 
@@ -760,10 +770,187 @@ on the sign of the number.
 
 
 
+Neos.Array
+----------
+
+Some Functional Programming Array helpers for Eel contexts
+
+These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\ArrayHelper``
+
+Neos.Array.filter(set, filterProperty)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to TRUE.
+
+* ``set`` (array|Collection)
+* ``filterProperty`` (string)
+
+**Return** (array)
+
+Neos.Array.filterNegated(set, filterProperty)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to FALSE.
+
+* ``set`` (array|Collection)
+* ``filterProperty`` (string)
+
+**Return** (array)
+
+Neos.Array.groupBy(set, groupingKey)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The input is assumed to be an array or Collection of objects. Groups this input by the $groupingKey property of each element.
+
+* ``set`` (array|Collection)
+* ``groupingKey`` (string)
+
+**Return** (array)
+
+
+
+
+
+
+Neos.Link
+---------
+
+Eel helper for the linking service
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\LinkHelper``
+
+Neos.Link.convertUriToObject(uri, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``uri`` (string|Uri)
+* ``contextNode`` (NodeInterface, *optional*)
+
+**Return** (NodeInterface|AssetInterface|NULL)
+
+Neos.Link.getScheme(uri)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``uri`` (string|Uri)
+
+**Return** (string)
+
+Neos.Link.hasSupportedScheme(uri)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``uri`` (string|Uri)
+
+**Return** (boolean)
+
+Neos.Link.resolveAssetUri(uri)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``uri`` (string|Uri)
+
+**Return** (string)
+
+Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``uri`` (string|Uri)
+* ``contextNode`` (NodeInterface)
+* ``controllerContext`` (ControllerContext)
+
+**Return** (string)
+
+
+
+
+
+
+Neos.Node
+---------
+
+Eel helper for TYPO3CR Nodes
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\NodeHelper``
+
+Neos.Node.nearestContentCollection(node, nodePath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
+if no content collection could be found
+
+* ``node`` (NodeInterface)
+* ``nodePath`` (string)
+
+**Return** (NodeInterface)
+
+
+
+
+
+
+Neos.Rendering
+--------------
+
+Render Content Dimension Names, Node Labels
+
+These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\RenderingHelper``
+
+Neos.Rendering.injectConfigurationManager(configurationManager)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``configurationManager`` (ConfigurationManager)
+
+**Return** (void)
+
+Neos.Rendering.labelForNodeType(nodeTypeName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Render the label for the given $nodeTypeName
+
+* ``nodeTypeName`` (string)
+
+**Return** (string)
+
+Neos.Rendering.renderDimensions(dimensions)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Render a human-readable description for the passed $dimensions
+
+* ``dimensions`` (array)
+
+**Return** (string)
+
+
+
+
+
+
+Security
+--------
+
+Helper for security related information
+
+Implemented in: ``TYPO3\Eel\Helper\SecurityHelper``
+
+Security.getAccount()
+^^^^^^^^^^^^^^^^^^^^^
+
+Get the account of the first authenticated token.
+
+**Return** (\TYPO3\Flow\Security\Account|NULL)
+
+
+
+
+
+
 String
 ------
 
 String helpers for Eel contexts
+
+Implemented in: ``TYPO3\Eel\Helper\StringHelper``
 
 String.charAt(string, index)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -909,6 +1096,15 @@ Example::
 
 **Return** (integer) The last index of the substring (>=0) or -1 if the substring was not found
 
+String.length(string)
+^^^^^^^^^^^^^^^^^^^^^
+
+Get the length of a string
+
+* ``string`` (string) The input string
+
+**Return** (integer) Length of the string
+
 String.md5(string)
 ^^^^^^^^^^^^^^^^^^
 
@@ -923,8 +1119,8 @@ String.pregMatch(string, pattern)
 
 Match a string with a regular expression (PREG style)
 
-* ``string`` (string) 
-* ``pattern`` (string) 
+* ``string`` (string)
+* ``pattern`` (string)
 
 **Return** (array) The matches as array or NULL if not matched
 
@@ -933,9 +1129,9 @@ String.pregReplace(string, pattern, replace)
 
 Replace occurrences of a search string inside the string using regular expression matching (PREG style)
 
-* ``string`` (string) 
-* ``pattern`` (string) 
-* ``replace`` (string) 
+* ``string`` (string)
+* ``pattern`` (string)
+* ``replace`` (string)
 
 **Return** (string) The string with all occurrences replaced
 
@@ -964,9 +1160,9 @@ Replace occurrences of a search string inside the string
 
 Note: this method does not perform regular expression matching, @see pregReplace().
 
-* ``string`` (string) 
-* ``search`` (string) 
-* ``replace`` (string) 
+* ``string`` (string)
+* ``search`` (string)
+* ``replace`` (string)
 
 **Return** (string) The string with all occurrences replaced
 
@@ -998,7 +1194,7 @@ Examples::
 * ``search`` (string) The string to search for
 * ``position`` (integer, *optional*) The position to test (defaults to the beginning of the string)
 
-**Return** (boolean) 
+**Return** (boolean)
 
 String.stripTags(string)
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1046,7 +1242,7 @@ Examples::
     String.substring('Hello, World!', 7, 12) == 'World'
     String.substring('Hello, World!', 7) == 'World!'
 
-* ``string`` (string) 
+* ``string`` (string)
 * ``start`` (integer) Start index
 * ``end`` (integer, *optional*) End index
 
@@ -1117,6 +1313,35 @@ Trim whitespace at the beginning and end of a string
 * ``charlist`` (string, *optional*) List of characters that should be trimmed, defaults to whitespace
 
 **Return** (string) The trimmed string
+
+
+
+
+
+
+Translation
+-----------
+
+Translation helpers for Eel contexts
+
+Implemented in: ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
+
+Translation.translateById(id, packageKey, sourceName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fetches a translation by its id.
+
+Examples::
+
+    Translation.translateById('some.title', 'Acme.Site') == 'Acme Inc.'
+
+    Translation.translateById('str1407180613', 'Acme.Site', 'Ui') == 'Login'
+
+* ``id`` (string) The ID to translate
+* ``packageKey`` (string) The package key where to find the translation file
+* ``sourceName`` (string, *optional*) The source name, defaults to "Main
+
+**Return** (mixed)
 
 
 
