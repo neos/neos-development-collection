@@ -970,10 +970,9 @@ All content which does not behave like pages, but which lives inside them, is
 implemented by two different node types:
 
 First, there is the ``TYPO3.Neos:ContentCollection`` type: A ``TYPO3.Neos:ContentCollection`` has a structural purpose.
-It usually does not contain any properties itself, but it contains an ordered list of child
-nodes which are rendered inside.
+It usually contains an ordered list of child nodes which are rendered inside.
 
-Currently, ``TYPO3.Neos:ContentCollection`` should not be extended by custom types.
+``TYPO3.Neos:ContentCollection`` may be extended by custom types.
 
 Second, the node type for all standard elements (such as text, image, youtube,
 ...) is ``TYPO3.Neos:Content``. This is–by far–the most often extended node type.

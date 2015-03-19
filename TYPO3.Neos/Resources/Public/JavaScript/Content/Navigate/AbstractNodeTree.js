@@ -723,9 +723,6 @@ define(
 					nodeTypeFilter = nodeTypeFilter.trim();
 
 					allowedNodeTypes = allowedNodeTypes.filter(function (nodeTypeName) {
-						if (NodeTypeService.isOfType(nodeTypeName, 'TYPO3.Neos:ContentCollection')) {
-							return false;
-						}
 						if (nodeTypeFilter[0] === '!') {
 							return !NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter.substring(1));
 						} else {

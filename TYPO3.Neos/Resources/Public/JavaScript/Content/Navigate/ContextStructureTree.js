@@ -83,14 +83,6 @@ define(
 			return this.get('cutNode') !== null || this.get('copiedNode') !== null;
 		}.property('activeNode', 'cutNode', 'copiedNode'),
 
-		/**
-		 * The condition on NodeType is to prevent modification of ContentCollections as the Workspaces module / publishing are not
-		 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
-		 * is inside a moved Collection.
-		 */
-		currentFocusedNodeCanBeModified: function() {
-			return (this.get('activeNode') && (this.get('activeNode').getLevel() <= this.get('unmodifiableLevels') || NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:ContentCollection')));
-		}.property('activeNode'),
 
 		isExpanded: function() {
 			return NavigatePanelController.get('contextStructureMode');
@@ -151,16 +143,6 @@ define(
 						iconClass: 'icon-sitemap'
 					}
 				],
-				dnd: {
-					onDragStart: function(node) {
-						/**
-						 * This is to prevent changing of ContentCollections as the Workspaces module / publishing are not
-						 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
-						 * is inside a moved Collection.
-						 */
-						return !NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection');
-					}
-				},
 
 				onClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null) {
