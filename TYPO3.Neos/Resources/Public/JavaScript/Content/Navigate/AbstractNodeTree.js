@@ -7,6 +7,7 @@ define(
 		'Library/jquery-with-dependencies',
 		'../Application',
 		'Content/Model/Node',
+		'Content/Components/AbstractPositionSelectorButton',
 		'vie',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
@@ -23,6 +24,7 @@ define(
 		$,
 		ContentModule,
 		EntityWrapper,
+		AbstractPositionSelectorButton,
 		vieInstance,
 		NodeSelection,
 		Configuration,
@@ -35,13 +37,6 @@ define(
 		NodeEndpoint,
 		I18n
 	) {
-		var _getAllowedChildNodeTypesForNode = function(node) {
-			if (node.data.isAutoCreated) {
-				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(node.parent.data.nodeType, node.data.name);
-			} else {
-				return NodeTypeService.getAllowedChildNodeTypes(node.data.nodeType);
-			}
-		};
 
 		return Ember.View.extend({
 			template: Ember.required(),
@@ -64,7 +59,6 @@ define(
 			siteRootUri: null,
 
 			baseNodeType: Ember.K,
-			unmodifiableLevels: 1,
 
 			statusCodes: {
 				error: -1,
@@ -72,71 +66,23 @@ define(
 				ok: 0
 			},
 
-			desiredNewPosition: 'after',
-			newPosition: function() {
-				var allowedNewPositions = this.get('allowedNewPositions'),
-					desiredNewPosition = this.get('desiredNewPosition');
-				return allowedNewPositions.indexOf(desiredNewPosition) !== -1 ? desiredNewPosition : allowedNewPositions[allowedNewPositions.length - 1];
-			}.property('allowedNewPositions', 'desiredNewPosition'),
-			allowedNewPositions: function() {
-				var positions = [''],
-					activeNode = this.get('activeNode');
-				if (!activeNode) {
-					return positions;
+			_getAllowedChildNodeTypesForNode: function(node) {
+				var nodeType;
+				if (node.data.isAutoCreated) {
+					nodeType = node.parent.data.nodeType;
+				} else {
+					nodeType = node.data.nodeType;
 				}
-
-				var level = activeNode.getLevel(),
-					unmodifiableLevels = this.get('unmodifiableLevels');
-				if (level >= unmodifiableLevels) {
-					var possibleChildNodeTypes = _getAllowedChildNodeTypesForNode(activeNode);
-					if (possibleChildNodeTypes.length > 0) {
-						positions.push('into');
-					}
-
-					if (level > unmodifiableLevels) {
-						var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(activeNode.parent);
-						if (possibleSiblingNodeTypes.length > 0) {
-							positions.push('before');
-							positions.push('after');
-						}
-					}
+				if (typeof nodeType === 'undefined') {
+					// Should only be in case of a parent of siteNode
+					nodeType = 'unstructured';
 				}
-				return positions;
-			}.property('activeNode'),
-
-			desiredPastePosition: 'after',
-			pastePosition: function() {
-				var allowedPastePositions = this.get('allowedPastePositions'),
-					desiredPastePosition = this.get('desiredPastePosition');
-				return allowedPastePositions.indexOf(desiredPastePosition) !== -1 ? desiredPastePosition : allowedPastePositions[allowedPastePositions.length - 1];
-			}.property('allowedPastePositions', 'desiredPastePosition'),
-			allowedPastePositions: function() {
-				var positions = [''],
-					activeNode = this.get('activeNode'),
-					sourceNode = this.get('cutNode') || this.get('copiedNode');
-				if (!activeNode || !sourceNode) {
-					return positions;
+				if (node.data.isAutoCreated) {
+					return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(nodeType, node.data.name);
+				} else {
+					return NodeTypeService.getAllowedChildNodeTypes(nodeType);
 				}
-
-				var level = activeNode.getLevel(),
-					unmodifiableLevels = this.get('unmodifiableLevels');
-				if (level >= unmodifiableLevels) {
-					var sourceNodeType = sourceNode.data.nodeType,
-						possibleChildNodeTypes = _getAllowedChildNodeTypesForNode(activeNode);
-					if (possibleChildNodeTypes.length > 0 && possibleChildNodeTypes.contains(sourceNodeType)) {
-						positions.push('into');
-					}
-
-					if (activeNode.getLevel() > unmodifiableLevels) {
-						var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(activeNode.parent);
-						if (possibleSiblingNodeTypes.length > 0 && possibleSiblingNodeTypes.contains(sourceNodeType)) {
-							positions.push('before');
-							positions.push('after');
-						}
-					}
-				}
-				return positions;
-			}.property('activeNode', 'cutNode', 'copiedNode'),
+			},
 
 			_updateMetaInformation: function() {
 				var documentMetadata = $('#neos-document-metadata');
@@ -155,193 +101,89 @@ define(
 				}
 			},
 
-			pasteIsActive: function() {
-				return this.get('cutNode') !== null || this.get('copiedNode') !== null;
-			}.property('cutNode', 'copiedNode'),
-
 			searchTermIsEmpty: function() {
 				return this.get('searchTerm') === '';
 			}.property('searchTerm'),
 
-			newButton: Ember.View.extend({
-				active: true,
-				expand: false,
-				attributeBindings: ['title'],
-				classNameBindings: [
-					':neos-node-tree-new-node',
-					':icon-plus',
-					'active::neos-disabled',
-					'inactive:neos-disabled',
-					'expand:neos-expanded',
-					'newBefore:node-node-tree-new-node-before',
-					'newInto:node-node-tree-new-node-into',
-					'newAfter:node-node-tree-new-node-after',
-					'insertNodePanelShown:neos-pressed'
-				],
-				downTimer: null,
-				title: function() {
-					return I18n.translate('Main:TYPO3.Neos:content.navigate.createNewHoldPosition', 'Create new (hold to select position)');
-				}.property(),
+			allowedNewPositions: function() {
+				var positions = [],
+					activeNode = this.get('activeNode');
+				if (!activeNode) {
+					return positions;
+				}
 
-				newBefore: function() {
-					return this.get('newPosition') === 'before';
-				}.property('newPosition'),
-
-				newInto: function() {
-					return this.get('newPosition') === 'into';
-				}.property('newPosition'),
-
-				newAfter: function() {
-					return this.get('newPosition') === 'after';
-				}.property('newPosition'),
-
-				newBeforeDisabled: function() {
-					return this.get('allowedNewPositions').indexOf('before') === -1;
-				}.property('allowedNewPositions'),
-
-				newIntoDisabled: function() {
-					return this.get('allowedNewPositions').indexOf('into') === -1;
-				}.property('allowedNewPositions'),
-
-				newAfterDisabled: function() {
-					return this.get('allowedNewPositions').indexOf('after') === -1;
-				}.property('allowedNewPositions'),
-
-				inactive: function() {
-					return this.get('newBeforeDisabled') && this.get('newIntoDisabled') && this.get('newAfterDisabled');
-				}.property('newBeforeDisabled', 'newIntoDisabled', 'newAfterDisabled'),
-
-				mouseDown: function() {
-					if (this.get('expand') === true) {
-						if ($(event.target).closest('.neos-node-tree-new-node-position').length === 0) {
-							this.set('expand', false);
-						}
-					} else {
-						var that = this;
-						clearTimeout(this.get('downTimer'));
-						this.set('downTimer', setTimeout(function() {
-							that.set('expand', true);
-						}, 300));
+				if (typeof activeNode.data.nodeType !== 'undefined') {
+					var possibleChildNodeTypes = this._getAllowedChildNodeTypesForNode(activeNode);
+					if (possibleChildNodeTypes.length > 0) {
+						positions.push('into');
 					}
-				},
+					if (typeof activeNode.parent.data.nodeType !== 'undefined') {
+						var possibleSiblingNodeTypes = this._getAllowedChildNodeTypesForNode(activeNode.parent);
+						if (possibleSiblingNodeTypes.length > 0) {
+							positions.push('before');
+							positions.push('after');
+						}
+					}
+				}
+
+				return positions;
+			}.property('activeNode'),
+
+			allowedPastePositions: function() {
+				var positions = [],
+					activeNode = this.get('activeNode'),
+					sourceNode = this.get('cutNode') || this.get('copiedNode');
+				if (!activeNode || !sourceNode) {
+					return positions;
+				}
+
+				if (typeof activeNode.data.nodeType !== 'undefined') {
+					var sourceNodeType = sourceNode.data.nodeType,
+						possibleChildNodeTypes = this._getAllowedChildNodeTypesForNode(activeNode);
+					if (possibleChildNodeTypes.length > 0 && possibleChildNodeTypes.contains(sourceNodeType)) {
+						positions.push('into');
+					}
+					if (typeof activeNode.parent.data.nodeType !== 'undefined') {
+						var possibleSiblingNodeTypes = this._getAllowedChildNodeTypesForNode(activeNode.parent);
+						if (possibleSiblingNodeTypes.length > 0 && possibleSiblingNodeTypes.contains(sourceNodeType)) {
+							positions.push('before');
+							positions.push('after');
+						}
+					}
+				}
+				return positions;
+			}.property('activeNode', 'cutNode', 'copiedNode'),
+
+			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+				allowedPositionsBinding: 'parentView.allowedNewPositions',
+				title: 'Create (hold to select position)',
+				iconClass: 'icon-plus',
 
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
 					this.set('downTimer', null);
-					if ((this.get('active') && !this.get('inactive')) && this.get('expand') === false) {
-						this.get('parentView').create();
+					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
+						var position = this.get('position');
+						this.get('parentView').create(position);
 					}
 					$(event.target).filter('button').click();
-				},
-
-				mouseLeave: function() {
-					this.set('expand', false);
-				},
-
-				toggleNewBefore: function() {
-					this.set('desiredNewPosition', 'before');
-					this.set('expand', false);
-				},
-
-				toggleNewInto: function() {
-					this.set('desiredNewPosition', 'into');
-					this.set('expand', false);
-				},
-
-				toggleNewAfter: function() {
-					this.set('desiredNewPosition', 'after');
-					this.set('expand', false);
 				}
 			}),
 
-			pasteButton: Ember.View.extend({
-				active: true,
-				expand: false,
-				attributeBindings: ['title'],
-				classNameBindings: [
-					':neos-node-tree-paste-node',
-					':icon-paste',
-					'active::neos-disabled',
-					'inactive:neos-disabled',
-					'expand:neos-expanded',
-					'pastingBefore:node-node-tree-paste-node-before',
-					'pastingInto:node-node-tree-paste-node-into',
-					'pastingAfter:node-node-tree-paste-node-after'
-				],
-				downTimer: null,
-				title: function() {
-					return I18n.translate('Main:TYPO3.Neos:content.navigate.pasteHoldPosition', 'Paste (hold to select position)')
-				}.property(),
-
-				pastingBefore: function() {
-					return this.get('pastePosition') === 'before';
-				}.property('pastePosition'),
-
-				pastingInto: function() {
-					return this.get('pastePosition') === 'into';
-				}.property('pastePosition'),
-
-				pastingAfter: function() {
-					return this.get('pastePosition') === 'after';
-				}.property('pastePosition'),
-
-				pasteBeforeDisabled: function() {
-					return this.get('allowedPastePositions').indexOf('before') === -1;
-				}.property('allowedPastePositions'),
-
-				pasteIntoDisabled: function() {
-					return this.get('allowedPastePositions').indexOf('into') === -1;
-				}.property('allowedPastePositions'),
-
-				pasteAfterDisabled: function() {
-					return this.get('allowedPastePositions').indexOf('after') === -1;
-				}.property('allowedPastePositions'),
-
-				inactive: function() {
-					return this.get('pasteBeforeDisabled') && this.get('pasteIntoDisabled') && this.get('pasteAfterDisabled');
-				}.property('pasteBeforeDisabled', 'pasteIntoDisabled', 'pasteAfterDisabled'),
-
-				mouseDown: function() {
-					if (this.get('expand') === true) {
-						if ($(event.target).closest('.neos-node-tree-paste-node-position').length === 0) {
-							this.set('expand', false);
-						}
-					} else {
-						var that = this;
-						clearTimeout(this.get('downTimer'));
-						this.set('downTimer', setTimeout(function() {
-							that.set('expand', true);
-						}, 300));
-					}
-				},
+			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+				allowedPositionsBinding: 'parentView.allowedPastePositions',
+				title: 'Paste (hold to select position)',
+				iconClass: 'icon-paste',
 
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
 					this.set('downTimer', null);
-					if ((this.get('active') && !this.get('inactive')) && this.get('expand') === false) {
-						this.get('parentView').paste();
+					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
+						var position = this.get('position');
+						this.get('parentView').paste(position);
 					}
 					$(event.target).filter('button').click();
 				},
-
-				mouseLeave: function() {
-					this.set('expand', false);
-				},
-
-				togglePasteBefore: function() {
-					this.set('desiredPastePosition', 'before');
-					this.set('expand', false);
-				},
-
-				togglePasteInto: function() {
-					this.set('desiredPastePosition', 'into');
-					this.set('expand', false);
-				},
-
-				togglePasteAfter: function() {
-					this.set('desiredPastePosition', 'after');
-					this.set('expand', false);
-				}
 			}),
 
 			currentFocusedNodeIsHidden: function() {
@@ -356,8 +198,16 @@ define(
 				return this.get('activeNode') && this.get('activeNode') === this.get('copiedNode');
 			}.property('activeNode', 'copiedNode'),
 
-			currentFocusedNodeCanBeModified: function() {
-				return this.get('activeNode') && this.get('activeNode').getLevel() <= this.get('unmodifiableLevels');
+			currentFocusedNodeCantBeModified: function() {
+				if (this.get('activeNode')) {
+					if ((this.get('activeNode').data.isAutoCreated === true) ||
+						(typeof this.get('activeNode').parent.data.nodeType === 'undefined')) {
+						// AutoCreated node or root site node
+						return true;
+					} else {
+						return false;
+					}
+				}
 			}.property('activeNode'),
 
 			init: function() {
@@ -460,23 +310,22 @@ define(
 					onDragEnter: function(node, sourceNode) {
 						var sourceNodeType = sourceNode.data.nodeType,
 							positions = [],
-							level = node.getLevel(),
-							unmodifiableLevels = node.tree.options.parent.get('unmodifiableLevels');
+							parent = node.tree.options.parent;
 
-						if (level >= unmodifiableLevels) {
-							var possibleChildrenNodeTypes = _getAllowedChildNodeTypesForNode(node);
+						if (typeof node.data.nodeType !== 'undefined') {
+							var possibleChildrenNodeTypes = parent._getAllowedChildNodeTypesForNode(node);
 							if (possibleChildrenNodeTypes.contains(sourceNodeType)) {
 								positions.push('over');
 							}
-
-							if (level > unmodifiableLevels) {
-								var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(node.parent);
+							if (typeof node.parent.data.nodeType !== 'undefined') {
+								var possibleSiblingNodeTypes = parent._getAllowedChildNodeTypesForNode(node.parent);
 								if (possibleSiblingNodeTypes.contains(sourceNodeType)) {
 									positions.push('before');
 									positions.push('after');
 								}
 							}
 						}
+
 						return positions;
 					},
 
@@ -527,7 +376,6 @@ define(
 				if (this.$nodeTree) {
 					return;
 				}
-
 				this.$nodeTree = this.$(this.treeSelector).dynatree(this.get('treeConfiguration'));
 
 				// Automatically expand the first node when opened
@@ -686,7 +534,7 @@ define(
 				return null;
 			},
 
-			create: function() {
+			create: function(position) {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
 					Notification.info('You have to select a node');
@@ -700,22 +548,22 @@ define(
 					nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
 					this.createNode(activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
 				} else {
-					this.showCreateNodeDialog(activeNode);
+					this.showCreateNodeDialog(activeNode, position);
 				}
 			},
 
-			showCreateNodeDialog: function(activeNode) {
+			showCreateNodeDialog: function(activeNode, position) {
 				var that = this,
 					parentNode = activeNode.parent,
 					allowedNodeTypes;
 
 				this.set('insertNodePanelShown', true);
 
-				if (this.get('newPosition') === 'into') {
+				if (position === 'into') {
 					parentNode = activeNode;
 				}
 
-				allowedNodeTypes = _getAllowedChildNodeTypesForNode(parentNode);
+				allowedNodeTypes = this._getAllowedChildNodeTypesForNode(parentNode);
 
 				// Only show node types which inherit from the base node type(s).
 				// If the base node type is prefixed with "!", it is seen as negated.
@@ -735,7 +583,7 @@ define(
 					allowedNodeTypes: allowedNodeTypes,
 					insertNode: function(nodeType, icon) {
 						that.set('insertNodePanelShown', false);
-						that.createNode(activeNode, null, nodeType, icon);
+						that.createNode(activeNode, null, nodeType, icon, position);
 						this.cancel();
 					},
 					willDestroyElement: function() {
@@ -769,9 +617,8 @@ define(
 				});
 			},
 
-			createNode: function(activeNode, title, nodeType, iconClass) {
-				var newPosition = this.get('newPosition'),
-					data = {
+			createNode: function(activeNode, title, nodeType, iconClass, position) {
+				var data = {
 						title: title ? title : 'Loading ...',
 						nodeType: nodeType,
 						addClass: 'neos-matched',
@@ -780,7 +627,7 @@ define(
 					},
 					newNode;
 
-				switch (newPosition) {
+				switch (position) {
 					case 'before':
 						newNode = activeNode.getParent().addChild(data, activeNode);
 					break;
@@ -790,7 +637,7 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				this.persistNode(activeNode, newNode, nodeType, title, newPosition);
+				this.persistNode(activeNode, newNode, nodeType, title, position);
 			},
 
 			persistNode: function(activeNode, node, nodeType, title, position) {
@@ -938,23 +785,22 @@ define(
 				}
 			},
 
-			paste: function() {
+			paste: function(position) {
 				var targetNode = this.get('activeNode'),
 					cutNode = this.get('cutNode'),
 					copiedNode = this.get('copiedNode');
 				if (!targetNode) {
 					Notification.info('You have to select a node');
 				}
-				var pastePosition = this.get('pastePosition');
 				if (cutNode) {
 					this.set('cutNode', null);
-					this.move(cutNode, targetNode, pastePosition);
+					this.move(cutNode, targetNode, position);
 				}
 				if (copiedNode) {
 					this.set('copiedNode', null);
 					var that = this,
 						newNode;
-					switch (pastePosition) {
+					switch (position) {
 						case 'before':
 							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode);
 						break;
@@ -968,7 +814,7 @@ define(
 					NodeEndpoint.copy(
 						copiedNode.data.key,
 						targetNode.data.key,
-						pastePosition,
+						position,
 						copiedNode.data.name
 					).then(
 						function(result) {

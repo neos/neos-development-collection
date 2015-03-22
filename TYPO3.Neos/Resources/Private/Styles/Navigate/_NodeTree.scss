@@ -24,324 +24,6 @@
 		}
 	}
 
-	.neos-node-tree-toolbar {
-		width: 100%;
-		position: absolute;
-		top: -$unit * 2 - 2;
-		@include box-sizing(border-box);
-
-		@import "Shared/Chosen";
-		.chosen-container {
-			.chosen-single {
-				background-color: $grayDark;
-
-				& > div {
-					border-left: 1px solid $grayLight;
-				}
-			}
-
-			.chosen-drop {
-				margin-top: 1px;
-
-				.chosen-results li:first-child {
-					border-top: none;
-				}
-			}
-		}
-
-		.neos-node-tree-toolbar-top,
-		.neos-node-tree-toolbar-bottom {
-			height: $unit;
-			border-bottom: 1px solid $grayLight;
-		}
-
-		#neos-node-tree-chooser {
-			float: left;
-			font-size: 14px;
-			line-height: $unit;
-			padding-left: $defaultMargin;
-		}
-
-		[class^="icon-"], [class*=" icon-"] {
-			@include icon-FontAwesome();
-			height: $unit;
-			font-size: 14px;
-			color: $textOnGray;
-			line-height: $unit;
-			width: $unit;
-			text-align: center;
-			float: right;
-			cursor: pointer;
-			border: none;
-			padding: 0;
-			margin: 0;
-			background-color: transparent;
-			background-image: none;
-
-			&[disabled] {
-				color: $textSubtle;
-				cursor: not-allowed;
-
-				&:hover {
-					color: $textSubtle;
-				}
-			}
-
-			&.neos-pressed,
-			&:hover {
-				color: $blue;
-			}
-		}
-
-		.neos-node-tree-new-node {
-			position: relative;
-
-			&.neos-disabled {
-				color: $textSubtle;
-				cursor: not-allowed;
-
-				&:hover,
-				&::after {
-					color: $textSubtle;
-				}
-
-				.neos-arrow {
-					border-bottom-color: $textSubtle;
-				}
-			}
-
-			&.node-node-tree-new-node-into::after {
-				content: $long-arrow-right;
-				left: 18px;
-				top: 9px;
-			}
-
-			&.node-node-tree-new-node-before::after {
-				content: $level-up;
-				left: 24px;
-				top: 6px;
-			}
-
-			&.node-node-tree-new-node-after::after {
-				content: $level-down;
-				left: 24px;
-				top: 7px;
-			}
-
-			&::after {
-				@include icon-FontAwesome();
-				position: absolute;
-				font-size: 14px;
-				color: $blue;
-			}
-
-			&.neos-expanded {
-				.neos-node-tree-new-node-position {
-					display: block;
-				}
-
-				.neos-arrow {
-					display: none;
-				}
-			}
-
-			.neos-arrow {
-				position: absolute;
-				bottom: $tightMargin;
-				right: $tightMargin;
-				border-left: $tightMargin solid transparent;
-				border-bottom: $tightMargin solid $blue;
-				@include transform(rotate(45deg));
-			}
-
-			.neos-node-tree-new-node-position {
-				display: none;
-				position: absolute;
-				top: $unit;
-				left: 0;
-				z-index: 1;
-				background-color: $grayDark;
-				border-right: 1px solid $grayLight;
-				border-bottom: 1px solid $grayLight;
-
-				button {
-					color: #fff;
-
-					&.neos-active {
-						color: $blue;
-					}
-
-					&:hover {
-						background-color: $blue;
-						color: #fff;
-					}
-				}
-			}
-		}
-
-		.neos-node-tree-paste-node {
-			position: relative;
-
-			&.neos-disabled {
-				color: $textSubtle;
-				cursor: not-allowed;
-
-				&:hover,
-				&::after {
-					color: $textSubtle;
-				}
-
-				.neos-arrow {
-					border-bottom-color: $textSubtle;
-				}
-			}
-
-			&.node-node-tree-paste-node-into::after {
-				content: $long-arrow-right;
-				left: 18px;
-				top: 9px;
-			}
-
-			&.node-node-tree-paste-node-before::after {
-				content: $level-up;
-				left: 24px;
-				top: 5px;
-			}
-
-			&.node-node-tree-paste-node-after::after {
-				content: $level-down;
-				left: 24px;
-				top: 6px;
-			}
-
-			&::after {
-				@include icon-FontAwesome();
-				position: absolute;
-				font-size: 14px;
-				color: $blue;
-			}
-
-			&.neos-expanded {
-				.neos-node-tree-paste-node-position {
-					display: block;
-				}
-
-				.neos-arrow {
-					display: none;
-				}
-			}
-
-			.neos-arrow {
-				position: absolute;
-				bottom: $tightMargin;
-				right: $tightMargin;
-				border-left: $tightMargin solid transparent;
-				border-bottom: $tightMargin solid $blue;
-				@include transform(rotate(45deg));
-			}
-
-			.neos-node-tree-paste-node-position {
-				display: none;
-				position: absolute;
-				top: $unit;
-				left: 0;
-				z-index: 1;
-				background-color: $grayDark;
-				border-left: 1px solid $grayLight;
-				border-right: 1px solid $grayLight;
-				border-bottom: 1px solid $grayLight;
-
-				button {
-					color: #fff;
-
-					&.neos-active {
-						color: $blue;
-					}
-
-					&:hover {
-						background-color: $blue;
-						color: #fff;
-					}
-				}
-			}
-		}
-
-		#neos-node-tree-search {
-			overflow: hidden;
-			position: relative;
-
-			input {
-				width: 100%;
-				height: $unit;
-				float: left;
-				background-color: $grayDark;
-				color: $textOnGray;
-				@include font;
-				font-size: 14px;
-				padding-left: $defaultMargin - 2px;
-				padding-right: $defaultMargin * 2 - 2px;
-				padding-top: 0;
-				padding-bottom: 0;
-				margin: 0;
-				border: none;
-				@include box-sizing(border-box);
-				@include box-shadow(none);
-				@include transition(none);
-
-				&:focus {
-					background-color: #fff;
-					color: $textOnWhite;
-					@include box-shadow(none);
-
-					& + span {
-						color: $textOnWhite;
-					}
-				}
-			}
-
-			span {
-				position: absolute;
-				top: 0;
-				right: 12px;
-				width: 16px;
-				height: 16px;
-				display: block;
-				font-size: 14px;
-
-				&.icon-remove-sign {
-					cursor: pointer;
-					font-size: 16px;
-					top: 1px;
-
-					&:hover {
-						color: $blue;
-					}
-				}
-			}
-		}
-
-		#neos-node-tree-sorting {
-			width: $unit;
-			height: $unit;
-			line-height: $unit;
-			border-left: 1px solid $grayMedium;
-			float: right;
-			text-align: center;
-			display: none;
-		}
-
-		#neos-node-tree-filter {
-			width: 50%;
-			float: right;
-			border-left: 1px solid $grayMedium;
-
-			select {
-				width: 100%;
-				padding: 0;
-			}
-		}
-	}
-
 	#neos-node-tree-container {
 		position: relative;
 		white-space: nowrap;
@@ -363,6 +45,143 @@
 			background-color: #fff;
 			color: $grayDarker;
 			@include font;
+		}
+	}
+}
+
+.neos-node-tree-toolbar {
+	width: 100%;
+	position: absolute;
+	top: -$unit * 2 - 2;
+	@include box-sizing(border-box);
+
+	@import "Shared/Chosen";
+	.chosen-container {
+		.chosen-single {
+			background-color: $grayDark;
+
+			& > div {
+				border-left: 1px solid $grayLight;
+			}
+		}
+
+		.chosen-drop {
+			margin-top: 1px;
+
+			.chosen-results li:first-child {
+				border-top: none;
+			}
+		}
+	}
+
+	.neos-node-tree-toolbar-top,
+	.neos-node-tree-toolbar-bottom {
+		height: $unit;
+		border-bottom: 1px solid $grayLight;
+	}
+
+	#neos-node-tree-chooser {
+		float: left;
+		font-size: 14px;
+		line-height: $unit;
+		padding-left: $defaultMargin;
+	}
+
+	.neos-button {
+		float: right;
+		width: $unit;
+		color: $textOnGray;
+		background-color: transparent;
+		text-align: center;
+
+		i {
+			margin-left: -3px;
+		}
+
+		&[disabled],
+		&[disabled]:hover {
+			color: $textSubtle;
+		}
+
+		&.neos-pressed,
+		&:hover {
+			color: $blue;
+		}
+	}
+
+	#neos-node-tree-search {
+		overflow: hidden;
+		position: relative;
+
+		input {
+			width: 100%;
+			height: $unit;
+			float: left;
+			background-color: $grayDark;
+			color: $textOnGray;
+			@include font;
+			font-size: 14px;
+			padding-left: $defaultMargin - 2px;
+			padding-right: $defaultMargin * 2 - 2px;
+			padding-top: 0;
+			padding-bottom: 0;
+			margin: 0;
+			border: none;
+			@include box-sizing(border-box);
+			@include box-shadow(none);
+			@include transition(none);
+
+			&:focus {
+				background-color: #fff;
+				color: $textOnWhite;
+				@include box-shadow(none);
+
+				& + span {
+					color: $textOnWhite;
+				}
+			}
+		}
+
+		span {
+			position: absolute;
+			top: 0;
+			right: 9px;
+			width: 16px;
+			height: 16px;
+			display: block;
+			font-size: 14px;
+			line-height: $unit;
+
+			&.icon-remove-sign {
+				cursor: pointer;
+				font-size: 16px;
+				top: 1px;
+
+				&:hover {
+					color: $blue;
+				}
+			}
+		}
+	}
+
+	#neos-node-tree-sorting {
+		width: $unit;
+		height: $unit;
+		line-height: $unit;
+		border-left: 1px solid $grayMedium;
+		float: right;
+		text-align: center;
+		display: none;
+	}
+
+	#neos-node-tree-filter {
+		width: 50%;
+		float: right;
+		border-left: 1px solid $grayMedium;
+
+		select {
+			width: 100%;
+			padding: 0;
 		}
 	}
 }

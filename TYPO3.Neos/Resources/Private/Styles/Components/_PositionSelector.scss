@@ -1,14 +1,16 @@
 .neos-position-selector {
 	position: relative;
 	text-indent: 0;
+	@include user-select(none);
 
 	&.neos-disabled {
-		color: $textSubtleLight;
 		cursor: not-allowed;
+		color: $textSubtle !important;
+		opacity: 1;
 
 		&:hover,
 		&::after {
-			color: $textSubtleLight !important;
+			color: $textSubtle !important;
 		}
 
 		.neos-arrow {
@@ -68,25 +70,31 @@
 .neos-position-selector-position {
 	display: none;
 	position: absolute;
-	top: $unit - 1px;
+	top: $unit;
 	left: -1px;
 	z-index: 1;
 	background-color: $grayDark;
 	border: 1px solid $grayLight;
-	border-top: 0;
+	border-top: none;
+	box-shadow: 1px 2px 5px $grayDark;
 
 	.neos-button {
 		width: $unit - 2px;
 		height: $unit;
-		color: #fff;
-		border: 0;
+		color: $textOnGray;
+		border: none;
 
 		&.neos-active {
 			color: $blue;
 			background-color: inherit;
 		}
 
-		&:hover {
+		&.neos-disabled {
+			color: $textSubtle !important;
+			opacity: 1;
+		}
+
+		&:hover:not(.neos-disabled) {
 			color: $blue;
 			background-color: inherit;
 		}

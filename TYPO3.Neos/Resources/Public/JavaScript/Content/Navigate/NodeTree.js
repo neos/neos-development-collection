@@ -380,9 +380,8 @@ define(
 				});
 			},
 
-			createNode: function(activeNode, title, nodeType, iconClass) {
+			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var that = this,
-					newPosition = this.get('newPosition'),
 					data = {
 						title: title,
 						nodeType: nodeType,
@@ -392,7 +391,7 @@ define(
 					},
 					newNode;
 
-				switch (newPosition) {
+				switch (position) {
 					case 'before':
 						newNode = activeNode.getParent().addChild(data, activeNode);
 						break;
@@ -405,7 +404,7 @@ define(
 				var prevTitle = newNode.data.tooltip,
 					tree = newNode.tree;
 
-				if (newPosition === 'into') {
+				if (position === 'into') {
 					activeNode.expand(true);
 				}
 
@@ -443,7 +442,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
-						that.persistNode(activeNode, newNode, nodeType, title, newPosition);
+						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});
 			},

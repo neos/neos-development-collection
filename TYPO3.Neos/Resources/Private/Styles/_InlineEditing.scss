@@ -13,7 +13,7 @@
 	.neos-button {
 		width: $unit;
 		height: $unit;
-		color: #fff;
+		color: $textOnGray;
 		background-color: transparent;
 		padding: 0;
 		text-align: center;
@@ -40,6 +40,11 @@
 		vertical-align: inherit;
 		margin: 0;
 		display: block;
+	}
+
+	.neos-position-selector-position {
+		top: $unit - 1px;
+		box-shadow: none;
 	}
 }
 

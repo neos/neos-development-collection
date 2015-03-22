@@ -123,7 +123,8 @@
   aggregate: TRUE
   constraints:
     nodeTypes:
-      '*': TRUE
+      '*': FALSE
+      'TYPO3.Neos:Document': TRUE
   ui:
     label: 'Document'
     search:

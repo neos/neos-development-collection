@@ -43,12 +43,30 @@ define(
 		baseNodeType: '!TYPO3.Neos:Document',
 		treeSelector: '#neos-context-structure-tree',
 		loadingDepth: 0,
-		unmodifiableLevels: 2,
 		refreshOnPageNodePathChanged: true,
 		desiredNewPosition: 'inside',
 		desiredPastePosition: 'inside',
 
 		publishableNodes: PublishableNodes,
+
+		_getAllowedChildNodeTypesForNode: function(node) {
+			if (node.data.isAutoCreated) {
+				var types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(node.parent.data.nodeType, node.data.name);
+			} else {
+				var types = NodeTypeService.getAllowedChildNodeTypes(node.data.nodeType);
+			}
+
+			if (types) {
+				var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+					contentTypesArray = Object.keys(contentTypes),
+					filteredTypes = types.filter(function(n) {
+						return contentTypesArray.indexOf(n) != -1;
+					});
+				return filteredTypes;
+			} else {
+				return [];
+			}
+		},
 
 		init: function() {
 			this._super();
@@ -75,14 +93,6 @@ define(
 			siteNode.fromDict({key: this.get('pageNodePath'), title: pageTitle});
 			this.refresh();
 		}.observes('pageNodePath'),
-
-		pasteIsActive: function() {
-			if (this.get('activeNode') && NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:Document')) {
-				return false;
-			}
-			return this.get('cutNode') !== null || this.get('copiedNode') !== null;
-		}.property('activeNode', 'cutNode', 'copiedNode'),
-
 
 		isExpanded: function() {
 			return NavigatePanelController.get('contextStructureMode');
