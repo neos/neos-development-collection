@@ -163,6 +163,10 @@ class PluginImplementation extends AbstractArrayTypoScriptObject {
 	 * @return string
 	 */
 	protected function getPluginNamespace() {
+		if ($this->getArgumentNamespace() !== NULL) {
+			return $this->getArgumentNamespace();
+		}
+
 		if ($this->node instanceof NodeInterface) {
 			$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
 			if ($nodeArgumentNamespace !== NULL) {
@@ -174,10 +178,6 @@ class PluginImplementation extends AbstractArrayTypoScriptObject {
 			$nodeArgumentNamespace = str_replace('.', '_', $nodeArgumentNamespace);
 			$nodeArgumentNamespace = strtolower($nodeArgumentNamespace);
 			return $nodeArgumentNamespace;
-		}
-
-		if ($this->getArgumentNamespace() !== NULL) {
-			return $this->getArgumentNamespace();
 		}
 
 		$argumentNamespace = str_replace(array(':', '.', '\\'), array('_', '_', '_'), ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
