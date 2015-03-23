@@ -281,6 +281,9 @@ class Runtime {
 		}
 
 		$exceptionHandler->setRuntime($this);
+		if (array_key_exists('__objectType', $typoScriptConfiguration)) {
+			$typoScriptPath .= sprintf('<%s>', $typoScriptConfiguration['__objectType']);
+		}
 		$output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
 		return $output;
 	}
@@ -354,9 +357,19 @@ class Runtime {
 		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
 			$finallyClosure();
 			if (isset($typoScriptConfiguration['__objectType'])) {
-				throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
+				$objectType = $typoScriptConfiguration['__objectType'];
+				throw new Exceptions\MissingTypoScriptImplementationException(sprintf(
+					"The TypoScript object at path `%s` could not be rendered:
+					The TypoScript object `%s` is not completely defined (missing property `@class`).
+					Most likely you didn't inherit from a basic object.
+					For example you could add the following line to your TypoScript:
+					`prototype(%s) < prototype(TYPO3.TypoScript:Template)`",
+					$typoScriptPath, $objectType, $objectType), 1332493995);
 			} elseif ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-				throw new Exceptions\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
+				throw new Exceptions\MissingTypoScriptObjectException(
+					"No TypoScript object found in path.
+					Please make sure to define one in your TypoScript configuration.",
+					1332493990);
 			}
 			$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
 			return NULL;
@@ -517,7 +530,14 @@ class Runtime {
 						$currentPrototypeWithInheritanceTakenIntoAccount = array();
 
 						foreach ($prototypeMergingOrder as $prototypeName) {
-							$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $simpleTypeToArrayClosure);
+							if (array_key_exists($prototypeName, $currentPrototypeDefinitions)) {
+								$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $simpleTypeToArrayClosure);
+							} else {
+								throw new Exception(sprintf(
+									"The TypoScript object `%s` which you tried to inherit from does not exist.
+									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.",
+									$prototypeName, $configuration['__objectType']), 1427134340);
+							}
 						}
 
 							// We merge the already flattened prototype with the current configuration (in that order),
@@ -566,7 +586,10 @@ class Runtime {
 			$typoScriptPath .= '<' . $typoScriptObjectType . '>';
 		}
 		if (!class_exists($tsObjectClassName)) {
-			throw new Exception(sprintf('The implementation class "%s" defined for TypoScript object of type "%s" does not exist (defined at %s).', $tsObjectClassName, $typoScriptObjectType, $typoScriptPath), 1347952109);
+			throw new Exception(sprintf(
+				"The implementation class `%s` defined for TypoScript object of type `%s` does not exist.
+				Maybe a typo in the `@class` property.",
+				$tsObjectClassName, $typoScriptObjectType), 1347952109);
 		}
 
 		/** @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject */
