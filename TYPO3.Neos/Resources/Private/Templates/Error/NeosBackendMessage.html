@@ -12,14 +12,7 @@
 <f:section name="body">
 	<body class="neos">
 		<f:if condition="{isBackend}">{metaData -> f:format.raw()}</f:if>
-		<div class="neos-error-screen">
-			<div class="neos-message-icon">
-				<i class="icon-warning-sign"></i>
-			</div>
-			<h1>An Error Occurred</h1>
-			<p>Sorry, the page could not be rendered.</p>
-			{message -> f:format.raw()}
-		</div>
+		<div class="neos-error-screen">{message -> f:format.raw()}</div>
 		<f:if condition="{isBackend}">
 			<f:render partial="NeosBackendContainer" arguments="{_all}" />
 			<f:render partial="NeosBackendFooterData" arguments="{_all}" />

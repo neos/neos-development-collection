@@ -1847,15 +1847,13 @@ body {
   float: right;
 }
 .neos .neos-error-screen {
-  background: transparent;
+  background: #222;
   border: none;
   position: absolute;
-  top: 50%;
+  top: 80px;
   left: 50%;
-  width: 480px;
-  height: 120px;
-  margin-top: -60px;
-  margin-left: -240px;
+  width: 720px;
+  margin-left: -360px;
   color: #fff;
   font-size: 16px;
   -webkit-box-shadow: none;
@@ -1865,28 +1863,49 @@ body {
   -moz-border-radius: none;
   border-radius: none;
 }
-.neos .neos-error-screen .neos-message-icon {
-  color: #ff460d;
+.neos .neos-error-screen .neos-message-header {
+  position: relative;
+  background-color: #ff460d;
+  padding: 2px 10px;
+}
+.neos .neos-error-screen .neos-message-header .neos-message-icon {
+  color: #fff;
   float: left;
   margin-right: 12px;
-  line-height: 76px;
+  margin-top: 8px;
+  height: 100%;
 }
-.neos .neos-error-screen .neos-message-icon i {
+.neos .neos-error-screen .neos-message-header .neos-message-icon i {
   font-size: 64px;
+  height: inherit;
 }
-.neos .neos-error-screen h1 {
+.neos .neos-error-screen .neos-message-header h1 {
   font-size: 26px;
   line-height: 1.2;
   margin-top: 8px;
   margin-bottom: 6px;
   margin-left: 112px;
 }
-.neos .neos-error-screen p {
+.neos .neos-error-screen .neos-message-header p {
   margin: 0 0 0 112px;
   font-size: 16px;
 }
-.neos .neos-error-screen a {
+.neos .neos-error-screen .neos-message-header a {
   color: #00b5ff;
+}
+.neos .neos-error-screen .neos-message-wrapper {
+  padding: 2px 10px;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-content {
+  font-size: 18.2px;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-stacktrace {
+  color: #adadad;
+  padding-left: 20px;
+  overflow-x: auto;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-stacktrace code {
+  white-space: pre;
 }
 .neos .neos-error-screen .neos-rendering-exception {
   background-color: transparent;
