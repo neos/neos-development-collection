@@ -17,6 +17,7 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * @Flow\Scope("singleton")
@@ -34,6 +35,12 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @var ResourceManager
 	 */
 	protected $resourceManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Imagine\ImagineFactory
+	 */
+	protected $imagineFactory;
 
 	/**
 	 * @Flow\Inject
@@ -59,13 +66,19 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$foundImageHandler = FALSE;
 		foreach (array('gd', 'gmagick', 'imagick') as $extensionName) {
+			$formElement = $imageSection->createElement($extensionName, 'TYPO3.Form:StaticText');
+
 			if (extension_loaded($extensionName)) {
-				$formElement = $imageSection->createElement($extensionName, 'TYPO3.Form:StaticText');
-				$formElement->setProperty('text', 'PHP extension "' . $extensionName .'" is installed');
-				$formElement->setProperty('elementClassAttribute', 'alert alert-info');
-				$foundImageHandler = $extensionName;
+				$unsupportedFormats = $this->findUnsupportedImageFormats($extensionName);
+				if(count($unsupportedFormats) === 0) {
+					$formElement->setProperty('text', 'PHP extension "' . $extensionName .'" is installed');
+					$formElement->setProperty('elementClassAttribute', 'alert alert-info');
+					$foundImageHandler = $extensionName;
+				} else {
+					$formElement->setProperty('text', 'PHP extension "' . $extensionName . '" is installed but lacks support for ' . implode(', ', $unsupportedFormats));
+					$formElement->setProperty('elementClassAttribute', 'alert alert-warning');
+				}
 			} else {
-				$formElement = $imageSection->createElement($extensionName, 'TYPO3.Form:StaticText');
 				$formElement->setProperty('text', 'PHP extension "' . $extensionName . '" is not installed');
 				$formElement->setProperty('elementClassAttribute', 'alert alert-warning');
 			}
@@ -115,6 +128,28 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 		$result = @file_get_contents($publicResourceUri);
 
 		return $result === 'example-upload-test';
+	}
+
+	/**
+	 * @param string $driver
+	 * @return array Not supported image format
+	 */
+	protected function findUnsupportedImageFormats($driver) {
+		$this->imagineFactory->injectSettings(array('driver' => ucfirst($driver)));
+		$imagine = $this->imagineFactory->create();
+		$unsupportedFormats = array();
+
+		foreach(array('jpg', 'gif', 'png') as $imageFormat) {
+			$imagePath = Files::concatenatePaths(array($this->packageManager->getPackage('TYPO3.Neos')->getResourcesPath(), 'Private/Installer/TestImages/Test.' . $imageFormat));
+
+			try {
+				$imagine->open($imagePath);
+			} catch (\Exception $exception) {
+				$unsupportedFormats[] = sprintf('"%s"', $imageFormat);
+			}
+		}
+
+		return $unsupportedFormats;
 	}
 
 	/**
