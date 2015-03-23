@@ -126,9 +126,9 @@ class NodeController extends AbstractServiceController {
 			$nodes = array();
 			$nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
 			foreach ($nodeDataRecords as $nodeData) {
-				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-				if ($node !== NULL) {
-					$nodes[$node->getPath()] = $node;
+				$matchedNode = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if ($matchedNode !== NULL) {
+					$nodes[$matchedNode->getPath()] = $matchedNode;
 				}
 			}
 		}
