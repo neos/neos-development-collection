@@ -133,15 +133,10 @@ class TypoScriptService {
 
 		$siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
 		$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
-		$expectedSiteRootTypoScriptPathAndFilename = $siteRootTypoScriptPathAndFilename;
 
 		if ($siteRootTypoScriptCode === '') {
 			$siteRootTypoScriptPathAndFilename = sprintf($this->legacySiteRootTypoScriptPattern, $siteResourcesPackageKey);
 			$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
-		}
-
-		if (trim($siteRootTypoScriptCode) === '') {
-			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $expectedSiteRootTypoScriptPathAndFilename), 1357215211);
 		}
 
 		$mergedTypoScriptCode = '';
