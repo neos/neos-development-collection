@@ -5822,6 +5822,9 @@
   max-width: 288px;
   max-height: 216px;
 }
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-thumbnail-inner img:not(.neos-inspector-image-thumbnail-dummy) {
+  cursor: pointer;
+}
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-upload,
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-width {
   padding-bottom: 12px;

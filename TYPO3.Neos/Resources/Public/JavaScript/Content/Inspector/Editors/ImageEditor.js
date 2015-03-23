@@ -138,9 +138,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			this._super();
 
 			// Create new instance per image editor to avoid side effects
-			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
-			}));
+			this._initializeMediaView();
 
 			this.set('_imageServiceEndpointUri', $('link[rel="neos-images"]').attr('href'));
 
@@ -275,12 +273,6 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
 			});
 
-			if (this.get('features.crop') === true) {
-				this.$().find('.neos-inspector-image-thumbnail').click(function() {
-					SecondaryInspectorController.toggle(that.get('_cropView'));
-				});
-			}
-
 			this._readAndDeserializeValue();
 		},
 
@@ -318,10 +310,35 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			};
 		},
 
+		_mediaBrowserEditView: null,
+
+		_initializeMediaBrowserEditView: function() {
+			this.set('_mediaBrowserEditView', Ember.View.extend({
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
+			}));
+		},
+
+		_beforeMediaBrowserEditIsShown: function() {
+			var that = this;
+			window.Typo3MediaBrowserCallbacks = {
+				close: function() {
+					SecondaryInspectorController.hide(that.get('_mediaBrowserEditView'));
+					that._initializeMediaBrowserEditView();
+				}
+			};
+		},
+
 		/****************************************
 		 * IMAGE REMOVE
 		 ***************************************/
 		remove: function() {
+			if (this.get('_mediaBrowserEditView')) {
+				SecondaryInspectorController.hide(this.get('_mediaBrowserEditView'));
+				this.set('_mediaBrowserEditView', null);
+			}
+			if (this.get('_mediaBrowserView')) {
+				SecondaryInspectorController.hide(this.get('_mediaBrowserView'));
+			}
 			this.set('_object', null);
 			this.set('_originalImageUri', null);
 			this.set('_previewImageUri', null);
@@ -865,6 +882,27 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			};
 		},
 
+		_updateImageEditLink: function() {
+			var that = this;
+			if (!this.get('_object')) {
+				this.set('_mediaBrowserEditView', null);
+				return;
+			}
+
+			this._initializeMediaBrowserEditView();
+
+			this.$().find('.neos-inspector-image-thumbnail').click(function() {
+				var view = that.get('_mediaBrowserEditView');
+				if (view === null) {
+					return;
+				}
+				if (!SecondaryInspectorController._viewIsActive(view)) {
+					that._beforeMediaBrowserEditIsShown();
+				}
+				SecondaryInspectorController.toggle(view);
+			});
+		}.observes('_imageFullyLoaded'),
+
 		/**
 		 *
 		 */
@@ -938,6 +976,12 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				width: Math.round(coordinates.width / (originalImageDimensions.width / previewImageDimensions.width)),
 				height: Math.round(coordinates.height / (originalImageDimensions.height / previewImageDimensions.height))
 			};
+		},
+
+		_initializeMediaView: function() {
+			this.set('_mediaBrowserView', Ember.View.extend({
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+			}));
 		},
 
 		_initializeUploader: function() {

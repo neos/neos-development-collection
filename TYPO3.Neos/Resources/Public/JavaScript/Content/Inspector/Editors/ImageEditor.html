@@ -6,7 +6,7 @@
 					<img {{bindAttr src="view._originalImageUri"}} alt="" />
 				{{else}}
 					{{#unless view._uploadInProgress}}
-						<img {{bindAttr src="view._defaultUploadPreviewImageSource"}} alt="" />
+						<img {{bindAttr src="view._defaultUploadPreviewImageSource"}} alt="" class="neos-inspector-image-thumbnail-dummy" />
 					{{/unless}}
 				{{/if}}
 			</div>
