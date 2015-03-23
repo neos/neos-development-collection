@@ -99,16 +99,22 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 	/**
 	 * Try to check whether resource publishing works, and the server is configured correctly or not.
 	 *
+	 * We need to do this "manually" without accessing the Resource Manager directly, as we need to avoid any
+	 * database calls (as the database might be gone at this point).
+	 *
 	 * @return boolean TRUE if resource publishing worked; FALSE otherwise.
 	 * @throws \TYPO3\Flow\Resource\Exception
 	 */
 	protected function canResourceBeUploadedAndFetchedAgain() {
-		$resource = $this->resourceManager->importResourceFromContent('example-file', 'example-upload-test.txt');
-		$this->persistenceManager->whitelistObject($resource);
+		$collection = $this->resourceManager->getCollection(ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME);
+		$resource = $collection->importResourceFromContent('example-upload-test');
+		$resource->setFilename('example-upload-test.txt');
 		$publicResourceUri = $this->resourceManager->getPublicPersistentResourceUri($resource);
+		$collection->getTarget()->publishResource($resource, $collection);
+
 		$result = @file_get_contents($publicResourceUri);
 
-		return $result === 'example-file';
+		return $result === 'example-upload-test';
 	}
 
 	/**
