@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Repository\ImageRepository;
 
 /**
@@ -24,5 +26,17 @@ class ImageBrowserController extends MediaBrowserController {
 	 * @var ImageRepository
 	 */
 	protected $assetRepository;
+
+	/**
+	 * @param Asset $asset
+	 * @return void
+	 */
+	public function editAction(Asset $asset) {
+		if ($asset instanceof ImageVariant) {
+			$asset = $asset->getOriginalAsset();
+		}
+		parent::editAction($asset);
+	}
+
 
 }
