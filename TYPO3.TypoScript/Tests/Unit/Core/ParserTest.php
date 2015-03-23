@@ -657,10 +657,30 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 								'__objectType' => NULL
 							),
 							'blah3' => array(
-								'__eelExpression' => 'my.expression("as' . "\n		some stuff }\n		" . '" + "df")',
+								'__eelExpression' => 'my.expression("as' . "		some stuff }		" . '" + "df")',
 								'__value' => NULL,
 								'__objectType' => NULL
 							),
+							'multiline2' => array(
+								'__eelExpression' => "my.expression(		Foo.bar(\"foo\")	)",
+								'__value' => NULL,
+								'__objectType' => NULL
+							),
+							'multiline3' => array(
+								'__eelExpression' => "		my.expression(			Bar.foo(\"bar\")		)	",
+								'__value' => NULL,
+								'__objectType' => NULL
+							),
+							'multiline4' => array(
+								'__eelExpression' => "my.expression(		\"bla\",		\"blubb\",		Test()	)",
+								'__value' => NULL,
+								'__objectType' => NULL
+							),
+							'multiline5' => array(
+								'__eelExpression' => "'col-sm-'+		String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
+								'__value' => NULL,
+								'__objectType' => NULL
+							)
 						)
 					)
 				)

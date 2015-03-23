@@ -228,6 +228,16 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Checks the regular expression SPLIT_PATTERN_VALUEMULTILINELITERAL
+	 *
+	 * @test
+	 */
+	public function testSPLIT_PATTERN_VALUEMULTILINELITERAL() {
+		$pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_VALUEMULTILINELITERAL;
+		$this->assertEquals(preg_match($pattern, "\${'col-sm-'+"), 0, 'This should not match; but it does');
+	}
+
+	/**
 	 * @test
 	 */
 	public function testSCAN_PATTERN_VALUEOBJECTTYPE() {

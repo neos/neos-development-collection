@@ -127,14 +127,29 @@ class Parser implements ParserInterface {
 		)
 		\s*
 		(?P<OpeningConfinement>
-			\{                    # optionally followed by an opening confinement
+			[^\${]\{              # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';
 	const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
 	const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
 	const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
-	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/^(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
+	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/
+		^(
+			(?P<DoubleQuoteChar>")
+			(?P<DoubleQuoteValue>
+				(?:\\\\.
+				|
+				[^\\\\"])*
+			)
+			|
+			(?P<SingleQuoteChar>\')
+			(?P<SingleQuoteValue>
+				(?:\\\\.
+				|
+				[^\\\\\'])*
+			)
+		)$/x';
 	const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
 	const SPLIT_PATTERN_VALUENULL = '/^\s*(NULL|null)\s*$/';
 
@@ -676,7 +691,7 @@ class Parser implements ParserInterface {
 						$matches = array();
 						if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
 							// Single-line Eel Expressions
-							$processedValue = array('__eelExpression' => $matches[1], '__value' => NULL, '__objectType' => NULL);
+							$processedValue = array('__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => NULL, '__objectType' => NULL);
 							break;
 						}
 					}
