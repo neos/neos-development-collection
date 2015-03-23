@@ -386,13 +386,25 @@ class Runtime {
 
 			$tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
 
-				// modify context if @override is specified
 			if (isset($typoScriptConfiguration['__meta']['override'])) {
-				$contextArray = $this->getCurrentContext();
+				$newContextArray = $this->getCurrentContext();
 				foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
-					$contextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
+					$newContextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 				}
-				$this->pushContextArray($contextArray);
+			}
+
+			if ($cacheCtx['cacheForPathDisabled'] === TRUE) {
+				$contextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
+				$newContextArray = array();
+				foreach ($cacheCtx['configuration']['context'] as $contextVariableName) {
+					if (isset($contextArray[$contextVariableName])) {
+						$newContextArray[$contextVariableName] = $contextArray[$contextVariableName];
+					}
+				}
+			}
+
+			if (isset($newContextArray)) {
+				$this->pushContextArray($newContextArray);
 				$needToPopContext = TRUE;
 			}
 

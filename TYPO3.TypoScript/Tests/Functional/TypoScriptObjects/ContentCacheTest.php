@@ -132,6 +132,27 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
+	public function uncachedSegmentWithWrongContextConfigurationWillTriggerErrorOnFirstHit() {
+		$object = new TestModel(42, 'Object value 1');
+		$otherContextVariable = 'foo';
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/uncachedSegmentWithWronglyConfiguredContext');
+
+		$view->assign('object', $object);
+		$view->assign('otherContextVariable', $otherContextVariable);
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Uncached segment|counter=|End uncached', $firstRenderResult);
+
+		$secondRenderResult = $view->render();
+		$this->assertSame('Uncached segment|counter=|End uncached', $secondRenderResult);
+	}
+
+	/**
+	 * @test
+	 */
 	public function uncachedSegmentInCachedSegmentIsEvaluatedFromSerializedContext() {
 		$object = new TestModel(42, 'Object value 1');
 

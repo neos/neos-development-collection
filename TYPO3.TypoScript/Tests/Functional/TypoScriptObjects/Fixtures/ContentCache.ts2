@@ -63,6 +63,22 @@ contentCache.uncachedSegmentOnTopLevel = TYPO3.TypoScript:Array {
 	}
 }
 
+contentCache.uncachedSegmentWithWronglyConfiguredContext = TYPO3.TypoScript:Array {
+	5 = 'Uncached segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|End uncached'
+
+	@cache {
+		mode = 'uncached'
+
+		context {
+			1 = 'otherContextVariable'
+		}
+	}
+}
+
 contentCache.uncachedSegmentInCachedSegment = TYPO3.TypoScript:Array {
 	5 = 'Outer segment|'
 
