@@ -97,7 +97,7 @@ class Parser implements ParserInterface {
 		$
 	/x';
 
-	const SPLIT_PATTERN_COMMENTTYPE = '/.*(#|\/\/|\/\*|\*\/).*/';
+	const SPLIT_PATTERN_COMMENTTYPE = '/.*?(#|\/\/|\/\*|\*\/).*/';  // we need to be "non-greedy" here, since we need the first comment type that matches
 	const SPLIT_PATTERN_DECLARATION = '/(?P<declarationType>[a-zA-Z]+[a-zA-Z0-9]*)\s*:\s*(["\']{0,1})(?P<declaration>.*)\\2/';
 	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*(?P<alias>[a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(?P<packageKey>[a-zA-Z0-9\.]+)\s*$/';
 	const SPLIT_PATTERN_OBJECTDEFINITION = '/

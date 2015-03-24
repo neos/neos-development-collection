@@ -255,6 +255,41 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertRegexMatches('TYPO3.TypoScript:Foo', $pattern, $expected, 'Detailed result');
 	}
 
+	public function SPLIT_PATTERN_COMMENTTYPEdataProvider() {
+		return array(
+			'hashComment' => array(
+				'tsSnippet' => '# */asdf',
+				'expectedCommentToken' => '#'
+			),
+			'doubleSlashComment' => array(
+				'tsSnippet' => '// comment with */ and more comment',
+				'expectedCommentToken' => '//'
+			),
+			'slashStarComment' => array(
+				'tsSnippet' => '/* comment with // and more comment */',
+				'expectedCommentToken' => '/*'
+			)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider SPLIT_PATTERN_COMMENTTYPEdataProvider
+	 * @parameter $markdownMessage
+	 * @parameter $renderedMessage
+	 */
+	public function testSPLIT_PATTERN_COMMENTTYPE($tsSnippet, $expectedCommentToken) {
+		$pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_COMMENTTYPE;
+
+		$this->assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
+
+		$expected = array(
+			0 => $tsSnippet,
+			1 => $expectedCommentToken
+		);
+		$this->assertRegexMatches($tsSnippet, $pattern, $expected, 'It did not match comment-parts as expected.');
+	}
+
 	/**
 	 * Custom assertion for matching regexes
 	 *

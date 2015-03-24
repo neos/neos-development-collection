@@ -83,7 +83,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture01() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture01');
 
 		$expectedParseTree = array(
 			'test' => array(
@@ -127,7 +127,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture02() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture02.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture02');
 
 		$expectedParseTree = array(
 			'myObject' => array(
@@ -162,7 +162,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture03() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture03.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture03');
 
 		$expectedParseTree = array(
 			'object1' => array(
@@ -209,7 +209,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture04() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture04.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture04');
 
 		$expectedParseTree = array(
 			'myArrayObject' => array(
@@ -278,7 +278,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture05() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture05.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture05');
 
 		$expectedParseTree = array(
 			'firstObject' => array(
@@ -341,7 +341,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture07() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture07.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture07');
 
 		$expectedParseTree = array(
 			'object3' => array(
@@ -363,7 +363,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture08() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture08.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture08');
 
 		$expectedParseTree = array(
 			'object1' => array(
@@ -426,7 +426,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture10() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture10.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture10');
 
 		$expectedParseTree = array(
 
@@ -505,7 +505,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture13() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture13.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture13');
 
 		$expectedParseTree = array(
 			'object1' => array(
@@ -557,7 +557,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture14() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture14.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture14');
 
 		$expectedParseTree = array(
 			'object1' => array(
@@ -594,7 +594,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parserCorrectlyParsesFixture15() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture15.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture15');
 
 		$expectedParseTree = array(
 			'foo' => array(
@@ -737,7 +737,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parserCorrectlyParsesFixture18() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture18.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture18');
 
 		$expectedParseTree = array(
 			'object1' => array(
@@ -794,7 +794,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parserCorrectlyParsesFixture19() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture19.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture19');
 
 		$expectedParseTree = array(
 			'somepath' => array(
@@ -816,7 +816,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parserCorrectlyParsesFixture20() {
-		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture20.ts2', FILE_TEXT);
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture20');
 
 		$expectedParseTree = array(
 			'somepath' => array(
@@ -833,6 +833,26 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$actualParseTree = $this->parser->parse($sourceCode);
 		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
+	}
+
+	/**
+	 * Checks if comments in comments are parsed correctly
+	 *
+	 * @test
+	 */
+	public function parserCorrectlyParsesComments01() {
+		$sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptComments01');
+		$expected = array(); // Fixture contains only comments, so expect empty parse tree
+		$actualParseTree = $this->parser->parse($sourceCode);
+		$this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01.ts2`');
+	}
+
+	/**
+	 * @param string $fixtureName File name of the TypoScript fixture to be read (without .ts2)
+	 * @return string The content of the fixture
+	 */
+	protected function readTypoScriptFixture($fixtureName) {
+		return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.ts2', FILE_TEXT);
 	}
 
 }
