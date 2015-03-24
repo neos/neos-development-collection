@@ -536,7 +536,7 @@ class Runtime {
 								throw new Exception(sprintf(
 									"The TypoScript object `%s` which you tried to inherit from does not exist.
 									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.",
-									$prototypeName, $configuration['__objectType']), 1427134340);
+									$prototypeName, $currentPathSegmentType), 1427134340);
 							}
 						}
 
