@@ -742,11 +742,14 @@ Example::
 ConvertUris
 -----------
 
-Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs.
+Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs and allows for
+overriding the target attribute for external links and resource links.
 
 :value: (string) The string value, defaults to the ``value`` context variable to work as a processor by default
 :node: (Node) The current node as a reference, defaults to the ``node`` context variable
-:forceConversion: (boolean) Whether to convert URIs in a non-live worksspace, defaults to ``FALSE``
+:externalLinkTarget: (string) Override the target attribute for external links, defaults to ``_blank``. Can be disabled with an empty value.
+:resourceLinkTarget: (string) Override the target attribute for resource links, defaults to ``_blank``. Can be disabled with an empty value.
+:forceConversion: (boolean) Whether to convert URIs in a non-live workspace, defaults to ``FALSE``
 
 Example::
 
