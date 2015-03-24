@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 use TYPO3\Media\Exception;
 
 /**
@@ -33,10 +33,10 @@ class Thumbnail implements ImageInterface
     use DimensionsTrait;
 
     /**
-     * @var \TYPO3\Media\Domain\Service\ImageService
+     * @var ThumbnailGeneratorStrategy
      * @Flow\Inject
      */
-    protected $imageService;
+    protected $generatorStrategy;
 
     /**
      * @var Asset
@@ -74,9 +74,6 @@ class Thumbnail implements ImageInterface
      */
     public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
     {
-        if (!$originalAsset instanceof ImageInterface) {
-            throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
-        }
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
     }
@@ -126,9 +123,21 @@ class Thumbnail implements ImageInterface
      * @param string $value
      * @return mixed
      */
-    protected function getConfigurationValue($value)
+    public function getConfigurationValue($value)
     {
         return Arrays::getValueByPath($this->configuration, $value);
+    }
+
+    /**
+     * @param \TYPO3\Flow\Resource\Resource $resource
+     * @param integer $width
+     * @param integer $height
+     */
+    public function setResource($resource, $width, $height)
+    {
+        $this->resource = $resource;
+        $this->width = (integer)$width;
+        $this->height = (integer)$height;
     }
 
     /**
@@ -138,23 +147,6 @@ class Thumbnail implements ImageInterface
      */
     public function refresh()
     {
-        $adjustments = array(
-            new ResizeImageAdjustment(
-                array(
-                    'width' => $this->getConfigurationValue('width'),
-                    'maximumWidth' => $this->getConfigurationValue('maximumWidth'),
-                    'height' => $this->getConfigurationValue('height'),
-                    'maximumHeight' => $this->getConfigurationValue('maximumHeight'),
-                    'ratioMode' => $this->getConfigurationValue('ratioMode'),
-                    'allowUpScaling' => $this->getConfigurationValue('allowUpScaling')
-                )
-            )
-        );
-
-        $processedImageInfo = $this->imageService->processImage($this->originalAsset->getResource(), $adjustments);
-
-        $this->resource = $processedImageInfo['resource'];
-        $this->width = $processedImageInfo['width'];
-        $this->height = $processedImageInfo['height'];
+        $this->generatorStrategy->refresh($this);
     }
 }
