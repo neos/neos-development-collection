@@ -33,6 +33,14 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
  *     forceConversion = true
  *   }
+ *
+ * The optional property ``externalLinkTarget`` can be modified to disable or change the target attribute of the
+ * link tag for links to external targets::
+ *
+ *   prototype(TYPO3.Neos:ConvertUris) {
+ *     externalLinkTarget = '_blank'
+ *     resourceLinkTarget = '_blank'
+ *   }
  */
 class ConvertUrisImplementation extends AbstractTypoScriptObject {
 
@@ -101,6 +109,48 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 			$processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
 		}
 
+		$processedContent = $this->replaceLinkTargets($processedContent);
+
+		return $processedContent;
+	}
+
+	/**
+	 * Replace the target attribute of link tags in processedContent with the target
+	 * specified by externalLinkTarget and resourceLinkTarget options.
+	 *
+	 * @param string $processedContent
+	 * @return string
+	 */
+	protected function replaceLinkTargets($processedContent) {
+		$externalLinkTarget = trim($this->tsValue('externalLinkTarget'));
+		$resourceLinkTarget = trim($this->tsValue('resourceLinkTarget'));
+		if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
+			return $processedContent;
+		}
+		$controllerContext = $this->tsRuntime->getControllerContext();
+		$host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+		$processedContent = preg_replace_callback(
+			'~<a.*?href="(.*?)".*?>~i',
+			function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host) {
+				list($linkText, $linkHref) = $matches;
+				$uriHost = parse_url($linkHref, PHP_URL_HOST);
+				$target = NULL;
+				if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
+					$target = $externalLinkTarget;
+				}
+				if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== FALSE) {
+					$target = $resourceLinkTarget;
+				}
+				if ($target === NULL) {
+					return $linkText;
+				}
+				if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
+					return preg_replace('/target=".*?"/', sprintf('target="%s"', $target), $linkText);
+				}
+				return str_replace('<a', sprintf('<a target="%s"', $target), $linkText);
+			},
+			$processedContent
+		);
 		return $processedContent;
 	}
 

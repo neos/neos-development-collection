@@ -83,7 +83,17 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
 
+		$this->mockHttpUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
+
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+
+		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+
 		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+		$this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
 
 		$this->mockLinkingService = $this->getMock('TYPO3\Neos\Service\LinkingService');
 		$this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
@@ -91,16 +101,22 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
 		$this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 		$this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
+
+		$_SERVER = array (
+			'HTTP_HOST' => 'localhost'
+		);
 	}
 
-	protected function addValueExpectation($value, $node = NULL, $forceConversion = FALSE) {
+	protected function addValueExpectation($value, $node = NULL, $forceConversion = FALSE, $externalLinkTarget = NULL, $resourceLinkTarget = NULL) {
 		$this->convertUrisImplementation
 			->expects($this->atLeastOnce())
 			->method('tsValue')
 			->will($this->returnValueMap(array(
 				array('value', $value),
 				array('node', $node ?: $this->mockNode),
-				array('forceConversion', $forceConversion)
+				array('forceConversion', $forceConversion),
+				array('externalLinkTarget', $externalLinkTarget),
+				array('resourceLinkTarget', $resourceLinkTarget)
 			)));
 	}
 
@@ -162,6 +178,8 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
+		$_SERVER['HTTP_HOST'] = 'foo';
+
 		$self = $this;
 		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
 			if ($nodeUri === 'node://' . $nodeIdentifier1) {
@@ -219,6 +237,61 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
 		$expectedResult = 'This string contains an unresolvable node URI:  and a link.';
+		$actualResult = $this->convertUrisImplementation->evaluate();
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * This test checks that targets for external links are correctly replaced
+	 *
+	 * @test
+	 */
+	public function evaluateReplaceExternalLinkTargets() {
+		$nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
+		$externalLinkTarget = '_blank';
+
+		$value = 'This string contains a link to a node: <a href="node://' . $nodeIdentifier . '">node</a> and one to an external url with a target set <a target="top" href="http://www.example.org">example</a> and one without a target <a href="http://www.example.org">example2</a>';
+		$this->addValueExpectation($value, NULL, FALSE, $externalLinkTarget, NULL);
+
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+
+		$self = $this;
+		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function($nodeUri) use ($self, $nodeIdentifier) {
+			if ($nodeUri === 'node://' . $nodeIdentifier) {
+				return 'http://localhost/uri/01';
+			} else {
+				$self->fail('Unexpected node URI "' . $nodeUri . '"');
+			}
+		}));
+
+		$expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" href="http://www.example.org">example2</a>';
+		$actualResult = $this->convertUrisImplementation->evaluate();
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * This test checks that targets for resource links are correctly replaced
+	 *
+	 * @test
+	 */
+	public function evaluateReplaceResourceLinkTargets() {
+		$assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
+		$resourceLinkTarget = '_blank';
+
+		$value = 'This string contains two asset links and an external link: one with a target set <a target="top" href="asset://' . $assetIdentifier . '">example</a> and one without a target <a href="asset://' . $assetIdentifier . '">example2</a> and an external link <a href="http://www.example.org">example3</a>';
+		$this->addValueExpectation($value, NULL, FALSE, NULL, $resourceLinkTarget);
+
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+
+		$self = $this;
+		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveAssetUri')->will($this->returnCallback(function($assetUri) use ($self, $assetIdentifier) {
+			if ($assetUri !== 'asset://' . $assetIdentifier) {
+				$self->fail('Unexpected asset URI "' . $assetUri . '"');
+			}
+			return 'http://localhost/_Resources/01';
+		}));
+
+		$expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
 		$actualResult = $this->convertUrisImplementation->evaluate();
 		$this->assertSame($expectedResult, $actualResult);
 	}
