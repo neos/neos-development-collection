@@ -14,8 +14,9 @@ namespace TYPO3\Media\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 use TYPO3\Media\Exception;
 
 /**
@@ -33,10 +34,10 @@ class Thumbnail implements ImageInterface
     use DimensionsTrait;
 
     /**
-     * @var \TYPO3\Media\Domain\Service\ImageService
+     * @var ThumbnailGeneratorStrategy
      * @Flow\Inject
      */
-    protected $imageService;
+    protected $generatorStrategy;
 
     /**
      * @var Asset
@@ -46,12 +47,18 @@ class Thumbnail implements ImageInterface
     protected $originalAsset;
 
     /**
-     * @var \TYPO3\Flow\Resource\Resource
+     * @var Resource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
      * @Flow\Validate(type = "NotEmpty")
      * @ORM\JoinColumn(nullable=false)
      */
     protected $resource;
+
+    /**
+     * @var string
+     * @Flow\Transient
+     */
+    protected $staticResource;
 
     /**
      * @var array<string>
@@ -66,18 +73,23 @@ class Thumbnail implements ImageInterface
     protected $configurationHash;
 
     /**
+     * @var boolean
+     * @Flow\Transient
+     */
+    protected $isTransient = false;
+
+    /**
      * Constructs a new Thumbnail
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
      * @param ThumbnailConfiguration $configuration
+     * @param boolean $transient
      * @throws \TYPO3\Media\Exception
      */
-    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
+    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration, $transient = false)
     {
-        if (!$originalAsset instanceof ImageInterface) {
-            throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
-        }
         $this->originalAsset = $originalAsset;
+        $this->setTransient($transient);
         $this->setConfiguration($configuration);
     }
 
@@ -126,9 +138,68 @@ class Thumbnail implements ImageInterface
      * @param string $value
      * @return mixed
      */
-    protected function getConfigurationValue($value)
+    public function getConfigurationValue($value)
     {
         return Arrays::getValueByPath($this->configuration, $value);
+    }
+
+    /**
+     * @param Resource $resource
+     * @return void
+     */
+    public function setResource(Resource $resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
+     * @param integer $width
+     * @return void
+     */
+    public function setWidth($width)
+    {
+        $this->width = (integer)$width;
+    }
+
+    /**
+     * @param integer $height
+     * @return void
+     */
+    public function setHeight($height)
+    {
+        $this->height = (integer)$height;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTransient()
+    {
+        return $this->isTransient === true;
+    }
+
+    /**
+     * @param boolean $isTransient
+     */
+    public function setTransient($isTransient)
+    {
+        $this->isTransient = (boolean)$isTransient;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStaticResource()
+    {
+        return $this->staticResource;
+    }
+
+    /**
+     * @param string $staticResource
+     */
+    public function setStaticResource($staticResource)
+    {
+        $this->staticResource = $staticResource;
     }
 
     /**
@@ -138,23 +209,6 @@ class Thumbnail implements ImageInterface
      */
     public function refresh()
     {
-        $adjustments = array(
-            new ResizeImageAdjustment(
-                array(
-                    'width' => $this->getConfigurationValue('width'),
-                    'maximumWidth' => $this->getConfigurationValue('maximumWidth'),
-                    'height' => $this->getConfigurationValue('height'),
-                    'maximumHeight' => $this->getConfigurationValue('maximumHeight'),
-                    'ratioMode' => $this->getConfigurationValue('ratioMode'),
-                    'allowUpScaling' => $this->getConfigurationValue('allowUpScaling')
-                )
-            )
-        );
-
-        $processedImageInfo = $this->imageService->processImage($this->originalAsset->getResource(), $adjustments);
-
-        $this->resource = $processedImageInfo['resource'];
-        $this->width = $processedImageInfo['width'];
-        $this->height = $processedImageInfo['height'];
+        $this->generatorStrategy->refresh($this);
     }
 }
