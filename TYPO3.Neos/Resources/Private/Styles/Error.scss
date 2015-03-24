@@ -7,7 +7,7 @@
 @import url('http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
 @import "../../Public/Library/fontawesome/scss/font-awesome.scss";
 
-$errorBoxWidth: $unit * 12;
+$errorBoxWidth: $unit * 18;
 $errorBoxHeight: $unit * 3;
 
 body {
@@ -24,46 +24,66 @@ body {
 	@include font;
 
 	.neos-error-screen {
-		background: transparent;
+		background: $grayDark;
 		border: none;
 		position: absolute;
-		top: 50%;
+		top: $unit * 2;
 		left: 50%;
 		width: $errorBoxWidth;
-		height: $errorBoxHeight;
-		margin-top: -($errorBoxHeight / 2);
 		margin-left: -($errorBoxWidth / 2);
 		color: #fff;
 		font-size: 16px;
 		@include box-shadow(none);
 		@include border-radius(none);
 
-		.neos-message-icon {
-			color: $warning;
-			float: left;
-			margin-right: 12px;
-			line-height: 76px;
+		.neos-message-header {
+			position: relative;
+			background-color: $warning ;
+			padding: $paddingSmall;
+			.neos-message-icon {
+				color: $white;
+				float: left;
+				margin-right: 12px;
+				margin-top: 8px;
+				height: 100%;
 
-			i {
-				font-size: 64px;
+				i {
+					font-size: 64px;
+					height: inherit;
+				}
+			}
+
+			h1 {
+				font-size: 26px;
+				line-height: 1.2;
+				margin-top: 8px;
+				margin-bottom: 6px;
+				margin-left: 112px;
+			}
+
+			p {
+				margin: 0 0 0 112px;
+				font-size: 16px;
+			}
+
+			a {
+				color: $blue;
 			}
 		}
 
-		h1 {
-			font-size: 26px;
-			line-height: 1.2;
-			margin-top: 8px;
-			margin-bottom: 6px;
-			margin-left: 112px;
-		}
-
-		p {
-			margin: 0 0 0 112px;
-			font-size: 16px;
-		}
-
-		a {
-			color: $blue;
+		.neos-message-wrapper {
+			padding: $paddingSmall;
+			.neos-message-content {
+				font-size: $generalFontSize * 1.3	;
+			}
+			.neos-message-stacktrace {
+				color: $textSubtleLight;
+				padding-left: 0.5 * $unit;
+				overflow-x: auto;
+				code {
+					white-space: pre;
+				}
+			}
 		}
 
 		.neos-rendering-exception {
