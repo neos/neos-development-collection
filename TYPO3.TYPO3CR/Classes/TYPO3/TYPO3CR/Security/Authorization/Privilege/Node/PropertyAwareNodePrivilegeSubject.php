@@ -12,7 +12,6 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  *                                                                        */
 
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -28,12 +27,12 @@ class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject {
 	/**
 	 * @var string
 	 */
-	protected $propertyName;
+	protected $propertyName = NULL;
 
 	/**
 	 * @var JoinPointInterface
 	 */
-	protected $joinPoint;
+	protected $joinPoint = NULL;
 
 	/**
 	 * @param NodeInterface $node
@@ -46,9 +45,16 @@ class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject {
 	}
 
 	/**
-	 * @return array
+	 * @return string
 	 */
 	public function getPropertyName() {
 		return $this->propertyName;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasPropertyName() {
+		return $this->propertyName !== NULL;
 	}
 }
