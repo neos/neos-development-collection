@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use \TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 class AssetService
@@ -37,66 +38,47 @@ class AssetService
      *
      * @param AssetInterface $asset
      * @param ThumbnailConfiguration $configuration
-     * @return array with keys "width", "height" and "src"
+     * @return array|null Array with keys "width", "height" and "src" if the thumbnail generation work or null
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        if ($asset instanceof ImageInterface) {
-            $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
+        $thumbnailImage = $this->getImageThumbnail($asset, $configuration);
+        if ($thumbnailImage instanceof ImageInterface) {
+            if ($thumbnailImage instanceof Thumbnail && $thumbnailImage->isTransient()) {
+                $src = $thumbnailImage->getStaticResource();
+            } else {
+                $src = $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource());
+            }
             $thumbnailData = array(
                 'width' => $thumbnailImage->getWidth(),
                 'height' => $thumbnailImage->getHeight(),
-                'src' => $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource())
+                'src' => $src
             );
         } else {
-            $thumbnailData = $this->getAssetThumbnailImage($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
+            return null;
         }
 
         return $thumbnailData;
     }
 
     /**
+     * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
+     * differ from the specified image dimensions, otherwise the original image is returned.
+     *
      * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
+     * @param ThumbnailConfiguration $configuration
+     * @return ImageInterface
      */
-    protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight)
+    protected function getImageThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        // TODO: Could be configurable at some point
-        $iconPackage = 'TYPO3.Media';
-
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
+        if ($configuration->isUpScalingAllowed() === false && $asset instanceof ImageInterface) {
+            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
+            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
+            if ($maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
+                return $asset;
+            }
         }
 
-        return array(
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'src' => $this->resourceManager->getPublicPackageResourceUri($iconPackage, $icon)
-        );
-    }
-
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
+        return $this->thumbnailService->getThumbnail($asset, $configuration);
     }
 }
