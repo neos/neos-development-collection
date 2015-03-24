@@ -9,7 +9,7 @@
 			<ul class="neos-clearfix">
 				{{#each nodeTypes}}
 					<li class="neos-content-new-selecttype-button">
-						<button class="neos-content-new" {{bindAttr title="label"}} {{action "insertNode" nodeType icon target="view"}}>
+						<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}}>
 							{{#if icon}}
 								<i class="{{unbound icon}}"></i>
 							{{else}}
