@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
@@ -65,23 +66,28 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	public function migrateCommand($version, $confirmation = FALSE, $direction = MigrationStatus::DIRECTION_UP) {
-		$migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
-			$this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration() :
-			$this->migrationFactory->getMigrationForVersion($version)->getDownConfiguration();
+		try {
+			$migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
+				$this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration() :
+				$this->migrationFactory->getMigrationForVersion($version)->getDownConfiguration();
 
-		$this->outputCommentsAndWarnings($migrationConfiguration);
-		if ($migrationConfiguration->hasWarnings() && $confirmation === FALSE) {
+			$this->outputCommentsAndWarnings($migrationConfiguration);
+			if ($migrationConfiguration->hasWarnings() && $confirmation === FALSE) {
+				$this->outputLine();
+				$this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation TRUE" option to the command.');
+				$this->quit(1);
+			}
+
+			$nodeMigrationService = new NodeMigration($migrationConfiguration->getMigration());
+			$nodeMigrationService->execute();
+			$migrationStatus = new MigrationStatus($version, $direction, new \DateTime());
+			$this->migrationStatusRepository->add($migrationStatus);
 			$this->outputLine();
-			$this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation TRUE" option to the command.');
+			$this->outputLine('Successfully applied migration.');
+		} catch (MigrationException $e) {
+			$this->outputLine('Error: ' . $e->getMessage());
 			$this->quit(1);
 		}
-
-		$nodeMigrationService = new NodeMigration($migrationConfiguration->getMigration());
-		$nodeMigrationService->execute();
-		$migrationStatus = new MigrationStatus($version, $direction, new \DateTime());
-		$this->migrationStatusRepository->add($migrationStatus);
-		$this->outputLine();
-		$this->outputLine('Successfully applied migration.');
 	}
 
 	/**
