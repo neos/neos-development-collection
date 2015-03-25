@@ -307,9 +307,16 @@ class SiteExportService {
 					$this->xmlWriter->startElement($propertyName);
 					$this->xmlWriter->writeAttribute('__type', 'array');
 					if (is_array($propertyValue)) {
-						foreach ($propertyValue as $propertyArrayValue) {
+						foreach ($propertyValue as $key => $propertyArrayValue) {
 							if (is_object($propertyArrayValue)) {
+								$tagName = 'entry' . $key;
+								$this->xmlWriter->startElement($tagName);
+								$this->xmlWriter->writeAttribute('__classname', get_class($propertyArrayValue));
+								if ($this->persistenceManager->getIdentifierByObject($propertyArrayValue)) {
+									$this->xmlWriter->writeAttribute('__identifier', $this->persistenceManager->getIdentifierByObject($propertyArrayValue));
+								}
 								$this->objectToXml($propertyArrayValue);
+								$this->xmlWriter->endElement();
 							}
 						}
 					}
@@ -363,11 +370,6 @@ class SiteExportService {
 	 * @return void
 	 */
 	protected function exportAsset(Asset $asset) {
-		$tagName = $asset instanceof Image ? 'image' : 'asset';
-		$this->xmlWriter->startElement($tagName);
-		$this->xmlWriter->writeAttribute('__classname', get_class($asset));
-		$this->xmlWriter->writeAttribute('__identifier', $this->persistenceManager->getIdentifierByObject($asset));
-
 		$this->xmlWriter->startElement('properties');
 		if ($asset instanceof Image) {
 			$this->xmlWriter->writeElement('width', $asset->getWidth());
@@ -417,7 +419,6 @@ class SiteExportService {
 			$this->xmlWriter->writeElement('hash', $hash);
 		}
 
-		$this->xmlWriter->endElement();
 		$this->xmlWriter->endElement();
 	}
 
