@@ -30,7 +30,7 @@ define(
 				}
 			);
 
-			this.set('configuration', LocalStorage.getItem('menuConfiguration') || {});
+			this.set('configuration', LocalStorage.getItem('menuConfiguration') || {'content': true});
 			Ember.addObserver(this, 'configuration', function() {
 				var configuration = this.get('configuration');
 				if ($.isEmptyObject(configuration) === false) {
