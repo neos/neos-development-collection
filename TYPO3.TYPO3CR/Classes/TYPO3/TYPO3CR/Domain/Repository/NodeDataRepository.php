@@ -1083,6 +1083,8 @@ class NodeDataRepository extends Repository {
 	 * Reset instances (internal).
 	 *
 	 * @return void
+	 * @deprecated Use flushNodeRegistry()
+	 * @see flushNodeRegistry()
 	 */
 	public function reset() {
 		$this->addedNodes = new \SplObjectStorage();
@@ -1246,16 +1248,14 @@ class NodeDataRepository extends Repository {
 
 		$query = $queryBuilder->getQuery();
 		$foundNodes = $query->getResult();
-
 		// Consider materialized, but not yet persisted nodes
 		foreach ($this->addedNodes as $addedNode) {
-			if ($addedNode->getPath() === $path) {
+			if ($addedNode->getPath() === $path || ($recursive && strpos($addedNode->getPath(), $path) === 0)) {
 				$foundNodes[] = $addedNode;
 			}
 		}
 
 		$foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
-
 		if ($includeRemovedNodes === FALSE) {
 			$foundNodes = $this->filterRemovedNodes($foundNodes, FALSE);
 		}

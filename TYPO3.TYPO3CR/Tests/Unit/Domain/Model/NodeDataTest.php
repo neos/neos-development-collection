@@ -458,7 +458,7 @@ class NodeDataTest extends UnitTestCase {
 	 * @test
 	 */
 	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
-		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove'), array(), '', FALSE);
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove', 'addOrUpdate'), array(), '', FALSE);
 		$node->expects($this->once())->method('remove');
 		$node->setRemoved(TRUE);
 	}
