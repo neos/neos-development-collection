@@ -12,6 +12,7 @@ namespace TYPO3\Neos;
  *                                                                        */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -90,6 +91,12 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodePathChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
+		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', function($node, $targetWorkspace) use ($bootstrap) {
+			$cacheManager = $bootstrap->getObjectManager()->get(CacheManager::class);
+			if ($cacheManager->hasCache('Flow_Persistence_Doctrine')) {
+				$cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
+			}
+		});
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function(NodeInterface $node, $propertyName) use($bootstrap) {
 			if ($propertyName === 'uriPathSegment') {
 				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
