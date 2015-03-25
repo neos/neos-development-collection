@@ -12,6 +12,7 @@
      <accessRoles __type="array"/>
      <properties>
       <title __type="string">Home</title>
+      <uriPathSegment __type="string">home</uriPathSegment>
      </properties>
     </variant>
     <node nodeName="main">
