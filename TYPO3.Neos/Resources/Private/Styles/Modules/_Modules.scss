@@ -327,6 +327,10 @@
 		.neos-button {
 			margin-right: $relatedMargin;
 		}
+
+		.neos-modal .neos-button {
+			margin-right: 0;
+		}
 	}
 
 	.fixedsticky-dummy {

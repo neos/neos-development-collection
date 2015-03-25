@@ -3778,7 +3778,7 @@
   clear: both;
 }
 .neos .neos-modal .neos-modal-footer .neos-button {
-  margin-left: 5px;
+  margin-left: 8px;
   margin-bottom: 0;
 }
 .neos .neos-modal-form {
@@ -10196,6 +10196,9 @@
 .neos.neos-module .neos-footer .neos-button {
   margin-right: 8px;
 }
+.neos.neos-module .neos-footer .neos-modal .neos-button {
+  margin-right: 0;
+}
 .neos.neos-module .fixedsticky-dummy {
   display: none;
 }
@@ -10868,6 +10871,11 @@
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle {
   float: right;
   background-color: #222;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle.neos-active {
   background-color: #00b5ff;
@@ -10880,7 +10888,7 @@
   border-top: 1px solid #3f3f3f;
   margin-bottom: 16px;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list.neos-tags-list-editing-active li button[type="submit"] {
+.neos.media-browser .neos-sort-tags .neos-tags-list.neos-tags-list-editing-active li .neos-sidelist-edit-actions {
   display: block;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li {
@@ -10890,30 +10898,30 @@
 .neos.media-browser .neos-sort-tags .neos-tags-list li + li {
   margin-top: 1px;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a {
   display: block;
   color: #fff;
-  padding: 9px 44px 10px 4px;
+  padding: 9px 100px 10px 4px;
   border-radius: 0;
   text-shadow: none;
   font-weight: 400;
   font-size: 100%;
   line-height: 1.5;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-active {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a.neos-active {
   color: #00b5ff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a.neos-active.neos-drag-active:hover {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a.neos-active.neos-drag-active:hover {
   background-color: #ff460d;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:not(.neos-active).neos-drag-active {
   outline: 1px dashed #fff;
   outline-offset: -1px;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active span {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:not(.neos-active).neos-drag-active span {
   display: none;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active::after {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:not(.neos-active).neos-drag-active::after {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -10924,24 +10932,24 @@
   position: absolute;
   right: 12px;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active:hover, .neos.media-browser .neos-sort-tags .neos-tags-list li a:not(.neos-active).neos-drag-active.neos-drag-hover {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:not(.neos-active).neos-drag-active:hover, .neos.media-browser .neos-sort-tags .neos-tags-list li > a:not(.neos-active).neos-drag-active.neos-drag-hover {
   outline: 1px solid #fff;
   outline-offset: -1px;
   background-color: #00b5ff;
   color: #fff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:hover:not(.neos-drag-active) {
   background-color: #00b5ff;
   color: #fff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) span {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:hover:not(.neos-drag-active) span {
   background-color: #fff;
   color: #00b5ff;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a:hover:not(.neos-drag-active) span .neos-ellipsis {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a:hover:not(.neos-drag-active) span .neos-ellipsis {
   color: #252525;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li a span {
+.neos.media-browser .neos-sort-tags .neos-tags-list li > a span {
   position: absolute;
   top: 10px;
   right: 8px;
@@ -10950,22 +10958,31 @@
   padding: 4px;
   line-height: 1;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li button {
-  background-color: #222;
-}
-.neos.media-browser .neos-sort-tags .neos-tags-list li button:hover {
-  background-color: #00b5ff;
-}
-.neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"] {
+.neos.media-browser .neos-sort-tags .neos-tags-list li .neos-sidelist-edit-actions {
+  display: none;
   position: absolute;
   top: 0;
   right: 0;
+  font-size: 0;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li .neos-sidelist-edit-actions button {
   background-color: #222;
-  display: none;
   width: auto;
 }
-.neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"]:hover {
+.neos.media-browser .neos-sort-tags .neos-tags-list li .neos-sidelist-edit-actions button:hover {
+  background-color: #00b5ff;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li .neos-sidelist-edit-actions button:hover.neos-button-danger {
   background-color: #ff460d;
+}
+.neos.media-browser .neos-sort-tags .neos-tags-list li .neos-sidelist-edit-actions form {
+  display: inline-block;
+}
+.neos.media-browser .neos-sort-tags #neos-tags-create-form {
+  display: none;
+}
+.neos.media-browser .neos-sort-tags #neos-tags-create-form.neos-tags-list-editing-active {
+  display: block;
 }
 .neos.media-browser .neos-sort-tags input,
 .neos.media-browser .neos-sort-tags button[type="submit"] {
