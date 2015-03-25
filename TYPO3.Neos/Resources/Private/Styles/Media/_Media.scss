@@ -1,3 +1,104 @@
+@mixin neos-media-aside-condensed {
+	.neos-media-aside {
+		margin-top: $wideMargin;
+		@include clearfix;
+
+		> h2 {
+			border-bottom: 1px solid $grayLight;
+			margin-bottom: $relatedMargin;
+		}
+
+		.neos-tags-list {
+			font-size: 0;
+			background-color: transparent;
+
+			&.neos-tags-list-editing-active {
+				li:first-child + li ~ li {
+					a span {
+						display: none;
+					}
+				}
+
+				li {
+					a {
+						display: inline-block;
+					}
+
+					.neos-sidelist-edit-actions {
+						display: inline-block;
+						position: static;
+						vertical-align: top;
+
+						form {
+							display: inline-block;
+						}
+
+						button {
+							position: static;
+							padding: 0 $tightMargin 0 0;
+							line-height: 29px;
+							height: 29px;
+							background-color: $blue;
+
+							i {
+								background-color: #fff;
+								color: $blue;
+								padding: 2px;
+
+								&:hover {
+									background-color: $blue;
+									color: #fff;
+								}
+							}
+
+							&.neos-button-danger i:hover {
+								background-color: $warning;
+							}
+						}
+					}
+				}
+			}
+
+			li {
+				display: inline-block;
+				margin-right: $relatedMargin;
+				margin-bottom: $relatedMargin;
+
+				> a {
+					border-top: none;
+					background-color: $blue;
+					padding: $tightMargin;
+					font-size: 14px;
+
+					&:hover {
+						background-color: #fff;
+						color: $blue;
+					}
+
+					&.neos-active {
+						background-color: #fff;
+					}
+
+					span {
+						background-color: #fff;
+						color: $blue;
+						position: static;
+						padding: 0 2px;
+						font-size: 13px;
+					}
+				}
+			}
+		}
+
+		#neos-tags-create-form {
+			input,
+			button {
+				max-width: $unit * 8;
+			}
+		}
+	}
+}
+
 &.media-browser {
 	background-color: transparent;
 
@@ -17,6 +118,7 @@
 	.neos-media-options {
 		margin-bottom: $wideMargin;
 		border-bottom: 1px solid $grayLight;
+		@include clearfix;
 
 		a {
 			display: block;
@@ -104,13 +206,44 @@
 		}
 	}
 
-	//Styles for "Sort by tag" sidebar in Media view
-	.neos-sort-tags {
-		margin-bottom: $wideMargin;
+	@media (max-width: 1024px) {
+		.neos-breadcrumb {
+			margin: 0;
+		}
+	}
+
+	.neos-media-content {
+		&:not(.neos-media-aside-condensed) {
+			@include clearfix;
+
+			.neos-media-assets {
+				@media (min-width: 768px) {
+					float: left;
+					position: relative;
+					left: $unit * 6 + $wideMargin;
+					width: calc(100% - (#{$unit} * 6 + #{$wideMargin}));
+				}
+			}
+
+			.neos-media-aside {
+				@media (max-width: 767px) {
+					margin-top: $wideMargin;
+				}
+
+				@media (min-width: 768px) {
+					float: left;
+					position: relative;
+					margin-right: $wideMargin;
+					width: $unit * 6;
+					right: calc(100% - (#{$unit} * 6 + #{$wideMargin}));
+				}
+			}
+		}
 
 		.neos-search {
 			@include clearfix;
 			width: 100%;
+			max-width: $unit * 8;
 			margin-bottom: $defaultMargin;
 
 			div {
@@ -127,6 +260,16 @@
 			}
 		}
 
+		&.neos-media-aside-condensed {
+			@include neos-media-aside-condensed;
+		}
+
+		@media (max-width: 767px) {
+			@include neos-media-aside-condensed;
+		}
+	}
+
+	aside.neos-media-aside {
 		> h2 {
 			line-height: $unit;
 
@@ -277,115 +420,158 @@
 		}
 	}
 
-	//Styles for Media grid view
-	.neos-thumbnails {
-		margin-bottom: $wideMargin;
-		font-size: 0;
-
-		li {
+	.neos-media-assets {
+		.neos-thumbnails {
+			margin-bottom: $wideMargin;
+			font-size: 0;
 			margin-left: 0;
-			margin-right: 16px;
-			@include box-sizing(border-box);
-			float: none;
-			display: inline-block;
-			vertical-align: top;
 
-			@media (max-width: 1023px) {
-				width: calc((100% - 16px * 3) / 4);
-
-				&:nth-child(4n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			@media (min-width: 1024px) and (max-width: 1199px) {
-				width: calc((100% - 16px * 4) / 5);
-
-				&:nth-child(5n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			@media (min-width: 1200px) {
-				width: calc((100% - 16px * 5) / 6);
-
-				&:nth-child(6n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			.neos-img-container {
-				position: relative;
-				background-color: $grayDarker;
-				padding-bottom: 100%;
-				height: 0;
-				margin-bottom: $relatedMargin * 1.5;
+			li {
+				margin-left: 0;
+				margin-right: $defaultMargin;
 				@include box-sizing(border-box);
+				float: none;
+				display: inline-block;
+				vertical-align: top;
 
-				&:hover {
-					&::after {
-						opacity: .9;
+				@media (max-width: 479px) {
+					width: calc((100% - #{$defaultMargin}) / 2);
+
+					&:nth-child(2n) {
+						margin-right: 0;
+						@include clearfix;
 					}
 				}
 
-				&.ui-draggable-dragging {
-					width: 250px;
-					height: 250px;
+				@media (min-width: 480px) and (max-width: 767px) {
+					width: calc((100% - #{$defaultMargin} * 2) / 3);
+
+					&:nth-child(3n) {
+						margin-right: 0;
+						@include clearfix;
+					}
 				}
 
-				&::after {
-					@include icon-FontAwesome();
-					content: $move;
+				@media (min-width: 768px) and (max-width: 1023px) {
+					width: calc((100% - #{$defaultMargin} * 2) / 3);
+
+					&:nth-child(3n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1024px) and (max-width: 1199px) {
+					width: calc((100% - #{$defaultMargin} * 3) / 4);
+
+					&:nth-child(4n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1200px) and (max-width: 1599px) {
+					width: calc((100% - #{$defaultMargin} * 4) / 5);
+
+					&:nth-child(5n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1600px) {
+					width: calc((100% - #{$defaultMargin} * 5) / 6);
+
+					&:nth-child(6n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				.neos-img-container {
+					position: relative;
+					background-color: $grayDarker;
+					padding-bottom: 100%;
+					height: 0;
+					margin-bottom: $relatedMargin * 1.5;
+					@include box-sizing(border-box);
+
+					&:hover {
+						&::after {
+							opacity: .9;
+						}
+					}
+
+					&.ui-draggable-dragging {
+						width: 250px;
+						height: 250px;
+					}
+
+					&::after {
+						@include icon-FontAwesome();
+						content: $move;
+						display: block;
+						position: absolute;
+						right: 0;
+						bottom: 0;
+						width: $unit;
+						height: $unit;
+						background-color: $grayDark;
+						opacity: .5;
+						color: #fff;
+						font-size: 16px;
+						text-align: center;
+						line-height: $unit;
+						cursor: move;
+					}
+				}
+
+				.neos-caption {
+					padding: 0;
 					display: block;
-					position: absolute;
-					right: 0;
-					bottom: 0;
-					width: $unit;
-					height: $unit;
-					background-color: $grayDark;
-					opacity: .5;
-					color: #fff;
-					font-size: 16px;
-					text-align: center;
-					line-height: $unit;
-					cursor: move;
+					font-size: 12px;
+					line-height: 1.2;
+					color: $textSubtleLight;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 				}
-			}
 
-			.neos-caption {
-				padding: 0;
-				display: block;
-				font-size: 12px;
-				line-height: 1.2;
-				color: $textSubtleLight;
-				word-break: break-all;
-			}
-
-			a {
-				border: 0;
-				border-radius: 0;
-				display: block;
-				box-shadow: none;
-				position: relative;
-				padding: 0;
-
-				&:hover {
+				a {
+					border: 0;
+					border-radius: 0;
+					display: block;
 					box-shadow: none;
-					text-decoration: none;
-				}
+					position: relative;
+					padding: 0;
 
-				img {
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					@include translate(-50%, -50%);
-					height: auto;
-					width: auto;
-					max-height: 100%;
-					max-width: 100%;
+					&:hover {
+						box-shadow: none;
+						text-decoration: none;
+					}
+
+					img {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						@include translate(-50%, -50%);
+						height: auto;
+						width: auto;
+						max-height: 100%;
+						max-width: 100%;
+					}
+				}
+			}
+		}
+
+		@media (max-width: 540px) {
+			.page-navigation ul li {
+				display: none;
+
+				&.previous,
+				&.current,
+				&.next {
+					display: inline-block;
 				}
 			}
 		}
@@ -394,6 +580,13 @@
 	.neos-thumbnails li .neos-img-container:hover {
 		cursor: pointer;
 		outline: $tightMargin solid $blue;
+	}
+
+	&:not(.media-module) {
+		.neos-media-assets .neos-thumbnails li .neos-img-container:hover {
+			cursor: pointer;
+			outline: $tightMargin solid $blue;
+		}
 	}
 
 	//Styles for upload/edit image
