@@ -109,7 +109,7 @@ class Utility {
 		// Remove duplicate delimiters
 		$name = preg_replace('/(' . preg_quote('-', '/') . '){2,}/u', '$1', $name);
 
-		// trim leftover dashes, lowercase and return
-		return strtolower(trim($name, '-'));
+		// trim leftover dashes and return
+		return trim($name, '-');
 	}
 }
