@@ -81,10 +81,6 @@ class ContentElementWrappingService {
 			$attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
 		} else {
 			if ($node->isRemoved()) {
-				if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node && $node->isShadowNode()) {
-					return '';
-				}
-
 				$classNames[] = 'neos-contentelement-removed';
 			}
 
