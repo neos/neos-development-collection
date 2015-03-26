@@ -1,0 +1,94 @@
+/* Modal Dialog Content area */
+button.icon-trash:before {
+	padding-right: 3px;
+}
+
+// Create content element button
+button.neos-create-new-content {
+}
+
+.neos-popover {
+	display: none;
+
+	&.neos-active {
+		display: block;
+	}
+}
+
+.scrollbar {
+	position: absolute;
+	content: '';
+	display: block;
+	border-radius: 100px;
+	opacity: 0;
+	z-index: 100;
+}
+
+.vertical {
+	width: 7px;
+	right: 2px;
+	top: 2px;
+}
+
+.horizontal {
+	height: 7px;
+	bottom: 2px;
+	left: 2px;
+}
+
+.scrollbar_bg {
+	position: absolute;
+	content: '';
+	display: block;
+	border-radius: 100px;
+	opacity: 0;
+	z-index: 99;
+}
+
+.scrollbar_bg.horizontal {
+	width: 100%;
+}
+
+.scrollbar_bg.vertical {
+	height: 100%;
+}
+
+.scrollbar.light {
+	background: rgba(255,255,255,0.5);
+}
+
+.scrollbar_bg.light {
+	background: rgba(255,255,255,0.10);
+}
+
+
+.scrollbar.dark {
+	background: rgba(0,0,0,0.3);
+}
+
+.scrollbar_bg.dark {
+	background: rgba(0,0,0,0.10);
+}
+
+.nWrap {
+	overflow: auto;
+	display: inline-block;
+}
+
+.ui-tabs .ui-tabs-nav li a:focus {
+	outline: none;
+}
+
+.neos-link-inputfield {
+	&.ui-autocomplete-loading {
+		background-image: url('../Images/ajax-preloader.gif');
+		background-repeat: no-repeat;
+		background-position: 198px;
+	}
+}
+
+// Img tag CSS reset
+img {
+	display: inline-block;
+	margin: 0;
+}
