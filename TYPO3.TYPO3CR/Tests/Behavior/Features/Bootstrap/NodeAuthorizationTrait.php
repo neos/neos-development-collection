@@ -21,7 +21,9 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * A trait with shared step definitions for common use by other contexts
  *
- * Note that this trait requires that the TYPO3CR authorization service must be available in $this->nodeAuthorizationService;
+ * Note that this trait requires the following properties to be available:
+ * * $this->nodeAuthorizationService
+ * * $this->nodeTypeManager
  *
  * Note: This trait expects the IsolatedBehatStepsTrait and the NodeOperationsTrait to be available!
  */
@@ -32,6 +34,12 @@ trait NodeAuthorizationTrait {
 	 * @var \TYPO3\TYPO3CR\Service\AuthorizationService
 	 */
 	protected $nodeAuthorizationService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 */
+	protected $nodeTypeManager;
 
 	/**
 	 * @param string $expectedResult
@@ -293,6 +301,29 @@ trait NodeAuthorizationTrait {
 			}
 		}
 	}
+
+	/**
+	 * @Then /^I should get the list of all available node types as denied node types for this node from the node authorization service$/
+	 */
+	public function iShouldGetTheListOfAllAvailableNodeTypesAsDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService() {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__);
+		} else {
+			$availableNodeTypes = $this->nodeTypeManager->getNodeTypes();
+			$deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
+
+			if (count($availableNodeTypes) !== count($deniedNodeTypeNames)) {
+				Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+			}
+
+			foreach ($availableNodeTypes as $nodeType) {
+				if (in_array($nodeType, $deniedNodeTypeNames) === FALSE) {
+					Assert::fail('The following node type name has not been returned by the node authorization service: ' . $nodeType);
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * @param string $not

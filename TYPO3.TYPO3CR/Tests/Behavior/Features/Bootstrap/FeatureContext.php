@@ -19,6 +19,9 @@ use Flowpack\Behat\Tests\Behat\FlowContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
@@ -47,8 +50,9 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext {
 		/** @var FlowContext $flowContext */
 		$flowContext = $this->getSubcontext('flow');
 		$this->objectManager = $flowContext->getObjectManager();
-		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
-		$this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
+		$this->environment = $this->objectManager->get(Environment::class);
+		$this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+		$this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
 		$this->setupSecurity();
 	}
 

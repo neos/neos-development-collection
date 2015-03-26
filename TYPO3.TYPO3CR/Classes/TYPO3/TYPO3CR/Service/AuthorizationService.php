@@ -16,6 +16,7 @@ use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
@@ -44,6 +45,12 @@ class AuthorizationService {
 	 * @var PrivilegeManagerInterface
 	 */
 	protected $privilegeManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeTypeManager
+	 */
+	protected $nodeTypeManager;
 
 	/**
 	 * Returns TRUE if the currently authenticated user is allowed to edit the given $node, otherwise FALSE
@@ -75,6 +82,8 @@ class AuthorizationService {
 	public function getNodeTypeNamesDeniedForCreation(NodeInterface $referenceNode) {
 		$privilegeSubject = new CreateNodePrivilegeSubject($referenceNode);
 
+		$allNodeTypes = $this->nodeTypeManager->getNodeTypes();
+
 		$deniedCreationNodeTypes = array();
 		$grantedCreationNodeTypes = array();
 		$abstainedCreationNodeTypes = array();
@@ -84,12 +93,15 @@ class AuthorizationService {
 				if (!$createNodePrivilege->matchesSubject($privilegeSubject)) {
 					continue;
 				}
+
+				$affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== array() ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
+
 				if ($createNodePrivilege->isGranted()) {
-					$grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $createNodePrivilege->getCreationNodeTypes());
+					$grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $affectedNodeTypes);
 				} elseif ($createNodePrivilege->isDenied()) {
-					$deniedCreationNodeTypes = array_merge($deniedCreationNodeTypes, $createNodePrivilege->getCreationNodeTypes());
+					$deniedCreationNodeTypes = array_merge($deniedCreationNodeTypes, $affectedNodeTypes);
 				} else {
-					$abstainedCreationNodeTypes = array_merge($abstainedCreationNodeTypes, $createNodePrivilege->getCreationNodeTypes());
+					$abstainedCreationNodeTypes = array_merge($abstainedCreationNodeTypes, $affectedNodeTypes);
 				}
 			}
 		}

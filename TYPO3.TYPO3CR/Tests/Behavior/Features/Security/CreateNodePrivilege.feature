@@ -10,6 +10,9 @@ Feature: Privilege to restrict creation of nodes
         'TYPO3.TYPO3CR:Service':
           matcher: 'isDescendantNodeOf("/sites/typo3cr/service/") && nodeIsOfType("TYPO3.TYPO3CR.Testing:Document") && createdNodeIsOfType("TYPO3.Neos.NodeTypes:Text")'
 
+        'TYPO3.TYPO3CR:Company':
+          matcher: 'isDescendantNodeOf("68ca0dcd-2afb-ef0e-1106-a5301e65b8a0")'
+
     roles:
       'TYPO3.Flow:Everybody':
         privileges: []
@@ -25,7 +28,9 @@ Feature: Privilege to restrict creation of nodes
           -
             privilegeTarget: 'TYPO3.TYPO3CR:Service'
             permission: GRANT
-
+          -
+            privilegeTarget: 'TYPO3.TYPO3CR:Company'
+            permission: GRANT
       """
     And I have the following nodes:
       | Identifier                           | Path                        | Node Type                      | Properties           | Workspace |
@@ -70,3 +75,21 @@ Feature: Privilege to restrict creation of nodes
     Then I should get the following list of denied node types for this node from the node authorization service:
       | nodeTypeName              |
       | TYPO3.Neos.NodeTypes:Text |
+
+  @Isolated @fixtures
+  Scenario: creating text nodes under company is granted to administrators
+    Given I am authenticated with role "TYPO3.TYPO3CR:Administrator"
+    And I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace |
+      | live      |
+    Then I should be granted to create a new "mynewtext" child node of type "TYPO3.Neos.NodeTypes:Text"
+    And I should get TRUE when asking the node authorization service if creating a new "mynewtext" child node of type "TYPO3.Neos.NodeTypes:Text" is granted
+
+  @Isolated @fixtures
+  Scenario: creating text nodes under company is denied to everybody
+    Given I am not authenticated
+    And I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace |
+      | live      |
+    Then I should not be granted to create a new "mynewtext" child node of type "TYPO3.Neos.NodeTypes:Text"
+    And I should get the list of all available node types as denied node types for this node from the node authorization service
