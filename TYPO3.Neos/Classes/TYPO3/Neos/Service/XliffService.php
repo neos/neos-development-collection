@@ -17,6 +17,7 @@ use TYPO3\Flow\I18n\Xliff\XliffParser;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Service as LocalizationService;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The XLIFF service provides methods to find XLIFF files and parse them to json
@@ -49,6 +50,12 @@ class XliffService {
 	 * @var VariableFrontend
 	 */
 	protected $xliffToJsonTranslationsCache;
+
+	/**
+	 * @Flow\InjectConfiguration(path="userInterface.scrambleTranslatedLabels", package="TYPO3.Neos")
+	 * @var boolean
+	 */
+	protected $scrambleTranslatedLabels = FALSE;
 
 	/**
 	 * Return the json array for a given locale, sourceCatalog, xliffPath and package.
@@ -91,6 +98,11 @@ class XliffService {
 		$arrayData = array();
 		foreach ($parsedData['translationUnits'] as $key => $value) {
 			$valueToStore = $value[0]['target'] ? $value[0]['target'] : $value[0]['source'];
+
+			if ($this->scrambleTranslatedLabels) {
+				$valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
+			}
+
 			$this->setArrayDataValue($arrayData, $packageKey . '.' . $sourceName . '.' . str_replace ('.', '-', $key), $valueToStore);
 		}
 

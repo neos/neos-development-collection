@@ -12,4 +12,5 @@ These are the user interface development guidelines of TYPO3 Neos.
 	BackendModules
 	JavaScriptStyleGuide
 	EmberTipsTricks
+	Translation
 
