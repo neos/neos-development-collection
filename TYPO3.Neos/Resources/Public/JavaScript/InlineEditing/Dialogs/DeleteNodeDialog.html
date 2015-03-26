@@ -1,7 +1,7 @@
 <div class="neos-modal">
 	<div class="neos-modal-header">
 		<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1a" value="Do you really want to delete"}} {{#if view._node.nodeLabel}}"{{view._node.nodeLabel}}"{{else}}{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1b" value="this element"}}{{/if}}?</div>
+		<div class="neos-header">{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1a" value="Do you really want to delete"}} {{#if view.strippedLabel}}"{{view.strippedLabel}}"{{else}}{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1b" value="this element"}}{{/if}}?</div>
 	</div>
 	<div>
 		<div class="neos-subheader">

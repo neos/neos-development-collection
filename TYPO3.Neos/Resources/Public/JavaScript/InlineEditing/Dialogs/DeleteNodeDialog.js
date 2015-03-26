@@ -18,7 +18,7 @@ define(
 			_node: null,
 
 			strippedLabel: function() {
-				return $(this.get('_node.nodeLabel')).text());
+				return $(this.get('_node.nodeLabel')).text();
 			}.property('_node.nodeLabel'),
 
 			'delete': function() {
