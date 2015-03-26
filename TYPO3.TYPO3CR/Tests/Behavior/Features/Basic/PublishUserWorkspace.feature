@@ -48,3 +48,48 @@ Feature: Publish user workspace
     Then I expect to have 0 unpublished nodes for the following context:
       | Workspace |
       | live      |
+
+  @fixtures
+  Scenario: When changing the node type of a node in my workspace to one that has fewer properties it is possible to publish it
+    And I have the following NodeTypes configuration:
+    """
+    'unstructured':
+      constraints:
+        nodeTypes:
+          '*': TRUE
+
+    'TYPO3.TYPO3CR.Testing:Page':
+      properties:
+        pageTitle:
+          type: 'string'
+        additionalTitle:
+          type: 'string'
+    """
+    And I create the following nodes:
+      | Path        | Node Type                  | Properties                                                   | Workspace |
+      | /sites/home | TYPO3.TYPO3CR.Testing:Page | {"pageTitle": "neos", "additionalTitle": "The neos project"} | live      |
+    When I get a node by path "/sites/home" with the following context:
+      | Workspace |
+      | user-demo |
+    And I set the node property "pageTitle" to "Homepage"
+    When I have the following NodeTypes configuration:
+    """
+    'unstructured':
+      constraints:
+        nodeTypes:
+          '*': TRUE
+
+    'TYPO3.TYPO3CR.Testing:Page':
+      properties:
+        pageTitle:
+          type: 'string'
+    """
+    And I publish the workspace "user-demo"
+    Then I expect to have 0 unpublished nodes for the following context:
+      | Workspace |
+      | user-demo |
+    And I get a node by path "/sites/home" with the following context:
+      | Workspace |
+      | live      |
+    Then the node should not have a property "additionalTitle"
+    Then the node property "pageTitle" should be "Homepage"
