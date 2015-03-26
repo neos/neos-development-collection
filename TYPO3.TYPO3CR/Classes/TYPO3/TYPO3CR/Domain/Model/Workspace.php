@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
@@ -70,6 +71,18 @@ class Workspace {
 	 * @var \TYPO3\TYPO3CR\Service\PublishingServiceInterface
 	 */
 	protected $publishingService;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeService
+	 */
+	protected $nodeService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\Now
+	 */
+	protected $now;
 
 	/**
 	 * Constructs a new workspace
@@ -222,7 +235,9 @@ class Workspace {
 			if ($nodeWasMoved) {
 				$targetNodeData->setPath($node->getPath(), FALSE);
 			}
+			$targetNodeData->setLastPublicationDateTime($this->now);
 			$node->setNodeData($targetNodeData);
+			$this->nodeService->cleanUpProperties($node);
 		}
 		$this->nodeDataRepository->remove($sourceNodeData);
 	}
@@ -249,6 +264,8 @@ class Workspace {
 			$this->nodeDataRepository->remove($nodeData);
 		} else {
 			$nodeData->setWorkspace($targetWorkspace);
+			$nodeData->setLastPublicationDateTime($this->now);
+			$this->nodeService->cleanUpProperties($node);
 		}
 		$node->setNodeDataIsMatchingContext(NULL);
 	}

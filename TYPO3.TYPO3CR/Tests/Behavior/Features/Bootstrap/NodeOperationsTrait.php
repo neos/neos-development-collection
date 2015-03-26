@@ -474,6 +474,22 @@ trait NodeOperationsTrait {
 	}
 
 	/**
+	 * @Then /^the node should (not |)have a property "([^"]*)"$/
+	 */
+	public function theNodeShouldHaveAProperty($not, $propertyName) {
+		if ($this->isolated === TRUE) {
+			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($propertyName), 'string', escapeshellarg($propertyValue)));
+		} else {
+			$currentNode = $this->iShouldHaveOneNode();
+			$expected = FALSE;
+			if (empty($not)) {
+				$expected = TRUE;
+			}
+			Assert::assertEquals($expected, $currentNode->hasProperty($propertyName));
+		}
+	}
+
+	/**
 	 * @Then /^the node should be hidden in index$/
 	 */
 	public function theNodeShouldBeHiddenInIndex() {

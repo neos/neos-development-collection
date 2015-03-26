@@ -80,20 +80,20 @@ class NodeService {
 	}
 
 	/**
-	 * Remove all property not configured in the current Node Type
+	 * Remove all properties not configured in the current Node Type.
+	 * This will not do anything on Nodes marked as removed as those could be queued up for deletion
+	 * which contradicts updates (that would be necessary to remove the properties).
 	 *
 	 * @param NodeInterface $node
 	 * @return void
 	 */
 	public function cleanUpProperties(NodeInterface $node) {
-		$nodeTypeProperties = $node->getNodeType()->getProperties();
-		foreach ($node->getProperties() as $name => $value) {
-			if (!isset($nodeTypeProperties[$name])) {
-				try {
-					$this->systemLogger->log(sprintf('Remove property "%s" from: %s', $name, (string)$node), LOG_DEBUG, NULL, 'TYPO3CR');
-					$node->removeProperty($name);
-				} catch (NodeException $exception) {
-
+		if ($node->isRemoved() === FALSE) {
+			$nodeData = $node->getNodeData();
+			$nodeTypeProperties = $node->getNodeType()->getProperties();
+			foreach ($node->getProperties() as $name => $value) {
+				if (!isset($nodeTypeProperties[$name])) {
+					$nodeData->removeProperty($name);
 				}
 			}
 		}
