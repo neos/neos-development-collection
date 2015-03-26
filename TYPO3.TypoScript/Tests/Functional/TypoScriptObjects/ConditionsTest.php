@@ -29,7 +29,11 @@ class ConditionsTest extends AbstractTypoScriptObjectTest {
 			array('conditions/objectAtLeastOneFalse', NULL),
 			array('conditions/objectThis', NULL),
 			array('conditions/rawArray', array('key' => 'foo', 'nullValue' => NULL)),
-			array('conditions/attributes', ' key="foo"')
+			array('conditions/attributes', ' key="foo"'),
+			array('conditions/supportForConditionInProcess', 'wrappedValue'),
+			array('conditions/supportForConditionInProcessFalse', 'originalValue'),
+			array('conditions/supportForConditionInProcessWithAdvancedProcess', 'wrappedValue'),
+			array('conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue')
 		);
 	}
 
