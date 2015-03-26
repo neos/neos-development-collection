@@ -54,3 +54,37 @@ conditions.attributes = TYPO3.TypoScript:Attributes {
 	keyNotSet = 'bar'
 	keyNotSet.@if.cond = FALSE
 }
+
+conditions.supportForConditionInProcess = TYPO3.TypoScript:Value {
+	value = 'originalValue'
+	@process.wrap {
+		expression = 'wrappedValue'
+		@if.doIfTrue = TRUE
+	}
+}
+
+conditions.supportForConditionInProcessFalse = TYPO3.TypoScript:Value {
+	value = 'originalValue'
+	@process.wrap {
+		expression = 'wrappedValue'
+		@if.skipIfFalse = FALSE
+	}
+	@process.wrap2 = ${'wrappedValue2'}
+	@process.wrap2.@if.skipIfFalse = FALSE
+}
+
+conditions.supportForConditionInProcessWithAdvancedProcess = TYPO3.TypoScript:Value {
+	value = 'originalValue'
+	@process.wrap = TYPO3.TypoScript:Value {
+		value = 'wrappedValue'
+		@if.doIfTrue = TRUE
+	}
+}
+
+conditions.supportForConditionInProcessWithAdvancedProcessFalse = TYPO3.TypoScript:Value {
+	value = 'originalValue'
+	@process.wrap = TYPO3.TypoScript:Value {
+		value = 'wrappedValue'
+		@if.skipIfFalse = FALSE
+	}
+}

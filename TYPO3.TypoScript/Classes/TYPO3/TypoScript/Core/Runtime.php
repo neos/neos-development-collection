@@ -377,15 +377,10 @@ class Runtime {
 
 		try {
 			if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
-				if (isset($typoScriptConfiguration['__meta']['if'])) {
-					foreach ($typoScriptConfiguration['__meta']['if'] as $conditionKey => $conditionValue) {
-						$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, NULL);
-						if ($conditionValue === FALSE) {
-							$finallyClosure();
-							$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
-							return NULL;
-						}
-					}
+				if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $contextObject) === FALSE) {
+					$finallyClosure();
+					$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+					return NULL;
 				}
 
 				$evaluatedExpression = $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
@@ -424,13 +419,8 @@ class Runtime {
 			}
 
 			$evaluateObject = TRUE;
-			if (isset($typoScriptConfiguration['__meta']['if'])) {
-				foreach ($typoScriptConfiguration['__meta']['if'] as $conditionKey => $conditionValue) {
-					$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-					if ($conditionValue === FALSE) {
-						$evaluateObject = FALSE;
-					}
-				}
+			if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $tsObject) === FALSE) {
+				$evaluateObject = FALSE;
 			}
 
 			if ($evaluateObject) {
@@ -452,19 +442,7 @@ class Runtime {
 			return $this->handleRenderingException($typoScriptPath, $exception, TRUE);
 		}
 
-		if (isset($typoScriptConfiguration['__meta']['process'])) {
-			$positionalArraySorter = new PositionalArraySorter($typoScriptConfiguration['__meta']['process'], '__meta.position');
-			foreach ($positionalArraySorter->getSortedKeys() as $key) {
-				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
-				if (isset($typoScriptConfiguration['__meta']['process'][$key]['expression'])) {
-					$processorPath .= '/expression';
-				}
-
-				$this->pushContext('value', $output);
-				$output = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $tsObject);
-				$this->popContext();
-			}
-		}
+		$output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $tsObject);
 
 		$output = $runtimeContentCache->postProcess($cacheCtx, $tsObject, $output);
 		$finallyClosure($needToPopContext);
@@ -639,32 +617,19 @@ class Runtime {
 	 * Evaluate a simple value or eel expression with processors
 	 *
 	 * @param string $typoScriptPath the TypoScript path up to now
-	 * @param array $value TypoScript configuration for the value
+	 * @param array $valueConfiguration TypoScript configuration for the value
 	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
 	 * @return mixed The result of the evaluation
 	 */
-	protected function evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, array $value, AbstractTypoScriptObject $contextObject = NULL) {
-		if (isset($value['__eelExpression'])) {
-			$evaluatedValue = $this->evaluateEelExpression($value['__eelExpression'], $contextObject);
+	protected function evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, array $valueConfiguration, AbstractTypoScriptObject $contextObject = NULL) {
+		if (isset($valueConfiguration['__eelExpression'])) {
+			$evaluatedValue = $this->evaluateEelExpression($valueConfiguration['__eelExpression'], $contextObject);
 		} else {
 			// must be simple type, as this is the only place where this method is called.
-			$evaluatedValue = $value['__value'];
+			$evaluatedValue = $valueConfiguration['__value'];
 		}
 
-		if (isset($value['__meta']['process'])) {
-			$positionalArraySorter = new PositionalArraySorter($value['__meta']['process'], '__meta.position');
-			foreach ($positionalArraySorter->getSortedKeys() as $key) {
-
-				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
-				if (isset($value['__meta']['process'][$key]['expression'])) {
-					$processorPath .= '/expression';
-				}
-
-				$this->pushContext('value', $evaluatedValue);
-				$evaluatedValue = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
-				$this->popContext();
-			}
-		}
+		$evaluatedValue = $this->evaluateProcessors($evaluatedValue, $valueConfiguration, $typoScriptPath, $contextObject);
 
 		return $evaluatedValue;
 	}
@@ -695,6 +660,61 @@ class Runtime {
 		}
 
 		return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
+	}
+
+	/**
+	 * Evaluate processors on given value.
+	 *
+	 * @param mixed $valueToProcess
+	 * @param array $configurationWithEventualProcessors
+	 * @param string $typoScriptPath
+	 * @param AbstractTypoScriptObject $contextObject
+	 * @return mixed
+	 */
+	protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $typoScriptPath, AbstractTypoScriptObject $contextObject = NULL) {
+		if (isset($configurationWithEventualProcessors['__meta']['process'])) {
+			$processorConfiguration = $configurationWithEventualProcessors['__meta']['process'];
+			$positionalArraySorter = new PositionalArraySorter($processorConfiguration, '__meta.position');
+			foreach ($positionalArraySorter->getSortedKeys() as $key) {
+				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
+				if ($this->evaluateIfCondition($processorConfiguration[$key], $processorPath, $contextObject) === FALSE) {
+					continue;
+				}
+				if (isset($processorConfiguration[$key]['expression'])) {
+					$processorPath .= '/expression';
+				}
+
+				$this->pushContext('value', $valueToProcess);
+				$result = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+				if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
+					$valueToProcess = $result;
+				}
+				$this->popContext();
+			}
+		}
+
+		return $valueToProcess;
+	}
+
+	/**
+	 * Evaluate eventually existing meta "@if" conditionals inside the given configuration and path.
+	 *
+	 * @param array $configurationWithEventualIf
+	 * @param string $configurationPath
+	 * @param AbstractTypoScriptObject $contextObject
+	 * @return boolean
+	 */
+	protected function evaluateIfCondition($configurationWithEventualIf, $configurationPath, AbstractTypoScriptObject $contextObject = NULL) {
+		if (isset($configurationWithEventualIf['__meta']['if'])) {
+			foreach ($configurationWithEventualIf['__meta']['if'] as $conditionKey => $conditionValue) {
+				$conditionValue = $this->evaluateInternal($configurationPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, $contextObject);
+				if ($conditionValue === FALSE) {
+					return FALSE;
+				}
+			}
+		}
+
+		return TRUE;
 	}
 
 	/**
