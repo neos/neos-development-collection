@@ -23,12 +23,16 @@ function(
 		_loadOptionsOnChange: function() {
 			var that = this,
 				nodePath = InspectorController.get('nodeProperties.plugin'),
-				workspaceName = InspectorController.get('nodeProperties.__workspaceName');
+				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name'),
+				dimensions = $('#neos-document-metadata').data('neos-context-dimensions'),
+				dimensionValues = Object.keys(dimensions).reduce(function (previous, key) {
+					return previous + (previous ? '&' : '') + key + '=' + dimensions[key].join(',');
+				}, '');
 
 			if (!Ember.empty(nodePath)) {
 				this._loadValuesFromController(
 					$('link[rel="neos-pluginviews"]').attr('href'),
-					[{name: 'node', value: nodePath + '@' + workspaceName}],
+					[{name: 'node', value: nodePath + '@' + workspaceName + (dimensionValues !== '' ? ';' + dimensionValues : '')}],
 					function(results) {
 						var values = {},
 							placeholder,
