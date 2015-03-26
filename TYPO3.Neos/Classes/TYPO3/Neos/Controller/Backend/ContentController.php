@@ -250,38 +250,40 @@ class ContentController extends ActionController {
 	 *
 	 * @param NodeInterface $node
 	 * @return string
+	 *
+	 * @Flow\IgnoreValidation("node")
 	 */
-	public function pluginViewsAction(NodeInterface $node) {
+	public function pluginViewsAction(NodeInterface $node = NULL) {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		$pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
 		$views = array();
-		/** @var $pluginViewDefinition \TYPO3\Neos\Domain\Model\PluginViewDefinition */
-		foreach ($pluginViewDefinitions as $pluginViewDefinition) {
-			$label = $pluginViewDefinition->getLabel();
+		if ($node !== NULL) {
+			/** @var $pluginViewDefinition \TYPO3\Neos\Domain\Model\PluginViewDefinition */
+			$pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
+			foreach ($pluginViewDefinitions as $pluginViewDefinition) {
+				$label = $pluginViewDefinition->getLabel();
 
-			$views[$pluginViewDefinition->getName()] = array(
-				'label' => $label
-			);
+				$views[$pluginViewDefinition->getName()] = array('label' => $label);
 
-			$pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
-			if ($pluginViewNode === NULL) {
-				continue;
+				$pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
+				if ($pluginViewNode === NULL) {
+					continue;
+				}
+				$q = new FlowQuery(array($pluginViewNode));
+				$page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+				$uri = $this->uriBuilder
+					->reset()
+					->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
+				$pageTitle = $page->getProperty('title');
+				$views[$pluginViewDefinition->getName()] = array(
+					'label' => sprintf('"%s"', $label, $pageTitle),
+					'pageNode' => array(
+						'title' => $pageTitle,
+						'path' => $page->getPath(),
+						'uri' => $uri
+					)
+				);
 			}
-			$q = new FlowQuery(array($pluginViewNode));
-			$page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-			$uri = $this->uriBuilder
-						->reset()
-						->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
-			$pageTitle = $page->getProperty('title');
-			$views[$pluginViewDefinition->getName()] = array(
-				'label' => sprintf('"%s"', $label, $pageTitle),
-				'pageNode' => array(
-					'title' => $pageTitle,
-					'path' => $page->getPath(),
-					'uri' => $uri
-				)
-			);
 		}
 		return json_encode((object) $views);
 	}
