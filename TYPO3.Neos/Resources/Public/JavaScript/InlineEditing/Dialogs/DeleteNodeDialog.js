@@ -28,7 +28,7 @@ define(
 			 */
 			nodeLabel: function() {
 				if (this.get('_entity').get('typo3:title') !== undefined) {
-					return this.get('_entity').get('typo3:title');
+					return $(this.get('_entity').get('typo3:title')).text();
 				}
 
 				return '';
@@ -37,10 +37,6 @@ define(
 			cancel: function() {
 				this.destroy();
 			},
-
-			strippedLabel: function() {
-				return $(this.get('_node.nodeLabel')).text());
-			}.property('_node.nodeLabel'),
 
 			'delete': function() {
 				this.get('_node').$element.remove();
