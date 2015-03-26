@@ -58,6 +58,7 @@ class FeatureContext extends MinkContext {
 		$this->objectManager = $this->getSubcontext('flow')->getObjectManager();
 		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
 		$this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
+		$this->setupSecurity();
 	}
 
 	/**
