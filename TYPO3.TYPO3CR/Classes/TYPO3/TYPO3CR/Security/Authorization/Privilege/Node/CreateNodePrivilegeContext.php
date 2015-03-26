@@ -15,8 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An Eel context matching expression for the CreateNodePrivilege
- *
- * @Flow\Proxy(false)
  */
 class CreateNodePrivilegeContext extends NodePrivilegeContext {
 

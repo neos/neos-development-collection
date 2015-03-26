@@ -11,7 +11,7 @@ Feature: Privilege to restrict editing of nodes
             matcher: 'isDescendantNodeOf("/sites/typo3cr/service") && nodeIsOfType("TYPO3.TYPO3CR.Testing:Document")'
 
           'TYPO3.TYPO3CR:EditEventNodes':
-            matcher: 'isDescendantNodeOf("/sites/typo3cr/events")'
+            matcher: 'isDescendantNodeOf("11d3aded-fb1a-70e7-1412-0b465b11fcd8")'
 
       roles:
         'TYPO3.Flow:Everybody':
@@ -34,11 +34,11 @@ Feature: Privilege to restrict editing of nodes
       """
 
     And I have the following nodes:
-      | Identifier                           | Path                        | Node Type                      | Properties           | Workspace |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                      | unstructured                   |                      | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr              | TYPO3.TYPO3CR.Testing:Document | {"title": "Home"}    | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company      | TYPO3.TYPO3CR.Testing:Document | {"title": "Company"} | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service      | TYPO3.TYPO3CR.Testing:Document | {"title": "Service"} | live      |
+      | Identifier                           | Path                        | Node Type                      | Properties                                             | Workspace |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                      | unstructured                   |                                                        | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr              | TYPO3.TYPO3CR.Testing:Document | {"title": "Home"}                                      | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company      | TYPO3.TYPO3CR.Testing:Document | {"title": "Company"}                                   | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service      | TYPO3.TYPO3CR.Testing:Document | {"title": "Service"}                                   | live      |
       | 11d3aded-fb1a-70e7-1412-0b465b11fcd8 | /sites/typo3cr/events       | TYPO3.TYPO3CR.Testing:Document | {"title": "Events", "description": "Some cool event"}  | live      |
 
   @Isolated @fixtures

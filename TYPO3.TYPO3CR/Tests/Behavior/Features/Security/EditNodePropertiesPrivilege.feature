@@ -14,7 +14,7 @@ Feature: Privilege to restrict editing of node properties
           matcher: 'nodeIsOfType("TYPO3.TYPO3CR.Testing:Document") && nodePropertyIsIn(["hidden", "hiddenBeforeDateTime", "hiddenAfterDateTime", "hiddenInIndex"])'
 
         'TYPO3.TYPO3CR:Service:HideServiceTeaser':
-          matcher: 'isDescendantNodeOf("/sites/typo3cr/service/teaser") && nodePropertyIsIn("hidden")'
+          matcher: 'isDescendantNodeOf("82246a9e-be03-3c06-018d-e4c68103ecd3") && nodePropertyIsIn("hidden")'
 
     roles:
       'TYPO3.Flow:Everybody':

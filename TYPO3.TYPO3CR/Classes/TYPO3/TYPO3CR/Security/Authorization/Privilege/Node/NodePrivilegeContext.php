@@ -12,14 +12,27 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context as SecurityContext;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
  * An Eel context matching expression for the node privileges
- *
- * @Flow\Proxy(false)
  */
 class NodePrivilegeContext {
+
+	/**
+	 * @Flow\Inject
+	 * @var ContextFactory
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var SecurityContext
+	 */
+	protected $securityContext;
 
 	/**
 	 * @var NodeInterface
@@ -42,15 +55,26 @@ class NodePrivilegeContext {
 	}
 
 	/**
-	 * @param string $nodePath
+	 * @param string $nodePathOrIdentifier
 	 * @return boolean
 	 */
-	public function isDescendantNodeOf($nodePath) {
+	public function isDescendantNodeOf($nodePathOrIdentifier) {
 		if ($this->node === NULL) {
 			return TRUE;
 		}
-		$testedNodePath = rtrim($this->node->getPath(), '/') . '/';
-		return substr($testedNodePath, 0, strlen($nodePath)) === $nodePath;
+		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
+			if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
+				return TRUE;
+			}
+			$node = $this->getNodeByIdentifier($nodePathOrIdentifier);
+			if ($node === NULL) {
+				return FALSE;
+			}
+			$nodePath = $node->getPath() . '/';
+		} else {
+			$nodePath = rtrim($nodePathOrIdentifier, '/') . '/';
+		}
+		return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
 	}
 
 	/**
@@ -82,5 +106,19 @@ class NodePrivilegeContext {
 		}
 
 		return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
+	}
+
+	/**
+	 * @param string $nodeIdentifier
+	 * @return NodeInterface
+	 */
+	protected function getNodeByIdentifier($nodeIdentifier) {
+		$context = $this->contextFactory->create();
+		$node = NULL;
+		$this->securityContext->withoutAuthorizationChecks(function() use ($nodeIdentifier, $context, &$node) {
+			$node = $context->getNodeByIdentifier($nodeIdentifier);
+		});
+		$context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, NULL);
+		return $node;
 	}
 }

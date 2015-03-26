@@ -17,6 +17,8 @@ use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerat
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeException;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
@@ -59,15 +61,23 @@ class ConditionGenerator extends EntityConditionGenerator {
 	}
 
 	/**
-	 * @param string $path
+	 * @param string $nodePathOrIdentifier
 	 * @return PropertyConditionGenerator
 	 */
-	public function isDescendantNodeOf($path) {
+	public function isDescendantNodeOf($nodePathOrIdentifier) {
+		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
+			$node = $this->getNodeByIdentifier($nodePathOrIdentifier);
+			if ($node === NULL) {
+				return NULL;
+			}
+			$nodePath = $node->getPath();
+		} else {
+			$nodePath = rtrim($nodePathOrIdentifier, '/');
+		}
 		$propertyConditionGenerator1 = new PropertyConditionGenerator('path');
 		$propertyConditionGenerator2 = new PropertyConditionGenerator('path');
 
-		$path = rtrim($path, '/');
-		return new DisjunctionGenerator(array($propertyConditionGenerator1->like($path . '/%'), $propertyConditionGenerator2->equals($path)));
+		return new DisjunctionGenerator(array($propertyConditionGenerator1->like($nodePath . '/%'), $propertyConditionGenerator2->equals($nodePath)));
 	}
 
 	/**
@@ -97,5 +107,19 @@ class ConditionGenerator extends EntityConditionGenerator {
 			$workspaceNames = array($workspaceNames);
 		}
 		return $propertyConditionGenerator->in($workspaceNames);
+	}
+
+	/**
+	 * @param string $nodeIdentifier
+	 * @return NodeInterface
+	 */
+	protected function getNodeByIdentifier($nodeIdentifier) {
+		$context = $this->contextFactory->create();
+		$node = NULL;
+		$this->securityContext->withoutAuthorizationChecks(function() use ($nodeIdentifier, $context, &$node) {
+			$node = $context->getNodeByIdentifier($nodeIdentifier);
+		});
+		$context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, NULL);
+		return $node;
 	}
 }

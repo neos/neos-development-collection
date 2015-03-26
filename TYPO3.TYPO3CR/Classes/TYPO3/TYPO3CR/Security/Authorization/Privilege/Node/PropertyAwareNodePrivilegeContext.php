@@ -16,8 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * An Eel context matching expression for the node privileges including
  * node properties.
- *
- * @Flow\Proxy(false)
  */
 class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext {
 
