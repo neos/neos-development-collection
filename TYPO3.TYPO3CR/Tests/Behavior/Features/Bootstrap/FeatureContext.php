@@ -49,6 +49,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext {
 		$this->objectManager = $flowContext->getObjectManager();
 		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
 		$this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
+		$this->setupSecurity();
 	}
 
 	/**
