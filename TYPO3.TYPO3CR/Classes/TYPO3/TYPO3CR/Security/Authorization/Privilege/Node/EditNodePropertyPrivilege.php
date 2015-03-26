@@ -11,46 +11,28 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * An Eel context matching expression for the node privileges including
- * node properties.
- *
- * @Flow\Proxy(false)
+ * A privilege to restrict editing of node properties.
  */
-class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext {
+class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege {
 
 	/**
 	 * @var array
 	 */
-	protected $propertyNames = array();
+	protected $methodNameToPropertyMapping = array(
+		'setName' => 'name',
+		'setHidden' => 'hidden',
+		'setHiddenInIndex' => 'hiddenInIndex',
+		'setHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
+		'setHiddenAfterDateTime' => 'hiddenAfterDateTime',
+		'setAccessRoles' => 'accessRoles',
+	);
 
 	/**
-	 * @param array $propertyNames
-	 * @return boolean
+	 * @return string
 	 */
-	public function nodePropertyIsIn($propertyNames) {
-		if (!is_array($propertyNames)) {
-			$propertyNames = array($propertyNames);
-		}
-		$this->propertyNames = $propertyNames;
-		return TRUE;
+	protected function buildMethodPrivilegeMatcher() {
+		return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getNodePropertyNames() {
-		return $this->propertyNames;
-	}
-
-	/**
-	 * Whether or not this context is bound to specific properties
-	 *
-	 * @return boolean
-	 */
-	public function hasProperties() {
-		return $this->propertyNames !== array();
-	}
 }

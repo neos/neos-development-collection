@@ -19,6 +19,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
@@ -115,5 +116,45 @@ class AuthorizationService {
 	public function isGrantedToReadNodeProperty(NodeInterface $node, $propertyName) {
 		$privilegeSubject = new PropertyAwareNodePrivilegeSubject($node, NULL, $propertyName);
 		return $this->privilegeManager->isGranted(ReadNodePropertyPrivilege::class, $privilegeSubject);
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @param string $propertyName
+	 * @return boolean
+	 */
+	public function isGrantedToEditNodeProperty(NodeInterface $node, $propertyName) {
+		$privilegeSubject = new PropertyAwareNodePrivilegeSubject($node, NULL, $propertyName);
+		return $this->privilegeManager->isGranted(EditNodePropertyPrivilege::class, $privilegeSubject);
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @return string[] Array of granted node property names
+	 */
+	public function getDeniedNodePropertiesForEditing(NodeInterface $node) {
+		$privilegeSubject = new PropertyAwareNodePrivilegeSubject($node);
+
+		$deniedNodePropertyNames = array();
+		$grantedNodePropertyNames = array();
+		$abstainedNodePropertyNames = array();
+		foreach ($this->securityContext->getRoles() as $role) {
+			/** @var EditNodePropertyPrivilege $editNodePropertyPrivilege */
+			foreach ($role->getPrivilegesByType(EditNodePropertyPrivilege::class) as $editNodePropertyPrivilege) {
+				if (!$editNodePropertyPrivilege->matchesSubject($privilegeSubject)) {
+					continue;
+				}
+				if ($editNodePropertyPrivilege->isGranted()) {
+					$grantedNodePropertyNames = array_merge($grantedNodePropertyNames, $editNodePropertyPrivilege->getNodePropertyNames());
+				} elseif ($editNodePropertyPrivilege->isDenied()) {
+					$deniedNodePropertyNames = array_merge($deniedNodePropertyNames, $editNodePropertyPrivilege->getNodePropertyNames());
+				} else {
+					$abstainedNodePropertyNames = array_merge($abstainedNodePropertyNames, $editNodePropertyPrivilege->getNodePropertyNames());
+				}
+			}
+		}
+
+		$implicitlyDeniedNodePropertyNames = array_diff($abstainedNodePropertyNames, $grantedNodePropertyNames);
+		return array_merge($implicitlyDeniedNodePropertyNames, $deniedNodePropertyNames);
 	}
 }
