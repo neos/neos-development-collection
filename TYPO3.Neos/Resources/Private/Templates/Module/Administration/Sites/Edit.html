@@ -11,16 +11,18 @@
 			<div class="neos-row-fluid">
 				<fieldset class="neos-span5">
 					<legend>{neos:backend.translate(id: 'site', value: 'Site')}</legend>
-					<div class="neos-control-group">
+					<div class="neos-control-group{f:validation.ifHasErrors(for: 'site.name', then: ' neos-error')}">
 						<label class="neos-control-label" for="name">{neos:backend.translate(id: 'name', value: 'Name')}</label>
 						<div class="neos-controls">
 							<f:form.textfield property="name" id="name" class="neos-span12" required="true" />
+							<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'site.name'}"/>
 						</div>
 					</div>
-					<div class="neos-control-group">
+					<div class="neos-control-group{f:validation.ifHasErrors(for: 'newSiteNodeName', then: ' neos-error')}">
 						<label class="neos-control-label" for="node-name">{neos:backend.translate(id: 'rootNodeName', value: 'Root node name')}</label>
 						<div class="neos-controls">
-							<f:form.textfield name="newSiteNodeName" id="node-name" value="{site.nodeName}" additionalAttributes="{pattern: '^[a-z0-9\-]+$'}" class="neos-span12" />
+							<f:form.textfield name="newSiteNodeName" id="node-name" value="{site.nodeName}" additionalAttributes="{pattern: '^[a-z0-9\-]+$'}" class="neos-span12" required="true" />
+							<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'newSiteNodeName'}"/>
 						</div>
 					</div>
 					<p>

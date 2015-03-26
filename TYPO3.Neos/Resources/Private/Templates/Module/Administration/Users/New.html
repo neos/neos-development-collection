@@ -10,24 +10,26 @@
 			<fieldset class="neos-span5">
 				<legend>User data</legend>
 
-				<div class="neos-control-group">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'username', then: ' neos-error')}">
 					<label class="neos-control-label" for="username">Username</label>
 					<div class="neos-controls">
-						<f:form.textfield name="username" id="username" class="neos-span12" autofocus="true"/>
+						<f:form.textfield name="username" id="username" class="neos-span12" autofocus="true" required="true" />
+						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'username'}"/>
 					</div>
 				</div>
 
-				<div class="neos-control-group">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 					<label class="neos-control-label" for="password[0]">Password</label>
 					<div class="neos-controls">
-						<f:form.password name="password[0]" id="password[0]" class="neos-span12" />
+						<f:form.password name="password[0]" id="password[0]" class="neos-span12" additionalAttributes="{required: true}" />
 					</div>
 				</div>
 
-				<div class="neos-control-group">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 					<label class="neos-control-label" for="password[1]">Repeat password</label>
 					<div class="neos-controls">
-						<f:form.password name="password[1]" id="password[1]" class="neos-span12" />
+						<f:form.password name="password[1]" id="password[1]" class="neos-span12" additionalAttributes="{required: true}" />
+						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'password'}"/>
 					</div>
 				</div>
 
@@ -47,10 +49,11 @@
 			<fieldset class="neos-span5 neos-offset1">
 				<legend>Personal Data</legend>
 
-				<div class="neos-control-group">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'user.name', then: ' neos-error')}">
 					<label class="neos-control-label" for="firstName">First Name</label>
 					<div class="neos-controls">
-						<f:form.textfield property="name.firstName" id="firstName" class="neos-span12" />
+						<f:form.textfield property="name.firstName" id="firstName" class="neos-span12" required="true" />
+						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'user.name'}"/>
 					</div>
 				</div>
 				<div class="neos-control-group">
@@ -60,9 +63,8 @@
 					</div>
 				</div>
 			</fieldset>
-		</div>
-		<div class="neos-row-fluid">
-			<fieldset class="neos-span5">
+
+			<fieldset class="neos-span5 neos-offset1">
 				<legend>User Preferences</legend>
 
 				<div class="neos-control-group">
