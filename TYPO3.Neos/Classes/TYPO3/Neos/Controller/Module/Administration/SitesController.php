@@ -196,10 +196,16 @@ class SitesController extends AbstractModuleController {
 
 			$generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
 			$generatorService->generateSitePackage($packageKey, $siteName);
-			$this->packageManager->activatePackage($packageKey);
 		} else {
 			$packageKey = $site;
 		}
+
+		$deactivatedSitePackages = $this->deactivateAllOtherSitePackages($packageKey);
+		if (count($deactivatedSitePackages) > 0) {
+			$this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', implode(', ', $deactivatedSitePackages), $packageKey)));
+		}
+
+		$this->packageManager->activatePackage($packageKey);
 
 		if ($packageKey !== '') {
 			try {
@@ -360,5 +366,26 @@ class SitesController extends AbstractModuleController {
 	protected function unsetLastVisitedNodeAndRedirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
 		$this->session->putData('lastVisitedNode', NULL);
 		parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
+	}
+
+	/**
+	 * If site packages already exist and are active, we will deactivate them in order to prevent
+	 * interactions with the newly created or imported package (like Content Dimensions being used).
+	 *
+	 * @param string $activePackageKey Package key of one package which should stay active
+	 * @return array deactivated site packages
+	 */
+	protected function deactivateAllOtherSitePackages($activePackageKey) {
+		$sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', NULL, 'typo3-flow-site');
+		$deactivatedSitePackages = array();
+
+		foreach (array_keys($sitePackagesToDeactivate) as $packageKey) {
+			if ($packageKey !== $activePackageKey) {
+				$this->packageManager->deactivatePackage($packageKey);
+				$deactivatedSitePackages[] = $packageKey;
+			}
+		}
+
+		return $deactivatedSitePackages;
 	}
 }
