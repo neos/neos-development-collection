@@ -117,6 +117,8 @@ class NodeController extends ActionController {
 		$this->view->assign('value', $node);
 
 		if ($node->getContext()->getWorkspaceName() !== 'live' && $this->hasAccessToBackend()) {
+			$this->response->setHeader('Cache-Control', 'no-cache');
+
 			$editPreviewMode = $this->getEditPreviewModeTypoScriptRenderingPath($node);
 			if ($editPreviewMode !== NULL) {
 				$this->view->assign('editPreviewMode', $editPreviewMode);
