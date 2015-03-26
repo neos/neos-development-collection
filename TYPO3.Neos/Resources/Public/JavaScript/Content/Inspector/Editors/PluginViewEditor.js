@@ -21,7 +21,7 @@ function(
 		_loadOptionsOnChange: function() {
 			var that = this,
 				nodePath = InspectorController.get('nodeProperties.plugin'),
-				workspaceName = InspectorController.get('nodeProperties.__workspacename');
+				workspaceName = $('#neos-page-metainformation').data('context-__workspacename');
 
 			if (!Ember.empty(nodePath)) {
 				this._loadValuesFromController(
