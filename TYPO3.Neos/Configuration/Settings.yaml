@@ -125,6 +125,10 @@ TYPO3:
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 
+      # switch on to see all translated labels getting scrambled. You now can localize
+      # everything that is still readable.
+      scrambleTranslatedLabels: FALSE
+
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
