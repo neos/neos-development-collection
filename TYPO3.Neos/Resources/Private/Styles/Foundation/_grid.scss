@@ -1,0 +1,21 @@
+//
+// Grid system
+// --------------------------------------------------
+
+
+// Fixed (940px)
+@include grid-core($gridColumnWidth, $gridGutterWidth);
+
+// Fluid (940px)
+@include grid-fluid($fluidGridColumnWidth, $fluidGridGutterWidth);
+
+// Reset utility classes due to specificity
+[class*="neos-span"].neos-hide,
+.neos-row-fluid [class*="neos-span"].neos-hide {
+  display: none;
+}
+
+[class*="neos-span"].neos-pull-right,
+.neos-row-fluid [class*="neos-span"].neos-pull-right {
+  float: right;
+}
