@@ -29,16 +29,16 @@
 			<target xml:lang="fr">Fermer</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target xml:lang="fr">Copie</target></trans-unit>
+			<target xml:lang="fr">Copie</target><alt-trans><target xml:lang="fr">Copier</target></alt-trans></trans-unit>
       <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
 			<target xml:lang="fr">Couper</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="fr">Masquer / afficher</target></trans-unit>
+			<target xml:lang="fr">Masquer / afficher</target><alt-trans><target xml:lang="fr">Cacher / afficher</target></alt-trans></trans-unit>
       <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="fr">Navigation</target></trans-unit>
+			<target xml:lang="fr">Navigation</target><alt-trans><target xml:lang="fr">Naviguer</target></alt-trans></trans-unit>
       <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
 			<target xml:lang="fr">OK</target></trans-unit>
@@ -47,7 +47,7 @@
 			<target xml:lang="fr">Supprimer</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="fr">Rafraîchir</target></trans-unit>
+			<target xml:lang="fr">Rafraîchir</target><alt-trans><target xml:lang="fr">Actualiser</target></alt-trans></trans-unit>
       <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
 			<target xml:lang="fr">Effacer</target></trans-unit>
@@ -62,7 +62,7 @@
 			<target xml:lang="fr">Ignorer</target><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="fr">Annuler</target><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Annuler</target><alt-trans><target xml:lang="fr">Annuler les modifications</target></alt-trans><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
 			<target xml:lang="fr">Modifier le titre</target></trans-unit>
@@ -74,7 +74,7 @@
 			<target xml:lang="fr">Edition</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="fr">Navigation</target></trans-unit>
+			<target xml:lang="fr">Navigation</target><alt-trans><target xml:lang="fr">Naviguer</target></alt-trans></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
 			<target xml:lang="fr">Nouveau après</target></trans-unit>
