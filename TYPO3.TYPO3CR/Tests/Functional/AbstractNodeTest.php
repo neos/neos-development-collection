@@ -22,6 +22,17 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
+	 * If enabled, this test case will modify the behavior of the security framework
+	 * in a way which allows for easy simulation of roles and authentication.
+	 *
+	 * Note: this will implicitly enable testable HTTP as well.
+	 *
+	 * @var boolean
+	 * @api
+	 */
+	protected $testableSecurityEnabled = TRUE;
+
+	/**
 	 * @var string the Nodes fixture
 	 */
 	protected $fixtureFileName;
