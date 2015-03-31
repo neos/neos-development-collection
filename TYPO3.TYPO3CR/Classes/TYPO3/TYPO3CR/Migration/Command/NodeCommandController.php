@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  *                                                                        */
 
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
@@ -85,7 +86,12 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine();
 			$this->outputLine('Successfully applied migration.');
 		} catch (MigrationException $e) {
+			$this->outputLine();
 			$this->outputLine('Error: ' . $e->getMessage());
+			$this->quit(1);
+		} catch (DatabaseException $exception) {
+			$this->outputLine();
+			$this->outputLine('An exception occurred during the migration, run a ./flow doctrine:migrate and run the migration again.');
 			$this->quit(1);
 		}
 	}

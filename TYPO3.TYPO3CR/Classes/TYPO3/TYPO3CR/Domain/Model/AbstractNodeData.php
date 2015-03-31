@@ -32,7 +32,7 @@ abstract class AbstractNodeData {
 	/**
 	 * Properties of this Node
 	 *
-	 * @ORM\Column(type="objectarray")
+	 * @ORM\Column(type="flow_json_array")
 	 * @var array<mixed>
 	 */
 	protected $properties = array();
@@ -97,6 +97,7 @@ abstract class AbstractNodeData {
 	/**
 	 * List of role names which are required to access this node at all
 	 *
+	 * @ORM\Column(type="json_array")
 	 * @var array<string>
 	 */
 	protected $accessRoles = array();

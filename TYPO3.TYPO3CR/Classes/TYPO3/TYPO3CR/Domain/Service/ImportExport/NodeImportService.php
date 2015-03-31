@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
 use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
@@ -596,13 +597,13 @@ class NodeImportService {
 		$dimensionValues = $nodeData['dimensionValues'];
 		$dimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
 
-		$objectArrayDataTypeHandler = \TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::getType(\TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::OBJECTARRAY);
+		$jsonPropertiesDataTypeHandler = JsonArrayType::getType(JsonArrayType::FLOW_JSON_ARRAY);
 
 		// post-process node data
 		$nodeData['dimensionsHash'] = $dimensionsHash;
-		$nodeData['dimensionValues'] = $objectArrayDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
-		$nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
-		$nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
+		$nodeData['dimensionValues'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
+		$nodeData['properties'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
+		$nodeData['accessRoles'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['accessRoles'], $connection->getDatabasePlatform());
 
 		$connection->prepare('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
 			. ' WHERE nodedata IN ('
