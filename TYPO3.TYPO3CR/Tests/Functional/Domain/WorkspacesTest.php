@@ -64,9 +64,6 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->currentTestWorkspaceName = uniqid('user-', TRUE);
 
 		$this->setUpRootNodeAndRepository();
-
-		$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
-		$this->liveWorkspace = $this->workspaceRepository->findOneByName('live');
 	}
 
 	/**
@@ -80,6 +77,8 @@ class WorkspacesTest extends FunctionalTestCase {
 	protected function setUpRootNodeAndRepository() {
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
 		$personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
+		// Make sure the Workspace was created.
+		$this->liveWorkspace = $personalContext->getWorkspace()->getBaseWorkspace();
 		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
 		$this->rootNode = $personalContext->getNode('/');
 
@@ -161,6 +160,7 @@ class WorkspacesTest extends FunctionalTestCase {
 		$parentNode->createNode('childNodeA');
 		$childNodeB = $parentNode->createNode('childNodeB');
 		$childNodeB->createNode('childNodeC');
+		$this->persistenceManager->persistAll();
 		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
@@ -196,6 +196,7 @@ class WorkspacesTest extends FunctionalTestCase {
 		$childNodeA = $parentNode->createNode('childNode1A');
 		$childNodeB = $parentNode->createNode('childNode1B');
 		$childNodeB->createNode('childNode1C');
+		$this->persistenceManager->persistAll();
 		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
@@ -267,7 +268,6 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$this->liveWorkspace = $this->workspaceRepository->findOneByName('live');
 		$this->rootNode->getWorkspace()->publishNode($teaserNode, $this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
