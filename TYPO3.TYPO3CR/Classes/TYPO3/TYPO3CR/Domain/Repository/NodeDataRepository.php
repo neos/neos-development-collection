@@ -97,6 +97,11 @@ class NodeDataRepository extends Repository {
 	/**
 	 * @var array
 	 */
+	protected $highestIndexCache = [];
+
+	/**
+	 * @var array
+	 */
 	protected $defaultOrderings = array(
 		'index' => QueryInterface::ORDER_ASCENDING
 	);
@@ -344,6 +349,7 @@ class NodeDataRepository extends Repository {
 				if ($nextHigherIndex === NULL) {
 						// $referenceNode is last node, so we can safely add an index at the end by incrementing the reference index.
 					$newIndex = $referenceIndex + 100;
+					$this->setHighestIndexInParentPath($parentPath, $newIndex);
 				} elseif ($nextHigherIndex > ($referenceIndex + 1)) {
 						// $referenceNode is not last node, but there is free space left between $referenceNode and following sibling.
 					$newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
@@ -354,14 +360,15 @@ class NodeDataRepository extends Repository {
 					$nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
 					if ($nextHigherIndex === NULL) {
 						$newIndex = $referenceIndex + 100;
+						$this->setHighestIndexInParentPath($parentPath, $newIndex);
 					} else {
 						$newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
 					}
 				}
 			break;
 			case self::POSITION_LAST:
-				$highestIndex = $this->findHighestIndexInLevel($parentPath);
-				$newIndex = $highestIndex + 100;
+				$nextFreeIndex = $this->findNextFreeIndexInParentPath($parentPath);
+				$newIndex = $nextFreeIndex;
 			break;
 			default:
 				throw new \InvalidArgumentException('Invalid position for new node index given.', 1329729088);
@@ -640,18 +647,31 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
-	 * Finds the currently highest index in the level below the given parent path
+	 * Finds the next free index on the level below the given parent path
 	 * across all workspaces.
 	 *
 	 * @param string $parentPath Path of the parent node specifying the level in the node tree
-	 * @return integer The currently highest index
+	 * @return integer The next available index
 	 */
-	protected function findHighestIndexInLevel($parentPath) {
-		$this->persistEntities();
-		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
-		$query->setParameter('parentPathHash', md5($parentPath));
-		return $query->getSingleScalarResult() ?: 0;
+	protected function findNextFreeIndexInParentPath($parentPath) {
+		if (!isset($this->highestIndexCache[$parentPath])) {
+			/** @var \Doctrine\ORM\Query $query */
+			$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
+			$query->setParameter('parentPathHash', md5($parentPath));
+			$this->highestIndexCache[$parentPath] = $query->getSingleScalarResult() ?: 0;
+		}
+
+		$this->highestIndexCache[$parentPath] += 100;
+		return $this->highestIndexCache[$parentPath];
+	}
+
+	/**
+	 * @param string $parentPath
+	 * @param integer $highestIndex
+	 * @return void
+	 */
+	protected function setHighestIndexInParentPath($parentPath, $highestIndex) {
+		$this->highestIndexCache[$parentPath] = $highestIndex;
 	}
 
 	/**
@@ -677,15 +697,18 @@ class NodeDataRepository extends Repository {
 	/**
 	 * Returns the next-higher-index seen from the given reference index in the
 	 * level below the specified parent path. If no node with a higher than the
-	 * given index exists at that level, the reference index is returned.
+	 * given index exists at that level, NULL is returned.
 	 *
 	 * The result is determined workspace-agnostic.
 	 *
 	 * @param string $parentPath Path of the parent node specifying the level in the node tree
 	 * @param integer $referenceIndex Index of a known node
-	 * @return integer The currently next higher index
+	 * @return integer The currently next higher index or NULL if no node with a higher index exists
 	 */
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
+		if (isset($this->highestIndexCache[$parentPath]) && $this->highestIndexCache[$parentPath] === $referenceIndex) {
+			NULL;
+		}
 		$this->persistEntities();
 		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
@@ -892,6 +915,7 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	public function flushNodeRegistry() {
+		$this->highestIndexCache = [];
 		$this->addedNodes = new \SplObjectStorage();
 		$this->removedNodes = new \SplObjectStorage();
 	}
@@ -1062,8 +1086,7 @@ class NodeDataRepository extends Repository {
 	 * @see flushNodeRegistry()
 	 */
 	public function reset() {
-		$this->addedNodes = new \SplObjectStorage();
-		$this->removedNodes = new \SplObjectStorage();
+		$this->flushNodeRegistry();
 	}
 
 	/**

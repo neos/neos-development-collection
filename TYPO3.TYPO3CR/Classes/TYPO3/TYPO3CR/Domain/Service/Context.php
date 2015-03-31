@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache;
 
 /**
@@ -41,7 +42,7 @@ class Context {
 	protected $nodeFactory;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @var Workspace
 	 */
 	protected $workspace;
 
@@ -123,25 +124,28 @@ class Context {
 	 * Returns the current workspace.
 	 *
 	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
+	 * @return Workspace The workspace or NULL
 	 * @api
 	 */
 	public function getWorkspace($createWorkspaceIfNecessary = TRUE) {
 		if ($this->workspace === NULL) {
-			$this->workspace = $this->workspaceRepository->findOneByName($this->workspaceName);
+			$this->workspace = $this->workspaceRepository->findByIdentifier($this->workspaceName);
 			if (!$this->workspace) {
 				if ($createWorkspaceIfNecessary === FALSE) {
 					return NULL;
 				}
-				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+				$liveWorkspace = NULL;
+				if ($this->workspaceName !== 'live') {
+					$liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+				}
 				if (!$liveWorkspace) {
-					$liveWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
+					$liveWorkspace = new Workspace('live');
 					$this->workspaceRepository->add($liveWorkspace);
 				}
 				if ($this->workspaceName === 'live') {
 					$this->workspace = $liveWorkspace;
 				} else {
-					$this->workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace($this->workspaceName, $liveWorkspace);
+					$this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
 					$this->workspaceRepository->add($this->workspace);
 				}
 			}
