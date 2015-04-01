@@ -345,8 +345,15 @@ define(
 										InspectorController.set('nodeProperties.title', title);
 										InspectorController.apply();
 									}
+									var isCurrentNode = node.data.key === that.get('pageNodePath');
+									node.data.href = result.data.nextUri;
+									node.data.title = title;
 									node.data.tooltip = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
+									node.render();
+									if (isCurrentNode) {
+										ContentModule.loadPage(node.data.href);
+									}
 								} else {
 									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 									node.setLazyNodeStatus(that.statusCodes.error);
