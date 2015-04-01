@@ -234,7 +234,7 @@ class NodeConverter extends AbstractTypeConverter {
 					}
 				break;
 				case 'array':
-					$nodePropertyValue = json_decode($nodePropertyValue);
+					$nodePropertyValue = json_decode($nodePropertyValue, TRUE);
 				break;
 			}
 			if (substr($nodePropertyName, 0, 1) === '_') {
