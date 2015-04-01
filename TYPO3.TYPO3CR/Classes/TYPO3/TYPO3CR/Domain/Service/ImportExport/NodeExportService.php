@@ -369,7 +369,7 @@ class NodeExportService {
 						$this->writeConvertedElement($propertyValue, $key, 'entry' . $key);
 					}
 				} else {
-					if (is_object($propertyValue) && $data[$propertyName] instanceof \DateTime) {
+					if ($propertyValue instanceof \DateTime) {
 						$this->xmlWriter->writeAttribute('__classname', 'DateTime');
 					}
 					$this->xmlWriter->text($this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration));

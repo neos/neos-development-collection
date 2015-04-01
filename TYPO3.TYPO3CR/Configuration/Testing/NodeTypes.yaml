@@ -172,4 +172,4 @@
     description:
       type: string
     someDate:
-      type: \DateTime
+      type: DateTime
