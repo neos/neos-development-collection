@@ -190,6 +190,30 @@ class NodeConverterTest extends UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function convertFromDecodesJsonEncodedArraysAsAssociative() {
+		$contextPath = '/foo/bar@user-demo';
+		$nodePath = '/foo/bar';
+		$nodeTypeProperties = array(
+			'quux' => array(
+				'type' => 'array'
+			)
+		);
+		$decodedPropertyValue = array('foo' => 'bar');
+		$source = array(
+			'__contextNodePath' => $contextPath,
+			'quux' => json_encode($decodedPropertyValue)
+		);
+
+		$mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
+
+		$mockNode->expects($this->once())->method('setProperty')->with('quux', $decodedPropertyValue);
+
+		$this->nodeConverter->convertFrom($source, NULL, array(), $this->mockConverterConfiguration);
+	}
+
+	/**
 	 * @param string $nodePath
 	 * @param array $nodeTypeProperties
 	 * @return NodeInterface
