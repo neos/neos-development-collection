@@ -208,6 +208,7 @@
   ui:
     label: 'Plugin View'
     group: 'plugins'
+    icon: 'icon-puzzle-piece'
     position: 100
     inspector:
       groups:
