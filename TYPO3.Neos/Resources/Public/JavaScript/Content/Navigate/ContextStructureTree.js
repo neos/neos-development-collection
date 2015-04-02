@@ -45,6 +45,8 @@ define(
 		loadingDepth: 0,
 		unmodifiableLevels: 2,
 		refreshOnPageNodePathChanged: true,
+		desiredNewPosition: 'inside',
+		desiredPastePosition: 'inside',
 
 		publishableNodes: PublishableNodes,
 
