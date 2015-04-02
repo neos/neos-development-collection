@@ -21,7 +21,7 @@
 			</f:for>
 		</f:then>
 		<f:else>
-			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
+			<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 				<f:if condition="{node.context.workspace.name} != 'live'">
 					<li>Empty menu</li>
 				</f:if>
