@@ -184,6 +184,7 @@
   ui:
     label: 'Plugin View'
     group: 'plugins'
+    icon: 'icon-puzzle-piece'
     inspector:
       groups:
         pluginViews:
