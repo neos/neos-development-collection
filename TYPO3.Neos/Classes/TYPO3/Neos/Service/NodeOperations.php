@@ -101,15 +101,19 @@ class NodeOperations {
 			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
 		}
 
-		$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position), $node->getName());
-		if ($nodeName !== $node->getName()) {
-			$currentParentPath = $node->getParentPath();
-			$currentParentPath = $currentParentPath !== '/' ? $currentParentPath . '/' : $currentParentPath;
-			while ($this->nodeService->nodePathExistsInAnyContext($currentParentPath . $nodeName)) {
-				$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position), $node->getName());
+		$designatedParentNode = $this->getDesignatedParentNode($targetNode, $position);
+		// If we stay inside the same parent we basically just reorder, no rename needed or wanted.
+		if ($designatedParentNode !== $node->getParent()) {
+			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
+			if ($nodeName !== $node->getName()) {
+				$currentParentPath = $node->getParentPath();
+				$currentParentPath = $currentParentPath !== '/' ? $currentParentPath . '/' : $currentParentPath;
+				while ($this->nodeService->nodePathExistsInAnyContext($currentParentPath . $nodeName)) {
+					$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
+				}
+				// FIXME: This can be removed if $node->move* supports additionally changing the name of the node.
+				$node->setName($nodeName);
 			}
-			// FIXME: This can be removed if $node->move* support additionally changing the name of the node.
-			$node->setName($nodeName);
 		}
 
 		switch ($position) {
