@@ -157,8 +157,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 		}
 
-		$possibleShadowedNodeData = $this->nodeData->move($path, $this->context->getWorkspace());
-		$this->setNodeData($possibleShadowedNodeData);
+		$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE);
+		/** @var $nodeData NodeData */
+		foreach ($nodeDataVariants as $nodeData) {
+			$possibleShadowedNodeData = $nodeData->move($path, $this->context->getWorkspace());
+			$isCurrentNodeInContext = $nodeData === $this->nodeData;
+			if ($isCurrentNodeInContext) {
+				$this->setNodeData($possibleShadowedNodeData);
+			}
+		}
 
 		$this->nodeDataRepository->persistEntities();
 		$this->context->getFirstLevelNodeCache()->flush();
