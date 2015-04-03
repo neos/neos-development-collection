@@ -10,6 +10,7 @@ Feature: Move node
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | live      |
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | live      |
       | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"} | live      |
+      | dc48851c-f653-ebd5-4d35-3feac69a3e09 | /sites/typo3cr/about   | TYPO3.TYPO3CR.Testing:Page | {"title": "About"}   | live      |
 
   @fixtures
   Scenario: Move a node (into) in user workspace and get by path
@@ -53,6 +54,7 @@ Feature: Move node
     Then I should have the following nodes:
       | Path                   |
       | /sites/typo3cr/company |
+      | /sites/typo3cr/about   |
     And I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
@@ -202,6 +204,7 @@ Feature: Move node
       | Path                   | Properties           |
       | /sites/typo3cr/service | {"title": "Service"} |
       | /sites/typo3cr/company | {"title": "Company"} |
+      | /sites/typo3cr/about   | {"title": "About"}   |
     When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
       | Workspace |
       | live      |
@@ -209,6 +212,7 @@ Feature: Move node
       | Path                   | Properties           |
       | /sites/typo3cr/company | {"title": "Company"} |
       | /sites/typo3cr/service | {"title": "Service"} |
+      | /sites/typo3cr/about   | {"title": "About"}   |
 
   @fixtures
   Scenario: Reordering nodes can be published
@@ -224,6 +228,7 @@ Feature: Move node
       | Path                   | Properties           |
       | /sites/typo3cr/service | {"title": "Service"} |
       | /sites/typo3cr/company | {"title": "Company"} |
+      | /sites/typo3cr/about   | {"title": "About"}   |
     And the unpublished node count in workspace "user-admin" should be 0
 
   @fixtures
@@ -264,6 +269,37 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Moving a node on the same level in user workspace
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node after the node with path "/sites/typo3cr/about"
+    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 3 nodes
+    Then I should have the following nodes:
+      | Path                           |
+      | /sites/typo3cr/service |
+      | /sites/typo3cr/about   |
+      | /sites/typo3cr/company |
+
+    When I get a node by path "/sites/typo3cr/about" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    And I move the node before the node with path "/sites/typo3cr/service"
+    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 3 nodes
+    Then I should have the following nodes:
+      | Path                           |
+      | /sites/typo3cr/about   |
+      | /sites/typo3cr/service |
+      | /sites/typo3cr/company |
 
   @fixtures
   Scenario: Move a new document node in user workspace and publish
