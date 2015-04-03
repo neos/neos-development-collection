@@ -1117,10 +1117,11 @@ class NodeDataRepository extends Repository {
 			}
 			$dimensionPositions[] = $workspacePosition;
 
+			$identifier = $node->getIdentifier();
 			// Yes, it seems to work comparing arrays that way!
-			if (!isset($minimalDimensionPositionsByIdentifier[$node->getIdentifier()]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$node->getIdentifier()]) {
-				$foundNodes[$node->getIdentifier()] = $node;
-				$minimalDimensionPositionsByIdentifier[$node->getIdentifier()] = $dimensionPositions;
+			if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
+				$foundNodes[$identifier] = $node;
+				$minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
 			}
 		}
 
