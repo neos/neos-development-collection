@@ -711,7 +711,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
-		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers, $this->context);
+		$value = $this->nodeData->getProperty($propertyName);
 		if (!empty($value)) {
 			$nodeType = $this->getNodeType();
 			if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
@@ -720,8 +720,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 					case 'references' :
 						if ($returnNodesAsIdentifiers === FALSE) {
 							$nodes = array();
-							foreach ($value as $nodeData) {
-								$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+							foreach ($value as $nodeIdentifier) {
+								$node = $this->context->getNodeByIdentifier($nodeIdentifier);
 								// $node can be NULL if the node is not visible according to the current content context:
 								if ($node !== NULL) {
 									$nodes[] = $node;
@@ -732,7 +732,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 						break;
 					case 'reference' :
 						if ($returnNodesAsIdentifiers === FALSE) {
-							$value = $this->nodeFactory->createFromNodeData($value, $this->context);
+							$value = $this->context->getNodeByIdentifier($value);
 						}
 						break;
 					default:

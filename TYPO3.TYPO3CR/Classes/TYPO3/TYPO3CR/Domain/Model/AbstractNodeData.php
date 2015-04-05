@@ -219,18 +219,13 @@ abstract class AbstractNodeData {
 	 * there if it is gettable.
 	 *
 	 * @param string $propertyName Name of the property
-	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context An optional Context if $returnNodesAsIdentifiers === TRUE
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
 	 */
-	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE, \TYPO3\TYPO3CR\Domain\Service\Context $context = NULL) {
+	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
-				// TODO: The next two lines are workarounds, actually a NodeData cannot correctly return references but should always return identifier. Node should then apply the context and return the real Node objects.
-				$dimensions = $context !== NULL ? $context->getDimensions() : array();
-				$workspace = $context !== NULL ? $context->getWorkspace() : $this->getWorkspace();
 				switch($this->getNodeType()->getPropertyType($propertyName)) {
 					case 'references' :
 						$nodeDatas = array();
@@ -244,28 +239,13 @@ abstract class AbstractNodeData {
 								$nodeIdentifier = $nodeIdentifier->getIdentifier();
 								$valueNeedsToBeFixed = TRUE;
 							}
-							if ($returnNodesAsIdentifiers === FALSE) {
-								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $workspace, $dimensions);
-								if ($nodeData instanceof NodeData) {
-									$nodeDatas[] = $nodeData;
-								}
-							} else {
-								$nodeDatas[] = $nodeIdentifier;
-							}
-						}
-						if ($valueNeedsToBeFixed === TRUE) {
-							$fixedValue = array();
-							foreach ($value as $nodeIdentifier) {
-								if ($nodeIdentifier instanceof NodeData) {
-									$fixedValue[] = $nodeIdentifier->getIdentifier();
-								} else {
-									$fixedValue[] = $nodeIdentifier;
-								}
-							}
-							$this->properties[$propertyName] = $fixedValue;
-							$this->addOrUpdate();
+							$nodeDatas[] = $nodeIdentifier;
 						}
 						$value = $nodeDatas;
+						if ($valueNeedsToBeFixed === TRUE) {
+							$this->properties[$propertyName] = $value;
+							$this->addOrUpdate();
+						}
 						break;
 					case 'reference' :
 						// in cases where a reference is a NodeData instance, fix this
@@ -273,14 +253,6 @@ abstract class AbstractNodeData {
 							$value = $value->getIdentifier();
 							$this->properties[$propertyName] = $value;
 							$this->addOrUpdate();
-						}
-						if ($returnNodesAsIdentifiers === FALSE) {
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $workspace, $dimensions);
-							if ($nodeData instanceof NodeData) {
-								$value = $nodeData;
-							} else {
-								$value = NULL;
-							}
 						}
 						break;
 				}
@@ -319,18 +291,16 @@ abstract class AbstractNodeData {
 	 * If the node has a content object attached, the properties will be fetched
 	 * there.
 	 *
-	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context An optional Context if $returnNodesAsIdentifiers === TRUE
 	 * @return array Property values, indexed by their name
 	 */
-	public function getProperties($returnNodesAsIdentifiers = FALSE, \TYPO3\TYPO3CR\Domain\Service\Context $context = NULL) {
+	public function getProperties() {
 		if (is_object($this->contentObjectProxy)) {
 			return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		}
 
 		$properties = array();
 		foreach (array_keys($this->properties) as $propertyName) {
-			$properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers, $context);
+			$properties[$propertyName] = $this->getProperty($propertyName);
 		}
 		return $properties;
 	}

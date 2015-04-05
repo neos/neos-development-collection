@@ -693,7 +693,7 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function similarize(AbstractNodeData $sourceNode, $isCopy = FALSE) {
 		$this->properties = array();
-		foreach ($sourceNode->getProperties(TRUE) as $propertyName => $propertyValue) {
+		foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
 			$this->setProperty($propertyName, $propertyValue);
 		}
 
