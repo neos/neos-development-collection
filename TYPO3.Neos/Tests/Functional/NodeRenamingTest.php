@@ -47,14 +47,14 @@ class NodeRenamingTest extends AbstractNodeTest {
 	 */
 	public function renamedNodeInPersonalWorkspaceDoesNotRenameInLiveWorkspace() {
 		$teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
-		$teaserTestWorkspace->setName('teaserNew');
+		$teaserTestWorkspace->setName('teaser-new');
 
 		$this->assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy42a'), 'renaming was not successful in user workspace');
-		$this->assertNotNull($this->nodeInTestWorkspace->getNode('teaserNew/dummy42a'), 'renaming was not successful in user workspace (2)');
+		$this->assertNotNull($this->nodeInTestWorkspace->getNode('teaser-new/dummy42a'), 'renaming was not successful in user workspace (2)');
 
 		$this->assertNotNull($this->node->getNode('teaser'),  'the renamed teaser should not shine through in the live workspace for subelements (1) ');
 		$this->assertNotNull($this->node->getNode('teaser/dummy42a'), 'the renamed teaser should not shine through in the live workspace for subelements (2)');
-		$this->assertNull($this->node->getNode('teaserNew/dummy42a'));
+		$this->assertNull($this->node->getNode('teaser-new/dummy42a'));
 	}
 
 	/**
