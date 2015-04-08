@@ -3,7 +3,7 @@
 	<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}"></script>
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>
-			<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+			<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js?bust={neos:backend.javascriptBuiltVersion()}', package: 'TYPO3.Neos')}"></script>
 		</f:then>
 		<f:else>
 			<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
