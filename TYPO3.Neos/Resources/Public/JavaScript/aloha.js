@@ -248,7 +248,8 @@ function(
 		require(
 			{
 				context: 'aloha',
-				baseUrl: alohaBaseUrl
+				baseUrl: alohaBaseUrl,
+				urlArgs: Configuration.get('neosJavascriptVersion') ? 'bust=' +  Configuration.get('neosJavascriptVersion') : ''
 			},
 			['aloha']
 		);

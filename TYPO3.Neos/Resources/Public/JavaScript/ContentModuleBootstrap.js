@@ -13,7 +13,7 @@ requirePaths['text'] = '../Library/requirejs/text';
 require(
 	{
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
-		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
+		urlArgs: window.T3Configuration.neosJavascriptVersion ? 'bust=' +  window.T3Configuration.neosJavascriptVersion : '',
 		paths: requirePaths,
 		context: 'neos'
 	},

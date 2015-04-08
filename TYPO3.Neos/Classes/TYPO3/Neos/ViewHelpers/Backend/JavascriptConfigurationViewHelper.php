@@ -69,6 +69,12 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	protected $securityContext;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+	 */
+	protected $backendAssetsUtility;
+
+	/**
 	 * @Flow\InjectConfiguration("userInterface.defaultLocale")
 	 * @var string
 	 */
@@ -102,12 +108,15 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		$neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://TYPO3.Neos/Public/JavaScript');
 
 		$configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
+		if ($this->backendAssetsUtility->shouldLoadMinifiedJavascript()) {
+			$configuration[] = 'window.T3Configuration.neosJavascriptVersion = ' . json_encode($this->backendAssetsUtility->getJavascriptBuiltVersion()) . ';';
+		}
 
 		if ($this->bootstrap->getContext()->isDevelopment()) {
 			$configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
 		}
 
-		return (implode("\n", $configuration));
+		return implode("\n", $configuration);
 	}
 
 	/**
