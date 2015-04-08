@@ -91,10 +91,6 @@ class NodeTemplate extends AbstractNodeData {
 			return $this->name;
 		}
 
-		if ($this->hasProperty('title') && strlen($this->getProperty('title')) > 0) {
-			return \TYPO3\TYPO3CR\Utility::renderValidNodeName($this->getProperty('title'));
-		}
-
 		return uniqid('node');
 	}
 
