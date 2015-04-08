@@ -21,7 +21,7 @@ interface NodeInterface {
 	/**
 	 * Regex pattern which matches a node path without any context information
 	 */
-	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
+	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/';
 
 	/**
 	 * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
@@ -58,7 +58,7 @@ interface NodeInterface {
 	/**
 	 * Regex pattern which matches a Node Name (ie. segment of a node path)
 	 */
-	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
+	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/';
 
 	/**
 	 * Set the name of the node to $newName, keeping it's position as it is
