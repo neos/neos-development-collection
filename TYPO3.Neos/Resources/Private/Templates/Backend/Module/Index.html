@@ -31,8 +31,8 @@
 
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>
-			<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
-			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+			<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js?bust={neos:backend.javascriptBuiltVersion()}', package: 'TYPO3.Neos')}"></script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css?bust={neos:backend.cssBuiltVersion()}', package: 'TYPO3.Neos')}" />
 		</f:then>
 		<f:else>
 			<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
