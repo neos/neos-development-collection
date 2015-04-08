@@ -226,35 +226,10 @@ abstract class AbstractNodeData {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
-				switch($this->getNodeType()->getPropertyType($propertyName)) {
-					case 'references' :
-						$nodeDatas = array();
-						if (!is_array($value)) {
-							$value = array();
-						}
-						$valueNeedsToBeFixed = FALSE;
-						foreach ($value as $nodeIdentifier) {
-							// in cases where a reference is a NodeData instance, fix this
-							if ($nodeIdentifier instanceof NodeData) {
-								$nodeIdentifier = $nodeIdentifier->getIdentifier();
-								$valueNeedsToBeFixed = TRUE;
-							}
-							$nodeDatas[] = $nodeIdentifier;
-						}
-						$value = $nodeDatas;
-						if ($valueNeedsToBeFixed === TRUE) {
-							$this->properties[$propertyName] = $value;
-							$this->addOrUpdate();
-						}
-						break;
-					case 'reference' :
-						// in cases where a reference is a NodeData instance, fix this
-						if ($value instanceof NodeData) {
-							$value = $value->getIdentifier();
-							$this->properties[$propertyName] = $value;
-							$this->addOrUpdate();
-						}
-						break;
+				if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
+					if (!is_array($value)) {
+						$value = array();
+					}
 				}
 			}
 			return $value;
