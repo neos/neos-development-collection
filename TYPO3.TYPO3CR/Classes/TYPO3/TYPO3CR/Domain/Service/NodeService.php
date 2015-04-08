@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Exception\NodeException;
@@ -119,6 +120,24 @@ class NodeService {
 	 */
 	public function nodePathExistsInAnyContext($nodePath) {
 		return $this->nodeDataRepository->pathExists($nodePath);
+	}
+
+	/**
+	 * Checks if the given node path can be used for the given node.
+	 *
+	 * @param string $nodePath
+	 * @param NodeInterface $node
+	 * @return boolean
+	 */
+	public function nodePathAvailableForNode($nodePath, NodeInterface $node) {
+		/** @var NodeData $existingNode */
+		$existingNodes = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), TRUE);
+		foreach ($existingNodes as $existingNode) {
+			if ($existingNode->getMovedTo() !== NULL && $existingNode->getMovedTo()->getPath() === $node->getPath()) {
+				return TRUE;
+			}
+		}
+		return $this->nodePathExistsInAnyContext($nodePath);
 	}
 
 }
