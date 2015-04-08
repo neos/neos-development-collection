@@ -104,15 +104,13 @@ class NodeOperations {
 		$designatedParentNode = $this->getDesignatedParentNode($targetNode, $position);
 		// If we stay inside the same parent we basically just reorder, no rename needed or wanted.
 		if ($designatedParentNode !== $node->getParent()) {
-			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
-			if ($nodeName !== $node->getName()) {
-				$currentParentPath = $node->getParentPath();
-				$currentParentPath = $currentParentPath !== '/' ? $currentParentPath . '/' : $currentParentPath;
-				while ($this->nodeService->nodePathExistsInAnyContext($currentParentPath . $nodeName)) {
-					$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
+			$designatedNodePath = rtrim($designatedParentNode->getPath(), '/') . '/' . $node->getName();
+			if ($this->nodeService->nodePathAvailableForNode($designatedNodePath, $node) === FALSE) {
+				$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
+				if ($nodeName !== $node->getName()) {
+					// FIXME: This can be removed if $node->move* supports additionally changing the name of the node.
+					$node->setName($nodeName);
 				}
-				// FIXME: This can be removed if $node->move* supports additionally changing the name of the node.
-				$node->setName($nodeName);
 			}
 		}
 

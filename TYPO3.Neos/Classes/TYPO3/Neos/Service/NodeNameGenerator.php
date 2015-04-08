@@ -36,10 +36,7 @@ class NodeNameGenerator {
 	 */
 	public function generateUniqueNodeName(NodeInterface $parentNode, $idealNodeName = NULL) {
 		$possibleNodeName = $this->generatePossibleNodeName($idealNodeName);
-		$parentPath = $parentNode->getPath();
-		if ($parentPath !== '/') {
-			$parentPath .= '/';
-		}
+		$parentPath = rtrim($parentNode->getPath(), '/') . '/';
 
 		while ($this->nodeService->nodePathExistsInAnyContext($parentPath . $possibleNodeName)) {
 			$possibleNodeName = $this->generatePossibleNodeName();
