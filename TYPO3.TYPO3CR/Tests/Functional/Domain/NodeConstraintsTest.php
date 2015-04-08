@@ -93,7 +93,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException() {
 		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document');
-		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);
+		$nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $nodeTypeWithChildNodeAndConstraints);
 		$childNode = $nodeWithChildNode->getNode('subnode1');
 		$childNode->createNode('document', $documentNodeType);
 	}
@@ -105,7 +105,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
 
-		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);
+		$nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $nodeTypeWithChildNodeAndConstraints);
 		$childNode = $nodeWithChildNode->getNode('subnode1');
 		$childNode->createNode('headline', $headlineNodeType);
 		$this->assertCount(1, $childNode->getChildNodes());
@@ -119,7 +119,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$textNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text');
 
-		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);
+		$nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $nodeTypeWithChildNodeAndConstraints);
 		$childNode = $nodeWithChildNode->getNode('subnode1');
 		$childNode->createNode('text', $textNodeType);
 	}
@@ -131,7 +131,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$testingNodeTypeWithSubnodes = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
 		$testingNodeTypeThatInheritsFromDocumentType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Page');
 
-		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $testingNodeTypeWithSubnodes);
+		$nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $testingNodeTypeWithSubnodes);
 		$nodeWithChildNode->createNode('page', $testingNodeTypeThatInheritsFromDocumentType);
 		$this->assertCount(2, $nodeWithChildNode->getChildNodes());
 	}
