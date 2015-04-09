@@ -397,3 +397,49 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Move a node to another parent and back again
+    Given I have the following nodes:
+      | Identifier                           | Path                               | Node Type                  | Workspace |
+      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us    | TYPO3.TYPO3CR.Testing:Page | live      |
+      | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company/departments | TYPO3.TYPO3CR.Testing:Page | live      |
+
+    When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/service"
+
+    When I get a node by path "/sites/typo3cr/service/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+    When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+    When I get a node by path "/sites/typo3cr/service/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    And I move the node into the node with path "/sites/typo3cr/company"
+
+    When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+    When I get a node by path "/sites/typo3cr/service/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+    When I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have the following nodes:
+      | Path                               |
+      | /sites/typo3cr/company/departments |
+      | /sites/typo3cr/company/about-us    |

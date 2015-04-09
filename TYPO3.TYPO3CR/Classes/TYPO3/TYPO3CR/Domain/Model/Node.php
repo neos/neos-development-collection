@@ -129,7 +129,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * This method is only for internal use by the content repository or node methods. Changing
 	 * the path of a node manually may lead to unexpected behavior.
 	 *
-	 * To achieve a correct behavior when changing the path (moving the node) in a worspace, a shadow node data that will
+	 * To achieve a correct behavior when changing the path (moving the node) in a workspace, a shadow node data that will
 	 * hide the node data in the base workspace will be created. Thus queries do not need to worry about moved nodes.
 	 * Through a movedTo reference the shadow node data will be removed when publishing the moved node.
 	 *
