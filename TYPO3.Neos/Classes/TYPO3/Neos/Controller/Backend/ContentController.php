@@ -37,6 +37,12 @@ class ContentController extends ActionController {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 */
+	protected $imageRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -87,9 +93,15 @@ class ContentController extends ActionController {
 		switch ($metadata) {
 			case 'Asset':
 				$result = $this->getAssetProperties($asset);
+				if ($this->persistenceManager->isNewObject($asset)) {
+					$this->assetRepository->add($asset);
+				}
 				break;
 			case 'Image':
 				$result = $this->getImageInterfacePreviewData($asset);
+				if ($this->persistenceManager->isNewObject($asset)) {
+					$this->imageRepository->add($asset);
+				}
 				break;
 			default:
 				$this->response->setStatus(400);
