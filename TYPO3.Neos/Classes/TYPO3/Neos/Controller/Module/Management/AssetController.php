@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Module\Management;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
@@ -49,11 +50,20 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 	 * @return void
 	 */
 	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$identifier = $this->persistenceManager->getIdentifierByObject($asset);
-		$relatedNodes = $this->nodeDataRepository->findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($identifier, array(
-			'TYPO3\Media\Domain\Model\Asset' => '',
-			'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
-		));
+		$relationMap = [];
+		$relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
+
+		if ($asset instanceof \TYPO3\Media\Domain\Model\Image) {
+			foreach ($asset->getVariants() as $variant) {
+				$type = TypeHandling::getTypeForValue($variant);
+				if (!isset($relationMap[$type])) {
+					$relationMap[$type] = [];
+				}
+				$relationMap[$type][] = $this->persistenceManager->getIdentifierByObject($variant);
+			}
+		}
+
+		$relatedNodes = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 		if (count($relatedNodes) > 0) {
 			$this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
 			$this->redirect('index');
