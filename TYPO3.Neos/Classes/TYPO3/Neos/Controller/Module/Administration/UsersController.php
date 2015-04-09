@@ -117,6 +117,7 @@ class UsersController extends AbstractModuleController {
 	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
 	 * @param User $user The user to create
 	 * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
+	 * @Flow\Validate(argumentName="username", type="\TYPO3\Flow\Validation\Validator\NotEmptyValidator")
 	 * @Flow\Validate(argumentName="username", type="\TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator")
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
 	 * @return void

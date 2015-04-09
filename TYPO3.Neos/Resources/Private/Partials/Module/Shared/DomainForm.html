@@ -4,10 +4,11 @@
 		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
 		<legend>{neos:backend.translate(id: 'domainform.domainData', value: 'Domain data')}</legend>
 
-		<div class="neos-control-group">
+		<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostPattern', then: ' neos-error')}">
 			<label class="neos-control-label" for="host-pattern">{neos:backend.translate(id: 'hostPattern', value: 'Host pattern')}</label>
 			<div class="neos-controls">
 				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" class="neos-span12" placeholder="{neos:backend.translate(id: 'domainform.hostPatternPlaceholder', value: 'e.g. www.typo3.org')}" />
+				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostPattern'}"/>
 			</div>
 		</div>
 		<div class="neos-control-group">

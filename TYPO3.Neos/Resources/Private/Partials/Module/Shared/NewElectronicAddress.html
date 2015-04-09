@@ -10,10 +10,11 @@
 				</div>
 			</div>
 
-			<div class="neos-control-group">
+			<div class="neos-control-group{f:validation.ifHasErrors(for: 'electronicAddress.identifier', then: ' neos-error')}">
 				<label class="neos-control-label" for="addressIdentifier">{neos:backend.translate(id: 'electronicAddress.identifier', package: 'TYPO3.Party', value: 'Identifier (example: test@typo3.org)')}</label>
 				<div class="neos-controls">
-					<f:form.textfield name="identifier" required="true" property="identifier" id="addressIdentifier" placeholder="{neos:backend.translate(id: 'electronicAddress.identifierPlaceholder', package: 'TYPO3.Party', value: 'Identifier')}" class="neos-span12"  />
+					<f:form.textfield name="identifier" property="identifier" id="addressIdentifier" placeholder="{neos:backend.translate(id: 'electronicAddress.identifierPlaceholder', package: 'TYPO3.Party', value: 'Identifier')}" class="neos-span12" />
+					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'electronicAddress.identifier'}"/>
 				</div>
 			</div>
 

@@ -49,7 +49,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
 
     'TYPO3.Neos:Backend.Module.User.UserSettings':
-      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit|editAccount|updateAccount)Action())'
 
     'TYPO3.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
       matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAccountAction(user == current.securityContext.account)) || method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(user == current.securityContext.party))'
