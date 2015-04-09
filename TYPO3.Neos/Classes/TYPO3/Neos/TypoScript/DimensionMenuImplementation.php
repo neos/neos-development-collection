@@ -50,16 +50,16 @@ class DimensionMenuImplementation extends AbstractMenuImplementation {
 	 */
 	public function buildItems() {
 		$output = array();
-
+		$dimension = $this->getDimension();
 		foreach ($this->getPresetsInCorrectOrder() as $presetName => $presetConfiguration) {
 			$q = new FlowQuery(array($this->currentNode));
 			$nodeInOtherDimension = $q->context(
 				array(
 					'dimensions' => array(
-						'language' => $presetConfiguration['values']
+						$dimension => $presetConfiguration['values']
 					),
 					'targetDimensions' => array(
-						'language' => reset($presetConfiguration['values'])
+						$dimension => reset($presetConfiguration['values'])
 					)
 				)
 			)->get(0);
