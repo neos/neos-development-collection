@@ -2,11 +2,11 @@
 	<div class="neos-modal-header">
 		<button data-dismiss="modal" class="neos-close neos-button icon-remove" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
 		<div class="neos-header">
-			{{translate id="content-components-publishAllDialog-header" value="Publish all changes"}}
+			{{translate id="content-components-publishAllDialog-header" fallback="Publish all changes"}}
 		</div>
 		<div>
 			<div class="neos-subheader">
-				{{translate id="content-components-publishAllDialog-subheader" value="Are you sure that you want to publish all changes?"}}
+				{{translate id="content-components-publishAllDialog-subheader" fallback="Are you sure that you want to publish all changes?"}}
 			</div>
 		</div>
 	</div>

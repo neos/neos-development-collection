@@ -9,7 +9,7 @@
 </div>
 <div class="neos-inspector-form">
 	<div class="neos-inspector-field">
-		<label for="neos-content-breadcrumb">{{translate id="content-inspector-inspectorView-selectedElement" value="Selected element"}}</label>
+		<label for="neos-content-breadcrumb">{{translate id="content-inspector-inspectorView-selectedElement" fallback="Selected element"}}</label>
 		{{view view.Breadcrumb}}
 	</div>
 	{{#each tab in groupedViews}}
@@ -45,7 +45,7 @@
 		<button class="neos-inspector-cancel" title="{{translate id='discardChanges' value='Discard changes'}}" {{bindAttr disabled="unmodified"}} {{action "revert"}}>{{translate id="discardChanges" value="Discard changes"}}</button>
 		{{#if hasValidationErrors}}
 			<button class="neos-button neos-inspector-apply neos-disabled" title="{{translate id='content-inspector-inspectorView-selectedElement' value='There are fields that are not correctly filled in.'}}" onclick="alert('Some fields are not filled in correctly- Please fill in the marked values properly.');">
-				<i class="icon-warning-sign"></i> {{translate id='okay' value='OK'}}
+				<i class="icon-warning-sign"></i> {{translate id='okay' fallback='OK'}}
 			</button>
 		{{else}}
 			<button class="neos-inspector-apply" title="{{translate id='applyChanges' value='Apply changes'}}" {{bindAttr disabled="unmodified"}} {{action "apply"}}>{{translate id="apply" value="Apply"}}</button>

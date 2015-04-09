@@ -25,10 +25,11 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
-		'Shared/I18n',
 		'ExternalApi',
-		'Shared/NodeTypeService',
+		'Library/underscore',
 		'Shared/HttpClient',
+		'Shared/I18n',
+		'Shared/NodeTypeService',
 		'InlineEditing/PositioningHelper',
 		'storage'
 	],
@@ -40,30 +41,44 @@ require(
 		ResourceCache,
 		Notification,
 		Configuration,
-		I18n,
-		ExternalApi
-	) {
+		ExternalApi,
+		_,
+		HttpClient
+		) {
+
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
-		// Load all localizations, and then bootstrap the Neos interface
-		I18n.then(function() {
-			require(
-				{context: 'neos'},
-				function() {
-					Ember.$(document).ready(function() {
-						ContentModule.bootstrap();
-						ContentModule.advanceReadiness();
-
-						// Wait until the NodeTypeService is usable by resolving the promise
-						ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
-							ApplicationView.create().appendTo('#neos-application');
-							if (window.T3.isContentModule) {
-								PublishMenu.create().appendTo('#neos-top-bar-right');
-							}
-						});
-					});
+		/**
+		 * Load all translations, and then bootstrap the Neos interface
+		 */
+		Ember.RSVP.Promise(function (resolve, reject) {
+			// Get all translations and merge them
+			HttpClient.getResource(Configuration.get('localeInclude')).then(function(labels) {
+				try {
+					$.extend(Ember.I18n.translations, labels);
+				} catch (exception) {
+					if ('localStorage' in window && 'showDevelopmentFeatures' in window.localStorage) {
+						console.error('Could not parse JSON for locale file ' + labels[iterator].substr(5));
+					}
 				}
-			);
+				resolve();
+			});
+		}).then(function () {
+			// Bootstrap the content module
+			Ember.$(document).ready(function () {
+				ContentModule.bootstrap();
+				ContentModule.advanceReadiness();
+
+				// Wait until the NodeTypeService is usable by resolving the promise
+				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function () {
+					ApplicationView.create().appendTo('#neos-application');
+					if (window.T3.isContentModule) {
+						PublishMenu.create().appendTo('#neos-top-bar-right');
+					}
+				});
+			});
+		}, function (reason) {
+			console.log('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API

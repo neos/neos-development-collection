@@ -4,11 +4,12 @@ define(
 		'Library/jquery-with-dependencies',
 		'./SelectBoxEditor',
 		'Shared/Configuration',
-		'Shared/NodeTypeService'
+		'Shared/NodeTypeService',
+		'Shared/I18n'
 	],
-	function (Ember, $, SelectBoxEditor, Configuration, NodeTypeService) {
+	function (Ember, $, SelectBoxEditor, Configuration, NodeTypeService, I18n) {
 		return SelectBoxEditor.extend({
-			placeholder: 'Loading ...',
+			placeholder:  I18n.translate('Main:TYPO3.Neos:loading', 'Loading...'),
 			baseNodeType: 'TYPO3.Neos:Content',
 
 			values: function () {
@@ -72,7 +73,8 @@ define(
 						});
 					});
 				} else {
-					this.set('placeholder', 'Unable to load sub node types of: ' + this.get('baseNodeType'));
+					var placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes', 'Unable to load sub node types of:') + ' ' + this.get('baseNodeType');
+					this.set('placeholder', placeholder);
 				}
 
 				return groupedNodeTypes;

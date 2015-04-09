@@ -3,8 +3,9 @@ define([
 	'emberjs',
 	'Shared/HttpClient',
 	'Content/Inspector/InspectorController',
+	'Shared/I18n',
 	'Shared/Utility'
-], function($, Ember, HttpClient, InspectorController, Utility) {
+], function($, Ember, HttpClient, InspectorController, I18n, Utility) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -76,7 +77,9 @@ define([
 		values: [],
 		allowEmpty: false,
 		multiple: false,
-		placeholder: 'Choose',
+		placeholder: function() {
+			return I18n.translate('Main:TYPO3.Neos:choose', 'Choose');
+		}.property(),
 		dataSourceIdentifier: null,
 		dataSourceUri: null,
 		attributeBindings: ['size', 'disabled', 'multiple'],

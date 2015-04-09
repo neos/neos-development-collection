@@ -4,14 +4,16 @@ define(
 	'Library/jquery-with-dependencies',
 	'text!./PluginViewsEditor.html',
 	'Content/Inspector/InspectorController',
-	'Shared/HttpClient'
+	'Shared/HttpClient',
+	'Shared/I18n'
 ],
 function(
 	Ember,
 	$,
 	template,
 	InspectorController,
-	HttpClient
+	HttpClient,
+	I18n
 ) {
 	return Ember.CollectionView.extend({
 		tagName: 'ul',
@@ -37,7 +39,7 @@ function(
 			return this._super();
 		},
 		emptyView: Ember.View.extend({
-			template: Ember.Handlebars.compile("Loading ...")
+			template: Ember.Handlebars.compile(I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...'))
 		}),
 		itemViewClass: Ember.View.extend({
 			template: Ember.Handlebars.compile(template)

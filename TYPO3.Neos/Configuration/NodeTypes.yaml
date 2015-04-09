@@ -68,6 +68,7 @@
       type: boolean
       ui:
         label: 'Hide'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Hidable.properties.hide'
         inspector:
           group: 'visibility'
           position: 30
@@ -87,6 +88,7 @@
       type: DateTime
       ui:
         label: 'Hide before'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime'
         inspector:
           group: 'visibility'
           position: 10
@@ -98,6 +100,7 @@
       type: DateTime
       ui:
         label: 'Hide after'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime'
         inspector:
           group: 'visibility'
           position: 20
@@ -140,6 +143,7 @@
       type: string
       ui:
         label: 'Title'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.title'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
@@ -152,6 +156,7 @@
       type: string
       ui:
         label: 'URL path segment'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.uriPathSegment'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
@@ -169,6 +174,7 @@
       type: boolean
       ui:
         label: 'Hide in menus'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex'
         reloadIfChanged: TRUE
         inspector:
           group: 'visibility'
@@ -193,6 +199,7 @@
       defaultValue: 'firstChildNode'
       ui:
         label: 'Target mode'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.targetMode'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
@@ -209,6 +216,7 @@
       type: string
       ui:
         label: 'Target'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.target'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
@@ -247,6 +255,7 @@
       type: string
       ui:
         label: 'Master View'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.PluginView.properties.plugin'
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'
@@ -256,6 +265,7 @@
       type: string
       ui:
         label: 'Plugin View'
+        labelTranslationId: 'nodetypes.TYPO3.Neos.PluginView.properties.view'
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'

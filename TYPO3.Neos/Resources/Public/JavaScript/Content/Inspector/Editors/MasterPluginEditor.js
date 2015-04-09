@@ -1,18 +1,20 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/SelectBoxEditor'
+	'Content/Inspector/Editors/SelectBoxEditor',
+	'Shared/I18n'
 ],
 function(
 	$,
-	SelectBoxEditor
+	SelectBoxEditor,
+	I18n
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
 			var that = this,
 				url = $('link[rel="neos-masterplugins"]').attr('href');
 
-			this.set('placeholder', 'Loading ...');
+			this.set('placeholder', I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...'));
 			this._loadValuesFromController(url, function(results) {
 				var values = {}, placeholder, i = 0;
 				values[''] = {};
@@ -28,9 +30,9 @@ function(
 					i++;
 				}
 				if (i > 0) {
-					placeholder = 'Select a Plugin';
+					placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
 				} else {
-					placeholder = 'No plugin configured';
+					placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
 					values = {};
 				}
 				that.setProperties({

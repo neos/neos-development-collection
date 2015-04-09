@@ -16,7 +16,8 @@ define(
 		'./DeleteNodeDialog',
 		'./InsertNodePanel',
 		'LibraryExtensions/Mousetrap',
-		'Shared/Endpoint/NodeEndpoint'
+		'Shared/Endpoint/NodeEndpoint',
+		'Shared/I18n'
 	], function(
 		Ember,
 		$,
@@ -31,7 +32,8 @@ define(
 		DeleteNodeDialog,
 		InsertNodePanel,
 		Mousetrap,
-		NodeEndpoint
+		NodeEndpoint,
+		I18n
 	) {
 		var _getAllowedChildNodeTypesForNode = function(node) {
 			if (node.data.isAutoCreated) {
@@ -177,6 +179,9 @@ define(
 					'insertNodePanelShown:neos-pressed'
 				],
 				downTimer: null,
+				title: function() {
+					return I18n.translate('Main:TYPO3.Neos:content.navigate.createNewHoldPosition', 'Create new (hold to select position)');
+				}.property(),
 
 				newBefore: function() {
 					return this.get('newPosition') === 'before';
@@ -264,6 +269,9 @@ define(
 					'pastingAfter:node-node-tree-paste-node-after'
 				],
 				downTimer: null,
+				title: function() {
+					return I18n.translate('Main:TYPO3.Neos:content.navigate.pasteHoldPosition', 'Paste (hold to select position)')
+				}.property(),
 
 				pastingBefore: function() {
 					return this.get('pastePosition') === 'before';

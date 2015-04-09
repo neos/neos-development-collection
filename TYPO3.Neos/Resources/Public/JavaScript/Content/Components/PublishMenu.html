@@ -12,12 +12,12 @@
 	</li>
 	<li>
 		<label class="neos-checkbox">
-			{{view Ember.Checkbox checkedBinding="view.autoPublish"}}<span></span>{{translate id="autoPublish" value="Auto-Publish"}}
+			{{view Ember.Checkbox checkedBinding="view.autoPublish"}}<span></span>{{translate id="autoPublish" fallback="Auto-Publish"}}
 		</label>
 	</li>
 	<li>
 		<a href="{{unbound view._workspacesManagementModuleUri}}">
-			<i class="icon-th-large"></i>{{translate id="workspaces" value="Workspaces"}}
+			<i class="icon-th-large"></i>{{translate id="workspaces" fallback="Workspaces"}}
 		</a>
 	</li>
 </ul>

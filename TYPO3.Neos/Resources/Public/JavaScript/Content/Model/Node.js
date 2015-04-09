@@ -67,6 +67,14 @@ define([
 			return Entity.extractNodeTypeFromVieEntity(this.get('_vieEntity'));
 		}.property('_vieEntity').volatile(),
 
+		nodeTypeTranslationId: function() {
+			return 'nodetypes-' + this.get('nodeType').replace(/[.: ]/g, '-');
+		}.property('nodeType'),
+
+		nodeTypeLabel: function() {
+			return this.get('nodeTypeSchema.ui.label');
+		}.property('nodeTypeSchema.ui.label'),
+
 		/**
 		 * @return {void}
 		 */

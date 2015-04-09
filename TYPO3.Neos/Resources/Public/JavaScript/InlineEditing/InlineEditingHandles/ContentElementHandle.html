@@ -15,12 +15,12 @@
 			</button>
 		{{/if}}
 		{{#if view._showCut}}
-			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="{{translate id='cut' value='Cut'}}" {{action "cut" target="view"}} tabindex="-1">
+			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="{{translate id='cut' fallback='Cut'}}" {{action "cut" target="view"}} tabindex="-1">
 				<i class="icon-cut"></i>
 			</button>
 		{{/if}}
 		{{#if view._showCopy}}
-			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="{{translate id='copy' value='Copy'}}" {{action "copy" target="view"}} tabindex="-1">
+			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="{{translate id='copy' fallback='Copy'}}" {{action "copy" target="view"}} tabindex="-1">
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}

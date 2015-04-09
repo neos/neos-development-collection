@@ -6,12 +6,15 @@ define(
 	'text!./AssetEditor.html',
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Utility',
-	'Shared/HttpClient'
+	'Shared/HttpClient',
+	'Shared/I18n'
 ],
-function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient) {
+function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n) {
 
 	return FileUpload.extend({
-		removeButtonLabel: 'Remove',
+		removeButtonLabel: function() {
+			return I18n.translate('Main:TYPO3.Neos:remove', 'Remove')
+		}.property(),
 		template: Ember.Handlebars.compile(template),
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 		assets: [],
@@ -42,7 +45,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._readAndDeserializeValue();
 
 			if (!this.get('loadingLabel')) {
-				this.set('loadingLabel', 'Loading');
+				this.set('loadingLabel', I18n.translate('Main:TYPO3.Neos:loading', 'Loading'));
 			}
 		},
 

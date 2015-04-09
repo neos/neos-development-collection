@@ -2,13 +2,15 @@ define(
 [
 	'emberjs',
 	'Content/Inspector/SecondaryInspectorController',
-	'Library/codemirror'
+	'Library/codemirror',
+	'Shared/I18n'
 ],
-function(Ember, SecondaryInspectorController, CodeMirror) {
+function(Ember, SecondaryInspectorController, CodeMirror, I18n) {
 	return SecondaryInspectorController.SecondaryInspectorButton.extend({
-		buttonLabel: 'Edit code',
-		labelBinding: 'buttonLabel',
 		highlightingMode: 'text/html',
+		label: function() {
+			return I18n.translate('Main:TYPO3.Neos:content.inspector.editors.codeEditor.editCode', 'Edit code')
+		}.property(),
 
 		viewClass: function() {
 			var that = this;

@@ -16,7 +16,7 @@ define(
 			isActive: false,
 			label: '',
 			title: '',
-			defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
+			defaultTemplate: Ember.Handlebars.compile('{{translate fallbackBinding="view.label" idBinding="view.label"}}'),
 			icon: '',
 			iconClass: function() {
 				var icon = this.get('icon');

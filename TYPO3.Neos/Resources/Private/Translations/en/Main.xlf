@@ -15,6 +15,12 @@
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+			<trans-unit id="choose" xml:space="preserve">
+				<source>Choose</source>
+			</trans-unit>
+			<trans-unit id="typeToSearch" xml:space="preserve">
+				<source>Type to search</source>
+			</trans-unit>
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>
@@ -32,21 +38,6 @@
 			</trans-unit>
 			<trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			</trans-unit>
-			<trans-unit id="hideUnhide" xml:space="preserve">
-				<source>Hide / Unhide</source>
-			</trans-unit>
-			<trans-unit id="navigate" xml:space="preserve">
-				<source>Navigate</source>
-			</trans-unit>
-			<trans-unit id="okay" xml:space="preserve">
-				<source>OK</source>
-			</trans-unit>
-			<trans-unit id="remove" xml:space="preserve">
-				<source>Remove</source>
-			</trans-unit>
-			<trans-unit id="refresh" xml:space="preserve">
-				<source>Refresh</source>
 			</trans-unit>
 			<trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
@@ -72,8 +63,11 @@
 			<trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
 			</trans-unit>
-			<trans-unit id="Navigate" xml:space="preserve">
-				<source>Navigate</source>
+			<trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+			</trans-unit>
+			<trans-unit id="loading" xml:space="preserve">
+				<source>Loading</source>
 			</trans-unit>
 			<trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
@@ -83,6 +77,15 @@
 			</trans-unit>
 			<trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
+			</trans-unit>
+			<trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+			</trans-unit>
+			<trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+			</trans-unit>
+			<trans-unit id="page" xml:space="preserve">
+				<source>Page</source>
 			</trans-unit>
 			<trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
@@ -105,11 +108,23 @@
 			<trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			</trans-unit>
+			<trans-unit id="published" xml:space="preserve">
+				<source>Published</source>
+			</trans-unit>
+			<trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+			</trans-unit>
+			<trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+			</trans-unit>
 			<trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
 			</trans-unit>
 			<trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
+			</trans-unit>
+			<trans-unit id="search" xml:space="preserve">
+				<source>Search</source>
 			</trans-unit>
 			<trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
@@ -119,6 +134,44 @@
 			</trans-unit>
 			<trans-unit id="you" xml:space="preserve">
 				<source>You</source>
+			</trans-unit>
+
+			<!-- nodetypes -->
+			<trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
+				<source>Document</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
+				<source>URL path segment</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
+				<source>Hide in menus</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
+				<source>URL path segment</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
+				<source>Target mode</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
+				<source>Target</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
+				<source>Master View</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
+				<source>Plugin View</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
+				<source>Hide</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
+				<source>Hide before</source>
+			</trans-unit>
+			<trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
+				<source>Hide after</source>
 			</trans-unit>
 
 			<!-- shortcuts -->
@@ -166,9 +219,6 @@
 			<trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			</trans-unit>
-			<trans-unit id="inspector" xml:space="preserve">
-				<source>Inspector</source>
-			</trans-unit>
 			<trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
 			</trans-unit>
@@ -190,17 +240,50 @@
 			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
+			<trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+				<source>Select a Plugin</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+				<source>No plugin configured</source>
+			</trans-unit>
 			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
 			</trans-unit>
 			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
 			</trans-unit>
+			<trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+				<source>No date set</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+				<source>Edit code</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+				<source>Paste a link, or type to search</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+				<source>Unable to load sub node types of:</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.groups.type" xml:space="preserve">
+				<source>Change type</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+				<source>Additional info</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+				<source>Visibility</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-document" xml:space="preserve">
+				<source>Document options</source>
+			</trans-unit>
 			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>
 			<trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+				<source>Create new (hold to select position)</source>
 			</trans-unit>
 			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
@@ -211,7 +294,10 @@
 			<trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			</trans-unit>
-			<trans-unit id="height.ucfirst" xml:space="preserve">
+			<trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+				<source>Paste (hold to select position)</source>
+			</trans-unit>
+			<trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			</trans-unit>
 			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
@@ -226,7 +312,13 @@
 			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			</trans-unit>
-			<trans-unit id="width.ucfirst" xml:space="preserve">
+			<trans-unit id="media" xml:space="preserve">
+				<source>Media</source>
+			</trans-unit>
+			<trans-unit id="crop" xml:space="preserve">
+				<source>Crop</source>
+			</trans-unit>
+			<trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
 			</trans-unit>
 			<trans-unit id="translate.requiredProperty" xml:space="preserve">
@@ -290,7 +382,6 @@
 			<trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
 			</trans-unit>
-
 
 		</body>
 	</file>

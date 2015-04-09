@@ -10,9 +10,10 @@ define(
 		'./DiscardAllDialog',
 		'Shared/Endpoint/NodeEndpoint',
 		'Shared/HttpClient',
+		'Shared/I18n',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, HttpClient, template) {
+	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, HttpClient, I18n, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -67,6 +68,7 @@ define(
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
+				defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
 				label: function() {
 					if (this.get('_savePending')) {
 						return 'Saving<span class="neos-ellipsis"></span>'.htmlSafe();
@@ -75,7 +77,12 @@ define(
 					} else if (this.get('autoPublish')) {
 						return 'Auto-Publish';
 					}
-					return this.get('_noChanges') ? 'Published' : 'Publish' + ' ('  + this.get('_numberOfChanges') + ')';
+
+					if (this.get('_noChanges')) {
+						return I18n.translate('Main:TYPO3.Neos:published');
+					}
+
+					return I18n.translate('Main:TYPO3.Neos:publish') + ' (' + this.get('_numberOfChanges') + ')';
 				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning'),
 
 				title: function() {
