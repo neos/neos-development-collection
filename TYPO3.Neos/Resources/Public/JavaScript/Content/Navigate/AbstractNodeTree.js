@@ -882,8 +882,8 @@ define(
 							entity.set('typo3:_hidden', value);
 						}
 						if (node.data.key === selectedNode.$element.attr('about')) {
+							InspectorController.set('cleanProperties._hidden', value);
 							InspectorController.set('nodeProperties._hidden', value);
-							InspectorController.apply();
 						}
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						that.afterToggleHidden(node);

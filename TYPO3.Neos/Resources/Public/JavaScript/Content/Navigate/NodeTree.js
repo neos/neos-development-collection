@@ -346,8 +346,8 @@ define(
 										entity.set('typo3:title', title);
 									}
 									if (node.data.key === selectedNode.$element.attr('about')) {
+										InspectorController.set('cleanProperties.title', title);
 										InspectorController.set('nodeProperties.title', title);
-										InspectorController.apply();
 									}
 									node.data.fullTitle = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
