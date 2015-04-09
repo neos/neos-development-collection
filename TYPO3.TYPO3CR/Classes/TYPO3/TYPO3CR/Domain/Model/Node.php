@@ -106,7 +106,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function setName($newName) {
 		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
 		}
 
 		if ($this->getPath() === '/') {

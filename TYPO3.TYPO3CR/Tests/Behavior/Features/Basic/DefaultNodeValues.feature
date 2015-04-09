@@ -16,8 +16,8 @@ Feature: Set Default Node Values on node creation
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /nodeA | TYPO3.TYPO3CR.Testing:DefaultProperties |
-    When I get a node by path "/nodeA" with the following context:
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | TYPO3.TYPO3CR.Testing:DefaultProperties |
+    When I get a node by path "/node-a" with the following context:
       | Workspace |
       | live      |
     Then the node property "text" should be "My default text"
@@ -36,8 +36,8 @@ Feature: Set Default Node Values on node creation
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /nodeA | TYPO3.TYPO3CR.Testing:DefaultProperties |
-    When I get a node by path "/nodeA" with the following context:
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | TYPO3.TYPO3CR.Testing:DefaultProperties |
+    When I get a node by path "/node-a" with the following context:
       | Workspace |
       | live      |
     Then the node should be hidden in index

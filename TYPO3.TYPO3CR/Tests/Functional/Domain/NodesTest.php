@@ -72,6 +72,14 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function nodeCreationThrowsExceptionIfNodeNameContainsUppercaseCharacters() {
+		$this->context->getRootNode()->createNode('fooBar');
+	}
+
+	/**
+	 * @test
 	 */
 	public function setPathWorksRecursively() {
 		$rootNode = $this->context->getRootNode();
@@ -295,15 +303,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$childNodeC->moveBefore($childNodeD);
 
@@ -318,16 +326,16 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
 
 		$childNodeB->moveInto($childNodeA);
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeA->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeA->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
 	}
 
 	/**
@@ -336,18 +344,18 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeC1 = $childNodeC->createNode('child-node-c1');
 
 		$childNodeB->moveBefore($childNodeC1);
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
 		$expectedChildNodes = array($childNodeB, $childNodeC1);
 		$actualChildNodes = $childNodeC->getChildNodes();
@@ -360,18 +368,18 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeC1 = $childNodeC->createNode('child-node-c1');
 
 		$childNodeB->moveAfter($childNodeC1);
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
 		$expectedChildNodes = array($childNodeC1, $childNodeB);
 		$actualChildNodes = $childNodeC->getChildNodes();
@@ -384,15 +392,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$this->persistenceManager->persistAll();
 
@@ -412,15 +420,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$this->persistenceManager->persistAll();
 
@@ -440,15 +448,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$childNodeF->moveBefore($childNodeG);
 
@@ -464,15 +472,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$childNodeC->moveAfter($childNodeB);
 
@@ -488,10 +496,10 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
 
 		$this->persistenceManager->persistAll();
 
@@ -499,9 +507,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->persistenceManager->persistAll();
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeA->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeA->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
 	}
 
 	/**
@@ -510,12 +518,12 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeC1 = $childNodeC->createNode('child-node-c1');
 
 		$this->persistenceManager->persistAll();
 
@@ -523,9 +531,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->persistenceManager->persistAll();
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
 		$expectedChildNodes = array($childNodeB, $childNodeC1);
 		$actualChildNodes = $childNodeC->getChildNodes();
@@ -538,12 +546,12 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB1 = $childNodeB->createNode('childNodeB1');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+		$parentNode = $rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB1 = $childNodeB->createNode('child-node-b1');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeC1 = $childNodeC->createNode('child-node-c1');
 
 		$this->persistenceManager->persistAll();
 
@@ -551,9 +559,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->persistenceManager->persistAll();
 
-		$this->assertNull($parentNode->getNode('childNodeB'));
-		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
-		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+		$this->assertNull($parentNode->getNode('child-node-b'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
 		$expectedChildNodes = array($childNodeC1, $childNodeB);
 		$actualChildNodes = $childNodeC->getChildNodes();
@@ -566,15 +574,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$this->persistenceManager->persistAll();
 
@@ -594,15 +602,15 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithPersistAll() {
 		$rootNode = $this->context->getRootNode();
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
 		$childNodeB->setProperty('name' , __METHOD__);
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$this->persistenceManager->persistAll();
 
@@ -622,14 +630,14 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$rootNode = $this->context->getNode('/');
 
-		$parentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeF = $parentNode->createNode('childNodeF');
-		$childNodeC = $parentNode->createNode('childNodeC');
-		$childNodeD = $parentNode->createNode('childNodeD');
-		$childNodeE = $parentNode->createNode('childNodeE');
-		$childNodeG = $parentNode->createNode('childNodeG');
+		$parentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeF = $parentNode->createNode('child-node-f');
+		$childNodeC = $parentNode->createNode('child-node-c');
+		$childNodeD = $parentNode->createNode('child-node-d');
+		$childNodeE = $parentNode->createNode('child-node-e');
+		$childNodeG = $parentNode->createNode('child-node-g');
 
 		$childNodeF->moveAfter($childNodeE);
 
@@ -645,22 +653,22 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function moveBeforeInASeparateWorkspaceLeadsToCorrectSortingAcrossWorkspaces() {
 		$rootNode = $this->context->getNode('/');
 
-		$liveParentNode = $rootNode->createNode('parentNode');
-		$childNodeA = $liveParentNode->createNode('childNodeA');
-		$childNodeC = $liveParentNode->createNode('childNodeC');
-		$childNodeD = $liveParentNode->createNode('childNodeD');
-		$childNodeE = $liveParentNode->createNode('childNodeE');
-		$childNodeG = $liveParentNode->createNode('childNodeG');
+		$liveParentNode = $rootNode->createNode('parent-node');
+		$childNodeA = $liveParentNode->createNode('child-node-a');
+		$childNodeC = $liveParentNode->createNode('child-node-c');
+		$childNodeD = $liveParentNode->createNode('child-node-d');
+		$childNodeE = $liveParentNode->createNode('child-node-e');
+		$childNodeG = $liveParentNode->createNode('child-node-g');
 
 		$this->persistenceManager->persistAll();
 
 		$userContext = $this->contextFactory->create(array('workspaceName' => 'live2'));
-		$userParentNode = $userContext->getNode('/parentNode');
+		$userParentNode = $userContext->getNode('/parent-node');
 
-		$childNodeB = $userParentNode->createNode('childNodeB');
+		$childNodeB = $userParentNode->createNode('child-node-b');
 		$childNodeB->moveBefore($childNodeC);
 
-		$childNodeF = $userParentNode->createNode('childNodeF');
+		$childNodeF = $userParentNode->createNode('child-node-f');
 		$childNodeF->moveBefore($childNodeG);
 
 		$this->persistenceManager->persistAll();
@@ -729,7 +737,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function renumberingTakesUnpersistedNodeOrderChangesIntoAccount() {
 		$rootNode = $this->context->getRootNode();
 
-		$liveParentNode = $rootNode->createNode('parentNode');
+		$liveParentNode = $rootNode->createNode('parent-node');
 		$nodes = array();
 		$nodes[1] = $liveParentNode->createNode('node001');
 		$nodes[1]->setIndex(1);
@@ -764,7 +772,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable() {
 		$rootNode = $this->context->getRootNode();
 
-		$liveParentNode = $rootNode->createNode('parentNode');
+		$liveParentNode = $rootNode->createNode('parent-node');
 		$nodes = array();
 		$nodes[0] = $liveParentNode->createNode('node000');
 		$nodes[150] = $liveParentNode->createNode('node150');
@@ -1029,8 +1037,8 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
-		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
-		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
 
 		$nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
 		$this->assertSame($nodeB, $nodeA->getProperty('property2'));
@@ -1047,9 +1055,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
-		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
-		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+		$nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
 		$expectedNodes = array($nodeB, $nodeC);
 
@@ -1068,9 +1076,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
-		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
-		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+		$nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
 		$expectedNodes = array($nodeB, $nodeC);
 
@@ -1092,9 +1100,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live', 'invisibleContentShown' => FALSE));
 
 		$rootNode = $this->context->getNode('/');
-		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
-		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+		$nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
 		$nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
 		$nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
@@ -1114,14 +1122,14 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$identifier = '81c848ed-abb5-7608-a5db-7eea0331ccfa';
 		$rootNode = $this->context->getNode('/');
-		$referencedNode = $rootNode->createNode('referencedNode', $nodeType, $identifier);
+		$referencedNode = $rootNode->createNode('referenced-node', $nodeType, $identifier);
 		$node = $rootNode->createNode('node', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
 		$node->setProperty('property2', $identifier);
 
 		$testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
 
 		$testRootNode = $testContext->getNode('/');
-		$testReferencedNode = $testRootNode->createNode('testReferencedNode', $nodeType, $identifier);
+		$testReferencedNode = $testRootNode->createNode('test-referenced-node', $nodeType, $identifier);
 		$testNode = $testRootNode->getNode('node');
 
 		$referencedNodeProperty = $node->getProperty('property2');
