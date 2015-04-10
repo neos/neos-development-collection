@@ -69,13 +69,22 @@ interface ContentDimensionPresetSourceInterface {
 	public function findPresetByDimensionValues($dimensionName, array $dimensionValues);
 
 	/**
-	 * Returns an array with all possible combinations of configured dimension presets. This should result in a full description of all node contexts (in terms of dimensions)
-	 * that could appear in this system.
+	 * Returns a list of presets of the specified dimension which are allowed in combination with the given presets
+	 * of other dimensions.
 	 *
-	 * The resulting array will be numerically indexed with every entry being an array of "dimension name" => "configured fallbacks" for each dimension
-	 *
-	 * @return array
+	 * @param string $dimensionName Name of the dimension to return presets for
+	 * @param array $preselectedDimensionPresets An array of dimension name and preset identifier specifying the presets which are already selected
+	 * @return array An array of presets only for the dimension specified in $dimensionName. Structure is: array($dimensionName => array('presets' => array(...))
 	 */
-	public function getAllDimensionCombinations();
+	public function getAllowedDimensionPresetsAccordingToPreselection($dimensionName, array $preselectedDimensionPresets);
+
+	/**
+	 * Checks if the given combination of presets is allowed, according to possibly defined constraints in the
+	 * content dimension configuration.
+	 *
+	 * @param array $dimensionsNamesAndPresetIdentifiers Preset pairs, for example array('language' => 'de', 'country' => 'GER', 'persona' => 'clueless')
+	 * @return boolean
+	 */
+	public function isPresetCombinationAllowedByConstraints(array $dimensionsNamesAndPresetIdentifiers);
 
 }

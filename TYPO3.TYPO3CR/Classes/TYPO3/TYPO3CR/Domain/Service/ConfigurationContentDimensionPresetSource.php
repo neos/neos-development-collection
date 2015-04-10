@@ -72,36 +72,83 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Returns a list of presets of the specified dimension which are allowed in combination with the given presets
+	 * of other dimensions.
+	 *
+	 * @param string $dimensionName Name of the dimension to return presets for
+	 * @param array $preselectedDimensionPresets An array of dimension name and preset identifier specifying the presets which are already selected
+	 * @return array An array of presets only for the dimension specified in $dimensionName. Structure is: array($dimensionName => array('presets' => array(...))
 	 */
-	public function getAllDimensionCombinations() {
-		$dimensionConfigurations = $this->getAllPresets();
-
-		$dimensionValueCountByDimension = array();
-		$possibleCombinationCount = 1;
-		$combinations = array();
-
-		foreach ($dimensionConfigurations as $dimensionName => $singleDimensionConfiguration) {
-			$dimensionValueCountByDimension[$dimensionName] = count($singleDimensionConfiguration['presets']);
-			$possibleCombinationCount = $possibleCombinationCount * $dimensionValueCountByDimension[$dimensionName];
+	public function getAllowedDimensionPresetsAccordingToPreselection($dimensionName, array $preselectedDimensionPresets) {
+		if (!isset($this->configuration[$dimensionName])) {
+			return NULL;
 		}
 
-		foreach ($dimensionConfigurations as $dimensionName => $singleDimensionConfiguration) {
-			for ($i = 0; $i < $possibleCombinationCount; $i++) {
-				if (!isset($combinations[$i]) || !is_array($combinations[$i])) {
-					$combinations[$i] = array();
-				}
+		$dimensionConfiguration = array($dimensionName => $this->configuration[$dimensionName]);
+		$sorter = new PositionalArraySorter($dimensionConfiguration[$dimensionName]['presets']);
+		$dimensionConfiguration[$dimensionName]['presets'] = $sorter->toArray();
 
-				$currentDimensionCurrentPreset = current($dimensionConfigurations[$dimensionName]['presets']);
-				$combinations[$i][$dimensionName] = $currentDimensionCurrentPreset['values'];
-
-				if (!next($dimensionConfigurations[$dimensionName]['presets'])) {
-					reset($dimensionConfigurations[$dimensionName]['presets']);
-				}
+		foreach (array_keys($dimensionConfiguration[$dimensionName]['presets']) as $presetIdentifier) {
+			$currentPresetCombination = $preselectedDimensionPresets;
+			$currentPresetCombination[$dimensionName] = $presetIdentifier;
+			if (!$this->isPresetCombinationAllowedByConstraints($currentPresetCombination)) {
+				unset($dimensionConfiguration[$dimensionName]['presets'][$presetIdentifier]);
 			}
 		}
 
-		return $combinations;
+		return $dimensionConfiguration;
+	}
+
+	/**
+	 * Checks if the given combination of presets is allowed, according to possibly defined constraints in the
+	 * content dimension configuration.
+	 *
+	 * @param array $dimensionsNamesAndPresetIdentifiers Preset pairs, for example array('language' => 'de', 'country' => 'GER', 'persona' => 'clueless')
+	 * @return boolean
+	 */
+	public function isPresetCombinationAllowedByConstraints(array $dimensionsNamesAndPresetIdentifiers) {
+		foreach ($dimensionsNamesAndPresetIdentifiers as $dimensionName => $presetIdentifier) {
+			if (!isset($this->configuration[$dimensionName]) || !isset($this->configuration[$dimensionName]['presets'][$presetIdentifier])) {
+				return FALSE;
+			}
+			foreach ($this->configuration as $currentDimensionName => $dimensionConfiguration) {
+				if (!isset($dimensionsNamesAndPresetIdentifiers[$currentDimensionName])) {
+					continue;
+				}
+				$currentPresetIdentifier = $dimensionsNamesAndPresetIdentifiers[$currentDimensionName];
+				if (isset($dimensionConfiguration['presets'][$currentPresetIdentifier]['constraints'])) {
+					$constraintsResult = $this->isPresetAllowedByConstraints($dimensionName, $presetIdentifier, $dimensionConfiguration['presets'][$currentPresetIdentifier]['constraints']);
+					if ($constraintsResult === FALSE) {
+						return FALSE;
+					}
+				}
+			}
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Checks if the given preset of the specified dimension is allowed according to the given constraints
+	 *
+	 * @param string $dimensionName Name of the dimension the preset belongs to
+	 * @param string $presetIdentifier Identifier of the preset to check
+	 * @param array $constraints Constraints to use for the check
+	 * @return boolean
+	 */
+	protected function isPresetAllowedByConstraints($dimensionName, $presetIdentifier, array $constraints) {
+		if (!array_key_exists($dimensionName, $constraints)) {
+			return TRUE;
+		}
+		if (array_key_exists($presetIdentifier, $constraints[$dimensionName]) && $constraints[$dimensionName][$presetIdentifier] === TRUE) {
+			return TRUE;
+		}
+		if (array_key_exists($presetIdentifier, $constraints[$dimensionName]) && $constraints[$dimensionName][$presetIdentifier] === FALSE) {
+			return FALSE;
+		}
+		if (array_key_exists('*', $constraints[$dimensionName])) {
+			return (boolean)$constraints[$dimensionName]['*'];
+		}
+		return TRUE;
 	}
 
 	/**
