@@ -1,3 +1,4 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
@@ -70,7 +71,7 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="interfaceLanguage">Interface language</label>
 					<div class="neos-controls">
-						<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" />
+						<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" value="{currentUser.preferences.interfaceLanguage}" prependOptionLabel="{neos:backend.translate(id: 'user.preferences.useDefaultInterfaceLanguage', source: 'Modules')}" />
 					</div>
 				</div>
 			</fieldset>
