@@ -18,6 +18,7 @@ require(
 		context: 'neos'
 	},
 	[
+		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Content/ContentModule',
 		'Content/ApplicationView',
@@ -34,6 +35,7 @@ require(
 		'storage'
 	],
 	function(
+		$,
 		Ember,
 		ContentModule,
 		ApplicationView,
