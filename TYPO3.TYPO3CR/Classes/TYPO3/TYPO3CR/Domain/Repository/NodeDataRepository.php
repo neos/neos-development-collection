@@ -97,7 +97,7 @@ class NodeDataRepository extends Repository {
 	/**
 	 * @var array
 	 */
-	protected $highestIndexCache = [];
+	protected $highestIndexCache = array();
 
 	/**
 	 * @var array
@@ -915,7 +915,7 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	public function flushNodeRegistry() {
-		$this->highestIndexCache = [];
+		$this->highestIndexCache = array();
 		$this->addedNodes = new \SplObjectStorage();
 		$this->removedNodes = new \SplObjectStorage();
 	}
