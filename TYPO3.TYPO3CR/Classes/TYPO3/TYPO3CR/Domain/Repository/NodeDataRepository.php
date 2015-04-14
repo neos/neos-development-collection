@@ -1470,8 +1470,8 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path) {
-		$queryBuilder->andWhere('n.path = :path')
-				->setParameter('path', $path);
+		$queryBuilder->andWhere('n.pathHash = :pathHash')
+			->setParameter('pathHash', md5($path));
 	}
 
 	/**
