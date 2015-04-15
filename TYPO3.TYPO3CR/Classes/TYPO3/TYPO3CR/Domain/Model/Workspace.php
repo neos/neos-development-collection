@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
@@ -79,8 +80,8 @@ class Workspace {
 	protected $nodeService;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Utility\Now
+	 * @Flow\Inject(lazy=false)
+	 * @var Now
 	 */
 	protected $now;
 
