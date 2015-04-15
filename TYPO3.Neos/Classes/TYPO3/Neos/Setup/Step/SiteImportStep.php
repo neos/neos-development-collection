@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Setup\Step;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use \TYPO3\Setup\Exception as SetupException;
 
 /**
  * @Flow\Scope("singleton")
@@ -70,12 +71,6 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
-	 */
-	protected $flashMessageContainer;
 
 	/**
 	 * @var \TYPO3\Form\Finishers\ClosureFinisher
@@ -201,7 +196,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			} catch (\Exception $exception) {
 				$finisherContext->cancel();
 				$this->systemLogger->logException($exception);
-				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage())));
+				throw new SetupException(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage()), 1351000864);
 			}
 		}
 	}
