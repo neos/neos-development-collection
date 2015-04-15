@@ -170,7 +170,11 @@ class RuntimeContentCache {
 			if (isset($evaluateContext['configuration']['context'])) {
 				$contextVariables = array();
 				foreach ($evaluateContext['configuration']['context'] as $contextVariableName) {
-					$contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
+					if (isset($contextArray[$contextVariableName])) {
+						$contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
+					} else {
+						$contextVariables[$contextVariableName] = NULL;
+					}
 				}
 			} else {
 				$contextVariables = $contextArray;
