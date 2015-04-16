@@ -189,7 +189,7 @@ class NodesController extends ActionController {
 				'dimensions' => $dimensions
 			));
 		} else {
-			throw new NodeCreationException(sprintf('The create mode "%s" is not supported.', $mode), 1415105055);
+			$this->throwStatus(400, sprintf('The create mode "%s" is not supported.', $mode));
 		}
 	}
 
@@ -226,7 +226,7 @@ class NodesController extends ActionController {
 	}
 
 	/**
-	 * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existant
+	 * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
 	 *
 	 * @param $identifier
 	 * @param Context $context
@@ -248,7 +248,7 @@ class NodesController extends ActionController {
 				// We subtract 3 because:
 				// - /sites/ is never translated (first part of the rootline)
 				// - the actual document is not translated either (last part of the rootline). Otherwise, we wouldn't be inside this IF-branch.
-				// - we count the number of path segments, and the first path segment (before the / which indicates an absolute path) is always emtpty.
+				// - we count the number of path segments, and the first path segment (before the / which indicates an absolute path) is always empty.
 				$this->response->setHeader('X-Neos-Nodes-Missing-On-Rootline', $pathSegments - count($nodes) - 3);
 			}
 		}
