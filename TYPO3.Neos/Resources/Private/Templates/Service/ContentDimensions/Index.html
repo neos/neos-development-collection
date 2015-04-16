@@ -1,11 +1,11 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}<html>
 	<head>
-		<title>{neos:backend.translate(id: 'contentDimensions', value: 'Content Dimensions')}</title>
+		<title>Content Dimensions</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
 		<div>
-			<h1>{neos:backend.translate(id: 'contentDimensions', value: 'Content Dimensions')}</h1>
+			<h1>Content Dimensions</h1>
 			<ul class="contentdimensions"><f:for each="{contentDimensionsPresets}" key="dimensionIdentifier" as="contentDimensionPresetConfiguration">
 				<li class="contentdimension">
 					<label class="contentdimension-label">{contentDimensionPresetConfiguration.label}</label>
