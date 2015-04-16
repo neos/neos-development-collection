@@ -1145,7 +1145,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
-		if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+		if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
 			return;
 		}
 		$this->nodeData->setHiddenBeforeDateTime($dateTime);
@@ -1175,7 +1175,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
-		if ($this->getHiddenAfterDateTime() instanceof \DateTime && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+		if ($this->getHiddenAfterDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
 			return;
 		}
 		$this->nodeData->setHiddenAfterDateTime($dateTime);
