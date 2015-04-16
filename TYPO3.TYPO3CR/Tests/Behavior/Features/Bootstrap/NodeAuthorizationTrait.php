@@ -114,7 +114,7 @@ trait NodeAuthorizationTrait {
 		} else {
 
 			try {
-				$this->currentNodes[0]->setName('someNewName');
+				$this->currentNodes[0]->setName('some-new-name');
 				if ($not === 'not') {
 					Assert::fail('Name should not be settable on the current node!');
 				}
