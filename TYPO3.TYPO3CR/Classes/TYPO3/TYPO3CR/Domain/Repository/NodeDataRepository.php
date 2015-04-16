@@ -894,7 +894,13 @@ class NodeDataRepository extends Repository {
 		$queryBuilder->andWhere('n.properties LIKE :term')->setParameter('term', '%' . $term . '%');
 
 		if (strlen($pathStartingPoint) > 0) {
-			$this->addParentPathConstraintToQueryBuilder($queryBuilder, $pathStartingPoint, TRUE);
+			$pathConstraint = $queryBuilder->expr()->orx()
+				->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+				->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'));
+			$queryBuilder
+				->setParameter('parentPath', $pathStartingPoint . '%')
+				->setParameter('pathHash', md5($pathStartingPoint));
+			$queryBuilder->getDQLPart('where')->add($pathConstraint);
 		}
 
 		$query = $queryBuilder->getQuery();
