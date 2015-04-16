@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1408190103') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -5133,6 +5133,8 @@
   white-space: nowrap;
   max-width: 220px;
   padding-right: 8px;
+  font-size: 14px;
+  text-shadow: none;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
   text-decoration: none;
@@ -5497,6 +5499,9 @@
   transition-duration: 0.2s;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+.neos #neos-inspector.neos-node-is-read-only * {
+  display: none;
 }
 .neos-inspector-panel-open .neos #neos-inspector {
   right: 0;
@@ -8291,6 +8296,15 @@
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension .chosen-container {
   width: 320px !important;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer {
+  margin-bottom: 16px;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button {
+  float: none !important;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button.neos-button-success {
+  background-color: #00a338 !important;
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog {
   white-space: normal;

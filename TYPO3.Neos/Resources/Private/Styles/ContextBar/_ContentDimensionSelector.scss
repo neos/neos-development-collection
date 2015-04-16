@@ -105,6 +105,18 @@
 			}
 		}
 
+		.neos-content-dimension-selector-dimensions-footer {
+			margin-bottom: $defaultMargin;
+
+			.neos-button {
+				float: none !important;
+				&.neos-button-success {
+					background-color: $green !important;
+				}
+			}
+
+		}
+
 		.neos-content-dimension-selector-initial-translation-dialog {
 
 			.neos-close.neos-button {
