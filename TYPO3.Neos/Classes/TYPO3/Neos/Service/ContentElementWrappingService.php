@@ -99,9 +99,7 @@ class ContentElementWrappingService {
 				$attributes['data-node-__read-only'] = 'true';
 				$attributes['data-nodedatatype-__read-only'] = 'boolean';
 			}
-
 		} else {
-
 			if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
 				return $content;
 			}
@@ -117,6 +115,8 @@ class ContentElementWrappingService {
 
 			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
 				$attributes['rel'] = 'typo3:content-collection';
+				// This is needed since the backend relies on this class (should not be necessary)
+				$classNames[] = 'neos-contentcollection';
 			} else {
 				$classNames[] = 'neos-contentelement';
 			}

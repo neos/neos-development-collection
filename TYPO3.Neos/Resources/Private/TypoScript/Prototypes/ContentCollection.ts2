@@ -14,10 +14,29 @@ prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Col
 }
 
 prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
-	attributes = TYPO3.TypoScript:Attributes {
-		class = 'neos-contentcollection'
-	}
 	tagName = 'div'
+
+	attributes = TYPO3.TypoScript:Attributes
+
+	# The following is used to automatically append class attribute with "neos-contentcollection" needed for editing.
+	# You can disable the following line with:
+	# prototype(TYPO3.Neos:ContentCollection) {
+	#   attributes.class.@process.collectionClass >
+	# }
+	# in your site's TypoScript if you don't need that behavior.
+	attributes.class.@process.collectionClass = TYPO3.TypoScript:Case {
+		@override.collectionClass = 'neos-contentcollection'
+
+		classIsString {
+			condition = ${Type.isString(value)}
+			renderer = ${String.trim(value) + ' ' + collectionClass}
+		}
+
+		classIsArray {
+			condition = ${Type.isArray(value)}
+			renderer = ${Array.push(value, collectionClass)}
+		}
+	}
 
 	nodePath = 'to-be-set-by-user'
 
