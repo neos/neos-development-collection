@@ -177,6 +177,10 @@ class LegacySiteImportService {
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
 			$rootNode = $contentContext->getRootNode();
+			// We fetch the workspace to be sure it's known to the persistence manager and persist all
+			// so the workspace and site node are persisted before we import any nodes to it.
+			$rootNode->getContext()->getWorkspace();
+			$this->persistenceManager->persistAll();
 			$sitesNode = $rootNode->getNode('/sites');
 			if ($sitesNode === NULL) {
 				$sitesNode = $rootNode->createSingleNode('sites');
