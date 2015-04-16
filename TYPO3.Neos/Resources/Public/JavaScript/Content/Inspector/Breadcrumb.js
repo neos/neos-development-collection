@@ -25,8 +25,8 @@ define(
 		}.property('nodeSelection.nodes'),
 
 		currentNode: function() {
-			return this.get('nodeSelection.nodes').reverse()[0];
-		}.property('nodeSelection.nodes'),
+			return this.get('nodes')[0];
+		}.property('nodes'),
 
 		click: function() {
 			this.set('open', !this.get('open'));
