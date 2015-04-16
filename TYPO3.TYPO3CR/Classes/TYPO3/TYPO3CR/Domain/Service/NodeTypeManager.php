@@ -32,6 +32,13 @@ class NodeTypeManager {
 	protected $cachedNodeTypes = array();
 
 	/**
+	 * Node types, indexed by supertype
+	 *
+	 * @var array
+	 */
+	protected $cachedSubNodeTypes = array();
+
+	/**
 	 * @Flow\Inject
 	 * @var ConfigurationManager
 	 */
@@ -75,17 +82,21 @@ class NodeTypeManager {
 			$this->loadNodeTypes();
 		}
 
-		$filteredNodeTypes = array();
-		/** @var NodeType $nodeType */
-		foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-			if ($includeAbstractNodeTypes === FALSE && $nodeType->isAbstract()) {
-				continue;
+		if (!isset($this->cachedSubNodeTypes[$superTypeName])) {
+			$filteredNodeTypes = array();
+			/** @var NodeType $nodeType */
+			foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
+				if ($includeAbstractNodeTypes === FALSE && $nodeType->isAbstract()) {
+					continue;
+				}
+				if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+					$filteredNodeTypes[$nodeTypeName] = $nodeType;
+				}
 			}
-			if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
-				$filteredNodeTypes[$nodeTypeName] = $nodeType;
-			}
+			$this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
 		}
-		return $filteredNodeTypes;
+
+		return $this->cachedSubNodeTypes[$superTypeName];
 	}
 
 	/**
