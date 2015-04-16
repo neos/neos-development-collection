@@ -28,7 +28,14 @@
 	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
 	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
 
-	<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes{f:if(condition: \'{neos:backend.shouldLoadMinifiedJavascript()}\', then: \'-built\')}.css', package: 'TYPO3.Neos')}" />
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css?bust={neos:backend.cssBuiltVersion()}', package: 'TYPO3.Neos')}" />
+		</f:then>
+		<f:else>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+		</f:else>
+	</f:if>
 </f:section>
 
 <f:section name="body">
@@ -74,7 +81,7 @@
 		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}"></script>
 		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js?bust={neos:backend.javascriptBuiltVersion()}', package: 'TYPO3.Neos')}"></script>
 			</f:then>
 			<f:else>
 				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
