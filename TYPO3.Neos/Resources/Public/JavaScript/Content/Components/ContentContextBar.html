@@ -1,0 +1,15 @@
+<div class="neos-left">
+	<div id="neos-aloha-topmenu"></div>
+</div>
+
+<div class="neos-right">
+	{{view view.SaveIndicator
+		saveRunningBinding="view._nodeEndpoint._saveRunning"
+		lastSuccessfulTransferBinding="view._nodeEndpoint._lastSuccessfulTransfer"
+		classNames="neos-context-bar-save-indicator"
+	}}
+
+	<button class="neos-button neos-full-screen-open" title="Full Screen" {{action "toggleFullScreen" target="view.fullScreenController"}}>
+		<i class="icon-resize-full"></i>
+	</button>
+</div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="TYPO3.Flow" source-language="en" target-language="de" datatype="plaintext">
+		<body>
+			<!-- AccountExistsValidator -->
+			<trans-unit id="1325156008" xml:space="preserve">
+				<source>The account identifier (username) is already in use.</source>
+				<target>Der Kontoname (Benutzername) wird bereits verwendet.</target>
+			</trans-unit>
+
+			<!-- HostnameValidator -->
+			<trans-unit id="1324641097" xml:space="preserve">
+				<source>The hostname "{0}" was not valid.</source>
+				<target>"{0}" ist kein gültiger Hostname.</target>
+			</trans-unit>
+
+			<!-- PasswordValidator -->
+			<trans-unit id="1324641097" xml:space="preserve">
+				<source>The given password was empty.</source>
+				<target>Das Passwort ist nicht angegeben.</target>
+			</trans-unit>
+			<trans-unit id="1324640997" xml:space="preserve">
+				<source>The passwords did not match.</source>
+				<target>Die Passwörter stimmen nicht überein.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

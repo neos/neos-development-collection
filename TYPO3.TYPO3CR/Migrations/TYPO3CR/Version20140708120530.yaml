@@ -1,0 +1,20 @@
+up:
+  comments: 'Delete removed nodes that were published to "live" workspace'
+  warnings: 'There is no way of reverting this migration since the nodes will be deleted in the database.'
+  migration:
+    -
+      filters:
+        -
+          type: 'IsRemoved'
+          settings: []
+        -
+          type: 'Workspace'
+          settings:
+            workspaceName: 'live'
+      transformations:
+        -
+          type: 'RemoveNode'
+          settings: []
+
+down:
+  comments: 'No down migration available'
