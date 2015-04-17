@@ -9,7 +9,7 @@
 
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>
-			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css?bust={neos:backend.cssBuiltVersion()}', package: 'TYPO3.Neos')}" />
 		</f:then>
 		<f:else>
 			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />

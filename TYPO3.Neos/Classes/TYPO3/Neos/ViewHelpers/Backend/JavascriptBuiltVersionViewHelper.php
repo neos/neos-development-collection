@@ -14,15 +14,9 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
+ * Returns a shortened md5 of the built JavaScript file
  */
-class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
-
-	/**
-	 * @see AbstractViewHelper::isOutputEscapingEnabled()
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
@@ -31,10 +25,10 @@ class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelpe
 	protected $backendAssetsUtility;
 
 	/**
-	 * @return boolean
+	 * @return string
 	 */
 	public function render() {
-		return $this->backendAssetsUtility->shouldLoadMinifiedJavascript();
+		return $this->backendAssetsUtility->getJavascriptBuiltVersion();
 	}
 
 }
