@@ -1,0 +1,267 @@
+.. _Media ViewHelper Reference:
+
+Media ViewHelper Reference
+==========================
+
+This reference was automatically generated from code on 2015-04-17
+
+
+typo3.media:form.checkbox
+-------------------------
+
+View Helper which creates a simple checkbox (<input type="checkbox">).
+
+:Implementation: TYPO3\\Media\\ViewHelpers\\Form\\CheckboxViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+
+* ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
+
+* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
+
+* ``multiple`` (boolean, *optional*): Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
+
+* ``name`` (string, *optional*): Name of input tag
+
+* ``value`` (string): Value of input tag. Required for checkboxes
+
+* ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
+
+* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+
+* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+
+* ``class`` (string, *optional*): CSS class(es) for this element
+
+* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+
+* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
+
+* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
+
+* ``style`` (string, *optional*): Individual CSS styles for this element
+
+* ``title`` (string, *optional*): Tooltip text of element
+
+* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+
+* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+
+* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+
+
+
+Examples
+********
+
+**Example**::
+
+	<f:form.checkbox name="myCheckBox" value="someValue" />
+
+
+Expected result::
+
+	<input type="checkbox" name="myCheckBox" value="someValue" />
+
+
+**Preselect**::
+
+	<f:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
+
+
+Expected result::
+
+	<input type="checkbox" name="myCheckBox" value="someValue" checked="checked" />
+	(depending on $object)
+
+
+**Bind to object property**::
+
+	<f:form.checkbox property="interests" value="TYPO3" />
+
+
+Expected result::
+
+	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
+	(depending on property "interests")
+
+
+
+
+typo3.media:image
+-----------------
+
+Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+
+:Implementation: TYPO3\\Media\\ViewHelpers\\ImageViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+
+* ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
+
+* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered as an image
+
+* ``maximumWidth`` (integer, *optional*): Desired maximum height of the image
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum width of the image
+
+* ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
+
+* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original image
+
+* ``class`` (string, *optional*): CSS class(es) for this element
+
+* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+
+* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
+
+* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
+
+* ``style`` (string, *optional*): Individual CSS styles for this element
+
+* ``title`` (string, *optional*): Tooltip text of element
+
+* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+
+* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+
+* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``alt`` (string): Specifies an alternate text for an image
+
+* ``ismap`` (string, *optional*): Specifies an image as a server-side image-map. Rarely used. Look at usemap instead
+
+* ``usemap`` (string, *optional*): Specifies an image as a client-side image-map
+
+* ``image`` (ImageInterface, *optional*): The image to be rendered
+
+
+
+
+Examples
+********
+
+**Rendering an asset as-is**::
+
+	<m:image asset="{assetObject}" alt="a sample image without scaling" />
+
+
+Expected result::
+
+	(depending on the asset, no scaling applied)
+	<img src="_Resources/Persistent/b29[...]95d.jpeg" width="120" height="180" alt="a sample image without scaling" />
+
+
+**Rendering an image with scaling at a given width only**::
+
+	<m:image asset="{assetObject}" maximumWidth="80" alt="sample" />
+
+
+Expected result::
+
+	(depending on the asset; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
+	<img src="_Resources/Persistent/b29[...]95d.jpeg" width="80" height="120" alt="sample" />
+
+
+**Rendering an image with scaling at given width and height, keeping aspect ratio**::
+
+	<m:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+
+
+Expected result::
+
+	(depending on the asset; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
+	<img src="_Resources/Persistent/b29[...]95d.jpeg" width="53" height="80" alt="sample" />
+
+
+**Rendering an image with crop-scaling at given width and height**::
+
+	<m:image asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+
+
+Expected result::
+
+	(depending on the asset; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
+	<img src="_Resources/Persistent/b29[...]95d.jpeg" width="80" height="80" alt="sample" />
+
+
+**Rendering an image with allowed up-scaling at given width and height**::
+
+	<m:image asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+
+
+Expected result::
+
+	(depending on the asset; scaled up or down to a width 5000 pixels, keeping aspect ratio)
+	<img src="_Resources/Persistent/b29[...]95d.jpeg" width="80" height="80" alt="sample" />
+
+
+
+
+typo3.media:uri.image
+---------------------
+
+Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
+
+:Implementation: TYPO3\\Media\\ViewHelpers\\Uri\\ImageViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered as an image
+
+* ``maximumWidth`` (integer, *optional*): Desired maximum height of the image
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum width of the image
+
+* ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
+
+* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original image
+
+* ``image`` (ImageInterface, *optional*): The image to be rendered
+
+
+
+
+Examples
+********
+
+**Rendering an asset path as-is**::
+
+	{m:uri.image(asset: assetObject)}
+
+
+Expected result::
+
+	(depending on the asset)
+	_Resources/Persistent/b29[...]95d.jpeg
+
+
+**Rendering an asset path with scaling at a given width only**::
+
+	{m:uri.image(asset: assetObject, maximumWidth: 80)}
+
+
+Expected result::
+
+	(depending on the asset; has scaled keeping the aspect ratio)
+	_Resources/Persistent/b29[...]95d.jpeg
+
+
+
