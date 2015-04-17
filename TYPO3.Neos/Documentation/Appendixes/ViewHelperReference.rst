@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-04-16
+This reference was automatically generated from code on 2015-04-17
 
 
 neos:backend.authenticationProviderLabel
@@ -91,6 +91,28 @@ Arguments
 *********
 
 * ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface)
+
+
+
+
+neos:backend.cssBuiltVersion
+----------------------------
+
+Returns a shortened md5 of the built CSS file
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
+
+
+
+
+
+neos:backend.javascriptBuiltVersion
+-----------------------------------
+
+Returns a shortened md5 of the built JavaScript file
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
+
 
 
 
