@@ -300,6 +300,17 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function getChildNodesWorksCaseInsensitive() {
+		$rootNode = $this->context->getRootNode();
+
+		$node = $rootNode->createNode('node');
+
+		$this->assertSame($node, $rootNode->getNode('nOdE'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll() {
 		$rootNode = $this->context->getRootNode();
 

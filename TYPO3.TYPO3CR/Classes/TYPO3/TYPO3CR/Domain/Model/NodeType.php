@@ -16,6 +16,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * A Node Type
@@ -373,7 +374,7 @@ class NodeType {
 		$autoCreatedChildNodes = array();
 		foreach ($this->configuration['childNodes'] as $childNodeName => $childNodeConfiguration) {
 			if (isset($childNodeConfiguration['type'])) {
-				$autoCreatedChildNodes[$childNodeName] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
+				$autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
 			}
 		}
 

@@ -169,6 +169,7 @@ class NodeDataRepository extends Repository {
 	 * @return NodeData The matching node if found, otherwise NULL
 	 */
 	public function findOneByPath($path, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE) {
+		$path = strtolower($path);
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
 		}
@@ -312,7 +313,7 @@ class NodeDataRepository extends Repository {
 	 * @throws \InvalidArgumentException
 	 */
 	public function setNewIndex(NodeData $node, $position, NodeInterface $referenceNode = NULL) {
-		$parentPath = $node->getParentPath();
+		$parentPath = strtolower($node->getParentPath());
 
 		switch ($position) {
 			case self::POSITION_BEFORE:
@@ -412,6 +413,7 @@ class NodeDataRepository extends Repository {
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE, $recursive = FALSE) {
+		$parentPath = strtolower($parentPath);
 		$foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
 		if ($parentPath === '/') {
@@ -498,6 +500,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
 	 */
 	public function findByParentWithoutReduce($parentPath, Workspace $workspace) {
+		$parentPath = strtolower($parentPath);
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -593,6 +596,7 @@ class NodeDataRepository extends Repository {
 	 * @throws Exception\NodeException
 	 */
 	protected function renumberIndexesInLevel($parentPath) {
+		$parentPath = strtolower($parentPath);
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
 
 		/** @var Query $query */
@@ -654,10 +658,11 @@ class NodeDataRepository extends Repository {
 	 * @return integer The next available index
 	 */
 	protected function findNextFreeIndexInParentPath($parentPath) {
+		$parentPath = strtolower($parentPath);
 		if (!isset($this->highestIndexCache[$parentPath])) {
 			/** @var \Doctrine\ORM\Query $query */
 			$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
-			$query->setParameter('parentPathHash', md5($parentPath));
+			$query->setParameter('parentPathHash', md5(strtolower($parentPath)));
 			$this->highestIndexCache[$parentPath] = $query->getSingleScalarResult() ?: 0;
 		}
 
@@ -671,7 +676,7 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	protected function setHighestIndexInParentPath($parentPath, $highestIndex) {
-		$this->highestIndexCache[$parentPath] = $highestIndex;
+		$this->highestIndexCache[strtolower($parentPath)] = $highestIndex;
 	}
 
 	/**
@@ -689,7 +694,7 @@ class NodeDataRepository extends Repository {
 		$this->persistEntities();
 		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
-		$query->setParameter('parentPathHash', md5($parentPath));
+		$query->setParameter('parentPathHash', md5(strtolower($parentPath)));
 		$query->setParameter('referenceIndex', $referenceIndex);
 		return $query->getSingleScalarResult() ?: 0;
 	}
@@ -706,6 +711,7 @@ class NodeDataRepository extends Repository {
 	 * @return integer The currently next higher index or NULL if no node with a higher index exists
 	 */
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
+		$parentPath = strtolower($parentPath);
 		if (isset($this->highestIndexCache[$parentPath]) && $this->highestIndexCache[$parentPath] === $referenceIndex) {
 			NULL;
 		}
@@ -814,6 +820,8 @@ class NodeDataRepository extends Repository {
 	 * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, array $dimensions = NULL, $includeRemovedNodes = FALSE, $nodeTypeFilter = NULL) {
+		$pathStartingPoint = strtolower($pathStartingPoint);
+		$pathEndPoint = strtolower($pathEndPoint);
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
@@ -841,7 +849,7 @@ class NodeDataRepository extends Repository {
 		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
 		foreach ($pathSegments as $pathSegment) {
 			$constraintPath .= $pathSegment;
-			$pathConstraints[] = md5($constraintPath);
+			$pathConstraints[] = md5(strtolower($constraintPath));
 			$constraintPath .= '/';
 		}
 		if (count($pathConstraints) > 0) {
@@ -879,6 +887,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
 	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = NULL) {
+		$pathStartingPoint = strtolower($pathStartingPoint);
 		if (strlen($term) === 0) {
 			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
 		}
@@ -1223,7 +1232,7 @@ class NodeDataRepository extends Repository {
 			$queryBuilder->select('n.identifier')
 				->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 				->where('n.pathHash = :pathHash')
-				->setParameter('pathHash', md5($nodePath));
+				->setParameter('pathHash', md5(strtolower($nodePath)));
 			$result = (count($queryBuilder->getQuery()->getResult()) > 0 ? TRUE : FALSE);
 		});
 
@@ -1241,6 +1250,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
 	 */
 	public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = FALSE) {
+		$path = strtolower($path);
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -1423,7 +1433,7 @@ class NodeDataRepository extends Repository {
 	 */
 	public function removeAllInPath($path) {
 		$query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
-		$query->setParameter('path', $path . '/%');
+		$query->setParameter('path', strtolower($path) . '/%');
 		$query->execute();
 	}
 
@@ -1461,6 +1471,7 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	protected function addParentPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $parentPath, $recursive = FALSE) {
+		$parentPath = strtolower($parentPath);
 		if ($recursive !== TRUE) {
 			$queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
 				->setParameter('parentPathHash', md5($parentPath));
@@ -1477,7 +1488,7 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path) {
 		$queryBuilder->andWhere('n.pathHash = :pathHash')
-			->setParameter('pathHash', md5($path));
+			->setParameter('pathHash', md5(strtolower($path)));
 	}
 
 	/**
