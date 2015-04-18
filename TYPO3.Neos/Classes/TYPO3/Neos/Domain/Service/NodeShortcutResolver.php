@@ -50,7 +50,7 @@ class NodeShortcutResolver {
 				default:
 					$childNodes = $node->getChildNodes('TYPO3.Neos:Document');
 					if ($childNodes !== array()) {
-						$node = current($childNodes);
+						$node = reset($childNodes);
 					} else {
 						return NULL;
 					}
