@@ -477,3 +477,40 @@ contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegme
 		}
 	}
 }
+
+
+contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = TYPO3.TypoScript:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|'
+
+	20 =  TYPO3.TypoScript:Array {
+		@override.currentCounter = ${object.counter}
+
+		5 = 'Uncached segment|'
+
+		10 = ${'counter=' + currentCounter}
+
+		15 = '|End uncached'
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+}

@@ -395,13 +395,6 @@ class Runtime {
 
 			$tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
 
-			if (isset($typoScriptConfiguration['__meta']['override'])) {
-				$newContextArray = $this->getCurrentContext();
-				foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
-					$newContextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-				}
-			}
-
 			if ($cacheCtx['cacheForPathDisabled'] === TRUE) {
 				$contextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
 				$newContextArray = array();
@@ -409,6 +402,13 @@ class Runtime {
 					if (isset($contextArray[$contextVariableName])) {
 						$newContextArray[$contextVariableName] = $contextArray[$contextVariableName];
 					}
+				}
+			}
+
+			if (isset($typoScriptConfiguration['__meta']['override'])) {
+				$newContextArray = $this->getCurrentContext();
+				foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
+					$newContextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 				}
 			}
 
