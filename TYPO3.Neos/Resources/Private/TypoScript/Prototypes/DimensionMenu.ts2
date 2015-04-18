@@ -4,6 +4,7 @@ prototype(TYPO3.Neos:DimensionMenu) < prototype(TYPO3.Neos:Menu) {
 
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/DimensionMenu.html'
 
+	renderHiddenInMenu = TRUE
 	absent.attributes = TYPO3.TypoScript:Attributes {
 		class = 'normal'
 	}
