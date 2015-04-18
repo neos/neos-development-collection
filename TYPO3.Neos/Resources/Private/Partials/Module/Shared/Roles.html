@@ -1,0 +1,3 @@
+<f:for each="{roles}" as="role" iteration="iterator">
+	{role}<f:if condition="{role.parentRoles}"> (<i><f:for each="{role.parentRoles}" as="parentRole" iteration="parentRoleIiterator">{parentRole}<f:if condition="{parentRoleIiterator.isLast}"><f:else>, </f:else></f:if></f:for></i>)</f:if><f:if condition="{iterator.isLast}"><f:else>, </f:else></f:if>
+</f:for>

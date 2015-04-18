@@ -1,0 +1,23 @@
+up:
+  comments: 'This is the migration to rename the "insert record" NodeType from TYPO3.Neos.NodeTypes:Records to TYPO3.Neos.NodeTypes:ContentReferences as per NEOS-847'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Records'
+      transformations:
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'records'
+            to: 'references'
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:ContentReferences'
+
+down:
+  comments: 'This migration cannot be reverted automatically'
+  migration: []
