@@ -434,4 +434,26 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		), $entriesWritten);
 	}
 
+	/**
+	 * @test
+	 */
+	public function uncachedSegmentInCachedSegmentCanOverrideContextVariables() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/uncachedSegmentInCachedSegmentCanOverrideContextVariables');
+
+		$view->assign('object', $object);
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
+
+		// Update the object value to see that the outer segment is really cached
+		$object->setValue('Object value 2');
+
+		$secondRenderResult = $view->render();
+		$this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
+	}
+
 }
