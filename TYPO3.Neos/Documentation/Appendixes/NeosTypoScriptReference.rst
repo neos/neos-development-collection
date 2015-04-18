@@ -711,7 +711,7 @@ Get a URI to a (thumbnail) image for an asset.
 
 Example::
 
-	logoUri = TYPO3.Media:ImageUri {
+	logoUri = TYPO3.Neos:ImageUri {
 		asset = ${q(node).property('image')}
 		maximumWidth = 100
 		maximumHeight = 100
@@ -731,7 +731,7 @@ Render an image tag for an asset.
 
 Example::
 
-	logoImage = TYPO3.Media:ImageTag {
+	logoImage = TYPO3.Neos:ImageTag {
 		asset = ${q(node).property('image')}
 		maximumWidth = 400
 		attributes.alt = 'A company logo'
