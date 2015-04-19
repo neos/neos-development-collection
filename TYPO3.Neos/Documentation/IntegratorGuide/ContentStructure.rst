@@ -1,8 +1,8 @@
 .. _content-structure:
 
-===========================
-The TYPO3 Content Structure
-===========================
+=================
+Content Structure
+=================
 
 Before we can understand how content is rendered, we have to see how it is structured
 and organized. These basics are explained in this section.

@@ -1,8 +1,8 @@
 .. _content-cache:
 
-============================
-The TYPO3 Neos Content Cache
-============================
+=============
+Content Cache
+=============
 
 Introduction
 ============
