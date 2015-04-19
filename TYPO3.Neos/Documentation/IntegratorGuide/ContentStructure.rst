@@ -707,7 +707,7 @@ Options Reference:
 * ``minuteStep``: The granularity on which a time can be selected. Example: If set to ``30``, only half-hour
   increments of time can be chosen. Default ``5`` minutes.
 
-Property Type: image (TYPO3\Media\Domain\Model\ImageVariant) ``ImageEditor`` -- Image Selection/Upload Editor
+Property Type: image (TYPO3\\Media\\Domain\\Model\\ImageVariant) ``ImageEditor`` -- Image Selection/Upload Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For properties of type ``TYPO3\Media\Domain\Model\ImageVariant``, an image editor is rendered. If you want cropping
@@ -793,7 +793,7 @@ Options Reference:
 		  is not set. Default ``TRUE``.
 		* ``defaultOption`` (string): default aspect ratio option to be chosen if no cropping has been applied already.
 
-Property Type: asset (TYPO3\Media\Domain\Model\Asset / array<TYPO3\Media\Domain\Model\Asset>) ``AssetEditor`` -- File Selection Editor
+Property Type: asset (TYPO3\\Media\\Domain\\Model\\Asset / array<TYPO3\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If an asset, i.e. ``TYPO3\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
