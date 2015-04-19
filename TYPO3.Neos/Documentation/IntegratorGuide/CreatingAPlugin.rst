@@ -1,8 +1,8 @@
 .. _creating-a-plugin:
 
-============================
-Creating a TYPO3 Neos plugin
-============================
+=================
+Creating a plugin
+=================
 
 Any TYPO3 Flow package can be used as a plugin with a little effort. This section
 will guide you through a simple example. First, we will create a really basic
