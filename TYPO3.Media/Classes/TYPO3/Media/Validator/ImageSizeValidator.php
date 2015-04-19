@@ -64,7 +64,7 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
 			if (isset($this->options['minimumResolution']) && $resolution < $this->options['minimumResolution']) {
 				$this->addError('The given image size of %1$d x %2$d is too low for the required minimum resolution of %3$d.', 1319813336, array($image->getHeight(), $image->getHeight(), $this->options['minimumResolution']));
 			} elseif (isset($this->options['maximumResolution']) && $resolution > $this->options['maximumResolution']) {
-				$this->addError('The given image size of %1$d x %2$d is too low for the required maximum resolution of %3$d.', 1319813355, array($image->getHeight(), $image->getHeight(), $this->options['maximumResolution']));
+				$this->addError('The given image size of %1$d x %2$d is too high for the required maximum resolution of %3$d.', 1319813355, array($image->getHeight(), $image->getHeight(), $this->options['maximumResolution']));
 			}
 		}
 	}
