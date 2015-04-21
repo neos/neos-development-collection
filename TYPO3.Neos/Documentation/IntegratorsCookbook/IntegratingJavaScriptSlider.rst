@@ -29,7 +29,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 Next you need to define the prototype for the slider in typoscript.
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes/Carousel.ts2)::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.ts2)::
 
 	prototype(Vendor.Site:Carousel) {
 		carouselItems = TYPO3.Neos:ContentCollection {
@@ -53,6 +53,11 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes/Ca
 			iteration = ${carouselItemsIteration}
 		}
 	}
+
+Now you need to include this at the top of your (Sites/Vendor.Site/Resources/Private/TypoScript/Root.ts2)::
+
+	// Includes all additional ts2 files inside the NodeTypes folder
+	include: NodeTypes/*.ts2
 
 For rendering you need the fluid templates for the slider.
 
