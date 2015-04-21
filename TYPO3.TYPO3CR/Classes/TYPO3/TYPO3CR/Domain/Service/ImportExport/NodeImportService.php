@@ -15,6 +15,7 @@ use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
@@ -53,6 +54,12 @@ class NodeImportService {
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var Context
+	 */
+	protected $securityContext;
 
 	/**
 	 * @var ImportExportPropertyMappingConfiguration
@@ -172,7 +179,9 @@ class NodeImportService {
 		$formatVersion = $this->determineFormatVersion($xmlReader);
 		switch ($formatVersion) {
 			case self::SUPPORTED_FORMAT_VERSION:
-				$this->importSubtree($xmlReader);
+				$this->securityContext->withoutAuthorizationChecks(function() use ($xmlReader) {
+					$this->importSubtree($xmlReader);
+				});
 				break;
 			case NULL:
 				throw new ImportException('Failed to recognize format of the Node Data XML to import. Please make sure that you use a valid Node Data XML structure.', 1409059346);

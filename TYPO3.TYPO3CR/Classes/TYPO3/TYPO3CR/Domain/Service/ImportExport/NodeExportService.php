@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
 use TYPO3\TYPO3CR\Exception\ExportException;
 
 /**
@@ -75,6 +76,12 @@ class NodeExportService {
 	protected $nodeDataRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @var ImportExportPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
@@ -124,8 +131,10 @@ class NodeExportService {
 			$this->xmlWriter->startDocument('1.0', 'UTF-8');
 		}
 
-		$nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName, $nodeTypeFilter);
-		$this->exportNodeDataList($nodeDataList);
+		$this->securityContext->withoutAuthorizationChecks(function() use ($startingPointNodePath, $workspaceName, $nodeTypeFilter) {
+			$nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName, $nodeTypeFilter);
+			$this->exportNodeDataList($nodeDataList);
+		});
 
 		if ($endDocument) {
 			$this->xmlWriter->endDocument();

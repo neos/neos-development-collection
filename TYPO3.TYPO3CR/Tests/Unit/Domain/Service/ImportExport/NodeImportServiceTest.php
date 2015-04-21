@@ -11,10 +11,31 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Now;
 
 class NodeImportServiceTest extends UnitTestCase {
+
+	/**
+	 * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockPropertyMapper;
+
+	/**
+	 * @var Context|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockSecurityContext;
+
+	public function setUp() {
+		$this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
+
+		$this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+		$this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will($this->returnCallback(function($callback) {
+			return $callback->__invoke();
+		}));
+	}
 
 	/**
 	 * @test
@@ -25,11 +46,10 @@ class NodeImportServiceTest extends UnitTestCase {
 
 		$this->assertTrue($result);
 
-		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
-
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
-		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
+		$this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
+		$this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
 		$now = new Now();
 		$expectedNodeData = array(
@@ -81,11 +101,10 @@ class NodeImportServiceTest extends UnitTestCase {
 
 		$this->assertTrue($result);
 
-		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
-
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
-		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
+		$this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
+		$this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
 		$now = new Now();
 		$expectedNodeDatas = array(
@@ -223,7 +242,7 @@ class NodeImportServiceTest extends UnitTestCase {
 			$actualNodeDatas[] = $nodeData;
 			return TRUE;
 		}));
-		$mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
 			return array(
 				'targetType' => $targetType,
 				'source' => $source
@@ -244,11 +263,10 @@ class NodeImportServiceTest extends UnitTestCase {
 
 		$this->assertTrue($result);
 
-		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
-
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
 		$nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
-		$this->inject($nodeImportService, 'propertyMapper', $mockPropertyMapper);
+		$this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
+		$this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
 		$now = new Now();
 		$expectedNodeDatas = array(
@@ -287,7 +305,7 @@ class NodeImportServiceTest extends UnitTestCase {
 			$actualNodeDatas[] = $nodeData;
 			return TRUE;
 		}));
-		$mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
 			return array(
 				'targetType' => $targetType,
 				'source' => $source
