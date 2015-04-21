@@ -48,10 +48,10 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
-prototype(TYPO3.Neos:Content) {
+prototype(TYPO3.Neos:ContentCollection) {
 	prototype(TYPO3.Neos:ContentCollection) {
-		# Make ContentCollection inside content node types embedded by default.
-		# Usually there's no need for a separate cache entry for container content elements, but depending on the use-case
+		# Make nested ContentCollections be embedded by default.
+		# Usually there's no need for a separate cache entry for nested ContentCollections, but depending on the use-case
 		# the mode can safely be switched to 'cached'.
 		@cache {
 			mode = 'embed'
