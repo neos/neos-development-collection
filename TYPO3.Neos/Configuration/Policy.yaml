@@ -40,7 +40,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.ContentDimensions':
-      matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|error)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
 
     'TYPO3.Neos:Backend.DataSource':
       matcher: 'method(TYPO3\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'

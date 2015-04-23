@@ -283,11 +283,21 @@
 
 # ContentDimensionController routes
 -
-  name: 'Services - ContentDimensionController->presetConfiguration'
+  name: 'Services - ContentDimensionController->index()'
   uriPattern: 'content-dimensions'
   defaults:
     '@package':    'TYPO3.Neos'
     '@controller': 'Service\ContentDimensions'
     '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - ContentDimensionController->show()'
+  uriPattern: 'content-dimensions/{dimensionName}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'show'
   appendExceedingArguments: TRUE
   httpMethods: ['GET']
