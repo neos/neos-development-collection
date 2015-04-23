@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Base class for all TypoScript objects
@@ -19,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
 abstract class AbstractTypoScriptObject implements \ArrayAccess
 {
     /**
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var Runtime
      */
     protected $tsRuntime;
 
@@ -40,16 +41,16 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess
     /**
      * @var array
      */
-    protected $tsValueCache = array();
+    protected $tsValueCache = [];
 
     /**
      * Constructor
      *
-     * @param \TYPO3\TypoScript\Core\Runtime $tsRuntime
+     * @param Runtime $tsRuntime
      * @param string $path
      * @param string $typoScriptObjectName
      */
-    public function __construct(\TYPO3\TypoScript\Core\Runtime $tsRuntime, $path, $typoScriptObjectName)
+    public function __construct(Runtime $tsRuntime, $path, $typoScriptObjectName)
     {
         $this->tsRuntime = $tsRuntime;
         $this->path = $path;
@@ -62,6 +63,16 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess
      * @return mixed
      */
     abstract public function evaluate();
+
+    /**
+     * Get the TypoScript runtime this object was created in.
+     *
+     * @return Runtime
+     */
+    public function getTsRuntime()
+    {
+        return $this->tsRuntime;
+    }
 
     /**
      * Return the TypoScript value relative to this TypoScript object (with processors etc applied).
