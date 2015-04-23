@@ -19,6 +19,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use TYPO3\Neos\Routing\Exception\InvalidRequestPathException;
 use TYPO3\Neos\Routing\Exception\NoSuchDimensionValueException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -422,6 +423,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		}
 
 		$dimensionsAndDimensionValues = array();
+		$chosenDimensionPresets = array();
 		$matches = array();
 
 		preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
@@ -429,6 +431,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		if (!isset($matches['dimensionPresetUriSegments'])) {
 			foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
 				$dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
+				$chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
 			}
 		} else {
 			$dimensionPresetUriSegments = explode('_', $matches['dimensionPresetUriSegments']);
@@ -444,9 +447,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 					throw new NoSuchDimensionValueException(sprintf('Could not find a preset for content dimension "%s" through the given URI segment "%s".', $dimensionName, $uriSegment), 1413389321);
 				}
 				$dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
+				$chosenDimensionPresets[$dimensionName] = $preset['identifier'];
 			}
 
 			$requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
+		}
+
+		if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
+			throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', 'x'), 1428657721);
 		}
 
 		return $dimensionsAndDimensionValues;
