@@ -34,9 +34,7 @@ function(
 		options: Ember.required(),
 		selected: null,
 		_presetsDidChange: function() {
-			this.set('selected', this.get('presets').filter(function(preset) {
-				return preset.get('selected') === true;
-			}).get(0));
+			this.set('selected', this.get('presets').findBy('selected', true));
 		}.observes('presets').on('init')
 	});
 
@@ -46,6 +44,7 @@ function(
 	Preset = Ember.Object.extend({
 		identifier: Ember.required(),
 		label: Ember.required(),
+		disabled: false,
 		values: Ember.required()
 	});
 
@@ -63,19 +62,12 @@ function(
 		showInitialTranslationDialog: false,
 
 		/**
-		 * Initialization
-		 */
-		init: function() {
-			this._updateSelectedDimensionsFromCurrentDocument();
-		},
-
-		/**
 		 * Retrieve the available content dimension presets via the REST service and set the local configuration accordingly.
 		 * Also fetches the "currently selected dimensions" from the meta data of the currently shown document.
 		 */
 		_loadConfiguration: function() {
 			var that = this;
-			HttpRestClient.getResource('neos-service-contentdimensions').then(function(result) {
+			HttpRestClient.getResource('neos-service-contentdimensions-index').then(function(result) {
 				var configuration = {};
 
 				$.each($('.contentdimensions', result.resource).children('li'), function(key, contentDimensionSnippet) {
@@ -91,7 +83,8 @@ function(
 						var presetIdentifier = $('.contentdimension-preset-identifier', contentDimensionPresetSnippet).text();
 						presets[presetIdentifier] = {
 							label: $('.contentdimension-preset-label', contentDimensionPresetSnippet).text(),
-							values: values
+							values: values,
+							disabled: false
 						};
 					});
 
@@ -111,10 +104,61 @@ function(
 
 		/**
 		 * Updates the "selectedDimensions" property by retrieving the currently active dimensions from the document markup
+		 *
+		 * Note that "selectedDimensions" contains the dimension _values_ for each dimension, not the dimension _presets_
 		 */
 		_updateSelectedDimensionsFromCurrentDocument: function() {
+			var that = this;
+			var firstDimensionSkipped = false;
+
 			// Hint: if we do not clone the selected dimensions, the switch-back to older dimensions does not properly work (e.g. inside cancelCreateAction)
 			this.set('selectedDimensions', $.extend(true, {}, $('#neos-document-metadata').data('neos-context-dimensions')));
+
+			that._updateAvailableDimensionPresetsAfterChoosingPreset(this.get('dimensions').get(0));
+		}.observes('configuration'),
+
+		/**
+		 * If a preset has been chosen, the list of allowed dimension presets in other dimensions might change.
+		 */
+		_updateAvailableDimensionPresetsAfterChoosingPreset: function(changedDimension) {
+			var chosenDimensionPresets = {};
+			var dimensions = this.get('dimensions');
+
+			$.each(dimensions, function(key, dimension) {
+				chosenDimensionPresets[dimension.get('identifier')] = dimension.get('selected.identifier');
+			});
+
+			var passedChangedDimension = false;
+			$.each(dimensions, function(key, dimension) {
+				if (passedChangedDimension) {
+					HttpRestClient.getResource('neos-service-contentdimensions-index', dimension.get('identifier'), {data: {chosenDimensionPresets: chosenDimensionPresets}}).then(function (result) {
+						$.each(dimension.get('presets'), function (key, preset) {
+							if ($('.contentdimension-preset-identifier:contains("' + preset.get('identifier') + '")', result.resource).length === 0) {
+								preset.set('disabled', true);
+								if (preset.get('selected')) {
+									preset.set('selected', false);
+								}
+							} else {
+								preset.set('disabled', false);
+							}
+						});
+
+						// If no preset is selected anymore (because it has been disabled above), select the first not-disabled presets:
+						if (dimension.get('presets').findBy('selected', true) === undefined) {
+							var substituteDimensionPreset = dimension.get('presets').findBy('disabled', false);
+							if (substituteDimensionPreset !== undefined) {
+								dimension.set('selected', substituteDimensionPreset);
+								substituteDimensionPreset.set('selected', true);
+							}
+						}
+					}, function (error) {
+						console.error('Failed loading dimension presets data for dimension ' + dimension.get('identifier') + '.', error);
+					});
+				}
+				if (dimension.get('identifier') === changedDimension.get('identifier')) {
+					passedChangedDimension = true;
+				}
+			});
 		},
 
 		/**
@@ -187,13 +231,24 @@ function(
 			}
 		}.observes('currentDimensionChoiceText'),
 
-		/*
-		 * Send an AJAX request for querying the Nodes service to check if the current node can be displayed in the
-		 * currently configured dimensions and if so, reloads the current document with the new context.
+		/**
+		 * Revert the selected dimension values to those stored in the current document and close the dimension selector
+		 */
+		cancelSelection: function () {
+			this._updateSelectedDimensionsFromCurrentDocument();
+			this.set('selectorIsActive', false);
+		},
+
+		/**
+		 * Apply the currently selected dimensions and reload the document to reflect these changes
+		 *
+		 * This method sends an AJAX request for querying the Nodes service to check if the current node already exists
+		 * in the newly selected dimensions. If it does, the document is reloaded with the new dimension values, if such
+		 * a combination does not exist yet, a dialog is shown asking the user if such a variant should be created.
 		 *
 		 * Also triggers "contentDimensionsSelectionChanged" if the document could be reloaded.
 		 */
-		reloadDocument: function() {
+		applySelection: function () {
 			var that = this,
 				$documentMetadata = $('#neos-document-metadata'),
 				nodeIdentifier = $documentMetadata.data('node-_identifier'),
@@ -223,7 +278,6 @@ function(
 
 		cancelCreateAction: function() {
 			this.set('showInitialTranslationDialog', false);
-			this._updateSelectedDimensionsFromCurrentDocument();
 		},
 
 		createEmptyDocumentAction: function() {

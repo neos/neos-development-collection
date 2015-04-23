@@ -9,12 +9,18 @@
 			<label for="neos-content-dimension-{{unbound dimension.identifier}}"><i class="{{unbound dimension.icon}}"></i> {{unbound dimension.label}}</label>
 			<select name="{{unbound dimension.identifier}}" id="neos-content-dimension-{{unbound dimension.identifier}}">
 				{{#each preset in dimension.presets}}
-					<option value="{{unbound preset.identifier}}" {{bind-attr selected=preset.selected}}>{{unbound preset.label}}</option>
+					<option value="{{unbound preset.identifier}}" {{bind-attr selected=preset.selected}} {{bind-attr disabled=preset.disabled}}>{{unbound preset.label}}</option>
 				{{/each}}
 			</select>
 		</div>
 	{{/each}}
 
+	{{#if view.isMultiDimensionSelection}}
+	<div class="neos-content-dimension-selector-dimensions-footer neos-right">
+		<button class="neos-button" title="{{translate id='cancel'}}" {{action "cancelSelection" target="controller"}}>{{translate id="cancel"}}</button>
+		<button class="neos-button neos-button-success" title="{{translate id='apply'}}" {{action "applySelection" target="controller"}}>{{translate id="apply"}}</button>
+	</div>
+	{{/if}}
 
 	<div {{bindAttr class=":neos-modal :neos-content-dimension-selector-initial-translation-dialog controller.showInitialTranslationDialog:neos-show:neos-hide"}}>
 		<div class="neos-modal-header">
@@ -40,7 +46,7 @@
 			</div>
 		</div>
 		<div class="neos-modal-footer">
-			<button class="neos-button" title="Cancel" {{action "cancelCreateAction" target="controller"}}>Cancel</button>
+			<button class="neos-button" title="{{translate id='cancel'}}" {{action "cancelCreateAction" target="controller"}}>{{translate id='cancel'}}</button>
 			<button class="neos-button" {{action "createEmptyDocumentAction" target="controller"}}>Create empty</button>
 			<button class="neos-button" {{action "createDocumentAndCopyContentAction" target="controller"}}>Create and copy</button>
 		</div>
