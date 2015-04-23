@@ -8297,6 +8297,15 @@
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension .chosen-container {
   width: 320px !important;
 }
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer {
+  margin-bottom: 16px;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button {
+  float: none !important;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button.neos-button-success {
+  background-color: #00a338 !important;
+}
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog {
   white-space: normal;
 }
