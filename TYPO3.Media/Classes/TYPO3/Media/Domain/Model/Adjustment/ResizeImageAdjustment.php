@@ -16,6 +16,7 @@ use Imagine\Image\Box;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * An adjustment for resizing an image
@@ -243,7 +244,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 * @internal Should never be used outside of the media package. Rely on the ImageService to apply your adjustments.
 	 */
 	public function applyToImage(ImagineImageInterface $image) {
-		$ratioMode = $this->ratioMode ?: \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_INSET;
+		$ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
 		return $image->thumbnail($this->calculateDimensions($image->getSize()), $ratioMode);
 	}
 
@@ -274,6 +275,17 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 			$height = $this->height;
 		}
 
+		// makes sure that maximumWidth and maximumHeight is respected:
+		if ($this->maximumWidth !== NULL && $this->maximumHeight !== NULL) {
+			if ($width > $this->maximumWidth) {
+				$width = $this->maximumWidth;
+			}
+			if ($height > $this->maximumHeight) {
+				$height = $this->maximumHeight;
+			}
+			return new Box($width, $height);
+		}
+
 		// no matter if width has been adjusted previously, makes sure that maximumWidth is respected:
 		if ($this->maximumWidth !== NULL) {
 			if ($width > $this->maximumWidth) {
@@ -282,7 +294,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 			}
 		}
 
-		// no matter if height has been adjusted previously, makes sure that maximumWidth is respected:
+		// no matter if height has been adjusted previously, makes sure that maximumHeight is respected:
 		if ($this->maximumHeight !== NULL) {
 			if ($height > $this->maximumHeight) {
 				$height = $this->maximumHeight;

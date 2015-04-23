@@ -73,8 +73,8 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 	 */
 	public function minimumAndMaximumDimensions() {
 		return array(
-			array(NULL, 110, NULL, NULL, 110, 82),	// maximum width respects aspect ratio
-			array(NULL, 110, NULL, 80, 106, 80),	// maximum height wins
+			array(NULL, 110, NULL, NULL, 110, 82), # maximum width respects aspect ratio
+			array(NULL, 110, NULL, 80, 110, 80),   # maximum height wins
 		);
 	}
 
