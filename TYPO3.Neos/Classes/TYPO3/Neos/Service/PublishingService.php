@@ -16,7 +16,6 @@ use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -28,7 +27,7 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
  * @api
  * @Flow\Scope("singleton")
  */
-class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
+class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService {
 
 	/**
 	 * @Flow\Inject

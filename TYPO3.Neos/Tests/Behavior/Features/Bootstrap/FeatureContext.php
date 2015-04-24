@@ -72,7 +72,6 @@ class FeatureContext extends MinkContext {
 	 * @return \TYPO3\Neos\Service\PublishingService $publishingService
 	 */
 	private function getPublishingService() {
-		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
 		return $this->getObjectManager()->get('TYPO3\Neos\Service\PublishingService');
 	}
 

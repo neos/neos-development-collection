@@ -11,7 +11,7 @@ TYPO3\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
 TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface:
   className: TYPO3\Neos\Domain\Service\ContentContextFactory
 
-TYPO3\TYPO3CR\Service\PublishingServiceInterface:
+TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface:
   className: TYPO3\Neos\Service\PublishingService
 
 TYPO3\Neos\Aspects\TypoScriptCachingAspect:
