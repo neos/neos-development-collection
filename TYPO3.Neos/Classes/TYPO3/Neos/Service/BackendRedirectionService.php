@@ -14,13 +14,16 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -48,6 +51,12 @@ class BackendRedirectionService {
 
 	/**
 	 * @Flow\Inject
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
@@ -71,6 +80,12 @@ class BackendRedirectionService {
 	protected $userService;
 
 	/**
+	 * @Flow\Inject
+	 * @var PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
 	 *
 	 * @param ActionRequest $actionRequest
@@ -81,17 +96,16 @@ class BackendRedirectionService {
 		if ($user === NULL) {
 			return NULL;
 		}
+
 		$workspaceName = $this->userService->getCurrentWorkspaceName();
-		$contentContext = $this->createContext($workspaceName);
-		// create workspace if it does not exist
-		$contentContext->getWorkspace();
-		$this->nodeDataRepository->persistEntities();
+		$this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
 		$uriBuilder = new UriBuilder();
 		$uriBuilder->setRequest($actionRequest);
 		$uriBuilder->setFormat('html');
 		$uriBuilder->setCreateAbsoluteUri(TRUE);
 
+		$contentContext = $this->createContext($workspaceName);
 		$lastVisitedNode = $this->getLastVisitedNode($contentContext);
 		if ($lastVisitedNode !== NULL) {
 			return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
@@ -154,5 +168,31 @@ class BackendRedirectionService {
 			$contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
 		}
 		return $this->contextFactory->create($contextProperties);
+	}
+
+	/**
+	 * If the specified workspace or its root node does not exist yet, the workspace and root node will be created.
+	 *
+	 * This method is basically a safeguard for legacy and potentially broken websites where users might not have
+	 * their own workspace yet. In a normal setup, the Domain User Service is responsible for creating and deleting
+	 * user workspaces.
+	 *
+	 * @param string $workspaceName Name of the workspace
+	 * @return void
+	 */
+	protected function createWorkspaceAndRootNodeIfNecessary($workspaceName) {
+		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
+		if ($workspace === NULL) {
+			$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+			$workspace = new Workspace($workspaceName, $liveWorkspace);
+			$this->workspaceRepository->add($workspace);
+			$this->persistenceManager->whitelistObject($workspace);
+		}
+
+		$contentContext = $this->createContext($workspaceName);
+		$rootNode = $contentContext->getRootNode();
+		$this->persistenceManager->whitelistObject($rootNode);
+		$this->persistenceManager->whitelistObject($rootNode->getNodeData());
+		$this->persistenceManager->persistAll(TRUE);
 	}
 }

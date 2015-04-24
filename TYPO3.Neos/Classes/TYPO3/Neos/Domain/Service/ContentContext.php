@@ -55,20 +55,22 @@ class ContentContext extends Context {
 	protected $interfaceRenderModeService;
 
 	/**
-	 * Constructor
+	 * Creates a new Content Context object.
 	 *
-	 * @param string $workspaceName
-	 * @param \DateTime $currentDateTime
-	 * @param array $dimensions
-	 * @param array $targetDimensions
-	 * @param boolean $invisibleContentShown
-	 * @param boolean $removedContentShown
-	 * @param boolean $inaccessibleContentShown
-	 * @param Site $currentSite
-	 * @param Domain $currentDomain
-	 * @return ContentContext
+	 * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
+	 *
+	 * @param string $workspaceName Name of the current workspace
+	 * @param \DateTime $currentDateTime The current date and time
+	 * @param array $dimensions Array of dimensions with array of ordered values
+	 * @param array $targetDimensions Array of dimensions used when creating / modifying content
+	 * @param boolean $invisibleContentShown If invisible content should be returned in query results
+	 * @param boolean $removedContentShown If removed content should be returned in query results
+	 * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
+	 * @param Site $currentSite The current Site object
+	 * @param Domain $currentDomain The current Domain object
+	 * @see ContextFactoryInterface
 	 */
-	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
+	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = NULL, Domain $currentDomain = NULL) {
 		parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
 		$this->currentSite = $currentSite;
 		$this->currentDomain = $currentDomain;

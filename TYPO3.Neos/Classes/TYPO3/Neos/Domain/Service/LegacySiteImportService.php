@@ -29,6 +29,8 @@ use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Exception as NeosException;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -77,6 +79,12 @@ class LegacySiteImportService {
 	 * @var AssetRepository
 	 */
 	protected $assetRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
 
 	/**
 	 * @Flow\Inject
@@ -177,10 +185,7 @@ class LegacySiteImportService {
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
 			$rootNode = $contentContext->getRootNode();
-			// We fetch the workspace to be sure it's known to the persistence manager and persist all
-			// so the workspace and site node are persisted before we import any nodes to it.
-			$rootNode->getContext()->getWorkspace();
-			$this->persistenceManager->persistAll();
+
 			$sitesNode = $rootNode->getNode('/sites');
 			if ($sitesNode === NULL) {
 				$sitesNode = $rootNode->createSingleNode('sites');
@@ -203,6 +208,12 @@ class LegacySiteImportService {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext() {
+		$workspace = $this->workspaceRepository->findOneByName('live');
+		if ($workspace === NULL) {
+			$this->workspaceRepository->add(new Workspace('live'));
+		}
+		$this->persistenceManager->persistAll();
+
 		return $this->contextFactory->create(array(
 			'workspaceName' => 'live',
 			'invisibleContentShown' => TRUE,
