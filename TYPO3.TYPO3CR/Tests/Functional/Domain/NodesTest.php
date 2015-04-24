@@ -11,13 +11,20 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Functional test case which covers all Node-related behavior of the
  * content repository as long as they reside in the live workspace.
  */
-class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodesTest extends FunctionalTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
@@ -30,22 +37,32 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @var Workspace
+	 */
+	protected $liveWorkspace;
+
+	/**
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @var NodeTypeManager
 	 */
 	protected $nodeTypeManager;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository
+	 * @var ContentDimensionRepository
 	 */
 	protected $contentDimensionRepository;
 
@@ -54,7 +71,19 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
+		$this->nodeDataRepository = new NodeDataRepository();
+
+		if ($this->liveWorkspace === NULL) {
+			$this->liveWorkspace = new Workspace('live');
+			$this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+			$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+			$this->workspaceRepository->add($this->liveWorkspace);
+			$this->workspaceRepository->add(new Workspace('user-admin', $this->liveWorkspace));
+			$this->workspaceRepository->add(new Workspace('live2', $this->liveWorkspace));
+			$this->workspaceRepository->add(new Workspace('test', $this->liveWorkspace));
+			$this->persistenceManager->persistAll();
+		}
+
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');

@@ -10,6 +10,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * Base test case for nodes
@@ -53,6 +55,16 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $contextFactory;
 
 	/**
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @var Workspace
+	 */
+	protected $liveWorkspace;
+
+	/**
 	 * @param string $name
 	 * @param array $data
 	 * @param string $dataName
@@ -65,6 +77,15 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->markSkippedIfNodeTypesPackageIsNotInstalled();
+
+		if ($this->liveWorkspace === NULL) {
+			$this->liveWorkspace = new Workspace('live');
+			$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+			$this->workspaceRepository->add($this->liveWorkspace);
+			$this->workspaceRepository->add(new Workspace('test', $this->liveWorkspace));
+			$this->persistenceManager->persistAll();
+		}
+
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');

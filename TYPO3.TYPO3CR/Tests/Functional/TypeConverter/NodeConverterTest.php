@@ -87,6 +87,14 @@ class NodeConverterTest extends FunctionalTestCase {
 		$this->currentTestWorkspaceName = uniqid('user-');
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
 
+		if ($this->liveWorkspace === NULL) {
+			$this->liveWorkspace = new Workspace('live');
+			$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+			$this->workspaceRepository->add($this->liveWorkspace);
+		}
+
+		$this->workspaceRepository->add(new Workspace($this->currentTestWorkspaceName, $this->liveWorkspace));
+
 		$this->personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
 		$this->liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$this->rootNodeInLiveWorkspace = $this->liveContext->getNode('/');

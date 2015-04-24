@@ -63,12 +63,6 @@ class Workspace {
 
 	/**
 	 * @Flow\Inject
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Service\PublishingServiceInterface
 	 */
 	protected $publishingService;
