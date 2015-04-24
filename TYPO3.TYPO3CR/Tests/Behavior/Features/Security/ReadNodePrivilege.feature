@@ -13,6 +13,10 @@ Feature: Privilege to restrict reading of nodes
         'TYPO3.TYPO3CR:Company':
           matcher: 'isDescendantNodeOf("68ca0dcd-2afb-ef0e-1106-a5301e65b8a0")'
 
+        'Dummy':
+          # fee74676-c42f-89da-208e-1741a66520000 is a non-existing node, this privilege should be ignored
+          matcher: 'isDescendantNodeOf("fee74676-c42f-89da-208e-1741a66520000")'
+
     roles:
       'TYPO3.Flow:Everybody':
         privileges: []

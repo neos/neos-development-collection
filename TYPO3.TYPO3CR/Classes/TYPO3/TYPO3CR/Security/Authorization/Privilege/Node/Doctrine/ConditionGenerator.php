@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\FalseConditionGenerator;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator as EntityConditionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
@@ -68,7 +69,7 @@ class ConditionGenerator extends EntityConditionGenerator {
 		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
 			$node = $this->getNodeByIdentifier($nodePathOrIdentifier);
 			if ($node === NULL) {
-				return NULL;
+				return new FalseConditionGenerator();
 			}
 			$nodePath = $node->getPath();
 		} else {
