@@ -18,8 +18,4 @@ use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
  */
 class NodeTreePrivilege extends EditNodePrivilege {
 
-	/**
-	 * @var string
-	 */
-	protected $nodeContextClassName = NodeTreePrivilegeContext::class;
 }
