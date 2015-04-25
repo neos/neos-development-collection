@@ -22,6 +22,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception;
 
 /**
@@ -167,7 +168,7 @@ class NodeDataRepository extends Repository {
 	 */
 	public function findOneByPath($path, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE) {
 		$path = strtolower($path);
-		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
+		if ($path === '' || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
 		}
 
@@ -193,7 +194,6 @@ class NodeDataRepository extends Repository {
 			$workspaces[] = $workspace;
 			$workspace = $workspace->getBaseWorkspace();
 		}
-
 		$queryBuilder = $this->createQueryBuilder($workspaces);
 		if ($dimensions !== NULL) {
 			$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
@@ -413,39 +413,31 @@ class NodeDataRepository extends Repository {
 		$parentPath = strtolower($parentPath);
 		$foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
-		if ($parentPath === '/') {
-			/** @var $addedNode NodeData */
-			foreach ($this->addedNodes as $addedNode) {
-				if ($addedNode->getDepth() === 1 && $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
-				}
+		$childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+		/** @var $addedNode NodeData */
+		foreach ($this->addedNodes as $addedNode) {
+			if (
+				(($recursive && $addedNode->getDepth() >= $childNodeDepth) || $addedNode->getDepth() === $childNodeDepth) &&
+				(($recursive && NodePaths::isSubPathOf($addedNode->getPath(), $parentPath)) || NodePaths::getParentPath($addedNode->getPath()) === $parentPath) &&
+				$addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
+			) {
+				$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 			}
-			/** @var $removedNode NodeData */
-			foreach ($this->removedNodes as $removedNode) {
-				if (isset($foundNodes[$removedNode->getIdentifier()]) && $removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
+		}
+		/** @var $removedNode NodeData */
+		foreach ($this->removedNodes as $removedNode) {
+			if (
+				(($recursive && $removedNode->getDepth() >= $childNodeDepth) || $removedNode->getDepth() === $childNodeDepth) &&
+				(($recursive && NodePaths::isSubPathOf($removedNode->getPath(), $parentPath)) || NodePaths::getParentPath($removedNode->getPath()) === $parentPath) &&
+				$removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
+			) {
+				if (isset($foundNodes[$removedNode->getIdentifier()])) {
 					unset($foundNodes[$removedNode->getIdentifier()]);
-				}
-			}
-		} else {
-			$childNodeDepth = substr_count($parentPath, '/') + 1;
-			/** @var $addedNode NodeData */
-			foreach ($this->addedNodes as $addedNode) {
-				if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/') && $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
-				}
-			}
-			/** @var $removedNode NodeData */
-			foreach ($this->removedNodes as $removedNode) {
-				if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/') && $removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-					if (isset($foundNodes[$removedNode->getIdentifier()])) {
-						unset($foundNodes[$removedNode->getIdentifier()]);
-					}
 				}
 			}
 		}
 
 		$foundNodes = $this->sortNodesByIndex($foundNodes);
-
 		return $foundNodes;
 	}
 
@@ -510,30 +502,17 @@ class NodeDataRepository extends Repository {
 		$query = $queryBuilder->getQuery();
 		$foundNodes = $query->getResult();
 
-		if ($parentPath === '/') {
-			/** @var $addedNode NodeData */
-			foreach ($this->addedNodes as $addedNode) {
-				if ($addedNode->getDepth() === 1) {
-					$foundNodes[] = $addedNode;
-				}
+		$childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+		/** @var $addedNode NodeData */
+		foreach ($this->addedNodes as $addedNode) {
+			if ($addedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($addedNode->getPath()) === $parentPath && in_array($addedNode->getWorkspace(), $workspaces)) {
+				$foundNodes[] = $addedNode;
 			}
-			/** @var $removedNode NodeData */
-			foreach ($this->removedNodes as $removedNode) {
-				$foundNodes = array_filter($foundNodes, function($nodeData) use($removedNode) { return $nodeData !== $removedNode; });
-			}
-		} else {
-			$childNodeDepth = substr_count($parentPath, '/') + 1;
-			/** @var $addedNode NodeData */
-			foreach ($this->addedNodes as $addedNode) {
-				if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-					$foundNodes[] = $addedNode;
-				}
-			}
-			/** @var $removedNode NodeData */
-			foreach ($this->removedNodes as $removedNode) {
-				if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-					$foundNodes = array_filter($foundNodes, function($nodeData) use($removedNode) { return $nodeData !== $removedNode; });
-				}
+		}
+		/** @var $removedNode NodeData */
+		foreach ($this->removedNodes as $removedNode) {
+			if ($removedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($removedNode->getPath()) === $parentPath && in_array($removedNode->getWorkspace(), $workspaces)) {
+				$foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
 			}
 		}
 
@@ -841,8 +820,8 @@ class NodeDataRepository extends Repository {
 	public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, array $dimensions = NULL, $includeRemovedNodes = FALSE, $nodeTypeFilter = NULL) {
 		$pathStartingPoint = strtolower($pathStartingPoint);
 		$pathEndPoint = strtolower($pathEndPoint);
-		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
-			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
+		if (NodePaths::isSubPathOf($pathStartingPoint, $pathEndPoint) === FALSE) {
+			throw new \InvalidArgumentException('Invalid paths: path of starting point must be first part of end point path.', 1284391181);
 		}
 
 		$workspaces = array();
@@ -865,11 +844,11 @@ class NodeDataRepository extends Repository {
 
 		$pathConstraints = array();
 		$constraintPath = $pathStartingPoint;
-		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
+		$pathConstraints[] = md5($constraintPath);
+		$pathSegments = explode('/', NodePaths::getRelativePathBetween($pathStartingPoint, $pathEndPoint));
 		foreach ($pathSegments as $pathSegment) {
-			$constraintPath .= $pathSegment;
+			$constraintPath = NodePaths::addNodePathSegment($constraintPath, $pathSegment);
 			$pathConstraints[] = md5($constraintPath);
-			$constraintPath .= '/';
 		}
 		if (count($pathConstraints) > 0) {
 			$queryBuilder->andWhere('n.pathHash IN (:paths)')
@@ -939,7 +918,6 @@ class NodeDataRepository extends Repository {
 		$foundNodes = $this->filterRemovedNodes($foundNodes, FALSE);
 
 		return $foundNodes;
-
 	}
 
 	/**
@@ -1294,7 +1272,7 @@ class NodeDataRepository extends Repository {
 		$foundNodes = $query->getResult();
 		// Consider materialized, but not yet persisted nodes
 		foreach ($this->addedNodes as $addedNode) {
-			if ($addedNode->getPath() === $path || ($recursive && strpos($addedNode->getPath(), $path) === 0)) {
+			if (($addedNode->getPath() === $path || ($recursive && NodePaths::isSubPathOf($path, $addedNode->getPath()))) && in_array($addedNode->getWorkspace(), $workspaces)) {
 				$foundNodes[] = $addedNode;
 			}
 		}

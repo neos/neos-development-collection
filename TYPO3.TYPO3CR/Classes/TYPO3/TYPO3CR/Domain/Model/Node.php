@@ -13,12 +13,17 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeConstraintException;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -56,13 +61,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+	 * @var NodeFactory
 	 */
 	protected $nodeFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -73,9 +78,14 @@ class Node implements NodeInterface, CacheAwareInterface {
 	protected $contextFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var NodeServiceInterface
+	 */
+	protected $nodeService;
+
+	/**
 	 * @param NodeData $nodeData
 	 * @param Context $context
-	 * @throws \InvalidArgumentException if you give a Node as originalNode.
 	 * @Flow\Autowiring(false)
 	 */
 	public function __construct(NodeData $nodeData, Context $context) {
@@ -92,19 +102,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getContextPath() {
-		$contextPath = $this->nodeData->getPath();
-		$workspaceName = $this->context->getWorkspace()->getName();
-
-		$contextPath .= '@' . $workspaceName;
-
-		if ($this->context->getDimensions() !== array()) {
-			$contextPath .= ';';
-			foreach ($this->context->getDimensions() as $dimensionName => $dimensionValues) {
-				$contextPath .= $dimensionName . '=' . implode(',', $dimensionValues) . '&';
-			}
-			$contextPath = substr($contextPath, 0, -1);
-		}
-		return $contextPath;
+		return NodePaths::generateContextPath($this->getPath(), $this->context->getWorkspaceName(), $this->context->getDimensions());
 	}
 
 	/**
@@ -129,7 +127,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			return;
 		}
 
-		$this->setPath($this->getParentPath() . ($this->getParentPath() === '/' ? '' : '/') . $newName);
+		$this->setPath(NodePaths::addNodePathSegment($this->getParentPath(), $newName));
 		$this->nodeDataRepository->persistEntities();
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
@@ -167,14 +165,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		if ($this->getNodeType()->isAggregate()) {
 
-			$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE, TRUE);
+			$nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE, TRUE);
 
 			/** @var NodeData $nodeData */
-			foreach ($nodeDataVariants as $nodeData) {
+			foreach ($nodeDataVariantsAndChildren as $nodeData) {
 				$nodeVariant = $this->createNodeForVariant($nodeData);
 				if ($nodeVariant !== NULL) {
-					$pathSuffix = substr($nodeVariant->getPath(), strlen($originalPath));
-					$possibleShadowedNodeData = $nodeData->move($path . $pathSuffix, $this->context->getWorkspace());
+					$relativePathSegment = NodePaths::getRelativePathBetween($originalPath, $nodeVariant->getPath());
+					$newNodeVariantPath = NodePaths::addNodePathSegment($path, $relativePathSegment);
+					$possibleShadowedNodeData = $nodeData->move($newNodeVariantPath, $this->context->getWorkspace());
 					$nodeVariant->setNodeData($possibleShadowedNodeData);
 					$changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), !$checkForExistence);
 				}
@@ -182,7 +181,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		} else {
 			/** @var Node $childNode */
 			foreach ($this->getChildNodes() as $childNode) {
-				$childNode->setPath($path . '/' . $childNode->getName(), FALSE);
+				$childNode->setPath(NodePaths::addNodePathSegment($path, $childNode->getName()), FALSE);
 			}
 			$possibleShadowedNodeData = $this->nodeData->move($path, $this->context->getWorkspace());
 			$this->setNodeData($possibleShadowedNodeData);
@@ -421,8 +420,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
 			$this->nodeDataRepository->persistEntities();
 		} else {
 			if (!$this->isNodeDataMatchingContext()) {
@@ -465,8 +463,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
 			$this->nodeDataRepository->persistEntities();
 		} else {
 			if (!$this->isNodeDataMatchingContext()) {
@@ -508,8 +505,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-		$parentPath = $referenceNode->getPath();
-		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		$this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $this->getName()));
 		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
@@ -936,7 +932,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * properties or creating subnodes. Only used internally.
 	 *
 	 * For internal use only!
-	 * TODO: Check if we can change the import service to avoid making this public.
+	 * TODO: New SiteImportService uses createNode() and DQL. When we drop the LegagcySiteImportService we can change this to protected.
 	 *
 	 * @param string $name Name of the new node
 	 * @param NodeType $nodeType Node type of the new node (optional)
@@ -997,8 +993,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getNode($path) {
-		$path = strtolower($path);
-		$absolutePath = $this->nodeData->normalizePath($path);
+		$absolutePath = $this->nodeService->normalizePath($path, $this->getPath());
 		$node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
 		if ($node !== FALSE) {
 			return $node;
@@ -1369,9 +1364,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$identifier = NULL;
 
 		$referenceNodeDimensions = $referenceNode->getDimensions();
-		$referenceNodeDimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
+		$referenceNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
 		$thisDimensions = $this->getDimensions();
-		$thisNodeDimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
+		$thisNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
 		if ($detachedCopy === FALSE && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === NULL) {
 			// If the target dimensions are different than this one, and there is no node shadowing this one in the target dimension yet, we use the same
 			// node identifier, effectively creating a new node variant.

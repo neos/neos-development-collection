@@ -12,3 +12,5 @@
   className: TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator
 'TYPO3\TYPO3CR\Domain\Model\NodeDataLabelGeneratorInterface':
   className: TYPO3\TYPO3CR\Domain\Model\FallbackNodeDataLabelGenerator
+'TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface':
+  className: TYPO3\TYPO3CR\Domain\Service\NodeService

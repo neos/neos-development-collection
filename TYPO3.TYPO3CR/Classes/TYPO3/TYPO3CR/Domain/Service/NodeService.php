@@ -12,11 +12,11 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -25,7 +25,7 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * @Flow\Scope("singleton")
  * @api
  */
-class NodeService {
+class NodeService implements NodeServiceInterface {
 
 	/**
 	 * @Flow\Inject
@@ -35,25 +35,18 @@ class NodeService {
 
 	/**
 	 * @Flow\Inject
-	 * @var SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
-	 * Set default node property base on the target node type configuration
+	 * Sets default node property values on the given node.
 	 *
 	 * @param NodeInterface $node
-	 * @param NodeType $targetNodeType
 	 * @return void
 	 */
-	public function setDefaultValues(NodeInterface $node, NodeType $targetNodeType = NULL) {
-		$nodeType = $targetNodeType ?: $node->getNodeType();
+	public function setDefaultValues(NodeInterface $node) {
+		$nodeType = $node->getNodeType();
 		foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
 			if (trim($node->getProperty($propertyName)) === '') {
 				$node->setProperty($propertyName, $defaultValue);
@@ -62,14 +55,13 @@ class NodeService {
 	}
 
 	/**
-	 * Create missing child nodes based on target node type configuration
+	 * Creates missing child nodes for the given node.
 	 *
 	 * @param NodeInterface $node
-	 * @param NodeType $targetNodeType
 	 * @return void
 	 */
-	public function createChildNodes(NodeInterface $node, NodeType $targetNodeType = NULL) {
-		$nodeType = $targetNodeType ?: $node->getNodeType();
+	public function createChildNodes(NodeInterface $node) {
+		$nodeType = $node->getNodeType();
 		foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
 			try {
 				$node->createNode($childNodeName, $childNodeType);
@@ -140,4 +132,49 @@ class NodeService {
 		return !$this->nodePathExistsInAnyContext($nodePath);
 	}
 
+	/**
+	 * Normalizes the given node path to a reference path and returns an absolute path.
+	 *
+	 * @param string $path The non-normalized path
+	 * @param string $referencePath a reference path in case the given path is relative.
+	 * @return string The normalized absolute path
+	 * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
+	 */
+	public function normalizePath($path, $referencePath = NULL) {
+		return NodePaths::normalizePath($path, $referencePath);
+	}
+
+	/**
+	 * Generate a node name, optionally based on a suggested "ideal" name
+	 *
+	 * @param string $parentPath
+	 * @param string $idealNodeName Can be any string, doesn't need to be a valid node name.
+	 * @return string
+	 */
+	public function generateUniqueNodeName($parentPath, $idealNodeName = NULL) {
+		$possibleNodeName = $this->generatePossibleNodeName($idealNodeName);
+
+		while ($this->nodePathExistsInAnyContext(NodePaths::addNodePathSegment($parentPath, $possibleNodeName))) {
+			$possibleNodeName = $this->generatePossibleNodeName();
+		}
+
+		return $possibleNodeName;
+	}
+
+	/**
+	 * Generate possible node name. When an idealNodeName is given then this is put into a valid format for a node name,
+	 * otherwise a random node name in the form "node-alphanumeric" is generated.
+	 *
+	 * @param string $idealNodeName
+	 * @return string
+	 */
+	protected function generatePossibleNodeName($idealNodeName = NULL) {
+		if ($idealNodeName !== NULL) {
+			$possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
+		} else {
+			$possibleNodeName = NodePaths::generateRandomNodeName();
+		}
+
+		return $possibleNodeName;
+	}
 }

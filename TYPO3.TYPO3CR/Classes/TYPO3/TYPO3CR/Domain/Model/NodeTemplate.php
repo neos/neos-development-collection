@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A container of properties which can be used as a template for generating new nodes.
@@ -81,7 +82,7 @@ class NodeTemplate extends AbstractNodeData {
 	 * If a name has been set using setName(), it is returned. If not, but the
 	 * template has a (non-empty) title property, this property is used to
 	 * generate a valid name. As a last resort a random name is returned (in
-	 * the form "nameXXXXX").
+	 * the form "name-XXXXX").
 	 *
 	 * @return string
 	 * @api
@@ -91,7 +92,7 @@ class NodeTemplate extends AbstractNodeData {
 			return $this->name;
 		}
 
-		return uniqid('node');
+		return NodePaths::generateRandomNodeName();
 	}
 
 	/**

@@ -292,10 +292,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPathInContext'), array(), '', FALSE);
 		$nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo/bar', $context)->will($this->returnValue($expectedContextualizedNode));
 
-		$currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('normalizePath'), array('/foo/baz', $currentNodeWorkspace));
-		$currentNodeData->expects($this->once())->method('normalizePath')->with('../bar')->will($this->returnValue('/foo/bar'));
+		$currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/baz', $currentNodeWorkspace));
+		$nodeService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeService', array(), array(), '', FALSE);
+		$nodeService->expects($this->once())->method('normalizePath')->with('../bar', '/foo/baz')->will($this->returnValue('/foo/bar'));
 		$currentContextualizedNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array($currentNodeData, $context));
 		$currentContextualizedNode->_set('nodeDataRepository', $nodeDataRepository);
+		$currentContextualizedNode->_set('nodeService', $nodeService);
 
 		$actualNode = $currentContextualizedNode->getNode('../bar');
 		$this->assertSame($expectedContextualizedNode, $actualNode);

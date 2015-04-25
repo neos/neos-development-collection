@@ -594,7 +594,7 @@ class NodeImportService {
 
 		// prepare node dimensions
 		$dimensionValues = $nodeData['dimensionValues'];
-		$dimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+		$dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
 
 		$jsonPropertiesDataTypeHandler = JsonArrayType::getType(JsonArrayType::FLOW_JSON_ARRAY);
 

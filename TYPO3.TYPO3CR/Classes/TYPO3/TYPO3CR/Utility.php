@@ -119,4 +119,24 @@ class Utility {
 		// trim leftover dashes, lowercase and return
 		return strtolower(trim($name, '-'));
 	}
+
+
+	/**
+	 * Sorts the incoming $dimensionValues array to make sure that before hashing, the ordering is made deterministic.
+	 * Then, calculates and returns the dimensionsHash.
+	 *
+	 * This method is public because it is used inside SiteImportService.
+	 *
+	 * @param array $dimensionValues Map of dimension names to dimension values, which will be ordered alphabetically after this method.
+	 * @return string the calculated DimensionsHash
+	 */
+	public static function sortDimensionValueArrayAndReturnDimensionsHash(array &$dimensionValues) {
+		foreach ($dimensionValues as &$values) {
+			sort($values);
+		}
+		ksort($dimensionValues);
+
+		return md5(json_encode($dimensionValues));
+	}
+
 }

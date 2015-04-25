@@ -25,8 +25,10 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 
 /**
@@ -85,7 +87,7 @@ class NodeConverter extends AbstractTypeConverter {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeService
+	 * @var NodeServiceInterface
 	 */
 	protected $nodeService;
 
@@ -139,17 +141,13 @@ class NodeConverter extends AbstractTypeConverter {
 			return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
 		}
 
-		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
-		if (!isset($matches['NodePath'])) {
+		try {
+			$nodePathAndContext = NodePaths::explodeContextPath($source['__contextNodePath']);
+			$nodePath = $nodePathAndContext['nodePath'];
+			$workspaceName = $nodePathAndContext['workspaceName'];
+			$dimensions = $nodePathAndContext['dimensions'];
+		} catch (\InvalidArgumentException $exception) {
 			return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
-		}
-		$nodePath = $matches['NodePath'];
-
-		$workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-
-		$dimensions = NULL;
-		if (isset($matches['Dimensions'])) {
-			$dimensions = $this->contextFactory->parseDimensionValueStringToArray($matches['Dimensions']);
 		}
 
 		$context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
@@ -163,22 +161,19 @@ class NodeConverter extends AbstractTypeConverter {
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
 		}
 
-		$targetNodeType = NULL;
-		if (isset($source['_nodeType'])) {
-			$source['_nodeType'] = $this->nodeTypeManager->getNodeType($source['_nodeType']);
-			if ($source['_nodeType'] !== $node->getNodeType()) {
-				if ($context->getWorkspace()->getName() === 'live') {
-					throw new NodeException('Could not convert the node type in live workspace');
-				}
-				$targetNodeType = $source['_nodeType'];
+		if (isset($source['_nodeType']) && $source['_nodeType'] !== $node->getNodeType()->getName()) {
+			if ($context->getWorkspace()->getName() === 'live') {
+				throw new NodeException('Could not convert the node type in live workspace', 1429989736);
 			}
-		}
-		$this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
-		if ($targetNodeType !== NULL) {
-			$this->nodeService->setDefaultValues($node, $targetNodeType);
-			$this->nodeService->createChildNodes($node, $targetNodeType);
-		}
 
+			$targetNodeType = $this->nodeTypeManager->getNodeType($source['_nodeType']);
+			$node->setNodeType($targetNodeType);
+			$this->nodeService->setDefaultValues($node);
+			$this->nodeService->createChildNodes($node);
+		}
+		unset($source['_nodeType']);
+
+		$this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
 		return $node;
 	}
 

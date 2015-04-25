@@ -276,8 +276,8 @@ class Context {
 	 * Finds all nodes lying on the path specified by (and including) the given
 	 * starting point and end point.
 	 *
-	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
-	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
+	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysitecom
+	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysitecom/homepage/subpage
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 * @api
 	 */

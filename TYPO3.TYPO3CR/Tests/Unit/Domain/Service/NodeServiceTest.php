@@ -62,7 +62,6 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				return new \TYPO3\TYPO3CR\Domain\Model\NodeType($nodeTypeName, array(), array());
 			}));
 
-		$this->inject($nodeService, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', FALSE));
 		$this->inject($nodeService, 'nodeTypeManager', $mockNodeTypeManager);
 
 		return $nodeService;
@@ -408,4 +407,47 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public function abnormalPaths() {
+		return array(
+			array('/', '/', '/'),
+			array('/', '/.', '/'),
+			array('/', '.', '/'),
+			array('/', 'foo/bar', '/foo/bar'),
+			array('/foo', '.', '/foo'),
+			array('/foo', '/foo/.', '/foo'),
+			array('/foo', '../', '/'),
+			array('/foo/bar', '../baz', '/foo/baz'),
+			array('/foo/bar', '../baz/../bar', '/foo/bar'),
+			array('/foo/bar', '.././..', '/'),
+			array('/foo/bar', '../../.', '/'),
+			array('/foo/bar/baz', '../..', '/foo'),
+			array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
+			array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
+		);
+	}
+
+	/**
+	 * @param string $currentPath
+	 * @param string $relativePath
+	 * @param string $normalizedPath
+	 * @test
+	 * @dataProvider abnormalPaths
+	 */
+	public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {
+		$nodeService = $this->createNodeService();
+		$this->assertSame($normalizedPath, $nodeService->normalizePath($relativePath, $currentPath));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash() {
+		$nodeService = $this->createNodeService();
+		$nodeService->normalizePath('foo//bar', '/');
+	}
 }
