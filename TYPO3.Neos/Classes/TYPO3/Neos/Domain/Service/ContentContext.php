@@ -12,7 +12,9 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -39,6 +41,18 @@ class ContentContext extends Context {
 	 * @var NodeInterface
 	 */
 	protected $currentSiteNode;
+
+	/**
+	 * @Flow\Inject
+	 * @var PrivilegeManagerInterface
+	 */
+	protected $privilegeManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var UserInterfaceModeService
+	 */
+	protected $interfaceRenderModeService;
 
 	/**
 	 * Constructor
@@ -109,6 +123,44 @@ class ContentContext extends Context {
 			'currentSite' => $this->currentSite,
 			'currentDomain' => $this->currentDomain
 		);
+	}
+
+	/**
+	 * Returns TRUE if current context is live workspace, FALSE otherwise
+	 *
+	 * @return boolean
+	 */
+	public function isLive() {
+		return ($this->getWorkspace()->getBaseWorkspace() === NULL);
+	}
+
+	/**
+	 * Returns TRUE while rendering backend (not live workspace and access to backend granted), FALSE otherwise
+	 *
+	 * @return boolean
+	 */
+	public function isInBackend() {
+		return (!$this->isLive() && $this->hasAccessToBackend());
+	}
+
+	/**
+	 * @return UserInterfaceMode
+	 */
+	public function getCurrentRenderingMode() {
+		return $this->interfaceRenderModeService->findModeByCurrentUser();
+	}
+
+	/**
+	 * Is access to the neos backend granted by current authentications.
+	 *
+	 * @return boolean
+	 */
+	protected function hasAccessToBackend() {
+		try {
+			return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess');
+		} catch (\TYPO3\Flow\Security\Exception $exception) {
+			return FALSE;
+		}
 	}
 
 }

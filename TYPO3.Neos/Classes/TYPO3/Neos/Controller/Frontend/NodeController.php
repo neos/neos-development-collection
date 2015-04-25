@@ -13,10 +13,12 @@ namespace TYPO3\Neos\Controller\Frontend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
-use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Controller for displaying nodes in the frontend
@@ -27,33 +29,15 @@ class NodeController extends ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
-	 */
-	protected $authenticationManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
-	 */
-	protected $securityContext;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\SessionInterface
+	 * @var SessionInterface
 	 */
 	protected $session;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -72,93 +56,67 @@ class NodeController extends ActionController {
 	protected $view;
 
 	/**
+	 * @Flow\Inject
+	 * @var PrivilegeManagerInterface
+	 */
+	protected $privilegeManager;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param Node $node
+	 * @param NodeInterface $node
 	 * @return string View output for the specified node
 	 * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
 	 * @Flow\IgnoreValidation("node")
 	 */
-	public function showAction(Node $node) {
-		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
-				// TODO: Introduce check if workspace is visible or accessible to the user
-			if ($this->hasAccessToBackend() === FALSE) {
-				$this->redirect('index', 'Login', NULL, array('unauthorized' => TRUE));
-			}
-		}
-		if (!$node->isAccessible()) {
-			try {
-				$this->authenticationManager->authenticate();
-			} catch (\Exception $exception) {}
-		}
-		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
-			$this->throwStatus(403);
-		}
-		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
-			$this->throwStatus(404);
+	public function showAction(NodeInterface $node) {
+		if (!$node->getContext()->isLive() && !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
+			$this->redirect('index', 'Login', NULL, array('unauthorized' => TRUE));
 		}
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
-			if (!$this->hasAccessToBackend() || $node->getContext()->getWorkspace()->getName() === 'live') {
-				$node = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-				if ($node === NULL) {
-					$this->throwStatus(404);
-				} elseif (is_string($node)) {
-					$this->redirectToUri($node);
-				} elseif ($node instanceof NodeInterface) {
-					$this->redirect('show', NULL, NULL, array('node' => $node));
-				} else {
-					$this->throwStatus(500, 'Shortcut resolved to an unsupported type.');
-				}
-			}
+		$inBackend = $node->getContext()->isInBackend();
+
+		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut') && !$inBackend) {
+			$this->handleShortcutNode($node);
 		}
 
 		$this->view->assign('value', $node);
 
-		if ($node->getContext()->getWorkspaceName() !== 'live' && $this->hasAccessToBackend()) {
+		if ($inBackend) {
+			/** @var UserInterfaceMode $renderingMode */
+			$renderingMode = $node->getContext()->getCurrentRenderingMode();
 			$this->response->setHeader('Cache-Control', 'no-cache');
-
-			$editPreviewMode = $this->getEditPreviewModeTypoScriptRenderingPath($node);
-			if ($editPreviewMode !== NULL) {
-				$this->view->assign('editPreviewMode', $editPreviewMode);
-			} else {
-				if (!$this->view->canRenderWithNodeAndPath()) {
-					$this->view->setTypoScriptPath('rawContent');
-				}
+			if ($renderingMode !== NULL) {
+				// Deprecated TypoScript context variable from version 2.0.
+				$this->view->assign('editPreviewMode', $renderingMode->getTypoScriptPath());
+			}
+			if (!$this->view->canRenderWithNodeAndPath()) {
+				$this->view->setTypoScriptPath('rawContent');
 			}
 		}
 
-		if ($this->session->isStarted() && $this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
+		if ($this->session->isStarted() && $inBackend) {
 			$this->session->putData('lastVisitedNode', $node->getIdentifier());
 		}
 	}
 
 	/**
-	 * Return a specific rendering mode if set.
+	 * Handles redirects to shortcut targets in live rendering.
 	 *
-	 * @return string|NULL
+	 * @param NodeInterface $node
+	 * @return void
 	 */
-	protected function getEditPreviewModeTypoScriptRenderingPath() {
-		if ($this->securityContext->getParty() === NULL || !$this->hasAccessToBackend()) {
-			return NULL;
+	protected function handleShortcutNode(NodeInterface $node) {
+		$node = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+		if ($node === NULL) {
+			$this->throwStatus(404);
+		} elseif (is_string($node)) {
+			$this->redirectToUri($node);
+		} elseif ($node instanceof NodeInterface) {
+			$this->redirect('show', NULL, NULL, array('node' => $node));
+		} else {
+			$this->throwStatus(500, 'Shortcut resolved to an unsupported type.');
 		}
-		/** @var \TYPO3\Neos\Domain\Model\User $user */
-		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-		$editPreviewMode = $user->getPreferences()->get('contentEditing.editPreviewMode');
-		if ($editPreviewMode === NULL) {
-			return NULL;
-		}
-
-		$editPreviewModeTypoScriptRenderingPath = Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes.' . $editPreviewMode . '.typoScriptRenderingPath');
-		return strlen($editPreviewModeTypoScriptRenderingPath) > 0 ? $editPreviewModeTypoScriptRenderingPath : NULL;
 	}
-
-	/**
-	 * @return boolean
-	 */
-	protected function hasAccessToBackend() {
-		return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess');
-	}
-
 }
