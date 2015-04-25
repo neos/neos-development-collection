@@ -146,41 +146,41 @@ class WorkspacesTest extends FunctionalTestCase {
 	 *     |
 	 *   parentNode
 	 *  |          |
-	 * childNodeA  childNodeB
+	 * child-node-a  child-node-b
 	 *               |
-	 *             childNodeC
+	 *             child-node-c
 	 *
-	 * We then move childNodeB UNDERNEATH childNodeA and check that it does not shine through
-	 * when directly asking parentNode for childNodeB.
+	 * We then move child-node-b UNDERNEATH child-node-a and check that it does not shine through
+	 * when directly asking parentNode for child-node-b.
 	 *
 	 * @test
 	 */
 	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation() {
-		$parentNode = $this->rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB->createNode('childNodeC');
+		$parentNode = $this->rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB->createNode('child-node-c');
 		$this->persistenceManager->persistAll();
 		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$parentNode2 = $this->rootNode->getNode('parentNode');
+		$parentNode2 = $this->rootNode->getNode('parent-node');
 
 		$this->assertSame($parentNode->getIdentifier(), $parentNode2->getIdentifier());
-		$childNodeA2 = $parentNode2->getNode('childNodeA');
+		$childNodeA2 = $parentNode2->getNode('child-node-a');
 		$this->assertNotNull($childNodeA2, 'Child node A must be there');
-		$childNodeB2 = $parentNode2->getNode('childNodeB');
+		$childNodeB2 = $parentNode2->getNode('child-node-b');
 		$this->assertNotNull($childNodeB2, 'Child node B must be there');
 		$childNodeB2->moveInto($childNodeA2);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$parentNode3 = $this->rootNode->getNode('parentNode');
+		$parentNode3 = $this->rootNode->getNode('parent-node');
 		//$this->assertNotSame($parentNode2, $parentNode3);
-		$childNodeB3 = $parentNode3->getNode('childNodeB');
+		$childNodeB3 = $parentNode3->getNode('child-node-b');
 		$this->assertTrue($childNodeB3 === NULL, 'child node B should not shine through as it has been moved.');
 	}
 
@@ -192,10 +192,10 @@ class WorkspacesTest extends FunctionalTestCase {
 	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocationWhileIteratingOverIt() {
 		$rootNode = $this->rootNode;
 		$rootNodeWorkspace = $this->rootNode->getWorkspace();
-		$parentNode = $this->rootNode->createNode('parentNode1');
-		$childNodeA = $parentNode->createNode('childNode1A');
-		$childNodeB = $parentNode->createNode('childNode1B');
-		$childNodeB->createNode('childNode1C');
+		$parentNode = $this->rootNode->createNode('parent-node1');
+		$childNodeA = $parentNode->createNode('child-node-1a');
+		$childNodeB = $parentNode->createNode('child-node-1b');
+		$childNodeB->createNode('child-node-1c');
 		$this->persistenceManager->persistAll();
 		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
@@ -204,13 +204,13 @@ class WorkspacesTest extends FunctionalTestCase {
 
 		$this->assertNotSame($rootNode, $this->rootNode);
 		$this->assertNotSame($rootNodeWorkspace, $this->rootNode->getWorkspace(), 'Workspace is not correctly cleaned up.');
-		$parentNode2 = $this->rootNode->getNode('parentNode1');
+		$parentNode2 = $this->rootNode->getNode('parent-node1');
 		$this->assertNotSame($parentNode, $parentNode2);
 		$this->assertSame('live', $parentNode2->getWorkspace()->getName());
-		$childNodeA2 = $parentNode2->getNode('childNode1A');
+		$childNodeA2 = $parentNode2->getNode('child-node-1a');
 		$this->assertNotNull($childNodeA2, 'Child node A must be there');
 		$this->assertNotSame($childNodeA, $childNodeA2);
-		$childNodeB2 = $parentNode2->getNode('childNode1B');
+		$childNodeB2 = $parentNode2->getNode('child-node-1b');
 		$this->assertNotNull($childNodeB2, 'Child node B must be there');
 		$this->assertNotSame($childNodeB, $childNodeB2);
 
@@ -219,38 +219,38 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$parentNode3 = $this->rootNode->getNode('parentNode1');
+		$parentNode3 = $this->rootNode->getNode('parent-node1');
 		$childNodes = $parentNode3->getChildNodes();
-		$this->assertSame(1, count($childNodes), 'parentNode is only allowed to have a single child node (childNode1A).');
+		$this->assertSame(1, count($childNodes), 'parent node is only allowed to have a single child node (child-node-1A).');
 	}
 
 	/**
 	 * For test setup / node structure, see nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation
 	 *
-	 * Here, we move childNodeC underneath childNodeA.
+	 * Here, we move child-node-c underneath child-node-a.
 	 *
 	 * @test
 	 */
 	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldWorkWhenUsingPrimaryChildNode() {
-		$parentNode = $this->rootNode->createNode('parentNode');
-		$parentNode->createNode('childNodeA');
-		$childNodeB = $parentNode->createNode('childNodeB');
-		$childNodeB->createNode('childNodeC');
+		$parentNode = $this->rootNode->createNode('parent-node');
+		$parentNode->createNode('child-node-a');
+		$childNodeB = $parentNode->createNode('child-node-b');
+		$childNodeB->createNode('child-node-c');
 		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$childNodeC2 = $this->rootNode->getNode('parentNode/childNodeB/childNodeC');
-		$childNodeA2 = $this->rootNode->getNode('parentNode/childNodeA');
+		$childNodeC2 = $this->rootNode->getNode('parent-node/child-node-b/child-node-c');
+		$childNodeA2 = $this->rootNode->getNode('parent-node/child-node-a');
 		$childNodeC2->moveInto($childNodeA2);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
 
-		$childNodeB3 = $this->rootNode->getNode('parentNode/childNodeB');
+		$childNodeB3 = $this->rootNode->getNode('parent-node/child-node-b');
 		$this->assertTrue($childNodeB3->getPrimaryChildNode() === NULL, 'Overlaid child node should be null');
-		$childNodeA3 = $this->rootNode->getNode('parentNode/childNodeA');
+		$childNodeA3 = $this->rootNode->getNode('parent-node/child-node-a');
 		$childNodeC3 = $childNodeA3->getPrimaryChildNode();
 		$this->assertNotNull($childNodeC3);
 	}
