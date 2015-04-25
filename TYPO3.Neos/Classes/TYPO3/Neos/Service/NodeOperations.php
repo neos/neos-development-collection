@@ -13,8 +13,9 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Utility;
 
@@ -33,13 +34,7 @@ class NodeOperations {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeNameGenerator
-	 */
-	protected $nodeNameGenerator;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeService
+	 * @var NodeServiceInterface
 	 */
 	protected $nodeService;
 
@@ -63,7 +58,7 @@ class NodeOperations {
 		}
 
 		$proposedNodeName = isset($nodeData['nodeName']) ? $nodeData['nodeName'] : NULL;
-		$nodeData['nodeName'] = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position), $proposedNodeName);
+		$nodeData['nodeName'] = $this->nodeService->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position)->getPath(), $proposedNodeName);
 
 		if ($position === 'into') {
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeType);
@@ -104,9 +99,9 @@ class NodeOperations {
 		$designatedParentNode = $this->getDesignatedParentNode($targetNode, $position);
 		// If we stay inside the same parent we basically just reorder, no rename needed or wanted.
 		if ($designatedParentNode !== $node->getParent()) {
-			$designatedNodePath = rtrim($designatedParentNode->getPath(), '/') . '/' . $node->getName();
+			$designatedNodePath = NodePaths::addNodePathSegment($designatedParentNode->getPath(), $node->getName());
 			if ($this->nodeService->nodePathAvailableForNode($designatedNodePath, $node) === FALSE) {
-				$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($designatedParentNode, $node->getName());
+				$nodeName = $this->nodeService->generateUniqueNodeName($designatedParentNode->getPath(), $node->getName());
 				if ($nodeName !== $node->getName()) {
 					// FIXME: This can be removed if $node->move* supports additionally changing the name of the node.
 					$node->setName($nodeName);
@@ -143,7 +138,7 @@ class NodeOperations {
 			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
 		}
 
-		$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position), (!empty($nodeName) ? $nodeName : NULL));
+		$nodeName = $this->nodeService->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position)->getPath(), (!empty($nodeName) ? $nodeName : NULL));
 
 		switch ($position) {
 			case 'before':
