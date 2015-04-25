@@ -29,7 +29,7 @@ Feature: Privilege to restrict reading of node properties
           -
             privilegeTarget: 'TYPO3.TYPO3CR:Service:ReadServiceTextTitles'
             permission: GRANT
-
+          -
             privilegeTarget: 'TYPO3.TYPO3CR:Service:ReadDocumentVisibilityAttributes'
             permission: GRANT
 
