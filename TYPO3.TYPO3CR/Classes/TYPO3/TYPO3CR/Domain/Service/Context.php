@@ -208,6 +208,9 @@ class Context {
 		if (!is_string($path) || $path[0] !== '/') {
 			throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
 		}
+
+		$path = strtolower($path);
+
 		$workspaceRootNode = $this->getWorkspace()->getRootNodeData();
 		$rootNode = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
 		if ($path !== '/') {

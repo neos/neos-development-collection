@@ -194,8 +194,8 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNodeType->expects($this->once())
 			->method('getAutoCreatedChildNodes')
 			->will($this->returnValue(array(
-				'firstChildNodeName' => $firstChildNodeType,
-				'secondChildNodeName' => $secondChildNodeType
+				'first-child-node-name' => $firstChildNodeType,
+				'second-child-node-name' => $secondChildNodeType
 			)));
 
 		$mockNode->expects($this->once())
@@ -204,11 +204,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode->expects($this->at(1))
 			->method('createNode')
-			->with('firstChildNodeName', $firstChildNodeType);
+			->with('first-child-node-name', $firstChildNodeType);
 
 		$mockNode->expects($this->at(2))
 			->method('createNode')
-			->with('secondChildNodeName', $secondChildNodeType);
+			->with('second-child-node-name', $secondChildNodeType);
 
 		$nodeService->createChildNodes($mockNode);
 	}

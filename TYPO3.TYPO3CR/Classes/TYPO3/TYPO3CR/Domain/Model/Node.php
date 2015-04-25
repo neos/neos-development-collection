@@ -990,6 +990,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getNode($path) {
+		$path = strtolower($path);
 		$absolutePath = $this->nodeData->normalizePath($path);
 		$node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
 		if ($node !== FALSE) {

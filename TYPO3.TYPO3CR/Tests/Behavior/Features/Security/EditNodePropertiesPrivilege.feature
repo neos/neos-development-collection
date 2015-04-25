@@ -91,7 +91,7 @@ Feature: Privilege to restrict editing of node properties
     And I should get FALSE when asking the node authorization service if setting the "hiddenInIndex" property is granted
     And I should be granted to set the "accessRoles" property to "TYPO3.Flow:Everybody"
     And I should get TRUE when asking the node authorization service if setting the "accessRoles" property is granted
-    And I should be granted to set the "name" property to "NewName"
+    And I should be granted to set the "name" property to "new-name"
     And I should get TRUE when asking the node authorization service if setting the "name" property is granted
 
   @Isolated @fixtures

@@ -16,13 +16,9 @@ use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\TypeHandling;
-use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception;
@@ -146,7 +142,7 @@ class NodeDataRepository extends Repository {
 	 * @api
 	 */
 	public function remove($object) {
-		if ($object instanceof Node) {
+		if ($object instanceof NodeInterface) {
 			$object = $object->getNodeData();
 		}
 		if ($this->addedNodes->contains($object)) {
@@ -169,6 +165,7 @@ class NodeDataRepository extends Repository {
 	 * @return NodeData The matching node if found, otherwise NULL
 	 */
 	public function findOneByPath($path, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE) {
+		$path = strtolower($path);
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
 		}
@@ -412,6 +409,7 @@ class NodeDataRepository extends Repository {
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE, $recursive = FALSE) {
+		$parentPath = strtolower($parentPath);
 		$foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
 		if ($parentPath === '/') {
@@ -498,6 +496,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
 	 */
 	public function findByParentWithoutReduce($parentPath, Workspace $workspace) {
+		$parentPath = strtolower($parentPath);
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -839,6 +838,8 @@ class NodeDataRepository extends Repository {
 	 * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, array $dimensions = NULL, $includeRemovedNodes = FALSE, $nodeTypeFilter = NULL) {
+		$pathStartingPoint = strtolower($pathStartingPoint);
+		$pathEndPoint = strtolower($pathEndPoint);
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
@@ -904,6 +905,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
 	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = NULL) {
+		$pathStartingPoint = strtolower($pathStartingPoint);
 		if (strlen($term) === 0) {
 			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
 		}
@@ -1239,6 +1241,7 @@ class NodeDataRepository extends Repository {
 	 * @return boolean
 	 */
 	public function pathExists($nodePath) {
+		$nodePath = strtolower($nodePath);
 		$result = NULL;
 
 		/** @var QueryBuilder $queryBuilder */
@@ -1267,6 +1270,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
 	 */
 	public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = FALSE, $recursive = FALSE) {
+		$path = strtolower($path);
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -1337,8 +1341,9 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	public function removeAllInPath($path) {
+		$path = strtolower($path);
 		$query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
-		$query->setParameter('path', $path . '/%');
+		$query->setParameter('path',  $path . '/%');
 		$query->execute();
 	}
 

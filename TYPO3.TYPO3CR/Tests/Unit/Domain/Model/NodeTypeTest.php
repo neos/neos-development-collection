@@ -342,4 +342,17 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		return new NodeType($nodeTypeName, $declaredSuperTypes, $configuration);
 	}
 
+	/**
+	 * @test
+	 */
+	public function getAutoCreatedChildNodesReturnsLowercasePaths() {
+		$childNodeConfiguration = array('type' => 'TYPO3.TYPO3CR:Base');
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
+			'childNodes' => array('nodeName' => $childNodeConfiguration)
+		));
+		$mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+		$mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
+		$this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
+	}
+
 }
