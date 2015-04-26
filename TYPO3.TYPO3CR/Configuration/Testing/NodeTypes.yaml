@@ -43,7 +43,8 @@
       type: references
 
 'TYPO3.TYPO3CR.Testing:Headline':
-  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   properties:
     title:
       type: string
@@ -58,7 +59,8 @@
       type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
 'TYPO3.TYPO3CR.Testing:HappyTestingNode':
-  supertypes: ['TYPO3.TYPO3CR:TestingNodeType']
+  supertypes:
+    'TYPO3.TYPO3CR:TestingNodeType': TRUE
   class: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode'
 
 # Constraint behat test nodetypes
@@ -66,7 +68,8 @@
   abstract: TRUE
 
 'TYPO3.TYPO3CR.Testing:ContentCollection':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Node']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Node': TRUE
   constraints:
     nodeTypes:
       'TYPO3.TYPO3CR.Testing:Headline': TRUE
@@ -80,7 +83,8 @@
   aggregate: TRUE
 
 'TYPO3.TYPO3CR.Testing:Page':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Document']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Document': TRUE
   properties:
     title:
       type: string
@@ -92,20 +96,24 @@
       '*': TRUE
 
 'TYPO3.TYPO3CR.Testing:Chapter':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Page']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Page': TRUE
 
 'TYPO3.TYPO3CR.Testing:PageWithConfiguredLabel':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Page']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Page': TRUE
   label: "${q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')')}"
   ui:
     label: 'Labeled Page'
 
 'TYPO3.TYPO3CR.Testing:Column':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   abstract: TRUE
 
 'TYPO3.TYPO3CR.Testing:TwoColumn':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Column']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Column': TRUE
   childNodes:
     column0:
       type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
@@ -113,7 +121,8 @@
       type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
 
 'TYPO3.TYPO3CR.Testing:ThreeColumn':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Column']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Column': TRUE
   childNodes:
     column0:
       type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
@@ -128,7 +137,8 @@
       '*': FALSE
 
 'TYPO3.TYPO3CR.Testing:Text':
-  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   properties:
     text:
       type: string
@@ -142,20 +152,25 @@
           'TYPO3.TYPO3CR.Testing:Headline': TRUE # allowed
 
 'TYPO3.TYPO3CR.Testing:Image':
-  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
 
 'TYPO3.TYPO3CR.Testing:TextWithImage':
-  superTypes: [ 'TYPO3.TYPO3CR.Testing:Text', 'TYPO3.TYPO3CR.Testing:Image' ]
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Text': TRUE
+    'TYPO3.TYPO3CR.Testing:Image': TRUE
 
 'TYPO3.TYPO3CR.Testing:Html':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   properties:
     source:
       type: string
       defaultValue: '<p>Enter HTML here</p>'
 
 'TYPO3.TYPO3CR.Testing:List':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   childNodes:
     items:
       type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
@@ -165,7 +180,8 @@
           '*': FALSE
 
 'TYPO3.TYPO3CR.Testing:ListItem':
-  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  superTypes:
+    'TYPO3.TYPO3CR.Testing:Content': TRUE
   properties:
     text:
       type: 'string'

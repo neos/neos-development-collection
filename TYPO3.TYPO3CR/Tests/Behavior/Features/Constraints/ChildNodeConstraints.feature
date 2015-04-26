@@ -35,27 +35,34 @@ Feature: ChildNode Constraints
           "*": TRUE
 
     'TYPO3.TYPO3CR.Testing:Page':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Document']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Document': TRUE
 
     'TYPO3.TYPO3CR.Testing:Chapter':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Document']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Document': TRUE
 
     'TYPO3.TYPO3CR.Testing:Content': []
 
     'TYPO3.TYPO3CR.Testing:ContentCollection':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Content': TRUE
       constraints:
         nodeTypes:
           "*": TRUE
 
     'TYPO3.TYPO3CR.Testing:Text':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Content': TRUE
 
     'TYPO3.TYPO3CR.Testing:Image':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Content': TRUE
 
     'TYPO3.TYPO3CR.Testing:TextWithImage':
-      superTypes: ['TYPO3.TYPO3CR.Testing:Text', 'TYPO3.TYPO3CR.Testing:Image']
+      superTypes:
+        'TYPO3.TYPO3CR.Testing:Text': TRUE
+        'TYPO3.TYPO3CR.Testing:Image': TRUE
     """
     And I have the following nodes:
       | Identifier                           | Path                | Node Type                               |

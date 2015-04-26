@@ -192,26 +192,29 @@ class NodeTypeManager {
 
 		$superTypes = array();
 		if (isset($nodeTypeConfiguration['superTypes'])) {
-			foreach ($nodeTypeConfiguration['superTypes'] as $key => $superTypeName) {
-
-				// when removing supertypes by setting them to null, only string keys can be overridden
-				if ($superTypeName === NULL && is_string($key)) {
-					$superTypes[$key] = NULL;
+			foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName => $enabled) {
+				// Skip unset node types
+				if ($enabled === FALSE || $enabled === NULL) {
+					$superTypes[$superTypeName] = NULL;
 					continue;
-				} elseif ($superTypeName === NULL) {
-					throw new \TYPO3\TYPO3CR\Exception\NodeConfigurationException('Node type "' . $nodeTypeName . '" sets supertype with a non-string key to NULL.', 1416578395);
+				}
+
+				// Make this setting backwards compatible with old array schema (deprecated since 2.0)
+				if (!is_bool($enabled)) {
+					$superTypeName = $enabled;
+				}
+
+				// when removing super types by setting them to null, only string keys can be overridden
+				if ($superTypeName === NULL) {
+					throw new \TYPO3\TYPO3CR\Exception\NodeConfigurationException('Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.', 1416578395);
 				}
 
 				$superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
 				if ($superType->isFinal() === TRUE) {
-					throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a supertype "' . $superType->getName() . '" which is final.', 1316452423);
+					throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a super type "' . $superType->getName() . '" which is final.', 1316452423);
 				}
 
-				if (is_string($key)) {
-					$superTypes[$key] = $superType;
-				} else {
-					$superTypes[] = $superType;
-				}
+				$superTypes[$superTypeName] = $superType;
 			}
 		}
 

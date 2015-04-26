@@ -27,7 +27,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $nodeTypesFixture = array(
 		'TYPO3.TYPO3CR.Testing:ContentObject' => array(
 			'ui' => array(
-				'label' => 'Abstract content object',
+				'label' => 'Abstract content object'
 			),
 			'abstract' => TRUE,
 			'properties' => array(
@@ -36,7 +36,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					'label' => 'Hidden',
 					'category' => 'visibility',
 					'priority' => 1
-				),
+				)
 			),
 			'propertyGroups' => array(
 				'visibility' => array(
@@ -46,9 +46,9 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		),
 		'TYPO3.TYPO3CR.Testing:Text' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'ui' => array(
-				'label' => 'Text',
+				'label' => 'Text'
 			),
 			'properties' => array(
 				'headline' => array(
@@ -63,13 +63,13 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'inlineEditableProperties' => array('headline', 'text')
 		),
 		'TYPO3.TYPO3CR.Testing:Document' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing.SomeMixin' => 'TYPO3.TYPO3CR.Testing:SomeMixin'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:SomeMixin' => TRUE),
 			'abstract' => TRUE,
 			'aggregate' => TRUE
 		),
 		'TYPO3.TYPO3CR.Testing:SomeMixin' => array(
 			'ui' => array(
-				'label' => 'could contain an inspector tab',
+				'label' => 'could contain an inspector tab'
 			),
 			'properties' => array(
 				'someMixinProperty' => array(
@@ -79,9 +79,12 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		),
 		'TYPO3.TYPO3CR.Testing:Shortcut' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document', 'TYPO3.TYPO3CR.Testing.SomeMixin' => NULL),
+			'superTypes' => array(
+				'TYPO3.TYPO3CR.Testing:Document' => TRUE,
+				'TYPO3.TYPO3CR.Testing:SomeMixin' => FALSE
+			),
 			'ui' => array(
-				'label' => 'Shortcut',
+				'label' => 'Shortcut'
 			),
 			'properties' => array(
 				'target' => array(
@@ -103,7 +106,15 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypes() {
+	public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys() {
+		$folderType = new NodeType('TYPO3CR:Folder', array('foo' => TRUE), array());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes() {
 		$folderType = new NodeType('TYPO3CR:Folder', array('foo'), array());
 	}
 
@@ -319,7 +330,6 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 		$this->assertSame($expectedProperties, $nodeType->getProperties());
 	}
-
 	/**
 	 * Return a nodetype built from the nodeTypesFixture
 	 *
@@ -334,8 +344,8 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configuration = $this->nodeTypesFixture[$nodeTypeName];
 		$declaredSuperTypes = array();
 		if (isset($configuration['superTypes']) && is_array($configuration['superTypes'])) {
-			foreach ($configuration['superTypes'] as $key => $superTypeName) {
-				$declaredSuperTypes[$key] = $this->getNodeType($superTypeName);
+			foreach ($configuration['superTypes'] as $superTypeName => $enabled) {
+				$declaredSuperTypes[$superTypeName] = $enabled === TRUE ? $this->getNodeType($superTypeName) : NULL;
 			}
 		}
 

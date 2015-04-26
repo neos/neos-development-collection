@@ -25,11 +25,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected $subNodeTypesFixture = array(
 		'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'final' => TRUE
 		),
 		'TYPO3.TYPO3CR.Testing:Text' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'ui' => array(
 				'label' => 'Text',
 			),
