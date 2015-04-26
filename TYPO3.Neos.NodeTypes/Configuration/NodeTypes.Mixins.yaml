@@ -149,10 +149,10 @@
 'TYPO3.Neos.NodeTypes:ContentImageMixin':
   abstract: TRUE
   superTypes:
-    - 'TYPO3.Neos.NodeTypes:ImageMixin'
-    - 'TYPO3.Neos.NodeTypes:LinkMixin'
-    - 'TYPO3.Neos.NodeTypes:ImageCaptionMixin'
-    - 'TYPO3.Neos.NodeTypes:ImageAlignmentMixin'
+    'TYPO3.Neos.NodeTypes:ImageMixin': TRUE
+    'TYPO3.Neos.NodeTypes:LinkMixin': TRUE
+    'TYPO3.Neos.NodeTypes:ImageCaptionMixin': TRUE
+    'TYPO3.Neos.NodeTypes:ImageAlignmentMixin': TRUE
   properties:
     link:
       ui:
