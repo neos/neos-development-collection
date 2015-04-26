@@ -8,7 +8,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
   'Vendor:Box':
     superTypes:
-      - 'TYPO3.Neos:Content'
+      'TYPO3.Neos:Content': TRUE
     ui:
       group: structure
       label: Box
@@ -48,7 +48,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
   'Vendor:Box':
     superTypes:
-      - 'TYPO3.Neos:Content'
+      'TYPO3.Neos:Content': TRUE
     ui:
       group: structure
       label: Box

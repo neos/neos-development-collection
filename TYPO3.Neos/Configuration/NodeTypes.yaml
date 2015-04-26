@@ -116,9 +116,9 @@
 # anything page-like (like a blog post) should subclass "TYPO3.Neos:Document".
 'TYPO3.Neos:Document':
   superTypes:
-    - 'TYPO3.Neos:Node'
-    - 'TYPO3.Neos:Hidable'
-    - 'TYPO3.Neos:Timable'
+    'TYPO3.Neos:Node': TRUE
+    'TYPO3.Neos:Hidable': TRUE
+    'TYPO3.Neos:Timable': TRUE
   abstract: TRUE
   aggregate: TRUE
   constraints:
@@ -185,7 +185,8 @@
 # A shortcut.
 # "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
 'TYPO3.Neos:Shortcut':
-  superTypes: ['TYPO3.Neos:Document']
+  superTypes:
+    'TYPO3.Neos:Document': TRUE
   ui:
     label: 'Shortcut'
     icon: 'icon-share'
@@ -225,7 +226,8 @@
 
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'TYPO3.Neos:Plugin':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    'TYPO3.Neos:Content': TRUE
   abstract: TRUE
   ui:
     label: 'Plugin'
@@ -240,7 +242,8 @@
       postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
 
 'TYPO3.Neos:PluginView':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    'TYPO3.Neos:Content': TRUE
   ui:
     label: 'Plugin View'
     group: 'plugins'
@@ -276,9 +279,9 @@
 
 'TYPO3.Neos:Content':
   superTypes:
-    - 'TYPO3.Neos:Node'
-    - 'TYPO3.Neos:Hidable'
-    - 'TYPO3.Neos:Timable'
+    'TYPO3.Neos:Node': TRUE
+    'TYPO3.Neos:Hidable': TRUE
+    'TYPO3.Neos:Timable': TRUE
   abstract: TRUE
   constraints:
     nodeTypes:
@@ -307,7 +310,8 @@
 #
 # Cannot be subclassed.
 'TYPO3.Neos:ContentCollection':
-  superTypes: ['TYPO3.Neos:Node']
+  superTypes:
+    'TYPO3.Neos:Node': TRUE
   ui:
     label: 'Content Collection'
     icon: 'icon-folder-open-alt'

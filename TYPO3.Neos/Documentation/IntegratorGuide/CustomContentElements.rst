@@ -29,7 +29,8 @@ in your site package or in a package dedicated to content elements, if reuse is 
 ::
 
 	   'Acme.Demo:YouTube':
-	     superTypes: ['TYPO3.Neos:Content']
+	     superTypes:
+	      'TYPO3.Neos:Content': TRUE
 	     ui:
 	       group: 'general'
 	       label: 'YouTube Video'
@@ -126,7 +127,8 @@ The node type definition must define which properties are inline editable throug
 `inlineEditable` property::
 
 	'Acme.Demo:Quote':
-	  superTypes: ['TYPO3.Neos:Content']
+	  superTypes:
+	    'TYPO3.Neos:Content': TRUE
 	  ui:
 	    group: 'general'
 	    label: 'Quote'
@@ -183,7 +185,8 @@ can contain two texts and two videos.
    video and text elements will be created directly upon element creation::
 
 	'Acme.Demo:VideoGrid':
-	  superTypes: ['TYPO3.Neos:Content']
+	  superTypes:
+	    'TYPO3.Neos:Content': TRUE
 	  ui:
 	    group: 'structure'
 	    label: 'Video Grid'

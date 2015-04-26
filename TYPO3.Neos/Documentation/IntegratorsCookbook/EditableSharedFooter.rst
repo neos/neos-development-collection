@@ -16,7 +16,8 @@ of the homepage. For this you create a homepage node type with for example
 the following configuration in NodeTypes.yaml::
 
 	'My.Package:HomePage':
-	  superTypes: ['TYPO3.Neos.NodeTypes:Page']
+	  superTypes:
+	    'TYPO3.Neos.NodeTypes:Page': TRUE
 	  ui:
 	    label: 'Homepage'
 	  childNodes:
