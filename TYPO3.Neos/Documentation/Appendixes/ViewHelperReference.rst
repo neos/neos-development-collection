@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-04-25
+This reference was automatically generated from code on 2015-04-26
 
 
 neos:backend.authenticationProviderLabel
@@ -637,6 +637,204 @@ Expected result::
 
 	<a href="about-us.html">see our <span>About Us</span> page</a>
 	(depending on current workspace, current node, format etc.)
+
+
+
+
+neos:rendering.inBackend
+------------------------
+
+ViewHelper to find out if Neos is rendering the backend.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InBackendViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*)
+
+
+
+
+Examples
+********
+
+**Basic usage**::
+
+	<f:if condition="{neos:rendering.inBackend()}">
+	  <f:then>
+	    Shown in the backend.
+	  </f:then>
+	  <f:else>
+	    Shown when not in backend.
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown in the backend.
+
+
+
+
+neos:rendering.inEditMode
+-------------------------
+
+ViewHelper to find out if Neos is rendering an edit mode.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InEditModeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
+
+* ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
+
+
+
+
+Examples
+********
+
+**Basic usage**::
+
+	<f:if condition="{neos:rendering.inEditMode()}">
+	  <f:then>
+	    Shown for editing.
+	  </f:then>
+	  <f:else>
+	    Shown elsewhere (preview mode or not in backend).
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown for editing.
+
+
+**Advanced usage**::
+
+	<f:if condition="{neos:rendering.inEditMode(mode: 'rawContent')}">
+	  <f:then>
+	    Shown just for rawContent editing mode.
+	  </f:then>
+	  <f:else>
+	    Shown in all other cases.
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown in all other cases.
+
+
+
+
+neos:rendering.inPreviewMode
+----------------------------
+
+ViewHelper to find out if Neos is rendering a preview mode.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InPreviewModeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
+
+* ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
+
+
+
+
+Examples
+********
+
+**Basic usage**::
+
+	<f:if condition="{neos:rendering.inPreviewMode()}">
+	  <f:then>
+	    Shown in preview.
+	  </f:then>
+	  <f:else>
+	    Shown elsewhere (edit mode or not in backend).
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown in preview.
+
+
+**Advanced usage**::
+
+	<f:if condition="{neos:rendering.inPreviewMode(mode: 'print')}">
+	  <f:then>
+	    Shown just for print preview mode.
+	  </f:then>
+	  <f:else>
+	    Shown in all other cases.
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown in all other cases.
+
+
+
+
+neos:rendering.live
+-------------------
+
+ViewHelper to find out if Neos is rendering the live website.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*)
+
+
+
+
+Examples
+********
+
+**Basic usage**::
+
+	<f:if condition="{neos:rendering.live()}">
+	  <f:then>
+	    Shown outside the backend.
+	  </f:then>
+	  <f:else>
+	    Shown in the backend.
+	  </f:else>
+	</f:if>
+
+
+Expected result::
+
+	Shown in the backend.
 
 
 

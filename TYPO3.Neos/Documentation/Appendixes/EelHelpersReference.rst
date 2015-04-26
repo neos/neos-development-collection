@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-04-25
+This reference was automatically generated from code on 2015-04-26
 
 
 Array
