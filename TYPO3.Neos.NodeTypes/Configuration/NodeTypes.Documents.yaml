@@ -1,5 +1,6 @@
 'TYPO3.Neos.NodeTypes:Page':
-  superTypes: ['TYPO3.Neos:Document']
+  superTypes:
+    'TYPO3.Neos:Document': TRUE
   childNodes:
     main:
       type: 'TYPO3.Neos:ContentCollection'
