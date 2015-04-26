@@ -13,6 +13,7 @@ namespace TYPO3\Neos\TypoScript\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 
 /**
@@ -88,10 +89,10 @@ class ContentCacheFlusher {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
+	 * @param NodeType $nodeType
+	 * @return array<NodeType>
 	 */
-	protected function getAllImplementedNodeTypes($nodeType) {
+	protected function getAllImplementedNodeTypes(NodeType $nodeType) {
 		$types = array($nodeType);
 		foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
 			$types = array_merge($types, $this->getAllImplementedNodeTypes($superType));

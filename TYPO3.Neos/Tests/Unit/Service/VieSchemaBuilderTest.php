@@ -56,18 +56,18 @@ class VieSchemaBuilderTest extends UnitTestCase {
 			)
 		),
 		'TYPO3.Neos:MyFinalType' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+			'superTypes' => array('TYPO3.Neos:ContentObject' => TRUE),
 			'final' => TRUE
 		),
 		'TYPO3.Neos:AbstractType' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+			'superTypes' => array('TYPO3.Neos:ContentObject' => TRUE),
 			'ui' => array(
 				'label' => 'Abstract type',
 			),
 			'abstract' => TRUE
 		),
 		'TYPO3.Neos:Text' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+			'superTypes' => array('TYPO3.Neos:ContentObject' => TRUE),
 			'ui' => array(
 				'label' => 'Text',
 			),
@@ -84,7 +84,7 @@ class VieSchemaBuilderTest extends UnitTestCase {
 			'inlineEditableProperties' => array('headline', 'text')
 		),
 		'TYPO3.Neos:TextWithImage' => array(
-			'superTypes' => array('TYPO3.Neos:Text'),
+			'superTypes' => array('TYPO3.Neos:Text' => TRUE),
 			'ui' => array(
 				'label' => 'Text with image',
 			),

@@ -98,7 +98,8 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
 .. code-block:: yaml
 
   'Sarkosh.CdCollection:Plugin':
-    superTypes: ['TYPO3.Neos:Plugin']
+    superTypes:
+      'TYPO3.Neos:Plugin': TRUE
     ui:
       label: 'CD Collection'
       group: 'plugins'
@@ -154,7 +155,8 @@ will be available for the ``Plugin View``:
 .. code-block:: yaml
 
   'Sarkosh.CdCollection:Plugin':
-    superTypes: ['TYPO3.Neos:Plugin']
+    superTypes:
+      'TYPO3.Neos:Plugin': TRUE
     ui:
       label: 'CD Collection'
       group: 'plugins'

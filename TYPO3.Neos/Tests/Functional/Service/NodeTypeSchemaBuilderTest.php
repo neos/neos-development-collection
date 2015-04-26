@@ -57,7 +57,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase {
 		$this->assertTrue(array_key_exists('TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
 
 		$expectedSchema = array(
-			'superTypes' => array('TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType'),
+			'superTypes' => array('TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => TRUE),
 			'properties' => array(
 				'text' => array(
 					'ui' => array(

@@ -1,5 +1,6 @@
 'Acme.Demo:ThreeColumn':
-  superTypes: ['TYPO3.Neos.NodeTypes:Column']
+  superTypes:
+    'TYPO3.Neos.NodeTypes:Column': TRUE
   ui:
     label: 'Three column content'
     group: 'structure'
@@ -12,7 +13,8 @@
       type: 'TYPO3.Neos:ContentCollection'
 
 'Acme.Demo:List':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    'TYPO3.Neos:Content': TRUE
   ui:
     label: 'List content'
     group: 'structure'
@@ -21,7 +23,8 @@
       type: 'TYPO3.Neos:ContentCollection'
 
 'Acme.Demo:ListItem':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    'TYPO3.Neos:Content': TRUE
   properties:
     text:
       type: 'string'
@@ -30,28 +33,35 @@
   abstract: TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:Document':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Node']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Node': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:Page':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Document']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Document': TRUE
   constraints:
     nodeTypes:
       'TYPO3.Neos.BackendSchemaControllerTest:SubPage': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:SubPage':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Page']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Page': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:Folder':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Document']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Document': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:Content':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Node']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Node': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:Text':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Content']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Content': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:TwoColumn':
-  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Content']
+  superTypes:
+    'TYPO3.Neos.BackendSchemaControllerTest:Content': TRUE
   childNodes:
     column0:
       type: 'TYPO3.Neos:ContentCollection'
@@ -76,7 +86,7 @@
 
 'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType':
   superTypes:
-    - TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType
+    'TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': TRUE
   properties:
     text:
       ui:
