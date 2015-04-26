@@ -46,18 +46,18 @@ class NodeTypeManagerTest extends UnitTestCase {
 			)
 		),
 		'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'final' => TRUE
 		),
 		'TYPO3.TYPO3CR.Testing:AbstractType' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'ui' => array(
 				'label' => 'Abstract type',
 			),
 			'abstract' => TRUE
 		),
 		'TYPO3.TYPO3CR.Testing:Text' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => TRUE),
 			'ui' => array(
 				'label' => 'Text',
 			),
@@ -74,7 +74,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 			'inlineEditableProperties' => array('headline', 'text')
 		),
 		'TYPO3.TYPO3CR.Testing:TextWithImage' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:Text'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Text' => TRUE),
 			'ui' => array(
 				'label' => 'Text with image',
 			),
@@ -90,7 +90,21 @@ class NodeTypeManagerTest extends UnitTestCase {
 			'aggregate' => TRUE
 		),
 		'TYPO3.TYPO3CR.Testing:Page' => array(
-			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document'),
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => TRUE),
+		),
+		'TYPO3.TYPO3CR.Testing:Page2' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => TRUE),
+		),
+		'TYPO3.TYPO3CR.Testing:Page3' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => TRUE),
+		),
+		'TYPO3.TYPO3CR.Testing:DocumentWithSupertypes' => array(
+			'superTypes' => array(
+				0 => 'TYPO3.TYPO3CR.Testing:Document',
+				'TYPO3.TYPO3CR.Testing:Page' => TRUE,
+				'TYPO3.TYPO3CR.Testing:Page2' => FALSE,
+				'TYPO3.TYPO3CR.Testing:Page3' => NULL
+			)
 		)
 	);
 
@@ -210,7 +224,10 @@ class NodeTypeManagerTest extends UnitTestCase {
 			'TYPO3.TYPO3CR.Testing:Text',
 			'TYPO3.TYPO3CR.Testing:TextWithImage',
 			'TYPO3.TYPO3CR.Testing:Document',
-			'TYPO3.TYPO3CR.Testing:Page'
+			'TYPO3.TYPO3CR.Testing:Page',
+			'TYPO3.TYPO3CR.Testing:Page2',
+			'TYPO3.TYPO3CR.Testing:Page3',
+			'TYPO3.TYPO3CR.Testing:DocumentWithSupertypes'
 		);
 		$this->assertEquals($expectedNodeTypes, array_keys($nodeTypeManager->getNodeTypes()));
 	}
@@ -310,7 +327,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 				'final' => TRUE
 			),
 			'TYPO3.TYPO3CR.Testing:Sub' => array(
-				'superTypes' => array('TYPO3.TYPO3CR.Testing:Base')
+				'superTypes' => array('TYPO3.TYPO3CR.Testing:Base' => TRUE)
 			)
 		));
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);

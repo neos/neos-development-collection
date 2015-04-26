@@ -148,7 +148,7 @@ class NodeType {
 	protected function buildFullConfiguration() {
 		$mergedConfiguration = array();
 		$applicableSuperTypes = $this->buildInheritanceChain();
-		foreach ($applicableSuperTypes as $superType) {
+		foreach ($applicableSuperTypes as $key => $superType) {
 			$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
 		}
 		$this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
@@ -160,26 +160,22 @@ class NodeType {
 	}
 
 	/**
-	 * Returns a flat list of supertypes to inherit from.
+	 * Returns a flat list of super types to inherit from.
 	 *
 	 * @return array
 	 */
 	protected function buildInheritanceChain() {
 		$superTypes = array();
-		foreach ($this->declaredSuperTypes as $key => $superType) {
+		foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
 			if ($superType !== NULL) {
 				$this->addInheritedSuperTypes($superTypes, $superType);
-				if (is_string($key)) {
-					$superTypes[$key] = $superType;
-				} else {
-					$superTypes[] = $superType;
-				}
+				$superTypes[$superTypeName] = $superType;
 			}
 		}
 
-		foreach ($this->declaredSuperTypes as $key => $superType) {
-			if ($superType === NULL && is_string($key)) {
-				unset($superTypes[$key]);
+		foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+			if ($superType === NULL) {
+				unset($superTypes[$superTypeName]);
 			}
 		}
 
@@ -187,20 +183,16 @@ class NodeType {
 	}
 
 	/**
-	 * Recursively add supertypes
+	 * Recursively add super types
 	 *
 	 * @param array $superTypes
 	 * @param NodeType $superType
 	 * @return void
 	 */
 	protected function addInheritedSuperTypes(array &$superTypes, NodeType $superType) {
-		foreach ($superType->getDeclaredSuperTypes() as $key => $inheritedSuperType) {
+		foreach ($superType->getDeclaredSuperTypes() as $inheritedSuperTypeName => $inheritedSuperType) {
 			$this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
-			if (is_string($key)) {
-				$superTypes[$key] = $inheritedSuperType;
-			} else {
-				$superTypes[] = $inheritedSuperType;
-			}
+			$superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
 		}
 	}
 
@@ -261,7 +253,7 @@ class NodeType {
 	 *
 	 * Note: NULL values are skipped since they are used only internally.
 	 *
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
+	 * @return array<NodeType>
 	 * @api
 	 */
 	public function getDeclaredSuperTypes() {

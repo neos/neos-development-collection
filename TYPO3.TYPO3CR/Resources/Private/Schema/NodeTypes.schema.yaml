@@ -10,9 +10,12 @@ additionalProperties:
     'aggregate': { type: boolean, description: "INTERNAL. If aggregate, this node type is something like a Document. If not aggregate, it is seen as part of an aggregate node type - has influence on how e.g. moving of nodes across dimensions work." }
 
     'superTypes':
-      type: array
+      type: dictionary
+      description: "List of TYPO3CR Node Types which are supertypes of this type"
+      # the "key" is the node type
+      additionalProperties:
+        type: boolean
       # TODO: add validator which check that these are other Node Types.
-      items: { type: string, description: "List of TYPO3CR Node Types which are supertypes of this type" }
 
     'label':
       type: ['string', 'array']
