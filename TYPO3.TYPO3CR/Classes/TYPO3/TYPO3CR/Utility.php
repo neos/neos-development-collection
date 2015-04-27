@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+
 /**
  * A class holding utility methods
  *
@@ -26,6 +28,11 @@ class Utility {
 	 * @return string A valid node name
 	 */
 	static public function renderValidNodeName($name) {
+		// Check if name already match name pattern to prevent unnecessary transliteration
+		if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) === 1) {
+			return $name;
+		}
+
 		$transliteration = array(
 			// Latin
 			'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'AA', 'Æ' => 'AE', 'Ç' => 'C',
