@@ -170,7 +170,7 @@ class NodeImportService {
 	 * @param \XMLReader $xmlReader The XML input to import - must be either XML as a string or a prepared \XMLReader instance containing XML data
 	 * @param string $targetPath path to the node which becomes parent of the root of the imported sub-tree
 	 * @param string $resourceLoadPath
-	 * @throws \Exception
+	 * @throws ImportException
 	 * @return void
 	 */
 	public function import(\XMLReader $xmlReader, $targetPath, $resourceLoadPath = NULL) {
@@ -206,7 +206,7 @@ class NodeImportService {
 			}
 		}
 
-		if ($xmlReader->name == 'nodes' && $xmlReader->nodeType == \XMLReader::ELEMENT) {
+		if ($xmlReader->name === 'nodes' && $xmlReader->nodeType === \XMLReader::ELEMENT) {
 			return $xmlReader->getAttribute('formatVersion');
 		}
 
@@ -249,6 +249,7 @@ class NodeImportService {
 	 *
 	 * @param \XMLReader $xmlReader The XML Reader with the element to be parsed as its root
 	 * @return void
+	 * @throws ImportException
 	 */
 	protected function parseElement(\XMLReader $xmlReader) {
 		$elementName = $xmlReader->name;
@@ -328,7 +329,7 @@ class NodeImportService {
 					$currentDimension = $reader->name;
 					break;
 				case \XMLReader::END_ELEMENT:
-					if ($reader->name == 'dimensions') {
+					if ($reader->name === 'dimensions') {
 						return $dimensions;
 					}
 					break;
@@ -348,11 +349,9 @@ class NodeImportService {
 	 * @param \XMLReader $reader reader positioned just after an opening array-tag
 	 * @param string $elementName
 	 * @return array the array values
-	 * @throws \Exception
 	 */
 	protected function parseArrayElements(\XMLReader $reader, $elementName) {
 		$values = array();
-		$currentKey = NULL;
 		$depth = 0;
 
 		// The following silences static code analysis warnings about undefined variables.
@@ -375,7 +374,7 @@ class NodeImportService {
 					$currentEncoding = $reader->getAttribute('__encoding');
 					break;
 				case \XMLReader::END_ELEMENT:
-					if ($reader->name == $elementName) {
+					if ($reader->name === $elementName) {
 						return $values;
 					}
 					break;
@@ -393,7 +392,6 @@ class NodeImportService {
 	 *
 	 * @param \XMLReader $reader reader positioned just after an opening properties-tag
 	 * @return array the properties
-	 * @throws \Exception
 	 */
 	protected function parsePropertiesElement(\XMLReader $reader) {
 		$properties = array();
@@ -433,7 +431,7 @@ class NodeImportService {
 					}
 					break;
 				case \XMLReader::END_ELEMENT:
-					if ($reader->name == 'properties') {
+					if ($reader->name === 'properties') {
 						return $properties;
 					}
 					break;
@@ -456,9 +454,7 @@ class NodeImportService {
 	 * @param string $currentClassName class name of element
 	 * @param string $currentIdentifier identifier of element
 	 * @return mixed
-	 * @throws \Exception
-	 * @throws \TYPO3\Flow\Property\Exception
-	 * @throws \TYPO3\Flow\Security\Exception
+	 * @throws ImportException
 	 */
 	protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier = '') {
 		switch ($currentType) {
@@ -468,7 +464,7 @@ class NodeImportService {
 				} elseif ($currentEncoding === 'json') {
 					$value = $this->propertyMapper->convert(json_decode($reader->value, TRUE), $currentClassName, $this->propertyMappingConfiguration);
 				} else {
-					throw new \Exception(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
+					throw new ImportException(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
 				}
 				break;
 			case 'string':
@@ -491,7 +487,7 @@ class NodeImportService {
 	 * @return void
 	 */
 	protected function persistEntities($propertyValue) {
-		if (!is_array($propertyValue) && !$propertyValue instanceof \Iterator) {
+		if (!$propertyValue instanceof \Iterator && !is_array($propertyValue)) {
 			$propertyValue = array($propertyValue);
 		}
 		foreach ($propertyValue as $possibleEntity) {
@@ -507,13 +503,12 @@ class NodeImportService {
 		}
 	}
 
-
-
 	/**
 	 * Parses the closing tags writes data to the database then
 	 *
 	 * @param \XMLReader $reader
 	 * @return void
+	 * @throws ImportException
 	 */
 	protected function parseEndElement(\XMLReader $reader) {
 		switch ($reader->name) {
@@ -533,7 +528,7 @@ class NodeImportService {
 				$nodeData = array_pop($this->nodeDataStack);
 
 				// if XML files lack the identifier for a node, add it here
-				if (!isset($nodeData['identifier'])) {
+				if (!array_key_exists('identifier', $nodeData)) {
 					$nodeData['identifier'] = Algorithms::generateUUID();
 				}
 
@@ -546,40 +541,32 @@ class NodeImportService {
 	}
 
 	/**
-	 * provides the path for a NodeData according to the current stacks
+	 * Provides the path for a NodeData according to the current stacks
 	 *
 	 * @return string
 	 */
 	protected function getCurrentPath() {
-		$path = join('/', $this->nodeNameStack);
-		if ($path == '') {
-			$path = '/';
-
-			return $path;
-		}
-
-		return $path;
+		$path = implode('/', $this->nodeNameStack);
+		return ($path === '') ? '/' : $path;
 	}
 
 	/**
-	 * provides the parent of the given path
+	 * Provides the parent of the given path
 	 *
 	 * @param string $path path to get parent for
 	 * @return string parent path
 	 */
 	protected function getParentPath($path) {
-		if ($path == '/') {
+		if ($path === '/') {
 			return '';
 		}
-		if ($path != '/') {
-			$endIndex = strrpos($path, '/');
-			$index = strpos($path, '/');
-			// path is something like /nodeInRootSpace
-			if ($index == $endIndex) {
-				return '/';
-			} else { // node is something like /node/not/in/root/space
-				return substr($path, 0, $endIndex);
-			}
+		$endIndex = strrpos($path, '/');
+		$index = strpos($path, '/');
+		// path is something like /nodeInRootSpace
+		if ($index === $endIndex) {
+			return '/';
+		} else { // node is something like /node/not/in/root/space
+			return substr($path, 0, $endIndex);
 		}
 	}
 
@@ -590,11 +577,11 @@ class NodeImportService {
 	 * it is replaced.
 	 *
 	 * @param array $nodeData node data to save as an associative array ( $column_name => $value )
-	 * @throws \TYPO3\TYPO3CR\Exception\ImportException
+	 * @throws ImportException
 	 * @return void
 	 */
 	protected function persistNodeData($nodeData) {
-		if ($nodeData['workspace'] != 'live') {
+		if ($nodeData['workspace'] !== 'live') {
 			throw new ImportException('Saving NodeData with workspace != "live" using direct SQL not supported yet. Workspace is "' . $nodeData['workspace'] . '".');
 		}
 		if ($nodeData['path'] === '/') {
