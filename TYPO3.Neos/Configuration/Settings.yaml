@@ -72,6 +72,10 @@ TYPO3:
               variables:
                 'showSetupLink': TRUE
 
+      debugger:
+        ignoredClasses:
+          'TYPO3\\Neos\\Domain\\Service\\ContentContextFactory': TRUE
+
     package:
       packagesPathByType:
         'typo3-flow-site': 'Sites'
