@@ -129,6 +129,9 @@
 
 'TYPO3.TYPO3CR.Testing:Text':
   superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+  properties:
+    text:
+      type: string
 
 'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints':
   childNodes:
