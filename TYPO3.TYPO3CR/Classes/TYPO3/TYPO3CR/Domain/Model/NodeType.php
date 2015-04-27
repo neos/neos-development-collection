@@ -519,7 +519,12 @@ class NodeType {
 		}
 		$constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
 
-		$childNodeConstraintConfiguration = $this->getConfiguration('childNodes.' . $childNodeName . '.constraints.nodeTypes') ?: array();
+		$childNodeConfiguration = [];
+		foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
+			$childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
+		}
+		$childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: array();
+
 		$constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
 		return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
