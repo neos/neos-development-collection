@@ -1,5 +1,5 @@
 up:
-  comments: 'Migrate to new ImageVariants.'
+  comments: 'Migrate serialized Media objects to relation format.'
   warnings: 'No down migration possible for this migration. There is no way back. Make sure you have a backup of your database.'
   migration:
     -
@@ -7,6 +7,9 @@ up:
       transformations:
         -
           type: 'TYPO3\Neos\TYPO3CR\Transformations\ImageVariantTransformation'
+          settings: []
+        -
+          type: 'TYPO3\Neos\TYPO3CR\Transformations\AssetTransformation'
           settings: []
 
 down:
