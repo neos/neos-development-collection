@@ -21,6 +21,7 @@ use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Service for importing nodes from an XML structure into the content repository
@@ -174,7 +175,9 @@ class NodeImportService {
 	 */
 	public function import(\XMLReader $xmlReader, $targetPath, $resourceLoadPath = NULL) {
 		$this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceLoadPath);
-		$this->nodeNameStack = ($targetPath === '/') ? array() : explode('/', $targetPath);
+		$this->nodeNameStack = ($targetPath === '/') ? array() : array_map(function($pathSegment) {
+			return Utility::renderValidNodeName($pathSegment);
+		}, explode('/', $targetPath));
 
 		$formatVersion = $this->determineFormatVersion($xmlReader);
 		switch ($formatVersion) {
@@ -255,8 +258,8 @@ class NodeImportService {
 				$this->nodeIdentifierStack[] = $xmlReader->getAttribute('identifier');
 				// update current path
 				$nodeName = $xmlReader->getAttribute('nodeName');
-				if ($nodeName != '/') {
-					$this->nodeNameStack[] = $nodeName;
+				if ($nodeName !== '/') {
+					$this->nodeNameStack[] = Utility::renderValidNodeName($nodeName);
 				}
 				break;
 			case 'variant':
