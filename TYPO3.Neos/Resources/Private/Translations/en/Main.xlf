@@ -111,6 +111,9 @@
 			<trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			</trans-unit>
+			<trans-unit id="targetWorkspace" xml:space="preserve">
+				<source>Target workspace</source>
+			</trans-unit>
 			<trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			</trans-unit>

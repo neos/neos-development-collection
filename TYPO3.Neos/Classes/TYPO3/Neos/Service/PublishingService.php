@@ -52,16 +52,22 @@ class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService 
 	protected $currentSite = FALSE;
 
 	/**
-	 * Publishes the given node to the specified target workspace. If no workspace is specified, "live" is assumed.
+	 * Publishes the given node to the specified target workspace. If no workspace is specified, the base workspace
+	 * is assumed.
+	 *
+	 * If the given node is a Document or has ContentCollection child nodes, these nodes are published as well.
 	 *
 	 * @param NodeInterface $node
-	 * @param Workspace $targetWorkspace If not set the "live" Workspace is assumed to be the publishing target
+	 * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
 	 * @return void
 	 * @api
 	 */
 	public function publishNode(NodeInterface $node, Workspace $targetWorkspace = NULL) {
 		if ($targetWorkspace === NULL) {
-			$targetWorkspace = $this->workspaceRepository->findOneByName('live');
+			$targetWorkspace = $node->getWorkspace()->getBaseWorkspace();
+		}
+		if (!$targetWorkspace instanceof Workspace) {
+			return;
 		}
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
