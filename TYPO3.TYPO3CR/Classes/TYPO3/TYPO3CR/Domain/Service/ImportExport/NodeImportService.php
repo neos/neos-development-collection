@@ -528,7 +528,7 @@ class NodeImportService {
 				$nodeData = array_pop($this->nodeDataStack);
 
 				// if XML files lack the identifier for a node, add it here
-				if (!array_key_exists('identifier', $nodeData)) {
+				if (!isset($nodeData['identifier'])) {
 					$nodeData['identifier'] = Algorithms::generateUUID();
 				}
 
