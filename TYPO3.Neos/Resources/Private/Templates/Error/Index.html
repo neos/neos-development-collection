@@ -14,6 +14,9 @@
 			</div>
 			<h1>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'TYPO3.Neos')}</h1>
 			<p>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.description', package: 'TYPO3.Neos') -> f:format.nl2br()}</p>
+			<f:if condition="{renderingOptions.renderTechnicalDetails}">
+				<p class="technical-details">#{exception.code}: {exception.message}</p>
+			</f:if>
 			<f:if condition="{showSetupLink}">
 				<p><strong>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.setupMessage', package: 'TYPO3.Neos')}</strong></p>
 				<p><a href="/setup" class="neos-button neos-button-primary">{neos:backend.translate(id: 'error.exception.goToSetup', package: 'TYPO3.Neos')}</a></p>
