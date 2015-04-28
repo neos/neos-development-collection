@@ -1,8 +1,6 @@
 include: Prototypes/ContentCase.ts2
 include: Prototypes/Document.ts2
 include: Prototypes/Content.ts2
-# Note: The TYPO3.Neos:Template prototype only exists for historical reasons and will be removed in a future version:
-include: Prototypes/Template.ts2
 include: Prototypes/PrimaryContent.ts2
 include: Prototypes/ContentCollection.ts2
 include: Prototypes/Page.ts2

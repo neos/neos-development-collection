@@ -1,6 +1,0 @@
-# This TypoScript object only exists as a reminder for migrating your code to the newer TypoScript object structure.
-# Please use TYPO3.TypoScript:Template instead or TYPO3.Neos:Content if you're creating a content element.
-#
-prototype(TYPO3.Neos:Template) {
-	@class = 'TYPO3\\Neos\\TypoScript\\TemplateImplementation'
-}
