@@ -4,9 +4,9 @@
     "description": "A simple generator for Neos assets, like sites and plugins.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/neos": "2.0.*@dev",
-        "typo3/kickstart": "*",
-        "typo3/neos-nodetypes": "*"
+        "typo3/neos": "~2.0.0",
+        "typo3/kickstart": "~3.0.0",
+        "typo3/neos-nodetypes": "~2.0.0"
     },
     "autoload": {
         "psr-0": {
