@@ -4,8 +4,8 @@
     "description": "Content repository based on TYPO3 Flow, specifically made for TYPO3 Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
-        "typo3/eel": "*",
+        "typo3/flow": "~3.0.0",
+        "typo3/eel": "~3.0.0",
         "gedmo/doctrine-extensions": "2.3.*"
     },
     "autoload": {
