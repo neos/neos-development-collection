@@ -1164,6 +1164,13 @@ class NodeDataRepository extends Repository {
 
 			// Find positions in dimensions, add workspace in front for highest priority
 			$dimensionPositions = array();
+
+			// Special case for no dimensions
+			if ($dimensions === array()) {
+				// We can just decide if the given node has no dimensions.
+				$dimensionPositions[] = ($nodeDimensions === array()) ? 0 : 1;
+			}
+
 			foreach ($dimensions as $dimensionName => $dimensionValues) {
 				foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
 					$position = array_search($nodeDimensionValue, $dimensionValues);

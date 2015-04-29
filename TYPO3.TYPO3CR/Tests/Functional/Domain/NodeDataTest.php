@@ -11,8 +11,6 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Service\Context;
-
 /**
  * Functional test case.
  */
@@ -162,4 +160,22 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('Japan', $entityArray[1]->getFavoritePlace());
 	}
 
+	/**
+	 * @test
+	 */
+	public function inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized() {
+		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+		$siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodesWithAndWithoutDimensions.xml', $this->context);
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->inject($this->contextFactory, 'contextInstances', array());
+
+		// The context is not important here, just a quick way to get a (live) workspace
+		$context = $this->contextFactory->create();
+		$nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+		// The identifier comes from the Fixture.
+		$resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(TRUE), array());
+
+		$this->assertEmpty($resultingNodeData->getDimensions());
+	}
 }
