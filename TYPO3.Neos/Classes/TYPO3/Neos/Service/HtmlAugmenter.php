@@ -18,6 +18,13 @@ use TYPO3\Neos\Exception;
  * A tool that can augment HTML for example by adding arbitrary attributes.
  * This is used in order to add meta data arguments to content elements in the Backend.
  *
+ * Usage:
+ *
+ * $html = '<div foo="existing">Some HTML code</div>';
+ * $result = (new HtmlAugmenter())->addAttributes($html, array('foo' => 'bar', 'bar' => 'baz'));
+ *
+ * // will return '<div foo="existing bar" bar="baz">Some HTML code</div'
+ *
  * @Flow\Scope("singleton")
  */
 class HtmlAugmenter {
@@ -28,17 +35,18 @@ class HtmlAugmenter {
 	 * If no unique root node can be determined, a wrapping tag is added with all the given attributes. The name of this
 	 * tag can be specified with $fallbackTagName.
 	 *
-	 * @param string $html
-	 * @param array $attributes
-	 * @param string $fallbackTagName
+	 * @param string $html The HTML code to augment
+	 * @param array $attributes Attributes to be added to the root element in the format array('<attribute-name>' => '<attribute-value>', ...)
+	 * @param string $fallbackTagName The root element tag name if one needs to be added
+	 * @param array $exclusiveAttributes A list of lowercase(!) attribute names that should be exclusive to the root element. If the existing root element contains one of these a new root element is wrapped
 	 * @return string
 	 */
-	public function addAttributes($html, array $attributes, $fallbackTagName = 'div') {
+	public function addAttributes($html, array $attributes, $fallbackTagName = 'div', array $exclusiveAttributes = NULL) {
 		if ($attributes === array()) {
 			return $html;
 		}
 		$rootElement = $this->getHtmlRootElement($html);
-		if ($rootElement === NULL) {
+		if ($rootElement === NULL || $this->elementHasAttributes($rootElement, $exclusiveAttributes)) {
 			return sprintf('<%s%s>%s</%s>', $fallbackTagName, $this->renderAttributes($attributes), $html, $fallbackTagName);
 		}
 		$this->mergeAttributes($rootElement, $attributes);
@@ -117,5 +125,25 @@ class HtmlAugmenter {
 			}
 		}
 		return $renderedAttributes;
+	}
+
+	/**
+	 * Checks whether the given $element contains at least one of the specified $attributes (case insensitive)
+	 *
+	 * @param \DOMNode $element
+	 * @param array $attributes array of attribute names to check (lowercase)
+	 * @return boolean TRUE if at least one of the $attributes is contained in the given $element, otherwise FALSE
+	 */
+	protected function elementHasAttributes(\DOMNode $element, array $attributes = NULL) {
+		if ($attributes === NULL) {
+			return FALSE;
+		}
+		/** @var $attribute \DOMAttr */
+		foreach ($element->attributes as $attribute) {
+			if (in_array(strtolower($attribute->name), $attributes)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 }
