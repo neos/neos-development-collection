@@ -29,7 +29,6 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-
 		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
