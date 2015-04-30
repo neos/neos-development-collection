@@ -117,5 +117,3 @@ class ImageController extends ActionController {
 		$this->view->assign('imageVariant', $imageVariant);
 	}
 }
-
-?>

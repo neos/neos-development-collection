@@ -57,7 +57,7 @@ class MediaCommandController extends CommandController {
 	public function importResourcesCommand($simulate = FALSE) {
 		$this->initializeConnection();
 
-		$sql = "
+		$sql = '
 			SELECT
 				r.persistence_object_identifier, r.filename, r.mediatype
 			FROM typo3_flow_resource_resource r
@@ -66,7 +66,7 @@ class MediaCommandController extends CommandController {
 			LEFT JOIN typo3_media_domain_model_thumbnail t
 			ON t.resource = r.persistence_object_identifier
 			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
-		";
+		';
 		$statement = $this->dbalConnection->prepare($sql);
 		$statement->execute();
 		$resourceInfos = $statement->fetchAll();
