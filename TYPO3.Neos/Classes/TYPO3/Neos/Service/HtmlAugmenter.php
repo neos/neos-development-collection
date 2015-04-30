@@ -42,7 +42,7 @@ class HtmlAugmenter {
 			return sprintf('<%s%s>%s</%s>', $fallbackTagName, $this->renderAttributes($attributes), $html, $fallbackTagName);
 		}
 		$this->mergeAttributes($rootElement, $attributes);
-		return preg_replace('/<(' . $rootElement->nodeName . ')\b[^>]*>/xi', '<$1' . $this->renderAttributes($attributes) . '>', $html, 1, $numberOfReplacements);
+		return preg_replace('/<(' . $rootElement->nodeName . ')\b[^>]*>/xi', '<$1' . addcslashes($this->renderAttributes($attributes), '\\') . '>', $html, 1);
 	}
 
 	/**

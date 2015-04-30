@@ -259,7 +259,6 @@ class ContentElementWrappingService {
 
 		if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
 			$propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-			$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer', ImageInterfaceJsonSerializer::CONFIGURATION_ESCAPE_SLASHES, TRUE);
 			return $this->imageInterfaceJsonSerializer->convertFrom($propertyValue, 'string', array(), $propertyMappingConfiguration);
 		}
 
