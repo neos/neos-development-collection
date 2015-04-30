@@ -23,13 +23,6 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter {
 
 	/**
-	 * Indicates if slashes should be escaped by slashes in the resulting JSON string. This is necessary to be able to use the string inside an HTML attribute for example.
-	 *
-	 * @var boolean
-	 */
-	const CONFIGURATION_ESCAPE_SLASHES = 3;
-
-	/**
 	 * @var string
 	 */
 	protected $targetType = 'string';
@@ -50,11 +43,6 @@ class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter {
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$data = parent::convertFrom($source, 'array', $convertedChildProperties, $configuration);
-		$data = json_encode($data);
-		if ($configuration->getConfigurationValue('TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer', self::CONFIGURATION_ESCAPE_SLASHES) === TRUE) {
-			$data = addcslashes($data, '\\');
-		}
-
-		return $data;
+		return json_encode($data);
 	}
 }
