@@ -10743,6 +10743,9 @@
 .neos.media-browser aside.neos-media-aside > h2 #neos-tags-list-edit-toggle:hover {
   background-color: #00b5ff;
 }
+.neos.media-browser aside.neos-media-aside > h2 .neos-tooltip {
+  font-weight: normal;
+}
 .neos.media-browser aside.neos-media-aside .neos-tags-list {
   background-color: #3f3f3f;
   border-top: 1px solid #3f3f3f;
