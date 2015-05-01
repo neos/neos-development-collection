@@ -62,8 +62,8 @@ class SetDimensions extends AbstractTransformation {
 	 */
 	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		$dimensions = array();
-		foreach ($this->dimensionValues as $dimensionName => $dimensionValues) {
-			foreach ($dimensionValues as $dimensionValues) {
+		foreach ($this->dimensionValues as $dimensionName => $dimensionConfiguration) {
+			foreach ($dimensionConfiguration as $dimensionValues) {
 				if (is_array($dimensionValues)) {
 					foreach ($dimensionValues as $dimensionValue) {
 						$dimensions[] = new NodeDimension($node, $dimensionName, $dimensionValue);
