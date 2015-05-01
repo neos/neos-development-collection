@@ -1,8 +1,8 @@
 conf.py:
-  copyright: '2006-2014, respective authors'
+  copyright: '2006-2015, respective authors'
   project: 'TYPO3 Neos'
-  release: 'master'
-  version: 'master'
+  release: '2.0'
+  version: '2.0'
   latex_documents:
   - - Index
     - typo3.neos.tex
