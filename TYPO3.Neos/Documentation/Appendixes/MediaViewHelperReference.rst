@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-04-30
+This reference was automatically generated from code on 2015-05-01
 
 
 typo3.media:form.checkbox
