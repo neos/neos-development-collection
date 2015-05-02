@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-05-01
+This reference was automatically generated from code on 2015-05-02
 
 
 neos:backend.authenticationProviderLabel
