@@ -88,6 +88,10 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 			img {
 				max-width: $maxImageWidth;
 				max-height: $maxImageHeight;
+
+				&:not(.neos-inspector-image-thumbnail-dummy) {
+					cursor: pointer;
+				}
 			}
 		}
 	}
