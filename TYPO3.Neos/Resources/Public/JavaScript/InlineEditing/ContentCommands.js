@@ -10,7 +10,6 @@ define(
 ],
 function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeTypeService) {
 	return Ember.Object.create({
-
 		_nodePath: null,
 		_selectedNode: null,
 
@@ -110,13 +109,10 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			switch (position) {
 				case 'before':
 					return NodeActions.pasteBefore(referenceNode);
-				break;
 				case 'after':
 					return NodeActions.pasteAfter(referenceNode);
-				break;
 				case 'into':
 					return NodeActions.pasteInto(referenceNode);
-				break;
 			}
 		},
 

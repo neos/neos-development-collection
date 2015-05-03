@@ -14,7 +14,6 @@ define(
 	'Shared/EventDispatcher',
 	'Content/LoadingIndicator',
 	'Content/Model/NodeSelection',
-	'Content/Model/PublishableNodes',
 	'Content/Model/NodeActions',
 	'Content/EditPreviewPanel/EditPreviewPanelController',
 	'vie',
@@ -34,7 +33,6 @@ function(
 	EventDispatcher,
 	LoadingIndicator,
 	NodeSelection,
-	PublishableNodes,
 	NodeActions,
 	EditPreviewPanelController,
 	vie,
@@ -217,90 +215,7 @@ function(
 			NodeSelection.initialize();
 			this.trigger('pageLoaded');
 
-			this._registerVieNodeTypeTemplateCallbacks();
 			this._initializeCreateJs();
-		},
-
-		/**
-		 * Register template generation callbacks.
-		 *
-		 * For adding new content elements VIE needs an HTML template. This method registers callback methods
-		 * for generating those templates. The template itself is rendered on the server, and contains the
-		 * rendered output of the requested node type, rendered within the current typoscript path.
-		 *
-		 * @return {void}
-		 */
-		_registerVieNodeTypeTemplateCallbacks: function() {
-			var namespace = Configuration.get('TYPO3_NAMESPACE');
-			_.each(vie.types.toArray(), function(type) {
-				var nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
-				var prefix = vie.namespaces.getPrefix(type.id);
-
-				if (prefix === 'typo3') {
-					vie.service('rdfa').setTemplate('typo3:' + nodeType, 'typo3:content-collection', function(entity, callBack, collectionView) {
-							// This callback function is called whenever we create a content element
-						var type = entity.get('@type'),
-							nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, ''),
-							referenceEntity = null,
-							lastMatchedEntity = null;
-
-						var afterCreationCallback = function(nodePath, template) {
-							entity.set('@subject', nodePath);
-
-								// We also want to load all the other RDFa properties on the entity.
-								// Else, editing newly created content elements in the Property Inspector
-								// does not work.
-							vie.load({element: template}).from('rdfa').execute();
-							callBack(template);
-								// TODO: VIE fires the 'add' event before the result of the callback is added to the DOM
-								// so we have to call the updatePublishableEntities manually. We should fix this upstream.
-							PublishableNodes._updatePublishableEntities();
-
-							if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
-									// When adding nested content elements (like the two-column-element),
-									// we need to refresh CreateJS to render the content element handles
-									// for the nested content collections.
-								CreateJS.enableEdit();
-							}
-						};
-
-						_.each(collectionView.collection.models, function(matchEntity) {
-							if (entity === matchEntity && lastMatchedEntity) {
-								referenceEntity = lastMatchedEntity;
-								NodeActions.addBelow(
-									nodeType,
-									referenceEntity,
-									afterCreationCallback
-								);
-							} else {
-								lastMatchedEntity = matchEntity;
-							}
-						});
-
-						if (referenceEntity === null) {
-							var visibleEntities = collectionView.collection.models.filter(function(model) {
-								return !model.get(namespace + '_removed');
-							});
-								// No reference entity found. This only happens when an element is created into a content collection
-							if (visibleEntities.length === 1) {
-									// The content collection only contains the new entity and was empty before, so we create the node into the content collection
-								NodeActions.addInside(
-									nodeType,
-									vie.entities.get($(collectionView.el).attr('about')),
-									afterCreationCallback
-								);
-							} else {
-									// The content collection contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
-								NodeActions.addAbove(
-									nodeType,
-									collectionView.collection.models[1],
-									afterCreationCallback
-								);
-							}
-						}
-					});
-				}
-			});
 		},
 
 		_initializeCreateJs: function() {
