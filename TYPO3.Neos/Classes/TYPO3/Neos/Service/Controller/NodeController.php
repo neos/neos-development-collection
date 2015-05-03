@@ -180,7 +180,7 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Creates a new node and renders the node inside the containing section
+	 * Creates a new node and renders the node inside the containing content collection.
 	 *
 	 * @param Node $referenceNode
 	 * @param string $typoScriptPath The TypoScript path of the collection
@@ -190,8 +190,15 @@ class NodeController extends AbstractServiceController {
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+
 		$result = $this->renderNode($newNode->getParent(), $typoScriptPath);
-		$this->view->assign('value', array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath()));
+
+		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
+			$this->persistenceManager->persistAll();
+		}
+
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
 	}
 
 	/**
@@ -213,11 +220,10 @@ class NodeController extends AbstractServiceController {
 	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
 	 * because they might be connected to images / resources which need to be updated at the same time.
 	 *
-	 * @param Node $node
-	 * @param Node $targetNode
+	 * @param Node $node The node to be moved
+	 * @param Node $targetNode The target node to be moved "to", see $position
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
-	 * @throws NodeException
 	 */
 	public function moveAction(Node $node, Node $targetNode, $position) {
 		$node = $this->nodeOperations->move($node, $targetNode, $position);
@@ -234,15 +240,39 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
+	 * Move the given node before, into or after the target node depending on the given position and renders it's content collection.
+	 *
+	 * @param Node $node The node to be moved
+	 * @param Node $targetNode The target node to be moved "to", see $position
+	 * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+	 * @param string $typoScriptPath The TypoScript path of the collection
+	 * @return void
+	 */
+	public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath) {
+		$node = $this->nodeOperations->move($node, $targetNode, $position);
+
+		$q = new FlowQuery(array($targetNode));
+		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
+		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
+
+		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
+			$this->persistenceManager->persistAll();
+		}
+
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'success' => TRUE));
+	}
+
+	/**
 	 * Copy $node before, into or after $targetNode
 	 *
 	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
 	 * because they might be connected to images / resources which need to be updated at the same time.
 	 *
-	 * @param Node $node the node to be copied
-	 * @param Node $targetNode the target node to be copied "to", see $position
-	 * @param string $position where the node should be added in relation to $targetNode (allowed: before, into, after)
-	 * @param string $nodeName optional node name (if empty random node name will be generated)
+	 * @param Node $node The node to be copied
+	 * @param Node $targetNode The target node to be copied "to", see $position
+	 * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+	 * @param string $nodeName Optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @throws NodeException
 	 */
@@ -269,6 +299,31 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
+	 * Copies the given node before, into or after the target node depending on the given position and renders it's content collection.
+	 *
+	 * @param Node $node The node to be copied
+	 * @param Node $targetNode The target node to be copied "to", see $position
+	 * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+	 * @param string $nodeName Optional node name (if empty random node name will be generated)
+	 * @param string $typoScriptPath The TypoScript path of the collection
+	 * @return void
+	 */
+	public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = NULL) {
+		$copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+
+		$q = new FlowQuery(array($targetNode));
+		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
+		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
+
+		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
+			$this->persistenceManager->persistAll();
+		}
+
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $copiedNode->getContextPath()), 'success' => TRUE));
+	}
+
+	/**
 	 * Updates the specified node.
 	 *
 	 * Returns the following data:
@@ -281,7 +336,7 @@ class NodeController extends AbstractServiceController {
 	 *       We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
 	 *       because they might be connected to images / resources which need to be updated at the same time.
 	 *
-	 * @param Node $node
+	 * @param Node $node The node to be updated
 	 * @return void
 	 */
 	public function updateAction(Node $node) {
@@ -296,19 +351,23 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Updates the specified node and renders it again.
+	 * Updates the specified node and renders it's content collection.
 	 *
-	 * @param Node $node
-	 * @param string $typoScriptPath
+	 * @param Node $node The node to be updated
+	 * @param string $typoScriptPath The TypoScript path of the collection
 	 * @return void
 	 */
 	public function updateAndRenderAction(Node $node, $typoScriptPath) {
-		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
 		$q = new FlowQuery(array($node));
 		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
 		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
-		$this->updateAction($node);
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nodePath' => $node->getContextPath()), 'success' => TRUE));
+
+		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
+			$this->persistenceManager->persistAll();
+		}
+
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'workspaceNameOfNode' => $node->getWorkspace()->getName(), 'success' => TRUE));
 	}
 
 	/**

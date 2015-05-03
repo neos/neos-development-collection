@@ -72,7 +72,7 @@ function (
 					ContentCommands.paste(pastePosition);
 				}
 				$(event.target).filter('button').click();
-			},
+			}
 		}),
 
 		_onNodeSelectionChange: function() {
@@ -196,6 +196,6 @@ function (
 
 		copy: function() {
 			ContentCommands.copy();
-		},
+		}
 	});
 });

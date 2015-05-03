@@ -16,7 +16,8 @@ define(
 	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
 	'vie',
-	'Shared/Endpoint/NodeEndpoint'
+	'Shared/Endpoint/NodeEndpoint',
+	'Content/LoadingIndicator'
 ], function(
 	Ember,
 	$,
@@ -25,13 +26,12 @@ define(
 	EventDispatcher,
 	NodeSelection,
 	vieInstance,
-	NodeEndpoint
+	NodeEndpoint,
+	LoadingIndicator
 ) {
 	return Ember.Object.extend({
 		// TODO: Move this to a separate controller
 		clipboard: null,
-		_elementIsAddingNewContent: null,
-		_elementIsPastingContent: null,
 
 		clipboardContainsContent: function() {
 			return this.get('clipboard') !== null;
@@ -48,9 +48,10 @@ define(
 
 		/**
 		 * Cut a node and put it on the clipboard
-		 * TODO: Decide if we move cut copy paste to another controller
+		 *
 		 * @param {object} node
 		 * @return {void}
+		 * @TODO Decide if we move cut copy paste to another controller
 		 */
 		cut: function(node) {
 			if (this.get('clipboard.type') === 'cut' && this.get('clipboard.nodePath') === node.get('nodePath')) {
@@ -66,8 +67,10 @@ define(
 
 		/**
 		 * Copy a node and put it on the clipboard
+		 *
 		 * @param {object} node
 		 * @return {void}
+		 * @TODO Decide if we move cut copy paste to another controller
 		 */
 		copy: function(node) {
 			if (this.get('clipboard.type') === 'copy' && this.get('clipboard.nodePath') === node.get('nodePath')) {
@@ -82,42 +85,43 @@ define(
 		},
 
 		/**
-		 * Paste the current node on the clipboard after another node
+		 * Paste the node in the clipboard after given node
 		 *
-		 * @param {object} node, the target node
+		 * @param {object} referenceNode
 		 * @return {boolean}
 		 */
-		pasteAfter: function(node) {
-			return this._paste(node, 'after');
+		pasteAfter: function(referenceNode) {
+			return this._paste(referenceNode, 'after');
 		},
 
 		/**
-		 * Paste the current node on the clipboard before another node
+		 * Paste the node in the clipboard before given node
 		 *
-		 * @param {object} node, the target node
+		 * @param {object} referenceNode
 		 * @return {boolean}
 		 */
-		pasteBefore: function(node) {
-			return this._paste(node, 'before');
+		pasteBefore: function(referenceNode) {
+			return this._paste(referenceNode, 'before');
 		},
 
 		/**
-		 * Paste the current node on the clipboard into another node
+		 * Paste the node in the clipboard into given node
 		 *
-		 * @param {object} node, the target node
+		 * @param {object} referenceNode
 		 * @return {boolean}
 		 */
-		pasteInto: function(node) {
-			return this._paste(node, 'into');
+		pasteInto: function(referenceNode) {
+			return this._paste(referenceNode, 'into');
 		},
 
 		/**
-		 * Paste a node on a certain location, relative to another node
-		 * @param {object} node, the target node
+		 * Paste the node in the clipboard at given position, relative to given node
+		 *
+		 * @param {object} referenceNode
 		 * @param {string} position
 		 * @return {boolean}
 		 */
-		_paste: function(node, position) {
+		_paste: function(referenceNode, position) {
 			var that = this,
 				clipboard = this.get('clipboard');
 
@@ -125,40 +129,63 @@ define(
 				Notification.info('No node found on the clipboard');
 				return false;
 			}
-			if (clipboard.nodePath === node.get('nodePath') && clipboard.type === 'cut') {
+			if (clipboard.nodePath === referenceNode.get('nodePath') && clipboard.type === 'cut') {
 				Notification.info('It is not possible to paste a node ' + position + ' itself.');
 				return false;
 			}
 
-			var action = clipboard.type === 'cut' ? 'move' : 'copy';
+			var referenceNodeEntity = referenceNode.get('_vieEntity'),
+				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
+				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
+				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
+				nodeType = clipboard.nodeType;
+
+			var action = clipboard.type === 'cut' ? 'moveAndRender' : 'copyAndRender';
+			LoadingIndicator.start();
 			NodeEndpoint[action].call(
 				that,
 				clipboard.nodePath,
-				node.get('nodePath'),
+				referenceNode.get('nodePath'),
 				position,
-				''
-			).then(
-				function (result) {
-					if (result.success) {
-						that.set('clipboard', null);
-						require(
-							{context: 'neos'},
-							[
-								'Content/Application'
-							],
-							function(ContentModule) {
-								if ('data' in result && 'nextUri' in result.data) {
-									ContentModule.loadPage(result.data.nextUri);
-								} else {
-									ContentModule.reloadPage();
-								}
+				typoScriptPath,
+				'',
+				{
+					xhr: function() {
+						var xhr = $.ajaxSettings.xhr();
+						xhr.onreadystatechange = function() {
+							if (xhr.readyState === 1) {
+								LoadingIndicator.set(0.1, 200);
 							}
-						);
+							if (xhr.readyState === 2) {
+								LoadingIndicator.set(0.9, 100);
+							}
+							if (xhr.readyState === 3) {
+								LoadingIndicator.set(0.99, 50);
+							}
+						};
+						return xhr;
 					}
-					// Remove the loading icon from the parent content element where current element was pasted from.
-					that.set('_elementIsPastingContent', null);
+				}
+			).then(
+				function(result) {
+					that.set('clipboard', null);
 
-					EventDispatcher.trigger('contentChanged');
+					if (clipboard.type === 'cut') {
+						var cutNodeEntity = vieInstance.entities.get('<' + clipboard.nodePath + '>'),
+							$cutNodeElement;
+						if (cutNodeEntity) {
+							$cutNodeElement = vieInstance.service('rdfa').getElementBySubject(cutNodeEntity.getSubject(), $(document));
+							cutNodeEntity._enclosingCollectionWidget.options.collection.remove(cutNodeEntity);
+							EventDispatcher.triggerExternalEvent('Neos.NodeRemoved', 'Node was removed.', {element: $cutNodeElement.get(0)});
+						}
+					}
+
+					that._insertNode(result, nodeType, collection, position, referenceNodeEntity);
+				}
+			).fail(
+				function(error) {
+					Notification.error('Failed to perform node action');
+					console.error('Failed to perform node action', error);
 				}
 			);
 
@@ -175,57 +202,139 @@ define(
 			});
 		},
 
-		addAbove: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'before', callBack);
+		/**
+		 * Add a node of given node type before given node
+		 *
+		 * @param {string} nodeType
+		 * @param {object} referenceNode
+		 */
+		addAbove: function(nodeType, referenceNode) {
+			this._add(nodeType, referenceNode, 'before');
 		},
 
-		addBelow: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'after', callBack);
+		/**
+		 * Add a node of given node type after given node
+		 *
+		 * @param {string} nodeType
+		 * @param {object} referenceNode
+		 */
+		addBelow: function(nodeType, referenceNode) {
+			this._add(nodeType, referenceNode, 'after');
 		},
 
-		addInside: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'into', callBack);
+		/**
+		 * Add a node of given node type into given node
+		 *
+		 * @param {string} nodeType
+		 * @param {object} referenceNode
+		 */
+		addInside: function(nodeType, referenceNode) {
+			this._add(nodeType, referenceNode, 'into');
 		},
 
 		/**
 		 * Creates a node on the server. When the result is received the callback function is called.
-		 * The first argument passed to the callback is the node path of the new node, second argument
-		 * is the $ object containing the rendered HTML of the new node.
 		 *
-		 * @param {String} nodeType
-		 * @param {Object} referenceEntity
-		 * @param {String} position
-		 * @param {Function} callBack This function is called after element creation and receives the $ DOM element as arguments
-		 * @private
+		 * @param {string} nodeType
+		 * @param {object} referenceNode
+		 * @param {string} position
 		 */
-		_add: function(nodeType, referenceEntity, position, callBack) {
+		_add: function(nodeType, referenceNode, position) {
 			var that = this,
-				nodePath = referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
-				$entityElement = vieInstance.service('rdfa').getElementBySubject(referenceEntity.getSubject(), $(document)),
-				$closestCollection = $entityElement.closest('[rel="typo3:content-collection"]'),
-				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection)),
-				typoScriptPath = position === 'into' ? referenceEntity.get('typo3:__typoscriptPath') : closestCollectionEntity.get('typo3:__typoscriptPath');
+				referenceNodeEntity = referenceNode.get('_vieEntity'),
+				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
+				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
+				typoScriptPath = collectionModel.get('typo3:__typoscriptPath');
 
+			LoadingIndicator.start();
 			NodeEndpoint.createAndRender(
-				nodePath,
+				referenceNode.get('nodePath'),
 				typoScriptPath,
 				{
 					nodeType: nodeType,
 					properties: {}
 				},
-				position
+				position,
+				{
+					xhr: function() {
+						var xhr = $.ajaxSettings.xhr();
+						xhr.onreadystatechange = function() {
+							if (xhr.readyState === 1) {
+								LoadingIndicator.set(0.1, 200);
+							}
+							if (xhr.readyState === 2) {
+								LoadingIndicator.set(0.9, 100);
+							}
+							if (xhr.readyState === 3) {
+								LoadingIndicator.set(0.99, 50);
+							}
+						};
+						return xhr;
+					}
+				}
 			).then(
 				function(result) {
-					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
-					callBack(result.nodePath, template);
+					that._insertNode(result, nodeType, collection, position, referenceNodeEntity);
+				}
+			).fail(
+				function(error) {
+					Notification.error('Failed to perform node action');
+					console.error('Failed to perform node action', error);
+				}
+			);
+		},
 
-					// Remove the loading icon from the parent content element where current element was created from.
-					that.set('_elementIsAddingNewContent', null);
+		/**
+		 * Inserts a node of the result into the collection at given position.
+		 *
+		 * @param {object} result Result containing the content collection and node path.
+		 * @param {string} nodeType The node type of the node
+		 * @param {object} collection The collection to insert the node into.
+		 * @param {string} position The position to insert the node relative to the reference node
+		 * @param {object} referenceNodeEntity
+		 * @return {void}
+		 */
+		_insertNode: function(result, nodeType, collection, position, referenceNodeEntity) {
+			var rdfaService = vieInstance.service('rdfa');
+			var content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+			if (content.length === 0) {
+				console.warn('Node could not be found in rendered collection.');
+				this._reloadPage();
+			}
+			rdfaService.setTemplate('typo3:' + nodeType, 'typo3:content-collection', rdfaService.getElementTemplate(content));
+			vieInstance.load({element: content}).from('rdfa').execute();
+			var subject = rdfaService.getElementSubject(content),
+				nodeEntity = vieInstance.entities.get(subject),
+				options = {};
 
-					EventDispatcher.trigger('contentChanged');
+			if (position !== 'into') {
+				var referenceIndex = collection.indexOf(referenceNodeEntity);
+				if (referenceIndex !== -1) {
+					options.at = position === 'after' ? referenceIndex + 1 : referenceIndex;
+				}
+			}
+			collection.add(nodeEntity, options);
+			var $newElement = rdfaService.getElementBySubject(subject, $(document));
 
-					var $createdElement = vieInstance.service('rdfa').getElementBySubject('<' + result.nodePath + '>', $(document));
-					EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $createdElement.get(0)});
+			if ($newElement.length === 0) {
+				console.warn('Node could not be found in document.');
+				this._reloadPage();
+			}
+
+			// Replace existing entity wrapper in case it already exists
+			NodeSelection.replaceEntityWrapper($newElement);
+
+			EventDispatcher.trigger('contentChanged');
+			EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $newElement.get(0)});
+			LoadingIndicator.done();
+		},
+
+		_reloadPage: function() {
+			require(
+				{context: 'neos'},
+				['Content/Application'],
+				function(ContentModule) {
+					ContentModule.reloadPage();
 				}
 			);
 		},
