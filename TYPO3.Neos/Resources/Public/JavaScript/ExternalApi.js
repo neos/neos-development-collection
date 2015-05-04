@@ -1,9 +1,13 @@
 define([
-	'Content/ExternalApi'
+	'Content/ExternalApi',
+	'Shared/Notification'
 ],
-function(ContentApi) {
-	var ExternalApi = {
-		Content: ContentApi
+function(
+	ContentApi,
+	Notification
+) {
+	return {
+		Content: ContentApi,
+		Notification: Notification
 	};
-	return ExternalApi;
 });
