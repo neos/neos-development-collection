@@ -105,9 +105,6 @@ class EntityIntegrationService extends AbstractIntegrationService {
 			}
 		}
 
-		foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-		}
-
 		foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
 			$className = get_class($entity);
 			if (isset($this->monitorEntitiesSetting[$className])) {
@@ -124,14 +121,6 @@ class EntityIntegrationService extends AbstractIntegrationService {
 					$unitOfWork->computeChangeSet($entityManager->getClassMetadata('TYPO3\Neos\EventLog\Domain\Model\Event'), $event);
 				}
 			}
-		}
-
-		foreach ($unitOfWork->getScheduledCollectionDeletions() as $col) {
-
-		}
-
-		foreach ($unitOfWork->getScheduledCollectionUpdates() as $col) {
-
 		}
 	}
 
