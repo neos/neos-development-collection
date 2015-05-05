@@ -27,6 +27,11 @@ use TYPO3\Media\Domain\Model\AssetInterface;
 class AssetInterfaceConverter extends PersistentObjectConverter {
 
 	/**
+	 * @var integer
+	 */
+	const CONFIGURATION_ONE_PER_RESOURCE = 'onePerResource';
+
+	/**
 	 * @var array
 	 */
 	protected $sourceTypes = array('string', 'array');
@@ -191,6 +196,14 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 		}
 
 		if ($object === NULL) {
+			if ($configuration !== NULL && $configuration->getConfigurationValue(self::class, self::CONFIGURATION_ONE_PER_RESOURCE) === TRUE && isset($convertedChildProperties['resource'])) {
+				$resource = $convertedChildProperties['resource'];
+				$possibleAsset = $this->assetRepository->findOneByResourceSha1($resource->getSha1());
+				if ($possibleAsset !== NULL) {
+					$this->resourceManager->deleteResource($resource);
+					return $possibleAsset;
+				}
+			}
 			$object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 		}
 
@@ -221,14 +234,6 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
 		$className = $this->objectManager->getClassNameByObjectName($objectType) ?: static::$defaultNewAssetType;
-		if (isset($possibleConstructorArgumentValues['resource'])) {
-			$resource = $possibleConstructorArgumentValues['resource'];
-			$possibleAsset = $this->assetRepository->findOneByResourceSha1($resource->getSha1());
-			if ($possibleAsset !== NULL) {
-				return $possibleAsset;
-				// TODO: Should probably throw an exception if the asset doesn't match the objectType expected.
-			}
-		}
 		return parent::buildObject($possibleConstructorArgumentValues, $className);
 	}
 
