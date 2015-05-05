@@ -20,6 +20,7 @@ use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\VideoRepository;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 
 /**
  * Controller for asset handling
@@ -195,7 +196,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeUpdateAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
 	}
 
 	/**
@@ -218,7 +219,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeCreateAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, TRUE);
 	}
 
 	/**
@@ -228,7 +230,9 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function createAction(Asset $asset) {
-		$this->assetRepository->add($asset);
+		if ($this->persistenceManager->isNewObject($asset)) {
+			$this->assetRepository->add($asset);
+		}
 		$this->addFlashMessage(sprintf('Asset "%s" has been added.', $asset->getLabel()));
 		$this->redirect('index', NULL, NULL, array(), 0, 201);
 	}
@@ -241,7 +245,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected function initializeUploadAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource');
-		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$assetMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, TRUE);
 	}
 
 	/**
@@ -254,7 +259,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (($tag = $this->browserState->get('activeTag')) !== NULL) {
 			$asset->addTag($tag);
 		}
-		$this->assetRepository->add($asset);
+		if ($this->persistenceManager->isNewObject($asset)) {
+			$this->assetRepository->add($asset);
+		} else {
+			$this->assetRepository->update($asset);
+		}
 		$this->addFlashMessage(sprintf('Asset "%s" has been added.', $asset->getLabel()));
 		$this->response->setStatus(201);
 		return '';
