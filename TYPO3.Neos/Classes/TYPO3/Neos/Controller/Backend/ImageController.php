@@ -13,8 +13,10 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 
 /**
  *
@@ -43,6 +45,19 @@ class ImageController extends ActionController {
 	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected $resourceManager;
+
+
+	/**
+	 * Initialize property mapping
+	 *
+	 * @return void
+	 */
+	public function initializeUploadAction() {
+		$propertyMappingConfiguration = $this->arguments->getArgument('image')->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, TRUE);
+		$propertyMappingConfiguration->allowCreationForSubProperty('resource');
+	}
 
 	/**
 	 * Upload a new image
