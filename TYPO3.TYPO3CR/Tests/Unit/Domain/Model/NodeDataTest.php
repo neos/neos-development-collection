@@ -411,15 +411,12 @@ class NodeDataTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace() {
+	public function removeFlagsTheNodeAsRemoved() {
 		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-		$baseWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-
 		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue($baseWorkspace));
 
-		$nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove', 'update'), array(), '', FALSE);
+		$nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('setRemoved', 'update'), array(), '', FALSE);
 		$this->inject($nodeDataRepository, 'entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
 		$this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
@@ -447,20 +444,13 @@ class NodeDataTest extends UnitTestCase {
 		$this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
 		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', NULL, array('/foo', $workspace));
+		$this->inject($currentNode, 'persistenceManager', $mockPersistenceManager);
 		$this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
 
 		$nodeDataRepository->expects($this->once())->method('remove');
+		$mockPersistenceManager->expects($this->once())->method('isNewObject')->with($currentNode)->willReturn(FALSE);
 
 		$currentNode->remove();
-	}
-
-	/**
-	 * @test
-	 */
-	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
-		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove', 'addOrUpdate'), array(), '', FALSE);
-		$node->expects($this->once())->method('remove');
-		$node->setRemoved(TRUE);
 	}
 
 	/**
