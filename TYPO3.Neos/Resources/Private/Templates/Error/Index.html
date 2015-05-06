@@ -9,10 +9,12 @@
 <f:section name="body">
 	<body class="neos">
 		<div class="neos-error-screen">
-			<div class="neos-message-icon">
-				<i class="icon-warning-sign"></i>
+			<div class="neos-message-header">
+				<div class="neos-message-icon">
+					<i class="icon-warning-sign"></i>
+				</div>
+				<h1>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'TYPO3.Neos')}</h1>
 			</div>
-			<h1>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'TYPO3.Neos')}</h1>
 			<p>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.description', package: 'TYPO3.Neos') -> f:format.nl2br()}</p>
 			<f:if condition="{renderingOptions.renderTechnicalDetails}">
 				<p class="technical-details">#{exception.code}: {exception.message}</p>
