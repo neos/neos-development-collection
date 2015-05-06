@@ -1062,37 +1062,41 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
-	 * Removes this node and all its child nodes.
+	 * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
 	 *
 	 * @return void
 	 * @api
 	 */
 	public function remove() {
-		/** @var $childNode Node */
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->remove();
-		}
-
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
-		$this->nodeData->remove();
-
-		$this->context->getFirstLevelNodeCache()->flush();
-		$this->emitNodeRemoved($this);
+		$this->setRemoved(TRUE);
 	}
 
 	/**
 	 * Enables using the remove method when only setters are available
 	 *
-	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. If it is FALSE only this node will be restored.
 	 * @return void
 	 * @api
 	 */
 	public function setRemoved($removed) {
-		if ((boolean)$removed === TRUE) {
-			$this->remove();
+		if (!$this->isNodeDataMatchingContext()) {
+			$this->materializeNodeData();
 		}
+
+		if ((boolean)$removed === TRUE) {
+			/** @var $childNode Node */
+			foreach ($this->getChildNodes() as $childNode) {
+				$childNode->setRemoved(TRUE);
+			}
+
+			$this->nodeData->setRemoved(TRUE);
+			$this->emitNodeRemoved($this);
+		} else {
+			$this->nodeData->setRemoved(FALSE);
+			$this->emitNodeUpdated($this);
+		}
+
+		$this->context->getFirstLevelNodeCache()->flush();
 	}
 
 	/**

@@ -549,31 +549,23 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Removes this node and all its child nodes.
+	 * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
 	 *
 	 * @return void
 	 */
 	public function remove() {
-		if ($this->workspace->getBaseWorkspace() === NULL) {
-			$this->nodeDataRepository->remove($this);
-		} else {
-			$this->removed = TRUE;
-		}
+		$this->setRemoved(TRUE);
 	}
 
 	/**
 	 * Enables using the remove method when only setters are available
 	 *
-	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. This can handle FALSE as well.
 	 * @return void
 	 */
 	public function setRemoved($removed) {
-		if ((boolean)$removed === TRUE) {
-			$this->removed = TRUE;
-			$this->remove();
-		} else {
-			$this->removed = FALSE;
-		}
+		$this->removed = (boolean)$removed;
+
 		$this->addOrUpdate();
 	}
 
@@ -999,9 +991,9 @@ class NodeData extends AbstractNodeData {
 
 		// If this NodeData was previously removed and is in live workspace we don't want to add it again to persistence.
 		if ($nodeData->isRemoved() && $this->workspace->getBaseWorkspace() === NULL) {
-			// Just in case, normally setRemoved() should have already removed the object from the identityMap.
+			// Actually it should be removed from the identity map here.
 			if ($this->persistenceManager->isNewObject($nodeData) === FALSE) {
-				$nodeData->remove();
+				$this->nodeDataRepository->remove($nodeData);
 			}
 		} else {
 			if ($this->persistenceManager->isNewObject($nodeData)) {

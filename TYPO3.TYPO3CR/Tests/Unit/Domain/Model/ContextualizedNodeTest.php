@@ -223,7 +223,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$node = $this->setUpNodeWithNonMatchingContext(array('getChildNodes'));
 
 		$node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array()));
-		$node->getNodeData()->expects($this->once())->method('remove');
+		$node->getNodeData()->expects($this->once())->method('setRemoved');
 
 		$node->remove();
 	}
@@ -237,23 +237,14 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeData = $node->getNodeData();
 		$context = $node->getContext();
 
-		$subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
-		$subNode1->expects($this->once())->method('remove');
+		$subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+		$subNode1->expects($this->once())->method('setRemoved');
 
-		$subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
-		$subNode2->expects($this->once())->method('remove');
+		$subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+		$subNode2->expects($this->once())->method('setRemoved');
 
 		$node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($subNode1, $subNode2)));
 		$node->remove();
-	}
-
-	/**
-	 * @test
-	 */
-	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
-		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove', 'addOrUpdate'), array(), '', FALSE);
-		$node->expects($this->once())->method('remove');
-		$node->setRemoved(TRUE);
 	}
 
 	/**

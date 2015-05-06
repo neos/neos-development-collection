@@ -482,7 +482,7 @@ interface NodeInterface {
 	public function hasChildNodes($nodeTypeFilter = NULL);
 
 	/**
-	 * Removes this node and all its child nodes.
+	 * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
 	 *
 	 * @return void
 	 * @api
@@ -490,9 +490,9 @@ interface NodeInterface {
 	public function remove();
 
 	/**
-	 * Enables using the remove method when only setters are available.
+	 * Removes this node and all its child nodes or sets ONLY this node to not being removed.
 	 *
-	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed or set to be not removed.
 	 * @return void
 	 * @api
 	 */
