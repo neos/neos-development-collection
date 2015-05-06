@@ -12,7 +12,8 @@ namespace TYPO3\Neos\Setup\Step;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use \TYPO3\Setup\Exception as SetupException;
+use TYPO3\Setup\Exception as SetupException;
+use TYPO3\Flow\Error\Message;
 
 /**
  * @Flow\Scope("singleton")
@@ -47,6 +48,12 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
+	 */
+	protected $flashMessageContainer;
 
 	/**
 	 * @Flow\Inject
@@ -185,10 +192,13 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 			$generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
 			$generatorService->generateSitePackage($packageKey, $siteName);
-			$this->packageManager->activatePackage($packageKey);
 		} elseif (!empty($formValues['site'])) {
 			$packageKey = $formValues['site'];
 		}
+
+		$this->deactivateOtherSitePackages($packageKey);
+		$this->packageManager->activatePackage($packageKey);
+
 		if (!empty($packageKey)) {
 			try {
 				$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
@@ -201,4 +211,25 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		}
 	}
 
+	/**
+	 * If Site Packages already exist and are active, we will deactivate them in order to prevent
+	 * interactions with the newly created or imported package (like Content Dimensions being used).
+	 *
+	 * @param string $packageKey
+	 * @return array
+	 */
+	protected function deactivateOtherSitePackages($packageKey) {
+		$sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', NULL, 'typo3-flow-site');
+		$deactivatedSitePackages = array();
+		foreach ($sitePackagesToDeactivate as $sitePackageToDeactivate) {
+			if ($sitePackageToDeactivate->getPackageKey() !== $packageKey) {
+				$this->packageManager->deactivatePackage($sitePackageToDeactivate->getPackageKey());
+				$deactivatedSitePackages[] = $sitePackageToDeactivate->getPackageKey();
+			}
+		}
+
+		if (count($deactivatedSitePackages) >= 1) {
+			$this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', implode(', ', $deactivatedSitePackages), $packageKey)));
+		}
+	}
 }
