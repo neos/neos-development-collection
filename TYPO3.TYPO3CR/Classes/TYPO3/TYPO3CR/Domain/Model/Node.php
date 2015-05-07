@@ -369,6 +369,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -381,6 +382,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 		$this->emitNodeUpdated($this);
 	}
 
@@ -411,6 +413,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -423,6 +426,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 		$this->emitNodeUpdated($this);
 	}
 
@@ -453,13 +457,35 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 		$this->emitNodeUpdated($this);
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $movedNode
+	 * @param NodeInterface $referenceNode
+	 * @param integer $movePosition
+	 * @return void
+	 */
+	protected function emitBeforeNodeMove($movedNode, $referenceNode, $movePosition) {
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $movedNode
+	 * @param NodeInterface $referenceNode
+	 * @param integer $movePosition
+	 * @return void
+	 */
+	protected function emitAfterNodeMove($movedNode, $referenceNode, $movePosition) {
 	}
 
 	/**
