@@ -785,8 +785,32 @@
 	.neos-upload-area {
 		text-align: center;
 		padding: $wideMargin;
-		border: 2px dashed $grayLight;
+		border: 1px dashed $grayLight;
 		margin-bottom: $wideMargin;
+		cursor: pointer;
+
+		&.neos-upload-area-active {
+			border-color: #fff;
+
+			i {
+				display: inline;
+			}
+
+			span {
+				display: none;
+			}
+		}
+
+		&.neos-upload-area-hover {
+			border-style: solid;
+			background-color: $blue;
+		}
+
+		i {
+			display: none;
+			vertical-align: baseline;
+			padding-left: $tightMargin;
+		}
 
 		#resource {
 			display: none;
@@ -794,20 +818,6 @@
 
 		&:hover {
 			border-color: $blue;
-		}
-
-		> span {
-			display: block;
-			margin-bottom: $relatedMargin;
-			color: $textSubtleLight;
-
-			&:first-child {
-				color: #fff;
-			}
-		}
-
-		label {
-			margin-bottom: 0;
 		}
 	}
 
