@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -73,7 +74,8 @@ class ContentController extends ActionController {
 	public function initializeUploadAssetAction() {
 		$propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$propertyMappingConfiguration->allowAllProperties();
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, TRUE);
 		$propertyMappingConfiguration->allowCreationForSubProperty('resource');
 	}
 
