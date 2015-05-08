@@ -36,3 +36,4 @@ TYPO3:
       Json: 'TYPO3\Eel\Helper\JsonHelper'
       Security: 'TYPO3\Eel\Helper\SecurityHelper'
       Translation: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
+      Type: 'TYPO3\Eel\Helper\TypeHelper'
