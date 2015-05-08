@@ -104,7 +104,7 @@ class LinkingServiceTest extends FunctionalTestCase {
 		$this->linkingService = $this->objectManager->get('TYPO3\Neos\Service\LinkingService');
 		/** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
+		$this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
 	}
 
 	/**
