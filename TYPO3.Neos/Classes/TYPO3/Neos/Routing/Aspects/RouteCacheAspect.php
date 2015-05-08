@@ -57,8 +57,9 @@ class RouteCacheAspect {
 	 * @return Context
 	 */
 	protected function getContext($contextArguments) {
-		$contextConfiguration = explode(';', $contextArguments);
-		$workspaceName = array_shift($contextConfiguration);
+		list($workspaceName, $dimensionValues) = explode(';', $contextArguments);
+		$contextConfiguration = explode('&', $dimensionValues);
+
 		$dimensions = array();
 		foreach ($contextConfiguration as $dimension) {
 			list($dimensionName, $dimensionValue) = explode('=', $dimension);
