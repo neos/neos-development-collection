@@ -12,7 +12,9 @@ define(
 	'Content/Model/NodeSelection',
 	'Content/Application',
 	'Content/LoadingIndicator',
-	'Shared/I18n'
+	'Shared/I18n',
+	'create',
+	'vie'
 ], function(
 	Ember,
 	$,
@@ -23,7 +25,9 @@ define(
 	NodeSelection,
 	ContentModule,
 	LoadingIndicator,
-	I18n
+	I18n,
+	CreateJS,
+	vie
 ) {
 
 	/**
@@ -378,6 +382,7 @@ define(
 			var that = this,
 				cleanProperties,
 				nodeTypeSchema = NodeSelection.get('selectedNodeSchema'),
+				reloadElement = false,
 				reloadPage = false,
 				selectedNode = this.get('selectedNode');
 
@@ -386,8 +391,10 @@ define(
 				if (value !== cleanPropertyValue) {
 					selectedNode.setAttribute(key, value, {validate: false});
 					if (value !== cleanPropertyValue) {
-						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadPageIfChanged')) {
 							reloadPage = true;
+						} else if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+							reloadElement = true;
 						}
 					}
 				}
@@ -398,7 +405,14 @@ define(
 				return;
 			}
 
-			if (reloadPage === true) {
+			// Reload element is only possible if the element is inside a content collection
+			var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined' ? true : false;
+			if (!isInsideCollection) {
+				reloadPage = true;
+				reloadElement = false;
+			}
+
+			if (reloadPage === true || reloadElement === true) {
 				LoadingIndicator.start();
 			}
 
@@ -408,11 +422,33 @@ define(
 						if (result && result.data && result.data.nextUri) {
 							// It might happen that the page has been renamed, so we need to take the server-side URI
 							ContentModule.loadPage(result.data.nextUri);
-						} else {
-							ContentModule.reloadPage();
+							return;
+						}
+					} else if (reloadElement === true) {
+						if (result && result.data && result.data.collectionContent) {
+							LoadingIndicator.done();
+							var id = entity.id.substring(1, entity.id.length - 1),
+								$element = $('[about="' + id + '"]').first(),
+								content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+							if (content.length === 0) {
+								console.warn('Node could not be found in rendered collection.');
+								ContentModule.reloadPage();
+								return;
+							}
+							var entityView = vie.service('rdfa')._getViewForElement($element);
+							entityView.$el.replaceWith(content);
+							var $newElement = $('[about="' + id + '"]');
+							entityView.el = $newElement.get(0);
+							entityView.$el = $newElement;
+							CreateJS.refreshEdit($newElement);
+							NodeSelection.replaceEntityWrapper($newElement);
+							NodeSelection.updateSelection($newElement);
+							return;
 						}
 					}
-				}
+					ContentModule.reloadPage();
+				},
+				render: isInsideCollection
 			});
 
 			this.set('modified', false);

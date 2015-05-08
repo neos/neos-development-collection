@@ -65,6 +65,13 @@ define([
 			);
 		},
 
+		updateAndRender: function(node, typoScriptPath) {
+			return HttpClient.updateResource(
+				HttpClient._getEndpointUrl('neos-service-node-updateAndRender'),
+				{data: {node: node, typoScriptPath: typoScriptPath}}
+			);
+		},
+
 		'delete': function(node) {
 			return HttpClient.deleteResource(
 				HttpClient._getEndpointUrl('neos-service-node-delete'),

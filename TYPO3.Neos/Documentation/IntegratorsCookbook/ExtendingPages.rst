@@ -19,7 +19,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 	      type: TYPO3\Media\Domain\Model\ImageVariant
 	      ui:
 	        label: 'Image'
-	        reloadIfChanged: TRUE
+	        reloadPageIfChanged: TRUE
 	        inspector:
 	          group: 'background'
 

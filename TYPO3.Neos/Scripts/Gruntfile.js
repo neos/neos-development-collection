@@ -298,7 +298,11 @@ module.exports = function (grunt) {
 					'  (function() {',
 					footer: '  }).apply(root);' +
 					'  return root.VIE;' +
-					'});'
+					'});',
+					process: function(src) {
+						// Set "overrideAttributes" option when updating existing entities to prevent it from converting values into an array with old values
+						return src.replace('entityInstance = this.vie.entities.addOrUpdate(entityInstance, {', 'entityInstance = this.vie.entities.addOrUpdate(entityInstance, {overrideAttributes: true,');
+					}
 				}
 			},
 
