@@ -101,7 +101,7 @@ class NodeViewHelperTest extends FunctionalTestCase {
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$httpRequest = $requestHandler->getHttpRequest();
 		$httpRequest->setBaseUri(new Uri('http://neos.test/'));
-		$controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
+		$controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
 		$this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
 		$typoScriptObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', FALSE);
