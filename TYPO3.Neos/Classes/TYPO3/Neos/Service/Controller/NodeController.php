@@ -171,7 +171,7 @@ class NodeController extends AbstractServiceController {
 	public function createAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
 		}
 
@@ -222,7 +222,7 @@ class NodeController extends AbstractServiceController {
 	public function moveAction(Node $node, Node $targetNode, $position) {
 		$node = $this->nodeOperations->move($node, $targetNode, $position);
 
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
 		}
 
@@ -249,7 +249,7 @@ class NodeController extends AbstractServiceController {
 	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = NULL) {
 		$copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
 		}
 
@@ -285,7 +285,7 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function updateAction(Node $node) {
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
 		}
 
@@ -320,7 +320,7 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function deleteAction(Node $node) {
-		if ($this->request->getHttpRequest()->isMethodSafe()) {
+		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
 		}
 
