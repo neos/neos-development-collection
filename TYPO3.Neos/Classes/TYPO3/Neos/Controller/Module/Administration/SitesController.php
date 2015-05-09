@@ -15,6 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
@@ -54,6 +56,12 @@ class SitesController extends AbstractModuleController {
 	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var AssetCollectionRepository
+	 */
+	protected $assetCollectionRepository;
 
 	/**
 	 * @Flow\Inject
@@ -128,7 +136,8 @@ class SitesController extends AbstractModuleController {
 		$this->view->assignMultiple(array(
 			'site' => $site,
 			'sitePackageMetaData' => isset($sitePackage) ? $sitePackage->getPackageMetaData() : array(),
-			'domains' => $this->domainRepository->findBySite($site)
+			'domains' => $this->domainRepository->findBySite($site),
+			'assetCollections' => $this->assetCollectionRepository->findAll()
 		));
 	}
 

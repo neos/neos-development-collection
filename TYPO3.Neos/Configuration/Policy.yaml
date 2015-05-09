@@ -25,7 +25,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction()) || method(TYPO3\Neos\Controller\Backend\SettingsController->editPreviewAction())'
 
     'TYPO3.Neos:Backend.EditContent':
-      matcher: 'method(TYPO3\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|updateAndRender|delete|searchPage|getPageByNodePath|error)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|masterPlugins|error)Action()) || method(TYPO3\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(TYPO3\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(TYPO3\Neos\Controller\Backend\(Media|Image)BrowserController->(initialize|index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(TYPO3\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|updateAndRender|delete|searchPage|getPageByNodePath|error)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|masterPlugins|error)Action()) || method(TYPO3\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(TYPO3\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.AccessContentInOwnOrLiveWorkspace':
       matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
@@ -70,7 +70,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\HistoryController->(index)Action())'
 
     'TYPO3.Neos:Backend.Module.Media.ManageAssets':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection)Action())'
+
+    'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections':
+      matcher: 'method(TYPO3\Neos\Controller\Module\(Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
 
     'TYPO3.Neos:Backend.Module.Administration':
       matcher: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
@@ -203,4 +206,12 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Configuration'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Media:ManageAssetCollections'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections'
         permission: GRANT

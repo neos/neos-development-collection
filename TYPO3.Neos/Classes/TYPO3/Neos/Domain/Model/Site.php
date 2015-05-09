@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\AssetCollection;
 
 /**
  * Domain model of a site
@@ -73,6 +74,12 @@ class Site {
 	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $siteResourcesPackageKey;
+
+	/**
+	 * @var AssetCollection
+	 * @ORM\ManyToOne
+	 */
+	protected $assetCollection;
 
 	/**
 	 * Constructs this Site object
@@ -220,6 +227,21 @@ class Site {
 	public function getFirstActiveDomain() {
 		$activeDomains = $this->domains->filter(function($domain) { return $domain->getActive(); });
 		return $activeDomains->first();
+	}
+
+	/**
+	 * @return AssetCollection
+	 */
+	public function getAssetCollection() {
+		return $this->assetCollection;
+	}
+
+	/**
+	 * @param AssetCollection $assetCollection
+	 * @return void
+	 */
+	public function setAssetCollection(AssetCollection $assetCollection = NULL) {
+		$this->assetCollection = $assetCollection;
 	}
 
 	/**
