@@ -203,6 +203,11 @@ The following options are allowed:
       changes. This only works for properties which are displayed inside the property inspector,
       i.e. for properties which have a ``group`` set.
 
+    ``reloadPageIfChanged``
+      If TRUE, the whole page needs to be re-rendered on the server side if the value
+      changes. This only works for properties which are displayed inside the property inspector,
+      i.e. for properties which have a ``group`` set.
+
     ``inlineEditable``
       If TRUE, this property is inline editable, i.e. edited directly on the page through Aloha.
 

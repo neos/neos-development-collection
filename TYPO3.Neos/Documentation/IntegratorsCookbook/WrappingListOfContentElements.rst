@@ -53,7 +53,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       group: structure
       label: Box
       icon: icon-columns
-      inlineEditable: true
+      inlineEditable: TRUE
       inspector:
         groups:
           display:
@@ -64,7 +64,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         type: boolean
         ui:
           label: Collapsed
-          reloadIfChanged: true
+          reloadIfChanged: TRUE
           inspector:
             group: display
     childNodes:

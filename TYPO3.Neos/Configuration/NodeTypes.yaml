@@ -145,7 +145,7 @@
       ui:
         label: 'Title'
         labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.title'
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
       validation:
@@ -158,7 +158,7 @@
       ui:
         label: 'URL path segment'
         labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.uriPathSegment'
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
       validation:
@@ -170,13 +170,13 @@
           regularExpression: '/^[a-z0-9\-]+$/i'
     _hidden:
       ui:
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
     _hiddenInIndex:
       type: boolean
       ui:
         label: 'Hide in menus'
         labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex'
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
         inspector:
           group: 'visibility'
           position: 40
@@ -201,7 +201,7 @@
       ui:
         label: 'Target mode'
         labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.targetMode'
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
@@ -218,7 +218,7 @@
       ui:
         label: 'Target'
         labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.target'
-        reloadIfChanged: TRUE
+        reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
           editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'

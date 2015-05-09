@@ -202,6 +202,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createAndRender'
+    '@format':     'json'
   httpMethods: ['POST']
 
 -
@@ -252,6 +253,17 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'update'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->updateAndRender'
+  uriPattern: 'node/update-and-render'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'updateAndRender'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
