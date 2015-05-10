@@ -163,6 +163,15 @@ class RenderingTest extends AbstractNodeTest {
 	/**
 	 * @test
 	 */
+	public function classesAreAppendedAsExpected() {
+		$output = $this->simulateRendering('Test_AppendingClassesToContent.ts2');
+		$this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Welcome to this example', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Last Commits', TRUE, $output);
+	}
+
+	/**
+	 * @test
+	 */
 	public function menuWithNegativeEntryLevelIsRenderedAsExpected() {
 		$output = $this->simulateRendering('Test_MenuNegativeEntryLevel.ts2');
 		$this->assertSelectEquals('.navigation > ul > li.normal > a', 'About Us', TRUE, $output);
