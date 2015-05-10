@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-05-09
+This reference was automatically generated from code on 2015-05-10
 
 
 Array
@@ -1401,10 +1401,19 @@ Is the given variable boolean.
 
 **Return** (boolean)
 
+Type.isFloat(variable)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable a float.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
 Type.isInteger(variable)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Is the given variable integer.
+Is the given variable an integer.
 
 * ``variable`` (mixed)
 
@@ -1414,6 +1423,24 @@ Type.isNumeric(variable)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Is the given variable numeric.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isObject(variable)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable an object.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isScalar(variable)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable a scalar.
 
 * ``variable`` (mixed)
 
