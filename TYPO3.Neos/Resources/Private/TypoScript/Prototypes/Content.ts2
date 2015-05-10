@@ -22,12 +22,12 @@ prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
 		@override.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
 
 		classIsString {
-			condition = ${q(value).count() == 1}
+			condition = ${Type.isString(value)}
 			renderer = ${String.trim(value) + ' ' + nodeTypeClassName}
 		}
 
 		classIsArray {
-			condition = ${q(value).count() > 0}
+			condition = ${Type.isArray(value)}
 			renderer = ${Array.push(value, nodeTypeClassName)}
 		}
 	}
