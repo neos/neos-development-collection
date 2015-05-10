@@ -9,7 +9,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 	'Vendor:YourContentElementName':
 	  superTypes:
-	    - 'TYPO3.Neos:Content'
+	    'TYPO3.Neos:Content': TRUE
 	  ui:
 	    label: 'My first custom content element'
 	    group: 'general'

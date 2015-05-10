@@ -17,7 +17,8 @@ To create the basic content element you have to add it to your node types.
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 	'Vendor.Site:Carousel':
-	  superTypes: ['TYPO3.Neos:Content']
+	  superTypes:
+	    'TYPO3.Neos:Content': TRUE
 	  childNodes:
 	    carouselItems:
 	      type: 'TYPO3.Neos:ContentCollection'

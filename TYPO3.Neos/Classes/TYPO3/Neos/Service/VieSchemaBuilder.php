@@ -111,10 +111,8 @@ class VieSchemaBuilder {
 	protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType) {
 		$nodeTypeConfiguration = $nodeType->getFullConfiguration();
 		$this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
-		if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
-			foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
-				$this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType;
-			}
+		foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
+			$this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
 		}
 
 		$nodeTypeProperties = array();

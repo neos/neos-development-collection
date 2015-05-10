@@ -25,7 +25,8 @@ which are *not auto-created*. Because "Chapter" has an auto-created ``main Conte
 to add content inside. In the following example, we see the NodeType definition which is shipped with the demo website::
 
   'TYPO3.NeosDemoTypo3Org:Chapter':
-    superTypes: ['TYPO3.Neos:Document']
+    superTypes:
+      'TYPO3.Neos:Document': TRUE
     childNodes:
       'main':
         type: 'TYPO3.Neos:ContentCollection'

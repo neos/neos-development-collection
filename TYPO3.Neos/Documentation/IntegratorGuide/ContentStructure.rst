@@ -70,7 +70,8 @@ all properties and settings of the parent types are inherited.
 A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
-	  superTypes: ['TYPO3.Neos:Content']
+	  superTypes:
+	    'TYPO3.Neos:Content': TRUE
 	  ui:
 	    label: 'Special Headline'
 	    group: 'general'
@@ -88,16 +89,15 @@ A node type definition can look as follows::
 The following options are allowed:
 
 ``superTypes``
-  An array of parent node types inherited from. If named keys are used, it is possible to remove a defined super type
-  again for a specific nodetype, by setting the value for that key to ``~`` (NULL)::
+  An array of parent node types inherited from as keys with a boolean values.::
 
     'TYPO3.Neos:Document':
       superTypes:
-        'Acme.Demo.ExtraMixin': 'Acme.Demo:ExtraMixin'
+        'Acme.Demo.ExtraMixin': TRUE
 
     'TYPO3.Neos:Shortcut':
       superTypes:
-        'Acme.Demo.ExtraMixin': ~
+        'Acme.Demo.ExtraMixin': FALSE
 
 
 ``constraints``
@@ -292,7 +292,8 @@ The following options are allowed:
 Here is one of the standard Neos node types (slightly shortened)::
 
 	'TYPO3.Neos.NodeTypes:Image':
-	  superTypes: ['TYPO3.Neos:Content']
+	  superTypes:
+	    'TYPO3.Neos:Content': TRUE
 	  ui:
 	    label: 'Image'
 	    icon: 'icon-picture'
