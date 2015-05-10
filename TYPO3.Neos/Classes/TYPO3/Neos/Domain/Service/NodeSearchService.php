@@ -71,4 +71,26 @@ class NodeSearchService implements NodeSearchServiceInterface
 
         return $searchResult;
     }
+
+    /**
+     * @param array $nodeIdentifiers
+     * @param Context $context
+     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     */
+    public function findByIdentifiers(array $nodeIdentifiers, Context $context)
+    {
+        if ($nodeIdentifiers === array()) {
+            throw new \InvalidArgumentException('"nodeIdentifiers" cannot be empty: provide a list of node identifiers to search for.', 1421329285);
+        }
+        $searchResult = array();
+        foreach ($nodeIdentifiers as $identifier) {
+            $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $context->getWorkspace(), $context->getDimensions());
+            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+            if ($node !== null) {
+                $searchResult[$node->getPath()] = $node;
+            }
+        }
+
+        return $searchResult;
+    }
 }
