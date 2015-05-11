@@ -7,8 +7,8 @@
         "typo3/flow": "~3.0.0",
         "typo3/media": "~2.0.0",
         "typo3/party": "~3.0.0",
-        "typo3/setup": "*",
-        "typo3/twitter-bootstrap": "*",
+        "typo3/setup": "~2.0",
+        "typo3/twitter-bootstrap": "~2.0",
         "typo3/typo3cr": "~2.0.0",
         "typo3/typoscript": "~2.0.0"
     },
