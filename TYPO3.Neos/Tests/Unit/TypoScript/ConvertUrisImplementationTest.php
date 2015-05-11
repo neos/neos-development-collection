@@ -101,10 +101,6 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
 		$this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 		$this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
-
-		$_SERVER = array (
-			'HTTP_HOST' => 'localhost'
-		);
 	}
 
 	protected function addValueExpectation($value, $node = NULL, $forceConversion = FALSE, $externalLinkTarget = NULL, $resourceLinkTarget = NULL) {
@@ -177,8 +173,6 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->addValueExpectation($value, NULL, TRUE);
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
-
-		$_SERVER['HTTP_HOST'] = 'foo';
 
 		$self = $this;
 		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
