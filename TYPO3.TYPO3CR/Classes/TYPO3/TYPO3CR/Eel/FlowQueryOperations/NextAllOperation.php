@@ -17,26 +17,25 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * "next" operation working on TYPO3CR nodes. It iterates over all
- * context elements and returns the immediately following sibling.
- * If an optional filter expression is provided, it only returns the node
- * if it matches the given expression.
+ * "nextAll" operation working on TYPO3CR nodes. It iterates over all
+ * context elements and returns each following sibling or only those matching
+ * the filter expression specified as optional argument.
  */
-class NextOperation extends AbstractOperation {
+class NextAllOperation extends AbstractOperation {
 
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @var string
 	 */
-	static protected $shortName = 'next';
+	static protected $shortName = 'nextAll';
 
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @var integer
 	 */
-	static protected $priority = 100;
+	static protected $priority = 0;
 
 	/**
 	 * {@inheritdoc}
@@ -59,10 +58,14 @@ class NextOperation extends AbstractOperation {
 		$output = array();
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {
-			$nextNode = $this->getNextForNode($contextNode);
-			if ($nextNode !== NULL && !isset($outputNodePaths[$nextNode->getPath()])) {
-				$outputNodePaths[$nextNode->getPath()] = TRUE;
-				$output[] = $nextNode;
+			$nextNodes = $this->getNextForNode($contextNode);
+			if (is_array($nextNodes)) {
+				foreach ($nextNodes as $nextNode) {
+					if ($nextNode !== NULL && !isset($outputNodePaths[$nextNode->getPath()])) {
+						$outputNodePaths[$nextNode->getPath()] = TRUE;
+						$output[] = $nextNode;
+					}
+				}
 			}
 		}
 		$flowQuery->setContext($output);
@@ -74,13 +77,18 @@ class NextOperation extends AbstractOperation {
 
 	/**
 	 * @param NodeInterface $contextNode The node for which the preceding node should be found
-	 * @return NodeInterface The following node of $contextNode or NULL
+	 * @return NodeInterface The preceding nodes of $contextNode or NULL
 	 */
-	protected function getNextForNode($contextNode) {
+	protected function getNextForNode(NodeInterface $contextNode) {
 		$nodesInContext = $contextNode->getParent()->getChildNodes();
-		for ($i = 1; $i < count($nodesInContext); $i++) {
-			if ($nodesInContext[$i - 1] === $contextNode) {
-				return $nodesInContext[$i];
+		$count = count($nodesInContext);
+
+		for ($i = 0; $i < $count; $i++) {
+			if ($nodesInContext[$i] === $contextNode) {
+				unset($nodesInContext[$i]);
+				return array_values($nodesInContext);
+			} else {
+				unset($nodesInContext[$i]);
 			}
 		}
 		return NULL;
