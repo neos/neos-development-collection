@@ -176,13 +176,13 @@
 
 			<!-- shortcuts -->
 			<trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
-				<source>Click here to continue to the {0} page.</source>
+				<source>Click {0} to continue to the page.</source>
 			</trans-unit>
 			<trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
-				<source>Click here to continue to the {0} asset.</source>
+				<source>Click {0} to see the file.</source>
 			</trans-unit>
 			<trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
-				<source>Click here to continue to the {0} ext page.</source>
+				<source>Click {0} to open the link.</source>
 			</trans-unit>
 			<trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
