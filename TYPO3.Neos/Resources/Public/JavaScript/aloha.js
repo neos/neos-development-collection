@@ -106,18 +106,7 @@ function(
 					sidebarAttributeEditor: false
 				},
 				table: { config: [], editables: nodeSettings.table },
-				link: {
-					config: [],
-					editables: nodeSettings.link,
-
-					// all links that match the targetregex will get set the target
-					// e.g. ^(?!.*aloha-editor.com).* matches all href except aloha-editor.com
-					targetregex: /^([a-z]){3,10}:\/\/.+/i,
-
-					// this target is set when either targetregex matches or not set
-					// e.g. _blank opens all links in new window
-					target: '_blank'
-				},
+				link: { config: [], editables: nodeSettings.link },
 				list: {
 					config: [],
 					editables: nodeSettings.list,
