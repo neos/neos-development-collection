@@ -11,7 +11,7 @@ Fine-grained Access Control
 
 A common requirement, especially for larger websites with many editors, is the possibility to selectively control access
 to certain backend tools and parts of the content. For example so that editors can only edit certain pages or content
-types or that they are limited to specific workspaces. These access restrictions are used to enforce certain work flows
+types or that they are limited to specific workspaces. These access restrictions are used to enforce certain workflows
 and to reduce complexity for editors.
 
 With Neos 2.0, we introduce a way to define Access Control Lists (ACL) in a very fine-grained manner, enabling the
@@ -97,7 +97,6 @@ Now, we need *your help*, as we still need the actual translation. Please head o
 and https://crowdin.com/project/typo3-flow and translate the labels as you see them :)
 
 
-
 SEO Improvements
 ================
 
@@ -108,7 +107,8 @@ With Neos 2.0, we've added some first tools which help in improving search engin
 - machine-readable links to alternative-language versions
 - XML sitemap generation
 
-These features are provided by a separate package which can be removed if so desired.
+These features are provided by a separate package which can be removed using Composer by removing the ``typo3/neos-seo``
+package if so desired.
 
 Google Analytics
 ================
@@ -135,16 +135,132 @@ By default, this feature is currently disabled, as the history grows quite quick
 history yet. We also imagine that the history can be used to enable functionality like more intelligent publishing or
 merging of changes.
 
-~~~~~~~~~~~~~~~~~~~~
-!!! Breaking changes
-~~~~~~~~~~~~~~~~~~~~
+**DISCLAIMER** Be aware that this feature is still experimental.
 
-- tbd.
+Data views (inspector)
+======================
+
+Data views is a new feature for the inspector to be able to display custom views without having a property for it.
+
+Supports a simple view, table view and time series view to display generic data from a data source. Include D3 for SVG
+graphs. Currently used in the Google Analytics package.
+
+**DISCLAIMER** Be aware that this feature is still experimental and likely to have breaking changes in the future.
+
+Media browser/module
+====================
+
+- Asset collections (additional layer to separate large amounts of assets)
+   New concept for asset collections which can have separate tags or share tags among them. A default asset collection
+   can be set for a site, resulting in every asset uploaded for that site automatically being added to that collection.
+   This makes it possible to separate assets across sites.
+- Support searching for assets
+- Drag & drop feedback improvements
+- Display upload progress for each file
+- Display filesize & type information in the list view
+- Thumbnail preview in list view
+- Improved notifications for various actions
+- Display error when trying to upload too large files
+- Support filtering lists by type
+- Support sorting lists by filename/last modified
+- Close button in top right corner when opening media browser
+- Possibility to delete assets in the thumbnail view
+- Display confirmation dialogs when deleting assets
+- Enable editing of existing tags
+- Improved for displaying on smaller viewports
+- Better support for many tags
+- Show tooltips for various icon buttons
+
+User interface improvements
+===========================
+
+- Content elements toolbar now support insert/paste before/into/after similar to the navigate component
+- Usability improvements to the sites management modules to better support multiple sites
+- Node information in the inspector displaying creation date, last modified date, last publication date, node name & identifier
+- Drag & drop support in the image inspector editor
+- Configurable resize & crop features for the image inspector editor
+- Searches (node tree, references, links) are no longer case sensitive
+
+Additional features
+===================
+
+- The storage format for the node data properties table has been changed to JSON from a serialized array
+   This makes it a lot easier to alter properties in the database, prevents unserialization issues and boost performance.
+- Improved exception handling with better output and styling
+- Creation date, last modified date & last publication date for nodes
+- Possibility to extend content collection as content elements
+- Auto-created child node positions (define the order of auto-created child nodes)
+- Backend context helpers (easier to determine if in the backend context)
+- Node repair improvements (remove broken nodes, remove lost nodes, remove undefined properties, add missing default values, set position)
 
 ~~~~~~~~~~~~~~~~~~~~
 Upgrade instructions
 ~~~~~~~~~~~~~~~~~~~~
 
-- tbd.
+See https://neos.typo3.org/develop/download/upgrade-instructions-2-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- Reload content without reloading the whole page
+   This is breaking in case you rely on the whole page being reloaded when a property of a single node is changed.
+   To achieve the previous behavior a new option called `reloadPageIfChanged` is introduced.
+- Pull in stable versions of 3rd party dependencies
+   Remove the file ``Configuration/PackageState.php`` if issues occur with the ``Doctrine.Instantiator`` package.
+- Move PhpCodesniffer installation to Build folder
+   See commit message for instructions.
+- Implement ContentCollection in pure TypoScript
+   Change ``iterationName`` to ``content.iterationName`` to adjust existing content collections if that is used.
+- Method to easily determine if backend rendering
+   Deprecates the TypoScript context variable ``editPreviewMode``, can be replaced seamlessly with
+   ``${documentNode.context.currentRenderingMode.name}`` instead if used.
+- Add code migration for ImageVariant to ImageInterface change
+   To adjust the code use the new class, it should be enough to run this on your site package(s):
+   ``./flow flow:core:migrate --package-key <sitepackagekey>``
+- Centralized Neos user domain service
+   The ``user:remove command`` has been renamed to user:delete. Additionally it drops support for the "--confirmation"
+   option and now interactively asks for confirmation.
+- Account should not be available in the context
+   This is breaking if you use the context variable ``${account}`` in your own TypoScript. You should instead use
+   ``${Security.getAccount()}`` to retrieve it. Therefor you should also remove all usage of account in safed contexts
+   for uncached TypoScript objects.
+- ContentCollection overwrites node directly
+   This is breaking if you rely on the ``contentCollectionNode`` variable being set. You can retrieve the nearest
+   ContentCollection via FlowQuery.
+- Add charset and collation to all MySQL migrations
+   This is breaking if you have existing tables that do not use the utf8
+   charset and utf8_unicode_ci collation. To solve this you need to convert
+   the existing tables. This can be done using the command:
+   ``./flow database:setcharset``
+- Property mapper error on node properties of type date
+   The code migration ``20141218134700`` can be run to adjust the code in your package(s):
+   ``./flow flow:core:migrate --package-key <packagekey>``
+- Disable image resizing for image properties by default
+   This change is  breaking as the default resize feature is disabled  by default now, which means you need to enable
+   it if you rely on that feature.
+- Cleanup multi column rendering
+   This is breaking if you rely on the MultiColumnItem having a template as MultiColumnItem is not a ContentCollection
+   (so a plain tag). Attributes configured for MultiColumnItem still work as before.
+- Remove deprecated TYPO3.Neos:Page nodetype
+- Node path should always be lowercase
+   This is breaking in case you have nodes with names that have uppercase letters and they are referenced by their
+   path somewhere.
+- Minor changes to improve CR performance
+   This is breaking if you rely on the fact that persists are triggered for each newly created Node. This was a side
+   effect of assigning the highest index to the newly created Node and is now no longer needed in all cases. Therefor
+   tests need to be adapted so that they do no longer rely on this behavior.
+- Fix unique constraint for workspace/dimensions
+   This is breaking if you were unlucky enough to migrate between the merge of the the aforementioned change and this
+   very change. See details in the commit message.
+- Node with identifier should only exist once per context
+   This is breaking in case you have existing nodes in this situation, which you shouldn't have though.
+- Throw exception for missing implementation class
+   This can be breaking if relying on missing implementation classes being silenced and returning NULL.
 
 **Further details can be found in the commit messages of the changes**
+
+.. note::
+
+   Additionally all breaking changes in Flow 3.0 apply, see the release notes to further information.
+   See http://docs.typo3.org/flow/TYPO3FlowDocumentation/latest/TheDefinitiveGuide/PartV/ReleaseNotes/300.html
