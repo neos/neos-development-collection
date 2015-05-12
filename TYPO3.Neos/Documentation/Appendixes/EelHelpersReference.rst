@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-04-27
+This reference was automatically generated from code on 2015-05-13
 
 
 Array
@@ -1342,6 +1342,127 @@ Examples::
 * ``sourceName`` (string, *optional*) The source name, defaults to "Main
 
 **Return** (mixed)
+
+
+
+
+
+
+Type
+----
+
+Type helper for Eel contexts
+
+Implemented in: ``TYPO3\Eel\Helper\TypeHelper``
+
+Type.className(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the class name of the given variable or NULL if it wasn't an object
+
+* ``variable`` (object)
+
+**Return** (string|NULL)
+
+Type.getType(variable)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Get the variable type
+
+* ``variable`` (mixed)
+
+**Return** (string)
+
+Type.instance(variable, expectedObjectType)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable of the provided object type.
+
+* ``variable`` (mixed)
+* ``expectedObjectType`` (string)
+
+**Return** (boolean)
+
+Type.isArray(variable)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable an array.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isBoolean(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable boolean.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isFloat(variable)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable a float.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isInteger(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable an integer.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isNumeric(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable numeric.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isObject(variable)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable an object.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isScalar(variable)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable a scalar.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.isString(variable)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the given variable a string.
+
+* ``variable`` (mixed)
+
+**Return** (boolean)
+
+Type.typeof(variable)
+^^^^^^^^^^^^^^^^^^^^^
+
+Get the variable type
+
+* ``variable`` (mixed)
+
+**Return** (string)
 
 
 
