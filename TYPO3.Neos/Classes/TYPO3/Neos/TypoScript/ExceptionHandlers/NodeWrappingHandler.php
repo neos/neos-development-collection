@@ -61,11 +61,11 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 
 		$currentContext = $this->getRuntime()->getCurrentContext();
 		if (isset($currentContext['node'])) {
-			$context = $this->environment->getContext();
-			if ($context->isProduction() && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') && $currentContext['site']->getContext()->getWorkspace()->getName() !== 'live') {
+			$node = $currentContext['node'];
+			$applicationContext = $this->environment->getContext();
+			if ($applicationContext->isProduction() && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
 				$output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
 			}
-			$node = $currentContext['node'];
 			return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptPath, $output);
 		}
 
