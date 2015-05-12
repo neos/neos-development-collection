@@ -2,18 +2,16 @@
 2.0.0 (not released yet)
 ========================
 
-*Note*: some of these release notes have been written as if the feature was already in master, although it is not fully
-        the case yet. For each feature, the first paragraph highlights the current implementation status -- that
-        paragraph will be removed for the final release notes.
+*Note*: These release notes are written from the perspective of the final release. Some of the mentioned features might
+        not yet work as expected and upgrading instructions may be incomplete. Please help improving these release notes
+        and upgrade instructions by submitting a patch to our review queue.
 
 Fine-grained Access Control
 ===========================
 
-*Current Status: FIXME*
-
 A common requirement, especially for larger websites with many editors, is the possibility to selectively control access
 to certain backend tools and parts of the content. For example so that editors can only edit certain pages or content
-types or that they are limited to specific workspaces. These access restrictions are used to enforce certain workflows
+types or that they are limited to specific workspaces. These access restrictions are used to enforce certain work flows
 and to reduce complexity for editors.
 
 With Neos 2.0, we introduce a way to define Access Control Lists (ACL) in a very fine-grained manner, enabling the
@@ -30,42 +28,37 @@ following use-cases:
 
 The above examples are all based upon specific *privilege types*; defining *what can be access-restricted*.
 
-Furthermore, the way Neos and Flow handle *roles* has been rewritten: A user is assigned to one or more specific
+Furthermore, the way Neos and Flow handle *roles* has been completely revised: A user is assigned to one or more specific
 roles, defining *who the user is*. For each role, a list of *privileges* is specified, defining the exact permissions of
 users assigned to each role.
 
 In the Neos user interface, it is possible to assign not just a single role to a user, but instead a list of multiple
 roles. This allows to define the permissions a user actually has on a much more fine-grained level than before, where
-only the distinction between Editor and Administrator was made.
+only the distinction between Editor and Administrator was made. Additionally, the user management module has basic
+support for multiple accounts per user: a user may, for example, have one account for backend access and another one
+for access of a member-only area on the respective website.
 
 
-Cloud Capable Resource and Media Management
+Cloud-Capable Resource and Media Management
 ===========================================
-
-*Current Status: The foundational change in Flow (Resource Management) has been merged. A prototype of uploading
-assets to Rackspace and Dropbox is functional but probably won't make it into the final release. CSS path rewriting
-is not yet implemented and would be needed for really using cloud resources.*
 
 In today's world, the use of cloud services is very prevalent. People use Google drive, Dropbox or Box.com to share
 files and assets. Furthermore, applications of today should be deployable on PAAS systems like Heroku or AWS EC2.
 Because these platforms do not contain a writable and persistent file system, alternative storage systems for assets
 are needed. For highly scalable websites, the use of Content Delivery Networks for serving static content helps to
-keep sites performant and fast.
+keep sites well performing and fast.
 
-With Neos 2.0 and Flow 3.0, we introduce a completely written core of resource management, which has built-in
-support for various cloud providers.
+With Neos 2.0 and Flow 3.0, we introduce a completely written core of resource management, which features a plugin-based
+storage and publishing mechanism, providing support for various cloud providers and other scenarios.
 
 On the one hand, this now allows to store persistent resources like images which the user has uploaded in Amazon S3;
 making Flow and Neos a lot more straightforward to run on PAAS.
 
 On the other hand, resources which are used on the website output (like cropped and resized images) can be *published*
-to a CDN like Akamai or Rackspace CloudFiles.
+to a CDN like Cloudfront, Akamai or Rackspace CloudFiles.
 
-The cloud providers supported with Neos 2.0 will be:
-- Rackspace CloudFiles / Akamai
-- Dropbox
-- S3??
-- ???
+As a reference implementation for third-party plugins we created a package supporting Rackspace Cloudfiles. A second
+implementation, for Amazon S3, is about to be finished.
 
 This feature is also the basis for seamlessly choosing assets from Google Drive or Dropbox in the Neos Media Management,
 which will be implemented in a later version of Neos.
@@ -73,8 +66,6 @@ which will be implemented in a later version of Neos.
 
 Translation & Content Variants
 ==============================
-
-*Current Status: all merged into master*
 
 While translation of content, or more broadly, content variants, are the flagship feature of Neos 1.2, there were still
 some missing spots to fill to make working with content variants really awesome. Neos 2.0 includes quite some of these
@@ -100,9 +91,6 @@ in later Neos releases.
 Translated Neos User Interface
 ==============================
 
-*Current Status: The most important change merged into Master, followups (e.g. for translating Node Type Names and JS)
-still in the works.*
-
 The User Interface of Neos is now translatable into multiple languages -- making it easier to use for non-English speakers.
 
 Now, we need *your help*, as we still need the actual translation. Please head over to https://crowdin.com/project/typo3-neos
@@ -113,8 +101,6 @@ and https://crowdin.com/project/typo3-flow and translate the labels as you see t
 SEO Improvements
 ================
 
-*Current Status: mostly merged, except for the XML sitemap generation*
-
 With Neos 2.0, we've added some first tools which help in improving search engine ranks:
 
 - Separation of page and navigation title
@@ -122,23 +108,20 @@ With Neos 2.0, we've added some first tools which help in improving search engin
 - machine-readable links to alternative-language versions
 - XML sitemap generation
 
-In the longer run, we'll add some more functionality and helpers in this area.
-
-
+These features are provided by a separate package which can be removed if so desired.
 
 Google Analytics
 ================
 
-*Current Status: merged*
+For many websites, getting key insights on their usage patterns is a requirement for improving content. That's why we
+created a seamless integration of Google Analytics; showing the current access numbers in an inspector tab of the current
+page.
 
-For many websites, getting key insights on their usage patterns is a requirement for improving content. That's why we started
-a basic integration with Google Analytics; showing the current access numbers in an inspector tab of the current page.
-
+Google Analytics integration for Neos 2.0 can be easily installed by adding the ``typo3/neos-googleanalytics`` package
+to your website via Composer.
 
 History / Event Log
 ===================
-
-*Current Status: Merged, but some instabilities and missing event types*
 
 For Neos 2.0, we have explored to add an event log, which records all kinds of changes to a Neos instance. Initially,
 the event log helps to answer the following questions:
@@ -154,6 +137,12 @@ merging of changes.
 
 ~~~~~~~~~~~~~~~~~~~~
 !!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- tbd.
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
 ~~~~~~~~~~~~~~~~~~~~
 
 - tbd.
