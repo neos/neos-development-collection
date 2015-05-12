@@ -303,10 +303,11 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function updateAndRenderAction(Node $node, $typoScriptPath) {
-		$this->updateAction($node);
+		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
 		$q = new FlowQuery(array($node));
 		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
 		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
+		$this->updateAction($node);
 		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nodePath' => $node->getContextPath()), 'success' => TRUE));
 	}
 
