@@ -1,0 +1,54 @@
+.neos-timeseriesview {
+	svg {
+		display: block;
+	}
+	svg .chart-background {
+		fill: transparent;
+	}
+	svg .axis line,
+	svg .axis path {
+		fill: none;
+		stroke: $grayLight;
+		stroke-width: 1px;
+	}
+	svg text {
+		cursor: default;
+		fill: #fff;
+		font-size: 11px;
+		shape-rendering: crispEdges;
+		stroke-width: 0;
+	}
+	svg .series {
+		path {
+			stroke-width: 2.5;
+			&.series-0 {
+				stroke: $blue;
+			}
+			&.series-1 {
+				stroke: #fb2286;
+			}
+			&.series-2 {
+				stroke: #adea02;
+			}
+			&.series-3 {
+				stroke: #fd9d00;
+			}
+		}
+	}
+	.chart-time-series .line {
+		fill: none;
+	}
+	.chart-time-series .axis .tick {
+		fill: none;
+		stroke: $grayLight;
+		stroke-width: 1px;
+		opacity: 1;
+		font-size: 11px;
+	}
+	.chart-time-series .axis .tick.major {
+
+	}
+	.chart-time-series .axis path {
+		opacity: 0;
+	}
+}
