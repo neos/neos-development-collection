@@ -105,9 +105,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	 * @return Resource
 	 */
 	public function getResource() {
-		if ($this->resource === NULL) {
-			$this->renderResource();
-		}
 		return $this->resource;
 	}
 
@@ -124,10 +121,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 		// delete the resource manually in order to avoid orphaned resource objects:
 		if ($this->resource !== NULL) {
 			$this->resourceManager->deleteResource($this->resource);
+			$this->resource = NULL;
 		}
 
 		parent::refresh();
-		$this->resource = NULL;
+		$this->renderResource();
 	}
 
 	/**
@@ -249,6 +247,34 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	 * @return void
 	 */
 	public function addAdjustment(ImageAdjustmentInterface $adjustment) {
+		$this->applyAdjustment($adjustment);
+		$this->refresh();
+	}
+
+	/**
+	 * Adds the given adjustments to the list of adjustments applied to this image variant.
+	 *
+	 * If an adjustment of one of the given types already exists, the existing one will be overridden by the new one.
+	 *
+	 * @param array<ImageAdjustmentInterface> $adjustments
+	 * @return void
+	 */
+	public function addAdjustments(array $adjustments) {
+		foreach ($adjustments as $adjustment) {
+			$this->applyAdjustment($adjustment);
+		}
+
+		$this->refresh();
+	}
+
+	/**
+	 * Apply the given adjustment to the image variant.
+	 * If an adjustment of the given type already exists, the existing one will be overridden by the new one.
+	 *
+	 * @param ImageAdjustmentInterface $adjustment
+	 * @return void
+	 */
+	protected function applyAdjustment(ImageAdjustmentInterface $adjustment) {
 		$existingAdjustmentFound = FALSE;
 		$newAdjustmentClassName = TypeHandling::getTypeForValue($adjustment);
 
@@ -267,7 +293,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 		}
 
 		$this->lastModified = new \DateTime();
-		$this->refresh();
 	}
 
 	/**

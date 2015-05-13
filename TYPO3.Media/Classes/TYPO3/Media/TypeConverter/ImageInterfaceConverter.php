@@ -77,6 +77,7 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 	 */
 	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {
 		if ($asset instanceof ImageVariant) {
+			$adjustments = [];
 			if (isset($source['adjustments'])) {
 				foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {
 					if (isset($adjustmentOptions['__type'])) {
@@ -92,18 +93,16 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 					if ($identity !== NULL) {
 						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identifier', $identity, TRUE);
 					}
-					$asset->addAdjustment($adjustment);
+
+					$adjustments[] = $adjustment;
 				}
 			} elseif (isset($source['processingInstructions'])) {
 				$adjustments = $this->processingInstructionsConverter->convertFrom($source['processingInstructions'], 'array');
-				if (is_array($adjustments)) {
-					foreach ($adjustments as $adjustment) {
-						$asset->addAdjustment($adjustment);
-					}
-				}
 			}
 
-			// TODO: Should find Variant here that already has the matching adjustments? But that can be dangerous as an existing variant might be already in use and any change then would apply to all places...
+			if (count($adjustments) > 0) {
+				$asset->addAdjustments($adjustments);
+			}
 		}
 
 		return $asset;
