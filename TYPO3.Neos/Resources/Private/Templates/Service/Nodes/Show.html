@@ -1,0 +1,25 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}<html>
+	<head>
+		<title>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</title>
+		<meta charset="UTF-8" />
+	</head>
+	<body>
+		<div>
+			<h1>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</h1>
+			<div class="node">
+				<label class="node-label">{node.label}</label>
+				<table class="node-properties">
+					<caption>{neos:backend.translate(id: 'nodes.properties', value: 'Node Properties')}</caption>
+					<tr><th>_identifier</th><td class="node-identifier">{node.identifier}</td></tr>
+					<tr><th>_path</th><td class="node-path">{node.path}</td></tr>
+					<tr><th>_type</th><td class="node-type">{node.nodeType.name}</td></tr>
+					<f:for each="{convertedNodeProperties}" as="value" key="name">
+						<tr class="node-property"><th class="node-property-name">{name}</th><td class="node-property-value">{value}</td></tr>
+					</f:for>
+				</table>
+				<link rel="node-frontend" href="{neos:uri.node(node: closestDocumentNode, absolute: true, resolveShortcuts: false)}"/>
+				<link rel="node-show" href="{f:uri.action(action: 'show', controller: 'Service\Nodes', arguments: {identifier: node.identifier}, absolute: true)}"/>
+			</div>
+		</div>
+	</body>
+</html>

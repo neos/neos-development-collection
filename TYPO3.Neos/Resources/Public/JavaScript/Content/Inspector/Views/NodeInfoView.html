@@ -1,0 +1,32 @@
+<ul>
+	<li>
+		<span>Created</span>
+		{{formatDate view.inspector.nodeProperties._creationDateTime}}
+	</li>
+	<li>
+		<span>Last modification</span>
+		{{formatDate view.inspector.nodeProperties._lastModificationDateTime}}
+	</li>
+	{{#if view.inspector.nodeProperties._lastPublicationDateTime}}
+		<li>
+			<span>Last publication</span>
+			{{formatDate view.inspector.nodeProperties._lastPublicationDateTime}}
+		</li>
+	{{/if}}
+	<li>
+		<span>Identifier</span>
+		{{view.inspector.nodeProperties._identifier}}
+	</li>
+	<li {{bind-attr title="view.inspector.nodeProperties._path"}}>
+		<span>Name</span>
+	{{#if view.inspector.nodeProperties._name}}
+		{{view.inspector.nodeProperties._name}}
+	{{else}}
+		/
+	{{/if}}
+	</li>
+	<li>
+		<span>Workspace</span>
+		{{view.inspector.nodeProperties.__workspaceName}}
+	</li>
+</ul>

@@ -1,0 +1,376 @@
+==================
+1.2.1 (2015-01-02)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Add date to changelog titles
+-----------------------------------------------------------------------------------------
+
+* Commit: `466de04 <https://git.typo3.org/Neos/Distributions/Base.git/commit/466de0417df7eb6f3d7dae4f3dd390e84d9f8cf0>`_
+
+[TASK] Depend on 1.2-dev branches of distribution packages
+-----------------------------------------------------------------------------------------
+
+* Commit: `de10c98 <https://git.typo3.org/Neos/Distributions/Base.git/commit/de10c9893739df7320c2a6441501a988ebea0887>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/24/
+
+* Commit: `0ea1a94 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0ea1a94dc4f3d3de9b4eb56e536773785e94c61e>`_
+
+[TASK] Remove wrong title in changelog index
+-----------------------------------------------------------------------------------------
+
+* Commit: `39429d9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/39429d9c7480a7ddc0692b06791bd7d5085f9e44>`_
+
+[TASK] Add release date to changelog titles
+-----------------------------------------------------------------------------------------
+
+* Commit: `4946c34 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4946c34d3c6b9c1f00372e3a3d133b3cc9bbedf9>`_
+
+[TASK] Remove backup changelog for 1.1.0
+-----------------------------------------------------------------------------------------
+
+* Commit: `7f61284 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7f6128411e74b7880a902b9436d7fde72329214c>`_
+
+[TASK] Only warn when navigating away for non safe requests
+-----------------------------------------------------------------------------------------
+
+When navigating away from the content module an alert is shown
+if requests are in progress. This leads to some undesired alerts
+when the requests are simple get requests that won't cause loss
+of data if not completed. To improve this the behavior should only
+apply to non safe requests.
+
+Resolves: NEOS-907
+
+* Commit: `8e3792d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8e3792d0205f598b027dba2b4a73830d1b646cc7>`_
+
+[BUGFIX] Remove undesired "(Page)" when editing titles in the node tree
+-----------------------------------------------------------------------------------------
+
+When editing a title in the node tree the title used contains "(Page)"
+afterwards, since its using the tooltip as it's source for the existing
+title.
+
+Fixes: NEOS-909
+
+* Commit: `837dca4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/837dca44eae39cbff484e32cf410269a18401fac>`_
+
+[TASK] Use HTML5 validation on login form
+-----------------------------------------------------------------------------------------
+
+Prevents sending incomplete login credentials.
+
+Related: NEOS-815
+
+* Commit: `6bc7757 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6bc7757e38f24170252f96319e919acde8f3bc3a>`_
+
+[BUGFIX] Add missing username on re-login dialog
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-905
+
+* Commit: `83babec <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/83babec5d552e8e9006251c287c6cb9d83ac6995>`_
+
+[BUGFIX] Handle unset inspector groups correctly
+-----------------------------------------------------------------------------------------
+
+Prevent a fatal error when unsetting an inspector group to ~ (null)
+
+Fixes: NEOS-910
+
+* Commit: `d5561b4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d5561b4463481b0fc487f8ee29ce6fa00d99a3c8>`_
+
+[TASK] Use consistent label on publish all button
+-----------------------------------------------------------------------------------------
+
+Always show "Publish all" instead of "Published" when
+no publishable changes are present. This is to avoid
+confusion of what the button does and to streamline it
+with the discard buttons.
+
+Resolves: NEOS-908
+
+* Commit: `a3cde3f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a3cde3f5c925d42b6c2a572d4d0dfc80f0a6fad9>`_
+
+[BUGFIX] Throw exception when trying to import an invalid Sites.xml file
+-----------------------------------------------------------------------------------------
+
+With this change a more meaningful exception is thrown if a site could
+not be imported for unknown reasons.
+Besides this slightly improves the ``site:import`` command to give
+feedback about the imported site on success.
+
+This also adds some cosmetic and non-functional cleanups in order to
+increase readabilty and IDE support:
+
+* Import FQN where applicable
+* Reduce nesting in ``SiteImportService::importFromFile()``
+* Remove unused import statements
+* Whitespace fixes
+
+Related: NEOS-885
+
+* Commit: `e2de993 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e2de993dc9cce192e6064ac36dbb87b81ea3ffb2>`_
+
+[BUGFIX] ContentCollection properties cannot be saved
+-----------------------------------------------------------------------------------------
+
+Without this change, saving ContentCollections results in an endless loop.
+
+Resolves: NEOS-188
+
+* Commit: `9fc7539 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9fc7539cb0afac8345cb3de276d4109aaaf95c73>`_
+
+[BUGFIX] Clear content and route cache when importing / pruning sites
+-----------------------------------------------------------------------------------------
+
+Adds signals and dispatcher connections to clear content and routing
+caches when sites were pruned or imported.
+
+Fixes: NEOS-885
+
+* Commit: `10d5fc1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/10d5fc11e5c2f5e4e8cdab398905bf2300a65cc4>`_
+
+[BUGFIX] fix image cropper on sites without bootstrap
+-----------------------------------------------------------------------------------------
+
+Because an unprefixed "clearfix" CSS class was used, the
+image cropper only worked on sites based on Bootstrap. This
+is fixed by properly namespacing the clearfix css class and
+use "neos-clearfix" instead.
+
+Resolves: NEOS-901
+
+* Commit: `e0337ed <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e0337ed3752dee68e01605db4b5722c46c787396>`_
+
+[TASK] Display warning if a inspector editor cannot be loaded
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-894
+(cherry picked from commit 46a5a721ab41fde21565902ca725f291d08a5021)
+
+* Commit: `fe338af <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fe338af21d710ace91eed37ea84f1d7ce19f4cbe>`_
+
+[TASK] Streamline direction and adjust position of notification arrow
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 1da2e6e41bfcb6373e40d4ec47ba53e8c39c1b91)
+
+* Commit: `41e9ac9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/41e9ac9d8c9692ecf7fdd3b311570aca4de57c66>`_
+
+[TASK] Refactor PrimaryContent to use "renderer" instead of "type"
+-----------------------------------------------------------------------------------------
+
+Using "renderer" with an object and property declaration is easier
+to read than "type" with prototype override.
+
+(cherry picked from commit 55fd6c7d1e4b8043bf9e395c7aefdba3853890ac)
+
+* Commit: `293f2c5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/293f2c5cc8fd15ae892360f0cc01eff25f79f1d2>`_
+
+[TASK] Small correction in PHPDoc for convertUriToObject method
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit d1e9fa6cef3fcea9520cdd085ecde9f1d0db8fab)
+
+* Commit: `7b82865 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7b8286528edac7b05a560a981e1b484942cff26b>`_
+
+[BUGFIX] Disallow inserting content in normal content elements
+-----------------------------------------------------------------------------------------
+
+To avoid allowing inserting content inside other content elements,
+unless explicitly allowed like for the content collection,
+we constraint it for all content elements.
+
+Fixes: NEOS-445
+
+* Commit: `9a668a7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9a668a76f361823113345bd3c4463f59431d4c21>`_
+
+[BUGFIX] Error for selected values in LinkEditor
+-----------------------------------------------------------------------------------------
+
+Prevent errors thrown in the LinkEditor for selected values due to
+incorrect format used in jQuery selector, leading to
+``Syntax error, unrecognized expression``.
+
+Fixes: NEOS-891
+Related: NEOS-856
+
+* Commit: `c808791 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c808791c6524cf1bbe25d24f30f9f20d988a70cf>`_
+
+[BUGFIX] Gracefully handle wrong property types in PropertyEditor
+-----------------------------------------------------------------------------------------
+
+Before this a wrong / missing property type would basically crash the
+backend and give no clear error message. This change adds a notification
+and a console error (if available) with more details.
+
+Related: NEOS-883
+
+* Commit: `02bc073 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/02bc07355d4721afa7f4e11a83f5e9591dbaae3d>`_
+
+[TASK] Add site node to content context for rendering tests
+-----------------------------------------------------------------------------------------
+
+Functional tests might give wrong exceptions on failure
+because the exception handler expects a site context variable.
+
+* Commit: `da6b738 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/da6b7389dd76c230bbb26ca14f7b0204f2ef3fa2>`_
+
+[BUGFIX] Adjust broken ``NodeTypeSchemaBuilder`` test
+-----------------------------------------------------------------------------------------
+
+Adjusts the broken ``NodeTypeSchemaBuilder`` test for
+``nodeTypesContainCorrectSuperTypes`` to the changed format.
+
+Related: NEOS-870
+
+* Commit: `c931412 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c931412fc20eec0b77f4b7917b6d7e1d7af33ce1>`_
+
+[BUGFIX] ContentContextFactory should not instanciate Now
+-----------------------------------------------------------------------------------------
+
+The ContentContextFactory created instances of
+\\TYPO3\\Flow\\Utility\\Now which should instead be injected.
+
+This resulted in hard to debug errors and is prevented by
+injecting Now into the parent class in TYPO3CR.
+
+Related: NEOS-879
+
+* Commit: `35dc31d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/35dc31db4649c3d0031e0a1f07539e6ce6230192>`_
+
+[BUGFIX] Fix typos in 1.2 changelogs
+-----------------------------------------------------------------------------------------
+
+* Commit: `2ba871b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2ba871b0d8bd63a8f68c779a0ce0e6a100af8c4d>`_
+
+[TASK] Update release notes for 1.2.0
+-----------------------------------------------------------------------------------------
+
+* Commit: `efff4a4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/efff4a43a41aa952b91b84101bd7732e12cacaae>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[!!!][BUGFIX] Node with identifier should only exist once per context
+-----------------------------------------------------------------------------------------
+
+On adopting nodes or in cases with undefined NodeData precedence
+it could happen that for the same identifier two Node objects are
+created for the same context. By just using the identifier and the
+context object hash in NodeFactory that is prevented. Nodes that
+are adopted into their own context directly get the new NodeData
+object, thus the factory doesn't need to know about it.
+
+This removes the $dimensions argument from NodeInterface::createNode().
+It was dangerous to use anyway so you shouldn't rely on it.
+Node::createNode() also sees  the argument removed so make sure you
+remove all usages of it from your code.
+
+Fixes: NEOS-354
+
+* Commit: `df5fb26 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/df5fb263285e3489824293e7d12d0f45e313054a>`_
+
+[BUGFIX] Fix broken test in NodeImportServiceTest
+-----------------------------------------------------------------------------------------
+
+* Commit: `6e3ec34 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/6e3ec346c2d331d83e02f5b7bf2ad6e2e2054564>`_
+
+[BUGFIX] Correclty handle empty property elements in node import
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-807
+
+* Commit: `f808a45 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/f808a455d185eb65df34dd5f641c1ad51670c2a1>`_
+
+[BUGFIX] Fix broken ``ContextFactoryTest`` & ``ContextTest``
+-----------------------------------------------------------------------------------------
+
+Fixes two broken tests, which break due to the unit tests not
+automatically injecting lazy properties.
+
+``ContextFactoryTest::createMergesDefaultPropertiesBeforeSettingAnInstanceByIdentifier``
+``ContextTest::getCurrentDateTimeReturnsACurrentDateAndTime``
+
+Related: NEOS-879
+
+* Commit: `5de4a29 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/5de4a29b42d5f0378ec91277b3c5ef4b6713a8e5>`_
+
+[BUGFIX] Now should not be instanciated
+-----------------------------------------------------------------------------------------
+
+Currently the ContextFactory creates new instances of
+\\TYPO3\\Flow\\Utility\\Now which results in multiple context instances
+despite having the same context properties.
+
+This led to hard to debug errors that could happen randomly.
+By injecting Now from the ObjectManager these problems are prevented.
+
+Resolves: NEOS-879
+
+* Commit: `bdea64e <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/bdea64ef26f2408110005fd429cb0fda5a9a0055>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fail gracefully for broken resources
+-----------------------------------------------------------------------------------------
+
+When a resource is missing an uncaught exception is thrown,
+rendering the page completely unaccessible.
+
+Fixes: NEOS-414
+
+* Commit: `6860d30 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/6860d305952518e14e889800fea0580b6f4e7f8a>`_
+
+[!!!][TASK] Move ImageTag and ImageUri TypoScript objects to TYPO3.Neos
+-----------------------------------------------------------------------------------------
+
+This moves the ImageTag and ImageUri TypoScript objects to the Neos
+package to avoid a dependency on TypoScript in TYPO3.Media.
+
+This is breaking if you already used the newly introduced objects,
+in that case you have to replace ``TYPO3.Media`` with ``TYPO3.Neos``.
+
+Fixes: NEOS-745
+
+* Commit: `d7cb998 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/d7cb9989fed7aa245bfbc0efc35129aba71e77a8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

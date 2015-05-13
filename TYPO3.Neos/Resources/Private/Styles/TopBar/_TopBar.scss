@@ -1,0 +1,85 @@
+#neos-top-bar {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 10021;
+	background-color: $grayDark;
+	height: $unit;
+	border-bottom: 1px solid $grayLight;
+	display: none;
+	@include font;
+	font-size: 0;
+
+	@include transition-property(top);
+	@include transition-duration(0.2s);
+
+	#neos-top-bar-right {
+		float: right;
+	}
+
+	#neos-user-actions,
+	#neos-publish-menu {
+		float: left;
+
+		i {
+			margin-left: $relatedMargin;
+			margin-right: $relatedMargin;
+		}
+
+		.neos-dropdown-menu {
+			@import "../Shared/Checkboxes";
+			border: 0;
+			right: 0;
+			background: none;
+			padding: 0;
+			margin: 0;
+
+			li {
+				height: $unit;
+				background: $grayMedium;
+				border-top: 1px solid $grayDark;
+
+				&:first-child {
+					border-color: $grayLight;
+				}
+
+				a,
+				button {
+					height: $unit;
+					color: white;
+					font-size: $generalFontSize;
+					line-height: $unit;
+					padding: 0 $defaultMargin;
+					@include box-sizing(border-box);
+
+					&:hover {
+						background: $blue;
+					}
+				}
+
+				button {
+					width: 100%;
+					text-align: left;
+					background-color: $grayMedium;
+
+					&:hover {
+						background-color: $blue;
+					}
+				}
+
+				label {
+					padding-top: 9px;
+				}
+
+				button i {
+					line-height: 18px;
+				}
+			}
+
+			label {
+				font-size: $generalFontSize;
+			}
+		}
+	}
+}

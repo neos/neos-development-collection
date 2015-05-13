@@ -1,0 +1,7 @@
+<f:for each="{accounts}" as="account" iteration="iteration">
+	<span title="{f:render(section: 'tooltip', arguments: '{account: account}')}">
+		{account.accountIdentifier}{f:if(condition: iteration.isLast, else: ', ')}
+	</span>
+</f:for>
+
+<f:section name="tooltip">Authentication provider: {account.authenticationProviderName}</f:section>

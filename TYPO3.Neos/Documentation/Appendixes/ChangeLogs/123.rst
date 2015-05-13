@@ -1,0 +1,714 @@
+==================
+1.2.3 (2015-03-26)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Add support metadata to composer.json
+-----------------------------------------------------------------------------------------
+
+* Commit: `858c64b <https://git.typo3.org/Neos/Distributions/Base.git/commit/858c64b0aa9a2e83b8bb96c2b86871b15eadb20d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/26/
+
+* Commit: `7a0ee0d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7a0ee0dc563891c7918092f9d28108672e28a8a8>`_
+
+[BUGFIX] Disable caching when editing nodes
+-----------------------------------------------------------------------------------------
+
+In Internet Explorer the response from the backend
+when editing a page in the inspector was cached.
+This means that changes are not visible and the
+editor is forced to reload the backend.
+This change tells the browser not to
+cache the response.
+
+Resolves: NEOS-1030
+
+* Commit: `3d5da6e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3d5da6ea978ad5ef16cb4b2baed712c8e3c04c47>`_
+
+[BUGFIX] Editing plugin view breaks with unpublished master node
+-----------------------------------------------------------------------------------------
+
+When a plugin view references a master node that hasn't been published,
+an exception occurs because the node cannot be found in the live workspace.
+
+Instead of looking for the master node in the live workspace it should look
+in the current workspace and with the current dimensions.
+
+Additionally it prevents breaking if the master node can no longer be found.
+
+Fixes: NEOS-1096
+
+* Commit: `89d3d38 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/89d3d38f4759fcc4204cd07931969d6649fcf8ff>`_
+
+[BUGFIX] Follow-up for broken strip tags for title in inline delete dialog
+-----------------------------------------------------------------------------------------
+
+The original bugfix didn't work properly and contained a JS error.
+
+Related: NEOS-1125
+
+* Commit: `9ad74db <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9ad74db9deeda8e7900f8032cd7c91b48764d891>`_
+
+[BUGFIX] Improve usability of menu panel button
+-----------------------------------------------------------------------------------------
+
+This commit improves the behavior of the neos-menu-button and the
+corresponding neos-menu-panel. The menu will now only be opened
+on a mouseDown and closed on mouseDown again or on a mouseLeave.
+
+This commit also contains a bugfix preventing ghost clicks on the
+neos-menu-button.
+
+Resolves: NEOS-608
+
+* Commit: `1f13336 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1f13336c67d7fe61b7381bdf15c60467cb3dfe06>`_
+
+[SECURITY][BUGFIX] Editors should not be able to access others’ workspaces
+-----------------------------------------------------------------------------------------
+
+Severity: Low
+
+This is a security fix, to restrict editors from accessing content in workspaces of other
+editors.
+
+Note: We consider severity low, due to the following facts:
+
+* You still need an editor account to access any content in workspaces, that are not
+  in the live workspace
+* Neos currently does not officially support access controls for editors
+
+Fixes: NEOS-960
+
+* Commit: `e163c82 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e163c82916bbcd8cf47282d8a566dcd1038136c3>`_
+
+[TASK] Adapt to shadow node refactoring
+-----------------------------------------------------------------------------------------
+
+Removes the check for shadow nodes in ``CotentElementWrappingService``
+as shadow nodes cannot exist as ``Node`` objects any longer.
+
+Releaes: master
+Depends: Ic855e10d7c6bd7fb73a5cb0926f8035910a790fe
+
+* Commit: `850f3fd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/850f3fdcf9960173d119ae34f2e5fda31f1689ed>`_
+
+[BUGFIX] Strip html tags in the inline delete node dialog title
+-----------------------------------------------------------------------------------------
+
+Removes the html tags from node label displayed in the confirmation
+when deleting a node inline.
+
+Resolves: NEOS-1125
+
+* Commit: `0ad5872 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0ad58727ade5bd57d771af16d0964b60217b6b9b>`_
+
+[TASK] Pin typo3/twitter-bootstrap to 1.0.*
+-----------------------------------------------------------------------------------------
+
+Later versions (specifically dev-master) are adjusted to Neos 3.0 so they
+won't work with earlier Flow versions.
+
+* Commit: `cf80686 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cf8068665c4aa1131a3aa85db050b278aa9a6a9e>`_
+
+[TASK] Pin typo3/setup to 1.1.*
+-----------------------------------------------------------------------------------------
+
+Later versions (specifically dev-master) are adjusted to Neos 3.0 so they
+won't work with earlier Flow versions.
+
+* Commit: `857987b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/857987b9d0c3eca8e74e864c669663bf1b2d012f>`_
+
+[TASK] Collapse site selector in the menu by default
+-----------------------------------------------------------------------------------------
+
+The site selector is seldom used and doesn't handle many sites well.
+To make it better it should just be collapsed instead, then users can
+open it if they want to use it.
+
+Resolves: NEOS-1130
+
+* Commit: `58d42c3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/58d42c33c9d3c8fa4f5f0882530dc12b24674ccb>`_
+
+[TASK] Constraint various node searching to current site
+-----------------------------------------------------------------------------------------
+
+When searching for nodes the result should be limited to the current
+site to avoid issues like linking between sites is unsupported and
+duplicate nodes from other sites make it difficult to tell apart.
+
+Following searches are constrained:
+
+- LinkEditor (Inspector)
+- Reference(s)Editor (Inspector)
+- Aloha link wizard
+- Node tree filter
+
+Depends: Ibaa9b914e438ba1c560d58a095a48e64a5428bfd
+
+Fixes: NEOS-140
+Resolves: NEOS-250
+
+* Commit: `1683108 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1683108672c797ade59b4223b9947f2f0c62cd56>`_
+
+[BUGFIX] Fixes styling issues in the pagetree of the Neos UI
+-----------------------------------------------------------------------------------------
+
+Adds a dedicated font-size to the navigational anchors.
+Adds a dedicated no text-shadow to the navigational anchors.
+
+Fixes: NEOS-998
+Related: NEOS-515
+
+* Commit: `42ec000 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/42ec000bfa71d13d69b79d8223e562f6ff4ab905>`_
+
+[TASK] Adjust version numbers in Documentation/Settings.yml
+-----------------------------------------------------------------------------------------
+
+The file wrongly contained "master".
+
+* Commit: `88a1f81 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/88a1f81421fccb5f273f42d8afc2fa379a3a1fba>`_
+
+[BUGFIX] Fix outdated nodetype in documentation
+-----------------------------------------------------------------------------------------
+
+The nodetype TYPO3.Neos.NodeTypes:AbstractNode has long been renamed
+to TYPO3.Neos:Node.
+
+* Commit: `dfe40c4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/dfe40c40ae5bf3cc22cacd0e12f22721a410d12f>`_
+
+[BUGFIX] Prevent duplicate errors while moving nodes
+-----------------------------------------------------------------------------------------
+
+Now that the URI is separated from the node path the path can be
+changed when moving nodes. This prevents errors when duplicate paths
+could be created.
+
+Also refactors this kind of operation into a service to be reused by
+other consumers.
+
+Fixes: NEOS-1009
+
+* Commit: `13fee7a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/13fee7a1a568ceeb50de39d0124f732c6f733b65>`_
+
+[BUGFIX] Circular dependency causing unexpected behavior
+-----------------------------------------------------------------------------------------
+
+A require dependency to itself caused unexpected behavior
+and broke things randomly in the content module.
+
+Regression introduced with I160263ccd4cac3f6d749b14a7e703dc53d4e7cfe
+
+* Commit: `091717d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/091717d0a27e6b7fdd4d936cc4e80b0d4dd9f146>`_
+
+[BUGFIX] createNewNode renders invalid uri path segments
+-----------------------------------------------------------------------------------------
+
+This change fixes a problem resulting in invalid uri path segments when
+creating new document nodes. When a new document was created, the
+NodeController would simply take the entered document title as the
+node's uri path segment, even if it contained characters which are not
+allowed as part of an URL path.
+
+We now use the TYPO3CR's function for rendering valid node names (like
+in the past) which provides some more or less meaningful transliteration.
+
+Resolves: NEOS-1079
+Related: NEOS-1059
+
+* Commit: `ee83092 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ee830920b116d9f7dec2480f33f6f8887741705f>`_
+
+[TASK] Move release notes to a new home in documentation
+-----------------------------------------------------------------------------------------
+
+This adds a home for release notes to the documentation and moves the
+release notes that were in the change logs there.
+
+While being at it, we also added a stub for the release notes of the
+upcoming version 2.0.
+
+* Commit: `419fc12 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/419fc1256723dd7bf6a28be7eeec6d50cb6d5824>`_
+
+[BUGFIX] uriPathSegment handling is slow and unreliable
+-----------------------------------------------------------------------------------------
+
+This change fixes two issues with the mechanism which assures the
+uniqueness of uriPathSegments among node siblings:
+
+  1. Updating document nodes with lots of siblings was extremely slow
+  2. Newly created nodes will get a non-human-friendly uriPathSegment if
+     the proposed name was already taken by a sibling.
+
+A severe side-effect was introduced with the change
+``I2315d30256f7d291204363fdde7e761154cbc7e4``, making
+adding/updating nodes extremely slow when a node has many siblings.
+
+Multiplied by the check happening for every given node property change,
+can lead to timeouts.
+
+This changes the behavior to only do the necessary check if it's
+actually needed, in case of new nodes, updating the ``uriPathSegment``
+property or changing the path of an existing node.
+
+Fixes: NEOS-1059
+
+* Commit: `ee6af62 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ee6af62aa7dc89cb7740dc525436b86ae1b75721>`_
+
+[TASK] Document default Eel helpers in context
+-----------------------------------------------------------------------------------------
+
+This adds a list of Eel helpers available in the context by default to
+the section on "Eel and FlowQuery" in the "Integrator Guide".
+
+* Commit: `5188017 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/518801757033f9be9b659ff6cfeb0b1b6190446f>`_
+
+[BUGFIX] make error/exception handling more robust - allowing to reload in case of an error
+-----------------------------------------------------------------------------------------
+
+Currently, if an error during rendering occurs, and then the user reloads
+this document where the error occurs, the Neos backend breaks. This is because
+some required context information is not added to neos-document-metadata,
+breaking the page tree and the global workspace status indicator.
+
+This is a regression introduced by  Ia8fa5228e772b0fee15921e02135c4899df39c0a
+
+(cherry picked from commit fb4b3697d37afaa9414e3915d5d616661de20b7f)
+
+* Commit: `2f4011c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2f4011ce6e3c5f7a3d8fc20b91a3355820fdd7ee>`_
+
+[TASK] Pin typo3/flow to version 2.3.*
+-----------------------------------------------------------------------------------------
+
+This makes sure a matching framework version is required with Neos.
+
+* Commit: `280414c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/280414c1b543a19848ec72a807811c0481939468>`_
+
+[BUGFIX] Prevent call to undefined getContext() on a non-object
+-----------------------------------------------------------------------------------------
+
+This change fixes the situation that $documentNode was set to
+TRUE when it is set while it should be set to the actual
+node object.
+
+Regression introduced in I4cd01ee64a293d5ac2da75013e0fe3cfcddad5a9
+
+* Commit: `8df7d1a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8df7d1ad082c14066c1f3fc8cb5c3b13c0f88783>`_
+
+[BUGFIX] Page exception handler should assume no nodes set.
+-----------------------------------------------------------------------------------------
+
+To prevent raising an error during exception handling the
+``PageHandler`` needs to check if ``node``, ``documentNode`` and
+``site`` are actually set before using them.
+
+* Commit: `ab22179 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ab2217969c32c9210b155bab04db57888e0b7904>`_
+
+[BUGFIX] Select2 leaks to global space
+-----------------------------------------------------------------------------------------
+
+Select2 writes a Select2 variable directly to the global
+scope which causes problems with website frontends that
+use jQuery and Select2. This change uses grunt to move
+the definition of window.Select2 to the Shared/Utility
+module in Neos.
+
+* Commit: `5f26b5b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5f26b5b9041c86ca4d433cb451eca519f6e10c4b>`_
+
+[BUGFIX] Make FloatValidator JS implementation require correct xregexp
+-----------------------------------------------------------------------------------------
+
+The xregexp library required was nowhere to be found. This change fixes
+that.
+
+* Commit: `7b02931 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7b02931851f820fe7490e4f6ff6a4ce706e6bbe4>`_
+
+[TASK] Log exceptions during import to the log
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-991
+
+* Commit: `0605bbf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0605bbf7a2fa59a04787c798f77b850b77c8efae>`_
+
+[BUGFIX] Allow editing of documents as content elements
+-----------------------------------------------------------------------------------------
+
+This fixes a regression introduced with
+Ia11ac5b6c7bef4c30e005b53f21215d0b17637c1 which resulted in document
+nodes not receiving the ``neos-contentelement`` class which made them
+inaccessible for the inspector. By introducing a flag to render this
+special type of document metadata only if asked for it, the regression
+is fixed.
+
+* Commit: `efeac29 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/efeac29d5e7cb1a24b200f78d17acd64aea4be25>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Unable to select the Menu if it's empty
+-----------------------------------------------------------------------------------------
+
+This change add a message "The menu is empty" only in the backend
+context, so the user know that the menu is empty, and can select the
+content element to configure it.
+
+Resolves: NEOS-1124
+
+* Commit: `8ecde50 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/8ecde50e7b31f7294fe63c1cb146d85c2c40681f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Uri segment empty for kickstarted sites
+-----------------------------------------------------------------------------------------
+
+The uri segment is not set for kickstarted sites which causes
+an error when trying to save the root page afterwards.
+A ``node:repair`ÂÂ` will fix it as well.
+
+Fixes: NEOS-980
+
+* Commit: `bf8ab2e <https://git.typo3.org/Packages/TYPO3.Neos.Kickstarter.git/commit/bf8ab2e08d6eb935bf6cc03f6b26b42ba17578ab>`_
+
+[BUGFIX] Fix accessRoles xml tag
+-----------------------------------------------------------------------------------------
+
+Corrects the generated XML to match the expected
+structure for an empty array.
+
+Resolves: NEOS-1003
+
+* Commit: `5e143fc <https://git.typo3.org/Packages/TYPO3.Neos.Kickstarter.git/commit/5e143fc0dd7e470bac89cfb91a401c6376ccc58b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Refactor shadow node generation to NodeData class
+-----------------------------------------------------------------------------------------
+
+Shadow nodes are purely internal so ``Node`` should not be
+responsible to create or deal with shadow nodes at all.
+Shadow nodes are also no longer exposed to the outside world
+as the ``NodeFactory`` no longer creates ``Node`` instances
+from shadow nodes. To do that the ``NodeData`` class got the
+new method ``isInternal()`` which returns a boolean to mark
+the object as purely internal preventing the NodeFactory to
+create a ``Node`` object. a ``NodeData`` currently identifies
+as internal if it has the ``movedTo`` property set AND
+``removed`` is TRUE.
+
+Fixes: NEOS-1013
+
+* Commit: `ed38953 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ed389536cb4fe4fa83e4cc7ffb0d08a610e87224>`_
+
+[BUGFIX] Prevent issues with mixed case node paths
+-----------------------------------------------------------------------------------------
+
+The node name match pattern in NodeInterface is case insensitive,
+but the utility to render a valid node name enforces them to be
+case insensitive. This is change removes the strtolower call
+to make the utility consistent with the pattern.
+
+Besides that the change checks if auto created child nodes
+already exist before creating them to prevent constraint
+errors on node copy.
+
+Resolves: NEOS-1081
+
+* Commit: `acddbd9 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/acddbd944642f44ebbd230fbd02617763b6bf63f>`_
+
+[TASK] More graceful handling of non-existing migrations
+-----------------------------------------------------------------------------------------
+
+The node:migrate command exited with an uncaught exception if the
+specified migration does not exist. This change will catch the
+exception and display the error message instead.
+
+* Commit: `965bc2e <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/965bc2e2aa688d07d1c71808a72c03b0a6ac07d6>`_
+
+[BUGFIX] Fix parsing of ``accessRoles`` during import
+-----------------------------------------------------------------------------------------
+
+This fixes the ``NodeImportService`` that choked on site exports that
+contained non-empty ``accessRoles``.
+
+Background:
+We currently don't use/evaluate the ``accessRoles``, thus the
+``site:export`` command generates empty and self-closing accessRoles
+tags::
+
+ <accessRoles __type="array"/>
+
+If accessRoles are *not* empty (as it was the case in the manually
+generated Sites.xml of the ``TYPO3.SiteKickstarter`` package (see
+I04bdd9fb750df7017ec81d8b600f6bb3ba427a87) the import failed.
+
+Fixes: NEOS-1003
+
+* Commit: `9ebbaab <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9ebbaab0b70cb6204e2c63030a025871f9e466da>`_
+
+[TASK] Skip unnecessary updates in node setters
+-----------------------------------------------------------------------------------------
+
+Prevents unnecessary signals and database updates when calling setter
+methods on a Node with the existing value. Without it performance
+decreases exponentially with the amount of properties being set using
+the NodeConverter e.g.
+
+Resolves: NEOS-1060
+
+* Commit: `7a8bf4e <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/7a8bf4e2f8c317eeb846fd6bef7c497616d11ec3>`_
+
+[FEATURE] Allow findByProperties() to be constrained to a path
+-----------------------------------------------------------------------------------------
+
+Currently findByProperties() always searches all available nodes. This
+change allows to set a $pathStartingPoint so only nodes below the given
+node will be searched.
+
+Related: NEOS-250
+Related: NEOS-140
+
+* Commit: `df45c9d <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/df45c9da3c248177252d830fc2edfa941b2957a8>`_
+
+[BUGFIX] Remove shadow nodes for moved nodes in user workspace
+-----------------------------------------------------------------------------------------
+
+If a node was not yet published to the live workspace and moved in the
+user workspace, the shadow node data (which is marked as removed) was
+not removed. This leads to strange effects where nodes disappear for
+individual users.
+
+Fixes: NEOS-1068
+
+* Commit: `da90131 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/da901312750dad8668d1e5acc3926b67a220b86f>`_
+
+[BUGFIX] Fix error in PostgreSQL down migration
+-----------------------------------------------------------------------------------------
+
+In the down migration of Version20140826164247 a FK constraint and an
+index were dropped "twice" (dropping a column removes related items
+already).
+
+* Commit: `7372dad <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/7372dadfd3db55e0623a2527834a7acc0344caf6>`_
+
+[BUGFIX] Exception when setting a node's path if it's unchanged
+-----------------------------------------------------------------------------------------
+
+Prevents an exception caused by checking for other nodes with the same
+path and finding itself, when the path is set to the existing path.
+This can happen through the node converter e.g.
+
+* Commit: `b3c29ed <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/b3c29ed60e06f159fac6abdec4a7c8877ee25c91>`_
+
+[BUGFIX] Fix behavior of NodeData::hasAccessRestrictions()
+-----------------------------------------------------------------------------------------
+
+This replaces the hard-coded check for the "Everybody" role with a
+check for the fully qualified role identifier "TYPO3.Flow:Everybody".
+
+Besides this adds tests for the the modified "isAccessible()" behavior
+introduced with Ia3a6220ae7fc7224b272794dba301fba2c617876
+
+* Commit: `0ae5a1e <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/0ae5a1e3a1edb4d6f0e0de8f9c5840e7b62ae893>`_
+
+[BUGFIX] Fix two failing unit tests
+-----------------------------------------------------------------------------------------
+
+This fixes two tests of the NodeDataTest test case that failed due to
+some unexpected method sequence indexes.
+
+Besides this cleans up the test case in order to simplify debugging and
+refactoring.
+
+* Commit: `4f47bfc <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4f47bfc4addf1d1e4d287d75d38e755c0590917c>`_
+
+[!!!][BUGFIX] Fix unique constraint for workspace/dimensions
+-----------------------------------------------------------------------------------------
+
+Run ``./flow doctrine migrate`` to adjust the database.
+
+The unique constraint https://review.typo3.org/36845 added lacked the
+movedto column and broke shadow nodes.
+
+This is breaking if you were unlucky enough to migrate between the merge
+of the the aforementioned change and this very change. In that case, drop
+the wrong constraint::
+
+  DROP INDEX UNIQ_60A956B9772E836A8D94001992F8FB01 ON typo3_typo3cr_domain_model_nodedata -- MySQL
+  DROP INDEX UNIQ_60A956B9772E836A8D94001992F8FB01 -- PostgreSQL
+
+and then run this for MySQL::
+
+  ./flow doctrine:migrationversion --version 20150211181736 --delete
+  ./flow doctrine:migrate
+
+and this for PostgreSQL::
+
+  ./flow doctrine:migrationversion --version 20150211181737 --delete
+  ./flow doctrine:migrate
+
+Related: NEOS-1002
+
+* Commit: `74e52d1 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/74e52d19cad89804810eabb1721ed895ada6ae19>`_
+
+[!!!][BUGFIX] Node data identifier not unique for workspace/dimensions
+-----------------------------------------------------------------------------------------
+
+Run ``./flow doctrine migrate`` to adjust the database.
+
+This prevents a node duplicate identifier in the same workspace with
+the same dimensions, by adding a constraint across identifier,
+workspace and dimensions. Without it unexpected behavior can occur
+when finding nodes by their identifier, e.g. used for references and
+links.
+
+Fixes: NEOS-1002
+
+* Commit: `4d26407 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4d26407eb3569ace235bf9ded13038c9a52774da>`_
+
+[TASK] Make isAccessible() in NodeData return TRUE without security context
+-----------------------------------------------------------------------------------------
+
+If the security context cannot be initialized, isAccessible() will return
+TRUE unconditionally.
+
+* Commit: `4aa12ec <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4aa12ec0e687482739bcee8bd0dd90a66ed88ee1>`_
+
+[BUGFIX] Skip nodes that have no connection to a parent node
+-----------------------------------------------------------------------------------------
+
+This fixes the site export for repositories that contain broken nodes
+without a proper rootline (one or multiple parent nodes in the path
+are missing).
+
+Related: NEOS-991
+
+* Commit: `b021b22 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/b021b2231737230e81c6d49a302a546cd836f557>`_
+
+[BUGFIX] Sites with the same prefix are exported multiple times
+-----------------------------------------------------------------------------------------
+
+This fixes a case where nodes were exported multiple times, if one site
+node name is the prefix of other site node names. This lead to duplicate
+key constraint errors during the import.
+
+Related: NEOS-991
+
+* Commit: `a512363 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/a5123634329d0501d70bfd36369c5e79769f587d>`_
+
+[BUGFIX] Support import of multiple sites
+-----------------------------------------------------------------------------------------
+
+This change fixes a problem with the import of multiple sites. The end
+element for nodes was not correctly discovered, such that the nodes of
+the second site would break the import.
+
+For more robustness in these cases the change introduces an exception if
+an unknown XML element is processed.
+
+Related: NEOS-991
+
+* Commit: `9328c22 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9328c22918e49cfa60ad53f4572f1de8db78ab26>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix parse errors with TypoScript comments
+-----------------------------------------------------------------------------------------
+
+This commit fixes problems with parsing "comments in comments" in TypoScript
+
+Example::
+
+    # */ text meant as comment
+
+Adds a unit test and a fixture that reproduces the parsing error.
+Adds a unit test for the split pattern used to identify the "type of comment".
+Refactors unit test for the TypoScript parser.
+
+Resolves: NEOS-864
+
+* Commit: `9dfaba8 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/9dfaba86468d67ec0395a578e2454b5f7fbae05d>`_
+
+[BUGFIX] PHP 5.3 compatibility broken
+-----------------------------------------------------------------------------------------
+
+A regression breaking PHP 5.3 compatibility was introduced
+with ``I4b2034794af05aab1ceb67d120b2da25f4b510f5`` by using
+$this in a Closure.
+
+Related: NEOS-1031
+
+* Commit: `352e1fb <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/352e1fb16c01729fa00c128a364b1f93c7ee145d>`_
+
+[BUGFIX] Exception causes fatal error in TypoScriptPathProxy __toString
+-----------------------------------------------------------------------------------------
+
+If an exception occurs during handling of a rendering exception a fatal
+error is thrown due to __toString methods not being allowed to throw
+exceptions. To prevent that we catch those exceptions and try to render
+them with a context depenent exception handler instead. If that also
+fails we fall back to a custom handling of the exception.
+
+Fixes: NEOS-898
+
+* Commit: `0b90fe2 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/0b90fe2712b91ba09b55701cc25ff5da3ced6342>`_
+
+[BUGFIX] Runtime needs to reset context if it was overriden
+-----------------------------------------------------------------------------------------
+
+Context overrides were just popped off the stack at the end of
+the ``evaluateInteral`` method, but need to be removed always
+before returning if override happened.
+
+* Commit: `30e884e <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/30e884e0edf881a144b614676726929ed7e0e169>`_
+
+[BUGFIX] Matcher with "renderer" should evaluate in own context
+-----------------------------------------------------------------------------------------
+
+A TypoScript (Case) Matcher configured with renderer should be
+evaluated with itself as context object, so that the following
+configuration works as expected::
+
+  hasLayout {
+    layout = ${q(node).property('layout')}
+    condition = ${this.layout ? true : false}
+    renderer = ${this.layout}
+  }
+
+Without this bugfix the ``renderer`` would fail as ``this``
+was not set.
+
+(cherry picked from commit b442fcfacef4cdb12b273fb663d9a717a2a3befc)
+
+* Commit: `d1e0faf <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/d1e0faf1567b71a4595bbf809379caaab93ca0a8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove unclosed li element in tags list
+-----------------------------------------------------------------------------------------
+
+* Commit: `023099d <https://git.typo3.org/Packages/TYPO3.Media.git/commit/023099d6d9ceb9a2440cdb7f5b98f3b6f8c98c29>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
