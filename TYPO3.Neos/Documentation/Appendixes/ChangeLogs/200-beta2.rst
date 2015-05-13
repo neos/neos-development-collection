@@ -1,0 +1,98 @@
+==================
+2.0.0-beta2 (2015-05-13)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Change dependency handling in branch/release scripts
+-----------------------------------------------------------------------------------------
+
+This change makes sure that the Neos packages always depend on the
+next significant release of the branch, never a fixed version. The
+manifest in the distribution pulls in fixed versions and (if needed)
+allows non-stable versions of the dependencies we have.
+
+After a release, the manifest is reset to require the branch dev version
+again.
+
+* Commit: `9ebcf4a <https://git.typo3.org/Neos/Distributions/Base.git/commit/9ebcf4a6c094d24d1450baf52cc58d65c212c163>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/50/
+
+* Commit: `b06390c <https://git.typo3.org/Neos/Distributions/Base.git/commit/b06390c272bc769ea4f3c8b7fdb5d65c4d7fce76>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix dependencies in composer manifest
+-----------------------------------------------------------------------------------------
+
+This relaxes the dependencies a bit.
+
+* Commit: `52df56d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/52df56d1e429b7f0d56b87bd7626dbe875ab5abb>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix dependencies in composer manifest
+-----------------------------------------------------------------------------------------
+
+This relaxes the dependencies a bit.
+
+* Commit: `064e070 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/064e07033285aff1cdd2f382963c7b81bc5bec6b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix dependencies in composer manifest
+-----------------------------------------------------------------------------------------
+
+This relaxes the dependencies a bit.
+
+* Commit: `f713477 <https://git.typo3.org/Packages/TYPO3.Neos.Kickstarter.git/commit/f713477c875f35e17b8c7f96041913532af938be>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] ImageVariant needs to update itself if resource rendered
+-----------------------------------------------------------------------------------------
+
+The lazy generation of ImageVariant resources can break when
+the resource needs to be generated in a GET request. This
+change reverted the logic change done with 
+``I9fc5028e577d621183c2848e5ad97523637d8a9a`` but
+introduces the method ``addAdjustments()`` so multiple
+adjustment changes do not trigger multiple re-rendering
+of the resource.
+
+(cherry picked from commit d17a3665c47775abf3e74ec085bc7168b35475f2)
+
+* Commit: `859ecac <https://git.typo3.org/Packages/TYPO3.Media.git/commit/859ecac1bba91222f2a5e19ba4f3a61b13e41a18>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
