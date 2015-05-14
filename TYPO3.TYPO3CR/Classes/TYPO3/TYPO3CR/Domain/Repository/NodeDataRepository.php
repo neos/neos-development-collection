@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -918,7 +919,9 @@ class NodeDataRepository extends Repository {
 		$queryBuilder = $this->createQueryBuilder($workspaces);
 		$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
 		$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
-		$queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', '%' . strtolower($term) . '%');
+		// Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+		$likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+		$queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
 		if (strlen($pathStartingPoint) > 0) {
 			$pathConstraint = $queryBuilder->expr()->orx()
