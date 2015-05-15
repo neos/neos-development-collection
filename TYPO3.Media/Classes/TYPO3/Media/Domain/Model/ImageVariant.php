@@ -88,6 +88,9 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 	 */
 	public function initializeObject($initializationCause) {
 		parent::initializeObject($initializationCause);
+		if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+			$this->renderResource();
+		}
 	}
 
 	/**
@@ -121,7 +124,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 		// delete the resource manually in order to avoid orphaned resource objects:
 		if ($this->resource !== NULL) {
 			$this->resourceManager->deleteResource($this->resource);
-			$this->resource = NULL;
 		}
 
 		parent::refresh();
