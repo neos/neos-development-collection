@@ -900,6 +900,11 @@ class NodeDataRepository extends Repository {
 		$queryBuilder = $this->createQueryBuilder($workspaces);
 		$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
 		$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+
+		if ($queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform()->getName() === 'postgresql') {
+			// we know that properties is of type objectarray and on PostgreSQL that is encoded with bin2hex.
+			$term = bin2hex($term);
+		}
 		$queryBuilder->andWhere('n.properties LIKE :term')->setParameter('term', '%' . $term . '%');
 
 		if (strlen($pathStartingPoint) > 0) {
