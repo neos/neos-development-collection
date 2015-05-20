@@ -715,7 +715,7 @@ Options Reference:
   increments of time can be chosen. Default ``5`` minutes.
 
 Property Type: image (TYPO3\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For properties of type ``TYPO3\Media\Domain\Model\ImageInterface``, an image editor is rendered. If you want cropping
 and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``TRUE``, as in the following
@@ -807,7 +807,7 @@ Options Reference:
 		* ``defaultOption`` (string): default aspect ratio option to be chosen if no cropping has been applied already.
 
 Property Type: asset (TYPO3\\Media\\Domain\\Model\\Asset / array<TYPO3\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If an asset, i.e. ``TYPO3\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
 is an example::
