@@ -1,9 +1,9 @@
 TYPO3 Neos Documentation
 ------------------------
 
-*This version of the documentation has been rendered at:* |today|
-
 TYPO3 Neos is a free enterprise web content management system licensed under the GPL.
+
+This version of the documentation has been rendered at: |today|
 
 .. toctree::
    :maxdepth: 2
@@ -14,4 +14,8 @@ TYPO3 Neos is a free enterprise web content management system licensed under the
    DeveloperGuide/Index
    Appendixes/Index
    Contributors
-   Targets
+
+Indices and tables
+==================
+
+* :ref:`genindex`
