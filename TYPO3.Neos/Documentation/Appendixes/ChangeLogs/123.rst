@@ -273,7 +273,7 @@ the section on "Eel and FlowQuery" in the "Integrator Guide".
 * Commit: `5188017 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/518801757033f9be9b659ff6cfeb0b1b6190446f>`_
 
 [BUGFIX] make error/exception handling more robust - allowing to reload in case of an error
------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
 
 Currently, if an error during rendering occurs, and then the user reloads
 this document where the error occurs, the Neos backend breaks. This is because
@@ -375,7 +375,7 @@ TYPO3.Neos.Kickstarter
 
 The uri segment is not set for kickstarted sites which causes
 an error when trying to save the root page afterwards.
-A ``node:repair`ÂÂ` will fix it as well.
+A ``node:repair`` will fix it as well.
 
 Fixes: NEOS-980
 

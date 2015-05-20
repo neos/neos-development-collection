@@ -338,7 +338,7 @@ selector. The secondary panel should close when the selected
 node changes (for example by changing the page).
 
 * Fixes: `#59452 <http://forge.typo3.org/issues/59452>`_
-Relates: NEOS-124
+* Relates: NEOS-124
 
 (cherry picked from commit c30d2f0d797e9639c22092963567274213dfcc81)
 
