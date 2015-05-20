@@ -350,7 +350,6 @@
 			.neos-media-aside-list {
 				background-color: $grayLight;
 				border-top: 1px solid $grayLight;
-				margin-bottom: $defaultMargin;
 
 				&.neos-media-aside-list-editing-active {
 					li .neos-sidelist-edit-actions {
@@ -468,6 +467,7 @@
 
 			> form {
 				display: none;
+				margin-top: $defaultMargin;
 
 				&.neos-media-aside-list-editing-active {
 					display: block;
