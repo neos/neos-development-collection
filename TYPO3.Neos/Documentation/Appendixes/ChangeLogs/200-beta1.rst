@@ -1,6 +1,6 @@
-==================
+========================
 2.0.0-beta1 (2015-05-13)
-==================
+========================
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Base Distribution
@@ -784,7 +784,7 @@ See https://ci.neos.typo3.org/job/Update%20Neos%20references%20in%20master%20doc
 
 The ``NodeTreePrivilege`` was introduced with a custom
 ``NodeTreePrivilegeContext`` that only implements the
-``isDescendantNodeOf()` constraint.
+``isDescendantNodeOf()`` constraint.
 That custom implementation, however, did not support referring to the
 node *identifier*, it only supported node *paths*.
 
@@ -1698,7 +1698,7 @@ I42ab157cee3d1e2852442282857476d9f296f91f
 * Commit: `528c7ae <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/528c7ae7723702e1fffee79bfbf849e87026680c>`_
 
 [BUGFIX] fix regression introduced by "detect file-permission issues when publishing resources"
------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
 
 Resolves: NEOS-1111
 
@@ -2107,7 +2107,7 @@ upcoming version 2.0.
 * Commit: `6458cbf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6458cbf8ef7e65ab4601acf2a4f31e3ea2cc3ca5>`_
 
 [BUGFIX] make error/exception handling more robust - allowing to reload in case of an error
------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
 
 Currently, if an error during rendering occurs, and then the user reloads
 this document where the error occurs, the Neos backend breaks. This is because
@@ -2536,7 +2536,7 @@ functionality::
   data-neos-toggle="dropdown"
 
 The components are based on Boostrap 2.3, but all CSS classes are
-prefixed with "neos-*" to avoid conflicts with normal bootstrap usage.
+prefixed with "neos-\*" to avoid conflicts with normal bootstrap usage.
 
 * Commit: `fd19408 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fd194082b0f91826ba4c2230e00b1484a6b27697>`_
 
@@ -5374,7 +5374,7 @@ Resolves: NEOS-408
 The usage and naming of data attributes for the node data
 is very inconsistent and there's no clear rules.
 
-- Renames node attributes from data-neos-* to data-node-*.
+- Renames node attributes from data-neos-\* to data-node-\*.
   Direct properties of the node are prefixed with _ and internal
   non properties are prefixed with __.
 - Replaces all usage of .attr('data with .data('
@@ -5880,7 +5880,7 @@ See https://ci.neos.typo3.org/job/typo3-neos-branch/5/
 
 The uri segment is not set for kickstarted sites which causes
 an error when trying to save the root page afterwards.
-A ``node:repair`ÂÂ` will fix it as well.
+A ``node:repair`` will fix it as well.
 
 Fixes: NEOS-980
 
@@ -8037,7 +8037,7 @@ Resolves: NEOS-1006
 -----------------------------------------------------------------------------------------
 
 Suffixes every content cache entry with the current
-``SecurityContextHash` in order to make sure that content is cached
+``SecurityContextHash`` in order to make sure that content is cached
 depending on the currently authenticated roles.
 
 Related: NEOS-433
@@ -9272,8 +9272,7 @@ command.
 -----------------------------------------------------------------------------------------
 
 This commit contains the result of applying migration
- TYPO3.Neos-20141212183900.
-to this package.
+TYPO3.Neos-20141212183900 to this package.
 
 Resolves: NEOS-883
 
