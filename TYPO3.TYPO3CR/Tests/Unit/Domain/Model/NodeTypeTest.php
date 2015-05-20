@@ -280,7 +280,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
 			'properties' => array(
 				'date' => array(
-					'type' => 'date',
+					'type' => 'DateTime',
 					'defaultValue' => '2014-09-23'
 				)
 			)

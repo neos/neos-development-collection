@@ -444,7 +444,7 @@ class NodeType {
 			if (isset($propertyConfiguration['defaultValue'])) {
 				$type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
 				switch ($type) {
-					case 'date':
+					case 'DateTime':
 						$defaultValues[$propertyName] = new \DateTime($propertyConfiguration['defaultValue']);
 					break;
 					default:
