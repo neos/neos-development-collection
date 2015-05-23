@@ -10831,7 +10831,6 @@
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list {
   background-color: #3f3f3f;
   border-top: 1px solid #3f3f3f;
-  margin-bottom: 16px;
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.neos-media-aside-list-editing-active li .neos-sidelist-edit-actions {
   display: block;
@@ -10928,6 +10927,7 @@
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group > form {
   display: none;
+  margin-top: 16px;
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group > form.neos-media-aside-list-editing-active {
   display: block;
