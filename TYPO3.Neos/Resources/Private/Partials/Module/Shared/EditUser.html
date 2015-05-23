@@ -47,7 +47,7 @@
 		<div class="neos-control-group">
 			<label class="neos-control-label" for="interfaceLanguage">Interface language</label>
 			<div class="neos-controls">
-				<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" prependOptionLabel="{neos:backend.translate(id: 'user.preferences.useDefaultInterfaceLanguage', source: 'Modules')}" />
+				<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" prependOptionLabel="{neos:backend.translate(id: 'user.preferences.useDefaultInterfaceLanguage', source: 'Modules', value: 'Use system default')}" />
 			</div>
 		</div>
 	</fieldset>
