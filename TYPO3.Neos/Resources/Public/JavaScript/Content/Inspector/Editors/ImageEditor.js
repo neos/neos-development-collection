@@ -778,7 +778,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			var value = this.get('_object');
 
 			this._applyEditorChangesToAdjustments();
-			if (Object.keys(this.get('_adjustments')).length > 0) {
+			if (value !== null && Object.keys(this.get('_adjustments')).length > 0) {
 				// we need to transform this into an ImageVariant
 				if (value.__type === 'TYPO3\\Media\\Domain\\Model\\Image') {
 					value = {
