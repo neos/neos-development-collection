@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetCollection;
@@ -108,4 +109,34 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 		parent::deleteAssetCollectionAction($assetCollection);
 	}
 
+	/**
+	 * This custom errorAction adds FlashMessages for validation results to give more information in the
+	 *
+	 * @return string
+	 */
+	protected function errorAction() {
+		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
+			foreach ($errors as $error) {
+				$this->flashMessageContainer->addMessage($error);
+			}
+		}
+
+		return parent::errorAction();
+	}
+
+	/**
+	 * Individual error FlashMessage that hides which action fails in production.
+	 *
+	 * @return \TYPO3\Flow\Error\Message The flash message or FALSE if no flash message should be set
+	 */
+	protected function getErrorFlashMessage() {
+		if ($this->arguments->getValidationResults()->hasErrors()) {
+			return FALSE;
+		}
+		$errorMessage = 'An error occurred';
+		if ($this->objectManager->getContext()->isDevelopment()) {
+			$errorMessage .= ' while trying to call %1$s->%2$s()';
+		}
+		return new Error($errorMessage, NULL, array(get_class($this), $this->actionMethodName));
+	}
 }
