@@ -24,6 +24,17 @@ prototype(TYPO3.Neos.NodeTypes:Menu) {
 
 	node = ${node}
 	items = ${this.items}
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${documentNode}
+			node = ${node}
+		}
+		entryTags {
+			1 = 'NodeType_TYPO3.Neos:Document'
+		}
+	}
 }
 
 # Headline TS Object
