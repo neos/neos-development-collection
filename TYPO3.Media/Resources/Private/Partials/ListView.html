@@ -42,7 +42,7 @@
 					<i class="icon-move" title="Drag and drop on tag or collection" data-neos-toggle="tooltip"></i>
 				</td>
 				<td><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
-				<td>{asset.lastModified -> m:format.relativeDate()}</td>
+				<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
 				<td>{asset.resource.fileSize -> f:format.bytes()}</td>
 				<td>{asset.resource.mediatype}</td>
 				<td class="tags">
