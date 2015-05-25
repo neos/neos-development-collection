@@ -36,11 +36,14 @@ class RelativeDateViewHelper extends AbstractViewHelper {
 		if (!$date instanceof \DateTime) {
 			throw new \InvalidArgumentException('No valid date given,', 1424647058);
 		}
+		// More than 11 months ago
 		$now = new \TYPO3\Flow\Utility\Now();
-		if ($date->format('Y') < $now->format('Y')) {
+		if ($date < $now->modify('-11 months')) {
 			return $date->format('Y M n');
 		}
-		if ($date->format('z') === $now->format('z')) {
+		// Same day of same year
+		$now = new \TYPO3\Flow\Utility\Now();
+		if ($date->format('Y z') === $now->format('Y z')) {
 			return $date->format('H:i');
 		}
 		return $date->format('M n');
