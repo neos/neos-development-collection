@@ -40,7 +40,7 @@
 							</tr>
 							<tr>
 								<th>Last modified (resource)</th>
-								<td>{asset.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}</td>
+								<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
 							</tr>
 							<tr>
 								<th>File size</th>
