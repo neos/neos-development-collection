@@ -43,6 +43,20 @@
 								<td>{asset.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}</td>
 							</tr>
 							<tr>
+								<th>File size</th>
+								<td>{asset.resource.fileSize -> f:format.bytes()}</td>
+							</tr>
+							<f:if condition="{asset.width}">
+								<tr>
+									<th>Dimensions</th>
+									<td>{asset.width} x {asset.height}</td>
+								</tr>
+							</f:if>
+							<tr>
+								<th>Type</th>
+								<td>{asset.resource.mediatype}</td>
+							</tr>
+							<tr>
 								<th>Identifier</th>
 								<td>{asset.identifier}</td>
 							</tr>
