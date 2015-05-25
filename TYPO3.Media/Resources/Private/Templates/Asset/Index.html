@@ -62,7 +62,7 @@
 	<form action="{f:uri.action(action: 'index')}" method="get" class="neos-search">
 		<button type="submit" title="Search in assets" data-neos-toggle="tooltip"><i class="icon-search"></i></button>
 		<div>
-			<input type="search" name="{f:if(condition: argumentNamespace, then: '{argumentNamespace}[searchTerm]', else: 'searchTerm')}" placeholder="Search" value="{searchTerm}" />
+			<input type="search" name="{f:if(condition: argumentNamespace, then: '{argumentNamespace}[searchTerm]', else: 'searchTerm')}" placeholder="Search" value="{searchTerm}" autofocus="autofocus" />
 		</div>
 	</form>
 	<div class="neos-media-aside-group">
