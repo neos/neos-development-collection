@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Xliff\XliffParser;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Service as LocalizationService;
@@ -58,26 +59,41 @@ class XliffService {
 	protected $scrambleTranslatedLabels = FALSE;
 
 	/**
+	 * @Flow\InjectConfiguration(path="userInterface.translation.autoInclude", package="TYPO3.Neos")
+	 * @var array
+	 */
+	protected $packagesRegisteredForAutoInclusion = [];
+
+	/**
 	 * Return the json array for a given locale, sourceCatalog, xliffPath and package.
 	 * The json will be cached.
 	 *
 	 * @param Locale $locale The locale
-	 * @param string $sourceName The source catalog to use
-	 * @param string $packageKey The package
 	 * @throws \TYPO3\Flow\I18n\Exception
 	 * @return \TYPO3\Flow\Error\Result
 	 */
-	public function getCachedJson(Locale $locale, $sourceName = 'Main', $packageKey = 'TYPO3.Neos') {
-		$cacheIdentifier = md5(implode('#', array($locale, $sourceName, $packageKey)));
+	public function getCachedJson(Locale $locale) {
+		$cacheIdentifier = md5($locale);
 
 		if ($this->xliffToJsonTranslationsCache->has($cacheIdentifier)) {
 			$json = $this->xliffToJsonTranslationsCache->get($cacheIdentifier);
 		} else {
-			$sourcePath = Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath));
-			list($xliffPathAndFilename) = $this->localizationService->getXliffFilenameAndPath($sourcePath, $sourceName, $locale);
+			$labels = [];
 
-			$json = $this->parseXliffToJson($xliffPathAndFilename, $packageKey, $sourceName);
+			foreach ($this->packagesRegisteredForAutoInclusion as $packageKey => $sourcesToBeIncluded) {
+				if (!is_array($sourcesToBeIncluded)) {
+					continue;
+				}
 
+				$sourcePath = Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath));
+
+				foreach ($sourcesToBeIncluded as $sourceName) {
+					list($xliffPathAndFilename) = $this->localizationService->getXliffFilenameAndPath($sourcePath, $sourceName, $locale);
+					$labels = Arrays::arrayMergeRecursiveOverrule($labels, $this->parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName));
+				}
+			}
+
+			$json = json_encode($labels);
 			$this->xliffToJsonTranslationsCache->set($cacheIdentifier, $json);
 		}
 
@@ -90,9 +106,10 @@ class XliffService {
 	 * @param string $xliffPathAndFilename The file to read
 	 * @param string $packageKey
 	 * @param string $sourceName
-	 * @return string
+	 * @todo remove the override handling once Flow takes care of that, see FLOW-61
+	 * @return array
 	 */
-	public function parseXliffToJson($xliffPathAndFilename, $packageKey, $sourceName) {
+	public function parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName) {
 		/** @var array $parsedData */
 		$parsedData = $this->xliffParser->getParsedData($xliffPathAndFilename);
 		$arrayData = array();
@@ -106,7 +123,7 @@ class XliffService {
 			$this->setArrayDataValue($arrayData, $packageKey . '.' . $sourceName . '.' . str_replace ('.', '-', $key), $valueToStore);
 		}
 
-		return json_encode($arrayData);
+		return $arrayData;
 	}
 
 	/**
