@@ -129,9 +129,19 @@ TYPO3:
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 
-      # switch on to see all translated labels getting scrambled. You now can localize
+      # Switch on to see all translated labels getting scrambled. You now can localize
       # everything that is still readable.
       scrambleTranslatedLabels: FALSE
+
+      translation:
+        # Configure which localization sources should be automatically included.
+        # The included sources are parsed into the xliff.json which is loaded by Neos
+        # for handling translations in the javascript code.
+        #
+        # Format:
+        #   'Package.Key': ['Main', 'Errors', 'NodeTypes']
+        autoInclude:
+          'TYPO3.Neos': ['Main']
 
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
