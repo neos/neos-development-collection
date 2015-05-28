@@ -9,8 +9,7 @@ requirejs({
 	paths: {
 		'Library': '../Library/',
 		'text': '../Library/requirejs/text',
-		'i18n': '../Library/requirejs/i18n',
-		'xregexp': '../Library/XRegExp/xregexp.min'
+		'i18n': '../Library/requirejs/i18n'
 	},
 	locale: 'en',
 
