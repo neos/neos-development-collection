@@ -312,5 +312,5 @@
     icon: 'icon-folder-open-alt'
   constraints:
     nodeTypes:
-      'TYPO3.Neos:Content': TRUE
-      'TYPO3.Neos:ContentCollection': TRUE
+      'TYPO3.Neos:Document': FALSE
+      '*': TRUE
