@@ -78,7 +78,7 @@ Version 0.9.12 from 2/2/13
 - deleted js/jquery.min.js
 
 
-CodeMirror 3.20 from http://codemirror.net/
+CodeMirror 3.24.0 from http://codemirror.net/
 
 
 Chosen 0.12.1 from http://harvesthq.github.io/chosen/
