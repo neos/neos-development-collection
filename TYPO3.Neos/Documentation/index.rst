@@ -8,11 +8,11 @@ This version of the documentation has been rendered at: |today|
 .. toctree::
    :maxdepth: 2
 
-   GettingStarted/Index
-   IntegratorGuide/Index
-   IntegratorsCookbook/Index
-   DeveloperGuide/Index
-   Appendixes/Index
+   GettingStarted/index
+   IntegratorGuide/index
+   IntegratorsCookbook/index
+   DeveloperGuide/index
+   Appendixes/index
    Contributors
 
 Indices and tables
