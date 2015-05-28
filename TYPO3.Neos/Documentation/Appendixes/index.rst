@@ -7,4 +7,4 @@ Appendixes
 
 	*
 
-	ChangeLogs/Index
+	ChangeLogs/index
