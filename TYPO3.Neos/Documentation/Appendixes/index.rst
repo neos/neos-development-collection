@@ -7,5 +7,5 @@ Appendixes
 
 	*
 
-	ReleaseNotes/Index
-	ChangeLogs/Index
+	ReleaseNotes/index
+	ChangeLogs/index
