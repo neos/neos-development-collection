@@ -48,44 +48,52 @@ class PluginViewImplementation extends PluginImplementation {
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$pluginRequest = new ActionRequest($parentRequest);
 
-		if ($this->node instanceof NodeInterface) {
-			$pluginNodePath = $this->node->getProperty('plugin');
-			$pluginViewName = $this->node->getProperty('view');
-
-			// Set the node to render this to the masterPlugin node
-			if (strlen($pluginNodePath) > 0) {
-				$this->node = $this->propertyMapper->convert($pluginNodePath, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-				$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
-				$this->passArgumentsToPluginRequest($pluginRequest);
-
-				if ($this->node instanceof NodeInterface) {
-					$controllerObjectPairs = array();
-					foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
-						/** @var PluginViewDefinition $pluginViewDefinition */
-						if ($pluginViewDefinition->getName() !== $pluginViewName) {
-							continue;
-						}
-						$controllerObjectPairs = $pluginViewDefinition->getControllerActionPairs();
-						break;
-					}
-					if ($controllerObjectPairs !== array()) {
-						$controllerObjectName = key($controllerObjectPairs);
-						$action = current($controllerObjectPairs[$controllerObjectName]);
-
-						$pluginRequest->setControllerObjectName($controllerObjectName);
-						$pluginRequest->setControllerActionName($action);
-						$pluginRequest->setArgument('__node', $this->node);
-					}
-				}
-			}
-		} else {
+		if (!$this->node instanceof NodeInterface) {
 			$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 			$this->passArgumentsToPluginRequest($pluginRequest);
 			$pluginRequest->setControllerPackageKey($this->getPackage());
 			$pluginRequest->setControllerSubpackageKey($this->getSubpackage());
 			$pluginRequest->setControllerName($this->getController());
 			$pluginRequest->setControllerActionName($this->getAction());
+			return $pluginRequest;
 		}
+
+		$pluginNodePath = $this->node->getProperty('plugin');
+		if (strlen($pluginNodePath) === 0) {
+			return $pluginRequest;
+		}
+		$pluginViewName = $this->node->getProperty('view');
+
+		// Set the node to render this to the masterPlugin node
+		$this->node = $this->propertyMapper->convert($pluginNodePath, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$pluginRequest->setArgument('__node', $this->node);
+		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
+		$this->passArgumentsToPluginRequest($pluginRequest);
+
+		if ($pluginRequest->getControllerObjectName() !== '') {
+			return $pluginRequest;
+		}
+
+		$controllerObjectPairs = array();
+		foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
+
+			/** @var PluginViewDefinition $pluginViewDefinition */
+			if ($pluginViewDefinition->getName() !== $pluginViewName) {
+				continue;
+			}
+			$controllerObjectPairs = $pluginViewDefinition->getControllerActionPairs();
+			break;
+		}
+
+		if ($controllerObjectPairs === array()) {
+			return $pluginRequest;
+		}
+
+		$defaultControllerObjectName = key($controllerObjectPairs);
+		$defaultActionName = current($controllerObjectPairs[$defaultControllerObjectName]);
+		$pluginRequest->setControllerObjectName($defaultControllerObjectName);
+		$pluginRequest->setControllerActionName($defaultActionName);
+
 		return $pluginRequest;
 	}
 
@@ -96,7 +104,6 @@ class PluginViewImplementation extends PluginImplementation {
 	 * @throws StopActionException
 	 */
 	public function evaluate() {
-
 		$currentContext = $this->tsRuntime->getCurrentContext();
 		$this->node = $currentContext['node'];
 		/** @var $parentResponse Response */
