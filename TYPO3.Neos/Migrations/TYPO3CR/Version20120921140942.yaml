@@ -1,0 +1,315 @@
+up:
+  comments: 'This is the migration to adjust sites to the new TYPO3.Phoenix.ContentTypes namespace'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Page'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Page'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Section'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Section'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Headline'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Headline'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Text'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Text'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Image'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Image'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:TextWithImage'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:TextWithImage'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Html'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Html'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Menu'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Menu'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Column'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Column'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:TwoColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:TwoColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:ThreeColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:ThreeColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:FourColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:FourColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Plugin'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Phoenix.ContentTypes:Plugin'
+
+down:
+  comments: 'This migrates nodes from the TYPO3.Phoenix.ContentTypes namespace back to the TYPO3.TYPO3 namespace.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Page'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Page'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Section'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Section'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Headline'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Headline'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Text'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Text'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Image'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Image'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:TextWithImage'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:TextWithImage'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Html'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Html'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Menu'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Menu'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Column'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Column'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:TwoColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:TwoColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:ThreeColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:ThreeColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:FourColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:FourColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Phoenix.ContentTypes:Plugin'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.TYPO3:Plugin'
