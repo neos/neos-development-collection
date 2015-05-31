@@ -137,7 +137,7 @@ class NodeService {
 				return TRUE;
 			}
 		}
-		return $this->nodePathExistsInAnyContext($nodePath);
+		return !$this->nodePathExistsInAnyContext($nodePath);
 	}
 
 }
