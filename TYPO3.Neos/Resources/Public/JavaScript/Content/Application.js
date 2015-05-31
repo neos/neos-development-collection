@@ -401,10 +401,6 @@ function(
 
 						// Update node selection (will update VIE)
 						NodeSelection.initialize();
-						that.trigger('pageLoaded');
-
-						// Send external event so site JS can act on it
-						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
 
 						if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
 							// Refresh CreateJS, renders the button bars f.e.
@@ -414,11 +410,15 @@ function(
 						// If doing a reload, we highlight the currently active content element again
 						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
 						if ($currentlyActiveContentElement.length === 1) {
-							NodeSelection.updateSelection($currentlyActiveContentElement);
+							NodeSelection.updateSelection($currentlyActiveContentElement, {scrollToElement: true});
 						}
 
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
+
+						that.trigger('pageLoaded');
+						// Send external event so site JS can act on it
+						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
 
 						if (typeof callback === 'function') {
 							callback();
