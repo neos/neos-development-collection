@@ -163,7 +163,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 		}
 
+		$changedNodePathsCollection = array();
+
 		if ($this->getNodeType()->isAggregate()) {
+
 			$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE, TRUE);
 
 			/** @var NodeData $nodeData */
@@ -173,6 +176,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 					$pathSuffix = substr($nodeVariant->getPath(), strlen($originalPath));
 					$possibleShadowedNodeData = $nodeData->move($path . $pathSuffix, $this->context->getWorkspace());
 					$nodeVariant->setNodeData($possibleShadowedNodeData);
+					$changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), $checkForExistence);
 				}
 			}
 		} else {
@@ -182,10 +186,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 			$possibleShadowedNodeData = $this->nodeData->move($path, $this->context->getWorkspace());
 			$this->setNodeData($possibleShadowedNodeData);
+			$changedNodePathsCollection[] = array($this, $originalPath, $this->getNodeData()->getPath(), $checkForExistence);
 		}
 
 		$this->nodeDataRepository->persistEntities();
-		$this->context->getFirstLevelNodeCache()->flush();
+		foreach ($changedNodePathsCollection as $nodePathChangedArguments) {
+			call_user_func_array(array($this, 'emitNodePathChanged'), $nodePathChangedArguments);
+		}
 	}
 
 	/**
@@ -1661,5 +1668,17 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	protected function emitNodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $newValue) {
+	}
+
+	/**
+	 * Signals that the node path has been changed.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param string $oldPath
+	 * @param string $newPath
+	 * @param boolean $checkForExistenceWasEnabled
+	 */
+	protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $checkForExistenceWasEnabled) {
 	}
 }

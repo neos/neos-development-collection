@@ -39,4 +39,18 @@ interface ContextFactoryInterface {
 	 */
 	public function create(array $contextConfiguration = array());
 
+	/**
+	 * Clears the instances cache clearing all contexts.
+	 *
+	 * @return void
+	 */
+	public function reset();
+
+	/**
+	 * Returns all known instances of Context.
+	 *
+	 * @return array<Context>
+	 */
+	public function getInstances();
+
 }
