@@ -324,6 +324,9 @@ define(
 			// Replace existing entity wrapper in case it already exists
 			NodeSelection.replaceEntityWrapper($newElement);
 
+			// Select the inserted node
+			NodeSelection.updateSelection($newElement, {scrollToElement: true, selectFirstEditable: true});
+
 			EventDispatcher.trigger('contentChanged');
 			EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $newElement.get(0)});
 			LoadingIndicator.done();

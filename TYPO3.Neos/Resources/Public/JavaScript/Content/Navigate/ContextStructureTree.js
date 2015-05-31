@@ -156,17 +156,7 @@ define(
 
 				onClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null) {
-						var nodePath = node.data.key,
-							offsetFromTop = 150,
-							$element = $('[about="' + nodePath + '"]');
-
-						// Prevent errors if the element cannot be found on the page
-						if ($element.length > 0) {
-							NodeSelection.updateSelection($element);
-							$('html, body').animate({
-								scrollTop: $element.offset().top - offsetFromTop
-							}, 500);
-						}
+						this.options.parent._selectNode(node);
 					}
 				},
 
@@ -187,23 +177,35 @@ define(
 			this._initializePropertyObservers(documentMetadata);
 		},
 
+		_selectNode: function(node) {
+			var nodePath = node.data.key,
+				$element = $('[about="' + nodePath + '"]');
+			// Prevent errors if the element cannot be found on the page
+			if ($element.length > 0) {
+				NodeSelection.updateSelection($element, {scrollToElement: true, selectFirstEditable: true});
+			}
+		},
+
 		afterDeleteNode: function() {
 			this._doNotRefreshOnPageNodePathChanged();
 			ContentModule.reloadPage();
 		},
 
-		afterPersistNode: function() {
+		afterPersistNode: function(newNode) {
 			this._doNotRefreshOnPageNodePathChanged();
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 
-		afterPaste: function() {
+		afterPaste: function(newNode) {
 			this._doNotRefreshOnPageNodePathChanged();
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 
-		afterMove: function() {
+		afterMove: function(newNode) {
 			this._doNotRefreshOnPageNodePathChanged();
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 
@@ -211,6 +213,14 @@ define(
 			var that = this;
 			ContentModule.one('pageLoaded', function() {
 				that.set('refreshOnPageNodePathChanged', false);
+			});
+		},
+
+		_selectElementAfterPageReload: function(newNode) {
+			var that = this;
+			ContentModule.one('pageLoaded', function() {
+				newNode.focus();
+				that._selectNode(newNode);
 			});
 		}
 	});
