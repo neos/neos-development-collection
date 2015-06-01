@@ -251,6 +251,13 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 			// Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
 		$secondRenderResult = $view->render();
 		$this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
+
+			// This should flush "Inner segment 2"
+		$this->contentCache->flushByTag('Node_47a6ee72-936a-4489-abc1-3666a63cdc4a');
+
+			// Since the cache entry for "Inner segment 2" is missing, the outer segment is also evaluated, but not "Inner segment 1"
+		$secondRenderResult = $view->render();
+		$this->assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
 	}
 
 	/**

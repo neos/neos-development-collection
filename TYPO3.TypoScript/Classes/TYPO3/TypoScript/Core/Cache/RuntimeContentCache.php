@@ -266,7 +266,9 @@ class RuntimeContentCache {
 		if (isset($configuration['entryTags'])) {
 			foreach ($configuration['entryTags'] as $tagKey => $tagValue) {
 				$tagValue = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryTags/' . $tagKey, $tsObject);
-				if ((string)$tagValue !== '') {
+				if (is_array($tagValue)) {
+					$cacheTags = array_merge($cacheTags, $tagValue);
+				} elseif ((string)$tagValue !== '') {
 					$cacheTags[] = $tagValue;
 				}
 			}

@@ -162,7 +162,7 @@ contentCache.cacheSegmentsWithTags = TYPO3.TypoScript:Array {
 			}
 
 			entryTags {
-				1 = 'Never'
+				2 = ${['Node_cba42fd2-495f-409d-af2a-b71768a33a6f', 'Node_47a6ee72-936a-4489-abc1-3666a63cdc4a']}
 			}
 		}
 	}
