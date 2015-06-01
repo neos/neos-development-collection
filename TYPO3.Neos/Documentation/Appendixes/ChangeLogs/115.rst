@@ -1,0 +1,139 @@
+====================
+1.1.5
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/53/
+
+* Commit: `f14df88 <https://git.typo3.org/Neos/Distributions/Base.git/commit/f14df88857c63c6c0ee26d70c195d8dd9677e9ec>`_
+
+[TASK] Update composer manifest for 1.1.*
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/53/
+
+* Commit: `f86e68f <https://git.typo3.org/Neos/Distributions/Base.git/commit/f86e68f2d0c26e57ee5b1e2bad3cdc5cbc15c9aa>`_
+
+[BUGFIX] Pin doctrine/migrations to tagged working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Unfortunately this needs to be repeated in the root manifest.
+
+Related: FLOW-300
+
+* Commit: `ed7dee0 <https://git.typo3.org/Neos/Distributions/Base.git/commit/ed7dee0891f2b3431b30bab07e7331983507b949>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/40/
+
+* Commit: `c0df045 <https://git.typo3.org/Neos/Distributions/Base.git/commit/c0df04512791329a4a638fa95fcd8100074c3f30>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Add changelog for TYPO3 Neos 1.1.4
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/53/
+
+* Commit: `d701046 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d701046d90d4d246fbdfaad69a3e11b6425a0ef2>`_
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/53/
+
+* Commit: `9a5eb87 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9a5eb87c085c63cc9013ffcdfec1311e2cd32885>`_
+
+[BUGFIX] Remove illegal character from ContentModuleBootstrap.js
+-----------------------------------------------------------------------------------------
+
+This character leads to a javascript error 'unexpected identifier'
+while loading the unminified sources.
+
+* Commit: `41bf2bf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/41bf2bf2667c6b052c77d011f523c0017d162597>`_
+
+[BUGFIX] Fetch external fonts via HTTPS
+-----------------------------------------------------------------------------------------
+
+Currently the Login and Error Views of Neos include Google fonts via
+HTTP leading to ``Mixed Content`` errors when accessing the site over
+HTTPS.
+
+This patch adjusts ``Error.scss`` and ``Login.scss`` accordingly.
+
+Note: We don't use protocol relative URLs by intention, because those
+are deprecated for security reasons.
+
+Fixes: NEOS-1100
+
+* Commit: `8706203 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8706203972d9377579fec72253dbe3ef74ad611b>`_
+
+[BUGFIX] Shortcut resolves to first node instead of sibling
+-----------------------------------------------------------------------------------------
+
+Shortcuts pointing to the first child node resolves to the next
+sibling of the current page when navigating the child pages of the
+shortcut. This happens because the child nodes are fetched from the
+first level node cache, which can have a array pointer that has been
+moved.
+
+Fixes: NEOS-1220
+
+* Commit: `c3744b4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c3744b45bdfca1a0165ef1176719a50104d412c2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix spelling error in error message
+-----------------------------------------------------------------------------------------
+
+Fixes: FLOW-112
+
+* Commit: `f87fd23 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/f87fd23a06e512eb4b0881de049ea92b39422406>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
