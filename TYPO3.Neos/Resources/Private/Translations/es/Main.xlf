@@ -8,16 +8,16 @@
 			<target xml:lang="es-ES" state="needs-translation">Auto-Publish</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="es-ES" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Aplicar</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Aplicar cambios</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="es-ES" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="es-ES" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="es-ES" state="needs-translation">Create after</target></trans-unit>
@@ -26,13 +26,13 @@
 			<target xml:lang="es-ES" state="needs-translation">Create new</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="es-ES" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cerrar</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="es-ES" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Copiar</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="es-ES" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cortar</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			<target xml:lang="es-ES" state="needs-translation">Hide / Unhide</target></trans-unit>
@@ -41,89 +41,89 @@
 			<target xml:lang="es-ES" state="needs-translation">Navigate</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="es-ES" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">OK</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="es-ES" state="needs-translation">Remove</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="es-ES" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Actualizar</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Borrar</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="es-ES" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el elemento</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Borrar el elemento</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="es-ES" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Descartar</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Descartar cambios</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar título</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar / Previsualizar</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve">
 				<source>Navigate</source>
 			<target xml:lang="es-ES" state="needs-translation">Navigate</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="es-ES" state="needs-translation">New After</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nuevo Después</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="es-ES" state="needs-translation">New Before</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nuevo Antes</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="es-ES" state="needs-translation">New Into</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nuevo en</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="es-ES" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pegar</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="es-ES" state="needs-translation">Paste After</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pegar Después</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="es-ES" state="needs-translation">Paste Before</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pegar Antes</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="es-ES" state="needs-translation">Paste Into</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pegar en</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="es-ES" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Contraseña</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="es-ES" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Vista previa</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="es-ES" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Publicar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="es-ES" state="needs-translation">Saving...</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Guardando...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="es-ES" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Guardado</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="es-ES" state="needs-translation">Toggle inspector</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="es-ES" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="es-ES" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tú</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
-			<target xml:lang="es-ES" state="needs-translation">Click here to continue to the {0} page.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Haga clic aquí para continuar a la página {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click here to continue to the {0} asset.</source>
 			<target xml:lang="es-ES" state="needs-translation">Click here to continue to the {0} asset.</target></trans-unit>
@@ -142,22 +142,22 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="es-ES" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pantalla completa</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="es-ES" state="needs-translation">Open page in live workspace</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Descartar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="es-ES" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="es-ES" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Seguro que quieres publicar todos los cambios?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="es-ES" state="needs-translation">Editing Modes</target></trans-unit>
@@ -172,7 +172,7 @@
 			<target xml:lang="es-ES" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="es-ES" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Elemento seleccionado</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
 			<target xml:lang="es-ES" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
@@ -181,13 +181,13 @@
 			<target xml:lang="es-ES" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="es-ES" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Seguir editando</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
 			<target xml:lang="es-ES" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="es-ES" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Aplicar</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
 			<target xml:lang="es-ES" state="needs-translation">view is displayed on page</target></trans-unit>
@@ -196,93 +196,93 @@
 			<target xml:lang="es-ES" state="needs-translation">view is displayed on current page</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="es-ES" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Realmente quieres borrar</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="es-ES" state="needs-translation">This will delete the element</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Se eliminará el elemento</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="es-ES" state="needs-translation">and it's children</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">y sus descendientes</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="es-ES" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="es-ES" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Altura</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Realmente quieres borrar?</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="es-ES" state="needs-translation">this element</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">este elemento</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="es-ES" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Se eliminará el elemento.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="es-ES" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="es-ES" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ancho</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="es-ES" state="needs-translation">Missing required property: </target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Falta la propiedad requerida: </target><alt-trans><target xml:lang="es-ES">Falta la propiedad requerida:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="es-ES" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="es-ES" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Se produjo un error mientras se guardaba</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="es-ES" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Vuelva a cargar la página para intentar solucionar el problema.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="es-ES" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Recargar el backend</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="es-ES" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Recargar</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="es-ES" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="es-ES" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Entrar</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="es-ES" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Autenticando</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="es-ES" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ir a configuración</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="es-ES" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Falta la página de inicio</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="es-ES" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No se ha definido ningún sitio, el sitio no contiene una página de inicio o el sitio activo no ha podido ser determinado.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="es-ES" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Puedes configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="es-ES" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error de base de datos</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="es-ES" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Lo sentimos, hemos detectado un error con su base de datos. Revise los archivos de registro de datos, logs, etc... para obtener más información.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="es-ES" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tal vez quieras configurar o comprobar la configuración de la base de datos en la configuración.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="es-ES" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Página no encontrada</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="es-ES" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Lo sentimos, no se ha encontrado la página solicitada.</target></trans-unit>
     </body>
   </file>
 </xliff>

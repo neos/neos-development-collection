@@ -199,7 +199,7 @@
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="de" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="de" state="translated">Möchten Sie das Element wirklich löschen</target><alt-trans><target xml:lang="de">Möchten Sie wirklich löschen</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="de" state="translated">Dadurch wird die Seite gelöscht</target></trans-unit>

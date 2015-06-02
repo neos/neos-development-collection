@@ -135,7 +135,7 @@
 			<target xml:lang="da" state="translated">(Ingen destination valgt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="translated">Dette er en genvej til den første underside&lt;br/&gt;Klik {0} for at fortsætte til siden.</target></trans-unit>
+			<target xml:lang="da" state="translated">Dette er en genvej til den første underside< br/>Klik {0} for at fortsætte til siden.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="da" state="translated">Dette er en genvej til den overordnede side. &lt;br /&gt; Klik på {0} at fortsætte til siden.</target></trans-unit>
@@ -241,10 +241,10 @@
 			<target xml:lang="da" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="da" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="da" state="translated">Genindlæs backenden</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="da" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="da" state="translated">Genindlæs</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
@@ -261,7 +261,7 @@
 			<target xml:lang="da" state="translated">Gå til opsætning</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="da" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="da" state="translated">Der blev ikke fundet en hjemmeside</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
 			<target xml:lang="da" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>

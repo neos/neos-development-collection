@@ -93,7 +93,7 @@
 			<target xml:lang="de" state="translated">Benutzername</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="de" state="translated">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target></trans-unit>
+			<target xml:lang="de" state="translated">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target><alt-trans><target xml:lang="de">Der Benutzername kann nicht über die Benutzeroberfläche geändert werden</target></alt-trans></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
 			<target xml:lang="de" state="translated">Benutzer speichern</target></trans-unit>

@@ -5,10 +5,10 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="sv-SE" state="needs-translation">Management</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Hantering</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="sv-SE" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Innehåller flera moduler relaterade till innehållshantering</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="sv-SE" state="needs-translation">Workspaces</target></trans-unit>
@@ -35,7 +35,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="sv-SE" state="needs-translation">{0} created the {1} {2}.</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">{0} skapade {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
 			<target xml:lang="sv-SE" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
@@ -66,7 +66,7 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="sv-SE" state="needs-translation">Administration</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
 			<target xml:lang="sv-SE" state="needs-translation">Contains multiple modules related to administration</target></trans-unit>
@@ -102,7 +102,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Repeat password</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="sv-SE" state="needs-translation">Roles</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Roller</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="sv-SE" state="needs-translation">Package Management</target></trans-unit>

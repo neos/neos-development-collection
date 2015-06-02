@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="km">
+    <body>
+      <!-- general translations like button -->
+      <trans-unit id="autoPublish" xml:space="preserve">
+				<source>Auto-Publish</source>
+			<target xml:lang="km" state="translated">ចុះផ្សាយស្វ័យប្រវត្តិ</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="km" state="translated">អនុវត្ត</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			<target xml:lang="km" state="translated">អនុវត្តការផ្លាស់ប្តូរ</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="km" state="translated">អត្ថបទ</target><alt-trans><target xml:lang="km">មាតិកា</target></alt-trans></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve">
+				<source>Create after</source>
+			<target xml:lang="km" state="translated">បង្កើតពេលបន្ទាប់</target><alt-trans><target xml:lang="km">បង្កើតពេលក្រោយ</target></alt-trans></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+			<target xml:lang="km" state="translated">បង្កើតថ្មី</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			<target xml:lang="km" state="translated">បិត</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve">
+				<source>Copy</source>
+			<target xml:lang="km" state="translated">ចម្លង</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve">
+				<source>Cut</source>
+			<target xml:lang="km" state="translated">កាត់</target></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+			<target xml:lang="km" state="translated">លាក់ / បង្ហាញ</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+			<target xml:lang="km" state="translated">រុករក</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+			<target xml:lang="km" state="translated">យល់ព្រម</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+			<target xml:lang="km" state="translated">លុបចេញ</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+			<target xml:lang="km" state="translated">ធ្វើឱ្យស្រស់</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			<target xml:lang="km" state="translated">លុប</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve">
+				<source>Yes, delete the element</source>
+			<target xml:lang="km" state="translated">យល់ព្រម, លុបធាតុនោះ</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve">
+				<source>Delete the element</source>
+			<target xml:lang="km" state="translated">លុបធាតុនោះ</target><alt-trans><target xml:lang="km">លុប​ធាតុ</target></alt-trans></trans-unit>
+      <trans-unit id="discard" xml:space="preserve">
+				<source>Discard</source>
+			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve">
+				<source>Discard changes</source>
+			<target xml:lang="km" state="translated">លះបង់ការ កែ</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve">
+				<source>Edit title</source>
+			<target xml:lang="km" state="translated">កែ​ចំណង​ជើង</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve">
+				<source>Edit / Preview</source>
+			<target xml:lang="km" state="translated">កែ / ការមើលជាមុន</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="km" state="translated">កែប្រែ</target></trans-unit>
+      <trans-unit id="Navigate" xml:space="preserve">
+				<source>Navigate</source>
+			<target xml:lang="km" state="translated">រុករក</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve">
+				<source>New After</source>
+			<target xml:lang="km" state="translated">បង្កើតថ្មីបន្ទាប់ទៀត</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve">
+				<source>New Before</source>
+			<target xml:lang="km" state="translated">បង្កើតថ្មីមុន</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve">
+				<source>New Into</source>
+			<target xml:lang="km" state="translated">បង្កើតថ្មីទៅ</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve">
+				<source>Paste</source>
+			<target xml:lang="km" state="translated">បិទភ្ជាប់</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve">
+				<source>Paste After</source>
+			<target xml:lang="km" state="translated">បិតភ្ជាប់បន្ទាប់</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve">
+				<source>Paste Before</source>
+			<target xml:lang="km" state="translated">បិតភ្ជាប់មុន</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve">
+				<source>Paste Into</source>
+			<target xml:lang="km" state="translated">បិតភ្ជាប់ទៅ</target></trans-unit>
+      <trans-unit id="password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="km" state="translated">ពាក្យ​សម្ងាត់</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			<target xml:lang="km" state="translated">មើលជាមុន</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+			<target xml:lang="km" state="translated">ដាក់ផ្សាយ</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve">
+				<source>Saving...</source>
+			<target xml:lang="km" state="translated">កំពុង​រក្សា​ទុក</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve">
+				<source>Saved</source>
+			<target xml:lang="km" state="translated">បាន​រក្សា​ទុក</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve">
+				<source>Toggle inspector</source>
+			<target xml:lang="km" state="translated">ត្រួតពិនិត្យបិទបើក</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="km" state="translated">ឈ្មោះ​គណនី</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve">
+				<source>You</source>
+			<target xml:lang="km" state="translated">អ្នក</target></trans-unit>
+      <!-- shortcuts -->
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+				<source>Click here to continue to the {0} page.</source>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទំព័រ {0}</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+				<source>Click here to continue to the {0} asset.</source>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទ្រព្យ {0}</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+				<source>Click here to continue to the {0} ext page.</source>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទំព័រមុន {0}.</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+				<source>(no target has been selected)</source>
+			<target xml:lang="km" state="translated">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+      <!-- javascript -->
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+				<source>Full Screen</source>
+			<target xml:lang="km" state="translated">អេក្រង់ពេញ</target><alt-trans><target xml:lang="km">ពេញអេក្រង់</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+				<source>Open page in live workspace</source>
+			<target xml:lang="km" state="translated">បើកពំព័រនៅក្នុងលំហរការងារផ្ទាល់</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+				<source>Discard all changes</source>
+			<target xml:lang="km" state="translated">បោះបង់ការផ្លាស់ប្តូរទាំងអស់</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			<target xml:lang="km" state="translated">ត់អ្នកពិតជាចង់បោះបង់ការកែរទាំងអស់ក្នុងលំហរការងារនេះមែនទេ?</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+				<source>Publish all changes</source>
+			<target xml:lang="km" state="translated">ផ្សាយរាល់ការផ្លាស់ប្តូរ</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+				<source>Are you sure that you want to publish all changes?</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់ដាក់ផ្សាយការផ្លាស់ប្តូរទាំងអស់មែនឬទេ?</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+				<source>Editing Modes</source>
+			<target xml:lang="km" state="translated">ពិធីការកែរ</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+				<source>Preview Central</source>
+			<target xml:lang="km" state="translated">មណ្ឌលបុរេទសនា</target></trans-unit>
+      <trans-unit id="inspector" xml:space="preserve">
+				<source>Inspector</source>
+			<target xml:lang="km" state="translated">អ្នកត្រួតពិនិត្យ</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+				<source>You still have changes. What do you want to do with them?</source>
+			<target xml:lang="km" state="translated">អ្នកនៅមានការផ្លាស់ប្តួរ។ តើអ្នកចង់ធ្វើអ្វីជាមួយពួកវា?</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+				<source>Selected element</source>
+			<target xml:lang="km" state="translated">រើសបានធាតុ</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+				<source>There are fields that are not correctly filled in.</source>
+			<target xml:lang="km" state="translated">មានកន្លែងបំពេញ ដែលអ្នកបានបំពេញមិនត្រូវ។</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			<target xml:lang="km" state="translated">កន្លែងបំពេញនេះ បានចេញសញ្ញាដែលថាបំពេញមិនត្រឹមត្រូវមួយ។ សូមបំពេញវាអោយបានត្រឹមត្រូវ។</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+				<source>Continue editing</source>
+			<target xml:lang="km" state="translated">បន្តរកែរ</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+				<source>Throw away</source>
+			<target xml:lang="km" state="translated">បោះចោល</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="km" state="translated">អនុវត្ត</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+				<source>view is displayed on page</source>
+			<target xml:lang="km" state="translated">ទេសភាពបានបង្ហាញទៅទំព័រ</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+				<source>view is displayed on current page</source>
+			<target xml:lang="km" state="translated">ទេសភាពបានបង្ហាញទៅទំព័រនេះ</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+				<source>This will delete the element</source>
+			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល</target><alt-trans><target xml:lang="km">នេះនឹងលុបធាតុចោល</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+				<source>and it's children</source>
+			<target xml:lang="km" state="translated">និងកូនៗរបស់វា</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="km" state="translated">នៅក្នុង ការគ្រប់គ្រងលំហរការងារ សកម្មភាពនេះមិនអាចថយក្រោយបានទេ។</target></trans-unit>
+      <trans-unit id="height.ucfirst" xml:space="preserve">
+				<source>Height</source>
+			<target xml:lang="km" state="translated">កំពស់</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎?</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+				<source>this element</source>
+			<target xml:lang="km" state="translated">ធាតុនេះ</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+				<source>This will delete the element.</source>
+			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="km" state="translated">នៅក្នុង ការគ្រប់គ្រងលំហរការងារ សកម្មភាពនេះមិនអាចថយក្រោយបានទេ។.</target></trans-unit>
+      <trans-unit id="width.ucfirst" xml:space="preserve">
+				<source>Width</source>
+			<target xml:lang="km" state="translated">ទទឺង</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve">
+				<source>Missing required property: </source>
+			<target xml:lang="km" state="translated">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ </target><alt-trans><target xml:lang="km">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve">
+				<source>Workspaces</source>
+			<target xml:lang="km" state="translated">លំហរការងារ</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			<target xml:lang="km" state="translated">មានបញ្ហារកើតឡើងនៅពេលរក្សាទុក</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="km" state="translated">បើកទំព័រឡើងវិញដើម្បីព្យាយាម ជួសជុលបញ្ហារ</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			<target xml:lang="km" state="translated">បើកផ្នែកក្រោយឡើងវិញ</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			<target xml:lang="km" state="translated">បើកឡើង​វិញ</target></trans-unit>
+      <!-- Login -->
+      <trans-unit id="login.index.title" xml:space="preserve">
+				<source>TYPO3 Neos Login</source>
+			<target xml:lang="km" state="translated">TYPO3 Neos ចុះឈ្មោះចូល</target></trans-unit>
+      <trans-unit id="login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="km" state="translated">ចុះឈ្មោះចូល</target></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve">
+				<source>Authenticating</source>
+			<target xml:lang="km" state="translated">កំពង់ផ្តល់សិទ្ធ</target></trans-unit>
+      <!-- Error handlers -->
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+				<source>Go to setup</source>
+			<target xml:lang="km" state="translated">ទៅតំឡើង</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+				<source>Missing Homepage</source>
+			<target xml:lang="km" state="translated">បាត់ទំព័រដើម</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			<target xml:lang="km" state="translated">គ្មានគេហទំព័រណាបានបង្កើតទេ គេហទំព័រអត់មានទំព័រដើម ឬ អត់បានប្តេជ្ញា។</target><alt-trans><target xml:lang="km">គ្មានគេហទំព័រណាបានបង្កើតទេ គេហទំព័រអត់មានទំព័រដើម ឬ អត់បានផ្តាជ្ញា។</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			<target xml:lang="km" state="translated">អ្នកប្រហែលជាចង់ ដាក់ដូមេន ឬ ទាញយកចូលគេហទំព័រថ្មី នៅក្នុងការតំឡើងនេះ។</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+				<source>Database Error</source>
+			<target xml:lang="km" state="translated">ដាតាបេស មានបញ្ហារ</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="km" state="translated">សុំទោស យើងរកឃើញ បញ្ហារជាមួយ ដាតាបេសអ្នក។ ត្រួត្យពិនិត្យ កំណត់ត្រារបស់អ្នក នៅក្នុង Data/Logs/* ដើម្បី រកព័រមាន បន្ថែម។</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="km" state="translated">អ្នកប្រហែលជាចង់ កែរការកំណត់ ឬ ពិនិត្យការកំណត់ដាតាបេស នៅក្នុង ការតំឡើងនេះ។</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+				<source>Page Not Found</source>
+			<target xml:lang="km" state="translated">បាត់ទំព័រ</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="km" state="translated">សុំទោស ទំព័រអ្នកស្នើរ រកមិនឃើញទេ។</target></trans-unit>
+    </body>
+  </file>
+</xliff>

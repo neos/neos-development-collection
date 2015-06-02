@@ -119,14 +119,14 @@
 			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="ru" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
 			<target xml:lang="ru" state="translated">Нажмите здесь, чтобы перейти на страницу {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click here to continue to the {0} asset.</source>
-			<target xml:lang="ru" state="translated">Нажмите здесь, для перехода к ресурсы {0}.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нажмите здесь, для перехода к ресурсу {0}.</target><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсы {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click here to continue to the {0} ext page.</source>
 			<target xml:lang="ru" state="translated">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></trans-unit>
@@ -135,17 +135,17 @@
 			<target xml:lang="ru" state="translated">(цель не была выбрана)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru" state="translated">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru" state="translated">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></alt-trans></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="ru" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="ru" state="translated">Во весь экран</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="ru" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="ru" state="translated">Открыть страницу в публичной рабочей области</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="ru" state="translated">Отменить все изменения</target><alt-trans><target xml:lang="ru">Сбросить все изменения</target></alt-trans></trans-unit>
@@ -199,7 +199,7 @@
 			<target xml:lang="ru" state="translated">Содержимое</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ru" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ru" state="translated">Подтвердите удаление</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="ru" state="translated">Это приведёт к удалению страницы</target><alt-trans><target xml:lang="ru">Это удалит страницу</target></alt-trans></trans-unit>
@@ -235,54 +235,54 @@
 			<target xml:lang="ru" state="translated">Рабочее пространство</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="ru" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="ru" state="translated">Произошла ошибка при сохранении</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="ru" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Перезагрузите страницу, чтобы попытаться исправить эту проблему.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="ru" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="ru" state="translated">Перезагрузить бэкэнд</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="ru" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="ru" state="translated">Перезагрузить</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			<target xml:lang="ru" state="translated">Вход в систему TYPO3 Neos</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="ru" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вход в систему</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="ru" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="ru" state="translated">Авторизация</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="ru" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="ru" state="translated">Перейти к установке</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="ru" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="ru" state="translated">Домашняя страница отсутствует</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="ru" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Либо сайт не был задан, либо сайт не содержит домашнюю страницу, либо невозможно определить активный сайт.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="ru" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Попробуйте задать домен сайта или импортировать новый сайт в программе установки.</target><alt-trans><target xml:lang="ru">Может потребоваться задать домен сайта или импортировать новый сайт в программе установки.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="ru" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ошибка базы данных</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="ru" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="ru" state="translated">К сожалению, мы обнаружили ошибку с вашей базой данных. Смотрите файлы журнала в Data/Logs/* для получения более подробной информации.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="ru" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Попробуйте настроить или проверить конфигурацию базы данных в программе установки.</target><alt-trans><target xml:lang="ru">Может потребоваться настроить или проверить конфигурацию базы данных в программе установки.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="ru" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="ru" state="translated">Страница не найдена</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="ru" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="ru" state="translated">К сожалению, запрашиваемая вами страница не найдена.</target></trans-unit>
     </body>
   </file>
 </xliff>
