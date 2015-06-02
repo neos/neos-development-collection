@@ -26,6 +26,11 @@ class WorkspaceController extends AbstractServiceController {
 	protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
 
 	/**
+	 * @var \TYPO3\Neos\Service\View\NodeView
+	 */
+	protected $view;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
@@ -82,14 +87,15 @@ class WorkspaceController extends AbstractServiceController {
 	 *
 	 * @param NodeInterface $node
 	 * @param string $targetWorkspaceName
-	 * @return void
+	 * @return string
 	 */
 	public function publishNodeAction(NodeInterface $node, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
 
 		$this->publishingService->publishNode($node, $targetWorkspace);
 
-		$this->throwStatus(204, 'Node has been published');
+		$this->response->setStatus(204, sprintf('Node has been published to workspace %s', $targetWorkspaceName));
+		return '';
 	}
 
 	/**
@@ -97,51 +103,55 @@ class WorkspaceController extends AbstractServiceController {
 	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $targetWorkspaceName
-	 * @return void
+	 * @return string
 	 */
 	public function publishNodesAction(array $nodes, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
 
 		$this->publishingService->publishNodes($nodes, $targetWorkspace);
 
-		$this->throwStatus(204, 'Nodes have been published');
+		$this->response->setStatus(204, sprintf('Nodes has been published to workspace %s', $targetWorkspaceName));
+		return '';
 	}
 
 	/**
 	 * Discards the given node
 	 *
 	 * @param NodeInterface $node
-	 * @return void
+	 * @return string
 	 */
 	public function discardNodeAction(NodeInterface $node) {
 		$this->publishingService->discardNode($node);
 
-		$this->throwStatus(204, 'Node changes have been discarded');
+		$this->response->setStatus(204, 'Node changes have been discarded');
+		return '';
 	}
 
 	/**
 	 * Discards the given nodes
 	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
-	 * @return void
+	 * @return string
 	 */
 	public function discardNodesAction(array $nodes) {
 		$this->publishingService->discardNodes($nodes);
 
-		$this->throwStatus(204, 'Node changes have been discarded');
+		$this->response->setStatus(204, 'Node changes have been discarded');
+		return '';
 	}
 
 	/**
 	 * Publish everything in the workspace with the given workspace name
 	 *
 	 * @param string $workspaceName
-	 * @return void
+	 * @return string
 	 */
 	public function publishAllAction($workspaceName) {
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace));
 
-		$this->throwStatus(204, 'Workspace changes have been published');
+		$this->response->setStatus(204, sprintf('All changes in workspace %s have been published', $targetWorkspaceName));
+		return '';
 	}
 
 	/**
@@ -151,21 +161,20 @@ class WorkspaceController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function getWorkspaceWideUnpublishedNodesAction($workspace) {
-		$nodes = $this->publishingService->getUnpublishedNodes($workspace);
-
-		$this->view->assignNodes($nodes);
+		$this->view->assignNodes($this->publishingService->getUnpublishedNodes($workspace));
 	}
 
 	/**
 	 * Discard everything in the workspace with the given workspace name
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @return void
+	 * @return string
 	 */
 	public function discardAllAction($workspace) {
-		$this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
+		$this->publishingService->discardAllNodes($workspace);
 
-		$this->throwStatus(204, 'Workspace changes have been discarded');
+		$this->response->setStatus(204, 'Workspace changes have been discarded');
+		return '';
 	}
 
 }

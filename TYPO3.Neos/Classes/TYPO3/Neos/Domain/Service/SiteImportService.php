@@ -22,6 +22,8 @@ use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 use TYPO3\Neos\Exception as NeosException;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
 
@@ -56,6 +58,12 @@ class SiteImportService {
 	 * @var NodeImportService
 	 */
 	protected $nodeImportService;
+
+	/**
+	 * @Flow\Inject
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
 
 	/**
 	 * @Flow\Inject
@@ -162,6 +170,17 @@ class SiteImportService {
 			$xmlReader = new \XMLReader();
 			$xmlReader->open($pathAndFilename, NULL, LIBXML_PARSEHUGE);
 
+			if ($this->workspaceRepository->findOneByName('live') === NULL) {
+				$this->workspaceRepository->add(new Workspace('live'));
+			}
+			$rootNode = $this->contextFactory->create()->getRootNode();
+			$this->persistenceManager->persistAll();
+
+			$sitesNode = $rootNode->getNode('/sites');
+			if ($sitesNode === NULL) {
+				$sitesNode = $rootNode->createSingleNode('sites');
+			}
+
 			while ($xmlReader->read()) {
 				if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
 					continue;
@@ -184,16 +203,6 @@ class SiteImportService {
 					throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
 				}
 				$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
-
-				$rootNode = $this->contextFactory->create()->getRootNode();
-				// We fetch the workspace to be sure it's known to the persistence manager and persist all
-				// so the workspace and site node are persisted before we import any nodes to it.
-				$rootNode->getContext()->getWorkspace();
-				$this->persistenceManager->persistAll();
-				$sitesNode = $rootNode->getNode('/sites');
-				if ($sitesNode === NULL) {
-					$sitesNode = $rootNode->createSingleNode('sites');
-				}
 
 				$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
 			}
