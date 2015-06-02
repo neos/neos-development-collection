@@ -76,6 +76,9 @@
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="ja" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+      <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="ja" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="ja" state="needs-translation">Create user</target></trans-unit>
