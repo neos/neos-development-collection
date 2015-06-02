@@ -406,7 +406,7 @@ define(
 			}
 
 			// Reload element is only possible if the element is inside a content collection
-			var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined' ? true : false;
+			var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined';
 			if (!isInsideCollection) {
 				reloadPage = true;
 				reloadElement = false;

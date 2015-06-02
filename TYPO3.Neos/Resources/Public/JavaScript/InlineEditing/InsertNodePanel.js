@@ -29,13 +29,14 @@ function(
 		nodeTypeGroups: function() {
 			var groups = {},
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				node = this.get('_node');
-				position = this.get('_position');
+				node = this.get('_node'),
+				position = this.get('_position'),
+				types;
 
 			if (position === 'into') {
-				var types = ContentCommands.getAllowedChildNodeTypesForNode(node);
+				types = ContentCommands.getAllowedChildNodeTypesForNode(node);
 			} else {
-				var types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
+				types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
 			}
 
 			types = _.map(types, function(nodeType) {
@@ -87,30 +88,20 @@ function(
 			return data;
 		}.property(),
 
+		/**
+		 * @param {string} nodeType
+		 */
 		insertNode: function(nodeType) {
-			NodeActions.set('_elementIsAddingNewContent', this.get('_node.nodePath'));
-			var position = this.get('_position');
-			var nodeEntity = this.get('_node._vieEntity');
-			var callBack = function () {
-				require(
-					{context: 'neos'},
-					[
-						'Content/Application'
-					],
-					function(ContentModule) {
-						ContentModule.reloadPage();
-					}
-				);
-			};
-			switch (position) {
+			var referenceNode = this.get('_node');
+			switch (this.get('_position')) {
 				case 'before':
-					NodeActions.addAbove(nodeType, nodeEntity, callBack);
+					NodeActions.addAbove(nodeType, referenceNode);
 				break;
 				case 'after':
-					NodeActions.addBelow(nodeType, nodeEntity, callBack);
+					NodeActions.addBelow(nodeType, referenceNode);
 				break;
 				case 'into':
-					NodeActions.addInside(nodeType, nodeEntity, callBack);
+					NodeActions.addInside(nodeType, referenceNode);
 				break;
 			}
 			this.destroy();

@@ -1,95 +1,111 @@
 define([
 	'emberjs',
+	'Library/jquery-with-dependencies',
 	'./../HttpClient'
 ], function(
 	Ember,
+	$,
 	HttpClient
 ) {
 	return Ember.Object.create({
 		_saveRunning: false,
 		_lastSuccessfulTransfer: null,
 
-		getChildNodesForTree: function(node, nodeTypeFilter, depth, untilNode) {
+		getChildNodesForTree: function(node, nodeTypeFilter, depth, untilNode, optionsOverride) {
 			return HttpClient.getResource(
 				HttpClient._getEndpointUrl('neos-service-node-getChildNodesForTree'),
-				{data: {node: node, nodeTypeFilter: nodeTypeFilter, depth: depth, untilNode: untilNode}}
+				$.extend({data: {node: node, nodeTypeFilter: nodeTypeFilter, depth: depth, untilNode: untilNode}}, optionsOverride || {})
 			);
 		},
 
-		filterChildNodesForTree: function(node, term, nodeType) {
+		filterChildNodesForTree: function(node, term, nodeType, optionsOverride) {
 			return HttpClient.getResource(
 				HttpClient._getEndpointUrl('neos-service-node-filterChildNodesForTree'),
-				{data: {node: node, term: term, nodeType: nodeType}}
+				$.extend({data: {node: node, term: term, nodeType: nodeType}}, optionsOverride || {})
 			);
 		},
 
-		create: function(referenceNode, nodeData, position) {
+		create: function(referenceNode, nodeData, position, optionsOverride) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-create'),
-				{data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}
+				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}, optionsOverride || {})
 			);
 		},
 
-		createAndRender: function(referenceNode, typoScriptPath, nodeData, position) {
+		createAndRender: function(referenceNode, typoScriptPath, nodeData, position, optionsOverride) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createAndRender'),
-				{data: {referenceNode: referenceNode, typoScriptPath: typoScriptPath, nodeData: nodeData, position: position}}
+				$.extend({data: {referenceNode: referenceNode, typoScriptPath: typoScriptPath, nodeData: nodeData, position: position}}, optionsOverride || {})
 			);
 		},
 
-		createNodeForTheTree: function(referenceNode, nodeData, position) {
+		createNodeForTheTree: function(referenceNode, nodeData, position, optionsOverride) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createNodeForTheTree'),
-				{data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}
+				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}, optionsOverride || {})
 			);
 		},
 
-		move: function(node, targetNode, position) {
+		move: function(node, targetNode, position, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-move'),
-				{data: {node: node, targetNode: targetNode, position: position}}
+				$.extend({data: {node: node, targetNode: targetNode, position: position}}, optionsOverride || {})
 			);
 		},
 
-		copy: function(node, targetNode, position, nodeName) {
+		moveAndRender: function(node, targetNode, position, typoScriptPath, optionsOverride) {
+			return HttpClient.updateResource(
+				HttpClient._getEndpointUrl('neos-service-node-moveAndRender'),
+				$.extend({data: {node: node, targetNode: targetNode, position: position, typoScriptPath: typoScriptPath}}, optionsOverride || {})
+			);
+		},
+
+		copy: function(node, targetNode, position, nodeName, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-copy'),
-				{data: {node: node, targetNode: targetNode, position: position, nodeName: nodeName}}
+				$.extend({data: {node: node, targetNode: targetNode, position: position, nodeName: nodeName}}, optionsOverride || {})
 			);
 		},
 
-		update: function(node) {
+		copyAndRender: function(node, targetNode, position, typoScriptPath, nodeName, optionsOverride) {
+			return HttpClient.updateResource(
+				HttpClient._getEndpointUrl('neos-service-node-copyAndRender'),
+				$.extend({data: {node: node, targetNode: targetNode, position: position, typoScriptPath: typoScriptPath, nodeName: nodeName}}, optionsOverride || {})
+			);
+		},
+
+		update: function(node, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-update'),
-				{data: {node: node}}
+				$.extend({data: {node: node}}, optionsOverride || {})
 			);
 		},
 
-		updateAndRender: function(node, typoScriptPath) {
+		updateAndRender: function(node, typoScriptPath, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-updateAndRender'),
-				{data: {node: node, typoScriptPath: typoScriptPath}}
+				$.extend({data: {node: node, typoScriptPath: typoScriptPath}}, optionsOverride || {})
 			);
 		},
 
-		'delete': function(node) {
+		'delete': function(node, optionsOverride) {
 			return HttpClient.deleteResource(
 				HttpClient._getEndpointUrl('neos-service-node-delete'),
-				{data: {node: node}}
+				$.extend({data: {node: node}}, optionsOverride || {})
 			);
 		},
 
-		searchPage: function(query) {
+		searchPage: function(query, optionsOverride) {
 			return HttpClient.getResource(
 				HttpClient._getEndpointUrl('neos-service-node-searchPage'),
-				{data: {query: query}}
+				$.extend({data: {query: query}}, optionsOverride || {})
 			);
 		},
 
-		getPageByNodePath: function(nodePath) {
+		getPageByNodePath: function(nodePath, optionsOverride) {
 			return HttpClient.getResource(
 				HttpClient._getEndpointUrl('neos-service-node-getPageByNodePath'),
-				{data: {nodePath: nodePath}}
+				$.extend({data: {nodePath: nodePath}}, optionsOverride || {})
 			);
 		}
 	});

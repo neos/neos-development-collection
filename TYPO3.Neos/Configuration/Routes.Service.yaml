@@ -236,6 +236,17 @@
   httpMethods: ['PUT']
 
 -
+  name: 'Services - NodeController->moveAndRender'
+  uriPattern: 'node/move-and-render'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'moveAndRender'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
   name: 'Services - NodeController->copy'
   uriPattern: 'node/copy'
   defaults:
@@ -243,6 +254,17 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'copy'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->copyAndRender'
+  uriPattern: 'node/copy-and-render'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'copyAndRender'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -

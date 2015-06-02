@@ -52,6 +52,7 @@ define(
 		}.property('workspaceWidePublishableEntitySubjects.length'),
 
 		init: function() {
+			vie.entities.on('add', this._updatePublishableEntities, this);
 			vie.entities.on('change', this._updatePublishableEntities, this);
 			this._updatePublishableEntities();
 
