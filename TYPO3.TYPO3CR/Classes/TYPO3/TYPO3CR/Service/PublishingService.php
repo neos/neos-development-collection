@@ -105,11 +105,7 @@ class PublishingService implements PublishingServiceInterface {
 		if ($targetWorkspace === NULL) {
 			$targetWorkspace = $this->workspaceRepository->findOneByName('live');
 		}
-		$nodes = array($node);
-
-		$sourceWorkspace = $node->getWorkspace();
-		$sourceWorkspace->publishNodes($nodes, $targetWorkspace);
-
+		$node->getWorkspace()->publishNode($node, $targetWorkspace);
 		$this->emitNodePublished($node, $targetWorkspace);
 	}
 
@@ -123,7 +119,6 @@ class PublishingService implements PublishingServiceInterface {
 	 */
 	public function publishNodes(array $nodes, Workspace $targetWorkspace = NULL) {
 		$nodes = $this->sortNodesForPublishing($nodes);
-
 		foreach ($nodes as $node) {
 			$this->publishNode($node, $targetWorkspace);
 		}

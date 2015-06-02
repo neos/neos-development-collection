@@ -11,16 +11,21 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\TypeConverter\NodeTemplateConverter;
 
 /**
  * Functional test case which covers all NodeTemplate related behavior of
  * the content repository as long as they reside in the live workspace.
  */
-class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeTemplatesTest extends FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @var Context
 	 */
 	protected $context;
 
@@ -30,21 +35,31 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
+
+	/**
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @var Workspace
+	 */
+	protected $liveWorkspace;
 
 	/**
 	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
+
+		$this->liveWorkspace = new Workspace('live');
+		$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+		$this->workspaceRepository->add($this->liveWorkspace);
+		$this->persistenceManager->persistAll();
+
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 	}
@@ -83,6 +98,9 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function createNodeFromTemplateUsesWorkspacesOfContext() {
 		$nodeTemplate = $this->generateBasicNodeTemplate();
 
+		$userWorkspace = new Workspace('user1', $this->liveWorkspace);
+		$this->workspaceRepository->add($userWorkspace);
+
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'user1'));
 
 		$rootNode = $this->context->getNode('/');
@@ -101,7 +119,7 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'test1' => 'Neos rules!'
 		);
 
-		$typeConverter = new \TYPO3\TYPO3CR\TypeConverter\NodeTemplateConverter();
+		$typeConverter = new NodeTemplateConverter();
 		return $typeConverter->convertFrom($source, 'TYPO3\TYPO3CR\Domain\Model\NodeTemplate');
 	}
 }

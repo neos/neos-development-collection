@@ -10,11 +10,17 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * Functional test case for node constraints
  */
-class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeConstraintsTest extends FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -22,23 +28,23 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @var NodeTypeManager
 	 *
 	 */
 	protected $nodeTypeManager;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var NodeInterface
 	 */
 	protected $rootNode;
 
@@ -47,9 +53,14 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
+		$this->nodeDataRepository = new NodeDataRepository();
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+
+		$workspace = new Workspace('live');
+		$this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->add($workspace);
+		$this->persistenceManager->persistAll();
+
 		$context = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$this->rootNode = $context->getRootNode();
 	}
