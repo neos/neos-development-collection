@@ -23,14 +23,13 @@ function(
 	}
 
 	function initAloha() {
-
 		var nodeTypes = Configuration.get('Schema');
 
 		var nodeSettings = {};
 		$.each(nodeTypes, function(nodeTypeName, nodeType) {
 			if (nodeType.properties && typeof nodeType.properties == 'object') {
 				$.each(nodeType.properties, function(propertyName, property) {
-					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]';
+					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]:not([typeof="typo3:' + nodeTypeName + '"] [typeof] [property="typo3:' + propertyName + '"])';
 					$.each(['table', 'link', 'list', 'format'], function(i, mode) {
 						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
 							var selector = '[typeof="typo3:' + nodeTypeName + '"]' +
