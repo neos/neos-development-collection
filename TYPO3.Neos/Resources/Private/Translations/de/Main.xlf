@@ -125,7 +125,7 @@
 			<target xml:lang="de">Gespeichert</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="de" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="de" state="translated">Suche</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
 			<target xml:lang="de">Inspector auf- / zuklappen</target></trans-unit>
@@ -165,7 +165,7 @@
 			<target xml:lang="de" state="needs-translation">Plugin View</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="de" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="de" state="translated">Ausblenden</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
 			<target xml:lang="de" state="needs-translation">Hide before</target></trans-unit>
@@ -254,7 +254,7 @@
 			<target xml:lang="de" state="needs-translation">No date set</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="de" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="de" state="translated">Code bearbeiten</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
 			<target xml:lang="de" state="needs-translation">Paste a link, or type to search</target></trans-unit>
@@ -296,7 +296,7 @@
 			<target xml:lang="de" state="needs-translation">Paste (hold to select position)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="de" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="de" state="translated">Höhe</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
@@ -317,7 +317,7 @@
 			<target xml:lang="de" state="needs-translation">Crop</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="de" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="de" state="translated">Breite</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
 			<target xml:lang="de">Erforderlicher Wert fehlt: </target><alt-trans><target xml:lang="de">Erforderlicher Wert fehlt:</target></alt-trans></trans-unit>
