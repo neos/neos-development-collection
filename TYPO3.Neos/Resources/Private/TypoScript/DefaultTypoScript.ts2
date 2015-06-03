@@ -74,7 +74,7 @@ root {
 			# Whenever the node changes the matched condition could change
 			1 = ${'Node_' + documentNode.identifier}
 			# Whenever one of the parent nodes changes the layout could change
-			2 = ${'DescendantOf_' + documentNode.identifier}
+			2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
 		}
 	}
 
