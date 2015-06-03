@@ -1,0 +1,39 @@
+<div class="neos-toolbar">Inspector</div>
+<div class="neos-inspector-form">
+	<div class="neos-inspector-field">
+		<label for="neos-content-breadcrumb">Selected element</label>
+		{{view view.Breadcrumb}}
+	</div>
+	{{#each groupedPropertyViews}}
+		{{#view view.Section classNames="neos-inspector-section" groupBinding="group" propertiesBinding="properties" inspectorBinding="controller"}}
+			<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
+				<span>{{unbound label}}</span>
+				{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
+				<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}}></div>
+			</div>
+			{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="properties"}}
+				{{#if isBoolean}}
+					<label for="{{unbound elementId}}" class="neos-checkbox">
+						{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
+						{{unbound ui.label}}
+					</label>
+				{{else}}
+					<label for="{{unbound elementId}}">{{unbound ui.label}}</label>
+					{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
+				{{/if}}
+			{{/collection}}
+		{{/view}}
+	{{/each}}
+</div>
+{{#if _enableTransactionalInspector}}
+	<div class="neos-actions">
+		<button class="neos-inspector-cancel" title="Discard changes" {{bindAttr disabled="unmodified"}} {{action "revert"}}>Discard changes</button>
+		{{#if hasValidationErrors}}
+			<button class="neos-button neos-inspector-apply neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('Some fields are not filled in correctly. Please fill in the marked values properly.');">
+				<i class="icon-warning-sign"></i> OK
+			</button>
+		{{else}}
+			<button class="neos-inspector-apply" title="Apply changes" {{bindAttr disabled="unmodified"}} {{action "apply"}}>Apply</button>
+		{{/if}}
+	</div>
+{{/if}}

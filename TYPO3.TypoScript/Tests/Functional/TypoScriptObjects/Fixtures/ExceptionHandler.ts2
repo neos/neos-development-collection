@@ -1,0 +1,21 @@
+exceptionHandler.eelExpressionInProperty = TYPO3.TypoScript:Array {
+	start = 'Start'
+	error = TYPO3.TypoScript:Collection {
+		collection = ${Testing.Utility.throwException()}
+
+		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+	}
+	end = 'End'
+}
+
+exceptionHandler.eelExpressionInOverride = TYPO3.TypoScript:Array {
+	start = 'Start'
+	error = TYPO3.TypoScript:Collection {
+		@override.myCollection = ${Testing.Utility.throwException()}
+		collection = ${myCollection}
+		itemName = 'item'
+
+		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+	}
+	end = 'End'
+}

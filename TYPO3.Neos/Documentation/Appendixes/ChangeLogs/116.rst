@@ -1,0 +1,108 @@
+====================
+1.1.6
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/54/
+
+* Commit: `eac83da <https://git.typo3.org/Neos/Distributions/Base.git/commit/eac83daed959bb97cda69a69dd3c03462847919b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/56/
+
+* Commit: `c5fb0d8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c5fb0d8d8ee2ce7a48abdfb0d2f4f1fdd4ebc948>`_
+
+[BUGFIX] Aloha configuration gets applied to nested properties
+-----------------------------------------------------------------------------------------
+
+Adjust selector for applying Aloha configuration, to only match
+those properties that belong to the same node and not descendants of
+nested node's wrapping.
+
+Resolves: NEOS-1316
+
+* Commit: `73d8ece <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/73d8ece1f77193123be01a959ac5f7e2c4773cbf>`_
+
+[BUGFIX] Fix wrong cache invalidation message
+-----------------------------------------------------------------------------------------
+
+The message for a DescendantOf_* tag referred to a wrong node, this is
+fixed by this change.
+
+* Commit: `42bd9f5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/42bd9f59a5210ac196d52ce5af1e2cb2ddf09cae>`_
+
+[TASK] Revert "Add changelog for TYPO3 Neos 1.1.4"
+-----------------------------------------------------------------------------------------
+
+This reverts commit d701046d90d4d246fbdfaad69a3e11b6425a0ef2. It
+was created by trying to release 1.1.4 a second time and contains
+changes that actually went into 1.1.5.
+
+* Commit: `e04d838 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e04d83834b768a777f193f1b52c3d0e3951de5fb>`_
+
+[BUGFIX] Prevent syntax error for backend in latest stable Chrome
+-----------------------------------------------------------------------------------------
+
+Due to a bug in the recent stable version of Chrome the backend breaks
+occasionally when initalizing. This only happens when using the minified
+JavaScript build. The bug is caused by a non UTF-8 unicode character
+in the CodeMirror library using a UTF-16 character, which causes the
+bug in Chrome.
+
+Updating CodeMirror to the latest minor version of 3.* fixes the issue,
+which is a good idea in any case.
+The issue is already fixed in Chrome, however it may take a while for a new
+stable version to be rolled out.
+
+Fixes: NEOS-1312
+
+* Commit: `5adb925 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5adb9254f7738d464b40bd0e56c5985530d9cad2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
