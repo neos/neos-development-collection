@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>QUnit Test Runner</title>
+
+		<link rel="stylesheet" href="../../../Scripts/bower_components/qunit/qunit/qunit.css" />
+		<script src="../../../Scripts/bower_components/qunit/qunit/qunit.js"></script>
+
+		<script>
+			// Defer Qunit so RequireJS can work its magic and resolve all modules.
+			QUnit.config.autostart = false;
+		</script>
+
+		<script src="../Bootstrap/utilities.js"></script>
+		<script src="../../../Resources/Public/Library/requirejs/require.js"></script>
+		<script src="NodeTypeServiceTest.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

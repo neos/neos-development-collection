@@ -1,0 +1,16 @@
+
+# should stay "Root"
+text1 = Text
+text1.value = 'Root'
+
+# should become "AboutUs"
+text2 = Text
+text2.value = 'Root'
+
+# should become "History"
+text3 = Text
+text3.value = 'Root'
+
+# should become "Additional"
+text4 = Text
+text4.value = 'Root'

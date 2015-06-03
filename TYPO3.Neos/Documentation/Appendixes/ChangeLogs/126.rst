@@ -1,0 +1,246 @@
+==================
+1.2.6 (2015-05-10)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update PHPUnit and vfsStream dependencies
+-----------------------------------------------------------------------------------------
+
+This updates PHPUnit from 4.3 to 4.6 and vfsStream from 1.4 to 1.5.
+
+* Commit: `c5ed333 <https://git.typo3.org/Neos/Distributions/Base.git/commit/c5ed333d7c0956f0356038f99f1a5a158f67b2ce>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/42/
+
+* Commit: `22099ca <https://git.typo3.org/Neos/Distributions/Base.git/commit/22099ca3a0bd413fdad03013d462dea031d9ba55>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/49/
+
+* Commit: `9e4fa2e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9e4fa2e9d3bf5ab61bf3be5b8dc7b35af2356324>`_
+
+[BUGFIX] Take multi-dimensional node paths into account
+-----------------------------------------------------------------------------------------
+
+The ``RouteCacheAspect`` didn't correctly split the nodepath into
+parts for multiple dimensions and so routing caches would fail
+to be flushed when using multiple dimensions.
+
+* Commit: `0ea3b99 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0ea3b99afb63c7c4b8fb10ae535feee933621c2a>`_
+
+[BUGFIX] Flush content cache of source collection when moving content
+-----------------------------------------------------------------------------------------
+
+Fixes a node being duplicated when cutting from one content
+collection and pasting into another one. This happens since
+the content cache for the previous collection isn't cleared
+when the node is moved.
+
+Depends: I865c6a8ebd6a8427730f03e995c14e0fbf2dba62
+
+Fixes: NEOS-1224
+
+* Commit: `e728d31 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e728d312c47d7d5d77d2114ed7a6b2eea6a06e91>`_
+
+[BUGFIX] Fetch external fonts via HTTPS
+-----------------------------------------------------------------------------------------
+
+Currently the Login and Error Views of Neos include Google fonts via
+HTTP leading to ``Mixed Content`` errors when accessing the site over
+HTTPS.
+
+This patch adjusts ``Error.scss`` and ``Login.scss`` accordingly.
+
+Note: We don't use protocol relative URLs by intention, because those
+are deprecated for security reasons.
+
+Fixes: NEOS-1100
+
+* Commit: `d85b39c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d85b39c19b87e0d4981ee2ec6e898cb265c18418>`_
+
+[BUGFIX] Add Namespace for NeosException
+-----------------------------------------------------------------------------------------
+
+In lines 88 and 91 NeosException is used, but which is not associated with a
+namespace. Therefore, there was an error if the appropriate package was not
+activated.
+
+Fixes: NEOS-1240
+
+* Commit: `fe3292a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fe3292a4fef5afc8ba9c5f37df4c36434f3fa087>`_
+
+[BUGFIX] Adjust IntegratingJavaScriptSlider cookbook
+-----------------------------------------------------------------------------------------
+
+Since the TypoScript paths changed for 1.2 the cookbook doesn't
+reflect realities anymore and missed the important part of including
+the additional TypoScript file to the Root.ts2.
+
+* Commit: `9bc32f7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9bc32f7ea2dbfb3d43adba916df7c836baa2e902>`_
+
+[BUGFIX] Documentation should document existing TypoScript objects
+-----------------------------------------------------------------------------------------
+
+The TypoScript reference mentions two TypoScript objects in the
+``TYPO3.Media`` namespace but that doesn't exist. Those objects are
+in fact in the ``TYPO3.Neos`` namespace. The change reflects that.
+
+Fixes: NEOS-1099
+
+* Commit: `043d90f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/043d90f83675c00a71e5e87359fea177e99a284b>`_
+
+[TASK] Remove unnecessary usages of ``TYPO3`` in documentation
+-----------------------------------------------------------------------------------------
+
+Removes the usage of ``TYPO3`` in the titles of various documentation
+since the context is known, it's superfluous.
+
+* Commit: `6dc8693 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6dc8693fd41d1b98500b66fb2074d70f602aafa1>`_
+
+[BUGFIX] Escape class names in ContentStructure documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `a48d092 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a48d09269c0ba5feeb1c23f616b304ffa14f605b>`_
+
+[BUGFIX] DimensionMenu should work on pages hidden in menu
+-----------------------------------------------------------------------------------------
+
+As the dimension menu uses code from the normal menu it also
+ignores documents that have the ``hiddenInMenu`` flag set.
+To make the ``DimensionMenu`` work on pages that have the flag
+set it needs to ignore that.
+
+* Commit: `f15aadd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f15aaddceec9e6c02f87427520f5dbef568e83e9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] `BeforeNodeMove` & `AfterNodeMove` signals
+-----------------------------------------------------------------------------------------
+
+Backports two signals for node moving needed to solve a
+bug with content cache flushing.
+
+Related: NEOS-1224
+
+* Commit: `ea8a2e9 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ea8a2e920ed62bf2cb4ec2bafe64d21c7bac1803>`_
+
+[BUGFIX] ChildNode constraints check needs to be lowercased
+-----------------------------------------------------------------------------------------
+
+Since all node paths are lowercase the constraints check for
+childNodes must be done against the lowercased node name to match
+properly. To be more precise any changes applied to the configured
+nodeName in
+``\\TYPO3\\TYPO3CR\\Domain\\Model\\NodeType::getAutoCreatedChildNodes()``
+must also be applied to incoming node names in
+``\\TYPO3\\TYPO3CR\\Domain\\Model\\NodeType::allowsGrandchildNodeType()``
+
+Fixes: NEOS-1234
+
+* Commit: `63cdafc <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/63cdafc1e3edaf849bcfd6f7f608713c3dec6db8>`_
+
+[BUGFIX] Reducing nodes by dimensions works for nodes without
+-----------------------------------------------------------------------------------------
+
+The `NodeDataRepository` filters query results with the method
+`reduceNodeVariantsByWorkspacesAndDimensions` which works as
+long as all nodes in your database have the same dimensions.
+Especially the case that you have nodes with some dimensions and
+nodes without any dimensions is not handled well if no dimensions
+are used (configured).
+
+Given you have two variants of a node, one with dimensions one
+without. If you ask the `NodeDataRepository` for a node with that
+identifier and no dimensions it would (wrongly) return the node with
+dimensions. This change adapts the matching algorithm for the specific
+case of matching against empty dimension values.
+
+* Commit: `9ec05cf <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9ec05cff5f5787a70c87d422bf3752334002f9ec>`_
+
+[BUGFIX] ImportService should import with lowercase paths
+-----------------------------------------------------------------------------------------
+
+The change I890ea84ec26f1fba00f72b200e959e3c0fc30f94 introduced a
+regression for importing sites from the Sites.xml. Paths in there
+would be used as is, so nodes with paths containing uppercase
+characters could never be found.
+
+This change adds the necessary lowercasing of paths found in the
+imported Sites.xml file.
+
+Fixes: NEOS-1237
+
+* Commit: `5618bc2 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/5618bc2a8e76e1a54dfaf3b3ecbbb0352ce8fd74>`_
+
+[TASK] Optimize `renderValidNodeName` utility method
+-----------------------------------------------------------------------------------------
+
+Checks the given name against the name pattern before doing
+expensive unnecessary transliteration.
+
+Related: NEOS-1237
+
+* Commit: `bee4b4d <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/bee4b4d9eb5608305103380ef91ecbdcc8baf390>`_
+
+[BUGFIX] Fix finding persistence relations on PostgreSQL
+-----------------------------------------------------------------------------------------
+
+The method findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap()
+could not work on PostgreSQL, due to the use of bin2hex when storing
+ObjectArray types.
+
+This change fixes that by encoding as needed when running on PostgreSQL.
+
+Related: NEOS-1062
+
+* Commit: `255491a <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/255491ae7d4f7d5009d155554949e0ddaadc3ee2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix spelling error in error message
+-----------------------------------------------------------------------------------------
+
+Fixes: FLOW-112
+
+* Commit: `b12fc90 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/b12fc9065be136a88be90916f0b40070fdd355bd>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

@@ -1,0 +1,71 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<div class="neos-row-fluid">
+		<table class="neos-table">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Name</th>
+					<th>Roles</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<f:for each="{accounts}" key="flowidentifier" as="account">
+				<tr>
+					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
+					<td title="{account.party.alias}">{account.party.name}</td>
+					<td>
+						<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
+					</td>
+					<td class="neos-action">
+						<div class="neos-pull-right">
+							<f:link.action action="show" arguments="{account: account}" class="neos-button neos-button-primary" title="View user">
+								<i class="icon-info-sign icon-white"></i>
+							</f:link.action>
+							<f:link.action action="edit" arguments="{account: account}" class="neos-button neos-button-primary" title="Edit user">
+								<i class="icon-pencil icon-white"></i>
+							</f:link.action>
+
+							<f:if condition="{currentAccount} == {account}">
+								<f:then>
+									<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself."><i class="icon-trash icon-white"></i></button>
+								</f:then>
+								<f:else>
+									<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
+										<i class="icon-trash icon-white"></i>
+									</button>
+									<div class="neos-hide" id="{flowidentifier}">
+										<div class="neos-modal">
+											<div class="neos-modal-header">
+												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+												<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
+												<div>
+													<div class="neos-subheader">
+														<p>This will delete the user and his personal workspace, including all unpublished content.<br />This operation cannot be undone.</p>
+													</div>
+												</div>
+											</div>
+											<div class="neos-modal-footer">
+												<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+												<f:form action="delete" arguments="{account: account}" class="neos-inline">
+													<button type="submit" class="neos-button neos-button-danger" title="Delete User">
+														Yes, delete the user
+													</button>
+												</f:form>
+											</div>
+										</div>
+										<div class="neos-modal-backdrop neos-in"></div>
+									</div>
+								</f:else>
+							</f:if>
+						</div>
+					</td>
+				</tr>
+			</f:for>
+		</table>
+	</div>
+	<div class="neos-footer">
+		<f:link.action action="new" class="neos-button neos-button-primary" title="Create new user">Create new user</f:link.action>
+	</div>
+</f:section>

@@ -1,0 +1,23 @@
+up:
+  comments: 'Migrate from "locales" dimension to "languages" dimension.'
+  migration:
+    -
+      filters: []
+      transformations:
+        -
+          type: 'RenameDimension'
+          settings:
+            oldDimensionName: 'locales'
+            newDimensionNAme: 'languages'
+
+down:
+  comments: 'Migrate from "languages" dimension to "locales" dimension.'
+  migration:
+    -
+      filters: []
+      transformations:
+        -
+          type: 'RenameDimension'
+          settings:
+            oldDimensionName: 'languages'
+            newDimensionNAme: 'locales'
