@@ -131,8 +131,11 @@ define(
 		 * Update the selection from a selected content element.
 		 * If we have a node activated, we add the CSS class "neos-contentelement-selected"
 		 * to the body so that we can modify the appearance of the content element editing handles.
+		 *
+		 * @param {jQuery} $element The jQuery element of the content element to select. Will deselect if null.
+		 * @param {object} options Options for how to update the selection.
 		 */
-		updateSelection: function($element) {
+		updateSelection: function($element, options) {
 			var activeClass = 'neos-contentelement-active';
 			// Do not update the selection if the element is already selected
 			if ($element && $element.hasClass(activeClass)) {
@@ -163,6 +166,35 @@ define(
 
 				// Add class to body that we have a content element selected
 				$('body').addClass('neos-contentelement-selected');
+
+				options = options || {};
+				if (options.scrollToElement === true) {
+					var offsetFromTop = $('body').offset().top + 150;
+					$('html, body').animate({
+						scrollTop: $element.offset().top - offsetFromTop
+					}, 500);
+				}
+
+				require({
+					context: 'aloha'
+				}, [
+					'aloha'
+				], function (Aloha) {
+					// Wait until Aloha is loaded if we use Aloha
+					if (!Aloha.__shouldInit) {
+						return;
+					}
+
+					// Remove cursor pointer from active editable
+					var selection = Aloha.getSelection();
+					selection.removeAllRanges();
+
+					// Deactivate active editable
+					var activeEditable = Aloha.getActiveEditable();
+					if (activeEditable) {
+						Aloha.getActiveEditable().blur();
+					}
+				});
 			} else {
 				$('body').removeClass('neos-contentelement-selected');
 			}
