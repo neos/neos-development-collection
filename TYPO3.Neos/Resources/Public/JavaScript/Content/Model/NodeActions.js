@@ -168,9 +168,8 @@ define(
 				}
 			).then(
 				function(result) {
-					that.set('clipboard', null);
-
 					if (clipboard.type === 'cut') {
+						that.set('clipboard', null);
 						var cutNodeEntity = vieInstance.entities.get('<' + clipboard.nodePath + '>'),
 							$cutNodeElement;
 						if (cutNodeEntity) {
