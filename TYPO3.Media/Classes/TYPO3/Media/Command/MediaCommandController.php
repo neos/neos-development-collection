@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
  * @Flow\Scope("singleton")
@@ -43,6 +44,12 @@ class MediaCommandController extends CommandController {
 	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
 	 */
 	protected $assetRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var ThumbnailRepository
+	 */
+	protected $thumbnailRepository;
 
 	/**
 	 * Import resources to asset management
@@ -97,6 +104,19 @@ class MediaCommandController extends CommandController {
 					$this->outputLine('Adding new image "%s" (%sx%s px)', array($image->getResource()->getFilename(), $image->getWidth(), $image->getHeight()));
 				}
 			}
+		}
+	}
+
+	/**
+	 * Remove all thumbnail objects and resources
+	 */
+	public function clearThumbnailsCommand() {
+		$thumbnailCount = $this->thumbnailRepository->countAll();
+		$this->output->progressStart($thumbnailCount);
+		$iterator = $this->thumbnailRepository->findAllIterator();
+		foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+			$this->thumbnailRepository->remove($thumbnail);
+			$this->output->progressAdvance(1);
 		}
 	}
 

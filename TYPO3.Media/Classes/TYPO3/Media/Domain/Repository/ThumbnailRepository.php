@@ -11,6 +11,8 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -29,6 +31,42 @@ class ThumbnailRepository extends Repository {
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
+
+	/**
+	 * Iterate over an IterableResult and return a Generator
+	 *
+	 * This method is useful for batch processing huge result set as it clears the object
+	 * manager and detaches the current object on each iteration.
+	 *
+	 * @param IterableResult $iterator
+	 * @param callable $callback
+	 * @return \Generator
+	 */
+	public function iterate(IterableResult $iterator, callable $callback = NULL) {
+		$iteration = 0;
+		foreach ($iterator as $object) {
+			$object = current($object);
+			yield $object;
+			if ($callback !== NULL) {
+				call_user_func($callback, $iteration, $object);
+			}
+			++$iteration;
+		}
+	}
+
+	/**
+	 * Find all objects and return an IterableResult
+	 *
+	 * @return IterableResult
+	 */
+	public function findAllIterator() {
+		/** @var QueryBuilder $queryBuilder */
+		$queryBuilder = $this->entityManager->createQueryBuilder();
+		return $queryBuilder
+			->select('Thumbnail')
+			->from($this->getEntityClassName(), 'Thumbnail')
+			->getQuery()->iterate();
+	}
 
 	/**
 	 * Returns a thumbnail of the given asset with the specified dimensions.
