@@ -1,10 +1,20 @@
 Appendixes
 ==========
 
-.. toctree::
-	:maxdepth: 1
-	:glob:
+.. only:: html
 
-	*
+	.. toctree::
+		:maxdepth: 1
+		:glob:
 
-	ChangeLogs/index
+		*
+
+		ChangeLogs/index
+
+.. only:: latex
+
+	.. toctree::
+		:maxdepth: 1
+		:glob:
+
+		*
