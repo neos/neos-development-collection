@@ -120,12 +120,11 @@ class PluginViewImplementation extends PluginImplementation {
 		} catch (StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (RequiredArgumentMissingException $exception) {
-			return $exception->getMessage();
+			return '<p>' . $exception->getMessage() . '</p>';
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
-
-			return ($this->objectManager->getContext()->isDevelopment()) ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+			return ($this->objectManager->getContext()->isDevelopment()) ? ('<p><strong>' . $message . '</strong></p>') : ('<!--' . $message . '-->');
 		}
 	}
 }
