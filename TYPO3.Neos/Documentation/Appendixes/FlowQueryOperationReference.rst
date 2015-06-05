@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-05-13
+This reference was automatically generated from code on 2015-06-05
 
 
 add
@@ -170,11 +170,11 @@ following operators:
   Strict equality of value and operand
 !=
   Strict inequality of value and operand
-\<
+<
   Value is less than operand
 <=
   Value is less than or equal to operand
-\>
+>
   Value is greater than operand
 >=
   Value is greater than or equal to operand
@@ -182,7 +182,7 @@ $=
   Value ends with operand (string-based)
 ^=
   Value starts with operand (string-based)
-\*=
+*=
   Value contains operand (string-based)
 instanceof
   Checks if the value is an instance of the operand
