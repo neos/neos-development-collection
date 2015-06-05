@@ -1,0 +1,571 @@
+==================
+2.0.0-beta3 (2015-06-05)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Do not require dev-master of doctrine/migrations
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that 1.0 is being worked on,
+require @dev instead and delegate the version to the Flow package.
+
+Related: FLOW-300
+
+* Commit: `24459b1 <https://git.typo3.org/Neos/Distributions/Base.git/commit/24459b16dbffb2a93539d509394c96331846c135>`_
+
+[TASK] Update composer manifest for 2.0.x-dev
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/51/
+
+* Commit: `5574c50 <https://git.typo3.org/Neos/Distributions/Base.git/commit/5574c504d7f5543dc4b3b30c6c669da5cc51e4b0>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/57/
+
+* Commit: `8b19b6a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8b19b6a884706cc3a6e21eb8fa16eaaf8db9b148>`_
+
+[BUGFIX] Moving a hidden page throws exception
+-----------------------------------------------------------------------------------------
+
+Moving a hidden page to a different parent will trigger regeneration
+of the uriPathSegment to avoid conflicts with the new sibling nodes.
+
+The closure used to process signals should not be used to create
+node contexts as that will probably lead to faulty results. Instead a
+new signal in the ``Node`` object is used that delivers Nodes to the new
+``UriPathSegmentGenerator`` when changing paths.
+
+Additionally the generation of node uri segments has been moved to a
+static utility method.
+
+Depends: I6c9f2bd0a720220225422882680e74dcc15905c3
+Depends: Ia539cd3c709a741532c93646ef3eb88cb12c71ea
+Depends: I8640f783c949d3046e344912d99e1d4b51ef962f
+Resolves: NEOS-1309
+
+* Commit: `bbed90f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bbed90ff053bc46240a25187b5d345758ed241b9>`_
+
+[BUGFIX] Only the Site Package kickstarted in Setup Tool should be active
+-----------------------------------------------------------------------------------------
+
+Disables existing Site Packages in case a new package is kickstarted
+or a package is imported in the Setup Tool.
+
+This prevents a big variety of errors when people think the Demo Site
+is inactive, but is still interacting with the their site because
+Settings and NodeTypes are loaded.
+
+Resolves: NEOS-1109
+
+* Commit: `089a6aa <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/089a6aab748ba5708b63f0852c1d1edbcb26e21c>`_
+
+[BUGFIX] Translations from other packages then Neos are ignored
+-----------------------------------------------------------------------------------------
+
+The backend translation changes ignored the labels from external
+packages making the node type translation useless. This change
+adds a configuration setting so specific sources can be configured
+to be included in the xliff.json
+
+Resolves: NEOS-1258
+
+* Commit: `ac48d26 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ac48d26ea50fd0e639ba349e4acb102778074d54>`_
+
+[TASK] Select newly inserted element automatically
+-----------------------------------------------------------------------------------------
+
+When inserting/pasting content the new elementing should
+automatically be selected to speed up the content creation
+process. The same behavior takes place when using inline
+handles or the structure tree.
+
+Resolves: NEOS-603
+
+* Commit: `e5a48f8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e5a48f823354ba0beb7b7b0aa4804af257bc3130>`_
+
+[TASK] Add date to titles for 1.1.5 & 1.1.6 change logs
+-----------------------------------------------------------------------------------------
+
+* Commit: `c18b1f4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c18b1f4fb043b8b65ef297d715fcbf8e96a744ae>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.2.8
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/55/
+
+* Commit: `256ddc3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/256ddc3b716e1d14def86a825c5ba9320221ad54>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.6
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/56/
+
+* Commit: `37bd4c0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/37bd4c0c06b31f561659e4d6384ed07982f561b5>`_
+
+[BUGFIX] Aloha configuration gets applied to nested properties
+-----------------------------------------------------------------------------------------
+
+Adjust selector for applying Aloha configuration, to only match
+those properties that belong to the same node and not descendants of
+nested node's wrapping.
+
+Resolves: NEOS-1316
+
+* Commit: `ad66946 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ad66946022de9d5b27af41f28e1775309d85ce16>`_
+
+[TASK] Insert content without page reload when creating/pasting
+-----------------------------------------------------------------------------------------
+
+When new content is created or existing content is pasting using cut or copy,
+the page reload is replaced with directly inserting of the content. This is
+done to improve user experience for editors when creating/pasting content since
+it interrupts the flow, especially when working on long pages with lots of content.
+
+Resolves: NEOS-613
+
+* Commit: `a6c4021 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a6c402139ffc2186a36a76ea0d18ad9b21ce6c54>`_
+
+[BUGFIX] Fix wrong cache invalidation message
+-----------------------------------------------------------------------------------------
+
+The message for a DescendantOf_* tag referred to a wrong node, this is
+fixed by this change.
+
+* Commit: `7c42797 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c42797b51a1f076bcc941022e953a38da3c7e6c>`_
+
+[BUGFIX] Allow ``PluginViews`` to encapsulate multiple actions
+-----------------------------------------------------------------------------------------
+
+Currently the ``PluginViewImplementation`` only evaluates the default
+controller/action pair that is configured in the ``controllerActions``
+setting of the corresponding NodeType.
+Additional controllers/actions are ignored so that it's not possible to
+invoke them.
+
+This is fixed by falling back to the default controller/action only if
+no explicit action is requested.
+
+Fixes: NEOS-1311
+
+* Commit: `86f179d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/86f179d423258435f2a9793a126d7937c6723a71>`_
+
+[TASK] Add missing ChangeLogs to documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `fffa741 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fffa7415f5f822352cfaa4e35d8ff9c3072a1338>`_
+
+[BUGFIX] Live workspace shortcut breaks when having multiple dimensions
+-----------------------------------------------------------------------------------------
+
+When using multiple content dimensions, the live workspace shortcut next
+to the fullscreen button, opens a broken URL because the dimensions are
+not stripped correctly.
+
+Fixes: NEOS-1206
+
+* Commit: `4777b6c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4777b6c0ad1c776cc16c3915075b1bccfc6735d4>`_
+
+[BUGFIX] Prevent syntax error for backend in latest stable Chrome
+-----------------------------------------------------------------------------------------
+
+Due to a bug in the recent stable version of Chrome the backend breaks
+occasionally when initalizing. This only happens when using the minified
+JavaScript build. The bug is caused by a non UTF-8 unicode character
+in the CodeMirror library using a UTF-16 character, which causes the
+bug in Chrome.
+
+Updating CodeMirror to the latest minor version of 3.* fixes the issue,
+which is a good idea in any case.
+The issue is already fixed in Chrome, however it may take a while for a new
+stable version to be rolled out.
+
+Fixes: NEOS-1312
+
+* Commit: `1877bac <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1877bac7912bc4017a267509b5c377e6e34c3084>`_
+
+[BUGFIX] Fix wrong/unexpected NodeType constraints behavior
+-----------------------------------------------------------------------------------------
+
+This changes the constraints for ``TYPO3.Neos:ContentCollection`` to
+disallow ``TYPO3.Neos:Document`` but allow everything else.
+
+That way, disallowing ``*`` and allowing something more specific in a
+NodeType works again as expected, as in::
+
+  'TYPO3.Neos.NodeTypes:ThreeColumn':
+    childNodes:
+      'column1':
+        constraints:
+          nodeTypes:
+            '*': FALSE
+
+Fixes: NEOS-1310
+
+* Commit: `c409fb1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c409fb1b3db32b9a1fcba65e68f11c21295d231b>`_
+
+[BUGFIX] Remove inclusion of removed stylesheet file in media browser
+-----------------------------------------------------------------------------------------
+
+A old removed file was still included in the module leading to a
+missing resource being loaded. Additionally an existing file was
+configured to load twice.
+
+Related: NEOS-1020
+
+* Commit: `2da4477 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2da4477b15d3ae9ffb47b8bce817ddcb002f066d>`_
+
+[BUGFIX] ImageEditor should check if image was removed
+-----------------------------------------------------------------------------------------
+
+In case the image gets removed from the editor an JavaScript
+error was thrown due to not checking for a null value before
+accessing properties on the editor value. On removal the editor
+value property is set to null and then ``__updateValue()`` is
+called. This now checks if value is a null value before using
+any properties.
+
+Fixes: NEOS-1276
+
+* Commit: `65dfd45 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/65dfd45afceef96dfa381017ca2d263d3737c5b4>`_
+
+[BUGFIX] Give useful error messages in media management
+-----------------------------------------------------------------------------------------
+
+When an error occurs in an action only a generic error
+``FlashMessage`` is rendered. This won't help any users,
+therefor we are adding some custom error handling first hiding
+which action failed in ``Production`` context because no user
+can use that information. But it adds any validation errors
+as FlashMessages to the output to give users a hint what they
+did wrong.
+
+Fixes: NEOS-264
+
+* Commit: `26cd4c0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/26cd4c07a8594526afde5c1bc363c8cb663bc9bb>`_
+
+[TASK] Code cleanup in node type configuration
+-----------------------------------------------------------------------------------------
+
+- Removes some blank lines
+- Removes wrong comment about extending content collections
+- Changes content collections to only allow content and other
+  collections instead of everything
+- Adjusts a comment with an old node type for a page
+
+* Commit: `d8c7c9f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d8c7c9f2621879032b536b1af53fd9d07dcf7d80>`_
+
+[BUGFIX] Tooltips not working in media browser
+-----------------------------------------------------------------------------------------
+
+The tooltips for icon buttons are not shown when opening
+the media browser, only in the media module.
+
+Related: NEOS-1028
+
+* Commit: `7d6939c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7d6939c1b6f5509e267e326a12cade7f2cf06a2b>`_
+
+[BUGFIX] Delete confirmation dialog not displaying in media browser
+-----------------------------------------------------------------------------------------
+
+When opening the media browser, not module, clicking the delete
+various delete buttons does not show the confirmation dialog.
+
+Fixes: NEOS-1286
+
+* Commit: `175511b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/175511bab91ef13aabca1362da451f248d63767c>`_
+
+[BUGFIX] Missing fallback label in user language selector
+-----------------------------------------------------------------------------------------
+
+If a language doesn't have a label for the default language, the
+language selector will show the key instead of a label.
+
+Related: NEOS-143
+
+* Commit: `ec40bbf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ec40bbf7f5a723b3e6a0d90e787cf2fa7f0ce3ab>`_
+
+[BUGFIX] Correct language key for danish in ``availableLanguages``
+-----------------------------------------------------------------------------------------
+
+The language key for danish in the UI setting ``availableLanguages``
+is set to ``dk`` instead of the correct ``da``.
+
+Related: NEOS-143
+
+* Commit: `05f6901 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/05f6901cf3976cf32cd86b07fd18e8f5b2a80bb9>`_
+
+[BUGFIX] Missing padding before content collection creation form
+-----------------------------------------------------------------------------------------
+
+In the media browser/module there's no padding between the creation form
+and the edit icon for collections, when no collections have been created.
+
+Related: NEOS-251
+
+* Commit: `c534e6a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c534e6a8ac0a9f7f5390bd53590dbf361de6ccdb>`_
+
+[BUGFIX] Fix unescaped HTML in danish XLIFF file
+-----------------------------------------------------------------------------------------
+
+* Commit: `92c6bdc <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/92c6bdcd67c27ec3897ea20f07c78e40684b50b0>`_
+
+[TASK] Fix some more (syntax) errors in documentation sources
+-----------------------------------------------------------------------------------------
+
+* Commit: `eb8176c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/eb8176c30c32ac080a27c12973c206d73ecae6af>`_
+
+[TASK] Fix some (syntax) errors in documentation sources
+-----------------------------------------------------------------------------------------
+
+* Commit: `fcbc732 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fcbc732136dd8cb3442e51ba29c37d7261610b1e>`_
+
+[TASK] Remove unused method parameter
+-----------------------------------------------------------------------------------------
+
+* Commit: `1ddb6e1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1ddb6e1024d63c29eff12d8e7fabf8ad3bce5cbd>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Add cache definition to ``TYPO3.Neos.NodeTypes:Menu``
+-----------------------------------------------------------------------------------------
+
+``TYPO3.Neos.NodeTypes:Menu`` is missing cache definition.
+Add cache definition to invalidate cache entry when any node
+of type ``TYPO3.Neos:Document`` changes.
+
+* Commit: `39a54be <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/39a54bef2b50c25a267421f18bf45f1b580acb36>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Rename signal argument
+-----------------------------------------------------------------------------------------
+
+The name "recursion" should give more meaning to the flag.
+
+* Commit: `f891558 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/f891558fda3edfb84e9c05b8840810317218406a>`_
+
+[BUGFIX] Make sure no invalid NodeData instances are used
+-----------------------------------------------------------------------------------------
+
+Makes sure that the first level cache for all context instances
+is flushed after moving a node as the ``NodeData`` instance used for
+a ``Node`` can have changed. Additionally adds a safeguard to the
+``NodeFactory`` to drop Node instances that have an internal
+``NodeData`` instance set.
+
+Also adds the signal ``emitNodePathChanged`` to the Node object
+in order to use the information in the right context.
+
+Last but not least cleans up the ``ContextFactory`` API by adding a new
+method ``getInstances`` and adding this and ``reset`` to the
+``ContextFactoryInterface``. At the same time removing the public
+method ``flushFirstLevelNodeCaches`` that was only used internally.
+
+* Commit: `54f0f34 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/54f0f34123119289e62500fccf65a7a080d9046c>`_
+
+[BUGFIX] Node path availability should be determined correctly
+-----------------------------------------------------------------------------------------
+
+The method
+``\\TYPO3\\TYPO3CR\\Domain\\Service\\NodeService::nodePathAvailableForNode()``
+checks if a given path can be used by a node and relies on
+``nodePathExistsInAnyContext()`` for doing so. But as the node path is
+not available if the path exists in any context the return value must be
+negated in order to return the correct result.
+
+* Commit: `bf2afe1 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/bf2afe138f4b5e72e4f2d8a45172c1c38c4bb3bb>`_
+
+[BUGFIX] findByProperties doesn't work with unicode
+-----------------------------------------------------------------------------------------
+
+Migrates Node properties to use unescaped unicode characters for
+storage to allow findByProperties to actually find them.
+Additionally runs the search term through json_encode just
+to make sure that any characters that need to be escaped are
+escaped for the search.
+
+* Commit: `17893ac <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/17893aca2f5b2a725c90ca818657eb3dd7fd3db7>`_
+
+[TASK] CGL Cleanup - Overwritten variable in foreach
+-----------------------------------------------------------------------------------------
+
+This change fixes incorrect variable naming in a foreach loop.
+
+* Commit: `19cabfd <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/19cabfd0fd180f575a1639c6ccfe0c3c5e3f3b01>`_
+
+[BUGFIX] ``defaultValue`` for type ``DateTime`` doesn't work
+-----------------------------------------------------------------------------------------
+
+Changing the date type from ``date`` to ``DateTime`` caused a
+regression in ``getDefaultValuesForProperties()`` since it wasn't
+adjusted accordingly.
+
+Related: I49f719670b60fa91c041af574b4dbbeb8b399eca
+
+* Commit: `9f2d3b3 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9f2d3b3d441d173ea334d4cba4926c8bff312bc9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Unable to use if condition inside a process segment
+-----------------------------------------------------------------------------------------
+
+Conditions are now properly executed in processors and additionally
+processor and if condition code was refactored to separate methods
+to reduce code duplication and make the code easier to understand.
+
+Resolves: NEOS-1183
+
+* Commit: `190b647 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/190b647cddee5bd98f7707f4a46e920d5f1f8d3d>`_
+
+[FEATURE] Support entry tags with array value in @cache configuration
+-----------------------------------------------------------------------------------------
+
+Entry tags for a cached path can be supplied with an array value. The
+values will be merged with other tags. This allows to use Eel helpers
+to dynamically compute a list of tags (e.g. for all parent nodes) which
+is needed by certain scenarios (e.g. content slide).
+
+Example::
+
+  @cache {
+  	mode = 'cached'
+  	entryTags {
+  		parents = ${['Tag1', 'Tag2']}
+  	}
+  }
+
+Resolves: NEOS-1315
+
+* Commit: `5853d9f <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/5853d9fb2e2e2524b110337695e876eaba10792b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Delete confirmation dialog not displaying in media browser
+-----------------------------------------------------------------------------------------
+
+When opening the media browser, not module, clicking the delete
+various delete buttons does not show the confirmation dialog.
+
+Fixes: NEOS-1286
+
+* Commit: `777a02e <https://git.typo3.org/Packages/TYPO3.Media.git/commit/777a02ed6bcb4540076db95d0a0dbcd1adfbc50e>`_
+
+[BUGFIX] Remove inclusion of removed stylesheet file
+-----------------------------------------------------------------------------------------
+
+A old removed file was still included in the module leading to a
+missing resource being loaded.
+
+Related: NEOS-1020
+
+* Commit: `76574af <https://git.typo3.org/Packages/TYPO3.Media.git/commit/76574af4347205ddd53e3fc152ca2feacf6ae7ab>`_
+
+[TASK] Show relative modification date in detail view
+-----------------------------------------------------------------------------------------
+
+Instead of showing the actual date for the modification date
+in the list view, the relative date is shown instead since that's
+easier to comprehend. The exact date is displayed as a tooltip.
+
+Related: NEOS-1020
+
+* Commit: `fb207dd <https://git.typo3.org/Packages/TYPO3.Media.git/commit/fb207dd448b7bdaff4d655efa2d57cade7504e8e>`_
+
+[TASK] Improve relative date view helper
+-----------------------------------------------------------------------------------------
+
+Instead of displaying a different year as soon as the date is
+from another year, the year is shown if the date is more than
+11 months old from now. This helps since displaying the previous
+month in January makes sense without adding the year.
+
+Related: NEOS-1020
+
+* Commit: `1c12f7e <https://git.typo3.org/Packages/TYPO3.Media.git/commit/1c12f7e61a6012bd9b16b379b14590e5e5125f4d>`_
+
+[TASK] Display actual date when hovering date in list view
+-----------------------------------------------------------------------------------------
+
+To be able to see the actual date and not only the relative one,
+the actual date is displayed as a tooltip.
+
+Related: NEOS-1020
+
+* Commit: `dd70d7b <https://git.typo3.org/Packages/TYPO3.Media.git/commit/dd70d7bab1e641270dfd0d8fcc5ea02978f22d43>`_
+
+[TASK] Auto focus search field in list views
+-----------------------------------------------------------------------------------------
+
+Automatically focus the search field to make it faster to
+search for users.
+
+Resolves: NEOS-1299
+
+* Commit: `48f21fa <https://git.typo3.org/Packages/TYPO3.Media.git/commit/48f21fae825fe61309768aa6d3d5756007e96724>`_
+
+[TASK] Display additional information in media detail view
+-----------------------------------------------------------------------------------------
+
+Add information about file size, media type and optionally dimensions
+if available for assets in the defail view.
+
+Related: NEOS-1020
+
+* Commit: `cd6b5b1 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/cd6b5b18b9d827aa087d1604849fd8442ea16f58>`_
+
+[TASK] Display asset identifier in detailed asset view
+-----------------------------------------------------------------------------------------
+
+Displays the asset identifier in the list of detailed
+information for the asset in the detailed asset view.
+
+Resolves: NEOS-309
+
+* Commit: `4dd4586 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/4dd458615afe39442c077131b8b4b13922df25cd>`_
+
+[BUGFIX] Fix regression with ImageVariant refreshes
+-----------------------------------------------------------------------------------------
+
+``ImageVariant::refresh()`` triggered an exception because
+the old resource was removed and still used afterwards.
+This is fixed by not removing the old resource object from
+the ImageVariant and just refreshing the resource. Additionally
+a resource is also generated on creation of the ImageVariant.
+
+Fixes: NEOS-1284
+
+(cherry picked from commit 90b8e7e9164bcb364d233119f01c67c564aea5af)
+
+* Commit: `a592ad0 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/a592ad0ae9980df1d948cf8cf074a33cf7f6c450>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
