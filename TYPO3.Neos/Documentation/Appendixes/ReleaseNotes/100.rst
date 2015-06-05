@@ -1,0 +1,43 @@
+==============
+1.0.0 versions
+==============
+
+TYPO3  Neos 1.0.0-alpha3
+------------------------
+
+* UI improvements for content editing
+* Stabilization of content editing
+* Low level features in TypoScript and Eel to prepare for new features
+
+See :ref:`1.0.0-alpha3`
+
+TYPO3  Neos 1.0.0-alpha4
+------------------------
+
+See :ref:`1.0.0-alpha4`
+
+TYPO3  Neos 1.0.0-alpha5
+------------------------
+
+See :ref:`1.0.0-alpha5`
+
+TYPO3  Neos 1.0.0-alpha6
+------------------------
+
+See :ref:`1.0.0-alpha6`
+
+TYPO3  Neos 1.0.0-alpha7
+------------------------
+
+See :ref:`1.0.0-alpha7`
+
+
+TYPO3  Neos 1.0.0-beta1
+-----------------------
+
+See :ref:`1.0.0-beta1`
+
+TYPO3  Neos 1.0.0-beta2
+-----------------------
+
+See :ref:`1.0.0-beta2`
