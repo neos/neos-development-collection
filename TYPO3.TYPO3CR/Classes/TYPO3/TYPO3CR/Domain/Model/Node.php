@@ -176,7 +176,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 					$pathSuffix = substr($nodeVariant->getPath(), strlen($originalPath));
 					$possibleShadowedNodeData = $nodeData->move($path . $pathSuffix, $this->context->getWorkspace());
 					$nodeVariant->setNodeData($possibleShadowedNodeData);
-					$changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), $checkForExistence);
+					$changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), !$checkForExistence);
 				}
 			}
 		} else {
@@ -1677,8 +1677,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param NodeInterface $node
 	 * @param string $oldPath
 	 * @param string $newPath
-	 * @param boolean $checkForExistenceWasEnabled
+	 * @param boolean $recursion TRUE if the node path change was caused because a parent node path was changed
 	 */
-	protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $checkForExistenceWasEnabled) {
+	protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion) {
 	}
 }
