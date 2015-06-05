@@ -2,7 +2,7 @@
 Development
 ===========
 
-Developing TYPO3 Neos.
+Developing Neos.
 
 .. toctree::
 	:maxdepth: 2

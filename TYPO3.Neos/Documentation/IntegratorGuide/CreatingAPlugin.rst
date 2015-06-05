@@ -4,11 +4,11 @@
 Creating a plugin
 =================
 
-Any TYPO3 Flow package can be used as a plugin with a little effort. This section
+Any Flow package can be used as a plugin with a little effort. This section
 will guide you through a simple example. First, we will create a really basic
-TYPO3 Flow package. Second, we'll expose this TYPO3 Flow package as a Neos plugin.
+Flow package. Second, we'll expose this Flow package as a Neos plugin.
 
-Creating a TYPO3 Flow package
+Creating a Flow package
 =============================
 
 First we will create a very simple Flow package to use for integrating it as a plugin.
@@ -24,7 +24,7 @@ If you do not have the Kickstart package installed, you must do this now:
 
 .. code-block:: bash
 
-  cd /your/htdocs/TYPO3-Neos
+  cd /your/htdocs/Neos
   php /path/to/composer.phar require typo3/kickstart \*
 
 Now create a package with a model, so we have something to show in the plugin:
@@ -48,7 +48,7 @@ Then generate a migration to create the needed DB schema:
 You should now have a package with a default controller and templates created.
 
 In order to view them you can call the frontend like ``http://neos.demo/sarkosh.cdcollection``,
-but you need to include the TYPO3 Flow default routes first (add them before the Neos routes):
+but you need to include the Flow default routes first (add them before the Neos routes):
 
 *Configuration/Routes.yaml*
 
@@ -86,10 +86,10 @@ to keep things organized. Technically it has no relevance.
   mkdir Packages/Plugins
   mv Packages/Application/Sarkosh.CdCollection Packages/Plugins/Sarkosh.CdCollection
 
-Converting a TYPO3 Flow Package Into a Neos Plugin
+Converting a Flow Package Into a Neos Plugin
 ==================================================
 
-To activate a TYPO3 Flow package as a Neos plugin, you only need to provide two
+To activate a Flow package as a Neos plugin, you only need to provide two
 configuration blocks. First, you need to add a new *node type* for the plugin,
 such that the user can choose the plugin from the list of content elements:
 
@@ -123,7 +123,7 @@ Finally tweak your site package's *Root.ts2* and include the newly created TypoS
 
   include: resource://Sarkosh.CdCollection/Private/TypoScript/Plugin.ts2
 
-Now log in to your Neos backend (you must remove the TYPO3 Flow routes again), and you
+Now log in to your Neos backend (you must remove the Flow routes again), and you
 will be able to add your plugin just like any other content element.
 
 Configuring a plugin to show specific actions on different pages
@@ -190,7 +190,7 @@ and body tags. This of course results in an invalid document.
 
 .. TBD
 
-.. Using TYPO3 CR Nodes in a Plugin
-.. ================================
+.. Using TYPO3CR Nodes in a Plugin
+.. ===============================
 
 .. TBD

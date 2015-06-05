@@ -3,7 +3,7 @@ User Interface Basics
 =====================
 
 .. figure:: Images/UserInterface.png
-   :alt: TYPO3 Neos User Interface
+   :alt: Neos User Interface
    :class: screenshot-fullsize
 
 #. Toggle button for the Menu
@@ -66,5 +66,5 @@ The content canvas is where you can add/edit your content.
 Discard / Apply changes
 -----------------------
 
-TYPO3 Neos saves your changes on the fly as much as possible. When editing properties you must apply or discard
+Neos saves your changes on the fly as much as possible. When editing properties you must apply or discard
 the changes you made.

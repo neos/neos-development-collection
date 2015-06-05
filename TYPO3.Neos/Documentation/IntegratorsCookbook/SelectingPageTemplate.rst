@@ -2,7 +2,7 @@
 Selecting a Page Layout
 =======================
 
-TYPO3 Neos has a flexible way of choosing a layout, which can be selected in the backend.
+Neos has a flexible way of choosing a layout, which can be selected in the backend.
 
 First of all, the necessary layouts have to be configured inside `VendorName.VendorSite/Configuration/NodeTypes.yaml`::
 
