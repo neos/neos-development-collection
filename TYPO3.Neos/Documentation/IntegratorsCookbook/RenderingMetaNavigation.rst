@@ -3,7 +3,7 @@ Rendering a Meta-Navigation
 ===========================
 
 To render a meta navigation (ex: footer navigation)
-in TYPO3 Neos all you need to use is TypoScript and
+in Neos all you need to use is TypoScript and
 HTML.
 
 A common fact is that most sites have footer where all
@@ -69,7 +69,7 @@ Iterating through nodes::
 
 What then is done inside the iteration is that first we wrap our node
 with a li tag with a class called menu-item. Then we use our view helper
-to (which namespace is neos that is clarified) link it to a node in TYPO3 Neos.
+to (which namespace is neos that is clarified) link it to a node in Neos.
 The linking is set in the parameter node, the you can choose what should be
 shown as a text for the link. In this case the label (default) of the
 node is the text.

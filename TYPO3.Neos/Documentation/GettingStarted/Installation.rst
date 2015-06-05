@@ -4,14 +4,14 @@ Installation
 
 .. tip::
 
-	TYPO3 Neos is built on top of the TYPO3 Flow framework. If you run into technical problems,
-	keep in mind to check the `TYPO3 Flow documentation`_ for possible hints as well.
+	Neos is built on top of the Flow framework. If you run into technical problems,
+	keep in mind to check the `Flow documentation`_ for possible hints as well.
 
 Requirements
 ------------
 
-TYPO3 Neos has at least the same system requirements as TYPO3 Flow. You can find them in the
-`TYPO3 Flow Requirements Documentation`_.
+Neos has at least the same system requirements as Flow. You can find them in the
+`Flow Requirements Documentation`_.
 
 Fundamental Installation
 ------------------------
@@ -33,28 +33,28 @@ Fundamental Installation
       If you are on Windows please refer to the `offical documentation
       <http://getcomposer.org/doc/00-intro.md#installation-windows>`_ on how to install Composer on Windows
 
-#. Go to your htdocs directory and create a new project based on the TYPO3 Neos base distribution:
+#. Go to your htdocs directory and create a new project based on the Neos base distribution:
 
    .. code-block:: bash
 
       cd /your/htdocs/
-      php /path/to/composer.phar create-project typo3/neos-base-distribution TYPO3-Neos
+      php /path/to/composer.phar create-project typo3/neos-base-distribution Neos
 
-   Composer will take care of downloading all dependencies for running your TYPO3 Neos installation to the
-   directory ``TYPO3-Neos``.
+   Composer will take care of downloading all dependencies for running your Neos installation to the
+   directory ``Neos``.
    You can safely delete the vcs files by answering 'Y' to the question 'Do you want to remove the existing VCS (.git,
    .svn..) history? [Y,n]?'.
 
 
 #. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
-   the TYPO3 Neos installation.
+   the Neos installation.
 
    .. code-block:: apache
 
       NameVirtualHost *:80 # if needed
 
       <VirtualHost *:80>
-         DocumentRoot "/your/htdocs/TYPO3-Neos/Web/"
+         DocumentRoot "/your/htdocs/Neos/Web/"
          # enable the following line for production context
          #SetEnv FLOW_CONTEXT Production
          ServerName neos.demo
@@ -81,7 +81,7 @@ Fundamental Installation
 
    Replace *john* with your current username and *www-data* with the webserver's user and group.
 
-   For detailed instructions on setting the needed permissions see  `TYPO3 Flow File Permissions`_
+   For detailed instructions on setting the needed permissions see  `Flow File Permissions`_
 
    .. note::
      Setting file permissions is not necessary and not possible on Windows machines.
@@ -91,10 +91,10 @@ Fundamental Installation
 
 #. Now go to http://neos.demo/setup and follow the on-screen instructions.
 
-The TYPO3 Neos Setup Tool
--------------------------
+The Neos Setup Tool
+-------------------
 
-#. A check for the basic requirements of TYPO3 Flow and Neos will be run. If all is well, you will
+#. A check for the basic requirements of Flow and Neos will be run. If all is well, you will
    see a login screen. If a check failed, hints on solving the issue will be shown and you should
    fix what needs to be fixed. Then just reload the page, until all requirements are met.
 
@@ -103,7 +103,7 @@ The TYPO3 Neos Setup Tool
    rendered if you lost it, so don't worry too much.
 
    .. figure:: Images/Setup-Step-1.png
-      :alt: TYPO3 Neos login page
+      :alt: Neos login page
       :class: screenshot-fullsize
 
 #. Fill in the database credentials in the first step. The selector box will be updated with
@@ -116,7 +116,7 @@ The TYPO3 Neos Setup Tool
       :alt: Setup database credentials
       :class: screenshot-fullsize
 
-#. In the next step a user with administrator privileges for editing with TYPO3 Neos is created.
+#. In the next step a user with administrator privileges for editing with Neos is created.
 
    .. figure:: Images/Setup-Step-3.png
       :alt: Create admin user
@@ -138,11 +138,11 @@ The TYPO3 Neos Setup Tool
    frontend or backend of your Neos website.
 
    .. figure:: Images/StartPage.png
-      :alt: The TYPO3 Neos start page
+      :alt: The Neos start page
       :class: screenshot-fullsize
 
-      The TYPO3 Neos start page
+      The Neos start page
 
-.. _TYPO3 Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
-.. _TYPO3 Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html
-.. _TYPO3 Flow File Permissions: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Installation.html#file-permissions
+.. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
+.. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html
+.. _Flow File Permissions: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Installation.html#file-permissions
