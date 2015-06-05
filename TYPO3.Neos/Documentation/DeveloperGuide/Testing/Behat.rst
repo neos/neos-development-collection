@@ -1,6 +1,6 @@
-==========================
-Behat tests for TYPO3 Neos
-==========================
+====================
+Behat tests for Neos
+====================
 
 Setting up Neos for running Behat tests
 =======================================
@@ -29,8 +29,6 @@ Behat needs two special Flow contexts, `Development/Behat` and `Testing/Behat`.
 
 These contexts should share the same database to work properly. Make sure to create a new database for the Behat tests
 since all the data will be removed after each scenario.
-
-
 
 `FLOW_ROOT/Configuration/Development/Behat/Settings.yaml`::
 

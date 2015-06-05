@@ -2,7 +2,7 @@
 Testing
 =======
 
-Testing and quality assurance documentation for TYPO3 Neos.
+Testing and quality assurance documentation for Neos.
 
 .. toctree::
 	:maxdepth: 2

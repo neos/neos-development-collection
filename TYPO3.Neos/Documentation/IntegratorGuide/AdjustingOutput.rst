@@ -169,8 +169,7 @@ Out of the box the `Menu` is rendered using a simple unsorted list::
 
 Wrapping this into some container (if needed) in a lot of cases provides for enough possibilities
 to style the menu using CSS. In case it still is needed, it is possible to change the rendered markup
-of `Menu` using TypoScript. `Menu` is defined inside the core of TYPO3 Neos together with TYPO3
-Neos.NodeTypes:
+of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together with TYPO3.Neos.NodeTypes:
 
 *TYPO3.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
 

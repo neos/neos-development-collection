@@ -4,7 +4,7 @@
 Integrator Guide
 ================
 
-This guide explains how to implement websites with TYPO3 Neos. It specifically
+This guide explains how to implement websites with Neos. It specifically
 covers the structuring of content using the *TYPO3 Content Repository (TYPO3CR)*,
 and how the content is rendered using *TypoScript* and *Fluid*.
 
