@@ -49,6 +49,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $contentDimensionRepository;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
 	 * @var NodeService
 	 */
 	protected $nodeService;
@@ -59,10 +64,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$this->contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$this->nodeTypeManager = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+		$this->contentDimensionRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
+		$this->workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
 		$this->nodeService = $this->objectManager->get(NodeService::class);
 	}
 
@@ -79,6 +85,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function nodePathAvailableForNodeWillReturnFalseIfNodeWithGivenPathExistsAlready() {
+		$this->workspaceRepository->add(new \TYPO3\TYPO3CR\Domain\Model\Workspace('live'));
 		$rootNode = $this->context->getRootNode();
 
 		$fooNode = $rootNode->createNode('foo');
