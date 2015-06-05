@@ -62,6 +62,11 @@ class NodeFactory {
 
 		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
 
+		// In case there is a Node with an internal NodeData (because the NodeData was changed in the meantime) we need to flush it.
+		if (isset($this->nodes[$internalNodeIdentifier]) && $this->nodes[$internalNodeIdentifier]->getNodeData()->isInternal()) {
+			unset($this->nodes[$internalNodeIdentifier]);
+		}
+
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			// Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
 			$class = $nodeData->getNodeType()->getConfiguration('class') ?: $this->objectManager->getClassNameByObjectName('TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface');

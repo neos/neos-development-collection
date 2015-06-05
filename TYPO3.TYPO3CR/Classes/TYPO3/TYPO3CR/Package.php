@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * The TYPO3CR Package
@@ -30,7 +31,13 @@ class Package extends BasePackage {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\Flow\Persistence\Doctrine\PersistenceManager', 'allObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'flushNodeRegistry');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'repositoryObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'flushNodeRegistry');
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', 'TYPO3\TYPO3CR\Domain\Service\ContextFactory', 'flushFirstLevelNodeCaches');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', function() use ($bootstrap) {
+			$contextFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+			/** @var Context $contextInstance */
+			foreach ($contextFactory->getInstances() as $contextInstance) {
+				$contextInstance->getFirstLevelNodeCache()->flush();
+			}
+		});
 
 		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function(ConfigurationManager $configurationManager) {
 			$configurationManager->registerConfigurationType('NodeTypes', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT, TRUE);
