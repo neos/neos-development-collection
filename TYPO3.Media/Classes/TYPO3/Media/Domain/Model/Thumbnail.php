@@ -65,15 +65,22 @@ class Thumbnail implements ImageInterface {
 	protected $ratioMode;
 
 	/**
+	 * @var boolean
+	 * @ORM\Column(nullable = true)
+	 */
+	protected $allowUpScaling;
+
+	/**
 	 * Constructs a new Thumbnail
 	 *
 	 * @param AssetInterface $originalAsset The original asset this variant is derived from
 	 * @param integer $maximumWidth Maximum width of the generated thumbnail
 	 * @param integer $maximumHeight Maximum height of the generated thumbnail
 	 * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
+	 * @param boolean $allowUpScaling Whether the resulting image should be upscaled
 	 * @throws \TYPO3\Media\Exception
 	 */
-	public function __construct(AssetInterface $originalAsset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
+	public function __construct(AssetInterface $originalAsset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = NULL) {
 		if (!$originalAsset instanceof ImageInterface) {
 			throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
 		}
@@ -82,6 +89,7 @@ class Thumbnail implements ImageInterface {
 		$this->maximumWidth = $maximumWidth;
 		$this->maximumHeight = $maximumHeight;
 		$this->ratioMode = $ratioMode;
+		$this->allowUpScaling = $allowUpScaling;
 	}
 
 	/**
@@ -124,7 +132,8 @@ class Thumbnail implements ImageInterface {
 				array(
 					'maximumWidth' => $this->maximumWidth,
 					'maximumHeight' => $this->maximumHeight,
-					'ratioMode' => $this->ratioMode
+					'ratioMode' => $this->ratioMode,
+					'allowUpScaling' => $this->allowUpScaling
 				)
 			)
 		);

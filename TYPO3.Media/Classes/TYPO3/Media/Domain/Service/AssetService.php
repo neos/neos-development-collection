@@ -41,7 +41,7 @@ class AssetService {
 	 * @param boolean $allowUpScaling
 	 * @return array with keys "width", "height" and "src"
 	 */
-	public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling) {
+	public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight, $allowCropping = FALSE, $allowUpScaling = NULL) {
 		if ($asset instanceof ImageInterface) {
 			$thumbnailImage = $this->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
 			$thumbnailData = array(
@@ -69,7 +69,7 @@ class AssetService {
 	 */
 	protected function getImageThumbnailImage(ImageInterface $image, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = NULL, $allowUpScaling = NULL) {
 		$ratioMode = ($allowCropping ? ImageInterface::RATIOMODE_OUTBOUND : ImageInterface::RATIOMODE_INSET);
-		if ($allowUpScaling === FALSE && $image instanceof ImageInterface) {
+		if ($allowUpScaling === FALSE) {
 			$maximumWidth = ($maximumWidth > $image->getWidth()) ? $image->getWidth() : $maximumWidth;
 			$maximumHeight = ($maximumHeight > $image->getHeight()) ? $image->getHeight() : $maximumHeight;
 		}
@@ -77,7 +77,7 @@ class AssetService {
 			return $image;
 		}
 
-		return $this->thumbnailService->getThumbnail($image, $maximumWidth, $maximumHeight, $ratioMode);
+		return $this->thumbnailService->getThumbnail($image, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
 	}
 
 	/**

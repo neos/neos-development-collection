@@ -287,11 +287,12 @@ class Asset implements AssetInterface {
 	 * @param integer $maximumWidth The thumbnail's maximum width in pixels
 	 * @param integer $maximumHeight The thumbnail's maximum height in pixels
 	 * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
+	 * @param boolean $allowUpScaling Whether the resulting image should be upscaled
 	 * @return Thumbnail
 	 * @api
 	 */
-	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
-		return $this->thumbnailService->getThumbnail($this, $maximumWidth, $maximumHeight, $ratioMode);
+	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = NULL) {
+		return $this->thumbnailService->getThumbnail($this, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
 	}
 
 	/**
