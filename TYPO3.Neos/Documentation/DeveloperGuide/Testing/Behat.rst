@@ -1,11 +1,11 @@
-==========================
-Behat tests for TYPO3 Neos
-==========================
+====================
+Behat tests for Neos
+====================
 
 Setting up Neos for running Behat tests
 =======================================
 
-The TYPO3 Neos package contains a growing suite of Behat tests which you should take into account while fixing bugs or
+The Neos package contains a growing suite of Behat tests which you should take into account while fixing bugs or
 adding new features. Please note that running these tests require that the Neos demo site package (TYPO3.NeosDemoTypo3Org)
 is installed and activated.
 

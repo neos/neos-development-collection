@@ -2,7 +2,7 @@
 Developer Guide
 ===============
 
-These are the development guidelines of TYPO3 Neos.
+These are the development guidelines of Neos.
 
 .. toctree::
 	:maxdepth: 2
