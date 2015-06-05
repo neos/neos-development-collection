@@ -376,7 +376,7 @@ Example::
 TYPO3.Neos TypoScript Objects
 =============================
 
-The TypoScript objects defined in the TYPO3 Neos package contain all TypoScript objects which
+The TypoScript objects defined in the Neos package contain all TypoScript objects which
 are needed to integrate a site. Often, it contains generic TypoScript objects
 which do not need a particular node type to work on.
 

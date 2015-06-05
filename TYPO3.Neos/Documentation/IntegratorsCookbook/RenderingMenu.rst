@@ -54,7 +54,7 @@ Iterating through nodes:
 
 What then is done inside the iteration is that first we wrap our node
 with a li tag with a class called menu-item. Then we use our viewhelper
-to (which namespace is neos in this example) link it to a node in TYPO3 Neos.
+to (which namespace is neos in this example) link it to a node in Neos.
 The linking is set in the parameter node, the you can chose what should be
 shown as a text for the link. In this case the label (default) of the
 node is the text.

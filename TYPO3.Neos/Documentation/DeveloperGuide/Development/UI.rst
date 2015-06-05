@@ -5,7 +5,7 @@ Neos UI Development
 Setting up your machine for Neos UI development
 ===============================================
 
-For user interface development of TYPO3 Neos we utilize `grunt` and some other
+For user interface development of Neos we utilize `grunt` and some other
 tools.
 
 Setting up your machine could be done by using the installation script that can

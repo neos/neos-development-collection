@@ -51,7 +51,7 @@ a ``ContentCollection``, there could be another three-column element which again
 	It allows to create an arbitrary nesting of content elements, but is still
 	plugged into the classical table-based architecture.
 
-	Basically, TYPO3 Neos generalizes the tree-based concept found in TYPO3 CMS
+	Basically, Neos generalizes the tree-based concept found in TYPO3 CMS
 	and TemplaVoila and implements it in a consistent manner, where we do not
 	have to distinguish between pages and other content.
 
@@ -1007,7 +1007,7 @@ Registering specific editors is also possible like this::
 Predefined Node Types
 ---------------------
 
-TYPO3 Neos is shipped with a number of node types. It is helpful to know some of
+Neos is shipped with a number of node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
@@ -1019,7 +1019,7 @@ TYPO3.Neos:Node
 ~~~~~~~~~~~~~~~
 
 ``TYPO3.Neos:Node`` is a (more or less internal) base type which should be extended by
-all content types which are used in the context of TYPO3 Neos.
+all content types which are used in the context of Neos.
 
 It does not define any properties.
 

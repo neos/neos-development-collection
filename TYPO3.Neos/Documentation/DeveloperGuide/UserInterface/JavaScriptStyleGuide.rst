@@ -53,7 +53,7 @@ To sum it up, we have three types of methods/properties:
 
 .. note::
 
-	It is allowed to observe or bind to private properties within the TYPO3 Neos javascript code. This is because the property
+	It is allowed to observe or bind to private properties within the Neos javascript code. This is because the property
 	is not just meant as private object property, but as a non-api property.
 
 When to use a new file

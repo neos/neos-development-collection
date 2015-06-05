@@ -2,7 +2,7 @@
 General User Interface Principles
 =================================
 
-The following principles serve as general guiding concepts throughout the whole TYPO3 Neos product.
+The following principles serve as general guiding concepts throughout the whole Neos product.
 
 Overall User Interface Goals
 ============================
@@ -50,6 +50,6 @@ Implementation notes:
 Z-Indexes
 ---------
 
-The TYPO3 Neos UI uses Z-Indexes starting at *10000*.
+The Neos UI uses Z-Indexes starting at *10000*.
 
 .. warning:: TODO: Formulate some more about the usage of z-indexes.
