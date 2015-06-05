@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
+use Imagine\Image\Point;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
@@ -73,6 +74,12 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 * @ORM\Column(nullable = TRUE)
 	 */
 	protected $ratioMode;
+
+	/**
+	 * @var boolean
+	 * @ORM\Column(nullable = TRUE)
+	 */
+	protected $allowUpScaling;
 
 	/**
 	 * Sets maximumHeight
@@ -222,6 +229,24 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	}
 
 	/**
+	 * Returns allowUpScaling
+	 *
+	 * @return boolean
+	 */
+	public function getAllowUpScaling() {
+		return $this->allowUpScaling;
+	}
+
+	/**
+	 * Sets allowUpScaling
+	 *
+	 * @param boolean $allowUpScaling
+	 */
+	public function setAllowUpScaling($allowUpScaling) {
+		$this->allowUpScaling = $allowUpScaling;
+	}
+
+	/**
 	 * Check if this Adjustment can or should be applied to its ImageVariant.
 	 *
 	 * @param ImagineImageInterface $image
@@ -229,7 +254,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 */
 	public function canBeApplied(ImagineImageInterface $image) {
 		$expectedDimensions = $this->calculateDimensions($image->getSize());
-		if ($expectedDimensions->contains($image->getSize())) {
+		if ($expectedDimensions->contains($image->getSize()) && $this->getAllowUpScaling() !== TRUE) {
 			return FALSE;
 		}
 
@@ -245,7 +270,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 */
 	public function applyToImage(ImagineImageInterface $image) {
 		$ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-		return $image->thumbnail($this->calculateDimensions($image->getSize()), $ratioMode);
+		return $this->resize($image, $this->calculateDimensions($image->getSize()), $ratioMode);
 	}
 
 	/**
@@ -258,6 +283,11 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	protected function calculateDimensions(BoxInterface $originalDimensions) {
 		$width = $originalDimensions->getWidth();
 		$height = $originalDimensions->getHeight();
+
+		if ($this->getAllowUpScaling()) {
+			$this->width = $this->getMaximumWidth();
+			$this->height = $this->getMaximumHeight();
+		}
 
 		// height and width are set explicitly:
 		if ($this->width !== NULL && $this->height !== NULL) {
@@ -303,6 +333,68 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 		}
 
 		return new Box($width, $height);
+	}
+
+	/**
+	 * @param ImagineImageInterface $image
+	 * @param BoxInterface $size
+	 * @param string $mode
+	 * @param string $filter
+	 * @return \Imagine\Image\ManipulatorInterface
+	 */
+	protected function resize(ImagineImageInterface $image, BoxInterface $size, $mode = ImageInterface::RATIOMODE_INSET, $filter = ImagineImageInterface::FILTER_UNDEFINED) {
+		if ($mode !== ImageInterface::RATIOMODE_INSET &&
+			$mode !== ImageInterface::RATIOMODE_OUTBOUND
+		) {
+			throw new \InvalidArgumentException('Invalid mode specified');
+		}
+
+		$imageSize = $image->getSize();
+		$ratios = array(
+			$size->getWidth() / $imageSize->getWidth(),
+			$size->getHeight() / $imageSize->getHeight()
+		);
+		if ($mode === ImageInterface::RATIOMODE_INSET) {
+			$ratio = min($ratios);
+		} else {
+			$ratio = max($ratios);
+		}
+
+		$thumbnail = $image->copy();
+
+		$thumbnail->usePalette($image->palette());
+		$thumbnail->strip();
+		if (!$imageSize->contains($size) && $this->getAllowUpScaling()) {
+			$imageSize = $imageSize->scale($ratio);
+		} elseif ($size->contains($imageSize) && !$this->getAllowUpScaling()) {
+			return $thumbnail;
+		}
+
+		if ($mode === ImageInterface::RATIOMODE_OUTBOUND) {
+			if (!$imageSize->contains($size)) {
+				$size = new Box(
+					min($imageSize->getWidth(), $size->getWidth()),
+					min($imageSize->getHeight(), $size->getHeight())
+				);
+			} else {
+				$imageSize = $thumbnail->getSize()->scale($ratio);
+				$thumbnail->resize($imageSize, $filter);
+			}
+			$thumbnail->crop(new Point(
+				max(0, round(($imageSize->getWidth() - $size->getWidth()) / 2)),
+				max(0, round(($imageSize->getHeight() - $size->getHeight()) / 2))
+			), $size);
+		} else {
+			if (!$imageSize->contains($size)) {
+				$imageSize = $imageSize->scale($ratio);
+				$thumbnail->resize($imageSize, $filter);
+			} else {
+				$imageSize = $thumbnail->getSize()->scale($ratio);
+				$thumbnail->resize($imageSize, $filter);
+			}
+		}
+
+		return $thumbnail;
 	}
 
 }

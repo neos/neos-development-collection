@@ -37,9 +37,10 @@ class ThumbnailRepository extends Repository {
 	 * @param string $ratioMode The thumbnail's ratio mode, see ImageInterface::RATIOMODE_* constants
 	 * @param integer $maximumWidth The thumbnail's maximum width in pixels
 	 * @param integer $maximumHeight The thumbnail's maximum height in pixels
+	 * @param boolean $allowUpScaling Whether the resulting image should be upscaled
 	 * @return \TYPO3\Media\Domain\Model\Thumbnail The thumbnail or NULL
 	 */
-	public function findOneByAssetAndDimensions(AssetInterface $asset, $ratioMode, $maximumWidth = NULL, $maximumHeight = NULL) {
+	public function findOneByAssetAndDimensions(AssetInterface $asset, $ratioMode, $maximumWidth = NULL, $maximumHeight = NULL, $allowUpScaling = NULL) {
 
 		/**
 		 * @var $query \Doctrine\ORM\Query
@@ -60,6 +61,13 @@ class ThumbnailRepository extends Repository {
 			$query->setParameter('maximumHeight', $maximumHeight);
 		} else {
 			$query->setDQL($query->getDQL() . ' AND t.maximumHeight IS NULL');
+		}
+
+		if ($allowUpScaling !== NULL) {
+			$query->setDQL($query->getDQL() . ' AND t.allowUpScaling = :allowUpScaling');
+			$query->setParameter('allowUpScaling', $allowUpScaling);
+		} else {
+			$query->setDQL($query->getDQL() . ' AND t.allowUpScaling IS NULL');
 		}
 
 		$query->setMaxResults(1);

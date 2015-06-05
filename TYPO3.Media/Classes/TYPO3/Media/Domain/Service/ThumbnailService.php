@@ -76,22 +76,21 @@ class ThumbnailService {
 	 * @param integer $maximumWidth The thumbnail's maximum width in pixels
 	 * @param integer $maximumHeight The thumbnail's maximum height in pixels
 	 * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
+	 * @param boolean $allowUpScaling Whether the resulting image should be upscaled
 	 * @return Thumbnail
 	 * @throws \Exception
 	 */
-	public function getThumbnail(AssetInterface $asset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
-		$thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight);
-
+	public function getThumbnail(AssetInterface $asset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = NULL) {
+		$thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight, $allowUpScaling);
 		if ($thumbnail === NULL) {
 			if (!$asset instanceof ImageInterface) {
 				throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
 			}
-
-			$thumbnail = new Thumbnail($asset, $maximumWidth, $maximumHeight, $ratioMode);
-			$this->thumbnailRepository->add($thumbnail);
-			$asset->addThumbnail($thumbnail);
+			$thumbnail = new Thumbnail($asset, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
 
 			// Allow thumbnails to be persisted even if this is a "safe" HTTP request:
+			$this->thumbnailRepository->add($thumbnail);
+			$asset->addThumbnail($thumbnail);
 			$this->persistenceManager->whiteListObject($thumbnail);
 			$this->persistenceManager->whiteListObject($thumbnail->getResource());
 		}
