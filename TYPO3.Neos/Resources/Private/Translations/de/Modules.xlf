@@ -78,7 +78,7 @@
 			<target xml:lang="de">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target><alt-trans><target xml:lang="de">Das Benutzer-Management-Modul bietet Ihnen einen Überblick über alle Backend-Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeit, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></alt-trans></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="de" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="de" state="translated">Systemstandard verwenden</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target xml:lang="de">Benutzer erstellen</target></trans-unit>
