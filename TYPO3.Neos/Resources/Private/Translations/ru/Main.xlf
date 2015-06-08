@@ -17,10 +17,10 @@
 			<target xml:lang="ru" state="translated">Отмена</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="ru" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="ru" state="translated">Выберите</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="ru" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="ru" state="translated">Начните печатать а мы найдём</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="ru" state="translated">Содержимое</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="ru" state="translated">Скрыть / Показать</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="ru" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="ru" state="translated">Загружается</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="ru" state="translated">Добавить после</target><alt-trans><target xml:lang="ru">Новый после</target></alt-trans></trans-unit>
@@ -86,7 +86,7 @@
 			<target xml:lang="ru" state="translated">ОК</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="ru" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="ru" state="translated">Страница</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="ru" state="translated">Вставить</target></trans-unit>
@@ -110,7 +110,7 @@
 			<target xml:lang="ru" state="translated">Опубликовать</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="ru" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="ru" state="translated">Опубликовано</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="ru" state="translated">Удалить</target></trans-unit>
