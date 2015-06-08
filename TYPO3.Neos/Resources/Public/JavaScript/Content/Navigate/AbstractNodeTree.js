@@ -797,7 +797,6 @@ define(
 					this.move(cutNode, targetNode, position);
 				}
 				if (copiedNode) {
-					this.set('copiedNode', null);
 					var that = this,
 						newNode;
 					switch (position) {
