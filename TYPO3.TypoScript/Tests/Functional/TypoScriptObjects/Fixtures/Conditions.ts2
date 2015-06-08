@@ -88,3 +88,17 @@ conditions.supportForConditionInProcessWithAdvancedProcessFalse = TYPO3.TypoScri
 		@if.skipIfFalse = FALSE
 	}
 }
+
+conditions.supportForTypoScriptObjectWithSubEvaluationUsedInProcessor = Value {
+	value = 'basic'
+
+	theArray = Array {
+		something = ' appended'
+		another = Value {
+			value = ' more'
+			@if.thisIsNotAppended = ${FALSE}
+		}
+	}
+
+	@process.appendArray = ${value + this.theArray}
+}

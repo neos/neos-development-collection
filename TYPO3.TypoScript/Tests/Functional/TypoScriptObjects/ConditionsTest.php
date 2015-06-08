@@ -70,4 +70,13 @@ class ConditionsTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame($expected, $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function conditionsInTypoScriptObjectsWithSubEvaluationUsedInProcessorRenderCorrectly() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
+		$this->assertEquals('basic appended', $view->render());
+
+	}
 }

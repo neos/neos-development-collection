@@ -425,6 +425,7 @@ class Runtime {
 
 			if ($evaluateObject) {
 				$output = $tsObject->evaluate();
+				$this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
 			} else {
 				$output = NULL;
 				$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
