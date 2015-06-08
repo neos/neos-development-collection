@@ -20,7 +20,7 @@
 			<target xml:lang="pl" state="translated">Wybierz</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="pl" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pisz, aby szukać</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="pl" state="translated">Treść</target></trans-unit>
@@ -311,10 +311,10 @@
 			<target xml:lang="pl" state="translated">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pl" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pliki</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="pl" state="needs-translation">Crop</target></trans-unit>
+			<target xml:lang="pl" state="translated">Kadruj</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
 			<target xml:lang="pl" state="translated">Szerokość</target></trans-unit>
