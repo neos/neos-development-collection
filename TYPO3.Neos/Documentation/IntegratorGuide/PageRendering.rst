@@ -48,10 +48,10 @@ markup::
 	    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
 	    >
 	  <!--
-	    This website is powered by TYPO3 Neos, the next generation CMS, a free Open
+	    This website is powered by Neos, the next generation CMS, a free Open
 	    Source Enterprise Content Management System licensed under the GNU/GPL.
 
-	    TYPO3 Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.
+	    Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.
 
 	    More information and contribution opportunities at http://neos.typo3.org and http://flow.typo3.org
 	  -->

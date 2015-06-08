@@ -10,7 +10,7 @@ Introduction
 The frontend rendering of a document node in Neos can involve many queries and operations. Doing this for every request
 would be too slow to achieve a feasible response time. The content cache is a feature of TypoScript and supports a
 configurable and nested cache that can answer many requests directly from the cache without expensive operations. It is
-based on the TYPO3 Flow caching framework that supports many different cache backends, expiration and tagging.
+based on the Flow caching framework that supports many different cache backends, expiration and tagging.
 
 Each TypoScript path (of type object) can have its own cache configuration. These cache configurations can be nested to
 re-use parts of the content and have multiple cache entries with different properties on the same page. This could be a

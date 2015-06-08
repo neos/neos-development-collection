@@ -4,7 +4,7 @@
 Node Type Constraints
 =====================
 
-In a typical TYPO3 Neos project, you will create lots of custom node types. However, many node types should only be
+In a typical Neos project, you will create lots of custom node types. However, many node types should only be
 used in a specific context and not everywhere.
 
 For instance, inside the "Chapter" node type of the Neos Demo Site (which is a document node), one should only be

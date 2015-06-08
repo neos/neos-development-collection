@@ -1,7 +1,7 @@
-TYPO3 Neos |version| Documentation
-----------------------------------
+Neos |version| Documentation
+----------------------------
 
-TYPO3 Neos is a free enterprise web content management system licensed under the GPL.
+Neos is a free enterprise web content management system licensed under the GPL.
 
 This version of the documentation covering Neos |release| has been rendered at: |today|
 

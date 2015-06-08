@@ -10,9 +10,9 @@
    
    End of comment.
 
-======================================
-Creating your first TYPO3 Neos website
-======================================
+================================
+Creating your first Neos website
+================================
 
 To create a new site, use `Add site` in `Administration > Sites`.
 
@@ -30,7 +30,7 @@ It allows the creation of arbitrary content elements, rendering everything in a 
 Further Reading
 ===============
 
-The :ref:`integrator-guide` contains everything else you need to know about building websites with TYPO3 Neos:
+The :ref:`integrator-guide` contains everything else you need to know about building websites with Neos:
 
 * :ref:`using custom templates <adjusting-output>`
 * :ref:`creating custom content elements <custom-content-elements>`
