@@ -16,6 +16,7 @@ define(
 	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
 	'vie',
+	'create',
 	'Shared/Endpoint/NodeEndpoint',
 	'Content/LoadingIndicator'
 ], function(
@@ -26,6 +27,7 @@ define(
 	EventDispatcher,
 	NodeSelection,
 	vieInstance,
+	CreateJS,
 	NodeEndpoint,
 	LoadingIndicator
 ) {
@@ -185,6 +187,7 @@ define(
 				function(error) {
 					Notification.error('Failed to perform node action');
 					console.error('Failed to perform node action', error);
+					that._reloadPage();
 				}
 			);
 
@@ -279,6 +282,7 @@ define(
 				function(error) {
 					Notification.error('Failed to perform node action');
 					console.error('Failed to perform node action', error);
+					that._reloadPage();
 				}
 			);
 		},
@@ -295,14 +299,29 @@ define(
 		 */
 		_insertNode: function(result, nodeType, collection, position, referenceNodeEntity) {
 			var rdfaService = vieInstance.service('rdfa');
-			var content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
-			if (content.length === 0) {
+			var newElement = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+			if (newElement.length === 0) {
 				console.warn('Node could not be found in rendered collection.');
 				this._reloadPage();
 			}
-			rdfaService.setTemplate('typo3:' + nodeType, 'typo3:content-collection', rdfaService.getElementTemplate(content));
-			vieInstance.load({element: content}).from('rdfa').execute();
-			var subject = rdfaService.getElementSubject(content),
+
+			rdfaService.setTemplate('typo3:' + nodeType, 'typo3:content-collection', function (entity, callback) {
+				if (newElement.attr('about') !== undefined) {
+					// Direct match with container element
+					newElement.attr('about', '');
+				}
+				var subject = rdfaService.findPredicateElements(subject, newElement, false).each(function () {
+					var predicateElement = jQuery(this);
+					var predicate = rdfaService.getElementPredicate(predicateElement);
+					if (entity.has(predicate) && entity.get(predicate).isCollection) {
+						return true;
+					}
+					rdfaService.writeElementValue(null, predicateElement, '');
+				});
+				callback(newElement);
+			});
+			vieInstance.load({element: newElement}).from('rdfa').execute();
+			var subject = rdfaService.getElementSubject(newElement),
 				nodeEntity = vieInstance.entities.get(subject),
 				options = {};
 
@@ -314,6 +333,8 @@ define(
 			}
 			collection.add(nodeEntity, options);
 			var $newElement = rdfaService.getElementBySubject(subject, $(document));
+			// Initialize nested elements
+			CreateJS.refreshEdit($newElement.find('[about]'));
 
 			if ($newElement.length === 0) {
 				console.warn('Node could not be found in document.');
