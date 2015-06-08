@@ -100,7 +100,7 @@ This is configured via the setting ``TYPO3.TypoScript.defaultContext``.
 FlowQuery
 =========
 
-FlowQuery, as the name might suggest, *is like jQuery for TYPO3 Flow*. It's syntax
+FlowQuery, as the name might suggest, *is like jQuery for Flow*. It's syntax
 has been heavily influenced by jQuery.
 
 FlowQuery is a way to process the content (being a TYPO3CR node within Neos) of the Eel

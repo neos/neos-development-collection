@@ -3,7 +3,7 @@ Creating a Plugin
 =================
 
 A plugin is a special content element which is implemented by PHP code through
-an `ActionController` of TYPO3 Flow.
+an `ActionController` of Flow.
 
 Kickstarter
 ===========

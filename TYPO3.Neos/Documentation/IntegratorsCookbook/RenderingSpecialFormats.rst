@@ -13,7 +13,7 @@ Routing
 ``Configuration/Routes.yaml`` in your site package::
 
 	-
-		name: 'TYPO3 Neos :: Frontend :: Document node with vCard format'
+		name: 'Neos :: Frontend :: Document node with vCard format'
 		uriPattern: '{node}.vcf'
 		defaults:
 			'@package': TYPO3.Neos
@@ -27,7 +27,7 @@ Routing
 
 This will register a new route to nodes with the ``vcard`` format. URIs with that format will get an ``.vcf`` extension.
 
-Global ``Configuration/Routes.yaml`` (before the TYPO3 Neos subroutes)::
+Global ``Configuration/Routes.yaml`` (before the Neos subroutes)::
 
 	##
 	# Site package subroutes
@@ -40,7 +40,7 @@ Global ``Configuration/Routes.yaml`` (before the TYPO3 Neos subroutes)::
 		  package: 'My.Package'
 
 	##
-	# TYPO3 Neos subroutes
+	# Neos subroutes
 	# ...
 
 This will add the new route from the site package before the Neos subroutes.

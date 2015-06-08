@@ -7,7 +7,7 @@ Feature List
 Managing pages
 ==============
 
-In the TYPO3 Neos backend it's possible to create, edit and delete pages. In the content
+In the Neos backend it's possible to create, edit and delete pages. In the content
 module the pagetree can be found by clicking the `Pages` button in the left top corner.
 Page properties can be set in the inspector panel (right pane of the screen).
 The pagetree has also support for moving pages, creating, deleting and renaming them.
@@ -52,7 +52,7 @@ The available node types is still being worked on. The currently supported list 
 * Plugin (not functional)
 	Currently a plugin can be displayed on a page, but not added to the page using the user interface.
 	A plugin is defined by TypoScript configuration and is basically just a normal MVC Controller
-	from a TYPO3 Flow package.
+	from a Flow package.
 * Structural elements
 	The structural elements can be used to add a two or three column structure to your page, in which
 	new content elements can be inserted.
@@ -60,15 +60,15 @@ The available node types is still being worked on. The currently supported list 
 Import Export
 =============
 
-TYPO3 Neos has full support for importing and exporting site content using
+Neos has full support for importing and exporting site content using
 content stored in XML files. This can now for example be used to manage the full
-site content, or just those parts which are not editable in the TYPO3 Neos
+site content, or just those parts which are not editable in the Neos
 interface yet.
 For using this feature you should use a so called `Site Package`. This is a normal
-TYPO3 Flow Package containing a ``Resources/Private/Content/Sites.xml`` file which contains
+Flow Package containing a ``Resources/Private/Content/Sites.xml`` file which contains
 a node structure in XML. For an example of such a file you can check the
 `Sites.xml <http://git.typo3.org/Flow/Packages/NeosDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
-of the TYPO3 Neos demo site.
+of the Neos demo site.
 
 The import can be used like::
 
@@ -85,7 +85,7 @@ Related to these functions there's a convenience method for removing all site re
 Workspaces
 ==========
 
-TYPO3 Neos already has workspaces build in. Every user works in his personal workspace, and has
+Neos already has workspaces build in. Every user works in his personal workspace, and has
 to publish his changes to become live. Publishing pages is done using the `Publish` button in
 the top right corner of the content module.
 
@@ -95,7 +95,7 @@ Multi Domain Support
 ====================
 
 Using the command line tools it's possible to link a hostname to a site node, making it possible
-to have a multi domain installation in TYPO3 Neos. This way you can for example create a multilingual
+to have a multi domain installation in Neos. This way you can for example create a multilingual
 website using a 'multi-tree concept'.
 
 .. note:: There are still a few bugs related to URI resolving in this area; it needs to be more thoroughly tested.
@@ -103,7 +103,7 @@ website using a 'multi-tree concept'.
 Security
 ========
 
-Using the TYPO3 Flow Security Framework we have a good support for security in TYPO3 Neos,
+Using the Flow Security Framework we have a good support for security in Neos,
 even though we're missing some parts of the interface. For example for configuring
 access to content elements or pages, this is still being worked on. By using the
 Security Framework there's support for roles and access to methods or content.
@@ -117,17 +117,17 @@ It's possible to do basic user management by using a backend module or CLI.
 Backend Module
 --------------
 
-Currently the user management in the TYPO3 Neos interface is currently only
+Currently the user management in the Neos interface is currently only
 available for users with the `Administrator` role (or via CLI).
 Using the ``Management > User Settings`` module it's possible to change
 your own personal settings, like your password. The ``Administration > User
-Management`` to create, edit and delete users for the TYPO3 Neos backend.
+Management`` to create, edit and delete users for the Neos backend.
 Assigning roles is not yet possible from within the backend but is planned.
 
 CLI
 ---
 
-Using the commandline commands of TYPO3 Neos it's possible to create users by
+Using the commandline commands of Neos it's possible to create users by
 using the ``user:create`` command. With ``user:addrole`` and ``user:removerole``
 it's possible to assign or remove roles.
 Removing and disabling users using CLI is planned.
@@ -136,4 +136,4 @@ Other Features
 ==============
 
 Probably this feature list is not yet complete; as it has not fully been
-updated to TYPO3 Neos yet. So feel free to contribute.
+updated to Neos yet. So feel free to contribute.

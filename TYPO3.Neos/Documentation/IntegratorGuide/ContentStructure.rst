@@ -51,7 +51,7 @@ a ``ContentCollection``, there could be another three-column element which again
 	It allows to create an arbitrary nesting of content elements, but is still
 	plugged into the classical table-based architecture.
 
-	Basically, TYPO3 Neos generalizes the tree-based concept found in TYPO3 CMS
+	Basically, Neos generalizes the tree-based concept found in TYPO3 CMS
 	and TemplaVoila and implements it in a consistent manner, where we do not
 	have to distinguish between pages and other content.
 
@@ -374,6 +374,7 @@ A ``boolean`` value is rendered using a checkbox in the inspector::
           group: 'document'
 
 Options Reference:
+
 * (no options)
 
 Property Type: string ``TextFieldEditor`` -- Single-line Text Editor (default)
@@ -393,17 +394,39 @@ Example::
 
 Options Reference:
 
-* ``placeholder`` (string): HTML5 ``placeholder`` property, which is shown if the text field is empty.
-* ``disabled`` (boolean): HTML ``disabled`` property. If ``TRUE``, disable this textfield.
-* ``maxlength`` (integer): HTML ``maxlength`` property. Maximum number of characters allowed to be entered.
-* ``readonly`` (boolean): HTML ``readonly`` property. If ``TRUE``, this field is cannot be written to.
-* ``form`` (optional): HTML5 ``form`` property.
-* ``selectionDirection`` (optional): HTML5 ``selectionDirection`` property.
-* ``spellcheck`` (optional): HTML5 ``spellcheck`` property.
-* ``required`` (boolean): HTML5 ``required`` property. If ``TRUE``, input is required.
-* ``title`` (boolean): HTML ``title`` property.
-* ``autocapitalize`` (boolean): Custom HTML ``autocapitalize`` property.
-* ``autocorrect`` (boolean): Custom HTML ``autocorrect`` property.
+``placeholder`` (string)
+	HTML5 ``placeholder`` property, which is shown if the text field is empty.
+
+``disabled`` (boolean)
+	HTML ``disabled`` property. If ``TRUE``, disable this textfield.
+
+``maxlength`` (integer)
+	HTML ``maxlength`` property. Maximum number of characters allowed to be entered.
+
+``readonly`` (boolean)
+	HTML ``readonly`` property. If ``TRUE``, this field is cannot be written to.
+
+``form`` (optional)
+	HTML5 ``form`` property.
+
+``selectionDirection`` (optional)
+	HTML5 ``selectionDirection`` property.
+
+``spellcheck`` (optional)
+	HTML5 ``spellcheck`` property.
+
+``required`` (boolean)
+	HTML5 ``required`` property. If ``TRUE``, input is required.
+
+``title`` (boolean)
+	HTML ``title`` property.
+
+``autocapitalize`` (boolean)
+	Custom HTML ``autocapitalize`` property.
+
+``autocorrect`` (boolean)
+	Custom HTML ``autocorrect`` property.
+
 
 Property Type: string ``TextAreaEditor`` -- Multi-line Text Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -422,8 +445,11 @@ In case the text input should span multiple lines, a ``TextAreaEditor`` should b
 
 Options Reference:
 
-* **all options from Text Field Editor -- see above**
-* ``rows`` (integer): Number of lines this textarea should have; Default ``5``.
+``rows`` (integer)
+	Number of lines this textarea should have; Default ``5``.
+
+** and all options from Text Field Editor -- see above**
+
 
 Property Type: string ``CodeEditor`` -- Full-Screen Code Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -454,10 +480,13 @@ can be customized, which is helpful for editing markdown and similar contents::
 
 Options Reference:
 
-* ``buttonLabel`` (string): label of the button which is used to open the full-screen editor. Default ``Edit code``.
-* ``highlightingMode`` (string): CodeMirror highlighting mode to use. These formats are support by default:
-  ``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
-  used, they must be loaded beforehand using custom JS code. Default ``text/html``.
+``buttonLabel`` (string)
+	label of the button which is used to open the full-screen editor. Default ``Edit code``.
+
+``highlightingMode`` (string)
+	CodeMirror highlighting mode to use. These formats are support by default:
+	``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
+	used, they must be loaded beforehand using custom JS code. Default ``text/html``.
 
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -563,18 +592,36 @@ Example:
 
 Options Reference:
 
-* ``values`` (required array): the list of values which can be chosen from.
-	* [valueKey]
-		* ``label`` (required string): label of this value.
-		* ``group`` (string): group of this value.
-		* ``icon`` (string): CSS icon class for this value.
-* ``allowEmpty`` (boolean): if TRUE, it is allowed to choose an empty value.
-* ``placeholder`` (string): placeholder text which is shown if nothing is selected. Only works if
-  ``allowEmpty`` is ``TRUE``. Default ``Choose``.
-* ``multiple`` (boolean): If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
-* ``dataSourceUri`` (string): If set, this URI will be called for loading the options of the select field.
-* ``dataSourceIdentifier`` (string): If set, a server-side data source will be called for loading the
-  possible options of the select field.
+``values`` (required array)
+	the list of values which can be chosen from
+
+	``[valueKey]``
+
+		``label`` (required string)
+			label of this value.
+
+		``group`` (string)
+			group of this value.
+
+		``icon`` (string)
+			CSS icon class for this value.
+
+``allowEmpty`` (boolean)
+	if TRUE, it is allowed to choose an empty value.
+
+``placeholder`` (string)
+	placeholder text which is shown if nothing is selected. Only works if
+	``allowEmpty`` is ``TRUE``. Default ``Choose``.
+
+``multiple`` (boolean)
+	If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
+
+``dataSourceUri`` (string)
+	If set, this URI will be called for loading the options of the select field.
+
+``dataSourceIdentifier`` (string)
+	If set, a server-side data source will be called for loading the
+	possible options of the select field.
 
 Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -627,7 +674,7 @@ Example::
 
 Options Reference:
 
-* **all TextFieldEditor Options**
+**all TextFieldEditor options apply**
 
 Property Type: reference / references ``ReferenceEditor`` / ``ReferencesEditor`` -- Reference Selection Editors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -648,10 +695,15 @@ Example::
 
 Options Reference:
 
-* ``nodeTypes`` (array of strings): List of node types which are allowed to be selected. By default, is set
-  to ``TYPO3.Neos:Document``, allowing only to choose other document nodes.
-* ``placeholder`` (string): Placeholder text to be shown if nothing is selected
-* ``threshold`` (number): Minimum amount of characters which trigger a search
+``nodeTypes`` (array of strings)
+	List of node types which are allowed to be selected. By default, is set
+	to ``TYPO3.Neos:Document``, allowing only to choose other document nodes.
+
+``placeholder`` (string)
+	Placeholder text to be shown if nothing is selected
+
+``threshold`` (number)
+	Minimum amount of characters which trigger a search
 
 Property Type: date ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -677,42 +729,48 @@ Example::
 
 Options Reference:
 
-* ``format`` (required string): The date format, a combination of
-  y, Y, F, m, M, n, t, d, D, j, l, N, S, w, a, A, g, G, h, H, i, s. Default ``d-m-Y``.
+``format`` (required string)
+	The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N,
+	S, w, a, A, g, G, h, H, i, s. Default ``d-m-Y``.
 
-	* year
-		* ``y``: A two digit representation of a year - Examples: 99 or 03
-		* ``Y``: A full numeric representation of a year, 4 digits - Examples: 1999 or 2003
-	* month
-		* ``F``: A full textual representation of a month, such as January or March - January through December
-		* ``m``: Numeric representation of a month, with leading zeros - 01 through 12
-		* ``M``: A short textual representation of a month, three letters - Jan through Dec
-		* ``n``: Numeric representation of a month, without leading zeros - 1 through 12
-		* ``t``: Number of days in the given month - 28 through 31
-	* day
-		* ``d``: Day of the month, 2 digits with leading zeros - 01 to 31
-		* ``D``: A textual representation of a day, three letters - Mon through Sun
-		* ``j``: Day of the month without leading zeros - 1 to 31
-		* ``l``: A full textual representation of the day of the week - Sunday through Saturday
-		* ``N``: ISO-8601 numeric representation of the day of the week - 1 (for Monday) through 7 (for Sunday)
-		* ``S``: English ordinal suffix for the day of the month, 2 characters - st, nd, rd or th.
-		* ``w``: Numeric representation of the day of the week - 0 (for Sunday) through 6 (for Saturday)
-	* hour
-		* ``a``: Lowercase Ante meridiem and Post meridiem - am or pm
-		* ``A``: Uppercase Ante meridiem and Post meridiem - AM or PM
-		* ``g``: hour without leading zeros - 12-hour format - 1 through 12
-		* ``G``: hour without leading zeros - 24-hour format - 0 through 23
-		* ``h``: 12-hour format of an hour with leading zeros - 01 through 12
-		* ``H``: 24-hour format of an hour with leading zeros - 00 through 23
-	* minute
-		* ``i``: minutes, 2 digits with leading zeros - 00 to 59
-	* second
-		* ``s``: seconds, 2 digits with leading zeros - 00 through 59
+``placeholder`` (string)
+	The placeholder shown when no date is selected
 
-* ``placeholder``: The placeholder shown when no date is selected
+``minuteStep`` (integer)
+	The granularity on which a time can be selected. Example: If set to ``30``, only half-hour
+	increments of time can be chosen. Default ``5`` minutes.
 
-* ``minuteStep``: The granularity on which a time can be selected. Example: If set to ``30``, only half-hour
-  increments of time can be chosen. Default ``5`` minutes.
+For the date format, these are the available placeholders:
+
+* year
+	* ``y``: A two digit representation of a year - Examples: 99 or 03
+	* ``Y``: A full numeric representation of a year, 4 digits - Examples: 1999 or 2003
+* month
+	* ``F``: A full textual representation of a month, such as January or March - January through December
+	* ``m``: Numeric representation of a month, with leading zeros - 01 through 12
+	* ``M``: A short textual representation of a month, three letters - Jan through Dec
+	* ``n``: Numeric representation of a month, without leading zeros - 1 through 12
+	* ``t``: Number of days in the given month - 28 through 31
+* day
+	* ``d``: Day of the month, 2 digits with leading zeros - 01 to 31
+	* ``D``: A textual representation of a day, three letters - Mon through Sun
+	* ``j``: Day of the month without leading zeros - 1 to 31
+	* ``l``: A full textual representation of the day of the week - Sunday through Saturday
+	* ``N``: ISO-8601 numeric representation of the day of the week - 1 (for Monday) through 7 (for Sunday)
+	* ``S``: English ordinal suffix for the day of the month, 2 characters - st, nd, rd or th.
+	* ``w``: Numeric representation of the day of the week - 0 (for Sunday) through 6 (for Saturday)
+* hour
+	* ``a``: Lowercase Ante meridiem and Post meridiem - am or pm
+	* ``A``: Uppercase Ante meridiem and Post meridiem - AM or PM
+	* ``g``: hour without leading zeros - 12-hour format - 1 through 12
+	* ``G``: hour without leading zeros - 24-hour format - 0 through 23
+	* ``h``: 12-hour format of an hour with leading zeros - 01 through 12
+	* ``H``: 24-hour format of an hour with leading zeros - 00 through 23
+* minute
+	* ``i``: minutes, 2 digits with leading zeros - 00 to 59
+* second
+	* ``s``: seconds, 2 digits with leading zeros - 00 through 59
+
 
 Property Type: image (TYPO3\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -782,29 +840,57 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``TRUE`
 
 Options Reference:
 
-* ``maximumFileSize``: (string) Set the maximum allowed file size to be uploaded.
-  Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb".
-  Defaults to the maximum allowed upload size configured in php.ini
+``maximumFileSize`` (string)
+	Set the maximum allowed file size to be uploaded.
+	Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb".
+	Defaults to the maximum allowed upload size configured in php.ini
 
-* ``features``
-	* ``crop`` (boolean): If ``TRUE``, enable image cropping. Default ``TRUE``.
-	* ``resize`` (boolean): If ``TRUE``, enable image resizing. Default ``FALSE``.
+``features``
 
-* ``crop``: crop-related options. Only relevant if ``features.crop`` is enabled.
-	* ``aspectRatio``
-		* ``locked``: Locks the aspect ratio to a specific width/height ratio
-			* ``width``: width of the aspect ratio which shall be enforced
-			* ``height``: height of the aspect ratio which shall be enforced
-		* ``options``: aspect-ratio presets. Only effective if ``locked`` is not set.
-			* [presetIdentifier]
-				* ``width`` (required integer): the width of the aspect ratio preset
-				* ``height`` (required integer): the height of the aspect ratio preset
-				* ``label`` (string): a human-readable name of the aspect ratio preset
-		* ``enableOriginal``: If ``TRUE``, the image ratio of the original image can be chosen in the selector.
-		  Only effective if ``locked`` is not set. Default ``TRUE``.
-		* ``allowCustom``: If ``TRUE``, a completely custom image ratio can be chosen. Only effective if ``locked``
-		  is not set. Default ``TRUE``.
-		* ``defaultOption`` (string): default aspect ratio option to be chosen if no cropping has been applied already.
+	``crop`` (boolean)
+		If ``TRUE``, enable image cropping. Default ``TRUE``.
+
+	``resize`` (boolean)
+		If ``TRUE``, enable image resizing. Default ``FALSE``.
+
+``crop``
+	crop-related options. Only relevant if ``features.crop`` is enabled.
+
+		``aspectRatio``
+
+			``locked``
+				Locks the aspect ratio to a specific width/height ratio
+
+				``width`` (integer)
+					width of the aspect ratio which shall be enforced
+
+				``height`` (integer)
+					height of the aspect ratio which shall be enforced
+
+			``options``
+				aspect-ratio presets. Only effective if ``locked`` is not set.
+
+				``[presetIdentifier]``
+
+					``width`` (required integer)
+						the width of the aspect ratio preset
+
+					``height`` (required integer)
+						the height of the aspect ratio preset
+
+					``label`` (string)
+						a human-readable name of the aspect ratio preset
+
+			``enableOriginal`` (boolean)
+				If ``TRUE``, the image ratio of the original image can be chosen in the selector.
+				Only effective if ``locked`` is not set. Default ``TRUE``.
+
+			``allowCustom`` (boolean)
+				If ``TRUE``, a completely custom image ratio can be chosen. Only effective if ``locked``
+				is not set. Default ``TRUE``.
+
+			``defaultOption`` (string)
+				default aspect ratio option to be chosen if no cropping has been applied already.
 
 Property Type: asset (TYPO3\\Media\\Domain\\Model\\Asset / array<TYPO3\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -829,7 +915,8 @@ Conversely, if multiple assets shall be uploaded, use ``array<TYPO3\Media\Domain
           group: 'document'
 
 Options Reference:
-* (no options)
+
+(no options)
 
 Property Validation
 -------------------
@@ -940,7 +1027,7 @@ Registering specific editors is also possible like this::
 Predefined Node Types
 ---------------------
 
-TYPO3 Neos is shipped with a number of node types. It is helpful to know some of
+Neos is shipped with a number of node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
@@ -952,7 +1039,7 @@ TYPO3.Neos:Node
 ~~~~~~~~~~~~~~~
 
 ``TYPO3.Neos:Node`` is a (more or less internal) base type which should be extended by
-all content types which are used in the context of TYPO3 Neos.
+all content types which are used in the context of Neos.
 
 It does not define any properties.
 

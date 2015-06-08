@@ -3,7 +3,7 @@ Content Module Principles
 =========================
 
 In the Content Module, we directly render the *frontend* of the website, and then
-augment it with the TYPO3 Neos Content Editing User Interface.
+augment it with the Neos Content Editing User Interface.
 
 Because of this, we do not control all CSS or javaScript which is included on
 the page; so we need some special guidelines to deal with that. These are listed
@@ -80,11 +80,13 @@ TODO write some intro text
 
    Those properties contain normal values like a title, date or other value.
    Serverside setting of the property is done using TYPO3CR Node::setProperty()
+
 #. *Visibility / lifecycle properties*
 
    These properties are prefixed using an underscore, like '_hidden'.
    Serverside setting of the property is done using TYPO3CR Node::set<UpperCamelCasePropertyname>()
-#. *TYPO3 internal properties*
+
+#. *Neos internal properties*
 
    These properties are prefixed with a double underscore, like __workspacename
    TODO: internal
