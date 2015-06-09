@@ -430,6 +430,9 @@ define(
 				}
 				Backbone.sync('update', entity, {
 					success: function (model, result, xhr) {
+						if (reloadPage !== true && reloadElement !== true) {
+							return;
+						}
 						if (reloadPage === true) {
 							if (result && result.data && result.data.nextUri) {
 								// It might happen that the page has been renamed, so we need to take the server-side URI
@@ -462,7 +465,7 @@ define(
 						}
 						ContentModule.reloadPage();
 					},
-					render: isInsideCollection
+					render: (isInsideCollection && reloadElement)
 				});
 
 				that.set('modified', false);
