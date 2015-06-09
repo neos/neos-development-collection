@@ -859,6 +859,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		_applyResizeAdjustment: function(finalWidth, finalHeight) {
 			// in order for change detection to work the order of these properties needs to be exactly like received from the server side (which is alphabetically ordered)
 			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
+				allowUpScaling: null,
 				height: finalHeight,
 				maximumHeight: null,
 				maximumWidth: null,
