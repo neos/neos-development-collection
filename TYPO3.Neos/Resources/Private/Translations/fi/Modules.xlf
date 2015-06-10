@@ -41,7 +41,7 @@
 			<target xml:lang="fi" state="translated">{0} poisti {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="fi" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+			<target xml:lang="fi" state="translated">{0} loi muunnoksen {1} {2} {3}:sta.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} changed {1} {2}.</source>
 			<target xml:lang="fi" state="translated">{0} muutti {1} {2}.</target></trans-unit>
@@ -75,7 +75,7 @@
 			<target xml:lang="fi" state="translated">Käyttäjähallinta</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="fi" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Käyttäjähalinta-moduuli näyttää kaikki hallintakäyttäliittymän käyttäjät. Voit ryhmitellä käyttäjät ominaisuuksien mukaan ja hallita käyttäjien oikeuksia, tiedostoliitäntöjä, ryhmäjäsenyyksiä jne... Tämä moduuli on tärkeä työkalu sen varmistamiseksi että käyttäjät on märitelty oikein.</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
 			<target xml:lang="fi" state="translated">Käytä järjestelmän oletusta</target></trans-unit>
@@ -111,13 +111,13 @@
 			<target xml:lang="fi" state="translated">Pakettien hallinta</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="fi" state="needs-translation">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Paketinhallinta-moduuli sisältää yhteenvedon kaikista paketeista. Voit aktivoida ja deaktivoida yksittäisiä paketteja, tuoda uusia paketteja ja poistaa olemassaolevia paketteja. Se mahdollistaa myös pakettien lukituksen hallinnan kehityskontekstissa.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="fi" state="translated">Sivustojen hallinta</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="fi" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Sivustojen hallinta-moduulin avulla voit lisätä, muokata ja poistaa sivustoja ja niiden tietoja, esimerkiksi lisätä uuden verkkotunnuksen.</target></trans-unit>
       <trans-unit id="sites.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="fi" state="translated">Luo sivusto</target></trans-unit>
@@ -133,7 +133,7 @@
 			<target xml:lang="fi" state="translated">Käyttäjäasetukset</target></trans-unit>
       <trans-unit id="usersettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="fi" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämän moduulin avulla voit muokata käyttäjäprofiilisi tietoja. Voit vaihtaa järjestelmän kielen, nimesi ja sähköpostiosoitteesi. Voit myös muokata muita järjestelmän yleisiä asetuksia.</target></trans-unit>
     </body>
   </file>
 </xliff>

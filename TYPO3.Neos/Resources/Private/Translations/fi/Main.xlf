@@ -281,19 +281,19 @@
 			<target xml:lang="fi" state="translated">Haluatko varmasti poistaa</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="fi" state="needs-translation">Create new (hold to select position)</target></trans-unit>
+			<target xml:lang="fi" state="translated">Luo uusi (pidä valittuna valitaksesi sijainti)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="fi" state="needs-translation">This will delete the element</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä poistaa elementin</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="fi" state="needs-translation">and it's children</target></trans-unit>
+			<target xml:lang="fi" state="translated">ja sen alasivut</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="fi" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä toiminto voidaan peruttaa työtilahallinnassa.</target></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="fi" state="needs-translation">Paste (hold to select position)</target></trans-unit>
+			<target xml:lang="fi" state="translated">Liitä (pidä valittuna valitaksesi sijainti)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="fi" state="translated">Korkeus</target></trans-unit>
