@@ -8,10 +8,10 @@
 			<target xml:lang="fi" state="translated">Julkaise automaattisesti</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="fi" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="fi" state="translated">Käytä</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="fi" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tallenna muutokset</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="fi" state="translated">Peruuta</target></trans-unit>
@@ -144,25 +144,25 @@
 			<target xml:lang="fi" state="translated">Otsikko</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="fi" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="fi" state="translated">URL-polun osa</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="fi" state="translated">Piilota valikoissa</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="fi" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="fi" state="translated">URL-polun osa</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="fi" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kohdetila</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="fi" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kohde</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="fi" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="fi" state="translated">Päänäkymä</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="fi" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="fi" state="translated">Laajennusnkäymä</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
 			<target xml:lang="fi" state="translated">Piilota</target></trans-unit>
@@ -187,98 +187,98 @@
 			<target xml:lang="fi" state="translated">(ei valittua kohdetta)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="fi" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä on linkki ensimmäiselle alasivulle.&lt;br /&gt;Valitse {0} jatkaaksesi sivulle.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="fi" state="needs-translation">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä on linkki ylemmän tason sivulle.&lt;br /&gt;Valitse {0} jatkaaksesi sivulle.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
 			<target xml:lang="fi" state="translated">Koko näyttö</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="fi" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="fi" state="translated">Avaa sivu työtilassa</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="fi" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="fi" state="translated">Hylkää kaikki muutokset</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="fi" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Oletko varma että haluat hylätä kaikki työtilan muutokset?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="fi" state="translated">Julkaise kaikki muutokset</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="fi" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Oletko varma että haluat julkaista kaikki muutokset?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="fi" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaustilat</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			<target xml:lang="fi" state="translated">Esikatselukeskus</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="fi" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Olet tehnyt muutoksia. Mitä haluat tehdä niille?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
 			<target xml:lang="fi" state="translated">Valittu elementti</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="fi" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kaikkia kenttiä ei ole täytetty oikein.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="fi" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Korostettuja kenttiä ei ole täytetty oikein. Ole hyvä ja täytä ne oikein.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="fi" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="fi" state="translated">Jatka muokkausta</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="fi" state="needs-translation">Throw away</target></trans-unit>
+			<target xml:lang="fi" state="translated">Heitä pois</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="fi" state="translated">Käytä</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="fi" state="needs-translation">Select a Plugin</target></trans-unit>
+			<target xml:lang="fi" state="translated">Valitse laajennus</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="fi" state="needs-translation">No plugin configured</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ei määritettyä laajennusta</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="fi" state="needs-translation">view is displayed on page</target></trans-unit>
+			<target xml:lang="fi" state="translated">näkymä näytetään sivulla</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="fi" state="needs-translation">view is displayed on current page</target></trans-unit>
+			<target xml:lang="fi" state="translated">näkymä näytetään nykyisellä sivulla</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="fi" state="needs-translation">No date set</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ei asetettua päivämäärää</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="fi" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa koodia</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="fi" state="needs-translation">Paste a link, or type to search</target></trans-unit>
+			<target xml:lang="fi" state="translated">Liitä linkki tai kirjoita hakeaksesi</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="fi" state="needs-translation">Unable to load sub node types of:</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ei voitu ladata alasolmuja joiden tyyppi on:</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="fi" state="needs-translation">Change type</target></trans-unit>
+			<target xml:lang="fi" state="translated">Vaihda tyyppiä</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="fi" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="fi" state="translated">Lisätiedot</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="fi" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näkyvyys</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="fi" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="fi" state="translated">Dokumentin valinnat</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="fi" state="translated">Sisältö</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="fi" state="translated">Haluatko varmasti poistaa</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
 			<target xml:lang="fi" state="needs-translation">Create new (hold to select position)</target></trans-unit>
