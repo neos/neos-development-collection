@@ -17,10 +17,10 @@
 			<target xml:lang="de">Abbrechen</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="de" state="translated">Wählen</target></trans-unit>
+			<target xml:lang="de" state="translated">Bitte auswählen</target><alt-trans><target xml:lang="de">Wählen</target></alt-trans></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="de" state="translated">Tippen, um zu suchen</target><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Tippen, um zu suchen</target></alt-trans><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
@@ -153,7 +153,7 @@
 			<target xml:lang="de" state="translated">URL Pfadsegment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="de" state="translated">Ziel Modus</target></trans-unit>
+			<target xml:lang="de" state="translated">Zielmodus</target><alt-trans><target xml:lang="de">Ziel Modus</target></alt-trans></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
 			<target xml:lang="de" state="translated">Ziel</target></trans-unit>
@@ -168,17 +168,17 @@
 			<target xml:lang="de" state="translated">Ausblenden</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="de" state="translated">Verstecken bis zum</target><alt-trans><target xml:lang="de">Verstecken bis</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Verstecken bis</target><alt-trans><target xml:lang="de">Verstecken bis zum</target></alt-trans></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="de" state="translated">Verstecken nach dem</target></trans-unit>
+			<target xml:lang="de" state="translated">Verstecken nach</target><alt-trans><target xml:lang="de">Verstecken nach dem</target></alt-trans></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
 			<target xml:lang="de" state="translated">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="de" state="translated">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target><alt-trans><target xml:lang="de">Klicken Sie hier, um die Datei {0} anzuzeigen.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
 			<target xml:lang="de" state="translated">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
@@ -251,40 +251,40 @@
 			<target xml:lang="de">Darstellung wird auf der aktuellen Seite angezeigt</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="de" state="translated">Kein Datum gewählt</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Datum ausgewählt</target><alt-trans><target xml:lang="de">Kein Datum gewählt</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target xml:lang="de" state="translated">Code bearbeiten</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="de" state="translated">Link einfügen oder tippen zum suchen</target></trans-unit>
+			<target xml:lang="de" state="translated">Link einfügen oder Eingabe zur Suche</target><alt-trans><target xml:lang="de">Link einfügen oder tippen zum suchen</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="de" state="translated">Kann untergeordnete Nodetypen nicht laden:</target></trans-unit>
+			<target xml:lang="de" state="translated">Kann untergeordnete Nodetypen von Folgenden nicht laden:</target><alt-trans><target xml:lang="de">Kann untergeordnete Nodetypen nicht laden:</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="de" state="translated">Typ ändern</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="de" state="translated">Zusätzliche Information</target></trans-unit>
+			<target xml:lang="de" state="translated">Zusätzliche Informationen</target><alt-trans><target xml:lang="de">Zusätzliche Information</target></alt-trans></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="de" state="translated">Sichtbarkeit</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="de" state="translated">Dokumenten Optionen</target></trans-unit>
+			<target xml:lang="de" state="translated">Dokument-Einstellungen</target><alt-trans><target xml:lang="de">Dokumenten Optionen</target></alt-trans></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="de" state="translated">Möchten Sie das Element wirklich löschen</target><alt-trans><target xml:lang="de">Möchten Sie wirklich löschen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Möchten Sie das Element wirklich löschen</target><alt-trans><target xml:lang="de">Möchten Sie den Datensatz wirklich löschen</target></alt-trans><alt-trans><target xml:lang="de">Möchten Sie wirklich löschen</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
 			<target xml:lang="de" state="translated">Neu erstellen (Halten um Position zu wählen)</target><alt-trans><target xml:lang="de">Neu erstellen (halten um Position zu wählen)</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="de" state="translated">Dadurch wird die Seite gelöscht</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird die Seite gelöscht</target><alt-trans><target xml:lang="de">Dies löscht den Eintrag</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
 			<target xml:lang="de" state="translated">und ihre Unterseiten</target><alt-trans><target xml:lang="de">als auch die Unterseiten</target></alt-trans></trans-unit>
