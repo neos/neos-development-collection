@@ -311,7 +311,7 @@ define(
 					newElement.attr('about', '');
 				}
 				var subject = rdfaService.findPredicateElements(subject, newElement, false).each(function () {
-					var predicateElement = jQuery(this);
+					var predicateElement = $(this);
 					var predicate = rdfaService.getElementPredicate(predicateElement);
 					if (entity.has(predicate) && entity.get(predicate).isCollection) {
 						return true;
