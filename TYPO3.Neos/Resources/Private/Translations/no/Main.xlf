@@ -144,34 +144,34 @@
 			<target xml:lang="no" state="translated">Tittel</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="no" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="no" state="translated">URL-banesegment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="no" state="translated">Skjule menyer</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="no" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="no" state="translated">URL-banesegment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="no" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="no" state="translated">Målmodus</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="no" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="no" state="translated">Mål</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="no" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="no" state="translated">Hovedvisning</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="no" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="no" state="translated">Pluginvisning</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="no" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="no" state="translated">Skjul</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="no" state="needs-translation">Hide before</target></trans-unit>
+			<target xml:lang="no" state="translated">Skjul før</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="no" state="needs-translation">Hide after</target></trans-unit>
+			<target xml:lang="no" state="translated">Skjul etter</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -184,65 +184,65 @@
 			<target xml:lang="no" state="translated">Klikk {0} for å åpne koblingen.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="no" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="no" state="translated">(ingen mål er valgt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="no" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="no" state="translated">Dette er en snarvei til den første undersiden.&lt;br /&gt;Klikk {0} for å fortsette til siden.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="no" state="needs-translation">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="no" state="translated">Dette er en snarvei til den overordnede siden. &lt;br /&gt; Klikk {0} å fortsette til siden.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="no" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="no" state="translated">Fullskjerm</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="no" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="no" state="translated">Åpne siden i live-arbeidsområdet</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="no" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="no" state="translated">Forkast alle endringer</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="no" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="no" state="translated">Er du sikker på at du vil forkaste alle endringer i dette arbeidsområdet?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="no" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="no" state="translated">Publiser alle endringer</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="no" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="no" state="translated">Er du sikker på at du vil publisere alle endringer?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="no" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="no" state="translated">Redigeringsmoduser</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="no" state="needs-translation">Preview Central</target></trans-unit>
+			<target xml:lang="no" state="translated">Forhåndsvisningssentral</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="no" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="no" state="translated">Du har fortsatt endringer. Hva vil du gjøre med dem?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="no" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="no" state="translated">Markert element</target><alt-trans><target xml:lang="no">Merket element</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="no" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="no" state="translated">Det er felt som ikke er fylt ut riktig.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="no" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="no" state="translated">Feltene merket med feil er ikke ennå riktig fylt ut. Fyll dem ut riktig.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="no" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="no" state="translated">Fortsett redigeringen</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="no" state="needs-translation">Throw away</target></trans-unit>
+			<target xml:lang="no" state="translated">Forkast</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="no" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="no" state="translated">Ta i bruk</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="no" state="needs-translation">Select a Plugin</target></trans-unit>
+			<target xml:lang="no" state="translated">Velg en plugin</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="no" state="needs-translation">No plugin configured</target></trans-unit>
+			<target xml:lang="no" state="translated">Ingen plugin konfigurert</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
 			<target xml:lang="no" state="needs-translation">view is displayed on page</target></trans-unit>
@@ -251,64 +251,64 @@
 			<target xml:lang="no" state="needs-translation">view is displayed on current page</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="no" state="needs-translation">No date set</target></trans-unit>
+			<target xml:lang="no" state="translated">Ingen dato</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="no" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="no" state="translated">Rediger kode</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="no" state="needs-translation">Paste a link, or type to search</target></trans-unit>
+			<target xml:lang="no" state="translated">Lim inn en kobling eller skriv for å søke</target><alt-trans><target xml:lang="no">Lim inn en link eller skriv for å søke</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="no" state="needs-translation">Unable to load sub node types of:</target></trans-unit>
+			<target xml:lang="no" state="translated">Kan ikke laste inn undernoden av typen:</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="no" state="needs-translation">Change type</target></trans-unit>
+			<target xml:lang="no" state="translated">Endre type</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="no" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="no" state="translated">Ytterligere info</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="no" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="no" state="translated">Synlighet</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="no" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="no" state="translated">Dokumentalternativer</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="no" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="no" state="translated">Innhold</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="no" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="no" state="translated">Ønsker du virkelig å slette</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="no" state="needs-translation">Create new (hold to select position)</target></trans-unit>
+			<target xml:lang="no" state="translated">Opprett ny (hold for å velge posisjon)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="no" state="needs-translation">This will delete the element</target></trans-unit>
+			<target xml:lang="no" state="translated">Dette vil slette elementet</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="no" state="needs-translation">and it's children</target></trans-unit>
+			<target xml:lang="no" state="translated">og dets underelementer</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="no" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="no" state="translated">Denne handlingen kan angres i administrasjonsmodulen for arbeidsområder.</target><alt-trans><target xml:lang="no">Denne handlingen kan angres i arbeidsområdet administrasjon.</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="no" state="needs-translation">Paste (hold to select position)</target></trans-unit>
+			<target xml:lang="no" state="translated">Lim inn (hold for å velge posisjon)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="no" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="no" state="translated">Høyde</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="no" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="no" state="translated">Ønsker du virkelig å slette</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="no" state="needs-translation">this element</target></trans-unit>
+			<target xml:lang="no" state="translated">dette elementet</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="no" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="no" state="translated">Dette vil slette elementet.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="no" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="no" state="translated">Denne handlingen kan angres i administrasjonsmodulen for arbeidsområder.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="no" state="translated">Media</target></trans-unit>
@@ -355,25 +355,25 @@
 			<target xml:lang="no" state="translated">Mangler Hjem-side</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="no" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="no" state="translated">Enten har ingen nettsteder blitt definert eller nettstedet mangler en hjem-side eller det var umulig å fastslå hvilket nettsted som er aktivt.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="no" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="no" state="translated">Du kan angi domenet til nettstedet eller importere et nytt område.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="no" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="no" state="translated">Databasefeil</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="no" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="no" state="translated">Beklager, vi har oppdaget en feil med databasen. Sjekk din loggfilene i Data/Logs/* for mer informasjon.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="no" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="no" state="translated">Du kan konfigurere eller kontrollere databasekonfigurasjonen.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="no" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="no" state="translated">Finner ikke siden</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="no" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="no" state="translated">Beklager, men den ønskede siden ble ikke funnet.</target></trans-unit>
     </body>
   </file>
 </xliff>
