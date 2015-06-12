@@ -1,14 +1,29 @@
 # This is a helper TypoScript object which is used to render all of the child elements
 # of a current node.
 prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
-	nodeAvailable = ${node && String.length(node.context.workspace.name)}
+	@override.nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
-	collection = ${this.nodeAvailable ? q(node).context({'removedContentShown': true}).children() : []}
+	collection = ${nodeAvailable ? q(node).children() : []}
 	# Render every item by its own TS object
 	itemRenderer = TYPO3.Neos:ContentCase
 	itemName = 'node'
 	iterationName = 'iterator'
+
+	# Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
+	@process.appendRemovedContentForBackend = TYPO3.TypoScript:Array {
+		visibleContent = ${value}
+
+		removedContent = TYPO3.TypoScript:Collection {
+			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
+			# Render every item by its own TS object
+			itemRenderer = TYPO3.Neos:ContentCase
+			itemName = 'node'
+			iterationName = 'iterator'
+		}
+
+		@if.onlyInBackend = ${nodeAvailable && node.context.inBackend}
+	}
 
 	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\BubblingHandler'
 }
