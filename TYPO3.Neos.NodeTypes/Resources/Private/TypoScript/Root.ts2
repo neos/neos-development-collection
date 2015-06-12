@@ -33,6 +33,7 @@ prototype(TYPO3.Neos.NodeTypes:Menu) {
 		}
 		entryTags {
 			1 = 'NodeType_TYPO3.Neos:Document'
+			2 = ${'Node_' + node.identifier}
 		}
 	}
 }
