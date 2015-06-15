@@ -26,9 +26,11 @@ use TYPO3\Flow\Utility\Now;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\UserRepository;
+use TYPO3\Neos\Service\PublishingService;
 use TYPO3\Party\Domain\Model\PersonName;
 use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
@@ -51,6 +53,12 @@ class UserService {
 	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var PublishingService
+	 */
+	protected $publishingService;
 
 	/**
 	 * @Flow\Inject
@@ -152,6 +160,8 @@ class UserService {
 		$account = $this->securityContext->getAccount();
 		if ($account !== NULL) {
 			return $this->getUser($account->getAccountIdentifier());
+		} else {
+			return NULL;
 		}
 	}
 
@@ -184,6 +194,8 @@ class UserService {
 	 * object itself. If you need to create the User object elsewhere, for example in your ActionController, make sure
 	 * to call this method for registering the new user instead of adding it to the PartyRepository manually.
 	 *
+	 * This method also creates a new user workspace for the given user if no such workspace exist.
+	 *
 	 * @param string $username The username of the user to be created.
 	 * @param string $password Password of the user to be created
 	 * @param User $user The pre-built user object to start with
@@ -203,6 +215,8 @@ class UserService {
 		$this->partyRepository->add($user);
 		$this->accountRepository->add($account);
 
+		$this->createUserWorkspace($username);
+
 		$this->emitUserCreated($user);
 		return $user;
 	}
@@ -217,7 +231,7 @@ class UserService {
 	public function emitUserCreated(User $user) {}
 
 	/**
-	 * Deletes the specified user
+	 * Deletes the specified user and all remaining content in his personal workspaces
 	 *
 	 * @param User $user The user to delete
 	 * @return void
@@ -225,7 +239,13 @@ class UserService {
 	 * @api
 	 */
 	public function deleteUser(User $user) {
+		$backendUserRole = $this->policyService->getRole('TYPO3.Neos:Editor');
+
 		foreach ($user->getAccounts() as $account) {
+			/** @var Account $account */
+			if ($account->hasRole($backendUserRole)) {
+				$this->deleteUserWorkspaces($account->getAccountIdentifier());
+			}
 			$this->accountRepository->remove($account);
 		}
 		$this->partyRepository->remove($user);
@@ -509,6 +529,36 @@ class UserService {
 			throw new NoSuchRoleException(sprintf('The role %s does not exist.', $roleIdentifier), 1422540184);
 		}
 		return $roleIdentifier;
+	}
+
+	/**
+	 * Creates a user workspace for the given user's account if it does not exist already.
+	 *
+	 * @param string $accountIdentifier Identifier of the user's account to create workspaces for
+	 * @return void
+	 */
+	protected function createUserWorkspace($accountIdentifier) {
+		$userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+		if ($userWorkspace === NULL) {
+			$liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+			$userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace);
+			$this->workspaceRepository->add($userWorkspace);
+		}
+	}
+
+	/**
+	 * Removes all personal workspaces of the given user's account if these workspaces exist. Also removes
+	 * all possibly existing content of these workspaces.
+	 *
+	 * @param string $accountIdentifier Identifier of the user's account
+	 * @return void
+	 */
+	protected function deleteUserWorkspaces($accountIdentifier) {
+		$userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+		if ($userWorkspace instanceof Workspace) {
+			$this->publishingService->discardAllNodes($userWorkspace);
+			$this->workspaceRepository->remove($userWorkspace);
+		}
 	}
 
 }

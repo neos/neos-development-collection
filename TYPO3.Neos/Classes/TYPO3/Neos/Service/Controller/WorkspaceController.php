@@ -150,7 +150,7 @@ class WorkspaceController extends AbstractServiceController {
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace));
 
-		$this->response->setStatus(204, sprintf('All changes in workspace %s have been published', $targetWorkspaceName));
+		$this->response->setStatus(204, sprintf('All changes in workspace %s have been published', $workspaceName));
 		return '';
 	}
 
