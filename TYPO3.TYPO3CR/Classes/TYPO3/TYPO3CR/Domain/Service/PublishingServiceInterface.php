@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3CR\Service;
+namespace TYPO3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Service;
 
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
  * TYPO3CR Publishing Service Interface
@@ -57,5 +58,34 @@ interface PublishingServiceInterface {
 	 * @api
 	 */
 	public function publishNodes(array $nodes, Workspace $targetWorkspace = NULL);
+
+	/**
+	 * Discards the given node.
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+	 * @api
+	 */
+	public function discardNode(NodeInterface $node);
+
+	/**
+	 * Discards the given nodes.
+	 *
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to discard
+	 * @return void
+	 * @api
+	 */
+	public function discardNodes(array $nodes);
+
+	/**
+	 * Discards all unpublished nodes of the given workspace.
+	 *
+	 * @param Workspace $workspace The workspace to flush, can't be the live workspace
+	 * @return void
+	 * @throws WorkspaceException
+	 * @api
+	 */
+	public function discardAllNodes(Workspace $workspace);
 
 }

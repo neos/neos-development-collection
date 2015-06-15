@@ -15,7 +15,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
-use TYPO3\TYPO3CR\Service\PublishingServiceInterface;
+use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -327,7 +327,7 @@ trait NodeOperationsTrait {
 			$workspace = $context->getWorkspace();
 
 			/** @var PublishingServiceInterface $publishingService */
-			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
 			$publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
 			$this->getSubcontext('flow')->persistAll();
@@ -343,7 +343,7 @@ trait NodeOperationsTrait {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
 			/** @var PublishingServiceInterface $publishingService */
-			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
 
 			$rows = $table->getHash();
 			$rows[0]['Workspace'] = $sourceWorkspaceName;
@@ -651,7 +651,7 @@ trait NodeOperationsTrait {
 		} else {
 			$workspaceRepository = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
 			$workspace = $workspaceRepository->findOneByName($workspaceName);
-			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+			$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
 			$unpublishedNodesCount = $publishingService->getUnpublishedNodesCount($workspace);
 			Assert::assertEquals($count, $unpublishedNodesCount);
 		}

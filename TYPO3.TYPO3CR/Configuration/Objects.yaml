@@ -2,8 +2,8 @@
   properties:
     dimensionsConfiguration:
       setting: 'TYPO3.TYPO3CR.contentDimensions'
-'TYPO3\TYPO3CR\Service\PublishingServiceInterface':
-  className: TYPO3\TYPO3CR\Service\PublishingService
+'TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface':
+  className: TYPO3\TYPO3CR\Domain\Service\PublishingService
 'TYPO3\TYPO3CR\Domain\Model\NodeInterface':
   className: TYPO3\TYPO3CR\Domain\Model\Node
 'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':

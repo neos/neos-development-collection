@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3CR\Service;
+namespace TYPO3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
@@ -158,6 +157,29 @@ class PublishingService implements PublishingServiceInterface {
 	public function discardNodes(array $nodes) {
 		foreach ($nodes as $node) {
 			$this->discardNode($node);
+		}
+	}
+
+	/**
+	 * Discards all unpublished nodes of the given workspace.
+	 *
+	 * TODO: This method needs to be optimized / implemented in collaboration with a DQL-based method in NodeDataRepository
+	 *
+	 * @param Workspace $workspace The workspace to flush, can't be the live workspace
+	 * @return void
+	 * @throws WorkspaceException
+	 * @api
+	 */
+	public function discardAllNodes(Workspace $workspace) {
+		if ($workspace->getName() === 'live') {
+			throw new WorkspaceException('Nodes in the live workspace cannot be discarded.', 1428937112);
+		}
+
+		foreach ($this->getUnpublishedNodes($workspace) as $node) {
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
+			if ($node->getPath() !== '/') {
+				$this->discardNode($node);
+			}
 		}
 	}
 
