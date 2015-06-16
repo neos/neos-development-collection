@@ -185,12 +185,12 @@
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
 			<target xml:lang="da" state="translated">(Ingen destination valgt)</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="translated">Dette er en genvej til den første underside< br/>Klik {0} for at fortsætte til siden.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+			<target xml:lang="da">Dette er en genvej til den første underside.&lt;br /&gt;Klik {0} for at fortsætte til siden.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="translated">Dette er en genvej til den overordnede side. &lt;br /&gt; Klik på {0} at fortsætte til siden.</target></trans-unit>
+			<target xml:lang="da">Dette er en genvej til den overordnede side. &lt;br /&gt; Klik på {0} at fortsætte til siden.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
