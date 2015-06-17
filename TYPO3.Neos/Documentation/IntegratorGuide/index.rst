@@ -19,6 +19,7 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	CustomContentElements
 	ContentCache
 	NodeConstraints
+	MultiSite
 	CreatingAPlugin
 	InteractionWithTheNeosBackend
 	ContentDimensions
