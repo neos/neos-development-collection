@@ -156,7 +156,7 @@
 			<target xml:lang="pl" state="translated">Przekieruj na</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="pl" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wybierz cel</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
 			<target xml:lang="pl" state="needs-translation">Master View</target></trans-unit>

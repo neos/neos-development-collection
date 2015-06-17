@@ -78,7 +78,7 @@
 			<target xml:lang="pl" state="translated">Moduł zarządzania użytkownikami umożliwia przegląd wszystkich back-end użytkowników. Można ich grupować wg. ich właściwości, dzięki czemu możesz monitorować ich uprawnienia, zamontowane systemy plików, członkostwa w grupach itp.. Moduł ten jest niezastąpionym narzędziem kiedy chcesz się upewnić, że użytkownicy są poprawnie skonfigurowani.</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="pl" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="pl" state="translated">Użyj domyślnego</target><alt-trans><target xml:lang="pl">Domyślna wartość systemu</target></alt-trans></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="pl" state="translated">Utwórz użytkownika</target></trans-unit>
