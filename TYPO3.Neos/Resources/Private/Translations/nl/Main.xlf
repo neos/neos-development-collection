@@ -23,7 +23,7 @@
 			<target xml:lang="nl" state="needs-translation">Type to search</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="nl" state="translated">Content</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Content</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="nl" state="translated">Maak na</target></trans-unit>
@@ -83,7 +83,7 @@
 			<target xml:lang="nl" state="translated">Navigeren</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="nl" state="translated">OK</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="nl" state="needs-translation">Page</target></trans-unit>
@@ -128,7 +128,7 @@
 			<target xml:lang="nl" state="needs-translation">Search</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="nl" state="translated">Toggle inspector</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Toggle inspector</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
@@ -236,7 +236,7 @@
 			<target xml:lang="nl" state="translated">Weggooien</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="nl" state="translated">Toepassen</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pas Toe</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target xml:lang="nl" state="needs-translation">Select a Plugin</target></trans-unit>
@@ -275,7 +275,7 @@
 			<target xml:lang="nl" state="needs-translation">Document options</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="nl" state="translated">Content</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Content</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="nl" state="needs-translation">Do you really want to delete</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="nl" state="needs-translation">Height</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="nl" state="translated">Wilt u daadwerkelijk</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Do you really want to delete</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="nl" state="translated">dit element verwijderen</target></trans-unit>
@@ -323,7 +323,7 @@
 			<target xml:lang="nl" state="translated">Verplicht ontbrekende eigenschap: </target><alt-trans><target xml:lang="nl">Verplicht ontbrekende eigenschap:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="nl" state="translated">Workspaces</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Workspaces</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
 			<target xml:lang="nl" state="translated">Er is een fout opgetreden tijdens het opslaan</target></trans-unit>
@@ -339,10 +339,10 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="nl" state="translated">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="nl" state="translated">Login</target></trans-unit>
+			<target xml:lang="nl" state="needs-translation">Login</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="nl" state="translated">Verificatie</target></trans-unit>

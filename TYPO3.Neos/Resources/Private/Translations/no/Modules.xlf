@@ -8,7 +8,7 @@
 			<target xml:lang="no" state="translated">Administrasjon</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="no" state="translated">Inneholder flere moduler knyttet til administrasjon av innhold</target><alt-trans><target xml:lang="no">Inneholder flere moduler knyttet til forvaltningen av innhold</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Inneholder flere moduler knyttet til administrasjon av innhold</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="no" state="translated">Arbeidsområder</target></trans-unit>
@@ -17,7 +17,7 @@
 			<target xml:lang="no" state="translated">Denne modulen inneholder en oversikt over alle elementer i gjeldende arbeidsområde og du kan fortsette arbeidsflyten for gjennomgang og publisering.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="no" state="translated">Media</target></trans-unit>
+			<target xml:lang="no" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="no" state="translated">Denne modulen lar deg administrere medieelementer inkludert bilder, videoer, lyd og dokumenter.</target></trans-unit>
@@ -32,7 +32,7 @@
 			<target xml:lang="no" state="translated">Her er det som nylig skjedde i Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="no" state="translated">Det er ikke ennå registrert noen hendelser som kan vises i denne historikken.</target><alt-trans><target xml:lang="no">Det er ikke ennå registrert noen hendelser som kan vises i denne historien.</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Det er ikke ennå registrert noen hendelser som kan vises i denne historikken.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
 			<target xml:lang="no" state="translated">{0} opprettet {1} {2}.</target></trans-unit>
@@ -117,7 +117,7 @@
 			<target xml:lang="no" state="translated">Nettstedsadministrasjon</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="no" state="translated">Nettsteder-modulen gir deg en oversikt over alle nettsteder. Du kan redigere, legge til og slette informasjon om dine nettsteder, for eksempel legge til et nytt domene.</target><alt-trans><target xml:lang="no">Nettsteder-modulen gir deg en oversikt over alle områder. Du kan redigere, legge til og slette informasjon om dine nettsteder, for eksempel legge til et nytt domene.</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Nettsteder-modulen gir deg en oversikt over alle nettsteder. Du kan redigere, legge til og slette informasjon om dine nettsteder, for eksempel legge til et nytt domene.</target></trans-unit>
       <trans-unit id="sites.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="no" state="translated">Opprette nettsted</target></trans-unit>

@@ -15,9 +15,9 @@
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="fr">Ce module contient une vue d'ensemble de tous les éléments dans l'espace de travail actuel et vous permet de poursuivre le travail de révision et de publication.</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve" approved="yes">
+      <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="fr">Média</target><alt-trans><target xml:lang="fr">Médias</target></alt-trans></trans-unit>
+			<target xml:lang="fr" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="fr">Ce module permet la gestion des ressources multimédias, y compris les images, vidéos, audio et des documents.</target></trans-unit>
@@ -64,9 +64,9 @@
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="fr">{0} a supprimé un utilisateur "{1}" de {2}.</target></trans-unit>
       <!-- Administration -->
-      <trans-unit id="administration.label" xml:space="preserve" approved="yes">
+      <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="fr">Administration</target></trans-unit>
+			<target xml:lang="fr" state="needs-translation">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
 			<target xml:lang="fr">Contient plusieurs modules associés à l'administration</target></trans-unit>
@@ -91,9 +91,9 @@
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target xml:lang="fr" state="needs-translation">Account</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve">
+      <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="fr" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="fr" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>

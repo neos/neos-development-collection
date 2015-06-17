@@ -17,7 +17,7 @@
 			<target xml:lang="pl" state="translated">Ten moduł zawiera listę wszystkich elementów w bieżącym obszarze roboczym i pozwala na ich przegląd i publikowanie.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pl" state="translated">Pliki</target><alt-trans><target xml:lang="pl">Multimedia</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Pliki</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="pl" state="translated">Ten moduł umożliwia zarządzanie multimediami, włączając w to zdjęcia, filmy video, pliki audio i dokumenty.</target></trans-unit>
@@ -93,7 +93,7 @@
 			<target xml:lang="pl" state="translated">Konto</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="pl" state="translated">Nazwa użytkownika</target></trans-unit>
+			<target xml:lang="pl" state="translated">Użytkownik</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="pl" state="translated">Nazwa użytkownika nie może zostać zmieniona za pomocą interfejsu użytkownika</target></trans-unit>

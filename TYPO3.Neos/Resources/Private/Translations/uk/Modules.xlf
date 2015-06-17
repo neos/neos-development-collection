@@ -17,7 +17,7 @@
 			<target xml:lang="uk" state="translated">Цей модуль містить огляд всіх елементів в рамках поточної робочої області, і це дає можливість продовжити розгляд та видавничу діяльність.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="uk" state="translated">Медіа</target></trans-unit>
+			<target xml:lang="uk" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="uk" state="translated">Цей модуль дозволяє управляти медіа активами, у тому числі фотографіями, відео, аудіо та документами.</target></trans-unit>
@@ -72,7 +72,7 @@
 			<target xml:lang="uk" state="translated">Містить кілька модулів, які пов'язані з адміністрацією</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="uk" state="translated">Керування користувачами</target><alt-trans><target xml:lang="uk">Управління користувачами</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Керування користувачами</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="uk" state="translated">Модуль керування користувача надає огляд всіх користувачів бекенда. Їх можна згрупувати за властивостями та контролювати їх дозволи. Цей модуль є незамінним інструментом для правильної настройки користувачів.</target></trans-unit>
@@ -93,7 +93,7 @@
 			<target xml:lang="uk" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="uk" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ім'я користувача</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="uk" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -123,7 +123,7 @@
 			<target xml:lang="uk" state="translated">Створити сайт</target></trans-unit>
       <trans-unit id="sites.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="uk" state="translated">Створити новий сайт</target><alt-trans><target xml:lang="uk">Створення нового сайту</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Створити новий сайт</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

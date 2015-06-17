@@ -83,7 +83,7 @@
 			<target xml:lang="pt-BR" state="translated">Navegar</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="pt-BR" state="translated">OK</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="pt-BR" state="needs-translation">Page</target></trans-unit>
@@ -342,7 +342,7 @@
 			<target xml:lang="pt-BR" state="translated">Typo3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="pt-BR" state="translated">Login</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Login</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="pt-BR" state="translated">Autenticando</target></trans-unit>

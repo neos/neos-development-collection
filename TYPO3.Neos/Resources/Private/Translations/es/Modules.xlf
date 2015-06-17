@@ -11,7 +11,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="es-ES" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="es-ES" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
@@ -105,7 +105,7 @@
 			<target xml:lang="es-ES" state="translated">Repetir contraseña</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="es-ES" state="translated">Roles</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Roles</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="es-ES" state="needs-translation">Package Management</target></trans-unit>

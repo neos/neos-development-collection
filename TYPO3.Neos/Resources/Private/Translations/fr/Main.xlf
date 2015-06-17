@@ -35,7 +35,7 @@
 			<target xml:lang="fr">Fermer</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target xml:lang="fr">Copie</target><alt-trans><target xml:lang="fr">Copier</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Copie</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
 			<target xml:lang="fr">Couper</target></trans-unit>
@@ -50,10 +50,10 @@
 			<target xml:lang="fr">Supprimer l'élément</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="fr">Ignorer</target><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Ignorer</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="fr">Annuler</target><alt-trans><target xml:lang="fr">Annuler les modifications</target></alt-trans><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Annuler</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
 			<target xml:lang="fr">Modifier le titre</target></trans-unit>
@@ -65,7 +65,7 @@
 			<target xml:lang="fr">Edition</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="fr">Masquer / afficher</target><alt-trans><target xml:lang="fr">Cacher / afficher</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Masquer / afficher</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="fr" state="needs-translation">Loading</target></trans-unit>
@@ -80,10 +80,10 @@
 			<target xml:lang="fr">Nouveau dans</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="fr">Navigation</target><alt-trans><target xml:lang="fr">Naviguer</target></alt-trans></trans-unit>
-      <trans-unit id="okay" xml:space="preserve" approved="yes">
+			<target xml:lang="fr">Navigation</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="fr">OK</target></trans-unit>
+			<target xml:lang="fr" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="fr" state="needs-translation">Page</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target xml:lang="fr">Supprimer</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="fr">Rafraîchir</target><alt-trans><target xml:lang="fr">Actualiser</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Rafraîchir</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
 			<target xml:lang="fr">Enregistrement...</target></trans-unit>
@@ -213,9 +213,9 @@
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="fr">Modes d'édition</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="fr">Preview Central</target></trans-unit>
+			<target xml:lang="fr" state="needs-translation">Preview Central</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target xml:lang="fr">Vous avez encore des modifications. Que voulez-vous faire avec ?</target></trans-unit>
@@ -297,18 +297,18 @@
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="fr" state="needs-translation">Height</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fr">Voulez-vous vraiment supprimer</target></trans-unit>
+			<target xml:lang="fr" state="needs-translation">Do you really want to delete</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
 			<target xml:lang="fr">cet élément</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
 			<target xml:lang="fr">Ceci supprimera l'élément.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="fr">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="fr" state="needs-translation">Media</target></trans-unit>

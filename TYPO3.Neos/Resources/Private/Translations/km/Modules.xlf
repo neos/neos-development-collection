@@ -11,7 +11,7 @@
 			<target xml:lang="km" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="km" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="km" state="translated">លំហរការងារ</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="km" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
@@ -35,10 +35,10 @@
 			<target xml:lang="km" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="km" state="translated">{0} បាន​បង្កើត {1} {2}។</target><alt-trans><target xml:lang="km">{0} បាន​បង្កើត {1} {2}.</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">{0} បាន​បង្កើត {1} {2}។</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="km" state="translated">{0} បាន​លុប {1} {2}។</target><alt-trans><target xml:lang="km">{0} បាន​លុប {1} {2}.</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">{0} បាន​លុប {1} {2}។</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
 			<target xml:lang="km" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
@@ -93,7 +93,7 @@
 			<target xml:lang="km" state="translated">គណនី</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="km" state="translated">ឈ្មេាះអ្នកប្រើប្រាស់</target></trans-unit>
+			<target xml:lang="km" state="translated">ឈ្មោះ​គណនី</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="km" state="translated">ឈ្មេាះគណនីនេះមិនអាចកែប្រែតាមរបៀបនេះបានឡើយ</target></trans-unit>

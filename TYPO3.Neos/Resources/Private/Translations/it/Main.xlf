@@ -101,7 +101,7 @@
 			<target xml:lang="it" state="translated">Incolla in</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="it" state="translated">Password</target></trans-unit>
+			<target xml:lang="it" state="needs-translation">Password</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="it" state="translated">Anteprima</target></trans-unit>
@@ -339,7 +339,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="it" state="translated">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="it" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
 			<target xml:lang="it" state="needs-translation">Login</target></trans-unit>

@@ -83,7 +83,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Navigate</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="es-ES" state="translated">OK</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="es-ES" state="needs-translation">Page</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Height</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="translated">¿Realmente quieres borrar?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Realmente quieres borrar</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="es-ES" state="translated">este elemento</target></trans-unit>
@@ -339,7 +339,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="es-ES" state="translated">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
 			<target xml:lang="es-ES" state="translated">Entrar</target></trans-unit>

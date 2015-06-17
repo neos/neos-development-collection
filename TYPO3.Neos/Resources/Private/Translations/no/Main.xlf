@@ -83,7 +83,7 @@
 			<target xml:lang="no" state="translated">Naviger</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="no" state="translated">OK</target></trans-unit>
+			<target xml:lang="no" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="no" state="translated">Side</target></trans-unit>
@@ -221,7 +221,7 @@
 			<target xml:lang="no" state="translated">Du har fortsatt endringer. Hva vil du gjøre med dem?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="no" state="translated">Markert element</target><alt-trans><target xml:lang="no">Merket element</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Markert element</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
 			<target xml:lang="no" state="translated">Det er felt som ikke er fylt ut riktig.</target></trans-unit>
@@ -257,7 +257,7 @@
 			<target xml:lang="no" state="translated">Rediger kode</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="no" state="translated">Lim inn en kobling eller skriv for å søke</target><alt-trans><target xml:lang="no">Lim inn en link eller skriv for å søke</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Lim inn en kobling eller skriv for å søke</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
 			<target xml:lang="no" state="translated">Kan ikke laste inn undernoden av typen:</target></trans-unit>
@@ -290,7 +290,7 @@
 			<target xml:lang="no" state="translated">og dets underelementer</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="no" state="translated">Denne handlingen kan angres i administrasjonsmodulen for arbeidsområder.</target><alt-trans><target xml:lang="no">Denne handlingen kan angres i arbeidsområdet administrasjon.</target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated">Denne handlingen kan angres i administrasjonsmodulen for arbeidsområder.</target></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
 			<target xml:lang="no" state="translated">Lim inn (hold for å velge posisjon)</target></trans-unit>
@@ -311,7 +311,7 @@
 			<target xml:lang="no" state="translated">Denne handlingen kan angres i administrasjonsmodulen for arbeidsområder.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="no" state="translated">Media</target></trans-unit>
+			<target xml:lang="no" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
 			<target xml:lang="no" state="translated">Beskjær</target></trans-unit>

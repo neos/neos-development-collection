@@ -17,7 +17,7 @@
 			<target xml:lang="pt-BR" state="translated">Este módulo contém a visão geral de todos os elementos dentro do espaço de trabalho atual e permite continuar a revisão e publicação do fluxo de trabalho para eles.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pt-BR" state="translated">Mídia</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="pt-BR" state="translated">Este módulo permite o gerenciamento de conteúdos de mídia, incluindo fotos, vídeos, áudio e documentos.</target></trans-unit>
@@ -35,7 +35,7 @@
 			<target xml:lang="pt-BR" state="translated">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} criado o {1} {2}.</target><alt-trans><target xml:lang="pt-BR">{0} criado em {1} {2}.</target></alt-trans></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} criado o {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
 			<target xml:lang="pt-BR" state="translated">{0} removido o {1} {2}.</target></trans-unit>

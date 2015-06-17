@@ -23,7 +23,7 @@
 			<target xml:lang="uk" state="needs-translation">Type to search</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="uk" state="translated">Вміст</target><alt-trans><target xml:lang="uk">Контент</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Вміст</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="uk" state="translated">Створити після</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="uk" state="needs-translation">Height</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="uk" state="translated">Ви дійсно бажаєте видалити</target></trans-unit>
+			<target xml:lang="uk" state="needs-translation">Do you really want to delete</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="uk" state="translated">Цей елемент</target></trans-unit>

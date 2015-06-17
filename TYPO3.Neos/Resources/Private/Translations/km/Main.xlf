@@ -23,10 +23,10 @@
 			<target xml:lang="km" state="needs-translation">Type to search</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="km" state="translated">អត្ថបទ</target><alt-trans><target xml:lang="km">មាតិកា</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="km" state="translated">បង្កើតពេលបន្ទាប់</target><alt-trans><target xml:lang="km">បង្កើតពេលក្រោយ</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតពេលបន្ទាប់</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="km" state="translated">បង្កើតថ្មី</target></trans-unit>
@@ -47,7 +47,7 @@
 			<target xml:lang="km" state="translated">យល់ព្រម, លុបធាតុនោះ</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="km" state="translated">លុបធាតុនោះ</target><alt-trans><target xml:lang="km">លុប​ធាតុ</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">លុបធាតុនោះ</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
@@ -194,7 +194,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="km" state="translated">អេក្រង់ពេញ</target><alt-trans><target xml:lang="km">ពេញអេក្រង់</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">អេក្រង់ពេញ</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="km" state="translated">បើកពំព័រនៅក្នុងលំហរការងារផ្ទាល់</target></trans-unit>
@@ -284,7 +284,7 @@
 			<target xml:lang="km" state="needs-translation">Create new (hold to select position)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល</target><alt-trans><target xml:lang="km">នេះនឹងលុបធាតុចោល</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
 			<target xml:lang="km" state="translated">និងកូនៗរបស់វា</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="km" state="needs-translation">Height</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎?</target></trans-unit>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="km" state="translated">ធាតុនេះ</target></trans-unit>
@@ -308,7 +308,7 @@
 			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="km" state="translated">នៅក្នុង ការគ្រប់គ្រងលំហរការងារ សកម្មភាពនេះមិនអាចថយក្រោយបានទេ។.</target></trans-unit>
+			<target xml:lang="km" state="translated">នៅក្នុង ការគ្រប់គ្រងលំហរការងារ សកម្មភាពនេះមិនអាចថយក្រោយបានទេ។</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="km" state="needs-translation">Media</target></trans-unit>
@@ -355,7 +355,7 @@
 			<target xml:lang="km" state="translated">បាត់ទំព័រដើម</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="km" state="translated">គ្មានគេហទំព័រណាបានបង្កើតទេ គេហទំព័រអត់មានទំព័រដើម ឬ អត់បានប្តេជ្ញា។</target><alt-trans><target xml:lang="km">គ្មានគេហទំព័រណាបានបង្កើតទេ គេហទំព័រអត់មានទំព័រដើម ឬ អត់បានផ្តាជ្ញា។</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">គ្មានគេហទំព័រណាបានបង្កើតទេ គេហទំព័រអត់មានទំព័រដើម ឬ អត់បានប្តេជ្ញា។</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
 			<target xml:lang="km" state="translated">អ្នកប្រហែលជាចង់ ដាក់ដូមេន ឬ ទាញយកចូលគេហទំព័រថ្មី នៅក្នុងការតំឡើងនេះ។</target></trans-unit>

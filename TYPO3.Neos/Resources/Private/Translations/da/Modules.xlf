@@ -11,13 +11,13 @@
 			<target xml:lang="da" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="da" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="da" state="translated">Arbejdsrum</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="da" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="da" state="translated">Medier</target></trans-unit>
+			<target xml:lang="da" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="da" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
@@ -66,7 +66,7 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="da" state="translated">Administration</target></trans-unit>
+			<target xml:lang="da" state="needs-translation">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
 			<target xml:lang="da" state="needs-translation">Contains multiple modules related to administration</target></trans-unit>
@@ -93,7 +93,7 @@
 			<target xml:lang="da" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="da" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="da" state="translated">Brugernavn</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="da" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>

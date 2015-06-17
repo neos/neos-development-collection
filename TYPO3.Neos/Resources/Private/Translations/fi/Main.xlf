@@ -83,7 +83,7 @@
 			<target xml:lang="fi" state="translated">Siirry</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="fi" state="translated">OK</target></trans-unit>
+			<target xml:lang="fi" state="needs-translation">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="fi" state="translated">Sivu</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="fi" state="translated">Korkeus</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fi" state="translated">Halutako varmasti poistaa</target></trans-unit>
+			<target xml:lang="fi" state="translated">Haluatko varmasti poistaa</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="fi" state="translated">tämä elementti</target></trans-unit>
@@ -308,10 +308,10 @@
 			<target xml:lang="fi" state="translated">Tämä poistaa elementin.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="fi" state="translated">Tätä toimintoa ei voi peruuttaa työtilahallinnassa.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä toiminto voidaan peruttaa työtilahallinnassa.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="fi" state="translated">Media</target></trans-unit>
+			<target xml:lang="fi" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
 			<target xml:lang="fi" state="translated">Rajaa</target></trans-unit>
@@ -339,7 +339,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="fi" state="translated">TYPO3 Neos Sisäänkirjautuminen</target><alt-trans><target xml:lang="fi">TYPO3 Neos Login</target></alt-trans></trans-unit>
+			<target xml:lang="fi" state="translated">TYPO3 Neos Sisäänkirjautuminen</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
 			<target xml:lang="fi" state="translated">Kirjaudu sisään</target></trans-unit>

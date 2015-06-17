@@ -5,28 +5,28 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="de">Automatisch Veröffentlichen</target><alt-trans><target xml:lang="de">Auto-Publish</target></alt-trans><alt-trans><target xml:lang="de">Auto-Veröffentlichung</target></alt-trans></trans-unit>
+			<target xml:lang="de">Automatisch Veröffentlichen</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
-			<target xml:lang="de">Übernehmen</target><alt-trans><target xml:lang="de">Anwenden</target></alt-trans></trans-unit>
+			<target xml:lang="de">Übernehmen</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve" approved="yes">
 				<source>Apply changes</source>
 			<target xml:lang="de">Änderungen übernehmen</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="de">Abbrechen</target></trans-unit>
-      <trans-unit id="choose" xml:space="preserve">
+      <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target xml:lang="de" state="translated">Bitte auswählen</target><alt-trans><target xml:lang="de">Wählen</target></alt-trans></trans-unit>
-      <trans-unit id="typeToSearch" xml:space="preserve">
+			<target xml:lang="de">Bitte auswählen</target></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target xml:lang="de" state="translated">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Tippen, um zu suchen</target></alt-trans><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Eingabe zur Suche</target></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target xml:lang="de">Erstellen nach</target><alt-trans><target xml:lang="de">Erstellen hinter</target></alt-trans></trans-unit>
+			<target xml:lang="de">Erstellen nach</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
 			<target xml:lang="de">Neu erstellen</target></trans-unit>
@@ -44,7 +44,7 @@
 			<target xml:lang="de">Löschen</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
 				<source>Yes, delete the element</source>
-			<target xml:lang="de">Ja, das Element löschen</target><alt-trans><target xml:lang="de">Ja, dieses Element löschen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Ja, das Element löschen</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
 				<source>Delete the element</source>
 			<target xml:lang="de">Element löschen</target></trans-unit>
@@ -66,9 +66,9 @@
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
-      <trans-unit id="loading" xml:space="preserve">
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
-			<target xml:lang="de" state="translated">Lade</target><alt-trans><target xml:lang="de">Lade Daten</target></alt-trans></trans-unit>
+			<target xml:lang="de">Lade</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
 			<target xml:lang="de">Neues Element danach</target></trans-unit>
@@ -77,16 +77,16 @@
 			<target xml:lang="de">Neues Element davor</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve" approved="yes">
 				<source>New Into</source>
-			<target xml:lang="de">Neues Element in</target><alt-trans><target xml:lang="de">Neues Element innerhalb</target></alt-trans></trans-unit>
+			<target xml:lang="de">Neues Element in</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
 			<target xml:lang="de">Navigieren</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
-			<target xml:lang="de">OK</target><alt-trans><target xml:lang="de">Ok</target></alt-trans></trans-unit>
-      <trans-unit id="page" xml:space="preserve">
+			<target xml:lang="de">OK</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="de" state="translated">Seite</target></trans-unit>
+			<target xml:lang="de">Seite</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve" approved="yes">
 				<source>Paste</source>
 			<target xml:lang="de">Einfügen</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target xml:lang="de">Davor einfügen</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target xml:lang="de">Element einfügen in</target><alt-trans><target xml:lang="de">Innerhalb einfügen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Element einfügen in</target></trans-unit>
       <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target xml:lang="de">Passwort</target></trans-unit>
@@ -108,24 +108,24 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="de">Veröffentlichen</target></trans-unit>
-      <trans-unit id="published" xml:space="preserve">
+      <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
-			<target xml:lang="de" state="translated">Veröffentlicht</target></trans-unit>
+			<target xml:lang="de">Veröffentlicht</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="de">Entfernen</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="de">Aktualisieren</target><alt-trans><target xml:lang="de">Neu Laden</target></alt-trans></trans-unit>
+			<target xml:lang="de">Aktualisieren</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
 			<target xml:lang="de">Speichern...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="de">Gespeichert</target></trans-unit>
-      <trans-unit id="search" xml:space="preserve">
+      <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="de" state="translated">Suche</target></trans-unit>
+			<target xml:lang="de">Suche</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
 			<target xml:lang="de">Inspector auf- / zuklappen</target></trans-unit>
@@ -136,74 +136,74 @@
 				<source>You</source>
 			<target xml:lang="de">Sie</target></trans-unit>
       <!-- nodetypes -->
-      <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
+      <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve" approved="yes">
 				<source>Document</source>
-			<target xml:lang="de" state="translated">Dokument</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
+			<target xml:lang="de">Dokument</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="de" state="translated">Titel</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
+			<target xml:lang="de">Titel</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve" approved="yes">
 				<source>URL path segment</source>
-			<target xml:lang="de" state="translated">URL Pfadsegment</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
+			<target xml:lang="de">URL Pfadsegment</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
-			<target xml:lang="de" state="translated">In Menüs verbergen</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
+			<target xml:lang="de">In Menüs verbergen</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve" approved="yes">
 				<source>URL path segment</source>
-			<target xml:lang="de" state="translated">URL Pfadsegment</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
+			<target xml:lang="de">URL Pfadsegment</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target xml:lang="de" state="translated">Zielmodus</target><alt-trans><target xml:lang="de">Ziel Modus</target></alt-trans></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
+			<target xml:lang="de">Zielmodus</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target xml:lang="de" state="translated">Ziel</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
+			<target xml:lang="de">Ziel</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
-			<target xml:lang="de" state="translated">Master Ansicht</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
+			<target xml:lang="de">Master Ansicht</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target xml:lang="de" state="translated">Plugin Ansicht</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
+			<target xml:lang="de">Plugin Ansicht</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
-			<target xml:lang="de" state="translated">Ausblenden</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
+			<target xml:lang="de">Ausblenden</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve" approved="yes">
 				<source>Hide before</source>
-			<target xml:lang="de" state="translated">Verstecken bis</target><alt-trans><target xml:lang="de">Verstecken bis zum</target></alt-trans></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
+			<target xml:lang="de">Verstecken bis</target></trans-unit>
+      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve" approved="yes">
 				<source>Hide after</source>
-			<target xml:lang="de" state="translated">Verstecken nach</target><alt-trans><target xml:lang="de">Verstecken nach dem</target></alt-trans></trans-unit>
+			<target xml:lang="de">Verstecken nach</target></trans-unit>
       <!-- shortcuts -->
-      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="de" state="translated">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+			<target xml:lang="de">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="de" state="translated">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target><alt-trans><target xml:lang="de">Klicken Sie hier, um die Datei {0} anzuzeigen.</target></alt-trans></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+			<target xml:lang="de">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="de" state="translated">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
 			<target xml:lang="de">(kein Ziel ausgewählt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
 			<target xml:lang="de">Vollbild</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
-			<target xml:lang="de">Seite im Live-Arbeitsbereich öffnen</target><alt-trans><target xml:lang="de">Seite im Live-Workspace öffnen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Seite im Live-Arbeitsbereich öffnen</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="de">Alle Änderungen verwerfen</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target><alt-trans><target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Arbeitsbereich verwerfen möchten?</target></alt-trans></trans-unit>
+			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="de">Alle Änderungen veröffentlichen</target></trans-unit>
@@ -212,13 +212,13 @@
 			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target xml:lang="de">Bearbeitungsmodus</target><alt-trans><target xml:lang="de">Bearbeitungsmodi</target></alt-trans></trans-unit>
+			<target xml:lang="de">Bearbeitungsmodus</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
 			<target xml:lang="de">Vorschau Zentrale</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="de">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target><alt-trans><target xml:lang="de">Es sind Änderungen vorgenommen worden. Was soll mit ihnen geschehen?</target></alt-trans></trans-unit>
+			<target xml:lang="de">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
 			<target xml:lang="de">Ausgewähltes Element</target></trans-unit>
@@ -227,7 +227,7 @@
 			<target xml:lang="de">Einige Felder sind nicht korrekt ausgefüllt.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="de">Die markierten Felder sind noch nicht korrekt ausgefüllt. Bitte korrigieren Sie diese.</target><alt-trans><target xml:lang="de">Die markierten Felder sind nicht noch korrekt ausgefüllt. Bitte korrigieren Sie sie.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Die markierten Felder sind noch nicht korrekt ausgefüllt. Bitte korrigieren Sie diese.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
 			<target xml:lang="de">Bearbeitung fortsetzen</target></trans-unit>
@@ -237,66 +237,66 @@
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
 				<source>Select a Plugin</source>
-			<target xml:lang="de" state="translated">Plugin auswählen</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+			<target xml:lang="de">Plugin auswählen</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
 				<source>No plugin configured</source>
-			<target xml:lang="de" state="translated">Kein Plugin konfiguriert</target></trans-unit>
+			<target xml:lang="de">Kein Plugin konfiguriert</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on page</source>
-			<target xml:lang="de">Darstellung wird auf der Seite angezeigt</target><alt-trans><target xml:lang="de">Darstellung wird angezeigt auf Seite</target></alt-trans></trans-unit>
+			<target xml:lang="de">Darstellung wird auf der Seite angezeigt</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on current page</source>
 			<target xml:lang="de">Darstellung wird auf der aktuellen Seite angezeigt</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
-			<target xml:lang="de" state="translated">Kein Datum ausgewählt</target><alt-trans><target xml:lang="de">Kein Datum gewählt</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+			<target xml:lang="de">Kein Datum ausgewählt</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target xml:lang="de" state="translated">Code bearbeiten</target></trans-unit>
-      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+			<target xml:lang="de">Code bearbeiten</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="de" state="translated">Link einfügen oder Eingabe zur Suche</target><alt-trans><target xml:lang="de">Link einfügen oder tippen zum suchen</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+			<target xml:lang="de">Link einfügen oder Eingabe zur Suche</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="de" state="translated">Kann untergeordnete Nodetypen von Folgenden nicht laden:</target><alt-trans><target xml:lang="de">Kann untergeordnete Nodetypen nicht laden:</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.groups.type" xml:space="preserve">
+			<target xml:lang="de">Kann untergeordnete Nodetypen von Folgenden nicht laden:</target></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="de" state="translated">Typ ändern</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+			<target xml:lang="de">Typ ändern</target></trans-unit>
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="de" state="translated">Zusätzliche Informationen</target><alt-trans><target xml:lang="de">Zusätzliche Information</target></alt-trans></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+			<target xml:lang="de">Zusätzliche Informationen</target></trans-unit>
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="de" state="translated">Sichtbarkeit</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+			<target xml:lang="de">Sichtbarkeit</target></trans-unit>
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target xml:lang="de" state="translated">Dokument-Einstellungen</target><alt-trans><target xml:lang="de">Dokumenten Optionen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Dokument-Einstellungen</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="de" state="translated">Möchten Sie das Element wirklich löschen</target><alt-trans><target xml:lang="de">Möchten Sie den Datensatz wirklich löschen</target></alt-trans><alt-trans><target xml:lang="de">Möchten Sie wirklich löschen</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
+      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="de" state="translated">Neu erstellen (Halten um Position zu wählen)</target><alt-trans><target xml:lang="de">Neu erstellen (halten um Position zu wählen)</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+			<target xml:lang="de">Neu erstellen (Halten um Position zu wählen)</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="de" state="translated">Dadurch wird die Seite gelöscht</target><alt-trans><target xml:lang="de">Dies löscht den Eintrag</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+			<target xml:lang="de">Dadurch wird das Element gelöscht</target><alt-trans><target xml:lang="de">Dadurch wird die Seite gelöscht</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target xml:lang="de" state="translated">und ihre Unterseiten</target><alt-trans><target xml:lang="de">als auch die Unterseiten</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="de">einschließlich seiner Unterelemente</target><alt-trans><target xml:lang="de">und ihre Unterseiten</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="de" state="translated">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
+      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="de" state="translated">Einfügen (Halten um Position zu wählen)</target></trans-unit>
-      <trans-unit id="height" xml:space="preserve">
+			<target xml:lang="de">Einfügen (Halten um Position zu wählen)</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
-			<target xml:lang="de" state="translated">Höhe</target></trans-unit>
+			<target xml:lang="de">Höhe</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
@@ -308,22 +308,22 @@
 			<target xml:lang="de">Dadurch wird das Element gelöscht.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
-      <trans-unit id="media" xml:space="preserve">
+			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="de" state="translated">Medien</target></trans-unit>
-      <trans-unit id="crop" xml:space="preserve">
+			<target xml:lang="de">Medien</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
 				<source>Crop</source>
-			<target xml:lang="de" state="translated">Beschneiden</target></trans-unit>
-      <trans-unit id="width" xml:space="preserve">
+			<target xml:lang="de">Beschneiden</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target xml:lang="de" state="translated">Breite</target></trans-unit>
+			<target xml:lang="de">Breite</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
 			<target xml:lang="de">Erforderlicher Wert fehlt: </target><alt-trans><target xml:lang="de">Erforderlicher Wert fehlt:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="de">Arbeitsbereiche</target><alt-trans><target xml:lang="de">Workspaces</target></alt-trans></trans-unit>
+			<target xml:lang="de">Arbeitsbereiche</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
 			<target xml:lang="de">Beim Speichern ist ein Fehler aufgetreten</target></trans-unit>
@@ -339,7 +339,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="de">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="de">Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve" approved="yes">
 				<source>Login</source>
 			<target xml:lang="de">Anmelden</target></trans-unit>
@@ -364,7 +364,7 @@
 			<target xml:lang="de">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="de">Es wurde ein Fehler mit ihrer Datenbank festgestellt. Bitte überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target><alt-trans><target xml:lang="de">Es tut uns Leid, es wurde ein Fehler mit ihrer Datenbank festgestellt. Überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Es wurde ein Fehler mit ihrer Datenbank festgestellt. Bitte überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target xml:lang="de">Bitte überprüfen Sie die Datenbankkonfiguration mit Hilfe des Setup-Tools.</target></trans-unit>
@@ -373,7 +373,7 @@
 			<target xml:lang="de">Seite nicht gefunden</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="de">Die angeforderte Seite konnte nicht gefunden werden.</target><alt-trans><target xml:lang="de">Die angeforderte Seite wurde leider nicht gefunden.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Die angeforderte Seite konnte nicht gefunden werden.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -17,7 +17,7 @@
 			<target xml:lang="fi" state="translated">Tämä moduuli sisältää näkymän kaikista elementeistä nykyisessä työtilassa ja mahdollistaa niiden julkaisuprosessin tarkastelun.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="fi" state="translated">Media</target></trans-unit>
+			<target xml:lang="fi" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="fi" state="translated">Tämän moduulin avulla hallitaan mediasisältöä kuten kuvia, videoita, ääntä ja asiakirjoja.</target></trans-unit>
