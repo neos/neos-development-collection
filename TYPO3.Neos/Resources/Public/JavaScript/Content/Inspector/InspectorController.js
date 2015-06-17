@@ -189,8 +189,10 @@ define(
 							groupsObject[groupIdentifier].properties = [];
 						}
 
+						Ember.Logger.mute = true; // Mute logging in case the specific label translation is not found
 						var translationId = 'nodetypes-' + NodeSelection.get('selectedNode.nodeType').replace(/[.: ]/g, '-') + '-properties-' + property.key,
 							nodeTypeSpecificLabelTranslation = I18n.translate(translationId);
+						Ember.Logger.mute = false;
 
 						if (nodeTypeSpecificLabelTranslation) {
 							property.ui.label = nodeTypeSpecificLabelTranslation;
