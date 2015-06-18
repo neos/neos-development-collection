@@ -86,7 +86,7 @@
 			<target xml:lang="km" state="translated">យល់ព្រម</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="km" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="km" state="translated">ទំព័រ</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="km" state="translated">បិទភ្ជាប់</target></trans-unit>
@@ -110,7 +110,7 @@
 			<target xml:lang="km" state="translated">ដាក់ផ្សាយ</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="km" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="km" state="translated">បានចុះផ្សាយ</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="km" state="translated">លុបចេញ</target></trans-unit>
@@ -178,10 +178,10 @@
 			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទំព័រ {0}</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទ្រព្យ {0}</target></trans-unit>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទ្រព្យ {0}</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទ្រព្យ {0}</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទំព័រមុន {0}.</target></trans-unit>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទំព័រមុន {0}.</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទំព័រមុន {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
 			<target xml:lang="km" state="translated">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></trans-unit>
@@ -266,7 +266,7 @@
 			<target xml:lang="km" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="km" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="km" state="translated">ព័ត៌មានបន្ថែម</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="km" state="needs-translation">Visibility</target></trans-unit>
@@ -296,7 +296,7 @@
 			<target xml:lang="km" state="needs-translation">Paste (hold to select position)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="km" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="km" state="translated">កម្ពស់</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎</target></trans-unit>
@@ -317,7 +317,7 @@
 			<target xml:lang="km" state="needs-translation">Crop</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="km" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="km" state="translated">បណ្ដោយ</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="km" state="translated">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ </target><alt-trans><target xml:lang="km">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ</target></alt-trans></trans-unit>
