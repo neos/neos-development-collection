@@ -182,7 +182,7 @@ define(
 				$element = $('[about="' + nodePath + '"]');
 			// Prevent errors if the element cannot be found on the page
 			if ($element.length > 0) {
-				NodeSelection.updateSelection($element, {scrollToElement: true, selectFirstEditable: true});
+				NodeSelection.updateSelection($element, {scrollToElement: true, deselectEditables: true});
 			}
 		},
 
