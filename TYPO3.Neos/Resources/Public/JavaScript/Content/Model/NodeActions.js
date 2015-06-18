@@ -345,7 +345,7 @@ define(
 			NodeSelection.replaceEntityWrapper($newElement);
 
 			// Select the inserted node
-			NodeSelection.updateSelection($newElement, {scrollToElement: true, selectFirstEditable: true});
+			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true});
 
 			EventDispatcher.trigger('contentChanged');
 			EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $newElement.get(0)});
