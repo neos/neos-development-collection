@@ -17,7 +17,7 @@
 			<target xml:lang="fr">Ce module contient une vue d'ensemble de tous les éléments dans l'espace de travail actuel et vous permet de poursuivre le travail de révision et de publication.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="fr" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="fr" state="translated">Média</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="fr">Ce module permet la gestion des ressources multimédias, y compris les images, vidéos, audio et des documents.</target></trans-unit>
@@ -91,9 +91,9 @@
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target xml:lang="fr" state="needs-translation">Account</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve" approved="yes">
+      <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
+			<target xml:lang="fr" state="translated">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="fr" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
