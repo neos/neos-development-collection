@@ -17,7 +17,7 @@
 			<target xml:lang="ru" state="translated">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="ru" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="ru" state="translated">Медиатека</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="ru" state="translated">Модуль позволяет управлять медиа-ресурсами, включая фото, видео, аудио и документы.</target></trans-unit>
@@ -78,7 +78,7 @@
 			<target xml:lang="ru" state="translated">Модуль управления пользователями даёт представление о всех пользователях в системе. Можно группировать их по свойствам для облегчения контроля их прав, точек доступа, принадлежности к группам и т. п. Это незаменимый инструмент для контроля настроек пользователей.</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="ru" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="ru" state="translated">Установки по умолчанию</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="ru" state="translated">Создать пользователя</target></trans-unit>

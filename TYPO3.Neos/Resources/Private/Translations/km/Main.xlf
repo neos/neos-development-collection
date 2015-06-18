@@ -17,7 +17,7 @@
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="km" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="km" state="translated">ជ្រើសរើស</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
 			<target xml:lang="km" state="needs-translation">Type to search</target></trans-unit>
@@ -125,7 +125,7 @@
 			<target xml:lang="km" state="translated">បាន​រក្សា​ទុក</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="km" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="km" state="translated">ស្វែងរក</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="km" state="translated">ត្រួតពិនិត្យបិទបើក</target></trans-unit>
@@ -138,16 +138,16 @@
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="km" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="km" state="translated">ឯកសារ</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="km" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="km" state="translated">ចំណងជើង</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target xml:lang="km" state="needs-translation">URL path segment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="km" state="needs-translation">Hide in menus</target></trans-unit>
+			<target xml:lang="km" state="translated">មិនបង្ហាុញក្នុងមីនុយ</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target xml:lang="km" state="needs-translation">URL path segment</target></trans-unit>
@@ -165,7 +165,7 @@
 			<target xml:lang="km" state="needs-translation">Plugin View</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="km" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="km" state="translated">លាក់</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
 			<target xml:lang="km" state="needs-translation">Hide before</target></trans-unit>
@@ -254,7 +254,7 @@
 			<target xml:lang="km" state="needs-translation">No date set</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="km" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="km" state="translated">កែ​កូដ</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
 			<target xml:lang="km" state="needs-translation">Paste a link, or type to search</target></trans-unit>
