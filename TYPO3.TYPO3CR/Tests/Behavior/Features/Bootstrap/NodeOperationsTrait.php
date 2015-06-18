@@ -99,7 +99,7 @@ trait NodeOperationsTrait {
 
 				$parentNode = $context->getNode($parentPath);
 				if ($parentNode === NULL) {
-					throw new Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
+					throw new \Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
 				}
 
 				$node = $parentNode->createNode($name, $nodeType, $identifier);
@@ -107,7 +107,7 @@ trait NodeOperationsTrait {
 				if (isset($row['Properties']) && $row['Properties'] !== '') {
 					$properties = json_decode($row['Properties'], TRUE);
 					if ($properties === NULL) {
-						throw new Exception(sprintf('Error decoding json value "%s": %d', $row['Properties'], json_last_error()));
+						throw new \Exception(sprintf('Error decoding json value "%s": %d', $row['Properties'], json_last_error()));
 					}
 					foreach ($properties as $propertyName => $propertyValue) {
 						$node->setProperty($propertyName, $propertyValue);
@@ -128,14 +128,42 @@ trait NodeOperationsTrait {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
-			$contentDimensionRepository = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 			$dimensions = array();
+			$presetsFound = FALSE;
 			foreach ($table->getHash() as $row) {
 				$dimensions[$row['Identifier']] = array(
-						'default' => $row['Default']
+					'default' => $row['Default']
 				);
+
+				$defaultPreset = '';
+				if (isset($row['Presets'])) {
+					$presetsFound = TRUE;
+					// parse a preset string like:
+					// preset1=dimensionValue1,dimensionValue2; preset2=dimensionValue3
+					$presetStrings = Arrays::trimExplode(';', $row['Presets']);
+					$presets = array();
+					foreach ($presetStrings as $presetString) {
+						list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
+						$presets[$presetName] = array(
+							'values' => Arrays::trimExplode(',', $presetValues)
+						);
+
+						if ($defaultPreset === '') {
+							$defaultPreset = $presetName;
+						}
+					}
+
+					$dimensions[$row['Identifier']]['presets'] = $presets;
+					$dimensions[$row['Identifier']]['defaultPreset'] = $defaultPreset;
+				}
 			}
+			$contentDimensionRepository = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 			$contentDimensionRepository->setDimensionsConfiguration($dimensions);
+
+			if ($presetsFound === TRUE) {
+				$contentDimensionPresetSource = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface');
+				$contentDimensionPresetSource->setConfiguration($dimensions);
+			}
 		}
 	}
 

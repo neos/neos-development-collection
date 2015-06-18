@@ -19,6 +19,7 @@ use TYPO3\TYPO3CR\Exception;
  * A Dimension Preset Source that gets presets from settings
  *
  * Everything is configured in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".
+ * @Flow\Scope("singleton")
  */
 class ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface {
 

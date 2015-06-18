@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
@@ -33,6 +34,12 @@ class NodePrivilegeContext {
 	 * @var SecurityContext
 	 */
 	protected $securityContext;
+
+	/**
+	 * @Flow\Inject
+	 * @var ContentDimensionPresetSourceInterface
+	 */
+	protected $contentDimensionPresetSource;
 
 	/**
 	 * @var NodeInterface
@@ -88,6 +95,7 @@ class NodePrivilegeContext {
 		if (!is_array($nodeTypes)) {
 			$nodeTypes = array($nodeTypes);
 		}
+
 		foreach ($nodeTypes as $nodeType) {
 			if ($this->node->getNodeType()->isOfType($nodeType)) {
 				return TRUE;
@@ -106,6 +114,44 @@ class NodePrivilegeContext {
 		}
 
 		return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
+	}
+
+	/**
+	 * Matches if the currently-selected preset in the passed $dimensionName is one of $presets.
+	 *
+	 * Example: isInDimensionPreset('language', 'de') checks whether the currently-selected language
+	 * preset (in the Neos backend) is "de".
+	 *
+	 * Implementation Note: We deliberately work on the Dimension Preset Name, and not on the
+	 * dimension values itself; as the preset is user-visible and the actual dimension-values
+	 * for a preset are just implementation details.
+	 *
+	 * @param string $dimensionName
+	 * @param string|array $presets
+	 * @return boolean
+	 */
+	public function isInDimensionPreset($dimensionName, $presets) {
+		if ($this->node === NULL) {
+			return TRUE;
+		}
+
+		$dimensionValues = $this->node->getContext()->getDimensions();
+		if (!isset($dimensionValues[$dimensionName])) {
+			return FALSE;
+		}
+
+		$preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
+
+		if ($preset === NULL) {
+			return FALSE;
+		}
+		$presetIdentifier = $preset['identifier'];
+
+		if (!is_array($presets)) {
+			$presets = array($presets);
+		}
+
+		return in_array($presetIdentifier, $presets);
 	}
 
 	/**
