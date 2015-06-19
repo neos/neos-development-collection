@@ -184,7 +184,7 @@
 			<target xml:lang="cs" state="needs-translation">Click {0} to open the link.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="cs" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="cs" state="translated">(nebyl vybrán žádný cíl)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="cs" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -194,7 +194,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="cs" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="cs" state="translated">Celá obrazovka</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="cs" state="needs-translation">Open page in live workspace</target></trans-unit>
@@ -212,7 +212,7 @@
 			<target xml:lang="cs" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="cs" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="cs" state="translated">Režimy editace</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			<target xml:lang="cs" state="needs-translation">Preview Central</target></trans-unit>
@@ -221,7 +221,7 @@
 			<target xml:lang="cs" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="cs" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="cs" state="translated">Vybraný prvek</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
 			<target xml:lang="cs" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="cs" state="translated">Pokračovat v úpravách</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="cs" state="needs-translation">Throw away</target></trans-unit>
+			<target xml:lang="cs" state="translated">Zahodit</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="cs" state="translated">Použít</target><alt-trans><target xml:lang="cs">Použít změny</target></alt-trans></trans-unit>
@@ -272,7 +272,7 @@
 			<target xml:lang="cs" state="translated">Viditelnost</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="cs" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="cs" state="translated">Možnosti dokumentu</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="cs" state="translated">Obsah</target></trans-unit>
@@ -342,17 +342,17 @@
 			<target xml:lang="cs" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="cs" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="cs" state="translated">Přihlásit</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="cs" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="cs" state="translated">Ověřování</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target xml:lang="cs" state="needs-translation">Go to setup</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="cs" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="cs" state="translated">Chybí úvodní stránka</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
 			<target xml:lang="cs" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>

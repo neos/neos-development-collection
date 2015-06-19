@@ -75,10 +75,10 @@
 			<target xml:lang="cs" state="translated">Správa uživatelů</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="cs" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="cs" state="translated">Modul Správa uživatelů poskytuje přehled všech uživatelů. Můžete je seskupit podle jejich vlastností, takže budete moci sledovat jejich oprávnění, soubory, členství ve skupinách atd… Tento modul je nepostradatelným nástrojem pro kontrolu, že jsou uživatelské účty správně nakonfigurovány.</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="cs" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="cs" state="translated">Použít výchozí nastavení systému</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="cs" state="translated">Vytvořit uživatele</target></trans-unit>
@@ -87,7 +87,7 @@
 			<target xml:lang="cs" state="translated">Vytvořit nového uživatele</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="cs" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
+			<target xml:lang="cs" state="translated">Upravit účet "{accountIdentifier}"</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target xml:lang="cs" state="translated">Účet</target></trans-unit>
