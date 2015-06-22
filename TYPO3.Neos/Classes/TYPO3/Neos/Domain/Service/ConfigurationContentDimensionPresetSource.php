@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
  * A Dimension Preset Source that gets presets from settings
  *
  * Everything is configured in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".
+ * @Flow\Scope("singleton")
  */
 class ConfigurationContentDimensionPresetSource extends \TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface {
 
