@@ -285,7 +285,8 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 			'key' => $node->getContextPath(),
 			'title' => $label,
 			'fullTitle' => $node->getProperty('title'),
-			'tooltip' => ($nodeTypeLabel == '' || strpos($label, $nodeTypeLabel) === FALSE) ? $label . ' (' . $nodeTypeLabel . ')' : $label,
+			'nodeTypeLabel' => $nodeTypeLabel,
+			'tooltip' => '', // will be filled on the client side, because nodeTypeLabel contains the localization string instead of the localized value
 			'href' => $uriForNode,
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),

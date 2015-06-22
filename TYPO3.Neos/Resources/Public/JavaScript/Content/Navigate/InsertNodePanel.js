@@ -4,14 +4,16 @@ define(
 		'Library/jquery-with-dependencies',
 		'Content/Components/AbstractInsertNodePanel',
 		'Shared/Configuration',
-		'Shared/NodeTypeService'
+		'Shared/NodeTypeService',
+		'Shared/I18n'
 	],
 	function(
 		Ember,
 		$,
 		AbstractInsertNodePanel,
 		Configuration,
-		NodeTypeService
+		NodeTypeService,
+		I18n
 	) {
 		return AbstractInsertNodePanel.extend({
 			// List of allowed node types (strings); with constraints already evaluated.
@@ -41,7 +43,7 @@ define(
 
 					groupedNodeTypes[groupName].nodeTypes.push({
 						'nodeType': nodeTypeName,
-						'label': nodeType.ui.label,
+						'label': I18n.translate(nodeType.ui.label),
 						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file',
 						'position': nodeType.ui.position
 					});

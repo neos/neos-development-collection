@@ -15,7 +15,7 @@ function(
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
-			this.set('placeholder', I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...'));
+			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...'));
 			this._loadOptionsOnChange();
 			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
 
@@ -54,9 +54,9 @@ function(
 							i++;
 						}
 						if (i > 0) {
-							placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
+							placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
 						} else {
-							placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
+							placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
 							values = {};
 						}
 						that.setProperties({

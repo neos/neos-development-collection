@@ -15,9 +15,10 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		/**
 		 * Label of the file chooser button
 		 */
-		fileChooserLabel: function() {
-			return I18n.translate('Main:TYPO3.Neos:chooseFile', 'Choose file');
-		}.property(),
+		fileChooserLabel: null,
+		_fileChooserLabel: function() {
+			return I18n.translate(this.get('fileChooserLabel'), 'Choose file');
+		}.property('fileChooserLabel'),
 
 		// File filters
 		allowedFileTypes: null,

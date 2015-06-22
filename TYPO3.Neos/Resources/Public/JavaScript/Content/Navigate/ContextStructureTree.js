@@ -16,6 +16,7 @@ define(
 	'../Model/NodeSelection',
 	'../Model/PublishableNodes',
 	'./NavigatePanelController',
+	'Shared/I18n',
 	'text!./ContextStructureTree.html'
 ], function(
 	Ember,
@@ -31,6 +32,7 @@ define(
 	NodeSelection,
 	PublishableNodes,
 	NavigatePanelController,
+	I18n,
 	template
 ) {
 	var documentMetadata = $('#neos-document-metadata');
@@ -169,6 +171,16 @@ define(
 					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
 						$(nodeSpan).addClass('neos-dynatree-dirty');
 					}
+				},
+				onCustomRender: function(node) {
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel);
+					var tooltip = node.data.title;
+
+					if (nodeTypeLabel == '' || tooltip.indexOf(nodeTypeLabel) == -1) {
+						tooltip += ' (' + nodeTypeLabel + ')';
+					}
+					node.data.tooltip = tooltip;
+					return null;
 				}
 			}));
 

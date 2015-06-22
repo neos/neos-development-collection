@@ -79,11 +79,11 @@ define(
 					}
 
 					if (this.get('_noChanges')) {
-						return I18n.translate('Main:TYPO3.Neos:published');
+						return I18n.translate('TYPO3.Neos:Main:published');
 					}
 
-					return I18n.translate('Main:TYPO3.Neos:publish') + ' (' + this.get('_numberOfChanges') + ')';
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning'),
+					return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
 
 				title: function() {
 					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
@@ -147,7 +147,7 @@ define(
 				}.property('title'),
 
 				title: function() {
-					return this.get('_noChanges') ? 'Discard' : 'Discard' + ' ('  + this.get('_numberOfChanges') + ')';
+					return I18n.translate('TYPO3.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' ('  + this.get('_numberOfChanges') + ')');
 				}.property('_noChanges', '_numberOfChanges'),
 
 				disabled: function() {
@@ -158,13 +158,17 @@ define(
 			PublishAllButton: Button.extend({
 				classNameBindings: ['disabledClass'],
 				classNames: ['neos-publish-all-button'],
-				attributeBindings: ['title'],
-				title: 'Publish all',
-				labelIcon: '<i class="icon-upload"></i> ',
-				label: function() {
-					return (this.get('labelIcon') + ' Publish all' + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
-				}.property('_numberOfWorkspaceWideChanges'),
 				controller: PublishableNodes,
+				attributeBindings: ['title'],
+				labelIcon: '<i class="icon-upload"></i> ',
+
+				label: function() {
+					return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
+				}.property('title'),
+
+				title: function() {
+					return (I18n.translate('TYPO3.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
+				}.property('_numberOfWorkspaceWideChanges'),
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
@@ -172,7 +176,7 @@ define(
 				_nodeEndpoint: NodeEndpoint,
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
-				click: function() {
+				click: function() {
 					PublishAllDialog.create();
 				},
 
@@ -192,17 +196,21 @@ define(
 			DiscardAllButton: Button.extend({
 				classNameBindings: ['disabledClass'],
 				classNames: ['neos-publish-all-button'],
+				controller: PublishableNodes,
 				attributeBindings: ['title'],
-				title: 'Discard all',
 				labelIcon: '<i class="icon-ban-circle"></i> ',
-				label: function() {
+
+				title: function() {
 					if (this.get('_noWorkspaceWideChanges')) {
-						return (this.get('labelIcon') + ' Discard all').htmlSafe();
+						return (I18n.translate('TYPO3.Neos:Main:discardAll')).htmlSafe();
 					} else {
-						return (this.get('labelIcon') + ' Discard all (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
+						return (I18n.translate('TYPO3.Neos:Main:discardAll') + ' (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
 					}
 				}.property('_numberOfWorkspaceWideChanges'),
-				controller: PublishableNodes,
+
+				label: function() {
+					return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
+				}.property('title'),
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
@@ -210,7 +218,7 @@ define(
 				_nodeEndpoint: NodeEndpoint,
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
-				click: function() {
+				click: function() {
 					DiscardAllDialog.create();
 				},
 

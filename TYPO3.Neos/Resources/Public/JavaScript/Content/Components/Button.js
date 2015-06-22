@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'emberjs'
+		'emberjs',
+		'Shared/I18n'
 	],
-	function (Ember) {
+	function (Ember, I18n) {
 		return Ember.View.extend(Ember.TargetActionSupport, {
 			tagName: 'button',
 			classNames: ['neos-button'],
@@ -16,7 +17,12 @@ define(
 			isActive: false,
 			label: '',
 			title: '',
-			defaultTemplate: Ember.Handlebars.compile('{{translate fallbackBinding="view.label" idBinding="view.label"}}'),
+			defaultTemplate: Ember.Handlebars.compile('{{view.translatedLabel}}'),
+
+			translatedLabel: function() {
+				return I18n.translate(this.get('label'));
+			}.property('label'),
+
 			icon: '',
 			iconClass: function() {
 				var icon = this.get('icon');

@@ -141,7 +141,7 @@ TYPO3:
         # Format:
         #   'Package.Key': ['Main', 'Errors', 'NodeTypes']
         autoInclude:
-          'TYPO3.Neos': ['Main']
+          'TYPO3.Neos': ['Main', 'Inspector', 'NodeTypes/*']
 
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
@@ -238,6 +238,38 @@ TYPO3:
             editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
           'references':
             editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
+        editors:
+          'TYPO3.Neos/Inspector/Editors/CodeEditor':
+            editorOptions:
+              buttonLabel: 'TYPO3.Neos:Main:content.inspector.editors.codeEditor.editCode'
+
+          'TYPO3.Neos/Inspector/Editors/DateTimeEditor':
+            editorOptions:
+              placeholder: 'TYPO3.Neos:Main:content.inspector.editors.dateTimeEditor.noDateSet'
+
+          'TYPO3.Neos/Inspector/Editors/AssetEditor':
+            editorOptions:
+              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+
+          'TYPO3.Neos/Inspector/Editors/ImageEditor':
+            editorOptions:
+              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+
+          'TYPO3.Neos/Inspector/Editors/LinkEditor':
+            editorOptions:
+              placeholder: 'TYPO3.Neos:Main:content.inspector.editors.linkEditor.search'
+
+          'TYPO3.Neos/Inspector/Editors/ReferencesEditor':
+            editorOptions:
+              placeholder: 'TYPO3.Neos:Main:typeToSearch'
+
+          'TYPO3.Neos/Inspector/Editors/ReferenceEditor':
+            editorOptions:
+              placeholder: 'TYPO3.Neos:Main:typeToSearch'
+
+          'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
+            editorOptions:
+              placeholder: 'TYPO3.Neos:Main:choose'
 
       defaultEditPreviewMode: 'inPlace'
       editPreviewModes:
