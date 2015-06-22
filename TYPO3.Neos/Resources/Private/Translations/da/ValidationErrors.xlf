@@ -5,7 +5,7 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
 				<source>The username is already in use.</source>
-			<target xml:lang="da" state="translated">Konto-id (Brugernavn) er allerede i brug.</target></trans-unit>
+			<target xml:lang="da" state="translated">Konto-id (brugernavn) er allerede i brug.</target><alt-trans><target xml:lang="da">Konto-id (Brugernavn) er allerede i brug.</target></alt-trans></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
