@@ -17,7 +17,7 @@
 			<target xml:lang="pt-BR" state="translated">Este módulo contém a visão geral de todos os elementos dentro do espaço de trabalho atual e permite continuar a revisão e publicação do fluxo de trabalho para eles.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pt-BR" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Mídia</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="pt-BR" state="translated">Este módulo permite o gerenciamento de conteúdos de mídia, incluindo fotos, vídeos, áudio e documentos.</target></trans-unit>

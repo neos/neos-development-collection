@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="pt-BR" state="translated">Auto-Publicar</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Publicar automaticamente</target><alt-trans><target xml:lang="pt-BR">Auto-Publicar</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="pt-BR" state="translated">Aplicar</target></trans-unit>
@@ -281,7 +281,7 @@
 			<target xml:lang="pt-BR" state="translated">Deseja realmente excluir</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="pt-BR" state="needs-translation">Create new (hold to select position)</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Criar novo (pressione pra selecionar posição)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="pt-BR" state="translated">Isto irá excluir o elemento</target></trans-unit>
@@ -293,10 +293,10 @@
 			<target xml:lang="pt-BR" state="translated">Esta ação pode ser desfeita no gerenciamento do espaço de trabalho.</target></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="pt-BR" state="needs-translation">Paste (hold to select position)</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Colar (pressione para selecionar a posição)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="pt-BR" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Altura</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pt-BR" state="translated">Deseja realmente excluir</target></trans-unit>
@@ -311,13 +311,13 @@
 			<target xml:lang="pt-BR" state="translated">Esta ação pode ser desfeita no gerenciamento do espaço de trabalho.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pt-BR" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Mídia</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="pt-BR" state="needs-translation">Crop</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Corte</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="pt-BR" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Largura</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="pt-BR" state="translated">Faltando propriedade necessária: </target><alt-trans><target xml:lang="pt-BR">Faltando propriedade necessária:</target></alt-trans></trans-unit>
@@ -342,7 +342,7 @@
 			<target xml:lang="pt-BR" state="translated">Typo3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="pt-BR" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Conectar</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="pt-BR" state="translated">Autenticando</target></trans-unit>
