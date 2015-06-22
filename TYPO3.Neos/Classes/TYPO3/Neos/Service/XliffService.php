@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Xliff\XliffParser;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\I18n\Locale;
@@ -28,7 +29,7 @@ use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 class XliffService {
 
 	/**
-	 * An absolute path to the directory where translation files reside.
+	 * A relative path for translations inside the package resources.
 	 *
 	 * @var string
 	 */
@@ -65,6 +66,12 @@ class XliffService {
 	protected $packagesRegisteredForAutoInclusion = [];
 
 	/**
+	 * @Flow\Inject
+	 * @var PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * Return the json array for a given locale, sourceCatalog, xliffPath and package.
 	 * The json will be cached.
 	 *
@@ -79,17 +86,28 @@ class XliffService {
 			$json = $this->xliffToJsonTranslationsCache->get($cacheIdentifier);
 		} else {
 			$labels = [];
+			$localeChain = $this->localizationService->getLocaleChain($locale);
 
 			foreach ($this->packagesRegisteredForAutoInclusion as $packageKey => $sourcesToBeIncluded) {
 				if (!is_array($sourcesToBeIncluded)) {
 					continue;
 				}
 
-				$sourcePath = Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath));
+				$translationBasePath = Files::concatenatePaths([
+					$this->packageManager->getPackage($packageKey)->getResourcesPath(),
+					$this->xliffBasePath
+				]);
 
-				foreach ($sourcesToBeIncluded as $sourceName) {
-					list($xliffPathAndFilename) = $this->localizationService->getXliffFilenameAndPath($sourcePath, $sourceName, $locale);
-					$labels = Arrays::arrayMergeRecursiveOverrule($labels, $this->parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName));
+				// We merge labels in the chain from the worst choice to best choice
+				foreach (array_reverse($localeChain) as $allowedLocale) {
+					$localeSourcePath = Files::getNormalizedPath(Files::concatenatePaths([$translationBasePath, $allowedLocale]));
+					foreach ($sourcesToBeIncluded as $sourceName) {
+						foreach (glob($localeSourcePath . $sourceName . '.xlf') as $xliffPathAndFilename) {
+							$xliffPathInfo = pathinfo($xliffPathAndFilename);
+							$sourceName = str_replace($localeSourcePath, '', $xliffPathInfo['dirname'] . '/' . $xliffPathInfo['filename']);
+							$labels = Arrays::arrayMergeRecursiveOverrule($labels, $this->parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName));
+						}
+					}
 				}
 			}
 
@@ -114,13 +132,13 @@ class XliffService {
 		$parsedData = $this->xliffParser->getParsedData($xliffPathAndFilename);
 		$arrayData = array();
 		foreach ($parsedData['translationUnits'] as $key => $value) {
-			$valueToStore = $value[0]['target'] ? $value[0]['target'] : $value[0]['source'];
+			$valueToStore = !empty($value[0]['target']) ? $value[0]['target'] : $value[0]['source'];
 
 			if ($this->scrambleTranslatedLabels) {
 				$valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
 			}
 
-			$this->setArrayDataValue($arrayData, $packageKey . '.' . $sourceName . '.' . str_replace ('.', '-', $key), $valueToStore);
+			$this->setArrayDataValue($arrayData, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
 		}
 
 		return $arrayData;

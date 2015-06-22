@@ -9,6 +9,7 @@ define(
 	'Content/Model/NodeActions',
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
+	'Shared/I18n',
 	'LibraryExtensions/Mousetrap'
 ],
 function(
@@ -20,7 +21,8 @@ function(
 	Configuration,
 	NodeActions,
 	NodeTypeService,
-	ContentCommands
+	ContentCommands,
+	I18n
 ) {
 	return AbstractInsertNodePanel.extend({
 		_node: null,
@@ -66,7 +68,7 @@ function(
 					}
 					groups[type.metadata.ui.group].nodeTypes.push({
 						'nodeType': nodeTypeName,
-						'label': type.metadata.ui.label,
+						'label': I18n.translate(type.metadata.ui.label),
 						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 						'position': type.metadata.ui.position
 					});

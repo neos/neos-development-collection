@@ -59,16 +59,7 @@ define(
 		_loadView: function() {
 			var that = this,
 				propertyDefinition = this.get('propertyDefinition'),
-				typeDefinition = Configuration.get('UserInterface.inspector.dataTypes.' + propertyDefinition.type),
 				editor;
-
-			if (!typeDefinition) {
-				if (window.console && console.error) {
-					console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '". Type defaults for "' + propertyDefinition.type + '" not found! Please check your NodeTypes.yaml configuration.');
-				}
-				Notification.error('Error loading inspector', 'Inspector property "' + propertyDefinition.key + '" could not be loaded because of a missing type definition. See console for further details.');
-				return;
-			}
 
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
 
@@ -80,14 +71,17 @@ define(
 					inspectorBinding: this.inspectorBinding,
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},
-				Configuration.get('UserInterface.inspector.editors.' + typeDefinition.editor + '.editorOptions') || {},
-				typeDefinition.editorOptions || {},
 				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
 			);
 
 			editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
+
 			if (!editor) {
-				editor = typeDefinition.editor;
+				if (window.console && console.error) {
+					console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '" (no editor configured). Please check your NodeTypes.yaml configuration.');
+				}
+				Notification.error('Error loading inspector', 'Inspector property "' + propertyDefinition.key + '" could not be loaded because of a missing editor definition. See console for further details.');
+				return;
 			}
 
 			if (editor.indexOf('Content/Inspector/Editors/') === 0) {

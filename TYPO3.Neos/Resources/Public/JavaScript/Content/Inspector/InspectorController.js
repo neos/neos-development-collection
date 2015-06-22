@@ -164,11 +164,14 @@ define(
 			// groups
 			groupsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.groups'));
 			for (groupName in groupsObject) {
-				groupsObject[groupName].label = I18n.translate('content-inspector-groups-' + groupName, groupsObject[groupName].label);
+				groupsObject[groupName].label = I18n.translate(groupsObject[groupName].label);
 			}
 
 			// tabs
 			tabsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.tabs'));
+			for (tabName in tabsObject) {
+				tabsObject[tabName].label = I18n.translate(tabsObject[tabName].label);
+			}
 
 			// build nested structure
 			sortedGroupsArray = this._assignPropertiesAndViewsToGroups(sortedPropertiesArray, sortedViewsArray, groupsObject);
@@ -183,22 +186,14 @@ define(
 			// 1. assign properties to groups
 			sortedPropertiesArray.forEach(function(property) {
 				var groupIdentifier = Ember.get(property, 'ui.inspector.group');
+
 				if (groupIdentifier in groupsObject) {
 					if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]) {
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
 
-						Ember.Logger.mute = true; // Mute logging in case the specific label translation is not found
-						var translationId = 'nodetypes-' + NodeSelection.get('selectedNode.nodeType').replace(/[.: ]/g, '-') + '-properties-' + property.key,
-							nodeTypeSpecificLabelTranslation = I18n.translate(translationId);
-						Ember.Logger.mute = false;
-
-						if (nodeTypeSpecificLabelTranslation) {
-							property.ui.label = nodeTypeSpecificLabelTranslation;
-						} else if (property.ui.labelTranslationId) {
-							property.ui.label = I18n.translate(property.ui.labelTranslationId, property.ui.label);
-						}
+						property.ui.label = I18n.translate(property.ui.label);
 
 						groupsObject[groupIdentifier].properties.push(property);
 					}

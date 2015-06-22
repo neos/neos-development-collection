@@ -9,7 +9,7 @@ function(Ember, SecondaryInspectorController, CodeMirror, I18n) {
 	return SecondaryInspectorController.SecondaryInspectorButton.extend({
 		highlightingMode: 'text/html',
 		label: function() {
-			return I18n.translate('Main:TYPO3.Neos:content.inspector.editors.codeEditor.editCode', 'Edit code')
+			return I18n.translate(this.get('buttonLabel'));
 		}.property(),
 
 		viewClass: function() {

@@ -23,104 +23,102 @@
  * All arguments are allowed to data bind.
  * Allowed identifier combinations::
  *
- *   i18n:Catalog:Package.Key:Identifier
- *   i18n:Package.Key:Identifier
- *   i18n:Catalog:Identifier
- *   i18n:Identifier
- *   Identifier
+ *   Vendor.Package:SourceFile:label-identifier
+ *   Vendor.Package:label-identifier
+ *   label-identifier
  */
 define(
 [
 	'emberjs',
 	'Library/underscore'
-], function(
-	Ember,
-	_
-	) {
+], function(Ember, _) {
 
-	function identifierFormatHelper(id) {
-		id = id.replace(/\./g, "-");
-		if (id.length <= 1) {
-			id = id.toLowerCase();
-		} else {
-			id = id.substring(0, 1).toLowerCase() + id.substring(1);
-		}
-		return id;
-	}
-
-	function translate(id, fallback, packageKey, source, context) {
-		var translatedValue, translationParts, identifier;
-		packageKey = packageKey || 'TYPO3.Neos';
-		source = source || 'Main';
-
-		if (_.isUndefined(id) || id === '' || _.isObject(id)) {
-			/**
-			 * Only default content given
-			 */
-			return fallback;
-		}
-
-		if (!id) {
-			/**
-			 * No identifier and default value given
-			 */
-			return Ember.I18n.translate('TYPO3.Neos.translate.requiredProperty') + 'id';
-		}
-		/**
-		 * i18n path given
-		 *
-		 * The identifier.replace() calls, converts the dots used in the fluid templates to match the generated
-		 * json file where dashes are used
-		 *
-		 * Current implementation allow only the given:
-		 * i18n:Catalog:Package.Key:Identifier
-		 * i18n:Package.Key:Identifier
-		 * i18n:Catalog:Identifier
-		 * i18n:Identifier
-		 * Identifier
-		 *
-		 * Defaults are:
-		 » packageKey = 'TYPO3.Neos'
-		 » source = 'Main'
-		 */
-		id = id.trim().replace('i18n:', '');
-		translationParts = id.split(':');
-		if (translationParts.length === 3) {
-			// i18n:Catalog:Package.Key:Identifier
-			identifier = identifierFormatHelper(translationParts[2]);
-			id = translationParts[1] + '.' + translationParts[0] + '.' + identifier;
-		} else if (translationParts.length === 2) {
-			if (translationParts[0].indexOf('.') === -1) {
-				// i18n:Catalog:Identifier
-				identifier = identifierFormatHelper(translationParts[1]);
-				id = packageKey + '.' + translationParts[0] + '.' + identifier;
-			} else {
-				// i18n:Package.Key:Identifier
-				identifier = identifierFormatHelper(translationParts[1]);
-				id = translationParts[0] + '.' + source + '.' + identifier;
-			}
-		} else {
-			// i18n:Identifier or Identifier
-			identifier = identifierFormatHelper(translationParts[0]);
-			id = packageKey + '.' + source + '.' + identifier;
-		}
-
-		translatedValue = Ember.I18n.translate(id, context);
-		if (translatedValue.indexOf('Missing translation:') !== -1) {
-			return fallback;
-		}
-
-		return translatedValue;
-	}
-
-	Ember.Handlebars.registerBoundHelper('translate', function (options) {
-
-		var attrs;
-		attrs = options.hash;
-		return translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
-	});
-
+	/**
+	 * @singleton
+	 */
 	return Ember.Object.extend({
-		translate: translate
+
+		defaultPackage: 'TYPO3.Neos',
+		defaultSource: 'Main',
+
+		init: function () {
+			var self = this,
+				translateHelperClosure;
+
+			translateHelperClosure = function (options) {
+				var attrs;
+				attrs = options.hash;
+				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
+			};
+
+			Ember.Handlebars.registerHelper('translate', translateHelperClosure);
+			Ember.Handlebars.registerBoundHelper('boundTranslate', translateHelperClosure);
+		},
+
+		translate: function(id, fallback, packageKey, source, context) {
+			var translatedValue, translationParts;
+			fallback = fallback || id;
+			packageKey = packageKey || this.defaultPackage;
+			source = source || this.defaultSource;
+
+			if (_.isUndefined(id) || id === '' || _.isObject(id)) {
+				return fallback;
+			}
+
+			translationParts = this._splitIdentifier(id, packageKey, source);
+			Ember.Logger.mute = true; // Mute logging in case the specific label translation is not found
+			translatedValue = Ember.I18n.translate(translationParts.getJoinedIdentifier(), context);
+			Ember.Logger.mute = false;
+			if (translatedValue.indexOf('Missing translation:') !== -1) {
+				return fallback;
+			}
+
+			return translatedValue;
+		},
+
+		/**
+		 * @param {string} id translation id with possible package and source parts.
+		 * @param {string} fallbackPackage
+		 * @param {string} fallbackSource
+		 * @private
+		 */
+		_splitIdentifier: function(id, fallbackPackage, fallbackSource) {
+			id = id.trim();
+			var translationParts = {
+				id: id,
+				packageKey: fallbackPackage,
+				source: fallbackSource,
+
+				getJoinedIdentifier: function() {
+					return this.packageKey + '.' + this.source + '.' + this.id;
+				}
+			};
+
+			if (id && id.split) {
+				idParts = id.split(':', 3);
+				switch (idParts.length) {
+					case 2:
+						translationParts.packageKey = idParts[0];
+						translationParts.id = idParts[1];
+						break;
+					case 3:
+						translationParts.packageKey = idParts[0];
+						translationParts.source = idParts[1];
+						translationParts.id = idParts[2];
+						break;
+				}
+			}
+
+			translationParts.id = translationParts.id.replace(/\./g, "_");
+			if (translationParts.id.length <= 1) {
+				translationParts.id = translationParts.id.toLowerCase();
+			} else {
+				translationParts.id = translationParts.id.substring(0, 1).toLowerCase() + translationParts.id.substring(1);
+			}
+
+			translationParts.packageKey = translationParts.packageKey.replace(/\./g, "_");
+			translationParts.source = translationParts.source.replace(/\./g, "_");
+			return translationParts;
+		}
 	}).create();
 });

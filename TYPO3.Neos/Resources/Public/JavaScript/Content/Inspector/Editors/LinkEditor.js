@@ -19,9 +19,10 @@ define(
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: function() {
-				return I18n.translate('Main:TYPO3.Neos:content.inspector.editors.linkEditor.search', 'Paste a link, or type to search');
-			}.property(),
+			placeholder: null,
+			_placeholder: function() {
+				return I18n.translate(this.get('placeholder'), 'Paste a link, or type to search');
+			}.property('placeholder'),
 
 			content: null,
 			searchRequest: null,
@@ -38,7 +39,7 @@ define(
 					minimumInputLength: 2,
 					maximumSelectionSize: 1,
 					multiple: true,
-					placeholder: this.get('placeholder'),
+					placeholder: this.get('_placeholder'),
 					escapeMarkup: function(markup) {
 						return markup;
 					},
@@ -156,7 +157,7 @@ define(
 						}
 					};
 				$input
-					.attr('placeholder', this.get('placeholder'))
+					.attr('placeholder', this.get('_placeholder'))
 					.css({'display': this.get('content') ? 'none' : 'inline-block'})
 					.on('keyup', function(e) {
 						if (e.keyCode === 13) {
@@ -181,7 +182,7 @@ define(
 					item = Ember.Object.extend({
 						id: value,
 						text: function() {
-							return I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...');
+							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...');
 						}.property(),
 						data: {}
 					}).create();

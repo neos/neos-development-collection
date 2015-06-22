@@ -12,9 +12,10 @@ define(
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: function () {
-				return I18n.translate('Main:TYPO3.Neos:typeToSearch', 'Type to search');
-			}.property(),
+			placeholder: '',
+			_placeholder: function () {
+				return I18n.translate(this.get('placeholder'), 'Type to search');
+			}.property('placeholder'),
 
 			// lazily initialized content – will be an array of select2 datums [{id: '12a9837…', text: 'My Node'}, …]:
 			content: [],
@@ -32,7 +33,7 @@ define(
 				this.$().select2({
 					multiple: true,
 					minimumInputLength: that.get('threshold'),
-					placeholder: this.get('placeholder'),
+					placeholder: this.get('_placeholder'),
 					formatResult: function(item, container, query, escapeMarkup) {
 						var markup = [];
 						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
@@ -92,7 +93,7 @@ define(
 					}
 				});
 
-				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
+				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
 
 				this.$().on('change', function() {
 					that.set('content', $(this).select2('data'));
@@ -122,7 +123,7 @@ define(
 						var item = Ember.Object.extend({
 							id: nodeIdentifier,
 							text: function() {
-								return I18n.translate('Main:TYPO3.Neos:loading', 'Loading ...');
+								return I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...');
 							}.property()
 						}).create();
 

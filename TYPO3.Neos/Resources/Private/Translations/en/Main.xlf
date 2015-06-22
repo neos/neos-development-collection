@@ -167,9 +167,6 @@
 			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
-				<source>URL path segment</source>
-			</trans-unit>
 			<trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
 			</trans-unit>
@@ -219,11 +216,17 @@
 			<trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			</trans-unit>
+			<trans-unit id="discardAll" xml:space="preserve">
+				<source>Discard all</source>
+			</trans-unit>
 			<trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			</trans-unit>
 			<trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			</trans-unit>
+			<trans-unit id="publishAll" xml:space="preserve">
+				<source>Publish all</source>
 			</trans-unit>
 			<trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>

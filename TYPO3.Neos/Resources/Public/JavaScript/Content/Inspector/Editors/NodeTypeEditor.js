@@ -9,7 +9,7 @@ define(
 	],
 	function (Ember, $, SelectBoxEditor, Configuration, NodeTypeService, I18n) {
 		return SelectBoxEditor.extend({
-			placeholder:  I18n.translate('Main:TYPO3.Neos:loading', 'Loading...'),
+			placeholder:  I18n.translate('TYPO3.Neos:Main:loading', 'Loading...'),
 			baseNodeType: 'TYPO3.Neos:Content',
 
 			values: function () {
@@ -73,7 +73,7 @@ define(
 						});
 					});
 				} else {
-					var placeholder = I18n.translate('Main:TYPO3.Neos:content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes', 'Unable to load sub node types of:') + ' ' + this.get('baseNodeType');
+					var placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes', 'Unable to load sub node types of:') + ' ' + this.get('baseNodeType');
 					this.set('placeholder', placeholder);
 				}
 

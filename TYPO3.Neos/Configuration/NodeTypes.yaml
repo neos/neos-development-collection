@@ -1,30 +1,29 @@
 # Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
+  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
   abstract: TRUE
   ui:
     inspector:
       tabs:
         default:
-          label: 'General'
+          label: i18n
           position: 10
           icon: 'icon-pencil'
         meta:
-          label: 'Metadata'
           position: 20
           icon: 'icon-cog'
       groups:
         nodeInfo:
-          label: 'Additional info'
+          label: i18n
           tab: 'meta'
           position: 990
         type:
-          label: 'Change type'
+          label: i18n
           tab: 'meta'
           position: 1000
       views:
         nodeInfo:
-          label: 'Metadata'
+          label: i18n
           group: 'nodeInfo'
           view: 'Content/Inspector/Views/NodeInfoView'
   properties:
@@ -43,7 +42,7 @@
     _nodeType:
       type: string
       ui:
-        label: 'Type'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'type'
@@ -60,15 +59,14 @@
     inspector:
       groups:
         visibility:
-          label: 'Visibility'
+          label: 'i18n:TYPO3.Neos:Inspector:groups.visibility'
           position: 100
           tab: meta
   properties:
     _hidden:
       type: boolean
       ui:
-        label: 'Hide'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Hidable.properties.hide'
+        label: i18n
         inspector:
           group: 'visibility'
           position: 30
@@ -80,15 +78,14 @@
     inspector:
       groups:
         visibility:
-          label: 'Visibility'
+          label: 'TYPO3.Neos:Inspector:groups.visibility'
           position: 100
           tab: meta
   properties:
     _hiddenBeforeDateTime:
       type: DateTime
       ui:
-        label: 'Hide before'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime'
+        label: i18n
         inspector:
           group: 'visibility'
           position: 10
@@ -99,8 +96,7 @@
     _hiddenAfterDateTime:
       type: DateTime
       ui:
-        label: 'Hide after'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime'
+        label: i18n
         inspector:
           group: 'visibility'
           position: 20
@@ -131,7 +127,7 @@
     inspector:
       groups:
         document:
-          label: 'Document options'
+          label: i18n
           position: 10
   properties:
     _nodeType:
@@ -142,8 +138,7 @@
     title:
       type: string
       ui:
-        label: 'Title'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.title'
+        label: i18n
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
@@ -155,8 +150,7 @@
     uriPathSegment:
       type: string
       ui:
-        label: 'URL path segment'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties.uriPathSegment'
+        label: i18n
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
@@ -173,8 +167,7 @@
     _hiddenInIndex:
       type: boolean
       ui:
-        label: 'Hide in menus'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex'
+        label: i18n
         reloadPageIfChanged: TRUE
         inspector:
           group: 'visibility'
@@ -186,20 +179,19 @@
   superTypes:
     'TYPO3.Neos:Document': TRUE
   ui:
-    label: 'Shortcut'
+    label: i18n
     icon: 'icon-share'
     position: 200
     inspector:
       groups:
         document:
-          label: 'Shortcut options'
+          label: i18n
   properties:
     targetMode:
       type: string
       defaultValue: 'firstChildNode'
       ui:
-        label: 'Target mode'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.targetMode'
+        label: i18n
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
@@ -207,16 +199,15 @@
           editorOptions:
             values:
               firstChildNode:
-                label: 'First child node'
+                label: i18n
               parentNode:
-                label: 'Parent node'
+                label: i18n
               selectedTarget:
-                label: 'Selected target'
+                label: i18n
     target:
       type: string
       ui:
-        label: 'Target'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.Shortcut.properties.target'
+        label: i18n
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
@@ -228,13 +219,13 @@
     'TYPO3.Neos:Content': TRUE
   abstract: TRUE
   ui:
-    label: 'Plugin'
+    label: i18n
     group: 'plugins'
     icon: 'icon-puzzle-piece'
     inspector:
       groups:
         pluginSettings:
-          label: 'Plugin Settings'
+          label: i18n
   postprocessors:
     'PluginPostprocessor':
       postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
@@ -243,21 +234,20 @@
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
-    label: 'Plugin View'
+    label: i18n
     group: 'plugins'
     icon: 'icon-puzzle-piece'
     position: 100
     inspector:
       groups:
         pluginViews:
-          label: 'Plugin Views'
+          label: i18n
           position: 100
   properties:
     plugin:
       type: string
       ui:
-        label: 'Master View'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.PluginView.properties.plugin'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'
@@ -266,8 +256,7 @@
     view:
       type: string
       ui:
-        label: 'Plugin View'
-        labelTranslationId: 'nodetypes.TYPO3.Neos.PluginView.properties.view'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'
@@ -284,7 +273,7 @@
     nodeTypes:
       '*': FALSE
   ui:
-    label: 'Content'
+    label: i18n
     icon: 'icon-unchecked'
     group: 'general'
     search:
@@ -292,7 +281,7 @@
     inspector:
       groups:
         type:
-          label: 'Change type'
+          label: i18n
           position: 100
           tab: meta
   properties:
@@ -308,7 +297,7 @@
   superTypes:
     'TYPO3.Neos:Node': TRUE
   ui:
-    label: 'Content Collection'
+    label: i18n
     icon: 'icon-folder-open-alt'
   constraints:
     nodeTypes:
