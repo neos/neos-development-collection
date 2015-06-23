@@ -126,7 +126,8 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface' || $operand === 'TYPO3\TYPO3CR\Domain\Model\Node') {
 				return TRUE;
 			} else {
-				return $value->getNodeType()->isOfType($operand);
+				$isOfType = $value->getNodeType()->isOfType($operand);
+				return $operand[0] === '!' ? $isOfType === FALSE : $isOfType;
 			}
 		}
 		return parent::evaluateOperator($value, $operator, $operand);
