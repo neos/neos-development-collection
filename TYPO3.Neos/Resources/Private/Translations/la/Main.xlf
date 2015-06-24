@@ -5,375 +5,375 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="la-LA" state="translated">crwdns1:0crwdne1:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns1:0crwdne1:0</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="la-LA" state="translated">crwdns2:0crwdne2:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns2:0crwdne2:0</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="la-LA" state="translated">crwdns3:0crwdne3:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns3:0crwdne3:0</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="la-LA" state="translated">crwdns4:0crwdne4:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns4:0crwdne4:0</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="la-LA" state="translated">crwdns5:0crwdne5:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns5:0crwdne5:0</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="la-LA" state="translated">crwdns6:0crwdne6:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns6:0crwdne6:0</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="la-LA" state="translated">crwdns7:0crwdne7:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns7:0crwdne7:0</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="la-LA" state="translated">crwdns8:0crwdne8:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns8:0crwdne8:0</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="la-LA" state="translated">crwdns9:0crwdne9:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns9:0crwdne9:0</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="la-LA" state="translated">crwdns10:0crwdne10:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns10:0crwdne10:0</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="la-LA" state="translated">crwdns11:0crwdne11:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns11:0crwdne11:0</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="la-LA" state="translated">crwdns12:0crwdne12:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns12:0crwdne12:0</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="la-LA" state="translated">crwdns13:0crwdne13:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns13:0crwdne13:0</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="la-LA" state="translated">crwdns14:0crwdne14:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns14:0crwdne14:0</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="la-LA" state="translated">crwdns15:0crwdne15:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns15:0crwdne15:0</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="la-LA" state="translated">crwdns16:0crwdne16:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns16:0crwdne16:0</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="la-LA" state="translated">crwdns17:0crwdne17:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns17:0crwdne17:0</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="la-LA" state="translated">crwdns18:0crwdne18:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns18:0crwdne18:0</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="la-LA" state="translated">crwdns19:0crwdne19:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns19:0crwdne19:0</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="la-LA" state="translated">crwdns20:0crwdne20:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns20:0crwdne20:0</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="la-LA" state="translated">crwdns21:0crwdne21:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns21:0crwdne21:0</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="la-LA" state="translated">crwdns22:0crwdne22:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns22:0crwdne22:0</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="la-LA" state="translated">crwdns23:0crwdne23:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns23:0crwdne23:0</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="la-LA" state="translated">crwdns24:0crwdne24:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns24:0crwdne24:0</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="la-LA" state="translated">crwdns25:0crwdne25:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns25:0crwdne25:0</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="la-LA" state="translated">crwdns26:0crwdne26:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns26:0crwdne26:0</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="la-LA" state="translated">crwdns27:0crwdne27:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns27:0crwdne27:0</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="la-LA" state="translated">crwdns28:0crwdne28:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns28:0crwdne28:0</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="la-LA" state="translated">crwdns29:0crwdne29:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns29:0crwdne29:0</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="la-LA" state="translated">crwdns30:0crwdne30:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns30:0crwdne30:0</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="la-LA" state="translated">crwdns31:0crwdne31:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns31:0crwdne31:0</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="la-LA" state="translated">crwdns32:0crwdne32:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns32:0crwdne32:0</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="la-LA" state="translated">crwdns33:0crwdne33:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns33:0crwdne33:0</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="la-LA" state="translated">crwdns34:0crwdne34:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns34:0crwdne34:0</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="la-LA" state="translated">crwdns35:0crwdne35:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns35:0crwdne35:0</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="la-LA" state="translated">crwdns36:0crwdne36:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns36:0crwdne36:0</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="la-LA" state="translated">crwdns37:0crwdne37:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns37:0crwdne37:0</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="la-LA" state="translated">crwdns38:0crwdne38:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns38:0crwdne38:0</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="la-LA" state="translated">crwdns39:0crwdne39:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns39:0crwdne39:0</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="la-LA" state="translated">crwdns40:0crwdne40:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns40:0crwdne40:0</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="la-LA" state="translated">crwdns41:0crwdne41:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns41:0crwdne41:0</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="la-LA" state="translated">crwdns42:0crwdne42:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns42:0crwdne42:0</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="translated">crwdns43:0crwdne43:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns43:0crwdne43:0</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="la-LA" state="translated">crwdns44:0crwdne44:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns44:0crwdne44:0</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="la-LA" state="translated">crwdns45:0crwdne45:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns45:0crwdne45:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="la-LA" state="translated">crwdns46:0crwdne46:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns46:0crwdne46:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="la-LA" state="translated">crwdns47:0crwdne47:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns47:0crwdne47:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="la-LA" state="translated">crwdns48:0crwdne48:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns48:0crwdne48:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="la-LA" state="translated">crwdns47:0crwdne47:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns47:0crwdne47:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="la-LA" state="translated">crwdns50:0crwdne50:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns50:0crwdne50:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="la-LA" state="translated">crwdns51:0crwdne51:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns51:0crwdne51:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="la-LA" state="translated">crwdns52:0crwdne52:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns52:0crwdne52:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="la-LA" state="translated">crwdns53:0crwdne53:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns53:0crwdne53:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="la-LA" state="translated">crwdns54:0crwdne54:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns54:0crwdne54:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="la-LA" state="translated">crwdns55:0crwdne55:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns55:0crwdne55:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="la-LA" state="translated">crwdns56:0crwdne56:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns56:0crwdne56:0</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="translated">crwdns57:0{0}crwdne57:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns57:0{0}crwdne57:0</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="la-LA" state="translated">crwdns58:0{0}crwdne58:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns58:0{0}crwdne58:0</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="la-LA" state="translated">crwdns59:0{0}crwdne59:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns59:0{0}crwdne59:0</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="la-LA" state="translated">crwdns60:0crwdne60:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns60:0crwdne60:0</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="translated">crwdns61:0{0}crwdne61:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns61:0{0}crwdne61:0</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="translated">crwdns62:0{0}crwdne62:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns62:0{0}crwdne62:0</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="la-LA" state="translated">crwdns63:0crwdne63:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns63:0crwdne63:0</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="la-LA" state="translated">crwdns64:0crwdne64:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns64:0crwdne64:0</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="la-LA" state="translated">crwdns65:0crwdne65:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns65:0crwdne65:0</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="la-LA" state="translated">crwdns66:0crwdne66:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns66:0crwdne66:0</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="la-LA" state="translated">crwdns67:0crwdne67:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns67:0crwdne67:0</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="la-LA" state="translated">crwdns68:0crwdne68:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns68:0crwdne68:0</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="la-LA" state="translated">crwdns69:0crwdne69:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns69:0crwdne69:0</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="la-LA" state="translated">crwdns70:0crwdne70:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns70:0crwdne70:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="la-LA" state="translated">crwdns71:0crwdne71:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns71:0crwdne71:0</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="la-LA" state="translated">crwdns72:0crwdne72:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns72:0crwdne72:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="la-LA" state="translated">crwdns73:0crwdne73:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns73:0crwdne73:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="la-LA" state="translated">crwdns74:0crwdne74:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns74:0crwdne74:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="la-LA" state="translated">crwdns75:0crwdne75:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns75:0crwdne75:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="la-LA" state="translated">crwdns76:0crwdne76:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns76:0crwdne76:0</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="la-LA" state="translated">crwdns77:0crwdne77:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns77:0crwdne77:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="la-LA" state="translated">crwdns78:0crwdne78:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns78:0crwdne78:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="la-LA" state="translated">crwdns79:0crwdne79:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns79:0crwdne79:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="la-LA" state="translated">crwdns80:0crwdne80:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns80:0crwdne80:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="la-LA" state="translated">crwdns81:0crwdne81:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns81:0crwdne81:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="la-LA" state="translated">crwdns82:0crwdne82:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns82:0crwdne82:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="la-LA" state="translated">crwdns83:0crwdne83:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns83:0crwdne83:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="la-LA" state="translated">crwdns84:0crwdne84:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns84:0crwdne84:0</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="la-LA" state="translated">crwdns85:0crwdne85:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns85:0crwdne85:0</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="la-LA" state="translated">crwdns86:0crwdne86:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns86:0crwdne86:0</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="la-LA" state="translated">crwdns87:0crwdne87:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns87:0crwdne87:0</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="la-LA" state="translated">crwdns88:0crwdne88:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns88:0crwdne88:0</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="la-LA" state="translated">crwdns89:0crwdne89:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns89:0crwdne89:0</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="la-LA" state="translated">crwdns90:0crwdne90:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns90:0crwdne90:0</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="la-LA" state="translated">crwdns91:0crwdne91:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns91:0crwdne91:0</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="la-LA" state="translated">crwdns92:0crwdne92:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns92:0crwdne92:0</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="la-LA" state="translated">crwdns93:0crwdne93:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns93:0crwdne93:0</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="la-LA" state="translated">crwdns94:0crwdne94:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns94:0crwdne94:0</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="la-LA" state="translated">crwdns95:0crwdne95:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns95:0crwdne95:0</target></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="la-LA" state="translated">crwdns96:0crwdne96:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns96:0crwdne96:0</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="la-LA" state="translated">crwdns97:0crwdne97:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns97:0crwdne97:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="la-LA" state="translated">crwdns98:0crwdne98:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns98:0crwdne98:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="la-LA" state="translated">crwdns99:0crwdne99:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns99:0crwdne99:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="la-LA" state="translated">crwdns100:0crwdne100:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns100:0crwdne100:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="la-LA" state="translated">crwdns101:0crwdne101:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns101:0crwdne101:0</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="la-LA" state="translated">crwdns102:0crwdne102:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns102:0crwdne102:0</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="la-LA" state="translated">crwdns103:0crwdne103:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns103:0crwdne103:0</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="la-LA" state="translated">crwdns104:0crwdne104:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns104:0crwdne104:0</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="la-LA" state="translated">crwdns105:0crwdne105:0 </target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns105:0crwdne105:0 </target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="la-LA" state="translated">crwdns106:0crwdne106:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns106:0crwdne106:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="la-LA" state="translated">crwdns107:0crwdne107:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns107:0crwdne107:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="la-LA" state="translated">crwdns108:0crwdne108:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns108:0crwdne108:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="la-LA" state="translated">crwdns109:0crwdne109:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns109:0crwdne109:0</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="la-LA" state="translated">crwdns110:0crwdne110:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns110:0crwdne110:0</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="la-LA" state="translated">crwdns111:0crwdne111:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns111:0crwdne111:0</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="la-LA" state="translated">crwdns112:0crwdne112:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns112:0crwdne112:0</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="la-LA" state="translated">crwdns113:0crwdne113:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns113:0crwdne113:0</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="la-LA" state="translated">crwdns114:0crwdne114:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns114:0crwdne114:0</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="la-LA" state="translated">crwdns115:0crwdne115:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns115:0crwdne115:0</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="la-LA" state="translated">crwdns116:0crwdne116:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns116:0crwdne116:0</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="la-LA" state="translated">crwdns117:0crwdne117:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns117:0crwdne117:0</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="la-LA" state="translated">crwdns118:0crwdne118:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns118:0crwdne118:0</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="la-LA" state="translated">crwdns119:0crwdne119:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns119:0crwdne119:0</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="la-LA" state="translated">crwdns120:0crwdne120:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns120:0crwdne120:0</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="la-LA" state="translated">crwdns121:0crwdne121:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns121:0crwdne121:0</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="la-LA" state="translated">crwdns122:0crwdne122:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns122:0crwdne122:0</target></trans-unit>
     </body>
   </file>
 </xliff>
