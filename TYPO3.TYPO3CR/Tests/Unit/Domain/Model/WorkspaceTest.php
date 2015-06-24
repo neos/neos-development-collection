@@ -16,7 +16,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
- * Testcase for the "Workspace" domain model
+ * Test case for the "Workspace" domain model
  *
  */
 class WorkspaceTest extends UnitTestCase {
@@ -46,86 +46,6 @@ class WorkspaceTest extends UnitTestCase {
 		$workspace->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeData', $workspace->getRootNodeData());
-	}
-
-	/**
-	 * @test
-	 */
-	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePublished() {
-		$liveWorkspace = new Workspace('live');
-		$currentWorkspace = new Workspace('current', $liveWorkspace);
-
-		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'findOneByMovedTo', 'remove', 'add'))->getMock();
-		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
-
-		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
-		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
-
-		$mockNodeService = $this->getMockBuilder(NodeService::CLASS)->disableOriginalConstructor()->getMock();
-		$this->inject($currentWorkspace, 'nodeService', $mockNodeService);
-
-		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-
-		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
-		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
-		$mockNode1->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
-
-		$nodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
-		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
-		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
-		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
-
-		$existingNodeData->expects($this->once())->method('similarize')->with($nodeData2);
-		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
-		$mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($nodeData2));
-		$mockNode2->expects($this->once())->method('setNodeData')->with($nodeData2);
-		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
-
-		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
-		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNodeData));
-		$mockNodeDataRepository->expects($this->once())->method('remove');
-
-		$currentWorkspace->publish($liveWorkspace);
-	}
-
-	/**
-	 * @test
-	 */
-	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
-		$liveWorkspace = new Workspace('live');
-		$currentWorkspace = new Workspace('current', $liveWorkspace);
-
-		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'findOneByMovedTo', 'remove', 'add'))->getMock();
-		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
-
-		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
-		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
-
-		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-		$mockNode2NodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-
-		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
-		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
-		$mockNode1->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
-
-		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
-		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
-		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
-		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
-		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
-		$mockNode2->expects($this->once())->method('getNodeData')->will($this->returnValue($mockNode2NodeData));
-
-		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
-
-		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
-		$mockNodeDataRepository->expects($this->at(0))->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNodeData));
-
-		$mockNodeDataRepository->expects($this->at(1))->method('findOneByMovedTo');
-		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($mockNode2NodeData);
-		$mockNodeDataRepository->expects($this->at(3))->method('remove')->with($existingNodeData);
-
-		$currentWorkspace->publish($liveWorkspace);
 	}
 
 	/**

@@ -58,7 +58,7 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
-		if ($workspace->getName() === 'live') {
+		if ($workspace->getBaseWorkspace() === NULL) {
 			return array();
 		}
 
@@ -93,26 +93,30 @@ class PublishingService implements PublishingServiceInterface {
 	}
 
 	/**
-	 * Publishes the given node to the specified target workspace. If no workspace is specified, "live" is assumed.
+	 * Publishes the given node to the specified target workspace. If no workspace is specified, the source workspace's
+	 * base workspace is assumed.
 	 *
 	 * @param NodeInterface $node
-	 * @param Workspace $targetWorkspace If not set the "live" workspace is assumed to be the publishing target
+	 * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
 	 * @return void
 	 * @api
 	 */
 	public function publishNode(NodeInterface $node, Workspace $targetWorkspace = NULL) {
 		if ($targetWorkspace === NULL) {
-			$targetWorkspace = $this->workspaceRepository->findOneByName('live');
+			$targetWorkspace = $node->getWorkspace()->getBaseWorkspace();
 		}
-		$node->getWorkspace()->publishNode($node, $targetWorkspace);
-		$this->emitNodePublished($node, $targetWorkspace);
+		if ($targetWorkspace instanceof Workspace) {
+			$node->getWorkspace()->publishNode($node, $targetWorkspace);
+			$this->emitNodePublished($node, $targetWorkspace);
+		}
 	}
 
 	/**
-	 * Publishes the given nodes to the specified target workspace. If no workspace is specified, "live" is assumed.
+	 * Publishes the given nodes to the specified target workspace. If no workspace is specified, the source workspace's
+	 * base workspace is assumed.
 	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to publish
-	 * @param Workspace $targetWorkspace If not set the "live" workspace is assumed to be the publishing target
+	 * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
 	 * @return void
 	 * @api
 	 */
@@ -132,8 +136,8 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function discardNode(NodeInterface $node) {
-		if ($node->getWorkspace()->getName() === 'live') {
-			throw new WorkspaceException('Nodes in the live workspace cannot be discarded.', 1395841899);
+		if ($node->getWorkspace()->getBaseWorkspace() === NULL) {
+			throw new WorkspaceException('Nodes in a in a workspace without a base workspace cannot be discarded.', 1395841899);
 		}
 
 		$possibleShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
