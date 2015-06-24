@@ -17,13 +17,13 @@
 			<target xml:lang="nl" state="translated">Annuleren</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="nl" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="nl" state="translated">Kies</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="nl" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="nl" state="translated">Type om te zoeken</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="nl" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="nl" state="translated">Inhoud</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="nl" state="translated">Maak na</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="nl" state="translated">Verbergen / zichtbaar maken</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="nl" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="nl" state="translated">Aan het laden</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="nl" state="translated">Nieuwe na</target></trans-unit>
@@ -83,10 +83,10 @@
 			<target xml:lang="nl" state="translated">Navigeren</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="nl" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="nl" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="nl" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pagina</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="nl" state="translated">Plakken</target></trans-unit>
@@ -110,7 +110,7 @@
 			<target xml:lang="nl" state="translated">Publiceren</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="nl" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="nl" state="translated">Gepubliceerd</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="nl" state="translated">Verwijder</target></trans-unit>
@@ -125,10 +125,10 @@
 			<target xml:lang="nl" state="translated">Opgeslagen</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="nl" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="nl" state="translated">Zoeken</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="nl" state="needs-translation">Toggle inspector</target></trans-unit>
+			<target xml:lang="nl" state="translated">Schakel inspector om</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
@@ -138,40 +138,40 @@
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="nl" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="nl" state="translated">Document</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="nl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="nl" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="nl" state="translated">URL pad segment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="nl" state="needs-translation">Hide in menus</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verberg in menu's</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="nl" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="nl" state="translated">URL pad segment</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="nl" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="nl" state="translated">Doelmodus</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="nl" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="nl" state="translated">Doel</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="nl" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="nl" state="translated">Hoofdweergave</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="nl" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="nl" state="translated">Plugin weergave</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="nl" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verberg</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="nl" state="needs-translation">Hide before</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verberg voor</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="nl" state="needs-translation">Hide after</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verberg na</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -239,10 +239,10 @@
 			<target xml:lang="nl" state="translated">Pas Toe</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="nl" state="needs-translation">Select a Plugin</target></trans-unit>
+			<target xml:lang="nl" state="translated">Selecteer een Plugin</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="nl" state="needs-translation">No plugin configured</target></trans-unit>
+			<target xml:lang="nl" state="translated">Geen plugin geconfigureerd</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
 			<target xml:lang="nl" state="translated">weergave op pagina</target></trans-unit>
@@ -251,37 +251,37 @@
 			<target xml:lang="nl" state="translated">weergave op huidige pagina</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="nl" state="needs-translation">No date set</target></trans-unit>
+			<target xml:lang="nl" state="translated">Geen datum ingesteld</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="nl" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="nl" state="translated">Code bewerken</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="nl" state="needs-translation">Paste a link, or type to search</target></trans-unit>
+			<target xml:lang="nl" state="translated">Plak een link, of type om te zoeken</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="nl" state="needs-translation">Unable to load sub node types of:</target></trans-unit>
+			<target xml:lang="nl" state="translated">Niet mogelijk om sub nodes te laden van type:</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="nl" state="needs-translation">Change type</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verander type</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="nl" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="nl" state="translated">Extra informatie</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="nl" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="nl" state="translated">Zichtbaarheid</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="nl" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="nl" state="translated">Documentopties</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="nl" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="nl" state="translated">Inhoud</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="nl" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="nl" state="translated">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="nl" state="needs-translation">Create new (hold to select position)</target></trans-unit>
+			<target xml:lang="nl" state="translated">Maak nieuw aan (ingedrukt houden om positie te kiezen)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="nl" state="translated">Dit zal de pagina verwijderen</target></trans-unit>
@@ -293,13 +293,13 @@
 			<target xml:lang="nl" state="translated">Deze bewerking kan ongedaan worden gemaakt in de workspace management omgeving.</target></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="nl" state="needs-translation">Paste (hold to select position)</target></trans-unit>
+			<target xml:lang="nl" state="translated">Plakken (ingedrukt houden om positie te kiezen)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="nl" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="nl" state="translated">Hoogte</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="nl" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="nl" state="translated">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="nl" state="translated">dit element verwijderen</target></trans-unit>
@@ -311,19 +311,19 @@
 			<target xml:lang="nl" state="translated">Deze bewerking kan ongedaan worden gemaakt in de workspace management omgeving.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="nl" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="nl" state="translated">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="nl" state="needs-translation">Crop</target></trans-unit>
+			<target xml:lang="nl" state="translated">Bijsnijden</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="nl" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="nl" state="translated">breedte</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="nl" state="translated">Verplicht ontbrekende eigenschap: </target><alt-trans><target xml:lang="nl">Verplicht ontbrekende eigenschap:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="nl" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="nl" state="translated">Workspaces</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
 			<target xml:lang="nl" state="translated">Er is een fout opgetreden tijdens het opslaan</target></trans-unit>
@@ -339,10 +339,10 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="nl" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="nl" state="translated">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="nl" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="nl" state="translated">Log in</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="nl" state="translated">Verificatie</target></trans-unit>

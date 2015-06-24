@@ -11,13 +11,13 @@
 			<target xml:lang="nl" state="translated">Bevat meerdere modules die in relatie staan tot het beheer van content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="nl" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="nl" state="translated">Workspaces</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="nl" state="translated">Deze module bevat een overzicht van alle elementen in de huidige workspace en geeft de mogelijkheid de review en publicatie workflow voort te zetten.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="nl" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="nl" state="translated">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="nl" state="translated">Deze module stelt u in staat media bestanden waaronder afbeeldingen, video's, audio bestanden en documenten te beheren.</target></trans-unit>
