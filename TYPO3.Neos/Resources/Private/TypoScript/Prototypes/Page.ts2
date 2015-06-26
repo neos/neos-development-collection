@@ -82,11 +82,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
-		# Script includes in the head should go here
-		javascripts = TYPO3.TypoScript:Array
-
 		# Link tags for stylesheets in the head should go here
 		stylesheets = TYPO3.TypoScript:Array
+
+		# Script includes in the head should go here
+		javascripts = TYPO3.TypoScript:Array {
+			@position = 'after stylesheets'
+		}
 	}
 
 	closingHeadTag = '</head>'
