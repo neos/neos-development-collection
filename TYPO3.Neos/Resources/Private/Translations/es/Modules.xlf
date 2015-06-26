@@ -5,7 +5,7 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="es-ES" state="needs-translation">Management</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Administración</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
 			<target xml:lang="es-ES" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
@@ -23,7 +23,7 @@
 			<target xml:lang="es-ES" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="es-ES" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Historial</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="es-ES" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
@@ -99,7 +99,7 @@
 			<target xml:lang="es-ES" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
-			<target xml:lang="es-ES" state="needs-translation">Save account</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Guardar cuenta</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="es-ES" state="translated">Repetir contraseña</target></trans-unit>
@@ -108,7 +108,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Roles</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
-			<target xml:lang="es-ES" state="needs-translation">Package Management</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Administrar paquetes</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="es-ES" state="needs-translation">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
