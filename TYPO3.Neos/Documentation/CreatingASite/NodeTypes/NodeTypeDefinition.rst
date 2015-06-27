@@ -88,6 +88,13 @@ The following options are allowed:
     Currently it's only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
+  ``help``
+    Configuration of contextual help. For now only ``message`` that is rendered as popover
+    is supported.
+
+    ``message``
+      Help text for the node type. Supports markdown.
+
   ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
     If FALSE, an overlay is shown preventing any interaction with the node.
@@ -143,6 +150,13 @@ The following options are allowed:
 
     ``label``
       The human-readable label of the property
+
+    ``help``
+      Configuration of contextual help. For now only ``message`` that is rendered as popover
+      is supported.
+
+      ``message``
+        Help text for this property. Supports markdown.
 
     ``reloadIfChanged``
       If TRUE, the whole content element needs to be re-rendered on the server side if the value

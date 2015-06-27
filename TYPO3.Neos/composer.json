@@ -10,7 +10,8 @@
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "*",
-        "typo3/typoscript": "*"
+        "typo3/typoscript": "*",
+        "league/commonmark": "*"
     },
     "suggest": {
         "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."

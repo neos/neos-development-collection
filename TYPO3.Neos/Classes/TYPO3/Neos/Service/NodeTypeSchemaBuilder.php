@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use League\CommonMark\CommonMarkConverter;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands; additionally pre-calculating node constraints
@@ -26,6 +27,12 @@ class NodeTypeSchemaBuilder
      * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @var CommonMarkConverter
+     * @Flow\Inject
+     */
+    protected $markdownConverter;
 
     /**
      * The preprocessed node type schema contains everything we need for the UI:
@@ -59,6 +66,7 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
+                $this->parseMarkdown($configuration);
                 $this->flattenAlohaFormatOptions($configuration);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
@@ -72,6 +80,26 @@ class NodeTypeSchemaBuilder
         }
 
         return $schema;
+    }
+
+    /**
+     * Process markdown syntax for help message properties
+     *
+     * @param array $options The options array, passed by reference
+     * @return void
+     */
+    protected function parseMarkdown(array &$options)
+    {
+        if (isset($options['ui']['help']['message'])) {
+            $options['ui']['help']['message'] = $this->markdownConverter->convertToHtml($options['ui']['help']['message']);
+        }
+        if (isset($options['properties'])) {
+            foreach (array_keys($options['properties']) as $propertyName) {
+                if (isset($options['properties'][$propertyName]['ui']['help']['message'])) {
+                    $options['properties'][$propertyName]['ui']['help']['message'] = $this->markdownConverter->convertToHtml($options['properties'][$propertyName]['ui']['help']['message']);
+                }
+            }
+        }
     }
 
     /**

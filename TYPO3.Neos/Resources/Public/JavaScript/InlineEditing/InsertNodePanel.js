@@ -66,9 +66,15 @@ function(
 							nodeTypes: []
 						};
 					}
+					if (type.metadata.ui.help && type.metadata.ui.help.message) {
+						var helpMessage = type.metadata.ui.help.message;
+					} else {
+						var helpMessage = '';
+					}
 					groups[type.metadata.ui.group].nodeTypes.push({
 						'nodeType': nodeTypeName,
 						'label': I18n.translate(type.metadata.ui.label),
+						'helpMessage': helpMessage,
 						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 						'position': type.metadata.ui.position
 					});

@@ -115,7 +115,7 @@ function(
 				this._setPagePosition();
 			}
 
-			this._initializeDropdowns();
+			this._initializeTwitterBootstrap();
 
 			if (window.T3.isContentModule) {
 				this._initializeHistoryManagement();
@@ -235,8 +235,13 @@ function(
 			CreateJS.initialize();
 		},
 
-		_initializeDropdowns: function() {
+		_initializeTwitterBootstrap: function() {
 			$('.dropdown-toggle', this.rootElement).dropdown();
+			$('html').click(function(e) {
+				if ($(e.target).parents('.neos-popover').length === 0) {
+					$('.neos-popover-toggle').popover('hide');
+				}
+			});
 		},
 
 		_initializeHistoryManagement: function() {

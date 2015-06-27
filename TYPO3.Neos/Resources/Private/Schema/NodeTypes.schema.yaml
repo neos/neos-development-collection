@@ -18,6 +18,12 @@ additionalProperties:
 
               'label': { type: string, description: "Human-readable label for this property." }
 
+              'help':
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+                  'message': { type: string, description: "Help text for this property. Supports markdown." }
+
               'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
 
               'reloadPageIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
@@ -112,6 +118,12 @@ additionalProperties:
       properties:
 
         'label': { type: string, description: "Human-readable label for this Node Type." }
+
+        'help':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'message': { type: string, description: "Help text for this Node Type. Supports markdown." }
 
         'icon': { type: string, description: "Icon class" }
 
