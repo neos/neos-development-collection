@@ -14,55 +14,64 @@ namespace TYPO3\Neos\Controller\Module\Management;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\Neos\Service\PublishingService;
 use TYPO3\Neos\Service\UserService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
- * The TYPO3 Workspaces module controller
+ * The Neos Workspaces module controller
  *
  * @Flow\Scope("singleton")
  */
-class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
+class WorkspacesController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\PublishingService
+	 * @var PublishingService
 	 */
 	protected $publishingService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
+	 * @var ContentContextFactory
 	 */
 	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
+	 * @var PropertyMappingConfigurationBuilder
 	 */
 	protected $propertyMappingConfigurationBuilder;
 
@@ -83,6 +92,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
+	 * Display a list of unpublished content
+	 *
 	 * @param Workspace $workspace
 	 * @return void
 	 * @todo Pagination
@@ -153,20 +164,24 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * Publish a single node
+	 *
+	 * @param NodeInterface $node
 	 * @return void
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function publishNodeAction(NodeInterface $node) {
 		$this->publishingService->publishNode($node);
 		$this->addFlashMessage('Node has been published', 'Node published', NULL, array(), 1412421581);
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * Discard a a single node
+	 *
+	 * @param NodeInterface $node
 	 * @return void
 	 */
-	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function discardNodeAction(NodeInterface $node) {
 		// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
 		$this->publishingService->discardNode($node);
 		$this->addFlashMessage('Node has been discarded', 'Node discarded', NULL, array(), 1412420292);
@@ -174,6 +189,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
+	 * Publishes or discards the given nodes
+	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $action
 	 * @return void
@@ -204,6 +221,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
+	 * Publishes the whole workspace
+	 *
 	 * @param Workspace $workspace
 	 * @return void
 	 */
@@ -215,6 +234,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
+	 * Discards content of the whole workspace
+	 *
 	 * @param Workspace $workspace
 	 * @return void
 	 */
