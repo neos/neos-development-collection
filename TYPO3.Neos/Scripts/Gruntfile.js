@@ -205,6 +205,7 @@ module.exports = function (grunt) {
 						src = src.replace(/select2-(dropdown-open|measure-scrollbar|choice|resizer|chosen|search-choice-close|arrow|focusser|offscreen|drop|display-none|search|input|results|no-results|selected|selection-limit|more-results|match|active|container-active|container|default|allowclear|with-searchbox|focused|sizer|result|disabled|highlighted|locked)/g, 'neos-select2-$1');
 
 						src = src.replace(/url\('select2.png'\)/g, "url('../Library/select2/select2.png')");
+						src = src.replace(/url\('select2x2.png'\)/g, "url('../Library/select2/select2x2.png')");
 
 						return src;
 					}
