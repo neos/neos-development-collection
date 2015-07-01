@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-06-30
+This reference was automatically generated from code on 2015-07-01
 
 
 add
@@ -124,7 +124,7 @@ If arguments are given, these are used to filter the elements before counting.
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\CountOperation
 :Priority: 1
 :Final: Yes
-:Returns: integer with the number of elements
+:Returns: void|integer with the number of elements
 
 
 
@@ -282,7 +282,7 @@ are given, they are used to filter the context before evaluation.
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\IsOperation
 :Priority: 1
 :Final: Yes
-:Returns: boolean
+:Returns: void|boolean
 
 
 
