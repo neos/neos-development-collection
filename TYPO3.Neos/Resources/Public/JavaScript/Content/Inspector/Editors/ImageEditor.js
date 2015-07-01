@@ -463,9 +463,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 							this.setProperties({'aspectRatioWidth': configuration.aspectRatio.locked.width, 'aspectRatioHeight': configuration.aspectRatio.locked.height});
 							this.set('aspectRatioLocked', true);
 						} else {
-							var isDefaultSettings = JSON.stringify(parent.get('_cropProperties.full')) === JSON.stringify({x: 0, y: 0, width: parent.get('_previewImageDimensions.width'), height: parent.get('_previewImageDimensions.height')});
-							// Prevent selecting the original aspect ratio option if it's the default settings
-							if (!isDefaultSettings) {
+							if (parent._shouldApplyCrop(parent.get('_cropProperties.full'), parent.get('_previewImageDimensions.width'), parent.get('_previewImageDimensions.height'))) {
 								this.setProperties({'aspectRatioWidth': parent.get('_cropProperties.width'), 'aspectRatioHeight': parent.get('_cropProperties.height')});
 							}
 							if (configuration.aspectRatio.defaultOption) {
@@ -685,10 +683,9 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						];
 					}
 
-					var isDefaultSettings = JSON.stringify(cropOptions) === JSON.stringify({x: 0, y: 0, width: parent.get('_previewImageDimensions.width'), height: parent.get('_previewImageDimensions.height')});
 					if (this.get('aspectRatioWidth') && this.get('aspectRatioHeight')) {
 						settings.aspectRatio = this.get('aspectRatioWidth') / this.get('aspectRatioHeight');
-					} else if (this.get('aspectRatioDefaultOption') && isDefaultSettings) {
+					} else if (this.get('aspectRatioDefaultOption') && !parent._shouldApplyCrop(cropOptions, parent.get('_previewImageDimensions.width'), parent.get('_previewImageDimensions.height'))) {
 						var defaultOption = this.get('aspectRatioOptions').findBy('key', this.get('aspectRatioDefaultOption'));
 						defaultOption.set('active', true);
 						this.set('selection', defaultOption.get('key'));
@@ -851,8 +848,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				this._applyResizeAdjustment(finalWidth, finalHeight);
 			}
 
-			var isDefaultSettings = JSON.stringify(cropProperties) === JSON.stringify({x: 0, y: 0, width: originalWidth, height: originalHeight});
-			if (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || !isDefaultSettings) {
+			if (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || this._shouldApplyCrop(cropProperties, originalWidth, originalHeight)) {
 				this._applyCropAdjustment(cropProperties);
 			}
 		},
@@ -869,6 +865,19 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				ratioMode: null,
 				width: finalWidth
 			};
+		},
+
+		_shouldApplyCrop: function(cropProperties, imageWidth, imageHeight) {
+			if (imageWidth == null || imageHeight == null) {
+				return false;
+			}
+
+			return !(
+				cropProperties.width === imageWidth &&
+				cropProperties.height === imageHeight &&
+				cropProperties.x === 0 &&
+				cropProperties.y === 0
+			);
 		},
 
 		_applyCropAdjustment: function(cropProperties) {
