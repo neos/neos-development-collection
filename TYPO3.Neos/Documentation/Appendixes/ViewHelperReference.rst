@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-06-03
+This reference was automatically generated from code on 2015-07-02
 
 
 neos:backend.configurationCacheVersion
