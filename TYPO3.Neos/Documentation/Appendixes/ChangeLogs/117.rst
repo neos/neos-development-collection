@@ -1,0 +1,160 @@
+====================
+1.1.7
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Require specific version of ``TYPO3.Form``
+-----------------------------------------------------------------------------------------
+
+* Commit: `abdaf31 <https://git.typo3.org/Neos/Distributions/Base.git/commit/abdaf3136e5b93cc358e9ce91511cb248b2addbc>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/56/
+
+* Commit: `3f04299 <https://git.typo3.org/Neos/Distributions/Base.git/commit/3f04299e7dc3ecfd877ace291b9e82c3009d3a26>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/59/
+
+* Commit: `f75db61 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f75db6144184a41ad3e1aea8dcde1ce1a755dd04>`_
+
+[BUGFIX] Support negated instanceof FlowQuery filter operation
+-----------------------------------------------------------------------------------------
+
+A regression introduced in another fix with the change
+``Icce97f6e0f210353f5123edd4f8c5a868f7134ea`` lead to incorrect
+matching of negated instanceof filters for node types.
+
+Related: NEOS-1348
+
+* Commit: `95e87d1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/95e87d1cfd8e277a7df4cb10131a39fd44e465a9>`_
+
+[BUGFIX] Support multiple filters in FlowQuery children operation
+-----------------------------------------------------------------------------------------
+
+Due to incorrect handling of multiple Fizzle filters in the custom
+optimization in the FlowQuery children operation, multiple filters
+give incorrect results. Instead now all filters are taken into
+account and optimized individually if possible.
+
+Fixes: NEOS-1348
+
+* Commit: `f417108 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f417108d9043848d41fec46496dd2fc8940dc4a7>`_
+
+[BUGFIX] ``PluginViews`` with error messages can be selected in backend
+-----------------------------------------------------------------------------------------
+
+If an error occurred inside a plugin view element the message was
+rendered as plain text without any wrap. Because of that the item could
+not be selected in the backend any more.
+
+The solution is to wrap the message in a p-tag for as it is already
+done if the ``PluginView`` is not configured at all.
+
+Fixes: NEOS-1322
+
+* Commit: `bb6e5b7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bb6e5b705442fa34b8cbe11d6261c33e17858ef5>`_
+
+[TASK] Adjust TYPO3 Neos to just Neos in documentation
+-----------------------------------------------------------------------------------------
+
+This adjusts the documentation–where it makes sense–to use just Neos
+instead of TYPO3 Neos.
+
+Changelogs and release notes have been left unchanged since they should
+be "historically correct".
+
+* Commit: `f2500d7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f2500d793917bc8021702d7f9df7729e47b5ef78>`_
+
+[TASK] Show version and release in front matter
+-----------------------------------------------------------------------------------------
+
+* Commit: `7352ce2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7352ce2fc859e4a5bcd4fd0003a21c00cc75ccd6>`_
+
+[TASK] Exclude changelogs from PDF rendering
+-----------------------------------------------------------------------------------------
+
+This saves some 600+ pages in the generated PDF, cutting down on the
+time needed to render, download, ... it.
+
+* Commit: `a9674de <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a9674de89d8a7bc2565dc637d53d39ec83e04395>`_
+
+[TASK] Rename Index.rst to index.rst
+-----------------------------------------------------------------------------------------
+
+This is our workaround for an issue with rtfd.org so the documentation
+can be browsed when it has been rendered there.
+
+(See https://github.com/rtfd/readthedocs.org/issues/1279 for details.)
+
+* Commit: `4953c0b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4953c0b18d5c57357213c1c77f54f5371853268e>`_
+
+[TASK] Switch to plain Sphinx build configuration
+-----------------------------------------------------------------------------------------
+
+Switches to a more standard setup for rendering rST using Sphinx. A
+simple ``make html`` renders the documentation, if sphinx is installed.
+
+The ``conf.py`` contains a tweak to allow using the RTD theme without
+confusing the renderer over at RDT itself.
+
+* Commit: `f783e90 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f783e908874ab60f1394b8f6c1bc208ae7d4309e>`_
+
+[TASK] Add date to titles for 1.1.5 & 1.1.6 change logs
+-----------------------------------------------------------------------------------------
+
+* Commit: `08f1fa9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/08f1fa9a7ef3187294a101c387080dff3743965b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Overriding ``TYPO3.Neos.NodeTypes`` node types not working
+-----------------------------------------------------------------------------------------
+
+Due to missing dependency on the ``TYPO3.Neos.NodeTypes`` package,
+the multi column overriding didn't work correctly.
+
+* Commit: `1d954d5 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/1d954d5b2a694d8a4a55c8ef05f9d1ae2944ec0e>`_
+
