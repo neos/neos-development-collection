@@ -1,0 +1,102 @@
+==================
+1.2.7 (2015-05-30)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Pin doctrine/migrations to tagged working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Unfortunately this needs to be repeated in the root manifest.
+
+Related: FLOW-300
+
+* Commit: `9b04653 <https://git.typo3.org/Neos/Distributions/Base.git/commit/9b0465357622c0e5ce73b8b6ec8a760a4fc1798d>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/49/
+
+* Commit: `0ae1b96 <https://git.typo3.org/Neos/Distributions/Base.git/commit/0ae1b969a5499524094af35c684d47ab901125eb>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/52/
+
+* Commit: `2083b67 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2083b67d9f5169fb1500d2766f22bbe6f8b8054a>`_
+
+[BUGFIX] Remove illegal character from ContentModuleBootstrap.js
+-----------------------------------------------------------------------------------------
+
+This character leads to a javascript error 'unexpected identifier'
+while loading the unminified sources.
+
+* Commit: `6f050fe <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6f050fe2eae22ad6162342b38bd38a8a7e1f6665>`_
+
+[BUGFIX] NodeWrappingHandler should not rely on "site" in context
+-----------------------------------------------------------------------------------------
+
+The NodeWrappingHandler checked for existence of "node" in the TypoScript
+context but then accessed "site" which might not be available. In fact
+that is not needed and "node" is enough. This avoids errors in uncached
+rendering where "site" might not be part of the context.
+
+* Commit: `43be7b7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/43be7b7ce075fc55ec3fa17efffeb15d745abe6f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix findByProperties() on PostgreSQL
+-----------------------------------------------------------------------------------------
+
+This change adds the needed encoding to the search term when using
+PostgreSQL, so that the search can find results.
+
+Fixes: NEOS-1295
+
+* Commit: `60cfb82 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/60cfb8230b21b2cb5f55c199b327dfc84a40b0d3>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

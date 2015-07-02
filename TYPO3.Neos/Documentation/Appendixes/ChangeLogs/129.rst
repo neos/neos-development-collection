@@ -1,0 +1,241 @@
+==================
+1.2.9 (2015-07-02)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove ``typo3-ci/typo3flow`` package from dev requirements
+-----------------------------------------------------------------------------------------
+
+Due to dependency conflicts (required version only compatible with 2.0),
+a problem occurs during proxy building resulting in the error::
+
+  "SimplyAdmire\\ComposerPlugins\\Installers\\PhpCodesnifferStandardInstaller"
+  could not be loaded properly for reflection
+
+Additionally the dependency is already moved from of the distribution
+to an independent subfolder in the 2.0+ branch.
+
+For existing installations running 1.2, you can remove the package with
+the following commands::
+
+  composer remove --no-update "typo3-ci/typo3flow"
+  composer update
+
+In case you still want to use the ``typo3-ci/typo3flow`` package you can include
+it in a subfolder like it's done in 2.0, but require "~2.2.0" instead of "dev-master".
+See https://git.typo3.org/Neos/Distributions/Base.git/blob/refs/heads/2.0:/Build/PhpCodesniffer/composer.json
+
+* Commit: `4fe9f68 <https://git.typo3.org/Neos/Distributions/Base.git/commit/4fe9f683c76998c8aa0f6bbd715c588252408092>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/55/
+
+* Commit: `fd5be7d <https://git.typo3.org/Neos/Distributions/Base.git/commit/fd5be7d741ef242ce0fd98d4214c02424764a7ea>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/60/
+
+* Commit: `6432c64 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6432c643b890b41e50ebe12b966c1bfb43ef61f7>`_
+
+[BUGFIX] Dimension menu broken on hidden pages
+-----------------------------------------------------------------------------------------
+
+The dimension menu should show the translated version of pages even
+when they are hidden in menus. A regression with the change
+``I50c5abf9d1dc15a9abad8042b74eee9646e8b166``.
+
+Fixes: NEOS-1355
+
+* Commit: `a870b4c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a870b4ca9f08c466f35379a7f085a7283467adce>`_
+
+[BUGFIX] ``PluginViews`` with error messages can be selected in backend
+-----------------------------------------------------------------------------------------
+
+If an error occurred inside a plugin view element the message was
+rendered as plain text without any wrap. Because of that the item could
+not be selected in the backend any more.
+
+The solution is to wrap the message in a p-tag for as it is already
+done if the ``PluginView`` is not configured at all.
+
+Fixes: NEOS-1322
+
+* Commit: `26d9100 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/26d910054c805527190659997a55de95ecc6bdd9>`_
+
+[TASK] Remove unused requirejs path
+-----------------------------------------------------------------------------------------
+
+* Commit: `d24a332 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d24a33287295a70f29205316824706ca9832e420>`_
+
+[TASK] Adjust TYPO3 Neos to just Neos in documentation
+-----------------------------------------------------------------------------------------
+
+This adjusts the documentation–where it makes sense–to use just Neos
+instead of TYPO3 Neos.
+
+Changelogs and release notes have been left unchanged since they should
+be "historically correct".
+
+* Commit: `c4513dd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c4513ddcde37a0c987c1e8f0de2be9e5ec5d6655>`_
+
+[BUGFIX] Fix PDF rendering errors
+-----------------------------------------------------------------------------------------
+
+This adjusts the markup of the options documentation on node types.
+
+This not only uses definition lists that are better readable than deeply
+nested lists, it also fixes a rendering error when producing PDF (the
+infamous "too deeply nested").
+
+Some rST warnings are fixed along the way.
+
+* Commit: `055343c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/055343cc2471438065b3f2b654281a935ee87315>`_
+
+[TASK] Show version and release in front matter
+-----------------------------------------------------------------------------------------
+
+* Commit: `b8c108b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b8c108b2483e1bc59141e71b4ad6408ea803c860>`_
+
+[TASK] Exclude changelogs from PDF rendering
+-----------------------------------------------------------------------------------------
+
+This saves some 600+ pages in the generated PDF, cutting down on the
+time needed to render, download, ... it.
+
+* Commit: `7d7c61c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7d7c61c43ca19b012ea6da79a7e38a90fb41fc60>`_
+
+[TASK] Rename Index.rst to index.rst
+-----------------------------------------------------------------------------------------
+
+This is our workaround for an issue with rtfd.org so the documentation
+can be browsed when it has been rendered there.
+
+(See https://github.com/rtfd/readthedocs.org/issues/1279 for details.)
+
+* Commit: `a1e3659 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a1e36598337f63df2e6b8e8776d73744ce13f5eb>`_
+
+[TASK] Switch to plain Sphinx build configuration
+-----------------------------------------------------------------------------------------
+
+Switches to a more standard setup for rendering rST using Sphinx. A
+simple ``make html`` renders the documentation, if sphinx is installed.
+
+The ``conf.py`` contains a tweak to allow using the RTD theme without
+confusing the renderer over at RDT itself.
+
+* Commit: `1c3b6df <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1c3b6df1b7669c61852262472b8c947f1b7dabbf>`_
+
+[TASK] Add date to titles for 1.1.5 & 1.1.6 change logs
+-----------------------------------------------------------------------------------------
+
+* Commit: `7ca33a4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7ca33a427e37767178c795c12cba6bf00600b607>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.6
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/56/
+
+* Commit: `a516850 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a516850c5af0b69f6c6a05eef1d6b01033a675e4>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Menu cache configuration is missing entryTag for the Menu node itself
+-----------------------------------------------------------------------------------------
+
+When some properties of ``TYPO3.Neos.NodeTypes:Menu`` node are changed
+the caches would not get flushed, as entryTags configuration are missing
+the entry tag for Menu node itself.
+
+* Commit: `15f44c2 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/15f44c2a77a960d3d4f8f081591266a1c65592ec>`_
+
+[BUGFIX] Add cache definition to ``TYPO3.Neos.NodeTypes:Menu``
+-----------------------------------------------------------------------------------------
+
+``TYPO3.Neos.NodeTypes:Menu`` is missing cache definition.
+Add cache definition to invalidate cache entry when any node
+of type ``TYPO3.Neos:Document`` changes.
+
+* Commit: `68800b4 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/68800b497cc43be3a5805521b20752d90cb9ed49>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Support negated instanceof FlowQuery filter operation
+-----------------------------------------------------------------------------------------
+
+A regression introduced in another fix with the change
+``Icce97f6e0f210353f5123edd4f8c5a868f7134ea`` lead to incorrect
+matching of negated instanceof filters for node types.
+
+Related: NEOS-1348
+
+* Commit: `7c3cc6a <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/7c3cc6a39646795f57d2e09ef571af1766235044>`_
+
+[BUGFIX] Support multiple filters in FlowQuery children operation
+-----------------------------------------------------------------------------------------
+
+Due to incorrect handling of multiple Fizzle filters in the custom
+optimization in the FlowQuery children operation, multiple filters
+give incorrect results. Instead now all filters are taken into
+account and optimized individually if possible.
+
+Fixes: NEOS-1348
+
+* Commit: `43e9757 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/43e9757a8b4f1578711b5895fa7f091870fa914c>`_
+
+[BUGFIX] Node path availability should be determined correctly
+-----------------------------------------------------------------------------------------
+
+The method
+``\\TYPO3\\TYPO3CR\\Domain\\Service\\NodeService::nodePathAvailableForNode()``
+checks if a given path can be used by a node and relies on
+``nodePathExistsInAnyContext()`` for doing so. But as the node path is
+not available if the path exists in any context the return value must be
+negated in order to return the correct result.
+
+* Commit: `781677d <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/781677dc27067178f1fd83ce520c115e9b16d61c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Overriding ``TYPO3.Neos.NodeTypes`` node types not working
+-----------------------------------------------------------------------------------------
+
+Due to missing dependency on the ``TYPO3.Neos.NodeTypes`` package,
+the multi column overriding didn't work correctly.
+
+* Commit: `388a42a <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/388a42acd46461fb43299988452dd0fdb4e94007>`_
+

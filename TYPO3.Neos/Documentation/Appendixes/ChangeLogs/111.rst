@@ -1,0 +1,476 @@
+==================
+1.1.1 (2014-08-26)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/18/
+
+* Commit: `63b3f45 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/63b3f457147bc7a157461a9a3adad39f051d8759>`_
+
+[BUGFIX] Children operation should only work with nodes
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 55c8c74ae90a31148e2f7c71923015de3fb2b2d2)
+
+* Commit: `761c667 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/761c6677587b04961a97bbc7d98d996c180398a4>`_
+
+[TASK] Improve ViewHelper documentation, add reference
+-----------------------------------------------------------------------------------------
+
+The documentation of the Neos ViewHelpers is amended and fixed with this
+changes.
+
+A Neos ViewHelper reference (in an appendix) is added to the
+documentation with this change.
+
+* Commit: `d4f9af6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d4f9af6fd753d34efb7bc1b5562d2291a98f792d>`_
+
+[BUGFIX] Inspector Image Cropper should not open if dummy-image is shown
+-----------------------------------------------------------------------------------------
+
+Else, this is very confusing for users which accidentally open the (empty)
+image cropper by clicking on the Neos dummy image
+
+Fixes: NEOS-130
+(cherry picked from commit 1882989129db869406be50802a184528e09b1421)
+
+* Commit: `e1608c2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e1608c2439f341ddeb672e05530ac77a95c448b6>`_
+
+[TASK] Add hint for fixing symlinks in Behat testing documentation
+-----------------------------------------------------------------------------------------
+
+This change adds a hint for the user how to fix a possibly
+missing symlink in the bin folder as composer does not recreate
+this symlink if it gets lost.
+
+(cherry picked from commit c821f9ef8583c4f11eb14f4d81f811a02eaa2116)
+
+* Commit: `54f6009 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/54f6009293bb0c3d7eb8276f646598b960a72ca1>`_
+
+[BUGFIX] Remove neos-contentelement class from page metainformation
+-----------------------------------------------------------------------------------------
+
+The page's metadata wrapper gets the class neos-contentelement set.
+
+This change also makes sure the class attribute is trimmed, which can
+be necessary for content collections.
+
+(cherry picked from commit 21812d151cb00e9185cf42f275ed1227a7c33c11)
+
+* Commit: `d227a18 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d227a18079105c9fb69e91d72bb79e2a4f4549c8>`_
+
+[TASK] Change RUBY_VERSION check to match versions > 1.9
+-----------------------------------------------------------------------------------------
+
+The current check for the RUBY_VERSION only checked if a
+1.9 version of Ruby is installed and as such does not work
+on 2.0 or higher. This change updates the comparison so it
+works for all versions higher than 1.9
+
+* Commit: `bba0be9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bba0be94a027a39dcca062a0abe61ae07ccc71f1>`_
+
+[TASK] Use primary button styling in Site management
+-----------------------------------------------------------------------------------------
+
+The button should be blue.
+
+Resolves: NEOS-221
+
+(cherry picked from commit abccf99fbdc6b4ec226a06a0059f7a8012092c40)
+
+* Commit: `a266eb2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a266eb282c10748adfe4321d4bff3ac8ae3b7e57>`_
+
+[TASK] Remove link interception for Aloha floating menu
+-----------------------------------------------------------------------------------------
+
+The Aloha floating menu has been disabled, so there's
+no need for intercepting links on that element.
+
+(cherry picked from commit 408517b89f5ca9eec4567cf753b45699542dca0f)
+
+* Commit: `677f7bf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/677f7bf650d2ecfaa7ebcfe7412863b88550a2ce>`_
+
+[BUGFIX] lastVisitedNode should be reset when changing sites
+-----------------------------------------------------------------------------------------
+
+The lastVisistedNode session variable is always pointing to the
+node that was last open in frontend to redirect to that page.
+If the node is removed this redirect will lead to a "page not
+found" error. This can happen for example if something is
+changed in sites management. Therefore changes in sites
+management should clear this session variable.
+
+Fixes: NEOS-127
+
+(cherry picked from commit aa059625730c6330ee720fc379f462b1bf55535a)
+
+* Commit: `de2d9af <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/de2d9afe8de710ad1b47863bcbf17a3f2f44838c>`_
+
+[BUGFIX] Throw exception for missing node in editable view helper
+-----------------------------------------------------------------------------------------
+
+This happens when a node is could not be found, but the view helper is
+still used. Now a catchable exception is thrown instead.
+
+Fixes: NEOS-328
+
+(cherry picked from commit 7ee3c5c017efcce6662b68ac9f90d19ac145f6a8)
+
+* Commit: `acbc911 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/acbc9111c7ad4eecb1152a94cc86d6e497ab67b3>`_
+
+[TASK] Add missing title attribute for "Toggle context structure"
+-----------------------------------------------------------------------------------------
+
+* Commit: `2f2b134 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2f2b134c4d4ae4c7e219c7081b6a9a64ac33d761>`_
+
+[TASK] Swap some access checks with workspace checks
+-----------------------------------------------------------------------------------------
+
+This change inverts a number of checks for the workspace being not the
+live workspace and for access to the TYPO3_Neos_Backend_GeneralAccess
+resource.
+
+This makes it possible to render full Neos pages in a CLI context (where
+the security framework cannot be initialized) and should speed up things
+a tiny bit along the way (by avoiding security checks in case of live
+being rendered).
+
+* Commit: `67c35c1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/67c35c1c0267de5c03886a4127830d0f28af09f0>`_
+
+[BUGFIX] Class names missing for setup steps
+-----------------------------------------------------------------------------------------
+
+* Commit: `79639db <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/79639db6e02e956a2431c3a1bbcb3289c4a8b0cc>`_
+
+[BUGFIX] Doctrine eventListener registered without key
+-----------------------------------------------------------------------------------------
+
+Because the Doctrine event listener for the account post
+listener is registered without a key, registering another
+event listener in another package will result in overwriting
+the listener causing undesired side-effects.
+
+* Commit: `be27d9c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/be27d9c619d0c73f7faeaf92f23b871798b771cb>`_
+
+[TASK] Fix code in nodetype examples
+-----------------------------------------------------------------------------------------
+
+This fixes two typos in the node type examples in the Integrator's
+Cookbook.
+
+(cherry picked from commit fdabd851af9c29a5a45431d464d2c7c70fc5bff5)
+
+* Commit: `c460302 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c460302b0b5ef7fd6b4aaeb23454ef00b84ef6bb>`_
+
+[BUGFIX] Clicking outside the body should deselect active element
+-----------------------------------------------------------------------------------------
+
+When a page is shorter than the height of the browser window
+and a content element is selected, clicking outside the body
+tag doesn't deselect the active content element like it normally
+does when clicking outside any content elements.
+
+Fixes: NEOS-207
+
+* Commit: `ee13f4e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ee13f4ec79da96ec116f3921d92d928a360ad973>`_
+
+[BUGFIX] Emptying a collection breaks create new
+-----------------------------------------------------------------------------------------
+
+When a element in a content collection is removed it's
+not possible to create new elements without reloading the
+page. This happens when there are removed elements in the
+collection and it checks if it should insert before one
+of them, which fails because they cannot be found.
+
+Fixes: NEOS-182
+
+* Commit: `1ea7916 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1ea7916517261d03308ab88d36c577038f07c524>`_
+
+[BUGFIX] Inline link editor shown when linking is disabled
+-----------------------------------------------------------------------------------------
+
+When linking is disabled for a inline editable property the
+link field is always shown due to the plugin not being updated
+when the selection changes.
+
+Fixes: NEOS-261
+
+* Commit: `d0fc5f9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d0fc5f9984ace8e24ef40d924e5a159da3a1eed1>`_
+
+[BUGFIX] NodeSearchService working as before
+-----------------------------------------------------------------------------------------
+
+Due to the fix of case sensitive like queries merged in Flow
+(I53cd80e145eb49bcf8251f0045b9f3ec4fd61105) the NodeSearchService
+currently returns wrong results as it cannot properly lowercase
+the content of the properties blob field.
+
+As we already discussed this cannot be fixed easily so for now
+the NodeSearchService will not attempt to search case insensitive.
+
+This also needs to be backported to all branches that will get the
+Flow bugfix.
+
+Fixes: NEOS-267
+
+* Commit: `4cf0019 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4cf00193a2ccdd83d8c9f22919f2ebc6e9db72d3>`_
+
+[TASK] Document missing configuration options for aloha
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-263
+
+* Commit: `9b30772 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9b307727f4a48f0bd56e1e052d9801d29c919702>`_
+
+[BUGFIX] Behat Tests are green again
+-----------------------------------------------------------------------------------------
+
+Adapts the behavior tests to the changes in the UI.
+
+Note: The scenario Features/Content/InlineEditing.feature:7 is unstable
+because of server communication errors showing up sometimes.
+
+Resolves: NEOS-74
+
+* Commit: `3e11c80 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3e11c80069c3105c392686f7c447498a1cb19f34>`_
+
+[BUGFIX] Set correct cache mode for ContentCollection by default
+-----------------------------------------------------------------------------------------
+
+Change the default TypoScript for ContentCollection to make it
+cached or embedded depending on the context.
+
+With the power of prototype context dependent TypoScript declarations
+we can mitigate the problems when updating to Neos 1.1 or when
+new static ContentCollections are created.
+
+The documentation and comments are updated to remove the need for user
+action in these cases.
+
+Resolves: NEOS-227
+
+* Commit: `983bc77 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/983bc7716040dcd61fbc359ad6453af53acbd21d>`_
+
+[BUGFIX] Structure tree contains removed nodes after removal
+-----------------------------------------------------------------------------------------
+
+Removing content outside the structure tree does not remove node from
+structure tree. This is due to the structure tree being reloaded before
+the removal has been saved to the server. To resolve this issue a new
+event 'contentSaved' has been introduced to storage.js.
+The remove nodeAction listens to the first 'contentSaved' event and
+triggers 'contentChanged' afterwards.
+
+* Resolves: `#57839 <http://forge.typo3.org/issues/57839>`_
+* Commit: `9997709 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9997709a5c37fc4ff6bb5a8a7a1c0bbff4cb7107>`_
+
+[BUGFIX] Content element overlay not displayed
+-----------------------------------------------------------------------------------------
+
+This change fixes the content element overlay to display properly
+over the actual content by getting the full width/height including
+padding of content and apply to the overlay.
+
+* Resolves: `#57290 <http://forge.typo3.org/issues/57290>`_
+* Commit: `6d341c2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6d341c239a6eefb9be10fe2b399e9f8175b3d332>`_
+
+[BUGFIX] `Find` FlowQuery operation breaks with empty context
+-----------------------------------------------------------------------------------------
+
+When the `find` operation is used on an empty context an exception
+is thrown because the ``canEvaluate`` method will return FALSE.
+This happens because there is no fallback operation for `find` and
+it can only evaluate if the first context element is a NodeInterface.
+
+Fixes: NEOS-208
+
+* Commit: `2b2e6e5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2b2e6e58e57d5f6a57d278686035706042afd68c>`_
+
+[BUGFIX] Pages created without entering a name should work
+-----------------------------------------------------------------------------------------
+
+Creating pages wihout entering a name for the new page ended
+up in an exception and wrong "null" entry for the page that
+was not created. With this change a new page that has got no
+name will be "unnamed" automatically and prevent the exception.
+
+Fixes: NEOS-86
+
+* Commit: `22f8db7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/22f8db74d7291329de1ddf37891280e3860655b2>`_
+
+[BUGFIX] Fix small typo in 1.1.0 change log introduction
+-----------------------------------------------------------------------------------------
+
+* Commit: `508370e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/508370ef34dfe7e63b1d6c7ff4c8777cfac1e229>`_
+
+[BUGFIX] (Sites Management) Importing site fails if kickstarter is not installed
+-----------------------------------------------------------------------------------------
+
+When the site kickstarter is not installed, the "Package Key" and "Site Name" input
+fields are not rendered in the "Create Site" dialog. Because they are marked as
+required parameters, the following property mapping exception occurs on form submission::
+
+	The bug is 'Required argument "packageKey" is not set.'
+
+This is fixed with this change by marking the arguments as optional.
+
+Fixes: NEOS-128
+
+* Commit: `c26d8c5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c26d8c53c524a960b020b23de34f13b243afb244>`_
+
+[BUGFIX] Secondary Inspector Panel should close on changed node
+-----------------------------------------------------------------------------------------
+
+Secondary inspector panels are used for additional editors that
+do not fit the inspector like the HTML editor or the media
+selector. The secondary panel should close when the selected
+node changes (for example by changing the page).
+
+* Fixes: `#59452 <http://forge.typo3.org/issues/59452>`_
+Relates: NEOS-124
+
+(cherry picked from commit c30d2f0d797e9639c22092963567274213dfcc81)
+
+* Commit: `e9337e4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e9337e4e8aadb5141087f3c552ab0e261a9ceaea>`_
+
+[TASK] Add cache configuration to documentation example for shared footer
+-----------------------------------------------------------------------------------------
+
+Updates the documentation example for the shared footer to add a missing
+content cache configuration.
+
+Resolves: NEOS-132
+
+* Commit: `4c092de <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4c092dedc51a5508199cc05566b93b4755793f84>`_
+
+[TASK] Add release notes to 1.1.0 change log
+-----------------------------------------------------------------------------------------
+
+* Commit: `8db3614 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8db3614f78fab29f0109b922dbb0274b5fdc642f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Avoid exception when rendering new asset list element
+-----------------------------------------------------------------------------------------
+
+A freshly created asset list element contains no assets array, thus a foreach
+triggers a notice throwing an exception. This change fixes that by checking for
+the assets value being an array before using it.
+
+Resolves: NEOS-229
+
+* Commit: `13c097b <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/13c097b7d83b0f32ed0ba6ac276d51081bb89c02>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] ContextFactory does not check dimension configuration
+-----------------------------------------------------------------------------------------
+
+The ContextFactory should check if the given dimension values are
+arrays as specified or something else to prevent non meaningful
+error messages. The case now produces an exception with a clear
+error message stating that the dimension configuration is wrong.
+
+Fixes: NEOS-280
+
+* Commit: `ffc5ec1 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ffc5ec1c748ebcbd0499150b31f4b602c10f46a3>`_
+
+[BUGFIX] Behat Feature works with PHP 5.3
+-----------------------------------------------------------------------------------------
+
+Array Access to an array return from a function is not allowed
+in PHP 5.3. It was replaced by a backwards compatible access
+to the value.
+
+* Commit: `2131338 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/2131338ba07da38dc924241ff4605d28f92e8b71>`_
+
+[BUGFIX] Remove removed nodes without existing node when publishing
+-----------------------------------------------------------------------------------------
+
+Nodes that are created and removed in a user workspace were not removed
+when publishing them to the live workspace. This can have sideeffects
+in the Neos backend where removed nodes are rendered and causes problems
+where a changed or removed node type throws exceptions.
+
+This change fixes the problem and provides a migration to remove any of
+these removed nodes that stayed in the content repository.
+
+Run the following node migration to remove published nodes that are
+removed::
+
+    ./flow node:migrate 20140708120530
+
+Fixes: NEOS-236
+
+* Commit: `8e57b26 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/8e57b26618470277cde6cb5d760e96a05b44b2a7>`_
+
+[TASK] Make properties optional in ContextFactory->create()
+-----------------------------------------------------------------------------------------
+
+Since there are defaults and one could already pass an empty array to
+ContextFactory->create() this change makes the $contextProperties
+argument optional.
+
+* Commit: `b35152a <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/b35152ac6b599329e99ae4625a99e9179d1cdca6>`_
+
+[BUGFIX] Danish/Norwegian letters converted incorrect in node name
+-----------------------------------------------------------------------------------------
+
+The Danish/Norwegian letters "Ø/Å" are converted incorrect when the node
+title is transliterated into a valid node name. Instead of being
+converted to "oe/aa" they are just converted into "o/a".
+
+Fixes: NEOS-170
+
+* Commit: `bcc2efa <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/bcc2efa894d2612dde0a5f9ca62c2eaf4fe84495>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Underscore is not allowed as a TypoScript path value
+-----------------------------------------------------------------------------------------
+
+Furthermore, fixed some comment indentations in the Parser
+
+(cherry picked from commit 0ee12bd3db5f7189531cbc2ff4134d9211c3e674)
+
+* Commit: `199a2bd <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/199a2bd391ee3309822e3d4618330dd90ab58374>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove unnecessary cache mode configuration for ContentCollection
+-----------------------------------------------------------------------------------------
+
+Depends on I50bc64f3224ef79a5d77e5c9715963515d3d0a02
+
+* Commit: `958c2e0 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/958c2e0086321da20df3c7125ace2c9711b5d2da>`_
+
+[TASK] Position YouTube content element video properties uppermost
+-----------------------------------------------------------------------------------------
+
+* Commit: `b4427a5 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/b4427a5a974e8a8548ed436b0528aca6a83c5856>`_
+
