@@ -7401,7 +7401,7 @@
   left: 0;
   right: 0;
   top: 0;
-  z-index: 10021;
+  z-index: 10020;
   background-color: #222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
@@ -7645,7 +7645,7 @@
   box-shadow: none;
 }
 .neos #neos-publish-menu.neos-button-group .neos-publish-button {
-  min-width: 165px;
+  min-width: 212px;
   background-color: #00a338;
   font-size: 14px;
   cursor: default;
@@ -7703,6 +7703,12 @@
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-checkbox {
   margin-top: 8px;
   margin-left: 20px;
+}
+.neos #neos-target-workspace-selector .neos-select2-container {
+  width: 100%;
+}
+.neos .neos-target-workspace-selector ul.neos-select2-results li:not(.neos-select2-highlighted) {
+  background: #3f3f3f;
 }
 .neos .neos-user-menu.neos-button-group {
   font-size: 14px;
