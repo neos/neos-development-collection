@@ -115,7 +115,7 @@ define(
 			};
 
 			if (id && id.split) {
-				idParts = id.split(':', 3);
+				var idParts = id.split(':', 3);
 				switch (idParts.length) {
 					case 2:
 						translationParts.packageKey = idParts[0];
