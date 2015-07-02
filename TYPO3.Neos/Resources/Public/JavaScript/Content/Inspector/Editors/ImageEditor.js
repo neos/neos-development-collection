@@ -251,8 +251,11 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		/**
 		 * If the aspect ratio changes, adjust the height based on the width and the aspect ratio
 		 */
-		_aspectRatioChanged: function () {
-			this.set('_finalImageDimensions.height', parseInt(this.get('_finalImageDimensions.width') / this.get('_cropProperties.aspectRatio'), 10));
+		_aspectRatioChanged: function() {
+			var finalImageWidth = this.get('_finalImageDimensions.width');
+			if (finalImageWidth !== null) {
+				this.set('_finalImageDimensions.height', parseInt(finalImageWidth / this.get('_cropProperties.aspectRatio'), 10));
+			}
 		}.observes('_finalImageDimensions.width', '_cropProperties.aspectRatio'),
 
 		/****************************************
@@ -391,9 +394,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			Ember.beginPropertyChanges();
 			this._applyLoadedMetadata(metadata);
 			this._resetCropPropertiesToCurrentPreviewImageDimensions();
-			// We only need to set the width here; as the height is automatically
-			// calculated from the aspect ratio in the cropper
-			this.set('_finalImageDimensions.width', metadata.originalDimensions.width);
 			Ember.endPropertyChanges();
 			this.set('_imageFullyLoaded', false);
 			this.set('_imageFullyLoaded', true);
@@ -659,16 +659,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					$image.attr('src', parent.get('_previewImageUri'));
 
 					var update = function (previewImageCoordinates) {
-							// Besides updating the crop dimensions (_cropProperties.*), we also update
-							// the *width* of the final image, to make sure that if we select only a part
-							// of the final image, the image is not up-scaled but keeps the same resolution.
-							//
-							// NOTE: The height of the image is auto-calculated, so we only need to set the width.
-							var imageWidthBeforeChange = parent.get('_finalImageDimensions.width');
-							var imageWidthScalingFactor = previewImageCoordinates.width / parent.get('_cropProperties.width');
 
+							var imageWidthBeforeChange = parent.get('_finalImageDimensions.width');
+							var imageWidthScalingFactor = previewImageCoordinates.w / parent.get('_cropProperties.width');
 							Ember.beginPropertyChanges();
-							parent.set('_finalImageDimensions.width', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
+							if (imageWidthBeforeChange) {
+								parent.set('_finalImageDimensions.width', Math.round(imageWidthBeforeChange * imageWidthScalingFactor));
+							}
 
 							parent.set('_cropProperties.width', previewImageCoordinates.w);
 							parent.set('_cropProperties.height', previewImageCoordinates.h);
@@ -844,6 +841,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					that._updateAdjustmentsFromObject();
 					that._resetCropPropertiesToCurrentPreviewImageDimensions();
 					that.endPropertyChanges();
+					that._updateFinalImageDimensions();
 					that.set('_imageFullyLoaded', true);
 				});
 			}
@@ -965,13 +963,25 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					}
 					if (index === 'TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment') {
 						that.set('_finalImageDimensions.width', Ember.get(adjustment, 'width'));
-						// Height does not need to be set, as it is automatically calculated from crop properties + width
+						that.set('_finalImageDimensions.height', Ember.get(adjustment, 'height'));
 					}
 				});
 			}
 
 			this.set('_adjustments', adjustments);
 		}.observes('_object'),
+
+		/**
+		 * This is only to be used after loading image metadata because we want the final dimensions to be exactly like the resize image adjustment
+		 */
+		_updateFinalImageDimensions: function() {
+			var adjustments = this.get('_adjustments'),
+				resizeAdjustment = adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'];
+			if (resizeAdjustment) {
+				this.set('_finalImageDimensions.width', resizeAdjustment.width);
+				this.set('_finalImageDimensions.height', resizeAdjustment.height);
+			}
+		},
 
 		/**
 		 * Helper
