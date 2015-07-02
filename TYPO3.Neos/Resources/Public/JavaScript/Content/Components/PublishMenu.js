@@ -6,6 +6,8 @@ define(
 		'./Button',
 		'Content/Model/PublishableNodes',
 		'./StorageManager',
+		'./TargetWorkspaceController',
+		'./TargetWorkspaceSelector',
 		'./PublishAllDialog',
 		'./DiscardAllDialog',
 		'Shared/Endpoint/NodeEndpoint',
@@ -13,7 +15,22 @@ define(
 		'Shared/I18n',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, HttpClient, I18n, template) {
+	function (
+		Ember,
+		$,
+		LocalStorage,
+		Button,
+		PublishableNodes,
+		StorageManager,
+		TargetWorkspaceController,
+		TargetWorkspaceSelector,
+		PublishAllDialog,
+		DiscardAllDialog,
+		NodeEndpoint,
+		HttpClient,
+		I18n,
+		template
+	) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -24,8 +41,15 @@ define(
 				}
 				return LocalStorage.getItem('isAutoPublishEnabled');
 			}.property(),
-
 			controller: PublishableNodes,
+			targetWorkspaceController: TargetWorkspaceController,
+
+			/**
+			 * Only show the target workspace selector if more than one workspace can be selected
+			 */
+			_isTargetWorkspaceSelectorVisible: function() {
+				return this.targetWorkspaceController.get('targetWorkspaces').length > 1;
+			}.property('targetWorkspaceController.targetWorkspaces'),
 
 			_actionRunning: function() {
 				return this.get('controller.publishAllRunning') || this.get('controller.discardRunning') || this.get('controller.discardAllRunning');
@@ -51,6 +75,8 @@ define(
 				classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active'],
 				classNames: ['neos-publish-button'],
 				controller: PublishableNodes,
+				targetWorkspaceController: TargetWorkspaceController,
+				targetWorkspaceSelector: TargetWorkspaceSelector,
 
 				target: 'controller',
 				action: 'publishChanges',
@@ -64,26 +90,31 @@ define(
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 				_savePendingBinding: '_storageManager.savePending',
 
+				_workspaceRebasePendingBinding: 'targetWorkspaceController.workspaceRebasePending',
+
 				_publishRunningBinding: 'controller.publishRunning',
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
 				defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
+
+				_labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
+
 				label: function() {
 					if (this.get('_savePending')) {
 						return 'Saving<span class="neos-ellipsis"></span>'.htmlSafe();
 					} else if (this.get('_publishRunning')) {
 						return 'Publishing<span class="neos-ellipsis"></span>'.htmlSafe();
 					} else if (this.get('autoPublish')) {
-						return 'Auto-Publish';
+						return 'Auto-Publish' + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
 					}
 
 					if (this.get('_noChanges')) {
-						return I18n.translate('Main:TYPO3.Neos:published');
+						return I18n.translate('Main:TYPO3.Neos:published') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
 					}
 
-					return I18n.translate('Main:TYPO3.Neos:publish') + ' (' + this.get('_numberOfChanges') + ')';
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning'),
+					return I18n.translate('Main:TYPO3.Neos:publish') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '') + ' (' + this.get('_numberOfChanges') + ')';
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
 
 				title: function() {
 					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
@@ -112,8 +143,8 @@ define(
 				}.observes('autoPublish').on('init'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning'),
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending'),
 
 				_hasChanges: function() {
 					if (this.get('autoPublish')) {
@@ -128,6 +159,8 @@ define(
 					return className;
 				}.property('_connectionFailed')
 			}),
+
+			TargetWorkspaceSelector: TargetWorkspaceSelector,
 
 			DiscardButton: Button.extend({
 				classNames: ['neos-discard-button'],

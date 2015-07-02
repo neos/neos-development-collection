@@ -37,7 +37,7 @@
 	}
 
 	.neos-publish-button {
-		min-width: 165px;
+		min-width: 212px;
 		background-color: $green;
 		font-size: $generalFontSize;
 		cursor: default;
@@ -96,5 +96,17 @@
 			margin-top: $relatedMargin;
 			margin-left: $defaultMargin + $tightMargin;
 		}
+	}
+}
+
+#neos-target-workspace-selector {
+	.neos-select2-container {
+		width: 100%;
+	}
+}
+
+.neos-target-workspace-selector ul.neos-select2-results {
+	li:not(.neos-select2-highlighted) {
+		background: $grayLight;
 	}
 }

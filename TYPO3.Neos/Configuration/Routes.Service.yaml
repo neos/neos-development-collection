@@ -70,11 +70,53 @@
   appendExceedingArguments: TRUE
   httpMethods: ['HEAD', 'GET']
 
+# RESTful WorkspacesController routes
 
-# WorkspaceController routes
+-
+  name: 'Services - WorkspacesController->indexAction()'
+  uriPattern: 'workspaces'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspacesController->showAction()'
+  uriPattern: 'workspaces/{workspace}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'show'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspacesController->createAction()'
+  uriPattern: 'workspaces/{baseWorkspace}/{workspaceName}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'create'
+  httpMethods: ['POST']
+
+# Note: we need to specify the workspace as {workspace.__identity} in the uriPattern because if we just used
+# {workspace}, the properties could not be overridden through the parameters in the PUT request's body.
+# This is a shortcoming of the DispatchComponent and should be solved in a future version of Flow.
+-
+  name: 'Services - WorkspacesController->updateAction()'
+  uriPattern: 'workspaces/{workspace.__identity}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'update'
+  appendExceedingArguments: TRUE
+  httpMethods: ['PUT']
+
+# Legacy WorkspaceController routes
 -
   name: 'Services - WorkspaceController->getWorkspaceWideUnpublishedNodes'
-  uriPattern: 'workspaces/get-workspace-wide-unpublished-nodes'
+  uriPattern: 'workspaces-rpc/get-workspace-wide-unpublished-nodes'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -85,7 +127,7 @@
 
 -
   name: 'Services - WorkspaceController->publishNode'
-  uriPattern: 'workspaces/publish-node'
+  uriPattern: 'workspaces-rpc/publish-node'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -95,7 +137,7 @@
 
 -
   name: 'Services - WorkspaceController->publishNodes'
-  uriPattern: 'workspaces/publish-nodes'
+  uriPattern: 'workspaces-rpc/publish-nodes'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -105,7 +147,7 @@
 
 -
   name: 'Services - WorkspaceController->discardNode'
-  uriPattern: 'workspaces/discard-node'
+  uriPattern: 'workspaces-rpc/discard-node'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -115,7 +157,7 @@
 
 -
   name: 'Services - WorkspaceController->discardNodes'
-  uriPattern: 'workspaces/discard-nodes'
+  uriPattern: 'workspaces-rpc/discard-nodes'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -125,7 +167,7 @@
 
 -
   name: 'Services - WorkspaceController->publishAll'
-  uriPattern: 'workspaces/publish-all'
+  uriPattern: 'workspaces-rpc/publish-all'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
@@ -135,7 +177,7 @@
 
 -
   name: 'Services - WorkspaceController->discardAll'
-  uriPattern: 'workspaces/discard-all'
+  uriPattern: 'workspaces-rpc/discard-all'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
