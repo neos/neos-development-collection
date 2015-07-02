@@ -293,79 +293,79 @@ TYPO3:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:
       management:
-        label: 'Management'
+        label: 'TYPO3.Neos:Modules:management.label'
         controller: '\TYPO3\Neos\Controller\Module\ManagementController'
-        description: 'Contains multiple modules related to management of content'
+        description: 'TYPO3.Neos:Modules:management.description'
         icon: 'icon-briefcase'
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management'
         submodules:
           workspaces:
-            label: 'Workspaces'
+            label: 'TYPO3.Neos:Modules:workspaces.label'
             controller: '\TYPO3\Neos\Controller\Module\Management\WorkspacesController'
-            description: 'This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.'
+            description: 'TYPO3.Neos:Modules:workspaces.description'
             icon: 'icon-th-large'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces'
           media:
-            label: 'Media'
+            label: 'TYPO3.Neos:Modules:media.label'
             controller: '\TYPO3\Neos\Controller\Module\Management\AssetController'
-            description: 'This module allows managing of media assets including pictures, videos, audio and documents.'
+            description: 'TYPO3.Neos:Modules:media.description'
             icon: 'icon-camera'
             privilegeTarget: 'TYPO3.Media:ManageAssets'
           history:
-            label: 'History'
+            label: 'TYPO3.Neos:Modules:history.label'
             controller: '\TYPO3\Neos\Controller\Module\Management\HistoryController'
-            description: 'This module contains a list of all historic changes in Neos.'
+            description: 'TYPO3.Neos:Modules:history.description'
             icon: 'icon-calendar'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
       administration:
-        label: 'Administration'
+        label: 'TYPO3.Neos:Modules:administration.label'
         controller: '\TYPO3\Neos\Controller\Module\AdministrationController'
-        description: 'Contains multiple modules related to administration'
+        description: 'TYPO3.Neos:Modules:administration.description'
         icon: 'icon-gears'
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration'
         submodules:
           users:
-            label: 'User Management'
+            label: 'TYPO3.Neos:Modules:users.label'
             controller: '\TYPO3\Neos\Controller\Module\Administration\UsersController'
-            description: 'The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.'
+            description: 'TYPO3.Neos:Modules:users.description'
             icon: 'icon-group'
             actions:
               new:
-                label: 'Create user'
-                title: 'Create a new user'
+                label: 'TYPO3.Neos:Modules:users.actions.new.label'
+                title: 'TYPO3.Neos:Modules:users.actions.new.title'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Users'
           packages:
-            label: 'Package Management'
+            label: 'TYPO3.Neos:Modules:packages.label'
             controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
-            description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
+            description: 'TYPO3.Neos:Modules:packages.description'
             icon: 'icon-archive'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Packages'
           sites:
-            label: 'Sites Management'
+            label: 'TYPO3.Neos:Modules:sites.label'
             controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'
-            description: 'The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.'
+            description: 'TYPO3.Neos:Modules:sites.description'
             icon: 'icon-globe'
             actions:
               newSite:
-                label: 'Create site'
-                title: 'Create a new site'
+                label: 'TYPO3.Neos:Modules:sites.actions.newSite.label'
+                title: 'TYPO3.Neos:Modules:sites.actions.newSite.title'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Sites'
           configuration:
-            label: 'Configuration'
+            label: 'TYPO3.Neos:Modules:configuration.label'
             controller: '\TYPO3\Neos\Controller\Module\Administration\ConfigurationController'
-            description: 'The Configuration module provides you with an overview of all configuration types.'
+            description: 'TYPO3.Neos:Modules:configuration.description'
             icon: 'icon-list-alt'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Configuration'
       user:
-        label: 'User'
+        label: 'TYPO3.Neos:Modules:user.label'
         controller: '\TYPO3\Neos\Controller\Module\UserController'
         hideInMenu: TRUE
         privilegeTarget: 'TYPO3.Neos:Backend.Module.User'
         submodules:
           usersettings:
-            label: 'User Settings'
+            label: 'TYPO3.Neos:Modules:usersettings.label'
             controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
-            description: 'This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.'
+            description: 'TYPO3.Neos:Modules:usersettings.description'
             icon: 'icon-user'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.User.UserSettings'
 
