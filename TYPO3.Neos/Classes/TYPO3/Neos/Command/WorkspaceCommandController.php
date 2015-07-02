@@ -211,7 +211,7 @@ class WorkspaceCommandController extends CommandController {
 		}
 
 		if (substr($workspaceName, 0, 5) === 'user-') {
-			$this->outputLine('Did not delete workspace "%s" because it is a user workspace. User workspaces cannot be deleted manually.');
+			$this->outputLine('Did not delete workspace "%s" because it is a user workspace. User workspaces cannot be deleted manually.', array($workspaceName));
 			$this->quit(2);
 		}
 
