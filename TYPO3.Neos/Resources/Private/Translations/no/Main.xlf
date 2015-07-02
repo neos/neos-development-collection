@@ -111,6 +111,9 @@
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="no" state="translated">Publisert</target></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve">
+				<source>Target workspace</source>
+			<target xml:lang="no" state="needs-translation">Target workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="no" state="translated">Fjern</target></trans-unit>
@@ -135,6 +138,21 @@
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
 			<target xml:lang="no" state="translated">Deg</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve">
+				<source>[no title]</source>
+			<target xml:lang="no" state="needs-translation">[no title]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve">
+				<source>Label</source>
+			<target xml:lang="no" state="needs-translation">Label</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Node type</source>
+			<target xml:lang="no" state="needs-translation">Node type</target></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+				<source>Path</source>
+			<target xml:lang="no" state="needs-translation">Path</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative path</source>
+			<target xml:lang="no" state="needs-translation">Relative path</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
@@ -210,6 +228,15 @@
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
 			<target xml:lang="no" state="translated">Er du sikker på at du vil publisere alle endringer?</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+				<source>Pending changes</source>
+			<target xml:lang="no" state="needs-translation">Pending changes</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
+			<target xml:lang="no" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
+			<target xml:lang="no" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="no" state="translated">Redigeringsmoduser</target></trans-unit>

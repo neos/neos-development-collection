@@ -15,6 +15,45 @@
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="la-LA" state="translated">crwdns126:0crwdne126:0</target></trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+				<source>Unpublished changes</source>
+			<target xml:lang="la-LA" state="translated">crwdns245:0crwdne245:0</target></trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+				<source>Discard selected changes</source>
+			<target xml:lang="la-LA" state="translated">crwdns246:0crwdne246:0</target></trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
+				<source>Publish selected changes</source>
+			<target xml:lang="la-LA" state="translated">crwdns247:0crwdne247:0</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+				<source>Discard all changes</source>
+			<target xml:lang="la-LA" state="translated">crwdns248:0crwdne248:0</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+				<source>Publish all changes</source>
+			<target xml:lang="la-LA" state="translated">crwdns249:0crwdne249:0</target></trans-unit>
+      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
+				<source>Legend</source>
+			<target xml:lang="la-LA" state="translated">crwdns250:0crwdne250:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+				<source>deleted</source>
+			<target xml:lang="la-LA" state="translated">crwdns251:0crwdne251:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="la-LA" state="translated">crwdns252:0crwdne252:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="la-LA" state="translated">crwdns253:0crwdne253:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="la-LA" state="translated">crwdns254:0crwdne254:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="la-LA" state="translated">crwdns255:0crwdne255:0</target></trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+				<source>There are no unpublished changes in this workspace.</source>
+			<target xml:lang="la-LA" state="translated">crwdns256:0crwdne256:0</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+			<target xml:lang="la-LA" state="translated">crwdns257:0{0}crwdne257:0</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="la-LA" state="translated">crwdns127:0crwdne127:0</target></trans-unit>
