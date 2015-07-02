@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-07-01
+The following reference was automatically generated from code on 2015-07-02
 
 
 Package *TYPO3.NEOS*
@@ -493,6 +493,67 @@ Options
 
 
 
+``typo3.neos:workspace:create``
+*******************************
+
+**Create a new workspace**
+
+This command creates a new workspace.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "christmas-campaign
+
+
+
+Options
+^^^^^^^
+
+``--base-workspace``
+  Name of the base workspace. If none is specified, "live" is assumed.
+``--title``
+  Human friendly title of the workspace, for example "Christmas Campaign
+``--description``
+  A description explaining the purpose of the new workspace
+
+
+
+
+
+``typo3.neos:workspace:delete``
+*******************************
+
+**Deletes a workspace**
+
+This command deletes a workspace. If you only want to empty a workspace and not delete the
+workspace itself, use *workspace:discard* instead.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "christmas-campaign
+
+
+
+Options
+^^^^^^^
+
+``--force``
+  Delete the workspace and all of its contents
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.neos:workspace:discard``
+  Discard changes in workspace
+
+
+
 ``typo3.neos:workspace:discard``
 ********************************
 
@@ -569,7 +630,8 @@ Related commands
 
 **Publish changes of a workspace**
 
-This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
+This command publishes all modified, created or deleted nodes in the specified workspace to its base workspace.
+If a target workspace is specified, the content is published to that workspace instead.
 
 Arguments
 ^^^^^^^^^
@@ -582,6 +644,8 @@ Arguments
 Options
 ^^^^^^^
 
+``--target-workspace``
+  If specified, the content will be published to this workspace instead of the base workspace
 ``--verbose``
   If enabled, some information about individual nodes will be displayed
 ``--dry-run``
@@ -619,6 +683,29 @@ Related commands
 
 ``typo3.neos:workspace:publish``
   Publish changes of a workspace
+
+
+
+``typo3.neos:workspace:rebase``
+*******************************
+
+**Rebase a workspace**
+
+This command sets a new base workspace for the specified workspace. Note that doing so will put the possible
+changes contained in the workspace to be rebased into a different context and thus might lead to unintended
+results when being published.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace to rebase, for example "user-john
+``--base-workspace``
+  Name of the new base workspace
+
+
+
+
 
 
 
