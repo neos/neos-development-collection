@@ -1,0 +1,172 @@
+====================
+1.1.4
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] `composer.json` includes development versions in stable releases
+-----------------------------------------------------------------------------------------
+
+In `Idddd184af48f6d32b995e8d224a7e237aaee84bd` the requirements for
+branch tip versions were introduced to easy development, however that
+had a bad side effect causing the stable releases to pull unstable
+versions of packages.
+
+To fix this the release scripts are adjusted to work with dependencies
+on development branch versions.
+
+Fixes: NEOS-1216
+Depends: I791174633d2b1b0fb7263504744901d87bbb1ec6
+
+* Commit: `16f847d <https://git.typo3.org/Neos/Distributions/Base.git/commit/16f847d95bfb04833f2c84885654796ab5c2fcd9>`_
+
+[TASK] Pull in stable versions of 3rd party dependencies (again)
+-----------------------------------------------------------------------------------------
+
+During the release of 1.1.3 the dependencies were changed back to
+the stable releases, however that should only be for the tagged
+versions.
+
+* Commit: `83daa4c <https://git.typo3.org/Neos/Distributions/Base.git/commit/83daa4cc16886e9d7e7e312625feb2a20392189a>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/40/
+
+* Commit: `fb831d3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fb831d39d1d9915c143429ae3eda2414da176427>`_
+
+[BUGFIX] Version upgrades leads to a broken backend
+-----------------------------------------------------------------------------------------
+
+Existing users experience a broken backend between Neos upgrades due to
+the backend resources being cached in their browser.
+
+To prevent this problem a bust header is added to the resource paths,
+based on the Javascript & CSS built files when using the minified
+versions.
+
+Fixes: NEOS-1202
+
+* Commit: `9d06cf2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9d06cf2bedfa8c865278ee6d1fa9b42dda889d46>`_
+
+[BUGFIX] Updating page in node tree can lead to problems
+-----------------------------------------------------------------------------------------
+
+When a page is being edited in the node tree and the url is changed
+on the server side, the link in the tree is out of sync.
+
+Additionally if the title of the current page is changed, the page
+is not reloaded.
+
+To prevent these situations the URL of the node in the tree is updated,
+as well as the title and if it's the current page it's reloaded automatically.
+
+Fixes: NEOS-1197
+
+* Commit: `a7a495a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a7a495aada9558010f729be4f010f0057d2cec36>`_
+
+[BUGFIX] Prevent unnecessary double persist when updating node in tree
+-----------------------------------------------------------------------------------------
+
+When a node is being edited in one of the tres in the navigate component,
+the inline element is synchronized causing an additional update call to
+the server. This call is unnecessary since that state has already been saved.
+
+Fixes: NEOS-1196
+
+* Commit: `be7e13e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/be7e13e3f250616e41142e3b847c66321511bb67>`_
+
+[TASK] Add missing icon for plugin view
+-----------------------------------------------------------------------------------------
+
+The plugin view content element doesn't have a default
+icon and therefore uses the fallback icon. This is not
+helpful since the element cannot be recognized easily.
+
+Even though plugins have the same icon by default it's
+still better since that would relate them. Additionally
+most plugins would a specific icon instead of the default.
+
+* Commit: `180daaa <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/180daaa33b2af13841b361ea36222c46fbcc3fb6>`_
+
+[BUGFIX] Allow overriding ArgumentNamespace for plugins
+-----------------------------------------------------------------------------------------
+
+Currently it is not possible to set a plugin ``argumentNamespace``
+from TypoScript as the order of resolution will always result in an
+early return because the NodeType will be resolved.
+This fixes the resolution order.
+
+Fixes: NEOS-1097
+
+* Commit: `0e5dba0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0e5dba0e4738297835554593f85407bcb0da2663>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Menu content element breaks without items
+-----------------------------------------------------------------------------------------
+
+A regression introduced in `I472f502b59ee538305e06d4635ea0a91d615e2b9`
+caused the menu content element to throw an exception since the
+backport of the change didn't account for the change of the
+security view helper.
+
+Related: NEOS-1124
+
+* Commit: `da8e7e6 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/da8e7e605709dd001520d7eed5f7064052ef227f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Adjust Behat tests to work with PHP 5.4+
+-----------------------------------------------------------------------------------------
+
+* Commit: `cb5dd68 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/cb5dd68fe2c931974f58b8e089e911611aabda63>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Adjust code migration identifier pattern to contain the full timestamp
+-----------------------------------------------------------------------------------------
+
+Previously code migrations are expected to have a class name with the
+pattern ``Version<YYYYMMDDhhmm>`` and the unique identifier was
+determined extracting the last 12 characters of the class name (which
+are expected to be the timestamp).
+
+This change adjusts existing code migrations to return the old identifier
+so that they won't be applied again.
+
+Related: FLOW-110
+
+* Commit: `f6eb26d <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/f6eb26dfd0dfe7e030e63a2de40ff70686c19842>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

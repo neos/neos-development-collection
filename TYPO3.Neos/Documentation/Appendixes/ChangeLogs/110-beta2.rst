@@ -1,0 +1,67 @@
+====================
+1.1.0-beta2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/10/
+
+* Commit: `398ea6b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/398ea6b478aa7b78145dc409790ae2dfb2164ab4>`_
+
+[BUGFIX] Backend endpoints with CSRF must not be cached
+-----------------------------------------------------------------------------------------
+
+The "neosBackendEndpoints" header part must not be cached because it
+contains the CSRF token that depends on the user session.
+
+* Commit: `f272cc8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f272cc8999e5ce0d41fa4c43126f7dac5d659dfe>`_
+
+[TASK] Fix documentation version
+-----------------------------------------------------------------------------------------
+
+Sets the version of this documentation to "1.1.0" to match the released
+version.
+
+Also enable PDF rendering of the documentation.
+
+* Commit: `8fe737f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8fe737fe366c608244b2eb29fdd43125cdc11a97>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
