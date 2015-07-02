@@ -113,7 +113,7 @@
 			<target xml:lang="de">Veröffentlicht</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="de" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="de" state="translated">Zielarbeitsbereich</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="de">Entfernen</target></trans-unit>
@@ -140,19 +140,19 @@
 			<target xml:lang="de">Sie</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="de" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="de" state="translated">[kein Titel]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="de" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="de" state="translated">Bezeichnung</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="de" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="de" state="translated">Knotentyp</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="de" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="de" state="translated">Pfad</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="de" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="de" state="translated">Relativer Pfad</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve" approved="yes">
 				<source>Document</source>
@@ -230,13 +230,13 @@
 			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="de" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="de" state="translated">Ausstehende Änderungen</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="de" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+			<target xml:lang="de" state="translated">Ihr persönlicher Arbeitsbereich enthält derzeit unveröffentlichte Änderungen. Um zu einem anderen Ziel-Arbeitsbereich zu wechseln, müssen Sie die Inhalte zunächst entweder veröffentlichen oder verwerfen.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="de" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+			<target xml:lang="de" state="translated">Bitte überprüfen Sie Ihre Änderungen, veröffentlichen oder verwerfen sie und wählen Sie dann erneut einen neuen Ziel-Arbeitsbereich.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="de">Bearbeitungsmodus</target></trans-unit>
