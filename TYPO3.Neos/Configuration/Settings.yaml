@@ -398,7 +398,7 @@ TYPO3:
       final:
         className: 'TYPO3\Neos\Setup\Step\FinalStep'
     view:
-      title: 'TYPO3 Neos Setup'
+      title: 'Neos Setup'
 
   Media:
     bodyClasses: 'neos neos-module media-browser'
