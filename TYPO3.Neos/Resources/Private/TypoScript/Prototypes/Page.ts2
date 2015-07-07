@@ -56,27 +56,28 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		neosBackendHeader = TYPO3.TypoScript:Template {
 			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
-			node = ${node}
+			node = ${documentNode}
 
 			@cache {
 				mode = 'uncached'
 				context {
-					1 = 'node'
+					1 = 'documentNode'
 				}
 			}
+
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
 		neosBackendEndpoints = TYPO3.TypoScript:Template {
 			@position = 'end 10001'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
-			node = ${node}
+			node = ${documentNode}
 			account = ${Security.getAccount()}
 
 			@cache {
 				mode = 'uncached'
 				context {
-					1 = 'node'
+					1 = 'documentNode'
 				}
 			}
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
@@ -123,12 +124,12 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	neosBackendContainer = TYPO3.TypoScript:Template {
 		@position = 'before closingBodyTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
-		node = ${node}
+		node = ${documentNode}
 
 		@cache {
 			mode = 'uncached'
 			context {
-				1 = 'node'
+				1 = 'documentNode'
 			}
 		}
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
