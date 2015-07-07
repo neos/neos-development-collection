@@ -1,0 +1,68 @@
+==================
+2.0.0-beta5 (2015-07-07)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest for 2.0.x-dev
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/61/
+
+* Commit: `b24ed4c <https://git.typo3.org/Neos/Distributions/Base.git/commit/b24ed4cb160d2b0ed512de30add1227e7c8f4e5a>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix cache busting for backend modules
+-----------------------------------------------------------------------------------------
+
+After ``I8672d4ee98e84989714bb5229de8144f1a2dadce`` resource paths are
+rawurlencoded, so adding a parameter to the resource view helper results
+in it being escaped.
+
+This fixes it for backend modules.
+
+Related: FLOW-321
+
+* Commit: `b78e1bb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b78e1bb5e98fd0a89ac31cc973850d80d9fc2f28>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

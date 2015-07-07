@@ -1,0 +1,35 @@
+//
+// TypoScript Fixture 16
+//
+// - Object Prototypes
+// - Eel
+// - multiline Eel expressions
+
+
+prototype(TYPO3.Foo:Bar).baz = 'Hallo'
+
+test.prototype(TYPO3.Foo:Bar).baz = 'Hallo'
+
+
+prototype(TYPO3.Foo:Bar2) {
+	baz = 'Foo'
+	test2 = 42
+}
+
+
+foo.bar.prototype(TYPO3.Foo:Bar2) {
+	baz = 'Foo'
+	test2 = 42
+	blah = ${my.expression()}
+	blah2 = ${my.expression('asdf')}
+	blah3 = ${my.expression("as
+		some stuff }
+		" + "df")}
+}
+
+prototype(Foo.Bar:Baz) {
+	prototype(Foo.Bar:Baz2).test = 'asdf'
+}
+
+
+prototype(TYPO3.Foo:Bar3) < prototype(TYPO3.Foo:Bar2)

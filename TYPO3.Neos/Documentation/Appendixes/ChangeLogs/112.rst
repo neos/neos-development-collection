@@ -1,0 +1,274 @@
+==================
+1.1.2 (2014-09-02)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update release scripts to include Media with Neos
+-----------------------------------------------------------------------------------------
+
+This makes sure TYPO3.Media is released together with Neos.
+
+* Commit: `da9049f <https://git.typo3.org/Neos/Distributions/Base.git/commit/da9049f25c855ce5638d4035532df72502de4876>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/19/
+
+* Commit: `eb54ede <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/eb54ede78d9ef88d80c5684a7ee65767bbfdc961>`_
+
+[BUGFIX] Better error checking for missing content collection nodes
+-----------------------------------------------------------------------------------------
+
+This change introduces a backward compatible helper that will search
+for a content collection node on the current or parent node. If none is
+found a speaking error message is generated in an exception that should
+help to solve the error.
+
+Fixes: NEOS-150
+
+* Commit: `8ed7f14 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8ed7f1480c72a27c505f3b67b2eccc0cbfa7bd18>`_
+
+[BUGFIX] Focus lost for inline editing after deletion on every save
+-----------------------------------------------------------------------------------------
+
+After a content element has been deleted the "contentChanged" event
+is triggered for every "contentSaved" event afterwards. Instead it
+should only happen once. Regression introduced in
+I7104d0ceab260c8e679e67cdc716ca33e2880836.
+
+The focus is only lost if the structure tree is open.
+
+Fixes: NEOS-368
+(cherry picked from commit b7ebf31112735648a373b9e8b4042f4d76b4b208)
+
+* Commit: `73bf2b0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/73bf2b0ffaec77aaac34ed976c876576b98a29e8>`_
+
+[TASK] Enhance documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `cd08ce9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cd08ce9128d8e1ac072310fe0b65671de425388c>`_
+
+[BUGFIX] Inline editable properties for documents not visible
+-----------------------------------------------------------------------------------------
+
+When a property is inline editable directly on the document,
+it's not visible in any way. Now a gray outline is displayed on
+hover as well as a blue outline when focussed matching the behavior
+of the content elements.
+
+Fixes: NEOS-362
+
+* Commit: `102c8ab <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/102c8ab282cfa6d192a38baabf8b416b427cc8a7>`_
+
+[BUGFIX] Content collections marked unpublished for new pages
+-----------------------------------------------------------------------------------------
+
+When creating a new page and publishing the changes, the content
+collections remain shown as unpublished changes. This is due to
+the cache for the content collections not being flushed when
+publishing the first time. Afterwards the content collections
+will remain in the live workspace, so clearing the content cache
+solves the issue for existing pages.
+
+It is solved by adding a entry tag for all content collections
+directly in the document, making sure that content collections
+are flushed when the document is.
+
+Fixes: NEOS-339
+
+* Commit: `a66bbb8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a66bbb8ffd541876239021415e17603a4ca722c0>`_
+
+[BUGFIX] Wrapping pages results in PHP notice
+-----------------------------------------------------------------------------------------
+
+Using the ContentElementWrappingService on document nodes can
+lead to PHP notices because the attribute ``class`` might not
+have been defined prior to concatenating. This leads to Flow
+exceptions and break the site.
+This change fixes it by initializing the empty class array
+entry at the beginning.
+The problem was introduced with the related change below.
+
+Related: Ia11ac5b6c7bef4c30e005b53f21215d0b17637c1
+
+(cherry picked from commit 0ab4d7afebb0e709204184cbaab378a8bf6d6bdc)
+
+* Commit: `ba4227c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ba4227ce91ab8bb7758afb664f8f21190c221d38>`_
+
+[BUGFIX] Backend redirects breaks with invisible/inaccessible nodes
+-----------------------------------------------------------------------------------------
+
+If a node is inaccessible or invisible (hidden after/before) the backend
+redirect service cannot find it thus leading to not being able to
+redirect to the page.
+In case the fallback redirect is used to the site's root node and the root
+node is inaccessible/invisible the backend will throw a 404, even though
+the page can be accessed just fine in the content module.
+
+This is caused because the context created for finding the nodes in the
+backend redirect service doesn't allow inaccessible/invisible nodes.
+
+Fixes: NEOS-225
+(cherry picked from commit 4f45c7673444f514f86b3b7f031af64dad48692a)
+
+* Commit: `be5d89f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/be5d89f494db16eb03640e332519f27e2085d86e>`_
+
+[BUGFIX] Enable/disable edit in create uses different selector
+-----------------------------------------------------------------------------------------
+
+The enable/disable edit methods in create uses a different selector,
+meaning that it could happen that some entities are not disabled
+correctly.
+
+(cherry picked from commit d52417e7f26dbab56af953e889b3c4b61955e763)
+
+* Commit: `3475263 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/347526358a4cfb0d1fdbac4fbfb4e2ff3c720a4e>`_
+
+[BUGFIX] respect "workspace" argument consistently when auto-creating child nodes
+-----------------------------------------------------------------------------------------
+
+How to reproduce
+================
+
+* Create a new page (which then only exists in your user workspace)
+* Then, modify NodeTypes yaml to add a new (auto-created) child node
+* Then, run ./flow node:autocreatechildnodes. We'd expect *no changes*
+  on your newly created page, because it only exists in your user
+  workspace, but not in live workspace (where auto-creation is applied).
+* However, without this change, the node (with all childnodes) gets created
+  in live workspace as well, leading to duplicated nodes in the node tree.
+
+(cherry picked from commit 2748340766273526765c069430445da0ec9fea79)
+
+* Commit: `cc85545 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cc8554506035b85f93fdc09db450a999b836a64a>`_
+
+[BUGFIX] Content collection falls back to first child if nodePath is empty
+-----------------------------------------------------------------------------------------
+
+When a content collection cannot find a node in the given path, it falls
+back to the first found child node on the current page. This leads to very
+unexpected and confusing results, e.g. rendering the main content collection
+right before the content collection with the unfound node.
+
+(cherry picked from commit 575a608722c6225bf944795be83a162fa4230ac2)
+
+* Commit: `c454bc4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c454bc4e9fa85bf227edb0d214a28220f50d9959>`_
+
+[BUGFIX] Site Export should be able to handle broken assets/images
+-----------------------------------------------------------------------------------------
+
+This is a workaround for NEOS-121 which fixes the site export e.g.
+with the demo site.
+
+In order to test this, the demo site should be exported directly
+after it was imported. This broke without that change.
+
+Related: NEOS-121
+(cherry picked from commit d772782eee6e8935dbf315294d9de6b42e7279d6)
+
+* Commit: `2880463 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/28804632af701fdcdc86d81b4157a1326de6234b>`_
+
+[BUGFIX] Importing of resources broken due to wrong argument order
+-----------------------------------------------------------------------------------------
+
+Creating resources during site import was broken for assets in arrays
+that were not used elsewhere.
+
+(cherry picked from commit fb63ad5dfdca4f2b489874d9835c6372950d15e8)
+
+* Commit: `b3aac9c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b3aac9c4c2df8f04453c691233e2db4381bf0da9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Searching node properties works only case sensitive
+-----------------------------------------------------------------------------------------
+
+Search for the given identifier in the repository method
+``findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap``
+should be done case sensitive because case insensitive search
+won't work on blob fields in MySQL.
+
+Since case sensitive like was merged in Flow with
+I53cd80e145eb49bcf8251f0045b9f3ec4fd61105 the feature to
+prevent deletion of used assets was broken.
+
+* Commit: `b19dc85 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/b19dc85c5b5855d5bf2a2c6649710680196c7fea>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Ignore empty tags in @cache.entryTags configuration
+-----------------------------------------------------------------------------------------
+
+When unsetting a tag in TypoScript, the resulting value will be an empty
+(null) tag. This is not allowed in the caching framework which will
+throw an exception for this case.
+
+This change ignores empty tag values so unsetting a key in the entryTags
+configuration is possible.
+
+* Commit: `957c37a <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/957c37a10d1cb8c4cdcdb27ce5ed38b30abdbd8f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Unify button styling in Media management
+-----------------------------------------------------------------------------------------
+
+The submit button should be blue.
+
+Resolves: NEOS-222
+
+* Commit: `af699de <https://git.typo3.org/Packages/TYPO3.Media.git/commit/af699de7a6dba5acf3e0739d35c1e0f57609fdfa>`_
+
+[TASK] Escape caption text in thumbnail view
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-237
+
+(cherry picked from commit 47c3f745c2f28120d98f611cf9e6782970797a5e)
+
+* Commit: `fe84cca <https://git.typo3.org/Packages/TYPO3.Media.git/commit/fe84cca4f6bd5cddf9e59cad5a46b52babb55a20>`_
+
+[BUGFIX] Functional tests use sys_get_temp_dir()
+-----------------------------------------------------------------------------------------
+
+The functional tests use the sys_get_temp_dir() function which
+causes problems if Flow resides on a network share but PHP temp
+dir is still set to a local disk.
+
+When this happens PHP will fail to move the file from the local
+disk to the network storage as this is not supported by PHP.
+
+* Commit: `cc7047d <https://git.typo3.org/Packages/TYPO3.Media.git/commit/cc7047d6d44faa4545e437e49ba83e24ceb9572f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

@@ -1,0 +1,17 @@
+//
+// TypoScript Fixture 16b
+// - invalid multiline Eel expressions
+
+
+// intentionally-left-open eel expression
+foo.bar.prototype(TYPO3.Foo:Bar2) {
+	blah3 = ${my.expression("as}
+		" + "df"
+}
+
+prototype(Foo.Bar:Baz) {
+	prototype(Foo.Bar:Baz2).test = 'asdf'
+}
+
+
+prototype(TYPO3.Foo:Bar3) < prototype(TYPO3.Foo:Bar2)

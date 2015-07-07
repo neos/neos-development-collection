@@ -1,0 +1,414 @@
+==================
+2.0.0-beta4 (2015-07-07)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest for 2.0.x-dev
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/57/
+
+* Commit: `ae19b81 <https://git.typo3.org/Neos/Distributions/Base.git/commit/ae19b811a31a2138508ce2eb3b84023b9cf3ce0d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/61/
+
+* Commit: `ded06e7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ded06e7b4d80c07f326c4477495deb5e04747147>`_
+
+[BUGFIX] Remove faulty, old code migration
+-----------------------------------------------------------------------------------------
+
+The removed migration was a pre 1.0 migration changing
+TypoScript prototypes. The names of the prototypes have
+changed further and names could be used in userland code 
+and so mess up the TypoScript. Any pre 1.0 projects
+still in the wild would need to migrate this manually from now.
+
+* Commit: `5aab8b5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5aab8b5ce81647b672218b76c7024ee7875524f3>`_
+
+[BUGFIX] Bust argument for backend assets escaped
+-----------------------------------------------------------------------------------------
+
+After ``I8672d4ee98e84989714bb5229de8144f1a2dadce`` resource paths are
+rawurlencoded, so adding a parameter to the resource view helper results
+in it being escaped. This breaks the bust argument for the built backend
+asset files ```ContentModule-built.js``` and ```Includes-built.css```
+
+Related: FLOW-321
+
+* Commit: `92809ff <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/92809fffe3098427cce9feab7a8a7ee2162e681a>`_
+
+[BUGFIX] Dimension menu broken on hidden pages
+-----------------------------------------------------------------------------------------
+
+The dimension menu should show the translated version of pages even
+when they are hidden in menus. A regression with the change
+``I50c5abf9d1dc15a9abad8042b74eee9646e8b166``.
+
+Fixes: NEOS-1355
+
+* Commit: `8d33057 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8d330573ad824a67d7a9ccc336636dadb85c02c9>`_
+
+[BUGFIX] Too many missing translation logs
+-----------------------------------------------------------------------------------------
+
+To allow fallbacks to translations configured on supertypes
+of nodetypes we need to call the translate method twice which
+would result in a 'Missing translation' warning even though the
+fallback translation is found.
+
+This change overwrites the default Ember.Logger behavior and adds
+a mute flag to prevent unneeded logs.
+
+Related: NEOS-437
+
+* Commit: `a284ed1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a284ed170ebccd1e4538503dba5c8f6a5ac4fa0f>`_
+
+[TASK] mark ContentDimensionPresetSource as singleton
+-----------------------------------------------------------------------------------------
+
+This is needed in order to inject fake configurations into it
+during Behat tests. See the related change in TYPO3CR where
+this is used.
+
+Related: NEOS-1345
+
+(cherry picked from commit 4e64cf13e55ffcbd4af4b3c5dbc8e5ccd56eb35d)
+
+* Commit: `95b34df <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/95b34dfc032003a4eca361e3849648f23a8db66e>`_
+
+[BUGFIX] Selecting editable requires a second click
+-----------------------------------------------------------------------------------------
+
+Fix regression caused by ``I6f04b5eed47193a5322514be67d179c593ed1ba8``
+where editables are not selected on first click. This happens because
+when focussing a new element the active editables are deselected, but
+the newly focussed editable is focussed before the update of the
+selected element and thus deselected for the newly selected element.
+
+Introduce ``deselectEditables`` option for ``updateSelection()``,
+to only try to deselect editables when it's desired.
+
+* Commit: `0461bf6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0461bf6bd9109805850f87b8714cdc3ffcaa3172>`_
+
+[TASK] Add Khmer language to Backend interface selector
+-----------------------------------------------------------------------------------------
+
+This also changes the format of language label from just the local
+language to [local language - how it is called in English]
+
+Example: "Dansk - Danish"
+
+Resolves: NEOS-1336
+
+* Commit: `265bf51 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/265bf515f2a46fe988ca03cb0fbab30814ac5def>`_
+
+[BUGFIX] ContentCollectionRenderer should not taint Node context
+-----------------------------------------------------------------------------------------
+
+The ContentCollection also renders removed nodes while in editing mode,
+so publishing can pick up those nodes and give a correct count of changes
+available for publishing.
+
+Without this change removed and non removed nodes are fetched in one
+expression, but that results in all visible nodes to have a "tainted"
+context that permits seeing removed nodes. This results in removed nodes
+being fetched if a content element fetches and renders sub nodes without
+using the ContentCase renderer (as that adds a class that hides removed
+elements).
+
+This change fixes the problem by separating the retrieval of removed nodes
+from that of visible nodes. That way only the removed nodes get the
+tainted context but as they are not rendered visible that won't be
+a problem.
+
+* Commit: `d9bc480 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d9bc4802c60085e18ead80052da69c9f684d2ced>`_
+
+[TASK] Include MultiSite documentation into TOC tree
+-----------------------------------------------------------------------------------------
+
+This makes the MultiSite documentation (stub) available in the TOC tree
+of the documentation, so it actually shows up and is linked to.
+
+* Commit: `d55eebe <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d55eebebae844bae3c50d69d2f7da61715b1106b>`_
+
+[TASK] Remove unused requirejs path
+-----------------------------------------------------------------------------------------
+
+* Commit: `966b552 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/966b552e4d619a3be486ad0eaadff1078b3eb13e>`_
+
+[BUGFIX] ``PluginViews`` with error messages can be selected in backend
+-----------------------------------------------------------------------------------------
+
+If an error occurred inside a plugin view element the message was
+rendered as plain text without any wrap. Because of that the item could
+not be selected in the backend any more.
+
+The solution is to wrap the message in a p-tag for as it is already
+done if the ``PluginView`` is not configured at all.
+
+Fixes: NEOS-1322
+
+* Commit: `87c2935 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/87c2935539aabd7eeee59d649282d09be2ffa550>`_
+
+[BUGFIX] Fix use of undefined jQuery in NodeActions.js
+-----------------------------------------------------------------------------------------
+
+A regression from I66802b9d7319422037b19bbd7848afd0b5c4e6a4 which added
+the use of jQuery, but only $ is defined.
+
+Related: NEOS-613
+
+* Commit: `178a37f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/178a37f6a6c7632cf1fe973599fb44fe694ed086>`_
+
+[BUGFIX] Inserting content elements with nested content elements breaks
+-----------------------------------------------------------------------------------------
+
+Fixes a regression introduced with the inserting/pasting inline content
+without reloading the page, caused insert of elements containing nested
+elements to break.
+
+Related: NEOS-613
+
+* Commit: `0ae6775 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0ae6775d16a1abbb4ccdae6ea2a81335c526cd6a>`_
+
+[TASK] Adjust TYPO3 Neos to just Neos in documentation
+-----------------------------------------------------------------------------------------
+
+This adjusts the documentation–where it makes sense–to use just Neos
+instead of TYPO3 Neos.
+
+Changelogs and release notes have been left unchanged since they should
+be "historically correct".
+
+* Commit: `b5cadd3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b5cadd374e0b1a722b56a8ee24169a7bde445641>`_
+
+[BUGFIX] Fix PDF rendering errors
+-----------------------------------------------------------------------------------------
+
+This adjusts the markup of the options documentation on node types.
+
+This not only uses definition lists that are better readable than deeply
+nested lists, it also fixes a rendering error when producing PDF (the
+infamous "too deeply nested").
+
+Some rST warnings are fixed along the way.
+
+* Commit: `7c46b35 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c46b35045049967f39d863dee83c9b6d7def07c>`_
+
+[TASK] Show version and release in front matter
+-----------------------------------------------------------------------------------------
+
+* Commit: `b2e4434 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b2e4434ea3d7a085b56c6fcc8d5459f6553d1deb>`_
+
+[TASK] Exclude changelogs from PDF rendering
+-----------------------------------------------------------------------------------------
+
+This saves some 600+ pages in the generated PDF, cutting down on the
+time needed to render, download, ... it.
+
+* Commit: `6c87780 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6c877803994b28927e5894aabf493324615165b8>`_
+
+[TASK] Rename Index.rst to index.rst
+-----------------------------------------------------------------------------------------
+
+This is our workaround for an issue with rtfd.org so the documentation
+can be browsed when it has been rendered there.
+
+(See https://github.com/rtfd/readthedocs.org/issues/1279 for details.)
+
+* Commit: `148e296 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/148e29698d63ef6b2fd8291b091b6dc605b162f9>`_
+
+[TASK] Switch to plain Sphinx build configuration
+-----------------------------------------------------------------------------------------
+
+Switches to a more standard setup for rendering rST using Sphinx. A
+simple ``make html`` renders the documentation, if sphinx is installed.
+
+The ``conf.py`` contains a tweak to allow using the RTD theme without
+confusing the renderer over at RDT itself.
+
+* Commit: `f1d5264 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f1d5264f83e16e68a70f82a51c4221f18959e064>`_
+
+[TASK] Allow pasting copied node multiple times
+-----------------------------------------------------------------------------------------
+
+Instead of clearing the clipboard after copying content/documents,
+the copied node is kept in the clipboard to allow pasting it multiple
+times. When cutting a node it's still cleared like before.
+
+Resolves: NEOS-1319
+
+* Commit: `c468045 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c468045b9a452ae763c30a3bdb1eac5e58e51400>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Remove faulty, old code migration
+-----------------------------------------------------------------------------------------
+
+The removed code migration renamed various TypoScript prototypes
+from a pre 1.0 state to a 1.0 and up compatible state. Some of those
+prototypes have changed names again in the meantime (TYPO3.Neos:Template)
+rendering this migration breaking.
+Pre 1.0 projects need to adjust those changes manually from now.
+
+* Commit: `7c5497e <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/7c5497e8431c5f9761f82c873d6298a6604c46e8>`_
+
+[BUGFIX] Menu cache configuration is missing entryTag for the Menu node itself
+-----------------------------------------------------------------------------------------
+
+When some properties of ``TYPO3.Neos.NodeTypes:Menu`` node are changed
+the caches would not get flushed, as entryTags configuration are missing
+the entry tag for Menu node itself.
+
+* Commit: `9efa6a4 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/9efa6a42a81c066a90a3c3d34ae995f8ee17a643>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Support negated instanceof FlowQuery filter operation
+-----------------------------------------------------------------------------------------
+
+A regression introduced in another fix with the change
+``Icce97f6e0f210353f5123edd4f8c5a868f7134ea`` lead to incorrect
+matching of negated instanceof filters for node types.
+
+Related: NEOS-1348
+
+* Commit: `22e843b <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/22e843b91cc8b2bbbcb7cb30e4daa3f0b39d02a6>`_
+
+[BUGFIX] Support multiple filters in FlowQuery children operation
+-----------------------------------------------------------------------------------------
+
+Due to incorrect handling of multiple Fizzle filters in the custom
+optimization in the FlowQuery children operation, multiple filters
+give incorrect results. Instead now all filters are taken into
+account and optimized individually if possible.
+
+Fixes: NEOS-1348
+
+* Commit: `9229837 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9229837ebc4481366b31e80fb295353f0255ac71>`_
+
+[FEATURE] Allow to restrict editing by node-dimension
+-----------------------------------------------------------------------------------------
+
+Example Configuration::
+
+privilegeTargets:
+  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePrivilege':
+    # This privilegeTarget must be *DEFINED* so that we switch to a
+    # "whitelist" approach
+    'TYPO3.NeosDemoTypo3Org:EditAllNodes':
+      matcher: 'TRUE'
+
+    'TYPO3.NeosDemoTypo3Org:EditGerman':
+      matcher: 'isInDimensionPreset("language", "de")'
+roles:
+  'TYPO3.Neos:Editor':
+    privileges:
+      -
+        privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
+        permission: GRANT
+
+This change also marks the ContentDimensionPresetSource a singleton,
+to make sure we can override the configuration from within Behat tests.
+
+Also, check the corresponding change in the Neos package.
+
+Resolves: NEOS-1345
+
+(cherry picked from commit b1cf82a625efd31da90cec12a134c687a9f4916d)
+
+* Commit: `ea22df3 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ea22df3d44659485b6797d04e1ff2b3f0b798453>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Set status after sucessfully rendering a TypoScript object
+-----------------------------------------------------------------------------------------
+
+Due to the bugfix done in ``I8abefe9f8fb399a186d93737e2396dd55fc9c452``
+a regression was introduced as the ``lastEvaluationStatus`` is now
+considered in processors to allow conditions. But as the status
+is not set in a consistent manner you can end up with a successfully
+rendered TypoScript object and ``lastEvaluationStatus`` set to FALSE.
+
+This is fixed by setting the status after successfully rendering a
+TypoScript object.
+
+* Commit: `57e3cf6 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/57e3cf6844300524feaf4e7465c04660ea92645a>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Demo site should "correctly" create footer node
+-----------------------------------------------------------------------------------------
+
+The demo site created the "footer" child node on the homepage purely from
+the ``Sites.xml``. It was not configured in ``NodeTypes.yaml``.
+This is not best practice and could break if we introduce functionality
+to remove child nodes that are not configured.
+Now the homepage of the demo site is a new NodeType that has ``footer``
+configured as childNode.
+
+Fixes: NEOS-913
+
+* Commit: `dc0d89d <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/dc0d89d9850bdfd693cbaa60eeedd6c01296026a>`_
+
+[TASK] Adjust demo site to simplified FrontendLogin
+-----------------------------------------------------------------------------------------
+
+This adjusts the demo site content to the simplified
+``Flowpack.Neos.FrontendLogin`` package by
+
+* Replacing the "/member-area/user-profile" page by a simple
+  "/member-area/subpage" (because there is no "user profile" plugin
+  any longer).
+* Adjusting the explanatory text and example command
+
+See https://github.com/Flowpack/Flowpack.Neos.FrontendLogin/commit/ddf1fea55853cad59b8e4684d548554f161d60cf
+for the corresponding change on the FrontendLogin package
+
+Related: NEOS-1340
+
+* Commit: `7080f92 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/7080f920874dd57cadb85c5f0abcd0bcf5f08833>`_
+
+[TASK] Remove unused boostrap view helper namespace
+-----------------------------------------------------------------------------------------
+
+* Commit: `9f51fa6 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/9f51fa6469ce48e4aeb77ac3b8adc68c40426283>`_
+
+[BUGFIX] Overriding ``TYPO3.Neos.NodeTypes`` node types not working
+-----------------------------------------------------------------------------------------
+
+Due to missing dependency on the ``TYPO3.Neos.NodeTypes`` package,
+the multi column overriding didn't work correctly.
+
+* Commit: `2e80b3b <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/2e80b3b4aeab7c99baab814576c7468b055b4851>`_
+
