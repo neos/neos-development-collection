@@ -1,0 +1,45 @@
+<div class="neos-node-tree-toolbar">
+	<div class="neos-node-tree-toolbar-top">
+		<button id="neos-node-tree-refresh" class="neos-button" title="{{translate id='refresh' value='Refresh'}}" {{action "refresh" target="view"}}>
+			<i class="icon-refresh"></i>
+		</button>
+		<button id="neos-node-tree-delete-node" class="neos-button" title="{{translate id='delete' value='Delete'}}" {{bindAttr disabled="view.currentFocusedNodeCantBeModified"}} {{action "showDeleteNodeDialog" target="view"}}>
+			<i class="icon-trash"></i>
+		</button>
+
+		{{view view.PastePositionSelectorButton}}
+
+		<button id="neos-node-tree-cut-node" title="{{translate id='cut' value='Cut'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "cut" target="view"}}>
+			<i class="icon-cut"></i>
+		</button>
+		<button id="neos-node-tree-copy-node" title="{{translate id='copy' value='Copy'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "copy" target="view"}}>
+			<i class="icon-copy"></i>
+		</button>
+		<button id="neos-node-tree-toggle-hidden" title="{{translate id='hideUnhide' value='Hide/unhide'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "toggleHidden" target="view"}}>
+			<i class="icon-eye-close"></i>
+		</button>
+		<button id="neos-node-tree-edit-node" title="{{translate id='editTitle' value='Edit title'}}" {{bindAttr class=":neos-button view.editNodeTitleMode:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "editNode" target="view"}}>
+			<i class="icon-pencil"></i>
+		</button>
+
+		{{view view.NewPositionSelectorButton}}
+
+	</div>
+	<div class="neos-node-tree-toolbar-bottom">
+		<div id="neos-node-tree-filter">
+			<select data-placeholder="Filter">
+				<option value=""></option>
+			</select>
+		</div>
+		<div id="neos-node-tree-sorting">
+			<span class="icon-sort-by-attributes"></span>
+		</div>
+		<div id="neos-node-tree-search">
+			{{view view.searchField valueBinding="view.searchTerm"}}
+			<span {{bindAttr class="view.searchTermIsEmpty:icon-search:icon-remove-sign"}} {{action "clearSearchTerm" target="view"}}></span>
+		</div>
+	</div>
+</div>
+<div id="neos-node-tree-container">
+	<div id="neos-node-tree-tree" {{bindAttr class="view.dragInProgress:neos-tree-drag-in-progress"}}></div>
+</div>

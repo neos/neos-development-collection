@@ -1,0 +1,198 @@
+body {
+	// States
+	&.neos-backend {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+
+	&.neos-controls {
+		margin-top: $unit * 2 + 2;
+		margin-left: 0;
+
+		#neos-top-bar {
+			display: block;
+		}
+	}
+
+	&.neos-edit-preview-panel-open {
+		margin-top: $editPreviewPanelHeight + ($unit * 2 + 2);
+	}
+
+	&.neos-menu-panel-open.neos-menu-panel-sticky {
+		margin-left: $menuButtonWidth;
+	}
+
+	&.neos-navigate-panel-open {
+		margin-left: $navigatePanelWidth + 1;
+	}
+
+	&.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open {
+		margin-left: $menuButtonWidth + $navigatePanelWidth + 1;
+	}
+
+	&.neos-inspector-panel-open {
+		margin-right: $inspectorWidth + 1;
+	}
+
+	&.neos-full-screen {
+		margin-top: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+
+		.neos {
+			#neos-top-bar,
+			#neos-context-bar,
+			#neos-inspector {
+				display: block !important;
+			}
+
+			#neos-top-bar {
+				top: -($unit + 1);
+			}
+
+			#neos-inspector-button {
+				top: -($unit + 2);
+			}
+
+			#neos-menu-button {
+				top: -$unit;
+			}
+
+			#neos-context-bar {
+				top: -($unit + 1);
+				box-shadow: none;
+				display: block;
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			#neos-edit-preview-panel {
+				top: -($editPreviewPanelHeight + 1);
+			}
+
+			#neos-inspector {
+				right: -($inspectorWidth + 1);
+				overflow: hidden;
+			}
+
+			#neos-menu-panel,
+			#neos-navigate-panel {
+				left: -($navigatePanelWidth + 1) !important;
+			}
+		}
+
+		.neos-full-screen-close {
+			display: block !important;
+			position: fixed;
+			top: $defaultMargin;
+			right: $defaultMargin;
+			@include box-shadow(0 0 $relatedMargin rgba(0, 0, 0, .25));
+			z-index: 9999;
+
+			.neos-button {
+				width: $unit;
+				line-height: $unit + 4px;
+				padding: 0;
+
+				i {
+					margin-top: 1px;
+				}
+			}
+		}
+	}
+
+	&.neos-preview-mode {
+		.neos-contentelement {
+			outline: none !important;
+		}
+
+		div.neos-inline-editable {
+			outline: none !important;
+			background: none !important;
+		}
+
+		// Handles around Aloha Blocks
+		.neos-handle,
+		.neos-status-indicator {
+			display: none !important;
+		}
+
+		// Aloha Floating Menu
+		#aloha-floatingmenu-shadow,
+		.aloha-floatingmenu,
+		.x-shadow,
+		.neos-contentelement-overlay,
+		button.neos-create-new-content,
+		.neos-contentelement-hidden {
+			display: none !important;
+		}
+
+		// Content elements
+		.neos-contentelement-active {
+			outline: none !important;
+			outline-offset: 0px;
+
+			> .neos-contentelement-handle-container {
+				visibility: hidden;
+			}
+		}
+
+		.neos {
+			&.neos-empty-contentcollection-overlay,
+			.neos-overlay-component,
+			.neos-handle-container,
+			.neos-modal-backdrop {
+				display: none;
+			}
+		}
+	}
+
+	.neos-nprogress-busy & {
+		cursor: wait !important;
+	}
+}
+
+#neos-document-metadata {
+	display: none;
+}
+
+.neos-rendering-exception {
+	word-wrap: break-word;
+}
+
+#neos-shortcut {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $grayMedium;
+	z-index: 9999;
+	@include font;
+
+	p {
+		position: relative;
+		margin: 0 auto;
+		width: 500px;
+		height: 60px;
+		top: 50%;
+		margin-top: -30px;
+		color: #fff;
+		font-size: 22px;
+		line-height: 1.4;
+		text-align: center;
+
+		a {
+			color: $blue;
+			text-decoration: none;
+
+			&:hover {
+				color: $blueLight;
+			}
+		}
+	}
+}
+
+// Include other global style files
+@import "ContextBar/AlohaInlineTable";
+@import "Shared/Select2";

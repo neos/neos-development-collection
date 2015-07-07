@@ -1,0 +1,428 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  Flow:
+    aop:
+      globalObjects:
+        userInformation: TYPO3\Neos\Service\UserService
+
+    security:
+      authentication:
+        providers:
+          Typo3BackendProvider:
+            label: 'Neos Backend'
+            provider: 'PersistedUsernamePasswordProvider'
+            requestPatterns:
+              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+            entryPoint: 'WebRedirect'
+            entryPointOptions:
+              routeValues:
+                '@package':    'TYPO3.Neos'
+                '@controller': 'Login'
+                '@action':     'index'
+                '@format':     'html'
+        authenticationStrategy: oneToken
+
+    persistence:
+      doctrine:
+        eventListeners:
+          'TYPO3\Neos\Domain\EventListener\AccountPostEventListener':
+            events: ['postPersist', 'postUpdate', 'postRemove']
+            listener: 'TYPO3\Neos\Domain\EventListener\AccountPostEventListener'
+
+          'TYPO3\Neos\EventLog\Integrations\EntityIntegrationService':
+            events: ['onFlush']
+            listener: 'TYPO3\Neos\EventLog\Integrations\EntityIntegrationService'
+
+          'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService':
+            events: ['preFlush']
+            listener: 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService'
+
+    error:
+      exceptionHandler:
+        renderingGroups:
+          'notFoundExceptions':
+            matchingStatusCodes: [ 404 ]
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+          'databaseConnectionExceptions':
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                'showSetupLink': TRUE
+          'noHomepageException':
+            matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                'showSetupLink': TRUE
+
+      debugger:
+        ignoredClasses:
+          'TYPO3\\Neos\\Domain\\Service\\ContentContextFactory': TRUE
+
+    package:
+      packagesPathByType:
+        'typo3-flow-site': 'Sites'
+        'typo3-flow-plugin': 'Plugins'
+
+  DocTools:
+    bundles:
+      Neos:
+        documentationRootPath: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/'
+        configurationRootPath: '%FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/'
+        renderedDocumentationRootPath: '%FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/'
+        renderingOutputFormat: 'html'
+        renderByDefault: FALSE
+
+  Neos:
+
+    typoScript:
+      # if set to TRUE, TypoScript is cached on a per-site basis.
+      # Depending on the size of your TypoScript, will improve rendering times 20-100+ ms.
+      # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
+      # you enable this setting only:
+      #
+      # - if you do not change TypoScript in production context, but instead use e.g. TYPO3.Surf for automatic deployment
+      # - in Production context
+      enableObjectTreeCache: FALSE
+
+      # Packages can now register with this setting to get their TypoScript in the path:
+      # resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2
+      # included automatically.
+      # The order of inclusions is set by the package loading order
+      # (and thus the composer dependencies of your packages).
+      # This also allows disabling of autoIncludes if needed.
+      autoInclude:
+        'TYPO3.TypoScript': TRUE
+        'TYPO3.Neos': TRUE
+
+    nodeTypes:
+      groups:
+        general:
+          position: 'start'
+          label: 'General'
+        structure:
+          position: 100
+          label: 'Structure'
+        plugins:
+          position: 200
+          label: 'Plugins'
+
+    userInterface:
+      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # Content Module, this should be set to FALSE.
+      loadMinifiedJavascript: TRUE
+
+      # Switch on to see all translated labels getting scrambled. You now can localize
+      # everything that is still readable.
+      scrambleTranslatedLabels: FALSE
+
+      translation:
+        # Configure which localization sources should be automatically included.
+        # The included sources are parsed into the xliff.json which is loaded by Neos
+        # for handling translations in the javascript code.
+        #
+        # Format:
+        #   'Package.Key': ['Main', 'Errors', 'NodeTypes']
+        autoInclude:
+          'TYPO3.Neos': ['Main']
+
+      requireJsPathMapping:
+        'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
+        'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
+
+      # the default language for the backend interface (can be overridden by user preference through availableLanguages)
+      defaultLanguage: 'en'
+
+      # the languages the backend user can choose from (the xliff file for this language should be present!)
+      availableLanguages:
+        'da': 'Dansk – Danish'
+        'de': 'Deutsch – German'
+        'en': 'English – English'
+        'es': 'Español – Spanish'
+        'fr': 'Français – French'
+        'km': 'ភាសាខ្មែរ – Khmer'
+        'lv': 'Latviešu – Latvian'
+        'nl': 'Nederlands – Dutch'
+        'pl': 'Polski – Polish'
+        'ru': 'Pусский – Russian'
+        'sv': 'Svenska – Swedish'
+
+      navigateComponent:
+        nodeTree:
+          # number of levels inside the node tree which shall be loaded eagerly, at start.
+          # if you have lots of nodes you should maybe reduce this number of elements.
+          loadingDepth: 4
+
+          presets:
+            default:
+              baseNodeType: 'TYPO3.Neos:Document'
+
+      inspector:
+        dataTypes:
+          'string':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'integer':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'boolean':
+            editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+          'array':
+            editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+            editorOptions:
+              multiple: TRUE
+              placeholder: 'Choose'
+          'TYPO3\Media\Domain\Model\ImageInterface':
+            editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
+            editorOptions:
+              # With this option you can limit the maximum file size to the specified number of bytes.
+              # Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb"
+              # If not set, the maximum upload size is used as configured in php.ini
+              maximumFileSize: ~
+              features:
+                crop: TRUE
+                resize: FALSE
+              crop:
+                aspectRatio:
+                  options:
+                    square:
+                      width: 1
+                      height: 1
+                      label: 'Square'
+                    fourFive:
+                      width: 4
+                      height: 5
+                    fiveSeven:
+                      width: 5
+                      height: 7
+                    twoThree:
+                      width: 2
+                      height: 3
+                    fourThree:
+                      width: 4
+                      height: 3
+                    sixteenNine:
+                      width: 16
+                      height: 9
+                  enableOriginal: TRUE
+                  allowCustom: TRUE
+                  locked:
+                    width: 0
+                    height: 0
+          'TYPO3\Media\Domain\Model\Asset':
+            editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
+          'array<TYPO3\Media\Domain\Model\Asset>':
+            editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
+            editorOptions:
+              multiple: TRUE
+          'DateTime':
+            editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
+            editorOptions:
+              format: 'd-m-Y'
+          'reference':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
+          'references':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
+
+      defaultEditPreviewMode: 'inPlace'
+      editPreviewModes:
+        # Live mode is only configured here for consistency. You shouldn't change it.
+        live:
+          isEditingMode: FALSE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: ''
+          title: 'Live'
+        inPlace:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: ''
+          title: 'In-Place'
+          position: 100
+        rawContent:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: 'rawContent'
+          title: 'Raw Content'
+          position: 200
+        desktop:
+          isEditingMode: FALSE
+          isPreviewMode: TRUE
+          typoScriptRenderingPath: ''
+          title: 'Desktop'
+          position: 100
+
+    moduleConfiguration:
+      widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
+    modules:
+      management:
+        label: 'Management'
+        controller: '\TYPO3\Neos\Controller\Module\ManagementController'
+        description: 'Contains multiple modules related to management of content'
+        icon: 'icon-briefcase'
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management'
+        submodules:
+          workspaces:
+            label: 'Workspaces'
+            controller: '\TYPO3\Neos\Controller\Module\Management\WorkspacesController'
+            description: 'This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.'
+            icon: 'icon-th-large'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces'
+          media:
+            label: 'Media'
+            controller: '\TYPO3\Neos\Controller\Module\Management\AssetController'
+            description: 'This module allows managing of media assets including pictures, videos, audio and documents.'
+            icon: 'icon-camera'
+            privilegeTarget: 'TYPO3.Media:ManageAssets'
+          history:
+            label: 'History'
+            controller: '\TYPO3\Neos\Controller\Module\Management\HistoryController'
+            description: 'This module contains a list of all historic changes in Neos.'
+            icon: 'icon-calendar'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
+      administration:
+        label: 'Administration'
+        controller: '\TYPO3\Neos\Controller\Module\AdministrationController'
+        description: 'Contains multiple modules related to administration'
+        icon: 'icon-gears'
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration'
+        submodules:
+          users:
+            label: 'User Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\UsersController'
+            description: 'The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.'
+            icon: 'icon-group'
+            actions:
+              new:
+                label: 'Create user'
+                title: 'Create a new user'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Users'
+          packages:
+            label: 'Package Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
+            description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
+            icon: 'icon-archive'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Packages'
+          sites:
+            label: 'Sites Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'
+            description: 'The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.'
+            icon: 'icon-globe'
+            actions:
+              newSite:
+                label: 'Create site'
+                title: 'Create a new site'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Sites'
+          configuration:
+            label: 'Configuration'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\ConfigurationController'
+            description: 'The Configuration module provides you with an overview of all configuration types.'
+            icon: 'icon-list-alt'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Configuration'
+      user:
+        label: 'User'
+        controller: '\TYPO3\Neos\Controller\Module\UserController'
+        hideInMenu: TRUE
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.User'
+        submodules:
+          usersettings:
+            label: 'User Settings'
+            controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
+            description: 'This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.'
+            icon: 'icon-user'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.User.UserSettings'
+
+    # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
+    eventLog:
+      enabled: TRUE
+      monitorEntities:
+        'TYPO3\Flow\Security\Account':
+          events:
+            created: 'Account.Created'
+            deleted: 'Account.Deleted'
+          data:
+            accountIdentifier: '${entity.accountIdentifier}'
+            authenticationProviderName: '${entity.authenticationProviderName}'
+            name: '${entity.party.name.fullName}'
+
+  Setup:
+    stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
+    steps:
+      neosRequirements:
+        className: 'TYPO3\Neos\Setup\Step\NeosSpecificRequirementsStep'
+      administrator:
+        className: 'TYPO3\Neos\Setup\Step\AdministratorStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      siteimport:
+        className: 'TYPO3\Neos\Setup\Step\SiteImportStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      final:
+        className: 'TYPO3\Neos\Setup\Step\FinalStep'
+    view:
+      title: 'TYPO3 Neos Setup'
+
+  Media:
+    bodyClasses: 'neos neos-module media-browser'
+    scripts:
+      - resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js
+      - resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js
+      - resource://TYPO3.Neos/Public/Library/bootstrap-components.js
+      - resource://TYPO3.Neos/Public/JavaScript/Modules/media-browser.js
+    styles:
+      - resource://TYPO3.Neos/Public/Styles/Neos.css
+
+  TypoScript:
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+    defaultContext:
+      'Neos.Node': 'TYPO3\Neos\TypoScript\Helper\NodeHelper'
+      'Neos.Link': 'TYPO3\Neos\TypoScript\Helper\LinkHelper'
+      'Neos.Array': 'TYPO3\Neos\TypoScript\Helper\ArrayHelper'
+      'Neos.Rendering': 'TYPO3\Neos\TypoScript\Helper\RenderingHelper'
+
+  #TYPO3CR:
+    # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
+    # or via global settings.
+    #
+    #contentDimensions:
+    #
+    #  # Content dimension "language" serves for translation of content into different languages. Its value specifies
+    #  # the language or language variant by means of a locale.
+    #  'language':
+    #    # The default dimension that is applied when creating nodes without specifying a dimension
+    #    default: 'mul_ZZ'
+    #    # The default preset to use if no URI segment was given when resolving languages in the router
+    #    defaultPreset: 'all'
+    #    label: 'Language'
+    #    icon: 'icon-language'
+    #    presets:
+    #      'all':
+    #        label: 'All languages'
+    #        values: ['mul_ZZ']
+    #        uriSegment: 'all'
+    #      # Example for additional languages:
+    #
+    #      'en_GB':
+    #        label: 'English (Great Britain)'
+    #        values: ['en_GB', 'en_ZZ', 'mul_ZZ']
+    #        uriSegment: 'gb'
+    #      'de':
+    #        label: 'German (Germany)'
+    #        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
+    #        uriSegment: 'de'

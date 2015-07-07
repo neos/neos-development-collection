@@ -1,0 +1,131 @@
+==================
+1.2.8 (2015-06-03)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/52/
+
+* Commit: `262dfae <https://git.typo3.org/Neos/Distributions/Base.git/commit/262dfaeb139bbc82d0d9a64f6612250689ab81ae>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/55/
+
+* Commit: `f50bdc9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f50bdc98ee9c04c318e5504b2cc6d9528b19b1f1>`_
+
+[BUGFIX] Aloha configuration gets applied to nested properties
+-----------------------------------------------------------------------------------------
+
+Adjust selector for applying Aloha configuration, to only match
+those properties that belong to the same node and not descendants of
+nested node's wrapping.
+
+Resolves: NEOS-1316
+
+* Commit: `07988a0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/07988a0f693ac73ff6898aa090b5268c6777af7a>`_
+
+[BUGFIX] Fix wrong cache invalidation message
+-----------------------------------------------------------------------------------------
+
+The message for a DescendantOf_* tag referred to a wrong node, this is
+fixed by this change.
+
+* Commit: `3c63de7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3c63de78c1a16175c826fd2eb42aa085dd8a0d7f>`_
+
+[TASK] Add missing ChangeLogs to documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `2f1c190 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2f1c190e161e7845ca6992c01159b3c06697c7e0>`_
+
+[BUGFIX] Live workspace shortcut breaks when having multiple dimensions
+-----------------------------------------------------------------------------------------
+
+When using multiple content dimensions, the live workspace shortcut next
+to the fullscreen button, opens a broken URL because the dimensions are
+not stripped correctly.
+
+Fixes: NEOS-1206
+
+* Commit: `2025972 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/202597274e793d8be5fc0ca4219f6351a17db5cd>`_
+
+[BUGFIX] Allow ``PluginViews`` to encapsulate multiple actions
+-----------------------------------------------------------------------------------------
+
+Currently the ``PluginViewImplementation`` only evaluates the default
+controller/action pair that is configured in the ``controllerActions``
+setting of the corresponding NodeType.
+Additional controllers/actions are ignored so that it's not possible to
+invoke them.
+
+This is fixed by falling back to the default controller/action only if
+no explicit action is requested.
+
+Fixes: NEOS-1311
+
+* Commit: `ff40c01 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ff40c01b593236ff0059bb26bd08977157e5ac31>`_
+
+[BUGFIX] Prevent syntax error for backend in latest stable Chrome
+-----------------------------------------------------------------------------------------
+
+Due to a bug in the recent stable version of Chrome the backend breaks
+occasionally when initalizing. This only happens when using the minified
+JavaScript build. The bug is caused by a non UTF-8 unicode character
+in the CodeMirror library using a UTF-16 character, which causes the
+bug in Chrome.
+
+Updating CodeMirror to the latest minor version of 3.* fixes the issue,
+which is a good idea in any case.
+The issue is already fixed in Chrome, however it may take a while for a new
+stable version to be rolled out.
+
+Fixes: NEOS-1312
+
+* Commit: `14c9773 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/14c9773f0ee3df7ba8f82e83c4fec7a418dda550>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

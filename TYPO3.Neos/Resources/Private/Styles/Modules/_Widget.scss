@@ -1,0 +1,89 @@
+.widget {
+	overflow: auto;
+	margin-bottom: 20px;
+	background-color: $grayMedium;
+	height: 300px;
+	position: relative;
+
+	&.has-footer {
+		.widget-body {
+			padding-bottom: 60px;
+		}
+	}
+
+	.widget-header {
+		h3 {
+			margin: 0;
+			padding: 0 $defaultMargin;
+			font-size: $baseFontSize;
+			line-height: 40px;
+			font-weight: normal;
+			color: #fff;
+			border-bottom: 1px solid $grayDark;
+
+			a {
+				color: #fff;
+			}
+		}
+
+		// Icon styles
+		i {
+			color: #fff;
+			font-size: 12px;
+			width: $unit;
+			height: $unit;
+			border-right: 1px solid $grayDark;
+			margin-right: $defaultMargin;
+
+			&:before {
+				width: inherit;
+				height: inherit;
+				text-align: center;
+				line-height: $unit;
+			}
+		}
+	}
+
+	.widget-body {
+		padding: 15px;
+		overflow-y: auto;
+
+		p {
+			font-size: $baseFontSize * 0.95;
+			line-height: 1.4;
+			color: $textSubtleLight;
+		}
+	}
+
+	.widget-footer {
+		padding: 14px 15px 15px;
+		margin-bottom: 0;
+		text-align: right;
+		background-color: transparent;
+		*zoom: 1;
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		width: 100%;
+		@include box-sizing(border-box);
+	}
+
+	.widget-footer:before,
+	.widget-footer:after {
+		display: table;
+		content: "";
+	}
+
+	.widget-footer:after {
+		clear: both;
+	}
+
+	.widget-footer .neos-button-group .neos-button {
+		margin-bottom: 0;
+		margin-left: 5px;
+	}
+
+	.widget-footer .neos-button-group .neos-button + .neos-button {
+		margin-left: -1px;
+	}
+}

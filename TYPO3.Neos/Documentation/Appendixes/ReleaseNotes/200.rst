@@ -1,0 +1,266 @@
+========================
+2.0.0 (not released yet)
+========================
+
+*Note*: These release notes are written from the perspective of the final release. Some of the mentioned features might
+        not yet work as expected and upgrading instructions may be incomplete. Please help improving these release notes
+        and upgrade instructions by submitting a patch to our review queue.
+
+Fine-grained Access Control
+===========================
+
+A common requirement, especially for larger websites with many editors, is the possibility to selectively control access
+to certain backend tools and parts of the content. For example so that editors can only edit certain pages or content
+types or that they are limited to specific workspaces. These access restrictions are used to enforce certain workflows
+and to reduce complexity for editors.
+
+With Neos 2.0, we introduce a way to define Access Control Lists (ACL) in a very fine-grained manner, enabling the
+following use-cases:
+
+- hide parts of the node tree completely (useful for multi-site websites and frontend-login) (in progress)
+- protect arbitrary method calls (as possible before)
+- define the visibility of arbitrary elements depending on the authenticated user (as possible before; currently being
+  worked on)
+- show only specific Backend Modules
+- allow to create only specific TYPO3CR Node Types (being worked on currently)
+- allow to only edit parts of the Node Tree (being worked on currently)
+- allow to hide certain properties in the Content Inspector (being worked on currently)
+
+The above examples are all based upon specific *privilege types*; defining *what can be access-restricted*.
+
+Furthermore, the way Neos and Flow handle *roles* has been completely revised: A user is assigned to one or more specific
+roles, defining *who the user is*. For each role, a list of *privileges* is specified, defining the exact permissions of
+users assigned to each role.
+
+In the Neos user interface, it is possible to assign not just a single role to a user, but instead a list of multiple
+roles. This allows to define the permissions a user actually has on a much more fine-grained level than before, where
+only the distinction between Editor and Administrator was made. Additionally, the user management module has basic
+support for multiple accounts per user: a user may, for example, have one account for backend access and another one
+for access of a member-only area on the respective website.
+
+
+Cloud-Capable Resource and Media Management
+===========================================
+
+In today's world, the use of cloud services is very prevalent. People use Google drive, Dropbox or Box.com to share
+files and assets. Furthermore, applications of today should be deployable on PAAS systems like Heroku or AWS EC2.
+Because these platforms do not contain a writable and persistent file system, alternative storage systems for assets
+are needed. For highly scalable websites, the use of Content Delivery Networks for serving static content helps to
+keep sites well performing and fast.
+
+With Neos 2.0 and Flow 3.0, we introduce a completely written core of resource management, which features a plugin-based
+storage and publishing mechanism, providing support for various cloud providers and other scenarios.
+
+On the one hand, this now allows to store persistent resources like images which the user has uploaded in Amazon S3;
+making Flow and Neos a lot more straightforward to run on PAAS.
+
+On the other hand, resources which are used on the website output (like cropped and resized images) can be *published*
+to a CDN like Cloudfront, Akamai or Rackspace CloudFiles.
+
+As a reference implementation for third-party plugins we created a package supporting Rackspace Cloudfiles. A second
+implementation, for Amazon S3, is about to be finished.
+
+This feature is also the basis for seamlessly choosing assets from Google Drive or Dropbox in the Neos Media Management,
+which will be implemented in a later version of Neos.
+
+
+Translation & Content Variants
+==============================
+
+While translation of content, or more broadly, content variants, are the flagship feature of Neos 1.2, there were still
+some missing spots to fill to make working with content variants really awesome. Neos 2.0 includes quite some of these
+improvements.
+
+First, we re-implemented the way an initial translation of a document from one language to another works. If you wanted
+to translate from English to German in Neos 1.2, you needed to define that the German-language version of your page falls
+back to the "English" version -- effectively showing English content if it has not been translated in German yet.
+With Neos 2.0, you do not need these fall-backs anymore. Instead, if you choose a content variant which does not exist yet,
+you are asked whether you want to start with an empty page or copy the original content and start modifying it.
+
+Second, we re-thought how the node tree should behave in Neos: In order to reduce confusion, if you move a page to a
+different position in the hierarchy, it is moved *in all variants*. However, if you move *content* from left to right column,
+this only affects the current variant. After having tried numerous options in the last months, we believe that this
+way leads to the most predictable editing experience.
+
+Third, if you copy content from one variant to another (e.g. a content element which has been created in English, but
+not yet in German), the link between the original content and the translation is now preserved. This is an important
+technical foundation, based on which features such as a "list of changes in the original language" will be implemented
+in later Neos releases.
+
+
+Translated Neos User Interface
+==============================
+
+The User Interface of Neos is now translatable into multiple languages -- making it easier to use for non-English speakers.
+
+Now, we need *your help*, as we still need the actual translation. Please head over to https://crowdin.com/project/typo3-neos
+and https://crowdin.com/project/typo3-flow and translate the labels as you see them :)
+
+
+SEO Improvements
+================
+
+With Neos 2.0, we've added some first tools which help in improving search engine ranks:
+
+- Separation of page and navigation title
+- allow to set description, keywords and robots information per-page
+- machine-readable links to alternative-language versions
+- XML sitemap generation
+
+These features are provided by a separate package which can be removed using Composer by removing the ``typo3/neos-seo``
+package if so desired.
+
+Google Analytics
+================
+
+For many websites, getting key insights on their usage patterns is a requirement for improving content. That's why we
+created a seamless integration of Google Analytics; showing the current access numbers in an inspector tab of the current
+page.
+
+Google Analytics integration for Neos 2.0 can be easily installed by adding the ``typo3/neos-googleanalytics`` package
+to your website via Composer.
+
+History / Event Log
+===================
+
+For Neos 2.0, we have explored to add an event log, which records all kinds of changes to a Neos instance. Initially,
+the event log helps to answer the following questions:
+
+- What content has changed since I have last used the system?
+- Audit Logging: Which users have been created or modified?
+
+A small History module is included which allows to browse the history.
+
+By default, this feature is currently disabled, as the history grows quite quickly and there is no function to prune the
+history yet. We also imagine that the history can be used to enable functionality like more intelligent publishing or
+merging of changes.
+
+**DISCLAIMER** Be aware that this feature is still experimental.
+
+Data views (inspector)
+======================
+
+Data views is a new feature for the inspector to be able to display custom views without having a property for it.
+
+Supports a simple view, table view and time series view to display generic data from a data source. Include D3 for SVG
+graphs. Currently used in the Google Analytics package.
+
+**DISCLAIMER** Be aware that this feature is still experimental and likely to have breaking changes in the future.
+
+Media browser/module
+====================
+
+- Asset collections (additional layer to separate large amounts of assets)
+   New concept for asset collections which can have separate tags or share tags among them. A default asset collection
+   can be set for a site, resulting in every asset uploaded for that site automatically being added to that collection.
+   This makes it possible to separate assets across sites.
+- Support searching for assets
+- Drag & drop feedback improvements
+- Display upload progress for each file
+- Display filesize & type information in the list view
+- Thumbnail preview in list view
+- Improved notifications for various actions
+- Display error when trying to upload too large files
+- Support filtering lists by type
+- Support sorting lists by filename/last modified
+- Close button in top right corner when opening media browser
+- Possibility to delete assets in the thumbnail view
+- Display confirmation dialogs when deleting assets
+- Enable editing of existing tags
+- Improved for displaying on smaller viewports
+- Better support for many tags
+- Show tooltips for various icon buttons
+
+User interface improvements
+===========================
+
+- Content elements toolbar now support insert/paste before/into/after similar to the navigate component
+- Usability improvements to the sites management modules to better support multiple sites
+- Node information in the inspector displaying creation date, last modified date, last publication date, node name & identifier
+- Drag & drop support in the image inspector editor
+- Configurable resize & crop features for the image inspector editor
+- Searches (node tree, references, links) are no longer case sensitive
+
+Additional features
+===================
+
+- The storage format for the node data properties table has been changed to JSON from a serialized array
+   This makes it a lot easier to alter properties in the database, prevents unserialization issues and boost performance.
+- Improved exception handling with better output and styling
+- Creation date, last modified date & last publication date for nodes
+- Possibility to extend content collection as content elements
+- Auto-created child node positions (define the order of auto-created child nodes)
+- Backend context helpers (easier to determine if in the backend context)
+- Node repair improvements (remove broken nodes, remove lost nodes, remove undefined properties, add missing default values, set position)
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://neos.typo3.org/develop/download/upgrade-instructions-2-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- Reload content without reloading the whole page
+   This is breaking in case you rely on the whole page being reloaded when a property of a single node is changed.
+   To achieve the previous behavior a new option called `reloadPageIfChanged` is introduced.
+- Pull in stable versions of 3rd party dependencies
+   Remove the file ``Configuration/PackageState.php`` if issues occur with the ``Doctrine.Instantiator`` package.
+- Move PhpCodesniffer installation to Build folder
+   See commit message for instructions.
+- Implement ContentCollection in pure TypoScript
+   Change ``iterationName`` to ``content.iterationName`` to adjust existing content collections if that is used.
+- Method to easily determine if backend rendering
+   Deprecates the TypoScript context variable ``editPreviewMode``, can be replaced seamlessly with
+   ``${documentNode.context.currentRenderingMode.name}`` instead if used.
+- Add code migration for ImageVariant to ImageInterface change
+   To adjust the code use the new class, it should be enough to run this on your site package(s):
+   ``./flow flow:core:migrate --package-key <sitepackagekey>``
+- Centralized Neos user domain service
+   The ``user:remove command`` has been renamed to user:delete. Additionally it drops support for the "--confirmation"
+   option and now interactively asks for confirmation.
+- Account should not be available in the context
+   This is breaking if you use the context variable ``${account}`` in your own TypoScript. You should instead use
+   ``${Security.getAccount()}`` to retrieve it. Therefor you should also remove all usage of account in safed contexts
+   for uncached TypoScript objects.
+- ContentCollection overwrites node directly
+   This is breaking if you rely on the ``contentCollectionNode`` variable being set. You can retrieve the nearest
+   ContentCollection via FlowQuery.
+- Add charset and collation to all MySQL migrations
+   This is breaking if you have existing tables that do not use the utf8
+   charset and utf8_unicode_ci collation. To solve this you need to convert
+   the existing tables. This can be done using the command:
+   ``./flow database:setcharset``
+- Property mapper error on node properties of type date
+   The code migration ``20141218134700`` can be run to adjust the code in your package(s):
+   ``./flow flow:core:migrate --package-key <packagekey>``
+- Disable image resizing for image properties by default
+   This change is  breaking as the default resize feature is disabled  by default now, which means you need to enable
+   it if you rely on that feature.
+- Cleanup multi column rendering
+   This is breaking if you rely on the MultiColumnItem having a template as MultiColumnItem is not a ContentCollection
+   (so a plain tag). Attributes configured for MultiColumnItem still work as before.
+- Remove deprecated TYPO3.Neos:Page nodetype
+- Node path should always be lowercase
+   This is breaking in case you have nodes with names that have uppercase letters and they are referenced by their
+   path somewhere.
+- Minor changes to improve CR performance
+   This is breaking if you rely on the fact that persists are triggered for each newly created Node. This was a side
+   effect of assigning the highest index to the newly created Node and is now no longer needed in all cases. Therefor
+   tests need to be adapted so that they do no longer rely on this behavior.
+- Fix unique constraint for workspace/dimensions
+   This is breaking if you were unlucky enough to migrate between the merge of the the aforementioned change and this
+   very change. See details in the commit message.
+- Node with identifier should only exist once per context
+   This is breaking in case you have existing nodes in this situation, which you shouldn't have though.
+- Throw exception for missing implementation class
+   This can be breaking if relying on missing implementation classes being silenced and returning NULL.
+
+**Further details can be found in the commit messages of the changes**
+
+.. note::
+
+   Additionally all breaking changes in Flow 3.0 apply, see the release notes to further information.
+   See http://docs.typo3.org/flow/TYPO3FlowDocumentation/latest/TheDefinitiveGuide/PartV/ReleaseNotes/300.html
