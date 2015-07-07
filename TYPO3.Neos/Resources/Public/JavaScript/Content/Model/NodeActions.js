@@ -303,6 +303,8 @@ define(
 			if (newElement.length === 0) {
 				console.warn('Node could not be found in rendered collection.');
 				this._reloadPage();
+				// reload page is deferred, to fulfill the promise we should return here to avoid the rest of the code to be executed.
+				return;
 			}
 
 			rdfaService.setTemplate('typo3:' + nodeType, 'typo3:content-collection', function (entity, callback) {
@@ -339,6 +341,8 @@ define(
 			if ($newElement.length === 0) {
 				console.warn('Node could not be found in document.');
 				this._reloadPage();
+				// reload page is deferred, to fulfill the promise we should return here to avoid the rest of the code to be executed.
+				return;
 			}
 
 			// Replace existing entity wrapper in case it already exists
