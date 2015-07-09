@@ -1,6 +1,6 @@
-==================
+========================
 2.0.0-beta4 (2015-07-07)
-==================
+========================
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Base Distribution
@@ -312,21 +312,21 @@ Fixes: NEOS-1348
 
 Example Configuration::
 
-privilegeTargets:
-  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePrivilege':
-    # This privilegeTarget must be *DEFINED* so that we switch to a
-    # "whitelist" approach
-    'TYPO3.NeosDemoTypo3Org:EditAllNodes':
-      matcher: 'TRUE'
+  privilegeTargets:
+    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePrivilege':
+      # This privilegeTarget must be *DEFINED* so that we switch to a
+      # "whitelist" approach
+      'TYPO3.NeosDemoTypo3Org:EditAllNodes':
+        matcher: 'TRUE'
 
-    'TYPO3.NeosDemoTypo3Org:EditGerman':
-      matcher: 'isInDimensionPreset("language", "de")'
-roles:
-  'TYPO3.Neos:Editor':
-    privileges:
-      -
-        privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
-        permission: GRANT
+      'TYPO3.NeosDemoTypo3Org:EditGerman':
+        matcher: 'isInDimensionPreset("language", "de")'
+  roles:
+    'TYPO3.Neos:Editor':
+      privileges:
+        -
+          privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
+          permission: GRANT
 
 This change also marks the ContentDimensionPresetSource a singleton,
 to make sure we can override the configuration from within Behat tests.
@@ -334,8 +334,6 @@ to make sure we can override the configuration from within Behat tests.
 Also, check the corresponding change in the Neos package.
 
 Resolves: NEOS-1345
-
-(cherry picked from commit b1cf82a625efd31da90cec12a134c687a9f4916d)
 
 * Commit: `ea22df3 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ea22df3d44659485b6797d04e1ff2b3f0b798453>`_
 
