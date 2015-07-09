@@ -44,7 +44,6 @@ define(
 		treeSelector: '#neos-context-structure-tree',
 		loadingDepth: 0,
 		unmodifiableLevels: 2,
-		refreshOnPageNodePathChanged: true,
 
 		publishableNodes: PublishableNodes,
 
@@ -61,11 +60,6 @@ define(
 		},
 
 		_onPageNodePathChanged: function() {
-			if (this.get('refreshOnPageNodePathChanged') === false) {
-				this.set('refreshOnPageNodePathChanged', true);
-				return;
-			}
-
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-document-metadata'))),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),
@@ -194,30 +188,19 @@ define(
 		},
 
 		afterDeleteNode: function() {
-			this._doNotRefreshOnPageNodePathChanged();
 			ContentModule.reloadPage();
 		},
 
 		afterPersistNode: function() {
-			this._doNotRefreshOnPageNodePathChanged();
 			ContentModule.reloadPage();
 		},
 
 		afterPaste: function() {
-			this._doNotRefreshOnPageNodePathChanged();
 			ContentModule.reloadPage();
 		},
 
 		afterMove: function() {
-			this._doNotRefreshOnPageNodePathChanged();
 			ContentModule.reloadPage();
-		},
-
-		_doNotRefreshOnPageNodePathChanged: function() {
-			var that = this;
-			ContentModule.one('pageLoaded', function() {
-				that.set('refreshOnPageNodePathChanged', false);
-			});
 		}
 	});
 });
