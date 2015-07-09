@@ -64,6 +64,12 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 		$imageSection = $page1->createElement('connectionSection', 'TYPO3.Form:Section');
 		$imageSection->setLabel('Image Manipulation');
 
+		$formElement = $imageSection->createElement('imageLibrariesInfo', 'TYPO3.Form:StaticText');
+		$formElement->setProperty('text', 'We checked for supported image manipulation libraries on your server.
+		Only one is needed and we select the best one available for you.
+		Using GD in production environment is not recommended as it has some issues and can easily lead to blank pages due to memory exhaustion.');
+		$formElement->setProperty('elementClassAttribute', 'alert alert-primary');
+
 		$foundImageHandler = FALSE;
 		foreach (array('gd', 'gmagick', 'imagick') as $extensionName) {
 			$formElement = $imageSection->createElement($extensionName, 'TYPO3.Form:StaticText');
@@ -76,11 +82,11 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 					$foundImageHandler = $extensionName;
 				} else {
 					$formElement->setProperty('text', 'PHP extension "' . $extensionName . '" is installed but lacks support for ' . implode(', ', $unsupportedFormats));
-					$formElement->setProperty('elementClassAttribute', 'alert alert-warning');
+					$formElement->setProperty('elementClassAttribute', 'alert alert-default');
 				}
 			} else {
 				$formElement->setProperty('text', 'PHP extension "' . $extensionName . '" is not installed');
-				$formElement->setProperty('elementClassAttribute', 'alert alert-warning');
+				$formElement->setProperty('elementClassAttribute', 'alert alert-default');
 			}
 		}
 
@@ -95,39 +101,6 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep {
 			$hiddenField = $imageSection->createElement('imagineDriver', 'TYPO3.Form:HiddenField');
 			$hiddenField->setDefaultValue(ucfirst($foundImageHandler));
 		}
-
-		$webServerSection = $page1->createElement('resourceSection', 'TYPO3.Form:Section');
-		$webServerSection->setLabel('Web Server Configuration');
-		if ($this->canResourceBeUploadedAndFetchedAgain()) {
-			$formElement = $webServerSection->createElement('resources', 'TYPO3.Form:StaticText');
-			$formElement->setProperty('text', 'File Uploads are configured as expected.');
-			$formElement->setProperty('elementClassAttribute', 'alert alert-success');
-		} else {
-			$formElement = $webServerSection->createElement('resources', 'TYPO3.Form:StaticText');
-			$formElement->setProperty('text', "File Uploads not configured correctly. This can have the following reasons:\n\n(1) The web server does not have permissions to read files in Web/_Resources. This might occur if a parent directory is not readable.\n(2) If you upgraded from Flow 2.x or Neos 1.x, you need to adjust your Web Server Configuration and remove the rewrite rule for _Resources/Persistent. See the release notes for details.");
-			$formElement->setProperty('elementClassAttribute', 'alert alert-warning');
-		}
-	}
-
-	/**
-	 * Try to check whether resource publishing works, and the server is configured correctly or not.
-	 *
-	 * We need to do this "manually" without accessing the Resource Manager directly, as we need to avoid any
-	 * database calls (as the database might be gone at this point).
-	 *
-	 * @return boolean TRUE if resource publishing worked; FALSE otherwise.
-	 * @throws \TYPO3\Flow\Resource\Exception
-	 */
-	protected function canResourceBeUploadedAndFetchedAgain() {
-		$collection = $this->resourceManager->getCollection(ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME);
-		$resource = $collection->importResourceFromContent('example-upload-test');
-		$resource->setFilename('example-upload-test.txt');
-		$publicResourceUri = $this->resourceManager->getPublicPersistentResourceUri($resource);
-		$collection->getTarget()->publishResource($resource, $collection);
-
-		$result = @file_get_contents($publicResourceUri);
-
-		return $result === 'example-upload-test';
 	}
 
 	/**
