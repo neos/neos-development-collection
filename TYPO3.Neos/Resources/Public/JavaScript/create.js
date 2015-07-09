@@ -65,9 +65,11 @@ define(
 			},
 
 			enableEdit: function() {
-				var that = this;
+				var editableOptions = this.get('editableOptions');
 				$('[about]').each(function() {
-					$(this).midgardEditable(that.get('editableOptions'));
+					var entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(this));
+					editableOptions.model = entity;
+					$(this).midgardEditable(editableOptions);
 				});
 
 				this.set('_state', 'edit');
