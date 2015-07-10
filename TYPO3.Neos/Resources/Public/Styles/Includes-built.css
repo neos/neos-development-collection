@@ -13195,7 +13195,7 @@ disabled look for disabled choices in the results dropdown
   top: 0;
   height: 40px;
   width: 40px;
-  background: none;
+  background: none !important;
   border-left: 1px solid #222;
   color: white;
   text-decoration: none;
