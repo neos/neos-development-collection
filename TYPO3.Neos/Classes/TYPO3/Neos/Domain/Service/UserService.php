@@ -541,6 +541,10 @@ class UserService {
 		$userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
 		if ($userWorkspace === NULL) {
 			$liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+			if (!($liveWorkspace instanceof Workspace)) {
+				$liveWorkspace = new Workspace('live');
+				$this->workspaceRepository->add($liveWorkspace);
+			}
 			$userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace);
 			$this->workspaceRepository->add($userWorkspace);
 		}

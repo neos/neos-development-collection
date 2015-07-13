@@ -103,7 +103,11 @@ class ContentContext extends Context {
 	 */
 	public function getCurrentSiteNode() {
 		if ($this->currentSite !== NULL && $this->currentSiteNode === NULL) {
-			$this->currentSiteNode = $this->getNode('/sites/' . $this->currentSite->getNodeName());
+			$siteNodePath = '/sites/' . $this->currentSite->getNodeName();
+			$this->currentSiteNode = $this->getNode($siteNodePath);
+			if (!($this->currentSiteNode instanceof NodeInterface)) {
+				$this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);
+			}
 		}
 		return $this->currentSiteNode;
 	}
