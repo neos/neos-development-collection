@@ -3,18 +3,18 @@
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="pt-BR">
     <body>
       <!-- Management -->
-      <trans-unit id="management.label" xml:space="preserve">
+      <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target xml:lang="pt-BR" state="translated">Gerenciamento</target></trans-unit>
-      <trans-unit id="management.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Gerenciamento</target></trans-unit>
+      <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="pt-BR" state="translated">Contém vários módulos relacionados ao gerenciamento de conteúdo</target></trans-unit>
-      <trans-unit id="workspaces.label" xml:space="preserve">
+			<target xml:lang="pt-BR">Contém vários módulos relacionados ao gerenciamento de conteúdo</target></trans-unit>
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="pt-BR" state="translated">Espaços de Trabalho</target></trans-unit>
-      <trans-unit id="workspaces.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Espaços de Trabalho</target></trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="pt-BR" state="translated">Este módulo contém a visão geral de todos os elementos dentro do espaço de trabalho atual e permite continuar a revisão e publicação do fluxo de trabalho para eles.</target></trans-unit>
+			<target xml:lang="pt-BR">Este módulo contém a visão geral de todos os elementos dentro do espaço de trabalho atual e permite continuar a revisão e publicação do fluxo de trabalho para eles.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes</source>
 			<target xml:lang="pt-BR" state="needs-translation">Unpublished changes</target></trans-unit>
@@ -24,12 +24,12 @@
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
 			<target xml:lang="pt-BR" state="needs-translation">Publish selected changes</target></trans-unit>
-      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="pt-BR" state="translated">Descartar todas as alterações</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+			<target xml:lang="pt-BR">Descartar todas as alterações</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="pt-BR" state="translated">Publicar todas as alterações</target></trans-unit>
+			<target xml:lang="pt-BR">Publicar todas as alterações</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
 			<target xml:lang="pt-BR" state="needs-translation">Legend</target></trans-unit>
@@ -54,125 +54,125 @@
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target xml:lang="pt-BR" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve">
+      <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="pt-BR" state="translated">Mídia</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Mídia</target></trans-unit>
+      <trans-unit id="media.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="pt-BR" state="translated">Este módulo permite o gerenciamento de conteúdos de mídia, incluindo fotos, vídeos, áudio e documentos.</target></trans-unit>
-      <trans-unit id="history.label" xml:space="preserve">
+			<target xml:lang="pt-BR">Este módulo permite o gerenciamento de conteúdos de mídia, incluindo fotos, vídeos, áudio e documentos.</target></trans-unit>
+      <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
-			<target xml:lang="pt-BR" state="translated">Histórico</target></trans-unit>
-      <trans-unit id="history.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Histórico</target></trans-unit>
+      <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="pt-BR" state="translated">Este módulo fornece uma visão geral de todos os eventos relevantes que afetam esta instalação do Neos.</target></trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+			<target xml:lang="pt-BR">Este módulo fornece uma visão geral de todos os eventos relevantes que afetam esta instalação do Neos.</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="pt-BR" state="translated">Aqui está o que aconteceu recentemente no Neos:</target></trans-unit>
-      <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
+			<target xml:lang="pt-BR">Aqui está o que aconteceu recentemente no Neos:</target></trans-unit>
+      <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="pt-BR" state="translated">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+			<target xml:lang="pt-BR">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} criado o {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} criado o {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} removido o {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} removido o {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} criada a variável {1} de {2} {3}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} criada a variável {1} de {2} {3}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} mudou {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} mudou {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
 				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} moveu {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} moveu {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
 				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} copiou {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} copiou {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
 				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="pt-BR" state="translated">{0} renomeado {1} "{2}" para "{3}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} renomeado {1} "{2}" para "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
 				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} mudou o conteúdo na {1} {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} mudou o conteúdo na {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} criou um novo usuário "{1}" para {2}.</target></trans-unit>
-      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
+			<target xml:lang="pt-BR">{0} criou um novo usuário "{1}" para {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target xml:lang="pt-BR" state="translated">{0} excluiu a conta "{1}" de {2}.</target></trans-unit>
+			<target xml:lang="pt-BR">{0} excluiu a conta "{1}" de {2}.</target></trans-unit>
       <!-- Administration -->
-      <trans-unit id="administration.label" xml:space="preserve">
+      <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
-			<target xml:lang="pt-BR" state="translated">Administração</target></trans-unit>
-      <trans-unit id="administration.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Administração</target></trans-unit>
+      <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="pt-BR" state="translated">Contém vários módulos relacionados a administração</target></trans-unit>
-      <trans-unit id="users.label" xml:space="preserve">
+			<target xml:lang="pt-BR">Contém vários módulos relacionados a administração</target></trans-unit>
+      <trans-unit id="users.label" xml:space="preserve" approved="yes">
 				<source>User Management</source>
-			<target xml:lang="pt-BR" state="translated">Gerenciamento de Usuários</target></trans-unit>
-      <trans-unit id="users.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Gerenciamento de Usuários</target></trans-unit>
+      <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="pt-BR" state="translated">O módulo de gerenciamento de usuário fornece uma visão geral de todos os usuários de back-end. Você pode agrupá-los por suas propriedades, então você é capaz de monitorar suas permissões, arquivos, grupos de membros etc... Este módulo é uma ferramenta indispensável para garantir que os usuários estão configurados corretamente.</target></trans-unit>
+			<target xml:lang="pt-BR">O módulo de gerenciamento de usuário fornece uma visão geral de todos os usuários de back-end. Você pode agrupá-los por suas propriedades, então você é capaz de monitorar suas permissões, arquivos, grupos de membros etc... Este módulo é uma ferramenta indispensável para garantir que os usuários estão configurados corretamente.</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
 			<target xml:lang="pt-BR" state="needs-translation">Use system default</target></trans-unit>
-      <trans-unit id="users.new.label" xml:space="preserve">
+      <trans-unit id="users.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
-			<target xml:lang="pt-BR" state="translated">Criar usuário</target></trans-unit>
-      <trans-unit id="users.new.title" xml:space="preserve">
+			<target xml:lang="pt-BR">Criar usuário</target></trans-unit>
+      <trans-unit id="users.new.title" xml:space="preserve" approved="yes">
 				<source>Create a new user</source>
-			<target xml:lang="pt-BR" state="translated">Criar um novo usuário</target></trans-unit>
-      <trans-unit id="users.editAccount.title" xml:space="preserve">
+			<target xml:lang="pt-BR">Criar um novo usuário</target></trans-unit>
+      <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="pt-BR" state="translated">Editar conta "{accountIdentifier}"</target></trans-unit>
-      <trans-unit id="users.account" xml:space="preserve">
+			<target xml:lang="pt-BR">Editar conta "{accountIdentifier}"</target></trans-unit>
+      <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
-			<target xml:lang="pt-BR" state="translated">Conta</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve">
+			<target xml:lang="pt-BR">Conta</target></trans-unit>
+      <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="pt-BR" state="translated">Nome de Usuário</target></trans-unit>
-      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
+			<target xml:lang="pt-BR">Nome de Usuário</target></trans-unit>
+      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve" approved="yes">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="pt-BR" state="translated">O nome de usuário não pode ser alterado através da interface de usuário</target></trans-unit>
-      <trans-unit id="users.saveAccount" xml:space="preserve">
+			<target xml:lang="pt-BR">O nome de usuário não pode ser alterado através da interface de usuário</target></trans-unit>
+      <trans-unit id="users.saveAccount" xml:space="preserve" approved="yes">
 				<source>Save account</source>
-			<target xml:lang="pt-BR" state="translated">Salvar conta</target></trans-unit>
-      <trans-unit id="users.repeatPassword" xml:space="preserve">
+			<target xml:lang="pt-BR">Salvar conta</target></trans-unit>
+      <trans-unit id="users.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
-			<target xml:lang="pt-BR" state="translated">Repetir a senha</target></trans-unit>
-      <trans-unit id="users.roles" xml:space="preserve">
+			<target xml:lang="pt-BR">Repetir a senha</target></trans-unit>
+      <trans-unit id="users.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target xml:lang="pt-BR" state="translated">Funções de usuário</target></trans-unit>
-      <trans-unit id="packages.label" xml:space="preserve">
+			<target xml:lang="pt-BR">Funções de usuário</target></trans-unit>
+      <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
-			<target xml:lang="pt-BR" state="translated">Gerenciamento de Pacotes</target></trans-unit>
-      <trans-unit id="packages.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Gerenciamento de Pacotes</target></trans-unit>
+      <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="pt-BR" state="translated">O módulo de gerenciamento de pacotes fornece uma visão geral de todos os pacotes. Você pode ativar e desativar os pacotes individuais, importar novos pacotes e excluir pacotes existentes. Também fornece a capacidade para congelar e descongelar pacotes no contexto de desenvolvimento.</target></trans-unit>
-      <trans-unit id="sites.label" xml:space="preserve">
+			<target xml:lang="pt-BR">O módulo de gerenciamento de pacotes fornece uma visão geral de todos os pacotes. Você pode ativar e desativar os pacotes individuais, importar novos pacotes e excluir pacotes existentes. Também fornece a capacidade para congelar e descongelar pacotes no contexto de desenvolvimento.</target></trans-unit>
+      <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target xml:lang="pt-BR" state="translated">Gerenciamento de Sites</target></trans-unit>
-      <trans-unit id="sites.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Gerenciamento de Sites</target></trans-unit>
+      <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="pt-BR" state="translated">O módulo de gerenciamento de Sites fornece uma visão geral de todos os sites. Você pode editar, adicionar e excluir informações sobre seus sites, como a adição de um novo domínio.</target></trans-unit>
-      <trans-unit id="sites.newSite.label" xml:space="preserve">
+			<target xml:lang="pt-BR">O módulo de gerenciamento de Sites fornece uma visão geral de todos os sites. Você pode editar, adicionar e excluir informações sobre seus sites, como a adição de um novo domínio.</target></trans-unit>
+      <trans-unit id="sites.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
-			<target xml:lang="pt-BR" state="translated">Criar site</target></trans-unit>
-      <trans-unit id="sites.newSite.title" xml:space="preserve">
+			<target xml:lang="pt-BR">Criar site</target></trans-unit>
+      <trans-unit id="sites.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
-			<target xml:lang="pt-BR" state="translated">Criar um novo site</target></trans-unit>
+			<target xml:lang="pt-BR">Criar um novo site</target></trans-unit>
       <!-- User -->
-      <trans-unit id="user.label" xml:space="preserve">
+      <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
-			<target xml:lang="pt-BR" state="translated">Usuário</target></trans-unit>
-      <trans-unit id="usersettings.label" xml:space="preserve">
+			<target xml:lang="pt-BR">Usuário</target></trans-unit>
+      <trans-unit id="usersettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target xml:lang="pt-BR" state="translated">Configurações de Usuário</target></trans-unit>
-      <trans-unit id="usersettings.description" xml:space="preserve">
+			<target xml:lang="pt-BR">Configurações de Usuário</target></trans-unit>
+      <trans-unit id="usersettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="pt-BR" state="translated">Este módulo permite que você personalize seu perfil de usuário de back-end. Aqui você pode alterar seu idioma do sistema, nome e endereço de e-mail. Você também pode configurar outras características gerais do sistema.</target></trans-unit>
+			<target xml:lang="pt-BR">Este módulo permite que você personalize seu perfil de usuário de back-end. Aqui você pode alterar seu idioma do sistema, nome e endereço de e-mail. Você também pode configurar outras características gerais do sistema.</target></trans-unit>
     </body>
   </file>
 </xliff>
