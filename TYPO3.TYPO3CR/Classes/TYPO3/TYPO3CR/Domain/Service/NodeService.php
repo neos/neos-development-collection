@@ -122,10 +122,10 @@ class NodeService implements NodeServiceInterface {
 	 * @return boolean
 	 */
 	public function nodePathAvailableForNode($nodePath, NodeInterface $node) {
-		/** @var NodeData $existingNode */
-		$existingNodes = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), TRUE);
-		foreach ($existingNodes as $existingNode) {
-			if ($existingNode->getMovedTo() !== NULL && $existingNode->getMovedTo()->getPath() === $node->getPath()) {
+		/** @var NodeData $existingNodeData */
+		$existingNodeDataObjects = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), TRUE);
+		foreach ($existingNodeDataObjects as $existingNodeData) {
+			if ($existingNodeData->getMovedTo() !== NULL && $existingNodeData->getMovedTo() === $node->getNodeData()) {
 				return TRUE;
 			}
 		}
