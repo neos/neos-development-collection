@@ -392,6 +392,12 @@ TYPO3:
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
 
+    actionsOnNodeCreation:
+      defaultContext:
+        String: 'TYPO3\Eel\Helper\StringHelper'
+        Array: 'TYPO3\Eel\Helper\ArrayHelper'
+        Date: 'TYPO3\Eel\Helper\DateHelper'
+
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:
