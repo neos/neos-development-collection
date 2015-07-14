@@ -604,14 +604,14 @@ class NodeImportService {
 		$nodeData['properties'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
 		$nodeData['accessRoles'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['accessRoles'], $connection->getDatabasePlatform());
 
-		$connection->prepare('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
+		$connection->executeQuery('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
 			. ' WHERE nodedata IN ('
 			. '   SELECT persistence_object_identifier FROM typo3_typo3cr_domain_model_nodedata'
 			. '   WHERE identifier = :identifier'
 			. '   AND workspace = :workspace'
 			. '   AND dimensionshash = :dimensionsHash'
-			. ' )'
-		)->execute(array(
+			. ' )',
+		array(
 			'identifier' => $nodeData['identifier'],
 			'workspace' => $nodeData['workspace'],
 			'dimensionsHash' => $nodeData['dimensionsHash']
