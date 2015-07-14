@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Frontend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Controller\Exception\NodeNotFoundException;
@@ -64,6 +65,12 @@ class NodeController extends ActionController {
 	protected $privilegeManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
@@ -90,6 +97,8 @@ class NodeController extends ActionController {
 		$this->view->assign('value', $node);
 
 		if ($inBackend) {
+			$this->overrideViewVariablesFromInternalArguments();
+
 			/** @var UserInterfaceMode $renderingMode */
 			$renderingMode = $node->getContext()->getCurrentRenderingMode();
 			$this->response->setHeader('Cache-Control', 'no-cache');
@@ -104,6 +113,32 @@ class NodeController extends ActionController {
 
 		if ($this->session->isStarted() && $inBackend) {
 			$this->session->putData('lastVisitedNode', $node->getIdentifier());
+		}
+	}
+
+	/**
+	 * Checks if the optionally given node context path, affected node context path and typoscript path are set
+	 * and overrides the rendering to use those. Will also add a "X-Neos-AffectedNodePath" header in case the
+	 * actually affected node is different from the one routing resolved.
+	 * This is used in out of band rendering for the backend.
+	 *
+	 * @return void
+	 */
+	protected function overrideViewVariablesFromInternalArguments() {
+		if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== NULL) {
+			$node = $this->propertyMapper->convert($nodeContextPath, NodeInterface::class);
+			if (!$node instanceof NodeInterface) {
+				throw new NodeNotFoundException(sprintf('The node with context path "%s" could not be resolved', $nodeContextPath), 1437051934);
+			}
+			$this->view->assign('value', $node);
+		}
+
+		if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== NULL) {
+			$this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
+		}
+
+		if (($typoScriptPath = $this->request->getInternalArgument('__typoScriptPath')) !== NULL) {
+			$this->view->setTypoScriptPath($typoScriptPath);
 		}
 	}
 

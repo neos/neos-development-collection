@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Domain\Service\NodeSearchService;
 use TYPO3\Neos\Service\View\NodeView;
-use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -191,15 +190,7 @@ class NodeController extends AbstractServiceController {
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-
-		$result = $this->renderNode($newNode->getParent(), $typoScriptPath);
-
-		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
-		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
-			$this->persistenceManager->persistAll();
-		}
-
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
+		$this->redirectToRenderNode($newNode, $typoScriptPath);
 	}
 
 	/**
@@ -250,18 +241,8 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath) {
-		$node = $this->nodeOperations->move($node, $targetNode, $position);
-
-		$q = new FlowQuery(array($targetNode));
-		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
-		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
-
-		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
-		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
-			$this->persistenceManager->persistAll();
-		}
-
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'success' => TRUE));
+		$this->nodeOperations->move($node, $targetNode, $position);
+		$this->redirectToRenderNode($targetNode, $typoScriptPath);
 	}
 
 	/**
@@ -310,18 +291,8 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = NULL) {
-		$copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
-
-		$q = new FlowQuery(array($targetNode));
-		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
-		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
-
-		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
-		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
-			$this->persistenceManager->persistAll();
-		}
-
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $copiedNode->getContextPath()), 'success' => TRUE));
+		$this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+		$this->redirectToRenderNode($targetNode, $typoScriptPath);
 	}
 
 	/**
@@ -359,16 +330,7 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function updateAndRenderAction(Node $node, $typoScriptPath) {
-		$q = new FlowQuery(array($node));
-		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
-		$result = $this->renderNode($closestContentCollection, $typoScriptPath);
-
-		// TODO: For some reason persistAll BEFORE rendering will break images (probably something in doctrine), so do not change nodes, persist and render. If change and render happens, persist afterwards.
-		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
-			$this->persistenceManager->persistAll();
-		}
-
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'success' => TRUE));
+		$this->redirectToRenderNode($node, $typoScriptPath);
 	}
 
 	/**
@@ -412,19 +374,23 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
+	 * Takes care of creating a redirect to properly render the collection the given node is in.
+	 *
 	 * @param NodeInterface $node
 	 * @param string $typoScriptPath
 	 * @return string
 	 */
-	protected function renderNode($node, $typoScriptPath) {
-		$view = new TypoScriptView();
-		$this->controllerContext->getRequest()->setFormat('html');
-		$view->setControllerContext($this->controllerContext);
-		$view->setOption('enableContentCache', FALSE);
+	protected function redirectToRenderNode(NodeInterface $node, $typoScriptPath) {
+		$q = new FlowQuery(array($node));
+		$closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
+		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
-		$view->setTypoScriptPath($typoScriptPath);
-		$view->assign('value', $node);
-		return $view->render();
+		$this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', [
+			'node' => $closestDocumentNode,
+			'__nodeContextPath' => $closestContentCollection->getContextPath(),
+			'__affectedNodeContextPath' => $node->getContextPath(),
+			'__typoScriptPath' => $typoScriptPath
+		], 0, 303, 'html');
 	}
 
 	/**
