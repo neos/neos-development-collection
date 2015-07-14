@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./AbstractValidator'
+		'./AbstractValidator',
+		'Shared/I18n'
 	],
-	function(AbstractValidator) {
+	function(AbstractValidator, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * @var {object}
@@ -23,7 +24,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (!((typeof value === 'number') || (typeof value  === 'string') && !isNaN(value))) {
-					this.addError('A valid number is expected.');
+					this.addError(I18n.translate('content.inspector.validators.numberRangeValidator.validNumberExpected'));
 					return;
 				}
 
@@ -36,7 +37,7 @@ define(
 					maximum = x;
 				}
 				if (value < minimum || value > maximum) {
-					this.addError('Please enter a valid number between ' + minimum + ' and ' + maximum + '.');
+					this.addError(I18n.translate('content.inspector.validators.numberRangeValidator.numberShouldBeInRange', null, null, null, {minimum: minimum, maximum: maximum}));
 				}
 			}
 		});

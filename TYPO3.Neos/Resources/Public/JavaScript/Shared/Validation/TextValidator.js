@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./AbstractValidator'
+		'./AbstractValidator',
+		'Shared/I18n'
 	],
-	function(AbstractValidator) {
+	function(AbstractValidator, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * Checks if the given value is a valid text (contains no XML tags).
@@ -15,7 +16,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (value !== value.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '')) {
-					this.addError('Valid text without any XML tags is expected.');
+					this.addError(I18n.translate('content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected'));
 				}
 			}
 		});

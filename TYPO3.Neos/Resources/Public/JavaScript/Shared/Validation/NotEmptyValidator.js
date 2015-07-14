@@ -4,9 +4,10 @@
 define(
 	[
 		'./AbstractValidator',
-		'Library/underscore'
+		'Library/underscore',
+		'Shared/I18n'
 	],
-	function(AbstractValidator, _) {
+	function(AbstractValidator, _, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * Specifies whether this validator accepts empty values.
@@ -23,7 +24,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (value === null || value === '' || (_.isArray(value) && _.isEmpty(value))) {
-					this.addError('This property is required.');
+					this.addError(I18n.translate('content.inspector.validators.notEmptyValidator.isEmpty'));
 				}
 			}
 		});

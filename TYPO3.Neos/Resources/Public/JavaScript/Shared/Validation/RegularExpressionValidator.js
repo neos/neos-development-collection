@@ -4,9 +4,10 @@
 define(
 	[
 		'./AbstractValidator',
-		'Library/xregexp'
+		'Library/xregexp',
+		'Shared/I18n'
 	],
-	function(AbstractValidator, XRegExp) {
+	function(AbstractValidator, XRegExp, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * @var {object}
@@ -38,7 +39,7 @@ define(
 					pattern = pattern.substring(0, pattern.length - 1);
 				}
 				if (typeof value !== 'string' || XRegExp(pattern, modifier).test(value) === false) {
-					this.addError('The given subject did not match the pattern (' + pattern + ').');
+					this.addError(I18n.translate('content.inspector.validators.regularExpressionValidator.patternDoesNotMatch', null, null, null, {pattern: pattern}));
 				}
 			}
 		});

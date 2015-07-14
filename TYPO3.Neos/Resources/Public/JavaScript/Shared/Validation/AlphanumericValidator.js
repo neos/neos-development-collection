@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./RegularExpressionValidator'
+		'./RegularExpressionValidator',
+		'Shared/I18n'
 	],
-	function(RegularExpressionValidator) {
+	function(RegularExpressionValidator, I18n) {
 		return RegularExpressionValidator.extend({
 			/**
 			 * The given value is valid if it is an alphanumeric string, which is the defined by the POSIX class "alnum".
@@ -23,7 +24,7 @@ define(
 			 * @return {void}
 			 */
 			addError: function(message) {
-				this._super('Only regular characters (a to z, umlauts, ...) and numbers are allowed.');
+				this._super(I18n.translate('content.inspector.validators.alphanumericValidator'));
 			}
 		});
 	}

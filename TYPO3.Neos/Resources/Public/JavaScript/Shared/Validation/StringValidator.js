@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./AbstractValidator'
+		'./AbstractValidator',
+		'Shared/I18n'
 	],
-	function(AbstractValidator) {
+	function(AbstractValidator, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * Checks if the given value is a string.
@@ -15,7 +16,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (typeof(value) !== 'string') {
-					this.addError('A valid string is expected.');
+					this.addError(I18n.translate('content.inspector.validators.stringValidator.stringIsExpected'));
 				}
 			}
 		});
