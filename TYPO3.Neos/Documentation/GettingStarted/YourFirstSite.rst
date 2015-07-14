@@ -30,7 +30,7 @@ It allows the creation of arbitrary content elements, rendering everything in a 
 Further Reading
 ===============
 
-The :ref:`integrator-guide` contains everything else you need to know about building websites with Neos:
+The :doc:`"Create a Site with Neos" <../CreatingASite/index>` guide contains everything else you need to know about building websites with Neos:
 
 * :ref:`using custom templates <adjusting-output>`
 * :ref:`creating custom content elements <custom-content-elements>`

@@ -9,11 +9,20 @@ This version of the documentation covering Neos |release| has been rendered at: 
    :maxdepth: 2
 
    GettingStarted/index
-   IntegratorGuide/index
-   IntegratorsCookbook/index
-   DeveloperGuide/index
+   TechnicalPrinciples/index
+   UserGuide/index
+   CreatingASite/index
+   ExtendingNeos/index
+   InsideOfNeos/index
+   References/index
+   Contribute/index
+   HowTos/index
+   Operations/index
    Appendixes/index
-   Contributors
+
+..   IntegratorGuide/index
+..   IntegratorsCookbook/index
+..   DeveloperGuide/index
 
 Indices and tables
 ==================
