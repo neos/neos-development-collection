@@ -52,6 +52,7 @@ define(
 						$itemContent = $('<span>' + markup.join('') + '</span>');
 
 						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
@@ -120,7 +121,7 @@ define(
 												nodes.push({
 													id: 'node://' + $('.node-identifier', value).text(),
 													text: $('.node-label', value).text().trim(),
-													data: {icon: iconClass, path: $('.node-path', value).text()},
+													data: {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim())},
 													'type': 'node'
 												});
 											} else {
@@ -201,7 +202,7 @@ define(
 								function(result) {
 									var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
 									item.set('text', $('.node-label', result.resource).text().trim());
-									item.set('data', {icon: iconClass, path: $('.node-path', result.resource).text()});
+									item.set('data', {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim())});
 									that._updateSelect2();
 								},
 								function() {

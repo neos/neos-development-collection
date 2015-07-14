@@ -124,6 +124,16 @@
 					border: 1px solid $grayLight;
 					@include box-sizing(border-box);
 				}
+
+				.neos-select2-result-path {
+					display: block;
+					padding-left: $defaultMargin + 2;
+					text-overflow: ellipsis;
+					max-width: 100%;
+					overflow: hidden;
+					font-size: 12px;
+					line-height: 14px;
+				}
 			}
 		}
 

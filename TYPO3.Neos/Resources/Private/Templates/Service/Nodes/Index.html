@@ -9,6 +9,11 @@
 			<ul class="nodes"><f:for each="{nodes}" as="node">
 				<li class="node">
 					<span class="node-path">{node.path}</span>
+					<f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
+					<neos:link.node node="{documentNode}" absolute="true" resolveShortcuts="false" class="node-frontend-uri">
+						<neos:uri.node node="{documentNode}" absolute="false" resolveShortcuts="false" />
+					</neos:link.node>
+					</f:alias>
 					<label class="node-label">{node.label}</label>
 					(<span class="node-identifier">{node.identifier}</span>)
 					[<span class="node-type">{node.nodeType.name}</span>]

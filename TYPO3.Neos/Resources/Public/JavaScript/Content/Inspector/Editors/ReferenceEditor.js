@@ -40,12 +40,14 @@ define(
 						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
 						var $itemContent = $('<span>' + markup.join('') + '</span>');
 
+						var info = item.data.path ? item.data.path : item.data.identifier;
+						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
+
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
 						}
-
-						$itemContent.attr('title', item.data.path);
 
 						return $itemContent.get(0).outerHTML;
 					},
@@ -53,12 +55,14 @@ define(
 						var $itemContent = $('<span>' + item.text + '</span>');
 
 						if (item.data) {
+							var info = item.data.path ? item.data.path : item.data.identifier;
+							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+							$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
+
 							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 							if (iconClass) {
 								$itemContent.prepend('<i class="' + iconClass + '"></i>');
 							}
-
-							$itemContent.attr('title', item.data.path);
 						}
 
 						return $itemContent.get(0).outerHTML;
@@ -85,7 +89,7 @@ define(
 									data.results.push({
 										id: identifier,
 										text: $('.node-label', value).text().trim(),
-										data: {identifier: identifier, path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()}
+										data: {identifier: identifier, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim().replace('.html', '')), nodeType: $('.node-type', value).text()}
 									});
 								});
 								query.callback(data);
@@ -134,7 +138,7 @@ define(
 					};
 					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text().trim());
-						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: $('.node-path', result.resource).text(), nodeType: $('.node-type', result.resource).text()});
+						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
 						that._updateSelect2();
 					});
 
