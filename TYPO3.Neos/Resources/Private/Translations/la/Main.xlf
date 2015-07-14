@@ -166,9 +166,6 @@
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
 			<target xml:lang="la-LA">crwdns48:0crwdne48:0</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve" approved="yes">
-				<source>URL path segment</source>
-			<target xml:lang="la-LA">crwdns47:0crwdne47:0</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="la-LA">crwdns50:0crwdne50:0</target></trans-unit>
@@ -216,12 +213,18 @@
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
 			<target xml:lang="la-LA">crwdns64:0crwdne64:0</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
+				<source>Discard all</source>
+			<target xml:lang="la-LA">crwdns279:0crwdne279:0</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="la-LA">crwdns65:0crwdne65:0</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="la-LA">crwdns66:0crwdne66:0</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
+				<source>Publish all</source>
+			<target xml:lang="la-LA">crwdns280:0crwdne280:0</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="la-LA">crwdns67:0crwdne67:0</target></trans-unit>

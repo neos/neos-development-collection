@@ -166,9 +166,6 @@
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
 			<target xml:lang="ru">Скрыть в меню</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve" approved="yes">
-				<source>URL path segment</source>
-			<target xml:lang="ru">Сегмент пути URL-адреса</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="ru">Целевой режим</target></trans-unit>
@@ -216,12 +213,18 @@
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
 			<target xml:lang="ru">Открыть страницу в публичной рабочей области</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve">
+				<source>Discard all</source>
+			<target xml:lang="ru" state="needs-translation">Discard all</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="ru">Отменить все изменения</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve">
+				<source>Publish all</source>
+			<target xml:lang="ru" state="needs-translation">Publish all</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="ru">Опубликовать все изменения</target></trans-unit>
