@@ -97,6 +97,19 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		@position = '20'
 		tagName = 'body'
 		omitClosingTag = TRUE
+		attributes.class.@process.addNeosBackendClass = TYPO3.TypoScript:Case {
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+
+			classIsString {
+				condition = ${Type.isString(value)}
+				renderer = ${String.trim(value + ' neos-backend')}
+			}
+
+			classIsArray {
+				condition = ${Type.isArray(value)}
+				renderer = ${Array.push(value, 'neos-backend')}
+			}
+		}
 	}
 
 	# Required for the backend to work.

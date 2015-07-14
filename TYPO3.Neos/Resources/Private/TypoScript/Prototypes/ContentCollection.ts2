@@ -44,7 +44,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 
 		classIsString {
 			condition = ${Type.isString(value)}
-			renderer = ${String.trim(value) + ' ' + collectionClass}
+			renderer = ${String.trim(value + ' ' + collectionClass)}
 		}
 
 		classIsArray {
