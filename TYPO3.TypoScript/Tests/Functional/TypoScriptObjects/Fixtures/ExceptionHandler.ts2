@@ -13,7 +13,7 @@ exceptionHandler.eelExpressionInProperty = TYPO3.TypoScript:Array {
 exceptionHandler.eelExpressionInOverride = TYPO3.TypoScript:Array {
 	start = 'Start'
 	error = TYPO3.TypoScript:Collection {
-		@override.myCollection = ${Testing.Utility.throwException()}
+		@context.myCollection = ${Testing.Utility.throwException()}
 		collection = ${myCollection}
 		itemName = 'item'
 

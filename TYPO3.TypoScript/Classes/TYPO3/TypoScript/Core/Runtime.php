@@ -400,10 +400,19 @@ class Runtime {
 				}
 			}
 
-			if (isset($typoScriptConfiguration['__meta']['override'])) {
-				$newContextArray = $this->getCurrentContext();
-				foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
-					$newContextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
+			if (isset($typoScriptConfiguration['__meta']['override']) || isset($typoScriptConfiguration['__meta']['context'])) {
+				$newContextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
+
+				if (isset($typoScriptConfiguration['__meta']['override'])) {
+					foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
+						$newContextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
+					}
+				}
+
+				if (isset($typoScriptConfiguration['__meta']['context'])) {
+					foreach ($typoScriptConfiguration['__meta']['context'] as $contextKey => $contextValue) {
+						$newContextArray[$contextKey] = $this->evaluateInternal($typoScriptPath . '/__meta/context/' . $contextKey, self::BEHAVIOR_EXCEPTION, $tsObject);
+					}
 				}
 			}
 
