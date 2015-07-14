@@ -166,10 +166,11 @@ class NodeController extends AbstractServiceController {
 	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
+	 * @param array $actionData
 	 * @return void
 	 */
-	public function createAction(Node $referenceNode, array $nodeData, $position) {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+	public function createAction(Node $referenceNode, array $nodeData, $position, array $actionData = []) {
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position, $actionData);
 
 		if ($this->request->getHttpRequest()->isMethodSafe() === FALSE) {
 			$this->persistenceManager->persistAll();
@@ -186,10 +187,11 @@ class NodeController extends AbstractServiceController {
 	 * @param string $typoScriptPath The TypoScript path of the collection
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
+	 * @param array $actionData
 	 * @return string
 	 */
-	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position, array $actionData = []) {
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position, $actionData);
 		$this->redirectToRenderNode($newNode, $typoScriptPath);
 	}
 
@@ -200,10 +202,11 @@ class NodeController extends AbstractServiceController {
 	 * @param array $nodeData
 	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @param string $nodeTypeFilter
+         * @param array $actionData	 
 	 * @return void
 	 */
-	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '') {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '', array $actionData = []) {
+		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position, $actionData);
 		$this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
 	}
 

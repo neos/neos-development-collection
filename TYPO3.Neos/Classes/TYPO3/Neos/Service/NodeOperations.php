@@ -39,15 +39,22 @@ class NodeOperations {
 	protected $nodeService;
 
 	/**
+	 * @Flow\Inject
+	 * @var ActionsOnNodeCreationService
+	 */
+	protected $actionsOnNodeCreationService;
+
+	/**
 	 * Helper method for creating a new node.
 	 *
 	 * @param NodeInterface $referenceNode
 	 * @param array $nodeData
 	 * @param string $position
+	 * @param array $actionData
 	 * @return NodeInterface
 	 * @throws \InvalidArgumentException
 	 */
-	public function create(NodeInterface $referenceNode, array $nodeData, $position) {
+	public function create(NodeInterface $referenceNode, array $nodeData, $position, array $actionData = []) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
 		}
@@ -78,6 +85,8 @@ class NodeOperations {
 				$newNode->setProperty($propertyName, $propertyValue);
 			}
 		}
+
+		$this->actionsOnNodeCreationService->processActions($newNode, $actionData);
 
 		return $newNode;
 	}
