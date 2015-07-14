@@ -57,7 +57,6 @@ define(
 		init: function() {
 			vie.entities.on('add', this._updatePublishableEntities, this);
 			vie.entities.on('change', this._updatePublishableEntities, this);
-			this._updatePublishableEntities();
 
 			EventDispatcher
 				.on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
@@ -87,7 +86,7 @@ define(
 				}
 			}, this);
 			this.set('publishableEntitySubjects', publishableEntitySubjects);
-		},
+		}.observes('targetWorkspaceController.userWorkspace'),
 
 		/**
 		 * Check whether the entity is publishable or not. Everything which is in the user workspace is publishable.
