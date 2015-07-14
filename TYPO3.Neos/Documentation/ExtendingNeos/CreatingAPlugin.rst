@@ -9,7 +9,7 @@ will guide you through a simple example. First, we will create a really basic
 Flow package. Second, we'll expose this Flow package as a Neos plugin.
 
 Creating a Flow package
-=============================
+=======================
 
 First we will create a very simple Flow package to use for integrating it as a plugin.
 
@@ -18,7 +18,7 @@ First we will create a very simple Flow package to use for integrating it as a p
   plugins will be very site-specific most of the time. In these cases it makes sense
   to create the needed code inside the site package, instead of in a separate package.
 
-  For the sake of simplicity we will create a seperate package now.
+  For the sake of simplicity we will create a separate package now.
 
 If you do not have the Kickstart package installed, you must do this now:
 
@@ -40,28 +40,64 @@ Then generate a migration to create the needed DB schema:
 .. code-block:: bash
 
   ./flow doctrine:migrationgenerate
-  mkdir -p Packages/Application/Sarkosh.CdCollection/Migrations/Mysql
-  mv Data/DoctrineMigrations/Version<timestamp>.php Packages/Application/Sarkosh.CdCollection/Migrations/Mysql/
-  # check the generated migration
+
+The command will ask in which directory the migration should be stored. Select the package Sarkosh.CdCollection.
+Afterwards the migration can be applied:
+
+.. code-block:: bash
+
   ./flow doctrine:migrate
 
 You should now have a package with a default controller and templates created.
 
-In order to view them you can call the frontend like ``http://neos.demo/sarkosh.cdcollection``,
-but you need to include the Flow default routes first (add them before the Neos routes):
+Configure Access Rights
+-----------------------
 
-*Configuration/Routes.yaml*
+To be able to call the actions of the controller you have to configure a matching set of rights.
+Add the following to *Configuration/Policy.yaml* of your package:
 
 .. code-block:: yaml
 
+  privilegeTargets:
+    TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
+      'Sarkosh.CdCollection:StandardControllerActions':
+        matcher: 'method(Sarkosh\CdCollection\Controller\StandardController->(index)Action())'
+
+  roles:
+    'TYPO3.Flow:Everybody':
+      privileges:
+        -
+          privilegeTarget: 'Sarkosh.CdCollection:StandardControllerActions'
+          permission: GRANT
+
+.. note:: If you add new actions later on you will have to extend the matcher rule to look like ``(index|other|third)``.
+
+Configure Routes
+----------------
+
+To actually call the plugin via HTTP request you have to include the Flow default-routes
+into the *Configuration/Routes.yaml* of your whole setup (before the Neos routes):
+
+.. code-block:: yaml
+
+  ##
+  # Flow subroutes
   -
     name: 'Flow'
-    uriPattern: '<FlowSubroutes>'
+    uriPattern: 'flow/<FlowSubroutes>'
     defaults:
       '@format': 'html'
     subRoutes:
-      FlowSubroutes:
-        package: TYPO3.Flow
+    FlowSubroutes:
+      package: TYPO3.Flow
+
+The frontend of your plugin can now be called via ``http://neos.demo/flow/sarkosh.cdcollection``.
+We specifically use the ``flow`` prefix here to ensure that the routes of Flow do not interfere with Neos.
+
+.. note:: The routing configuration will become obsolete as soon as you use the package as as Neos-Plugin as described in the following steps.
+
+Add data
+--------
 
 Now you can add some entries for your CD collection in the database::
 
@@ -76,7 +112,7 @@ Now you can add some entries for your CD collection in the database::
 (or using your database tool of choice) and adjust the templates so a list of
 CDs is shown. When you are done with that, you can make a plugin out of that.
 
-As an optional step you can move the generated package from it's default location
+As an optional step you can move the generated package from its default location
 *Packages/Application/* to *Packages/Plugins*. This is purely a convention and at
 times it might be hard to tell an "application package" from a "plugin", but it helps
 to keep things organized. Technically it has no relevance.
@@ -87,10 +123,15 @@ to keep things organized. Technically it has no relevance.
   mv Packages/Application/Sarkosh.CdCollection Packages/Plugins/Sarkosh.CdCollection
 
 Converting a Flow Package Into a Neos Plugin
-==================================================
+============================================
 
 To activate a Flow package as a Neos plugin, you only need to provide two
-configuration blocks. First, you need to add a new *node type* for the plugin,
+configuration blocks.
+
+Add a NodeType
+--------------
+
+First, you need to add a new *node type* for the plugin,
 such that the user can choose the plugin from the list of content elements:
 
 Add the following to *Configuration/NodeTypes.yaml* of your package:
@@ -107,6 +148,9 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
 This will add a new entry labeled "CD Collection" to the "Plugins" group in the content
 element selector (existing groups are *General*, *Structure* and *Plugins*).
 
+Configure TypoScript
+--------------------
+
 Second, the rendering of the plugin needs to be specified using TypoScript, so the following
 TypoScript needs to be added to your package.
 
@@ -114,22 +158,73 @@ TypoScript needs to be added to your package.
 
   prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
-       package = 'Sarkosh.CdCollection'
-       controller = 'Standard'
-       action = 'index'
+  	package = 'Sarkosh.CdCollection'
+  	controller = 'Standard'
+  	action = 'index'
   }
 
 Finally tweak your site package's *Root.ts2* and include the newly created TypoScript file::
 
-  include: resource://Sarkosh.CdCollection/Private/TypoScript/Plugin.ts2
+  include: Plugin.ts2
 
 Now log in to your Neos backend (you must remove the Flow routes again), and you
 will be able to add your plugin just like any other content element.
 
+To automatically include the Root.ts2 in Neos you have to add the following lines to the *Configuration/Settings.yaml* of your Package:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos:
+      typoScript:
+        autoInclude:
+          'Sarkosh.CdCollection': TRUE
+
+Use TypoScript to configure the Plugin
+--------------------------------------
+
+To hand over configuration to your plugin you can add arbitrary TypoScript values to *Resources/Private/TypoScript/Plugin.ts2*::
+
+  prototype(Sarkosh.CdCollection:Plugin) {
+  	...
+  	myNodeName = ${q(node).property('name')}
+  }
+
+In the controller of your plugin you can access the value from TypoScript like this.
+
+.. code-block:: php
+
+  $myNodeName = $this->request->getInternalArgument('__myNodeName');
+
+Linking to a Plugin
+===================
+
+Inside of your Plugin you can use the usual f:link and f:uri ViewHelpers from fluid to link to other ControllerActions::
+
+  <f:link.uri package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
+
+
+If you want to create links to your plugin from outside the plugin context you have to use one of the following methods.
+
+To create a link to a ControllerAction of your Plugin in TypoScript you can use the following code::
+
+  link = TYPO3.Neos:NodeUri {
+  	# you have to identify the document that contains your plugin somehow
+  	node = ${q(site).find('[instanceof Sarkosh.CdCollection:Plugin]').first().closest('[instanceof TYPO3.Neos:Document]').get(0)}
+  	absolute = true
+  	additionalParams = ${{'--sarkosh_cdcollection-plugin': {'@package': 'sarkosh.cdcollection', '@controller':'standard', '@action': 'show', 'collection': collection}}}
+  }
+
+The same code in a fluid template looks like this::
+
+  {namespace neos=TYPO3\Neos\ViewHelpers}
+  <neos:uri.node node="{targetNode}" arguments="{'--sarkosh_cdcollection-plugin': {'@package': 'sarkosh.cdcollection', '@controller':'standard', '@action': 'show', 'collection': collection}}" />
+
+
 Configuring a plugin to show specific actions on different pages
 ================================================================
 
-With the simple plugin you created above all of the actions of that plugin are
+With the simple plugin you created above, all of the actions of that plugin are
 executed on one specific page node. But sometimes you might want to break that
 up onto different pages. For this use case there is a node type called
 ``Plugin View``. A plugin view is basically a view of a specific set of actions
@@ -171,7 +266,7 @@ will be available for the ``Plugin View``:
           controllerActions:
             'Sarkosh\CdCollection\Controller\CollectionController': ['overview']
 
-When you insert a plugin view for a node the links in both of this nodes get rewritten
+When you insert a plugin view for a node the links in both of the nodes get rewritten
 automatically to link to the view or plugin, depending on the action the link points
 to. Insert a "Plugin View" node in your page, and then, in the inspector, configure
 the "Master View" (the master plugin instance) and the "Plugin View".
@@ -179,11 +274,19 @@ the "Master View" (the master plugin instance) and the "Plugin View".
 Fixing Plugin Output
 --------------------
 
-If you check the HTML of a page that includes your plugin, you will clearly see that things
-are not as they should be. The plugin is included using it's complete HTML, including head
-and body tags. This of course results in an invalid document.
+If you reuse an existing flow-package a plugin in Neos and check the HTML of a page that includes your plugin,
+you will clearly see that things are not as they should be. The plugin is included using its complete HTML,
+including head and body tags. This of course results in an invalid document.
 
-.. warning:: The documentation is incomplete at this point. Please ask on irc.freenode.net in #typo3-neos for further details.
+To improve that you can add a *Configration/Views.yaml* file to your Package that can be used to alter the used
+template and views based on certain conditions. The documentation for that can be found in the Flow Framework Documentation.
+
+Optimizing the URLs
+-------------------
+
+By default Neos will create pretty verbose urls for your plugin. To avoid that you have to configure a proper routing for your Package.
+
+.. warning:: The documentation is not covering all aspects yet. Please have a Look at the :ref:`How To` Section as well.
 
 .. Neos-Aware Plugin Development
 .. =============================
