@@ -15,7 +15,8 @@ define(
 	'Shared/ResourceCache',
 	'Shared/Configuration',
 	'Shared/Notification',
-	'Shared/Endpoint/WorkspaceEndpoint'
+	'Shared/Endpoint/WorkspaceEndpoint',
+	'Content/Application'
 ], function(
 	Ember,
 	$,
@@ -27,7 +28,8 @@ define(
 	ResourceCache,
 	Configuration,
 	Notification,
-	WorkspaceEndpoint
+	WorkspaceEndpoint,
+	ContentModule
 ) {
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
@@ -55,14 +57,14 @@ define(
 		}.property('workspaceWidePublishableEntitySubjects.length'),
 
 		init: function() {
-			vie.entities.on('add', this._updatePublishableEntities, this);
 			vie.entities.on('change', this._updatePublishableEntities, this);
 
 			EventDispatcher
 				.on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeDeleted', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes')
-				.on('nodesUpdated', this, '_updatePublishableEntities');
+				.on('contentChanged', this, '_updatePublishableEntities');
+			ContentModule.on('pageLoaded', this, '_updatePublishableEntities');
 		},
 
 		/**
