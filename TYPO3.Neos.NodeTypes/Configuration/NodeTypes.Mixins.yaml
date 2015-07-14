@@ -57,13 +57,13 @@
     inspector:
       groups:
         image:
-          label: 'Image'
+          label: i18n
           position: 5
   properties:
     image:
       type: TYPO3\Media\Domain\Model\ImageInterface
       ui:
-        label: 'Image'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -71,7 +71,7 @@
     alternativeText:
       type: string
       ui:
-        label: 'Alternative text'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -79,7 +79,7 @@
     title:
       type: string
       ui:
-        label: 'Title'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -92,7 +92,7 @@
     hasCaption:
       type: boolean
       ui:
-        label: 'Enable caption'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -114,7 +114,7 @@
       type: string
       defaultValue: ''
       ui:
-        label: 'Alignment'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -126,11 +126,11 @@
               '':
                 label: ''
               center:
-                label: 'Center'
+                label: i18n
               left:
-                label: 'Left'
+                label: i18n
               right:
-                label: 'Right'
+                label: i18n
 
 # Link mixin
 'TYPO3.Neos.NodeTypes:LinkMixin':
@@ -139,7 +139,7 @@
     link:
       type: string
       ui:
-        label: 'Link'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           position: 300

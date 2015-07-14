@@ -8,36 +8,36 @@
     layout:
       type: string
       ui:
-        label: 'Layout for this page only'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: ~
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            placeholder: 'Inherit from parent'
+            placeholder: i18n
             values:
               '':
                 label: ''
     subpageLayout:
       type: string
       ui:
-        label: 'Layout for subpages of this page'
+        label: i18n
         inspector:
           group: ~
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            placeholder: 'Inherit from parent'
+            placeholder: i18n
             values:
               '':
                 label: ''
   ui:
-    label: 'Page'
+    label: i18n
     icon: 'icon-file'
     position: 100
     inspector:
       groups:
         document:
-          label: 'Title'
+          label: i18n
         layout:
-          label: 'Layout'
+          label: i18n
           position: 150
