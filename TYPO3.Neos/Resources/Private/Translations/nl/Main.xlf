@@ -431,8 +431,8 @@
 			<target xml:lang="nl">Herladen</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
-				<source>TYPO3 Neos Login</source>
-			<target xml:lang="nl">TYPO3 Neos Login</target></trans-unit>
+				<source>Neos Login</source>
+			<target xml:lang="nl">Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve" approved="yes">
 				<source>Login</source>
 			<target xml:lang="nl">Log in</target></trans-unit>

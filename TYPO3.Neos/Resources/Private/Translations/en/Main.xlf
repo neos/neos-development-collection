@@ -436,7 +436,7 @@
 
 			<!-- Login -->
 			<trans-unit id="login.index.title" xml:space="preserve">
-				<source>TYPO3 Neos Login</source>
+				<source>Neos Login</source>
 			</trans-unit>
 			<trans-unit id="login" xml:space="preserve">
 				<source>Login</source>

@@ -431,7 +431,7 @@
 			<target xml:lang="km">បើកឡើង​វិញ</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
-				<source>TYPO3 Neos Login</source>
+				<source>Neos Login</source>
 			<target xml:lang="km">TYPO3 Neos ចុះឈ្មោះចូល</target></trans-unit>
       <trans-unit id="login" xml:space="preserve" approved="yes">
 				<source>Login</source>

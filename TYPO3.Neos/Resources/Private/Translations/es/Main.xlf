@@ -431,8 +431,8 @@
 			<target xml:lang="es-ES">Recargar</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
-				<source>TYPO3 Neos Login</source>
-			<target xml:lang="es-ES" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
+				<source>Neos Login</source>
+			<target xml:lang="es-ES" state="needs-translation">Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve" approved="yes">
 				<source>Login</source>
 			<target xml:lang="es-ES">Entrar</target></trans-unit>
