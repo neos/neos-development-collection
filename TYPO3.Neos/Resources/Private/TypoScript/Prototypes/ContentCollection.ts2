@@ -17,7 +17,7 @@ prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Col
 		removedContent = TYPO3.TypoScript:Collection {
 			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
 			# Render every item by its own TS object
-			itemRenderer = TYPO3.Neos:ContentCase
+			itemRenderer = TYPO3.Neos:ContentElementWrapping
 			itemName = 'node'
 			iterationName = 'iterator'
 		}
