@@ -395,11 +395,11 @@ between a context variable and the prototype can be set up.
 Manipulating the TypoScript Context
 -----------------------------------
 
-The TypoScript context can be manipulated directly through the use of the ``@override``
+The TypoScript context can be manipulated directly through the use of the ``@context``
 meta-property::
 
 	myObject = MyObject
-	myObject.@override.bar = ${foo * 2}
+	myObject.@context.bar = ${foo * 2}
 
 In the above example, there is now an additional context variable ``bar`` with twice the value
 of ``foo``.

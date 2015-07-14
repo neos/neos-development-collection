@@ -24,8 +24,8 @@ prototype(TYPO3.Neos:History.EventRenderer) < prototype(Case) {
 }
 
 prototype(TYPO3.Neos:History.NodeEventRenderer) < prototype(Array) {
-	@override.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
-	@override.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
+	@context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
+	@context.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
 
 	documentEvents = Collection {
 		collection = ${documentEventsByType}
