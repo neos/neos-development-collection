@@ -90,6 +90,155 @@ TYPO3:
         renderingOutputFormat: 'html'
         renderByDefault: FALSE
 
+    commandReferences:
+      Neos_NeosCommands:
+        title: 'Neos Command Reference'
+        packageKeys:
+          - 'TYPO3.Flow'
+          - 'TYPO3.Party'
+          - 'TYPO3.Fluid'
+          - 'TYPO3.Kickstart'
+          - 'TYPO3.Welcome'
+          - 'TYPO3.Media'
+          - 'TYPO3.TYPO3CR'
+          - 'TYPO3.Neos'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/CommandReference.rst'
+
+    references:
+
+      # View Helpers
+      Neos_FluidViewHelpers:
+        title: 'Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+      Neos_MediaViewHelpers:
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              'typo3.media': 'TYPO3\Media\ViewHelpers'
+      Neos_FormViewHelpers:
+        title: 'Form ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              'typo3.form': 'TYPO3\Form\ViewHelpers'
+      Neos_NeosViewHelpers:
+        title: 'Neos ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+              neos: 'TYPO3\Neos\ViewHelpers'
+      Neos_Typo3CrViewHelpers:
+        title: 'Content Repository ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+              neos: 'TYPO3\Neos\ViewHelpers'
+
+      # Validators
+      Neos_FlowValidators:
+        title: 'Flow Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Flow.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^TYPO3\\Flow\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+      Neos_PartyValidators:
+        title: 'Party Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Party.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^TYPO3\\Party\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+      Neos_MediaValidators:
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Media.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+
+      # Signals
+      Neos_FlowSignals:
+        title: 'Flow Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Flow\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      Neos_NeosSignals:
+        title: 'Neos Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Neos.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      Neos_TYPO3CRSignals:
+        title: 'Content Repository Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/TYPO3CR.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\TYPO3CR\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+
+      # Flow Query
+      Neos_FlowQueryOperations:
+        title: 'FlowQuery Operation Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
+        affectedClasses:
+          interface: 'TYPO3\Eel\FlowQuery\OperationInterface'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowQueryOperationClassParser'
+
+      # EelHelpers
+      Neos_EelHelpers:
+        title: 'Eel Helpers Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
+        affectedClasses:
+          interface: 'TYPO3\Eel\ProtectedContextAwareInterface'
+          classNamePattern: '/^.*Helper$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\EelHelperClassParser'
+
   Neos:
 
     typoScript:
