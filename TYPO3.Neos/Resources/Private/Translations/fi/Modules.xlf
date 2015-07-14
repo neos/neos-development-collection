@@ -15,45 +15,45 @@
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="fi">Tämä moduuli sisältää näkymän kaikista elementeistä nykyisessä työtilassa ja mahdollistaa niiden julkaisuprosessin tarkastelun.</target></trans-unit>
-      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes</source>
-			<target xml:lang="fi" state="needs-translation">Unpublished changes</target></trans-unit>
-      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+			<target xml:lang="fi">Julkaisematomat muutokset</target></trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target xml:lang="fi" state="needs-translation">Discard selected changes</target></trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
+			<target xml:lang="fi">Hylkää valitut muutokset</target></trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Publish selected changes</source>
-			<target xml:lang="fi" state="needs-translation">Publish selected changes</target></trans-unit>
+			<target xml:lang="fi">Julkaise valitut muutokset</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="fi">Hylkää kaikki muutokset</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="fi">Julkaise kaikki muutokset</target></trans-unit>
-      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
+      <trans-unit id="workspaces.legendCaption" xml:space="preserve" approved="yes">
 				<source>Legend</source>
-			<target xml:lang="fi" state="needs-translation">Legend</target></trans-unit>
-      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+			<target xml:lang="fi">Selite</target></trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target xml:lang="fi" state="needs-translation">deleted</target></trans-unit>
-      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+			<target xml:lang="fi">poistettu</target></trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target xml:lang="fi" state="needs-translation">created</target></trans-unit>
-      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+			<target xml:lang="fi">luotu</target></trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target xml:lang="fi" state="needs-translation">created</target></trans-unit>
-      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+			<target xml:lang="fi">luotu</target></trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target xml:lang="fi" state="needs-translation">created</target></trans-unit>
-      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+			<target xml:lang="fi">luotu</target></trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target xml:lang="fi" state="needs-translation">created</target></trans-unit>
-      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+			<target xml:lang="fi">luotu</target></trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="fi" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
-      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+			<target xml:lang="fi">Tässä työtilassa ei ole julkaisemattomia muutoksia.</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
+			<target xml:lang="fi">Halutako varmasti hylätä kaikki muutokset työtilassa "{0}"?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="fi">Media</target></trans-unit>
