@@ -7,9 +7,10 @@
  */
 define(
 	[
-		'./RegularExpressionValidator'
+		'./RegularExpressionValidator',
+		'Shared/I18n'
 	],
-	function(RegularExpressionValidator) {
+	function(RegularExpressionValidator, I18n) {
 		return RegularExpressionValidator.extend({
 			/**
 			 * The given value is valid if it matches the regular expression.
@@ -27,7 +28,7 @@ define(
 			 * @return {void}
 			 */
 			addError: function(message) {
-				this._super('Only letters, numbers, spaces and certain punctuation marks are expected.');
+				this._super(I18n.translate('content.inspector.validators.labelValidator.invalidLabel'));
 			}
 		});
 	}

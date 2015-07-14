@@ -48,7 +48,7 @@ define(
 		return id;
 	}
 
-	function translate(id, fallback, packageKey, source) {
+	function translate(id, fallback, packageKey, source, context) {
 		var translatedValue, translationParts, identifier;
 		packageKey = packageKey || 'TYPO3.Neos';
 		source = source || 'Main';
@@ -105,7 +105,7 @@ define(
 			id = packageKey + '.' + source + '.' + identifier;
 		}
 
-		translatedValue = Ember.I18n.translate(id);
+		translatedValue = Ember.I18n.translate(id, context);
 		if (translatedValue.indexOf('Missing translation:') !== -1) {
 			return fallback;
 		}
