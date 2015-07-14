@@ -44,7 +44,7 @@
 	<div class="neos-actions">
 		<button class="neos-inspector-cancel" title="{{translate id='discardChanges' value='Discard changes'}}" {{bindAttr disabled="unmodified"}} {{action "revert"}}>{{translate id="discardChanges" value="Discard changes"}}</button>
 		{{#if hasValidationErrors}}
-			<button class="neos-button neos-inspector-apply neos-disabled" title="{{translate id='content-inspector-inspectorView-selectedElement' value='There are fields that are not correctly filled in.'}}" onclick="alert('Some fields are not filled in correctly- Please fill in the marked values properly.');">
+			<button class="neos-button neos-inspector-apply neos-disabled" title="{{translate id='content-inspector-inspectorView-selectedElement' value='There are fields that are not correctly filled in.'}}">
 				<i class="icon-warning-sign"></i> {{translate id='okay' fallback='OK'}}
 			</button>
 		{{else}}
