@@ -239,8 +239,13 @@ class NodeConverter extends AbstractTypeConverter {
 				ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
 				continue;
 			}
+
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
-				throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+				if ($configuration !== NULL && $configuration->shouldSkipUnknownProperties()) {
+					continue;
+				} else {
+					throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+				}
 			}
 			$innerType = $nodePropertyType;
 			if ($nodePropertyType !== NULL) {
