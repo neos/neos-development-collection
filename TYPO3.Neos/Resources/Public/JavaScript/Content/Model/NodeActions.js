@@ -346,7 +346,7 @@ define(
 			}
 
 			// Replace existing entity wrapper in case it already exists
-			NodeSelection.replaceEntityWrapper($newElement);
+			NodeSelection.replaceEntityWrapper($newElement, true);
 
 			// Select the inserted node
 			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true});
