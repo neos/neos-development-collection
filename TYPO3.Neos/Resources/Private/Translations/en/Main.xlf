@@ -135,6 +135,21 @@
 			<trans-unit id="you" xml:space="preserve">
 				<source>You</source>
 			</trans-unit>
+			<trans-unit id="noTitle" xml:space="preserve">
+				<source>[no title]</source>
+			</trans-unit>
+			<trans-unit id="labelCaption" xml:space="preserve">
+				<source>Label</source>
+			</trans-unit>
+			<trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Node type</source>
+			</trans-unit>
+			<trans-unit id="pathCaption" xml:space="preserve">
+				<source>Path</source>
+			</trans-unit>
+			<trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative path</source>
+			</trans-unit>
 
 			<!-- nodetypes -->
 			<trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
