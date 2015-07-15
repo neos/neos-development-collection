@@ -89,7 +89,11 @@ define(
 			},
 
 			refreshEdit: function($element) {
-				$element.midgardEditable(this.get('editableOptions'));
+				var editableOptions = this.get('editableOptions');
+				$element.find('[about]').each(function() {
+					$(this).midgardEditable(editableOptions);
+				});
+				$element.midgardEditable(editableOptions);
 			},
 
 			/**

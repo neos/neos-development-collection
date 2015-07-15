@@ -440,7 +440,7 @@ define(
 							entityView.el = $newElement.get(0);
 							entityView.$el = $newElement;
 							CreateJS.refreshEdit($newElement);
-							NodeSelection.replaceEntityWrapper($newElement);
+							NodeSelection.replaceEntityWrapper($newElement, true);
 							NodeSelection.updateSelection($newElement);
 							EventDispatcher.trigger('contentChanged');
 							return;

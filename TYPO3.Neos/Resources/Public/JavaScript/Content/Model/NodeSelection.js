@@ -303,7 +303,13 @@ define(
 			return this._entitiesBySubject[subject];
 		},
 
-		replaceEntityWrapper: function($element) {
+		replaceEntityWrapper: function($element, recursive) {
+			var that = this;
+			if (recursive) {
+				$element.find('[about]').each(function() {
+					that._createEntityWrapper($(this), true);
+				});
+			}
 			this._createEntityWrapper($element, true);
 		},
 
