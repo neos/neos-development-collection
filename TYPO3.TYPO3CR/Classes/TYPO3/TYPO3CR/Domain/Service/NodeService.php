@@ -40,6 +40,12 @@ class NodeService implements NodeServiceInterface {
 	protected $nodeDataRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var ContextFactory
+	 */
+	protected $contextFactory;
+
+	/**
 	 * Sets default node property values on the given node.
 	 *
 	 * @param NodeInterface $node
@@ -66,7 +72,39 @@ class NodeService implements NodeServiceInterface {
 			try {
 				$node->createNode($childNodeName, $childNodeType);
 			} catch (NodeExistsException $exception) {
+				// If you have a node that has been marked as removed, but is needed again
+				// the old node is recovered
+				$childNodePath = NodePaths::addNodePathSegment($node->getPath(), $childNodeName);
+				$contextProperties = $node->getContext()->getProperties();
+				$contextProperties['removedContentShown'] = TRUE;
+				$context = $this->contextFactory->create($contextProperties);
+				$childNode = $context->getNode($childNodePath);
+				if ($childNode->isRemoved()) {
+					$childNode->setRemoved(FALSE);
+				}
+			}
+		}
+	}
 
+	/**
+	 * Removes all auto created child nodes that existed in the previous nodeType.
+	 *
+	 * @param NodeInterface $node
+	 * @param NodeType $oldNodeType
+	 * @return void
+	 */
+	public function cleanUpAutoCreatedChildNodes(NodeInterface $node, NodeType $oldNodeType) {
+		$newNodeType = $node->getNodeType();
+		$autoCreatedChildNodesForNewNodeType = $newNodeType->getAutoCreatedChildNodes();
+		$autoCreatedChildNodesForOldNodeType = $oldNodeType->getAutoCreatedChildNodes();
+		$removedChildNodesFromOldNodeType = array_diff(
+			array_keys($autoCreatedChildNodesForOldNodeType),
+			array_keys($autoCreatedChildNodesForNewNodeType)
+		);
+		/** @var NodeInterface $childNode */
+		foreach ($node->getChildNodes() as $childNode) {
+			if (in_array($childNode->getName(), $removedChildNodesFromOldNodeType)) {
+				$childNode->remove();
 			}
 		}
 	}

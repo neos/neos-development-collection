@@ -465,7 +465,7 @@ class NodeData extends AbstractNodeData {
 
 		$nodeWorkspace = $workspace ? : $this->workspace;
 		$newPath = NodePaths::addNodePathSegment($this->path, $name);
-		if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions) !== NULL) {
+		if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions, NULL) !== NULL) {
 			throw new NodeExistsException(sprintf('Node with path "' . $newPath . '" already exists in workspace %s and given dimensions %s.', $nodeWorkspace->getName(), var_export($dimensions, TRUE)), 1292503471);
 		}
 

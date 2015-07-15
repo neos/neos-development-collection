@@ -46,6 +46,15 @@ interface NodeServiceInterface {
 	public function cleanUpProperties(NodeInterface $node);
 
 	/**
+	 * Removes all auto created child nodes that existed in the previous nodeType.
+	 *
+	 * @param NodeInterface $node
+	 * @param NodeType $oldNodeType
+	 * @return void
+	 */
+	public function cleanUpAutoCreatedChildNodes(NodeInterface $node, NodeType $oldNodeType);
+
+	/**
 	 * @param NodeInterface $node
 	 * @param NodeType $nodeType
 	 * @return boolean
