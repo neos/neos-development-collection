@@ -183,7 +183,7 @@ class NodeEvent extends Event {
 	public function getDocumentNode() {
 		try {
 			$context = $this->contextFactory->create(array(
-				'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
+				'workspaceName' => $this->userService->getUserWorkspace()->getName(),
 				'dimensions' => $this->dimension,
 				'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
 				'invisibleContentShown' => TRUE
@@ -206,7 +206,7 @@ class NodeEvent extends Event {
 	public function getNode() {
 		try {
 			$context = $this->contextFactory->create(array(
-				'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
+				'workspaceName' => $this->userService->getUserWorkspace()->getName(),
 				'dimensions' => $this->dimension,
 				'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
 				'invisibleContentShown' => TRUE

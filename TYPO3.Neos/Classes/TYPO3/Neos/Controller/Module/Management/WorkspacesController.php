@@ -106,7 +106,7 @@ class WorkspacesController extends AbstractModuleController {
 	 */
 	public function indexAction(Workspace $workspace = NULL) {
 		if ($workspace === NULL) {
-			$workspace = $this->userService->getCurrentWorkspace();
+			$workspace = $this->userService->getUserWorkspace();
 		}
 
 		$sites = array();

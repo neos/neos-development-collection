@@ -28,16 +28,16 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|masterPlugins|error)Action()) || method(TYPO3\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(TYPO3\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.AccessContentInOwnOrLiveWorkspace':
-      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
+      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
 
     'TYPO3.Neos:Backend.AccessContentInOthersWorkspace':
-      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != current.userInformation.currentWorkspaceName)) && method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != "live"))'
+      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != current.userInformation.userWorkspaceName)) && method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != "live"))'
 
     'TYPO3.Neos:Backend.PublishOwnWorkspaceContent':
-      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.DiscardOwnWorkspaceContent':
-      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.ContentDimensions':
       matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
@@ -46,7 +46,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error)Action())'
 
     'TYPO3.Neos:Backend.ShowAndUpdateOwnWorkspace':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(show|update)Action(workspace.name == current.userInformation.currentWorkspaceName))'
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(show|update)Action(workspace.name == current.userInformation.userWorkspaceName))'
 
     'TYPO3.Neos:Backend.CreateWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->createAction())'
@@ -73,7 +73,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishNode|discardNode|publishOrDiscardNodes)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspace':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace)Action(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace == NULL))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace)Action(workspace.name == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace == NULL))'
 
     'TYPO3.Neos:Backend.Module.Management.History':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\HistoryController->(index)Action())'

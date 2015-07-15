@@ -97,7 +97,7 @@ class BackendRedirectionService {
 			return NULL;
 		}
 
-		$workspaceName = $this->userService->getCurrentWorkspaceName();
+		$workspaceName = $this->userService->getUserWorkspaceName();
 		$this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
 		$uriBuilder = new UriBuilder();
