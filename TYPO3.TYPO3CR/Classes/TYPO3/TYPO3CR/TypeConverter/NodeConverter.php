@@ -171,11 +171,13 @@ class NodeConverter extends AbstractTypeConverter {
 					throw new NodeException('Could not convert the node type in live workspace');
 				}
 				$targetNodeType = $source['_nodeType'];
+				$oldNodeType = $node->getNodeType();
 			}
 		}
 		$this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
 		if ($targetNodeType !== NULL) {
 			$this->nodeService->setDefaultValues($node, $targetNodeType);
+			$this->nodeService->cleanUpAutoCreatedChildNodes($node, $oldNodeType);
 			$this->nodeService->createChildNodes($node, $targetNodeType);
 		}
 
