@@ -1,4 +1,4 @@
-.. _Neos Command Reference:
+.. _`Neos Command Reference`:
 
 Neos Command Reference
 ======================
@@ -19,12 +19,16 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-07-14
+The following reference was automatically generated from code on 2015-07-15
 
+
+.. _`Neos Command Reference: TYPO3.NEOS`:
 
 Package *TYPO3.NEOS*
 --------------------
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:activate`:
 
 ``typo3.neos:domain:activate``
 ******************************
@@ -44,6 +48,8 @@ Arguments
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:add`:
 
 ``typo3.neos:domain:add``
 *************************
@@ -66,6 +72,8 @@ Arguments
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:deactivate`:
+
 ``typo3.neos:domain:deactivate``
 ********************************
 
@@ -84,6 +92,8 @@ Arguments
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:delete`:
 
 ``typo3.neos:domain:delete``
 ****************************
@@ -104,6 +114,8 @@ Arguments
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:list`:
+
 ``typo3.neos:domain:list``
 **************************
 
@@ -122,6 +134,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:export`:
 
 ``typo3.neos:site:export``
 **************************
@@ -159,6 +173,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:import`:
+
 ``typo3.neos:site:import``
 **************************
 
@@ -187,6 +203,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:list`:
+
 ``typo3.neos:site:list``
 ************************
 
@@ -199,6 +217,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:prune`:
 
 ``typo3.neos:site:prune``
 *************************
@@ -218,6 +238,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:activate`:
 
 ``typo3.neos:user:activate``
 ****************************
@@ -247,6 +269,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:addrole`:
 
 ``typo3.neos:user:addrole``
 ***************************
@@ -281,6 +305,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:create`:
 
 ``typo3.neos:user:create``
 **************************
@@ -324,6 +350,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:deactivate`:
+
 ``typo3.neos:user:deactivate``
 ******************************
 
@@ -352,6 +380,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:delete`:
 
 ``typo3.neos:user:delete``
 **************************
@@ -388,6 +418,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:list`:
+
 ``typo3.neos:user:list``
 ************************
 
@@ -400,6 +432,8 @@ This command lists all existing Neos users.
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:removerole`:
 
 ``typo3.neos:user:removerole``
 ******************************
@@ -432,6 +466,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:setpassword`:
+
 ``typo3.neos:user:setpassword``
 *******************************
 
@@ -463,6 +499,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:show`:
+
 ``typo3.neos:user:show``
 ************************
 
@@ -493,6 +531,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:create`:
+
 ``typo3.neos:workspace:create``
 *******************************
 
@@ -521,6 +561,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:delete`:
 
 ``typo3.neos:workspace:delete``
 *******************************
@@ -554,6 +596,8 @@ Related commands
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:discard`:
+
 ``typo3.neos:workspace:discard``
 ********************************
 
@@ -580,6 +624,8 @@ Options
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:discardall`:
 
 ``typo3.neos:workspace:discardall``
 ***********************************
@@ -612,6 +658,8 @@ Related commands
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:list`:
+
 ``typo3.neos:workspace:list``
 *****************************
 
@@ -624,6 +672,8 @@ Related commands
 
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:publish`:
 
 ``typo3.neos:workspace:publish``
 ********************************
@@ -655,6 +705,8 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:publishall`:
+
 ``typo3.neos:workspace:publishall``
 ***********************************
 
@@ -685,6 +737,8 @@ Related commands
   Publish changes of a workspace
 
 
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:rebase`:
 
 ``typo3.neos:workspace:rebase``
 *******************************

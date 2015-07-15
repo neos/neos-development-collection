@@ -1,10 +1,12 @@
-.. _FlowQuery Operation Reference:
+.. _`FlowQuery Operation Reference`:
 
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-07-14
+This reference was automatically generated from code on 2015-07-15
 
+
+.. _`FlowQuery Operation Reference: add`:
 
 add
 ---
@@ -19,6 +21,8 @@ Add another $flowQuery object to the current one.
 
 
 
+
+.. _`FlowQuery Operation Reference: cacheLifetime`:
 
 cacheLifetime
 -------------
@@ -44,6 +48,8 @@ Example:
 
 
 
+.. _`FlowQuery Operation Reference: children`:
+
 children
 --------
 
@@ -61,6 +67,8 @@ filter operation.
 
 
 
+.. _`FlowQuery Operation Reference: children`:
+
 children
 --------
 
@@ -77,6 +85,8 @@ the filter expression specified as optional argument.
 
 
 
+.. _`FlowQuery Operation Reference: closest`:
+
 closest
 -------
 
@@ -92,6 +102,8 @@ traversing up through its ancestors.
 
 
 
+
+.. _`FlowQuery Operation Reference: context`:
 
 context
 -------
@@ -114,6 +126,8 @@ Example:
 
 
 
+.. _`FlowQuery Operation Reference: count`:
+
 count
 -----
 
@@ -129,6 +143,8 @@ If arguments are given, these are used to filter the elements before counting.
 
 
 
+
+.. _`FlowQuery Operation Reference: filter`:
 
 filter
 ------
@@ -154,6 +170,8 @@ node. Anything else remains unchanged.
 
 
 
+
+.. _`FlowQuery Operation Reference: filter`:
 
 filter
 ------
@@ -201,6 +219,8 @@ classname with the PHP instanceof operation to check if the value matches.
 
 
 
+.. _`FlowQuery Operation Reference: find`:
+
 find
 ----
 
@@ -217,6 +237,8 @@ for evaluating relative paths.
 
 
 
+.. _`FlowQuery Operation Reference: first`:
+
 first
 -----
 
@@ -230,6 +252,8 @@ Get the first element inside the context.
 
 
 
+
+.. _`FlowQuery Operation Reference: get`:
 
 get
 ---
@@ -253,6 +277,8 @@ returned. If no such index exists, NULL is returned.
 
 
 
+.. _`FlowQuery Operation Reference: has`:
+
 has
 ---
 
@@ -271,6 +297,8 @@ object as argument.
 
 
 
+.. _`FlowQuery Operation Reference: is`:
+
 is
 --
 
@@ -288,6 +316,8 @@ are given, they are used to filter the context before evaluation.
 
 
 
+.. _`FlowQuery Operation Reference: last`:
+
 last
 ----
 
@@ -301,6 +331,8 @@ Get the last element inside the context.
 
 
 
+
+.. _`FlowQuery Operation Reference: next`:
 
 next
 ----
@@ -318,6 +350,8 @@ the filter expression specified as optional argument.
 
 
 
+.. _`FlowQuery Operation Reference: parent`:
+
 parent
 ------
 
@@ -333,6 +367,8 @@ the filter expression specified as optional argument.
 
 
 
+
+.. _`FlowQuery Operation Reference: parents`:
 
 parents
 -------
@@ -350,6 +386,8 @@ the filter expression specified as optional argument.
 
 
 
+.. _`FlowQuery Operation Reference: prev`:
+
 prev
 ----
 
@@ -366,6 +404,8 @@ the filter expression specified as optional argument
 
 
 
+.. _`FlowQuery Operation Reference: property`:
+
 property
 --------
 
@@ -381,6 +421,8 @@ hidden are accessed.
 
 
 
+
+.. _`FlowQuery Operation Reference: property`:
 
 property
 --------
@@ -400,6 +442,8 @@ element is returned.
 
 
 
+.. _`FlowQuery Operation Reference: siblings`:
+
 siblings
 --------
 
@@ -415,6 +459,8 @@ the filter expression specified as optional argument.
 
 
 
+
+.. _`FlowQuery Operation Reference: slice`:
 
 slice
 -----

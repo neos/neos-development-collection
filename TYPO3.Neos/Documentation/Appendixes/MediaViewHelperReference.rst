@@ -1,10 +1,12 @@
-.. _Media ViewHelper Reference:
+.. _`Media ViewHelper Reference`:
 
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-07-14
+This reference was automatically generated from code on 2015-07-15
 
+
+.. _`Media ViewHelper Reference: typo3.media:form.checkbox`:
 
 typo3.media:form.checkbox
 -------------------------
@@ -95,6 +97,8 @@ Expected result::
 
 
 
+.. _`Media ViewHelper Reference: typo3.media:format.relativeDate`:
+
 typo3.media:format.relativeDate
 -------------------------------
 
@@ -112,6 +116,8 @@ Arguments
 
 
 
+
+.. _`Media ViewHelper Reference: typo3.media:image`:
 
 typo3.media:image
 -----------------
@@ -228,6 +234,8 @@ Expected result::
 
 
 
+
+.. _`Media ViewHelper Reference: typo3.media:uri.image`:
 
 typo3.media:uri.image
 ---------------------

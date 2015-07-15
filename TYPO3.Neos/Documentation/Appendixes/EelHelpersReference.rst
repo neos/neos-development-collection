@@ -1,10 +1,12 @@
-.. _Eel Helpers Reference:
+.. _`Eel Helpers Reference`:
 
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-07-14
+This reference was automatically generated from code on 2015-07-15
 
+
+.. _`Eel Helpers Reference: Array`:
 
 Array
 -----
@@ -224,6 +226,8 @@ Allows to insert multiple elements at once::
 
 
 
+.. _`Eel Helpers Reference: Configuration`:
+
 Configuration
 -------------
 
@@ -250,6 +254,8 @@ Examples::
 
 
 
+
+.. _`Eel Helpers Reference: Date`:
 
 Date
 ----
@@ -387,6 +393,94 @@ Get the year of a date
 
 
 
+.. _`Eel Helpers Reference: I18n`:
+
+I18n
+----
+
+I18n helper for Eel - provides methods to translate labels using XLIFF
+translations stored in Flow Packages
+
+There are three ways of usage:
+* By calling translate, you can pass all necessary parameters into one method and get back the translated string
+* By calling translate with a translation shorthand string (PackageKey:Source:trans-unit-id), this shorthat will be
+  translated directly
+* id and value will return a token object, that'll help you collect those parameters without the need to provide
+  all of them and without the need to provide them in order
+
+= Examples =
+
+<code id="Calling translate">
+${I18n.translate('my-trans-unit-id', 'myOriginalLabel', ['an argument'], 'Main', 'MyAwesome.Package', 42, 'en_US')}
+</code>
+<output>
+The translated string or my-trans-unit-id, if no translation could be found.
+</output>
+
+<code id="Calling translate with a shorthand string">
+${I18n.translate('MyAwesome.Package:Main:my-trans-unit-id')}
+</code>
+<output>
+The translated string or my-trans-unit-id, if no translation could be found.
+</output>
+
+<code id="Calling id">
+${I18n.id('my-trans-unit-id').arguments(['an argument']).package('MyAwesome.Package')}
+</code>
+<output>
+The translated string or my-trans-unit-id, if no translation could be found.
+</output>
+
+Implemented in: ``TYPO3\Eel\Helper\I18nHelper``
+
+I18n.id(id)
+^^^^^^^^^^^
+
+Start collection of parameters for translation by id
+
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
+
+**Return** (\TYPO3\Eel\Helper\I18n\TranslationParameterToken)
+
+I18n.translate(id, value, arguments, source, package, quantity, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the translated value for an id or original label
+
+If only id is set and contains a translation shorthand string, translate
+according to that shorthand
+
+In all other cases:
+
+Replace all placeholders with corresponding values if they exist in the
+translated label.
+
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
+* ``value`` (string, *optional*) If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
+* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
+* ``source`` (string, *optional*) Name of file with translations
+* ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
+* ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
+* ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
+
+**Return** (string) Translated label or source label / ID key
+
+I18n.value(value)
+^^^^^^^^^^^^^^^^^
+
+Start collection of parameters for translation by original label
+
+* ``value`` (string)
+
+**Return** (\TYPO3\Eel\Helper\I18n\TranslationParameterToken)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Json`:
+
 Json
 ----
 
@@ -417,6 +511,8 @@ JSON encode the given value
 
 
 
+
+.. _`Eel Helpers Reference: Math`:
 
 Math
 ----
@@ -770,6 +866,8 @@ on the sign of the number.
 
 
 
+.. _`Eel Helpers Reference: Neos.Array`:
+
 Neos.Array
 ----------
 
@@ -813,6 +911,8 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 
 
 
+
+.. _`Eel Helpers Reference: Neos.Link`:
 
 Neos.Link
 ---------
@@ -864,6 +964,8 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 
 
 
+.. _`Eel Helpers Reference: Neos.Node`:
+
 Neos.Node
 ---------
 
@@ -886,6 +988,8 @@ if no content collection could be found
 
 
 
+
+.. _`Eel Helpers Reference: Neos.Rendering`:
 
 Neos.Rendering
 --------------
@@ -926,6 +1030,8 @@ Render a human-readable description for the passed $dimensions
 
 
 
+.. _`Eel Helpers Reference: Security`:
+
 Security
 --------
 
@@ -944,6 +1050,8 @@ Get the account of the first authenticated token.
 
 
 
+
+.. _`Eel Helpers Reference: String`:
 
 String
 ------
@@ -1319,6 +1427,8 @@ Trim whitespace at the beginning and end of a string
 
 
 
+.. _`Eel Helpers Reference: Translation`:
+
 Translation
 -----------
 
@@ -1347,6 +1457,8 @@ Examples::
 
 
 
+
+.. _`Eel Helpers Reference: Type`:
 
 Type
 ----
