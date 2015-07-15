@@ -367,7 +367,7 @@ class NodeController extends AbstractServiceController {
 			$this->persistenceManager->persistAll();
 		}
 
-		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'workspaceNameOfNode' => $node->getWorkspace()->getName(), 'success' => TRUE));
+		$this->view->assign('value', array('data' => array('collectionContent' => $result, 'nodePath' => $node->getContextPath()), 'success' => TRUE));
 	}
 
 	/**

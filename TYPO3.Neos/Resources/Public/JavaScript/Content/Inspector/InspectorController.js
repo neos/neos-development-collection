@@ -14,7 +14,8 @@ define(
 	'Content/LoadingIndicator',
 	'Shared/I18n',
 	'create',
-	'vie'
+	'vie',
+	'Shared/EventDispatcher'
 ], function(
 	Ember,
 	$,
@@ -27,7 +28,8 @@ define(
 	LoadingIndicator,
 	I18n,
 	CreateJS,
-	vie
+	vie,
+	EventDispatcher
 ) {
 
 	/**
@@ -440,6 +442,7 @@ define(
 							CreateJS.refreshEdit($newElement);
 							NodeSelection.replaceEntityWrapper($newElement);
 							NodeSelection.updateSelection($newElement);
+							EventDispatcher.trigger('contentChanged');
 							return;
 						}
 					}
