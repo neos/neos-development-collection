@@ -18,8 +18,9 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * "prev" operation working on TYPO3CR nodes. It iterates over all
- * context elements and returns each preceding sibling or only those matching
- * the filter expression specified as optional argument
+ * context elements and returns the immediately preceding sibling.
+ * If an optional filter expression is provided, it only returns the node
+ * if it matches the given expression.
  */
 class PrevOperation extends AbstractOperation {
 

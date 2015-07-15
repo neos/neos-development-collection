@@ -14,9 +14,9 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * Testcase for the FlowQuery NextOperation
+ * Testcase for the FlowQuery PrevAllOperation
  */
-class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class PrevAllOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
@@ -69,11 +69,11 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function nextWillReturnEmptyResultForLastNodeInLevel() {
-		$context = array($this->thirdNodeInLevel);
+	public function prevAllWillReturnEmptyResultForFirstNodeInLevel() {
+		$context = array($this->firstNodeInLevel);
 		$q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
 
-		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\PrevAllOperation();
 		$operation->evaluate($q, array());
 
 		$output = $q->getContext();
@@ -83,29 +83,43 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function nextWillReturnSecondNodeInLevelForFirstNodeInLevel() {
-		$context = array($this->firstNodeInLevel);
+	public function prevAllWillReturnFirstNodeInLevelForSecondNodeInLevel() {
+		$context = array($this->secondNodeInLevel);
 		$q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
 
-		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\PrevAllOperation();
 		$operation->evaluate($q, array());
 
 		$output = $q->getContext();
-		$this->assertEquals(array($this->secondNodeInLevel), $output);
+		$this->assertEquals(array($this->firstNodeInLevel), $output);
 	}
 
 	/**
 	 * @test
 	 */
-	public function nextWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel() {
-		$context = array($this->firstNodeInLevel, $this->secondNodeInLevel);
+	public function prevAllWillReturnFirstNodeAndSecondNodeInLevelForSecondAndThirdNodeInLevel() {
+		$context = array($this->secondNodeInLevel, $this->thirdNodeInLevel);
 		$q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
 
-		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\PrevAllOperation();
 		$operation->evaluate($q, array());
 
 		$output = $q->getContext();
-		$this->assertEquals(array($this->secondNodeInLevel, $this->thirdNodeInLevel), $output);
+		$this->assertEquals(array($this->firstNodeInLevel, $this->secondNodeInLevel), $output);
+	}
+
+	/**
+	 * @test
+	 */
+	public function prevAllWillReturnFirstNodeAndSecondNodeInLevelForThirdNodeInLevel() {
+		$context = array($this->thirdNodeInLevel);
+		$q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+
+		$operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\PrevAllOperation();
+		$operation->evaluate($q, array());
+
+		$output = $q->getContext();
+		$this->assertEquals(array($this->firstNodeInLevel, $this->secondNodeInLevel), $output);
 	}
 
 }
