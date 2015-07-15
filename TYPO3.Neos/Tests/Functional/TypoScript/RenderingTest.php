@@ -183,7 +183,7 @@ class RenderingTest extends AbstractNodeTest {
 	 * @param string $output
 	 */
 	protected function assertTeaserConformsToBasicRendering($output) {
-		$this->assertContains('TYPO3 Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
+		$this->assertContains('Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
 
 		$this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
