@@ -100,13 +100,6 @@ define([
 				HttpClient._getEndpointUrl('neos-service-node-searchPage'),
 				$.extend({data: {query: query}}, optionsOverride || {})
 			);
-		},
-
-		getPageByNodePath: function(nodePath, optionsOverride) {
-			return HttpClient.getResource(
-				HttpClient._getEndpointUrl('neos-service-node-getPageByNodePath'),
-				$.extend({data: {nodePath: nodePath}}, optionsOverride || {})
-			);
 		}
 	});
 });
