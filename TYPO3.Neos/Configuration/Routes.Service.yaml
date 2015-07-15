@@ -175,16 +175,6 @@
   httpMethods: ['GET']
 
 -
-  name: 'Services - NodeController->getPageByNodePath'
-  uriPattern: 'node/get-page-by-node-path'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@subpackage': 'Service'
-    '@controller': 'Node'
-    '@action':     'getPageByNodePath'
-  httpMethods: ['GET']
-
--
   name: 'Services - NodeController->create'
   uriPattern: 'node/create'
   defaults:

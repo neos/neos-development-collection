@@ -412,19 +412,6 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Get the page by the node path, needed for internal links.
-	 *
-	 * @param string $nodePath
-	 * @return void
-	 */
-	public function getPageByNodePathAction($nodePath) {
-		$contentContext = $this->createContext('live');
-
-		$node = $contentContext->getNode($nodePath);
-		$this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => TRUE));
-	}
-
-	/**
 	 * @param NodeInterface $node
 	 * @param string $typoScriptPath
 	 * @return string
