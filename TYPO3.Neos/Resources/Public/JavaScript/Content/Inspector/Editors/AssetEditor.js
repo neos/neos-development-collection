@@ -57,8 +57,10 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			tagName: 'ul',
 			itemViewClass: Ember.View.extend({
 				template: Ember.Handlebars.compile('<img src="{{unbound view.content.previewImageResourceUri}}" alt="" />{{view.content.filename}} <i class="icon-remove neos-pull-right" {{action remove target="view"}}> </i>'),
-				remove: function() {
-					this.get('_parentView._parentView').removeAsset(this.get('content'));
+				actions: {
+					remove: function() {
+						this.get('_parentView._parentView').removeAsset(this.get('content'));
+					}
 				}
 			}),
 			emptyView: Ember.View.extend({
