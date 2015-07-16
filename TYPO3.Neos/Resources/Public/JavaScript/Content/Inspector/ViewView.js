@@ -4,10 +4,12 @@
 define(
 [
 	'emberjs',
-	'Library/jquery-with-dependencies'
+	'Library/jquery-with-dependencies',
+	'Shared/I18n'
 ], function(
 	Ember,
-	$
+	$,
+    I18n
 ) {
 	return Ember.ContainerView.extend({
 		viewDefinition: null,
@@ -28,7 +30,7 @@ define(
 				{
 					elementId: viewDefinition.elementId,
 					key: viewDefinition.key,
-					label: viewDefinition.label,
+					label: I18n.translate(viewDefinition.label),
 					icon: viewDefinition.icon,
 					inspectorBinding: this.inspectorBinding
 				},
