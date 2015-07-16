@@ -350,7 +350,9 @@ class Runtime {
 
 		// A closure that needs to be called for every return path in this method
 		$finallyClosure = function($needToPopContext = FALSE) use ($cacheCtx, $runtimeContentCache) {
-			if ($needToPopContext) $this->popContext();
+			if ($needToPopContext) {
+				$this->popContext();
+			}
 			$runtimeContentCache->leave($cacheCtx);
 		};
 
@@ -366,10 +368,10 @@ class Runtime {
 					`prototype(%s) < prototype(TYPO3.TypoScript:Template)`",
 					$typoScriptPath, $objectType, $objectType), 1332493995);
 			} elseif ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-				throw new Exceptions\MissingTypoScriptObjectException(
-					"No TypoScript object found in path.
-					Please make sure to define one in your TypoScript configuration.",
-					1332493990);
+				throw new Exceptions\MissingTypoScriptObjectException(sprintf(
+					'No TypoScript object found in path "%s"
+					Please make sure to define one in your TypoScript configuration.', $typoScriptPath
+				), 1332493990);
 			}
 			$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
 			return NULL;
@@ -534,8 +536,8 @@ class Runtime {
 								$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $simpleTypeToArrayClosure);
 							} else {
 								throw new Exception(sprintf(
-									"The TypoScript object `%s` which you tried to inherit from does not exist.
-									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.",
+									'The TypoScript object `%s` which you tried to inherit from does not exist.
+									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.',
 									$prototypeName, $currentPathSegmentType), 1427134340);
 							}
 						}
@@ -587,8 +589,8 @@ class Runtime {
 		}
 		if (!class_exists($tsObjectClassName)) {
 			throw new Exception(sprintf(
-				"The implementation class `%s` defined for TypoScript object of type `%s` does not exist.
-				Maybe a typo in the `@class` property.",
+				'The implementation class `%s` defined for TypoScript object of type `%s` does not exist.
+				Maybe a typo in the `@class` property.',
 				$tsObjectClassName, $typoScriptObjectType), 1347952109);
 		}
 

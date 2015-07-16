@@ -684,7 +684,7 @@ class Parser implements ParserInterface {
 
 				if ($line === FALSE) {
 					// if the last line we consumed is FALSE, we have consumed the end of the file.
-					throw new Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue .'" was not closed.', 1417616064);
+					throw new Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
 				}
 
 			} else {
