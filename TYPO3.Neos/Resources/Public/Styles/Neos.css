@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1428863081') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1428863081') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1428863081') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1428863081') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1424185514') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -9393,6 +9393,24 @@
 }
 .neos.neos-module.neos-module-administration-configuration #configuration .value[title="string"] {
   color: #00b5ff;
+}
+.neos.neos-module .neos-change {
+  box-sizing: border-box;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+.neos.neos-module .neos-change-new {
+  color: #00a338;
+}
+.neos.neos-module .neos-change-changed {
+  color: #ff8700;
+}
+.neos.neos-module .neos-change-removed {
+  color: #ff460d;
+}
+.neos.neos-module .neos-change-unchanged {
+  color: #3f3f3f;
 }
 .neos.neos-module.neos-module-management-workspaces td {
   white-space: nowrap;

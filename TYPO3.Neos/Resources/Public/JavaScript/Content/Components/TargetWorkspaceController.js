@@ -52,7 +52,7 @@ define(
 			 */
 			_loadConfiguration: function() {
 				var that = this;
-				HttpRestClient.getResource('neos-service-workspaces').then(function(result) {
+				HttpRestClient.getResource('neos-service-workspaces', null, {data: {'onlyPublishable': true}}).then(function(result) {
 					var configuration = {},
 					currentUserWorkspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 

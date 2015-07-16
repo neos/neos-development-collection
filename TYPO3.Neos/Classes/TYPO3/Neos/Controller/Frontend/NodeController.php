@@ -123,6 +123,7 @@ class NodeController extends ActionController {
 	 * This is used in out of band rendering for the backend.
 	 *
 	 * @return void
+	 * @throws NodeNotFoundException
 	 */
 	protected function overrideViewVariablesFromInternalArguments() {
 		if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== NULL) {

@@ -106,7 +106,7 @@ define(
 		/**
 		 * Publish all blocks which are unsaved *and* on current page.
 		 *
-		 * @param {mixed} autoPublish
+		 * @param {bool} autoPublish
 		 * @return {void}
 		 */
 		publishChanges: function(autoPublish) {

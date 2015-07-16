@@ -27,11 +27,44 @@
 			<trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			</trans-unit>
+			<trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
+				<source>Details for "{0}"</source>
+			</trans-unit>
+			<trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
+				<source>Create new workspace</source>
+			</trans-unit>
+			<trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+				<source>Edit workspace "{0}"</source>
+			</trans-unit>
+			<trans-unit id="workspaces.new.name" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="workspaces.new.title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="workspaces.new.description" xml:space="preserve">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="workspaces.help.name" xml:space="preserve">
+				<source>Name of the workspace, for example "christmas-campaign."</source>
+			</trans-unit>
+			<trans-unit id="workspaces.help.title" xml:space="preserve">
+				<source>Human friendly title of the workspace, for example &quot;Christmas Campaign.&quot;</source>
+			</trans-unit>
+			<trans-unit id="workspaces.help.description" xml:space="preserve">
+				<source>A description explaining the purpose of the new workspace.</source>
+			</trans-unit>
 			<trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
-				<source>Unpublished changes</source>
+				<source>Unpublished changes in workspace "{0}"</source>
+			</trans-unit>
+			<trans-unit id="workspaces.changesCounts" xml:space="preserve">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+			</trans-unit>
+			<trans-unit id="workspaces.review" xml:space="preserve">
+				<source>Review</source>
 			</trans-unit>
 			<trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
@@ -62,6 +95,12 @@
 			</trans-unit>
 			<trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
+			</trans-unit>
+			<trans-unit id="workspaces.willPublishTo" xml:space="preserve">
+				<source>Changes will be published to the "{0}" workspace.</source>
+			</trans-unit>
+			<trans-unit id="workspaces.noLivePublishPermission" xml:space="preserve">
+				<source>You have no permission to publish to the "live" workspace.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>

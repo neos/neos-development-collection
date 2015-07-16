@@ -15,6 +15,9 @@
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+			<trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			</trans-unit>
 			<trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			</trans-unit>
@@ -117,6 +120,9 @@
 			<trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			</trans-unit>
+			<trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			</trans-unit>
 			<trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			</trans-unit>
@@ -148,13 +154,13 @@
 				<source>Label</source>
 			</trans-unit>
 			<trans-unit id="nodeTypeCaption" xml:space="preserve">
-				<source>Node type</source>
+				<source>Content Type</source>
 			</trans-unit>
 			<trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			</trans-unit>
 			<trans-unit id="relativePathCaption" xml:space="preserve">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			</trans-unit>
 
 			<!-- node types -->
