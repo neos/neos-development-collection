@@ -41,8 +41,9 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/**
 		 * Comma-separated list of allowed file types.
 		 * Public configuration.
+		 * TODO: Should probably be generated server-side depending on the configured imagine driver.
 		 */
-		allowedFileTypes: 'jpg,jpeg,png,gif',
+		allowedFileTypes: 'jpg,jpeg,png,gif,svg',
 
 		/**
 		 * Feature flags for this editor. Currently we have cropping and resize which can be enabled/disabled via NodeTypes editorOptions.
@@ -722,7 +723,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
 					image = container.find('img');
 
-				if (that.get('_originalImageUri') && (cropProperties.width !== that.get('_previewImageDimensions.width') || cropProperties.height !== that.get('_previewImageDimensions.height'))) {
+				if (that.get('_originalImageUri') && that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
 					var scalingFactorX = that.imagePreviewMaximumDimensions.width / cropProperties.width,
 						scalingFactorY = that.imagePreviewMaximumDimensions.height / cropProperties.height,
 						overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
@@ -730,6 +731,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 							width: Math.floor(cropProperties.width * overallScalingFactor),
 							height: Math.floor(cropProperties.height * overallScalingFactor)
 						};
+
 					// Update size of preview bounding box and center preview image thumbnail
 					container.css({
 						width: previewBoundingBoxDimensions.width + 'px',
@@ -764,7 +766,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * We don't use value observing here, as this might end up with a circular dependency.
 		 */
 		_updateValue: function() {
-			if (!this.get('_cropProperties.initialized') || !this.get('_imageFullyLoaded')) {
+			if (!this.get('_imageFullyLoaded')) {
 				return;
 			}
 
@@ -830,6 +832,11 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			this.set('_originalImageUri', metadata.originalImageResourceUri);
 			this.set('_previewImageDimensions', metadata.previewDimensions);
 			this.set('_previewImageUri', metadata.previewImageResourceUri);
+
+			// FIXME: Make less hardcoded... Currently svg is probably the most important format to support, but other formats could also need disabling. Find a better way to define formats vs. features.
+			if (metadata.mediaType === 'image/svg+xml') {
+				this.set('features', {crop: false, resize: false});
+			}
 		},
 
 		_applyEditorChangesToAdjustments: function() {

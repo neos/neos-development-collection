@@ -186,7 +186,8 @@ class ContentController extends ActionController {
 			'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
 			'previewImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()),
 			'originalDimensions' => array('width' => $image->getWidth(), 'height' => $image->getHeight(), 'aspectRatio' => $image->getAspectRatio()),
-			'previewDimensions' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight())
+			'previewDimensions' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight()),
+			'mediaType' => $image->getResource()->getMediaType()
 		);
 		return $imageProperties;
 	}
