@@ -10,6 +10,5 @@ Extending Neos
 	:maxdepth: 2
 	:glob:
 
-	Inspector/index
 	*
 	Tests/index

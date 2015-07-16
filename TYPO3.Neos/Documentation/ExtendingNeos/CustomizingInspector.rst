@@ -121,6 +121,45 @@ HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.htm
     </article>
   </neos:contentElement>
 
+Select multiple options in a selectbox element
+==============================================
+
+For selecting more than one item with a slect box the type of the property has to be set to ``array``.
+
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+
+  'Vendor.Site:YourContentElementName':
+    properties:
+      tags:
+        type: array
+        ...
+        ui:
+          inspector:
+            ...
+            editor: Content/Inspector/Editors/SelectBoxEditor
+            editorOptions:
+              multiple: TRUE
+              allowEmpty: FALSE
+              values:
+                ...
+
+
+Use custom DataSources for a selectbox element
+==============================================
+
+To add custom selectbox-options Neos uses :ref:`data-sources` for the inspector that can be implemented via php.
+
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+
+  'Vendor.Site:YourContentElementName':
+    properties:
+      articleType:
+        ui:
+          inspector:
+            editor: Content/Inspector/Editors/SelectBoxEditor
+            editorOptions:
+              dataSourceIdentifier: 'acme-yourpackage-test''
+
 
 Remove fields from an existing Node Type
 ========================================
@@ -150,5 +189,4 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
               values:
                 parentNode: [ ]
 
-It is also possible to add custom editors and use (custom) validators. For this
-you can read in the integrator guide: :ref:`custom-content-elements`.
+It is also possible to add :ref:`custom-editors` and use :ref:`custom-validators`.

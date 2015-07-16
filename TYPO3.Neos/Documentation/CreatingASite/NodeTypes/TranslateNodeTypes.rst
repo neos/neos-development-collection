@@ -64,6 +64,7 @@ Add properties to existing NodeTypes
 For adding properties to existing NodeTypes the use of mixins is encouraged.
 
 *NodeTypes.yaml*
+
 .. code-block:: yaml
 
   Vendor.Site:YourNodetypeMixin:
