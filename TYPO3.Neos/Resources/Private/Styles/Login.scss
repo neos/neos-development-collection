@@ -74,8 +74,11 @@ body {
 		@include box-shadow(none);
 		@include border-radius(none);
 
-		.neos-login-logo {
-			margin-bottom: 30px;
+		header {
+			color: #fff;
+			font-size: 16px;
+			margin-bottom: $defaultMargin;
+			text-align: center;
 		}
 
 		.neos-login-body {
