@@ -15,7 +15,8 @@ define(
 	'Shared/Configuration',
 	'Shared/Notification',
 	'Shared/Endpoint/WorkspaceEndpoint',
-	'Content/Application'
+	'Content/Application',
+	'Shared/I18n'
 ], function(
 	Ember,
 	$,
@@ -27,7 +28,8 @@ define(
 	Configuration,
 	Notification,
 	WorkspaceEndpoint,
-	ContentModule
+	ContentModule,
+	I18n
 ) {
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
@@ -131,7 +133,7 @@ define(
 								namespace = Configuration.get('TYPO3_NAMESPACE'),
 								title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
 								nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-							Notification.ok('Published changes for ' + nodeTypeDefinition.ui.label + ' "' + $('<a />').html(title).text() + '"');
+							Notification.ok('Published changes for ' + I18n.translate(nodeTypeDefinition.ui.label) + ' "' + $('<a />').html(title).text() + '"');
 						}
 						that.set('publishRunning', false);
 					},
