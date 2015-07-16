@@ -38,12 +38,12 @@ class Version20150324185019 extends AbstractMigration {
 				'accessroles' => json_encode($accessroles),
 			);
 		}
-		$this->connection->query('BEGIN;');
-		$update = $this->connection->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties = :properties, dimensionvalues = :dimensionvalues, accessroles = :accessroles WHERE persistence_object_identifier = :persistence_object_identifier');
+		$this->connection->beginTransaction();
+		$sql = 'UPDATE typo3_typo3cr_domain_model_nodedata SET properties = :properties, dimensionvalues = :dimensionvalues, accessroles = :accessroles WHERE persistence_object_identifier = :persistence_object_identifier';
 		foreach ($nodeData as $node) {
-			$update->execute($node);
+			$this->connection->executeQuery($sql, $node);
 		}
-		$this->connection->query('COMMIT;');
+		$this->connection->commit();
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE properties properties LONGTEXT NOT NULL COMMENT '(DC2Type:flow_json_array)'");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE dimensionvalues dimensionvalues LONGTEXT NOT NULL COMMENT '(DC2Type:json_array)'");
@@ -72,12 +72,12 @@ class Version20150324185019 extends AbstractMigration {
 			);
 		}
 
-		$this->connection->query('BEGIN;');
-		$update = $this->connection->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties = :properties, dimensionvalues = :dimensionvalues, accessroles = :accessroles WHERE persistence_object_identifier = :persistence_object_identifier');
+		$this->connection->beginTransaction();
+		$sql = 'UPDATE typo3_typo3cr_domain_model_nodedata SET properties = :properties, dimensionvalues = :dimensionvalues, accessroles = :accessroles WHERE persistence_object_identifier = :persistence_object_identifier';
 		foreach ($nodeData as $node) {
-			$update->execute($node);
+			$this->connection->executeQuery($sql, $node);
 		}
-		$this->connection->query('COMMIT;');
+		$this->connection->commit();
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE properties properties LONGBLOB NOT NULL COMMENT '(DC2Type:objectarray)'");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE dimensionvalues dimensionvalues LONGBLOB NOT NULL COMMENT '(DC2Type:objectarray)'");
