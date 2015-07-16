@@ -12,6 +12,7 @@ namespace TYPO3\Media\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
@@ -29,6 +30,12 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 	 * @var ProcessingInstructionsConverter
 	 */
 	protected $processingInstructionsConverter;
+
+	/**
+	 * @Flow\Inject
+	 * @var PropertyMapper
+	 */
+	protected $propertyMapper;
 
 	/**
 	 * @var string
@@ -89,7 +96,8 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 						$identity = $adjustmentOptions['__identity'];
 						unset($adjustmentOptions['__identity']);
 					}
-					$adjustment = new $adjustmentType($adjustmentOptions);
+
+					$adjustment = $this->propertyMapper->convert($adjustmentOptions, $adjustmentType, $configuration);
 					if ($identity !== NULL) {
 						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identifier', $identity, TRUE);
 					}

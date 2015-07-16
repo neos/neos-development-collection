@@ -83,6 +83,10 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter {
 		);
 
 		if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
+			$data['originalAsset'] = [
+				'__identity' => $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset()),
+			];
+
 			$adjustments = array();
 			foreach ($source->getAdjustments() as $adjustment) {
 				$index = TypeHandling::getTypeForValue($adjustment);
