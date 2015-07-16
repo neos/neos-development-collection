@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Neos\View\Service\AssetJsonView;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * Rudimentary REST service for assets
@@ -21,6 +21,8 @@ use TYPO3\Neos\View\Service\AssetJsonView;
  * @Flow\Scope("singleton")
  */
 class AssetsController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @Flow\Inject

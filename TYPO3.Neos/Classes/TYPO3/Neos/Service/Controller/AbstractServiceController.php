@@ -18,11 +18,14 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\ResponseInterface;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * Abstract Service Controller
  */
 abstract class AbstractServiceController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @var array
