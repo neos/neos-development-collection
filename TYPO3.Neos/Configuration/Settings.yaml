@@ -81,6 +81,11 @@ TYPO3:
         'typo3-flow-site': 'Sites'
         'typo3-flow-plugin': 'Plugins'
 
+  TYPO3CR:
+    # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
+    # been renamed for example). The default "TYPO3.Neos:FallbackNode" renders a warning in backend and is ignored
+    # in frontend rendering
+    fallbackNodeType: 'TYPO3.Neos:FallbackNode'
   Neos:
 
     typoScript:
