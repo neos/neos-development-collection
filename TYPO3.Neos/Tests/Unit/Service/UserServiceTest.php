@@ -51,7 +51,7 @@ class UserServiceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getBackendUserReturnsNullIfSecurityContextHasNotBeenInitialized() {
-		$this->mockSecurityContext->expects($this->atLeastOnce())->method('isInitialized')->will($this->returnValue(FALSE));
+		$this->mockSecurityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(FALSE));
 		$this->mockSecurityContext->expects($this->never())->method('getPartyByType');
 		$this->assertNull($this->userService->getBackendUser());
 	}
@@ -61,7 +61,7 @@ class UserServiceTest extends UnitTestCase {
 	 */
 	public function getBackendUserReturnsTheCurrentlyLoggedInUserIfSecurityContextIsInitialized() {
 		$mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
-		$this->mockSecurityContext->expects($this->atLeastOnce())->method('isInitialized')->will($this->returnValue(TRUE));
+		$this->mockSecurityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(TRUE));
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getPartyByType')->with('TYPO3\Neos\Domain\Model\User')->will($this->returnValue($mockUser));
 		$this->assertSame($mockUser, $this->userService->getBackendUser());
 	}
