@@ -16,7 +16,8 @@ use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
- * Change the value of a given property.
+ * Set dimensions on a node. This always overwrites existing dimensions, if you need to
+ * add to existing dimensions, @see AddDimensions
  */
 class SetDimensions extends AbstractTransformation {
 
@@ -27,14 +28,14 @@ class SetDimensions extends AbstractTransformation {
 	protected $contentDimensionRepository;
 
 	/**
-	 * If you omit a configured dimension this transformation will add the default value for that dimension.
+	 * If you omit a configured dimension this transformation will set the default value for that dimension.
 	 *
 	 * @var array
 	 */
 	protected $dimensionValues = array();
 
 	/**
-	 * Adds the default dimension values for all dimensions that were not given.
+	 * Sets the default dimension values for all dimensions that were not given.
 	 *
 	 * @var boolean
 	 */

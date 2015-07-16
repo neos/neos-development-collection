@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
- * Filter nodes by node type.
+ * Filter nodes by their dimensions.
  */
 class DimensionValues implements FilterInterface {
 
@@ -54,7 +54,7 @@ class DimensionValues implements FilterInterface {
 	}
 
 	/**
-	 * Returns TRUE if the given node is of the node type this filter expects.
+	 * Returns TRUE if the given node has the default dimension values.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return boolean
