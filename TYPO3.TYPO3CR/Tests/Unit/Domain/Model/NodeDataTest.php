@@ -58,6 +58,7 @@ class NodeDataTest extends UnitTestCase {
 
 		$this->mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
 		$this->mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
+		$this->mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
 		$this->inject($this->nodeData, 'nodeTypeManager', $this->mockNodeTypeManager);
 
 		$this->mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
@@ -208,7 +209,6 @@ class NodeDataTest extends UnitTestCase {
 		$actualPropertyNames = $this->nodeData->getPropertyNames();
 		sort($actualPropertyNames);
 		$this->assertEquals(array('body', 'title'), $actualPropertyNames);
-
 	}
 
 	/**
@@ -309,6 +309,7 @@ class NodeDataTest extends UnitTestCase {
 	public function theNodeTypeCanBeSetAndRetrieved() {
 		/** @var NodeTypeManager|\PHPUnit_Framework_MockObject_MockObject $mockNodeTypeManager */
 		$mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
 		$mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnCallback(
 			function ($name) {
 				return new NodeType($name, array(), array()) ;
@@ -322,6 +323,24 @@ class NodeDataTest extends UnitTestCase {
 		$myNodeType = $mockNodeTypeManager->getNodeType('typo3:mycontent');
 		$this->nodeData->setNodeType($myNodeType);
 		$this->assertEquals($myNodeType, $this->nodeData->getNodeType());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getNodeTypeReturnsFallbackNodeTypeForUnknownNodeType() {
+		$mockFallbackNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+
+		$mockNonExistingNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+		$mockNonExistingNodeType->expects($this->atLeastOnce())->method('getName')->willReturn('definitelyNotAvailableNodeType');
+
+		/** @var NodeTypeManager|\PHPUnit_Framework_MockObject_MockObject $mockNodeTypeManager */
+		$mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+		$mockNodeTypeManager->expects($this->atLeastOnce())->method('getNodeType')->with('definitelyNotAvailableNodeType')->will($this->returnValue($mockFallbackNodeType));
+		$this->inject($this->nodeData, 'nodeTypeManager', $mockNodeTypeManager);
+		$this->inject($this->nodeData, 'nodeType', $mockNonExistingNodeType);
+
+		$this->assertSame($mockFallbackNodeType, $this->nodeData->getNodeType());
 	}
 
 	/**
