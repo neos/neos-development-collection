@@ -18,6 +18,7 @@ include: Prototypes/DocumentMetadata.ts2
 include: Prototypes/ContentElementWrapping.ts2
 include: Prototypes/NodeUri.ts2
 include: Prototypes/ImageUri.ts2
+include: Prototypes/FallbackNode.ts2
 
 # The root matcher used to start rendering in Neos
 #
