@@ -41,7 +41,7 @@ class UserService {
 	 * @return User
 	 */
 	public function getBackendUser() {
-		if ($this->securityContext->isInitialized() === TRUE) {
+		if ($this->securityContext->canBeInitialized() === TRUE) {
 			return $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 		}
 		return NULL;
