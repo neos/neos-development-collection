@@ -419,6 +419,7 @@ TYPO3:
       'Neos.Link': 'TYPO3\Neos\TypoScript\Helper\LinkHelper'
       'Neos.Array': 'TYPO3\Neos\TypoScript\Helper\ArrayHelper'
       'Neos.Rendering': 'TYPO3\Neos\TypoScript\Helper\RenderingHelper'
+      'Neos.Caching': 'TYPO3\Neos\TypoScript\Helper\CachingHelper'
 
   #TYPO3CR:
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
