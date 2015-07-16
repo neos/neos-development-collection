@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-07-15
+This reference was automatically generated from code on 2015-07-16
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -53,13 +53,12 @@ Example:
 children
 --------
 
-"children" operation working on generic objects. It iterates over all
-context elements and returns the values of the properties given in the
-filter expression that has to be specified as argument or in a following
-filter operation.
+"children" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
-:Priority: 1
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ChildrenOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -72,12 +71,13 @@ filter operation.
 children
 --------
 
-"children" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns all child nodes or only those matching
-the filter expression specified as optional argument.
+"children" operation working on generic objects. It iterates over all
+context elements and returns the values of the properties given in the
+filter expression that has to be specified as argument or in a following
+filter operation.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ChildrenOperation
-:Priority: 100
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -149,33 +149,6 @@ If arguments are given, these are used to filter the elements before counting.
 filter
 ------
 
-This filter implementation contains specific behavior for use on TYPO3CR
-nodes. It will not evaluate any elements that are not instances of the
-`NodeInterface`.
-
-The implementation changes the behavior of the `instanceof` operator to
-work on node types instead of PHP object types, so that::
-
-	[instanceof TYPO3.Neos.NodeTypes:Page]
-
-will in fact use `isOfType()` on the `NodeType` of context elements to
-filter. This filter allow also to filter the current context by a given
-node. Anything else remains unchanged.
-
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
-:Priority: 100
-:Final: No
-:Returns: void
-
-
-
-
-
-.. _`FlowQuery Operation Reference: filter`:
-
-filter
-------
-
 Filter operation, limiting the set of objects. The filter expression is
 expected as string argument and used to reduce the context to matching
 elements by checking each value against the filter.
@@ -212,6 +185,33 @@ classname with the PHP instanceof operation to check if the value matches.
 
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
 :Priority: 1
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: filter`:
+
+filter
+------
+
+This filter implementation contains specific behavior for use on TYPO3CR
+nodes. It will not evaluate any elements that are not instances of the
+`NodeInterface`.
+
+The implementation changes the behavior of the `instanceof` operator to
+work on node types instead of PHP object types, so that::
+
+	[instanceof TYPO3.Neos.NodeTypes:Page]
+
+will in fact use `isOfType()` on the `NodeType` of context elements to
+filter. This filter allow also to filter the current context by a given
+node. Anything else remains unchanged.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -338,11 +338,49 @@ next
 ----
 
 "next" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns each following sibling or only those matching
-the filter expression specified as optional argument.
+context elements and returns the immediately following sibling.
+If an optional filter expression is provided, it only returns the node
+if it matches the given expression.
 
 :Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextOperation
 :Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: nextAll`:
+
+nextAll
+-------
+
+"nextAll" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns each following sibling or only those matching
+the filter expression specified as optional argument.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextAllOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: nextUntil`:
+
+nextUntil
+---------
+
+"nextUntil" operation working on TYPO3CR nodes. It iterates over all context elements
+and returns each following sibling until the matching sibling is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextUntilOperation
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -386,17 +424,74 @@ the filter expression specified as optional argument.
 
 
 
+.. _`FlowQuery Operation Reference: parentsUntil`:
+
+parentsUntil
+------------
+
+"parentsUntil" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns the parent nodes until the matching parent is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
 .. _`FlowQuery Operation Reference: prev`:
 
 prev
 ----
 
 "prev" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns each preceding sibling or only those matching
-the filter expression specified as optional argument
+context elements and returns the immediately preceding sibling.
+If an optional filter expression is provided, it only returns the node
+if it matches the given expression.
 
 :Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevOperation
 :Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: prevAll`:
+
+prevAll
+-------
+
+"prevAll" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns each preceding sibling or only those matching
+the filter expression specified as optional argument
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevAllOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: prevUntil`:
+
+prevUntil
+---------
+
+"prevUntil" operation working on TYPO3CR nodes. It iterates over all context elements
+and returns each preceding sibling until the matching sibling is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevUntilOperation
+:Priority: 0
 :Final: No
 :Returns: void
 
