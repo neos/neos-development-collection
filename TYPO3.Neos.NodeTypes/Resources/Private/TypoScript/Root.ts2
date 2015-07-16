@@ -103,9 +103,20 @@ prototype(TYPO3.Neos.NodeTypes:AssetList).@class = 'TYPO3\\Neos\\NodeTypes\\Typo
 
 # "Insert content references" TS Object
 prototype(TYPO3.Neos.NodeTypes:ContentReferences) {
+	@context.referenceNodesArray = ${q(node).property('references')}
 	referenceNodes = TYPO3.TypoScript:Collection {
-		collection = ${q(node).property('references')}
+		collection = ${referenceNodesArray}
 		itemRenderer = TYPO3.Neos:ContentCase
 		itemName = 'node'
+	}
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			node = ${node}
+		}
+		entryTags {
+			1 = ${'Node_' + node.identifier}
+			2 = ${Neos.Caching.nodeTag(referenceNodesArray)}
+		}
 	}
 }
