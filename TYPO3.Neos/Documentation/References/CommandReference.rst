@@ -1413,6 +1413,27 @@ Related commands
 
 
 
+.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:documentation`:
+
+``typo3.kickstart:kickstart:documentation``
+*******************************************
+
+**Kickstart documentation**
+
+Generates a documentation skeleton for the given package.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package for the documentation
+
+
+
+
+
+
+
 .. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:model`:
 
 ``typo3.kickstart:kickstart:model``
