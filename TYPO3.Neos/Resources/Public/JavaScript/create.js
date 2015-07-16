@@ -88,12 +88,24 @@ define(
 				this.set('_state', 'browse');
 			},
 
-			refreshEdit: function($element) {
-				var editableOptions = this.get('editableOptions');
-				$element.find('[about]').each(function() {
-					$(this).midgardEditable(editableOptions);
+			/**
+			 * Refresh an editable by the given DOM element
+			 *
+			 * @param {Element} element
+			 */
+			refreshEdit: function(element) {
+				var editableOptions = this.get('editableOptions'),
+					specificEditableOptions;
+
+				vieInstance.load({
+					element: element
+				}).from('rdfa').execute().done(function() {
+					$(element).find('[about]').add(element).each(function() {
+						var entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(this));
+						specificEditableOptions = $.extend(true, {model: entity}, editableOptions);
+						$(this).midgardEditable(specificEditableOptions);
+					});
 				});
-				$element.midgardEditable(editableOptions);
 			},
 
 			/**

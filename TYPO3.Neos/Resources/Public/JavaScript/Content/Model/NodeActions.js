@@ -335,8 +335,6 @@ define(
 			}
 			collection.add(nodeEntity, options);
 			var $newElement = rdfaService.getElementBySubject(subject, $(document));
-			// Initialize nested elements
-			CreateJS.refreshEdit($newElement.find('[about]'));
 
 			if ($newElement.length === 0) {
 				console.warn('Node could not be found in document.');
@@ -344,6 +342,7 @@ define(
 				// reload page is deferred, to fulfill the promise we should return here to avoid the rest of the code to be executed.
 				return;
 			}
+			CreateJS.refreshEdit($newElement.get(0));
 
 			// Replace existing entity wrapper in case it already exists
 			NodeSelection.replaceEntityWrapper($newElement, true);
