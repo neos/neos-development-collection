@@ -383,80 +383,96 @@ define(
 				nodeTypeSchema = NodeSelection.get('selectedNodeSchema'),
 				reloadElement = false,
 				reloadPage = false,
-				selectedNode = this.get('selectedNode');
+				selectedNode = this.get('selectedNode'),
+				propertyValuePostprocessPromises = [],
+				propertyPromise;
+
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-				var value = that.get('nodeProperties').get(key);
-				if (value !== cleanPropertyValue) {
-					selectedNode.setAttribute(key, value, {validate: false});
+				var valueOrPromise = that.get('nodeProperties').get(key);
+
+				// check if the value is actually a promise
+				if (valueOrPromise._propertyChangePromiseClosure) {
+					propertyPromise = valueOrPromise._propertyChangePromiseClosure();
+				} else {
+					propertyPromise = Ember.RSVP.Promise(function (resolve, reject) {
+						resolve(valueOrPromise);
+					});
+				}
+
+				propertyValuePostprocessPromises.push(propertyPromise.then(function(value) {
 					if (value !== cleanPropertyValue) {
+						selectedNode.setAttribute(key, value, {validate: false});
 						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadPageIfChanged')) {
 							reloadPage = true;
 						} else if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
 							reloadElement = true;
 						}
 					}
-				}
+				}));
 			});
 
-			var entity = this.get('selectedNode._vieEntity');
-			if (entity.isValid() !== true) {
-				return;
-			}
+			Ember.RSVP.all(propertyValuePostprocessPromises).then(function() {
+				var entity = that.get('selectedNode._vieEntity');
+				if (entity.isValid() !== true) {
+					return;
+				}
 
-			// Reload element is only possible if the element is inside a content collection
-			var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined';
-			if (!isInsideCollection) {
-				reloadPage = true;
-				reloadElement = false;
-			}
+				// Reload element is only possible if the element is inside a content collection
+				var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined';
+				if (!isInsideCollection) {
+					reloadPage = true;
+					reloadElement = false;
+				}
 
-			if (reloadPage === true || reloadElement === true) {
-				LoadingIndicator.start();
-			}
+				if (reloadPage === true || reloadElement === true) {
+					LoadingIndicator.start();
+				}
 
-			Backbone.sync('update', entity, {
-				success: function(model, result) {
-					if (reloadPage === true) {
-						if (result && result.data && result.data.nextUri) {
-							// It might happen that the page has been renamed, so we need to take the server-side URI
-							ContentModule.loadPage(result.data.nextUri);
-							return;
-						}
-					} else if (reloadElement === true) {
-						if (result && result.data && result.data.collectionContent) {
-							LoadingIndicator.done();
-							var id = entity.id.substring(1, entity.id.length - 1),
-								$element = $('[about="' + id + '"]').first(),
-								content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
-							if (content.length === 0) {
-								console.warn('Node could not be found in rendered collection.');
-								ContentModule.reloadPage();
+				Backbone.sync('update', entity, {
+					success: function (model, result) {
+						if (reloadPage === true) {
+							if (result && result.data && result.data.nextUri) {
+								// It might happen that the page has been renamed, so we need to take the server-side URI
+								ContentModule.loadPage(result.data.nextUri);
 								return;
 							}
-							var entityView = vie.service('rdfa')._getViewForElement($element);
-							entityView.$el.replaceWith(content);
-							var $newElement = $('[about="' + id + '"]');
-							entityView.el = $newElement.get(0);
-							entityView.$el = $newElement;
-							CreateJS.refreshEdit(entityView.el);
-							NodeSelection.replaceEntityWrapper($newElement, true);
-							NodeSelection.updateSelection($newElement);
-							EventDispatcher.trigger('contentChanged');
-							return;
+						} else if (reloadElement === true) {
+							if (result && result.data && result.data.collectionContent) {
+								LoadingIndicator.done();
+								var id = entity.id.substring(1, entity.id.length - 1),
+									$element = $('[about="' + id + '"]').first(),
+									content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+								if (content.length === 0) {
+									console.warn('Node could not be found in rendered collection.');
+									ContentModule.reloadPage();
+									return;
+								}
+
+								var entityView = vie.service('rdfa')._getViewForElement($element);
+								entityView.$el.replaceWith(content);
+								var $newElement = $('[about="' + id + '"]');
+								entityView.el = $newElement.get(0);
+								entityView.$el = $newElement;
+								CreateJS.refreshEdit(entityView.el);
+								NodeSelection.replaceEntityWrapper($newElement, true);
+								NodeSelection.updateSelection($newElement);
+								EventDispatcher.trigger('contentChanged');
+								return;
+							}
 						}
-					}
-					ContentModule.reloadPage();
-				},
-				render: isInsideCollection
+						ContentModule.reloadPage();
+					},
+					render: isInsideCollection
+				});
+
+				that.set('modified', false);
+
+				cleanProperties = that.get('selectedNode.attributes');
+				that.set('cleanProperties', cleanProperties);
+				that.set('nodeProperties', Ember.Object.create(cleanProperties));
+				SecondaryInspectorController.hide();
 			});
-
-			this.set('modified', false);
-
-			cleanProperties = this.get('selectedNode.attributes');
-			this.set('cleanProperties', cleanProperties);
-			this.set('nodeProperties', Ember.Object.create(cleanProperties));
-			SecondaryInspectorController.hide();
 		},
 
 		/**

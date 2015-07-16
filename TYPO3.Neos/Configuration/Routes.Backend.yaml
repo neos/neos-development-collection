@@ -50,6 +50,15 @@
     '@controller': 'Backend\Content'
     '@action':     'assetsWithMetadata'
 
+
+-
+  name: 'Content Module - Create ImageVariant'
+  uriPattern: 'content/create-image-variant'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'createImageVariant'
+  httpMethods: ['POST']
+
 -
   name: 'Content Module - Plugin Views'
   uriPattern: 'content/plugin-views'
