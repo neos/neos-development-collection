@@ -310,7 +310,7 @@ class ContentController extends ActionController {
 				$uri = $this->uriBuilder
 					->reset()
 					->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
-				$pageTitle = $page->getProperty('title');
+				$pageTitle = $page->getLabel();
 				$views[$pluginViewDefinition->getName()] = array(
 					'label' => sprintf('"%s"', $label, $pageTitle),
 					'pageNode' => array(
@@ -347,7 +347,7 @@ class ContentController extends ActionController {
 				if ($page === NULL) {
 					continue;
 				}
-				$masterPlugins[$pluginNode->getPath()] = sprintf('"%s" on page "%s"', $pluginNode->getNodeType()->getLabel(), $page->getProperty('title'));
+				$masterPlugins[$pluginNode->getPath()] = sprintf('"%s" on page "%s"', $pluginNode->getNodeType()->getLabel(), $page->getLabel());
 			}
 		}
 		return json_encode((object) $masterPlugins);
