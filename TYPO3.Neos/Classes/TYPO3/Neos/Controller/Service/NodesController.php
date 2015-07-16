@@ -15,6 +15,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -31,6 +32,8 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  * @Flow\Scope("singleton")
  */
 class NodesController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @Flow\Inject

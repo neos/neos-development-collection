@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Module;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * The TYPO3 Abstract module controller
@@ -20,6 +21,8 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
  * @Flow\Scope("singleton")
  */
 abstract class AbstractModuleController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @var array
