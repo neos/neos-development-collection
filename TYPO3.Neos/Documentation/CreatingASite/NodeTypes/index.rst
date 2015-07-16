@@ -7,5 +7,6 @@ These are the development guidelines of Neos.
 	:maxdepth: 2
 
 	ContentStructure
+	NodeTypeDefinition
 	NodeConstraints
 	TranslateNodeTypes
