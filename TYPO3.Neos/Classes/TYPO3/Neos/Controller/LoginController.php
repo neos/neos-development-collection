@@ -17,6 +17,8 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
 use TYPO3\Flow\Mvc\View\JsonView;
 
@@ -36,6 +38,18 @@ class LoginController extends AbstractAuthenticationController {
 	 * @var BackendRedirectionService
 	 */
 	protected $backendRedirectionService;
+
+	/**
+	 * @Flow\Inject
+	 * @var DomainRepository
+	 */
+	protected $domainRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * @var array
@@ -73,13 +87,15 @@ class LoginController extends AbstractAuthenticationController {
 	 * @return void
 	 */
 	public function indexAction($username = NULL, $unauthorized = FALSE) {
-		$this->view->assign('username', $username);
 		if ($this->securityContext->getInterceptedRequest() || $unauthorized) {
 			$this->response->setStatus(401);
 		}
 		if ($this->authenticationManager->isAuthenticated()) {
 			$this->redirect('index', 'Backend\Backend');
 		}
+		$currentDomain = $this->domainRepository->findOneByActiveRequest();
+		$currentSite = $currentDomain !== NULL ? $currentDomain->getSite() : $this->siteRepository->findFirstOnline();
+		$this->view->assignMultiple(array('username' => $username, 'site' => $currentSite));
 	}
 
 	/**

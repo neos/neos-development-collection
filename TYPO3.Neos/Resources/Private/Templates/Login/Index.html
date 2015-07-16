@@ -2,7 +2,7 @@
 <f:layout name="Default" />
 
 <f:section name="head">
-	<title><neos:backend.translate id="login.index.title">Neos Login</neos:backend.translate></title>
+	<title><neos:backend.translate id="login.index.title">Login to</neos:backend.translate> {site.name}</title>
 	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css')}" />
 	<script src="{f:uri.resource(path: 'Library/jquery/jquery-2.0.3.js')}"></script>
 	<script src="{f:uri.resource(path: 'Library/jquery-ui/js/jquery-ui-1.10.4.custom.js')}"></script>
@@ -11,9 +11,7 @@
 <f:section name="body">
 	<body class="neos">
 		<div id="neos-login-box">
-			<div class="neos-login-logo">
-				<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" alt="Neos" />
-			</div>
+			<header><neos:backend.translate id="login.index.title">Login to</neos:backend.translate> <strong>{site.name}</strong></header>
 			<div class="neos-login-body neos">
 				<f:form name="login" action="authenticate">
 					<f:form.hidden name="lastVisitedNode" />

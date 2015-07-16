@@ -2876,8 +2876,11 @@ body {
   -moz-border-radius: none;
   border-radius: none;
 }
-.neos #neos-login-box .neos-login-logo {
-  margin-bottom: 30px;
+.neos #neos-login-box header {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 .neos #neos-login-box .neos-login-body {
   padding: 0;
