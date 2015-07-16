@@ -9,6 +9,7 @@ Appendixes
 
 		*
 
+		ReleaseNotes/index
 		ChangeLogs/index
 
 .. only:: latex

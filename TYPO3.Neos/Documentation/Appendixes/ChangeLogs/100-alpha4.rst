@@ -1,8 +1,8 @@
 .. _1.0.0-alpha4:
 
-============
-1.0.0-alpha4
-============
+=========================
+1.0.0-alpha4 (2013-07-07)
+=========================
 
 We are extremely delighted to announce the immediate availability of TYPO3 Neos Alpha 4.
 

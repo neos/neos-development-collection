@@ -1,8 +1,8 @@
 .. _1.0.0-alpha7:
 
-====================
-1.0.0-alpha7
-====================
+=========================
+1.0.0-alpha7 (2013-10-30)
+=========================
 
 TYPO3 Neos Alpha 7 contains a number of improvements and fixes we considered important enough
 to release another alpha.
