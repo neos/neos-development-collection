@@ -439,7 +439,7 @@ define(
 							var $newElement = $('[about="' + id + '"]');
 							entityView.el = $newElement.get(0);
 							entityView.$el = $newElement;
-							CreateJS.refreshEdit($newElement);
+							CreateJS.refreshEdit(entityView.el);
 							NodeSelection.replaceEntityWrapper($newElement, true);
 							NodeSelection.updateSelection($newElement);
 							EventDispatcher.trigger('contentChanged');
