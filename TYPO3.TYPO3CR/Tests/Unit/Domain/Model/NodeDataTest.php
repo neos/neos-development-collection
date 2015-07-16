@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -687,6 +688,77 @@ class NodeDataTest extends UnitTestCase {
 		$dimensionsHash = $nodeData->getDimensionsHash();
 
 		$this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setDimensionsAddsDimensionValues() {
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace);
+
+		$dimensionsToSet = array(
+			new NodeDimension($nodeData, 'c', 'c1'),
+			new NodeDimension($nodeData, 'c', 'c2'),
+			new NodeDimension($nodeData, 'a', 'a1'),
+			new NodeDimension($nodeData, 'b', 'b1')
+		);
+		$expectedDimensionValues = array(
+			'a' => array('a1'),
+			'b' => array('b1'),
+			'c' => array('c1', 'c2')
+		);
+
+		$nodeData->setDimensions($dimensionsToSet);
+		$setDimensionValues = $nodeData->getDimensionValues();
+
+		$this->assertSame($expectedDimensionValues, $setDimensionValues);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setDimensionsAddsNewDimensionValues() {
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+
+		$dimensionsToSet = array(
+			new NodeDimension($nodeData, 'c', 'c1'),
+			new NodeDimension($nodeData, 'c', 'c2'),
+			new NodeDimension($nodeData, 'a', 'a1'),
+			new NodeDimension($nodeData, 'b', 'b1')
+		);
+		$expectedDimensionValues = array(
+			'a' => array('a1'),
+			'b' => array('b1'),
+			'c' => array('c1', 'c2')
+		);
+
+		$nodeData->setDimensions($dimensionsToSet);
+		$setDimensionValues = $nodeData->getDimensionValues();
+
+		$this->assertSame($expectedDimensionValues, $setDimensionValues);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setDimensionsRemovesDimensionValuesNotGiven() {
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+
+		$dimensionsToSet = array(
+			new NodeDimension($nodeData, 'c', 'c1'),
+			new NodeDimension($nodeData, 'b', 'b1'),
+			new NodeDimension($nodeData, 'f', 'f1')
+		);
+		$expectedDimensionValues = array(
+			'b' => array('b1'),
+			'c' => array('c1'),
+			'f' => array('f1')
+		);
+
+		$nodeData->setDimensions($dimensionsToSet);
+		$setDimensionValues = $nodeData->getDimensionValues();
+
+		$this->assertSame($expectedDimensionValues, $setDimensionValues);
 	}
 
 }
