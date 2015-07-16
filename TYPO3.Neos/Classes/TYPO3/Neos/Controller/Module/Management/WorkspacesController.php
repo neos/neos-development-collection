@@ -88,6 +88,9 @@ class WorkspacesController extends AbstractModuleController {
 		if ($this->arguments->hasArgument('node')) {
 			$this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
+		if ($this->arguments->hasArgument('nodes')) {
+			$this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->forProperty('*')->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		}
 		parent::initializeAction();
 	}
 
