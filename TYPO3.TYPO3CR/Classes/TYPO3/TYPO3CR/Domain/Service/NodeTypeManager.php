@@ -45,6 +45,12 @@ class NodeTypeManager {
 	protected $configurationManager;
 
 	/**
+	 * @Flow\InjectConfiguration(path="fallbackNodeType")
+	 * @var string
+	 */
+	protected $fallbackNodeTypeName;
+
+	/**
 	 * Return all registered node types.
 	 *
 	 * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
@@ -111,10 +117,18 @@ class NodeTypeManager {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
-		if (!isset($this->cachedNodeTypes[$nodeTypeName])) {
-			throw new NodeTypeNotFoundException('The node type "' . $nodeTypeName . '" is not available.', 1316598370);
+		if (isset($this->cachedNodeTypes[$nodeTypeName])) {
+			return $this->cachedNodeTypes[$nodeTypeName];
 		}
-		return $this->cachedNodeTypes[$nodeTypeName];
+
+		if ($this->fallbackNodeTypeName === NULL) {
+			throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and no fallback NodeType is configured.', $nodeTypeName), 1316598370);
+		}
+
+		if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
+			throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and the configured fallback NodeType "%s" is not available.', $nodeTypeName, $this->fallbackNodeTypeName), 1438166322);
+		}
+		return $this->getNodeType($this->fallbackNodeTypeName);
 	}
 
 	/**

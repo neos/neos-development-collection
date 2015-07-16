@@ -35,6 +35,13 @@ TYPO3:
           Json: 'TYPO3\Eel\Helper\JsonHelper'
           I18n: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
 
+    # the fallback NodeType can be used as a replacement for unknown NodeTypes
+    #
+    # Example
+    #
+    #  fallbackNodeType: 'Some.Package:SomeNodeType'
+    fallbackNodeType: ~
+
   Flow:
      # Register soft deletable filter & event listeners
     persistence:
