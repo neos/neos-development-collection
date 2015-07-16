@@ -431,11 +431,8 @@
 			<target xml:lang="de">Neu laden</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
-				<source>Neos Login</source>
+				<source>Login to</source>
 			<target xml:lang="de">Neos Login</target></trans-unit>
-      <trans-unit id="login" xml:space="preserve" approved="yes">
-				<source>Login</source>
-			<target xml:lang="de">Anmelden</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="de">Authentifiziere</target></trans-unit>

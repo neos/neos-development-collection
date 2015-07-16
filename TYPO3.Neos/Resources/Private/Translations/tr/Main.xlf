@@ -431,11 +431,8 @@
 			<target xml:lang="tr" state="needs-translation">Reload</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
-				<source>Neos Login</source>
-			<target xml:lang="tr" state="needs-translation">Neos Login</target></trans-unit>
-      <trans-unit id="login" xml:space="preserve">
-				<source>Login</source>
-			<target xml:lang="tr" state="needs-translation">Login</target></trans-unit>
+				<source>Login to</source>
+			<target xml:lang="tr" state="needs-translation">Login to</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="tr" state="needs-translation">Authenticating</target></trans-unit>

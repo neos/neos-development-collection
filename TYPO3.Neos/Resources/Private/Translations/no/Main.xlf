@@ -431,11 +431,8 @@
 			<target xml:lang="no">Last inn på nytt</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
-				<source>Neos Login</source>
+				<source>Login to</source>
 			<target xml:lang="no">Innlogging for TYPO3 Neos</target></trans-unit>
-      <trans-unit id="login" xml:space="preserve" approved="yes">
-				<source>Login</source>
-			<target xml:lang="no">Logg inn</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="no">Godkjenner</target></trans-unit>
