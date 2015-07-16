@@ -168,6 +168,13 @@ class Parser implements ParserInterface {
 	/x';
 
 	/**
+	 * Reserved parse tree keys for internal usage.
+	 *
+	 * @var array
+	 */
+	static public $reservedParseTreeKeys = array('__meta', '__prototypes', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression');
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
@@ -597,7 +604,7 @@ class Parser implements ParserInterface {
 	 */
 	protected function getParsedObjectPath($objectPath) {
 		if (preg_match(self::SCAN_PATTERN_OBJECTPATH, $objectPath) === 1) {
-			if ($objectPath[0] == '.') {
+			if ($objectPath[0] === '.') {
 				$objectPath = $this->getCurrentObjectPathPrefix() . substr($objectPath, 1);
 			}
 
@@ -620,7 +627,11 @@ class Parser implements ParserInterface {
 					}
 					$objectPathArray[] = $fullyQualifiedObjectType;
 				} else {
-					$objectPathArray[] = $objectPathSegment;
+					$key = $objectPathSegment;
+					if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, TRUE)) {
+						throw new Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
+					}
+					$objectPathArray[] = $key;
 				}
 			}
 		} else {

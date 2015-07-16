@@ -1,30 +1,30 @@
 prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
 
 template.basicTemplate = TYPO3.TypoScript:Template {
-	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 	myVariable = 'foo'
 }
 
 template.basicTemplateWithEelVariable = TYPO3.TypoScript:Template {
-	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 	bar = ${'b' + 'a' + 'r'}
 	myVariable = ${'foo' + this.bar}
 }
 
 template.partial = TYPO3.TypoScript:Template {
-	templatePath = ${fixtureDirectory + 'PartialTemplate.html'}
-	partialPath = ${fixtureDirectory + 'Partials/'}
+	templatePath = ${fixtureDirectory + 'Templates/PartialTemplate.html'}
+	partialRootPath = ${fixtureDirectory + 'Partials/'}
 }
 
 template.layout = TYPO3.TypoScript:Template {
-	templatePath = ${fixtureDirectory + 'LayoutTemplate.html'}
-	layoutPath = ${fixtureDirectory + 'Layouts'}
+	templatePath = ${fixtureDirectory + 'Templates/LayoutTemplate.html'}
+	layoutRootPath = ${fixtureDirectory + 'Layouts'}
 }
 
 # This fixture sets up a TypoScript object that will throw an exception during rendering
 # (a Collection needs an itemName property to be set)
 template.offsetAccessException = TYPO3.TypoScript:Template {
-	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 
 	myVariable = TYPO3.TypoScript:Collection {
 		collection = ${['foo', 'bar']}

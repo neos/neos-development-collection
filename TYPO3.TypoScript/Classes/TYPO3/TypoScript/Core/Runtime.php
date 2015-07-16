@@ -617,7 +617,7 @@ class Runtime {
 	protected function setPropertiesOnTypoScriptObject(AbstractTypoScriptObject $typoScriptObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
 			// skip keys which start with __, as they are purely internal.
-			if ($key[0] === '_' && $key[1] === '_') {
+			if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, TRUE)) {
 				continue;
 			}
 
