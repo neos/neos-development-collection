@@ -137,7 +137,7 @@ class VieSchemaBuilder {
 		}
 
 		$this->types['typo3:' . $nodeTypeName] = (object) array(
-			'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
+			'label' => $nodeType->getLabel() ?: $nodeTypeName,
 			'id' => 'typo3:' . $nodeTypeName,
 			'properties' => array(),
 			'specific_properties' => $nodeTypeProperties,
