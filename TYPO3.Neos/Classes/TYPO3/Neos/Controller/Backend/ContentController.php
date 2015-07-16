@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -24,6 +25,7 @@ use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -87,6 +89,12 @@ class ContentController extends ActionController {
 	protected $imageInterfaceArrayPresenter;
 
 	/**
+	 * @Flow\Inject
+	 * @var EntityToIdentityConverter
+	 */
+	protected $entityToIdentityConverter;
+
+	/**
 	 * Initialize property mapping as the upload usually comes from the Inspector JavaScript
 	 */
 	public function initializeUploadAssetAction() {
@@ -138,9 +146,36 @@ class ContentController extends ActionController {
 	}
 
 	/**
+	 * Configure property mapping for adding a new image variant.
+	 *
+	 * @return void
+	 */
+	public function initializeCreateImageVariantAction() {
+		$this->arguments->getArgument('asset')->getPropertyMappingConfiguration()
+			->allowOverrideTargetType()
+			->allowAllProperties()
+			->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+	}
+
+	/**
+	 * Generate a new image variant from given data.
+	 *
+	 * @param ImageVariant $asset
+	 * @return string
+	 */
+	public function createImageVariantAction(ImageVariant $asset) {
+		$this->assetRepository->add($asset);
+
+		$propertyMappingConfiguration = new PropertyMappingConfiguration();
+		// This will not be sent as "application/json" as we need the JSON string and not the single variables.
+		return json_encode($this->entityToIdentityConverter->convertFrom($asset, 'array', [], $propertyMappingConfiguration));
+	}
+
+	/**
 	 * Fetch the metadata for a given image
 	 *
 	 * @param ImageInterface $image
+	 *
 	 * @return string JSON encoded response
 	 */
 	public function imageWithMetadataAction(ImageInterface $image) {

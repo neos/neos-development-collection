@@ -16,8 +16,8 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
@@ -63,9 +63,9 @@ class ContentElementWrappingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var ImageInterfaceJsonSerializer
+	 * @var EntityToIdentityConverter
 	 */
-	protected $imageInterfaceJsonSerializer;
+	protected $entityToIdentityConverter;
 
 	/**
 	 * Wrap the $content identified by $node with the needed markup for the backend.
@@ -259,7 +259,7 @@ class ContentElementWrappingService {
 
 		if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
 			$propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-			return $this->imageInterfaceJsonSerializer->convertFrom($propertyValue, 'string', array(), $propertyMappingConfiguration);
+			return json_encode($this->entityToIdentityConverter->convertFrom($propertyValue, 'array', array(), $propertyMappingConfiguration));
 		}
 
 		// Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)
