@@ -16,6 +16,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * The TYPO3 Module
@@ -23,6 +24,8 @@ use TYPO3\Flow\Utility\MediaTypes;
  * @Flow\Scope("singleton")
  */
 class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @Flow\Inject

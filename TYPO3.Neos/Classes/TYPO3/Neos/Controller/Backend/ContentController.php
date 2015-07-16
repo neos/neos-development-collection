@@ -21,6 +21,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -32,6 +33,8 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
  * @Flow\Scope("singleton")
  */
 class ContentController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @Flow\Inject

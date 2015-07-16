@@ -15,11 +15,14 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * REST service controller for managing content dimensions
  */
 class ContentDimensionsController extends ActionController {
+
+	use BackendUserTranslationTrait;
 
 	/**
 	 * @var array
