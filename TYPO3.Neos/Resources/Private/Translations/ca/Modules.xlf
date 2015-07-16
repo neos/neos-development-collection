@@ -15,6 +15,45 @@
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="ca" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+				<source>Unpublished changes</source>
+			<target xml:lang="ca" state="needs-translation">Unpublished changes</target></trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+				<source>Discard selected changes</source>
+			<target xml:lang="ca" state="needs-translation">Discard selected changes</target></trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
+				<source>Publish selected changes</source>
+			<target xml:lang="ca" state="needs-translation">Publish selected changes</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+				<source>Discard all changes</source>
+			<target xml:lang="ca" state="needs-translation">Discard all changes</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+				<source>Publish all changes</source>
+			<target xml:lang="ca" state="needs-translation">Publish all changes</target></trans-unit>
+      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
+				<source>Legend</source>
+			<target xml:lang="ca" state="needs-translation">Legend</target></trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+				<source>deleted</source>
+			<target xml:lang="ca" state="needs-translation">deleted</target></trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="ca" state="needs-translation">created</target></trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="ca" state="needs-translation">created</target></trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="ca" state="needs-translation">created</target></trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="ca" state="needs-translation">created</target></trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+				<source>There are no unpublished changes in this workspace.</source>
+			<target xml:lang="ca" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+			<target xml:lang="ca" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="ca" state="needs-translation">Media</target></trans-unit>
@@ -76,6 +115,9 @@
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="ca" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+      <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="ca" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="ca" state="needs-translation">Create user</target></trans-unit>
