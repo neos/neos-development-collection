@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
+namespace TYPO3\TYPO3CR\Tests\Unit\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
@@ -11,7 +11,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use PHPUnit_Framework_Assert as Assert;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
