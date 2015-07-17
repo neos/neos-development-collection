@@ -37,3 +37,4 @@ TYPO3:
       Security: 'TYPO3\Eel\Helper\SecurityHelper'
       Translation: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
       Type: 'TYPO3\Eel\Helper\TypeHelper'
+      I18n: 'TYPO3\Eel\Helper\I18nHelper'
