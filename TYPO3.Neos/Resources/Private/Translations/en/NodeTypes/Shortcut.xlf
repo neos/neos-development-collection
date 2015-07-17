@@ -10,6 +10,10 @@
 				<source>Shortcut options</source>
 			</trans-unit>
 
+			<trans-unit id="groups.document" xml:space="preserve">
+				<source>Shortcut options</source>
+			</trans-unit>
+
 			<trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
 			</trans-unit>
