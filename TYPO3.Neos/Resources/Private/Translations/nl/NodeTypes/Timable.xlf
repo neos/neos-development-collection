@@ -2,12 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="nl">
     <body>
-      <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve" approved="yes">
+      <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="nl">Verberg voor</target></trans-unit>
-      <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve" approved="yes">
+			<target xml:lang="nl" state="translated">Verberg voor</target></trans-unit>
+      <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="nl">Verberg na</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verberg na</target></trans-unit>
     </body>
   </file>
 </xliff>

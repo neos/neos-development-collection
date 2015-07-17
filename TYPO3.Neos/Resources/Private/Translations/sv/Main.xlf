@@ -312,9 +312,9 @@
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {{maximum}} characters.</source>
 			<target xml:lang="sv-SE" state="needs-translation">This text may not exceed {{maximum}} characters.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="sv-SE">Endast tecknen ifrån a till z och siffror tillåts</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Endast tecknen ifrån a till z och siffror tillåts</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="sv-SE" state="needs-translation">The given subject was not countable.</target></trans-unit>
