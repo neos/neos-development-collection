@@ -8,6 +8,9 @@
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
 			<target xml:lang="de" state="needs-translation">Shortcut options</target></trans-unit>
+      <trans-unit id="groups.document" xml:space="preserve">
+				<source>Shortcut options</source>
+			<target xml:lang="de" state="needs-translation">Shortcut options</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="de">Zielmodus</target></trans-unit>
