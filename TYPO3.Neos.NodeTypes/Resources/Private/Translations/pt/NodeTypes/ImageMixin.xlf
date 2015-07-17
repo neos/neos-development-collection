@@ -11,9 +11,9 @@
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
 			<target xml:lang="pt-BR" state="needs-translation">Alternative text</target></trans-unit>
-      <trans-unit id="properties.title" xml:space="preserve" approved="yes">
+      <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="pt-BR">Título</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Título</target></trans-unit>
     </body>
   </file>
 </xliff>

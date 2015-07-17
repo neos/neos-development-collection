@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Menu</source>
-			<target xml:lang="pl" state="needs-translation">Menu</target></trans-unit>
+			<target xml:lang="pl" state="translated">Menu</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve">
 				<source>Options</source>
-			<target xml:lang="pl" state="needs-translation">Options</target></trans-unit>
+			<target xml:lang="pl" state="translated">Opcje</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve">
 				<source>Starting Level</source>
 			<target xml:lang="pl" state="needs-translation">Starting Level</target></trans-unit>

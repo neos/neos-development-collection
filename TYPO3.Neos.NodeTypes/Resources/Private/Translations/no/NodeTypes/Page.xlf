@@ -2,12 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="no">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+      <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="no">Side</target></trans-unit>
-      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
+			<target xml:lang="no" state="translated">Side</target></trans-unit>
+      <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="no">Tittel</target></trans-unit>
+			<target xml:lang="no" state="translated">Tittel</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
 			<target xml:lang="no" state="needs-translation">Layout</target></trans-unit>
