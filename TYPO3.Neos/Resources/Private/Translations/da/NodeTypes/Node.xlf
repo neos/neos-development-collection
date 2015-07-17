@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="da" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="da" state="translated">Generelt</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="da" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="da" state="translated">Metadata</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="da" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="da" state="translated">Metadata</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="da" state="translated">Yderligere info</target></trans-unit>
@@ -19,7 +19,7 @@
 			<target xml:lang="da" state="translated">Skift type</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="da" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="da" state="translated">Type</target></trans-unit>
     </body>
   </file>
 </xliff>
