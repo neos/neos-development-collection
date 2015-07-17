@@ -17,13 +17,13 @@
 			<target xml:lang="da" state="translated">Dette modul indeholder en oversigt over alle elementer i det aktuelle arbejdsområde, og det gør det muligt at fortsætte korrektur- og udgivelsesarbejdsgangen for dem.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes</source>
-			<target xml:lang="da" state="needs-translation">Unpublished changes</target></trans-unit>
+			<target xml:lang="da" state="translated">Ikke publiceret ændringer</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target xml:lang="da" state="needs-translation">Discard selected changes</target></trans-unit>
+			<target xml:lang="da" state="translated">kassere valgte ændringer</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
-			<target xml:lang="da" state="needs-translation">Publish selected changes</target></trans-unit>
+			<target xml:lang="da" state="translated">Publicer valgte ændringer</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="da" state="translated">Kassér alle ændringer</target></trans-unit>
@@ -35,25 +35,25 @@
 			<target xml:lang="da" state="needs-translation">Legend</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="da" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="da" state="translated">slettet</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="da" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="da" state="translated">oprettet</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="da" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="da" state="translated">oprettet</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="da" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="da" state="translated">oprettet</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="da" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="da" state="translated">oprettet</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="da" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
+			<target xml:lang="da" state="translated">Der er ingen upublicerede ændringer i dette arbejdsområde.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="da" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
+			<target xml:lang="da" state="translated">Er du sikker på du virkelig vil slette alle ændringer i {0} workspace?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="da" state="translated">Medie</target></trans-unit>
