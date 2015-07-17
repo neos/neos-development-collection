@@ -5,7 +5,8 @@ define(
 	'./ContentDimensionController',
 	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
-	'text!./ContentDimensionSelector.html'
+	'text!./ContentDimensionSelector.html',
+	'Shared/I18n'
 ],
 function(
 	Ember,
@@ -13,7 +14,8 @@ function(
 	ContentDimensionController,
 	EventDispatcher,
 	NodeSelection,
-	template
+	template,
+	I18n
 ) {
 
 	/**
@@ -110,6 +112,10 @@ function(
 				dimensionPreset.set('selected', true);
 				controller.set('selectedDimensions.' + dimensionIdentifier, dimensionPreset.values);
 			});
-		}
+		},
+
+		_nodeTypeLabel: function() {
+			return I18n.translate(this.get('nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label'));
+		}.property('nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label')
 	});
 });
