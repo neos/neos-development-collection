@@ -312,6 +312,7 @@ TYPO3:
             icon: 'icon-camera'
             privilegeTarget: 'TYPO3.Media:ManageAssets'
           history:
+            enabled: FALSE
             label: 'History'
             controller: '\TYPO3\Neos\Controller\Module\Management\HistoryController'
             description: 'This module contains a list of all historic changes in Neos.'
@@ -371,7 +372,7 @@ TYPO3:
 
     # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
-      enabled: TRUE
+      enabled: FALSE
       monitorEntities:
         'TYPO3\Flow\Security\Account':
           events:
