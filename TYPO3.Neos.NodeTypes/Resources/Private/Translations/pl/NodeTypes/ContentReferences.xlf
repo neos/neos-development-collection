@@ -7,10 +7,10 @@
 			<target xml:lang="pl" state="needs-translation">Insert content references</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
-			<target xml:lang="pl" state="needs-translation">References</target></trans-unit>
+			<target xml:lang="pl" state="translated">Odniesienia</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="pl" state="needs-translation">Select</target></trans-unit>
+			<target xml:lang="pl" state="translated">wybierz</target></trans-unit>
     </body>
   </file>
 </xliff>
