@@ -140,7 +140,8 @@ define(
 				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
 				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
-				nodeType = clipboard.nodeType;
+				nodeType = clipboard.nodeType,
+				localXhr = this._prepareXhr();
 
 			var action = clipboard.type === 'cut' ? 'moveAndRender' : 'copyAndRender';
 			LoadingIndicator.start();
@@ -153,19 +154,7 @@ define(
 				'',
 				{
 					xhr: function() {
-						var xhr = $.ajaxSettings.xhr();
-						xhr.onreadystatechange = function() {
-							if (xhr.readyState === 1) {
-								LoadingIndicator.set(0.1, 200);
-							}
-							if (xhr.readyState === 2) {
-								LoadingIndicator.set(0.9, 100);
-							}
-							if (xhr.readyState === 3) {
-								LoadingIndicator.set(0.99, 50);
-							}
-						};
-						return xhr;
+						return localXhr;
 					}
 				}
 			).then(
@@ -181,7 +170,7 @@ define(
 						}
 					}
 
-					that._insertNode(result, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
 				}
 			).fail(
 				function(error) {
@@ -246,7 +235,8 @@ define(
 				referenceNodeEntity = referenceNode.get('_vieEntity'),
 				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
-				typoScriptPath = collectionModel.get('typo3:__typoscriptPath');
+				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
+				localXhr = this._prepareXhr();
 
 			LoadingIndicator.start();
 			NodeEndpoint.createAndRender(
@@ -259,24 +249,12 @@ define(
 				position,
 				{
 					xhr: function() {
-						var xhr = $.ajaxSettings.xhr();
-						xhr.onreadystatechange = function() {
-							if (xhr.readyState === 1) {
-								LoadingIndicator.set(0.1, 200);
-							}
-							if (xhr.readyState === 2) {
-								LoadingIndicator.set(0.9, 100);
-							}
-							if (xhr.readyState === 3) {
-								LoadingIndicator.set(0.99, 50);
-							}
-						};
-						return xhr;
+						return localXhr;
 					}
 				}
 			).then(
 				function(result) {
-					that._insertNode(result, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
 				}
 			).fail(
 				function(error) {
@@ -291,15 +269,17 @@ define(
 		 * Inserts a node of the result into the collection at given position.
 		 *
 		 * @param {object} result Result containing the content collection and node path.
+		 * @param {object} xhr xhr object of the ajax request.
 		 * @param {string} nodeType The node type of the node
 		 * @param {object} collection The collection to insert the node into.
 		 * @param {string} position The position to insert the node relative to the reference node
 		 * @param {object} referenceNodeEntity
 		 * @return {void}
 		 */
-		_insertNode: function(result, nodeType, collection, position, referenceNodeEntity) {
-			var rdfaService = vieInstance.service('rdfa');
-			var newElement = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+		_insertNode: function(result, xhr, nodeType, collection, position, referenceNodeEntity) {
+			var rdfaService = vieInstance.service('rdfa'),
+				affectedNodePath = xhr.getResponseHeader('X-Neos-AffectedNodePath');
+			var newElement = $(result).find('[about="' + affectedNodePath + '"]').first();
 			if (newElement.length === 0) {
 				console.warn('Node could not be found in rendered collection.');
 				this._reloadPage();
@@ -363,6 +343,22 @@ define(
 					ContentModule.reloadPage();
 				}
 			);
+		},
+
+		_prepareXhr: function() {
+			var xhr = $.ajaxSettings.xhr();
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 1) {
+					LoadingIndicator.set(0.1, 200);
+				}
+				if (xhr.readyState === 2) {
+					LoadingIndicator.set(0.9, 100);
+				}
+				if (xhr.readyState === 3) {
+					LoadingIndicator.set(0.99, 50);
+				}
+			};
+			return xhr;
 		},
 
 		/**
