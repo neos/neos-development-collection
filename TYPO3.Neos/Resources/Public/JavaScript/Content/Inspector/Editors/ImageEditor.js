@@ -143,7 +143,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			this._initializeMediaView();
 
 			this.set('_imageServiceEndpointUri', $('link[rel="neos-images"]').attr('href'));
-			this.set('_createImageVariantEndpointUri', $('link[rel="neos-image-clone"]').attr('href'));
+			this.set('_createImageVariantEndpointUri', $('link[rel="neos-imagevariant-create"]').attr('href'));
 
 			this.set('_finalImageDimensions', Ember.Object.extend({
 				width: null,
@@ -801,13 +801,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			}
 
 			if (newImageVariantData.__type === 'TYPO3\\Media\\Domain\\Model\\ImageVariant') {
-				delete newValue.__type;
+				delete newImageVariantData.__type;
 				this.set('value', {
 					_propertyChangePromiseClosure: function () {
 					return HttpClient.createResource(that.get('_createImageVariantEndpointUri'), {data: {asset: newImageVariantData}});
 				}});
 			} else {
-				this.set('value', JSON.stringify(newValue));
+				this.set('value', JSON.stringify(currentObject));
 			}
 		},
 
