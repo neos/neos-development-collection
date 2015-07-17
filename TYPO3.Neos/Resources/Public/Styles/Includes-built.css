@@ -8181,7 +8181,7 @@
 .neos #neos-context-bar #neos-aloha-topmenu .chosen-container .chosen-drop .chosen-results li:first-child {
   border-top: 1px solid #3f3f3f;
 }
-.neos .neos-content-dimension-selector {
+.neos #neos-context-bar .neos-content-dimension-selector {
   *zoom: 1;
   position: relative;
   float: left;
@@ -8191,24 +8191,24 @@
   box-sizing: border-box;
   min-width: 352px;
 }
-.neos .neos-content-dimension-selector:before, .neos .neos-content-dimension-selector:after {
+.neos #neos-context-bar .neos-content-dimension-selector:before, .neos #neos-context-bar .neos-content-dimension-selector:after {
   display: table;
   content: "";
   line-height: 0;
 }
-.neos .neos-content-dimension-selector:after {
+.neos #neos-context-bar .neos-content-dimension-selector:after {
   clear: both;
 }
-.neos-inline-editing-active .neos .neos-content-dimension-selector {
+.neos-inline-editing-active .neos #neos-context-bar .neos-content-dimension-selector {
   display: none;
 }
-.neos .neos-content-dimension-selector.active {
+.neos #neos-context-bar .neos-content-dimension-selector.active {
   background-color: #222;
 }
-.neos .neos-content-dimension-selector.active .neos-content-dimension-selector-dimensions {
+.neos #neos-context-bar .neos-content-dimension-selector.active .neos-content-dimension-selector-dimensions {
   display: block;
 }
-.neos .neos-content-dimension-selector.active .neos-content-dimension-selector-summary::before {
+.neos #neos-context-bar .neos-content-dimension-selector.active .neos-content-dimension-selector-summary::before {
   right: 3px;
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
@@ -8216,10 +8216,10 @@
   -o-transform: rotate(-90deg);
   transform: rotate(-90deg);
 }
-.neos-contentelement-selected .neos .neos-content-dimension-selector {
+.neos-contentelement-selected .neos #neos-context-bar .neos-content-dimension-selector {
   display: none;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary {
   cursor: pointer;
   *zoom: 1;
   -webkit-user-select: none;
@@ -8237,15 +8237,15 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary:before, .neos .neos-content-dimension-selector .neos-content-dimension-selector-summary:after {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary:before, .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary:after {
   display: table;
   content: "";
   line-height: 0;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary:after {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary:after {
   clear: both;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary::before {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before {
   content: "›";
   font-size: 26px;
   font-weight: normal;
@@ -8262,18 +8262,18 @@
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension {
   line-height: 40px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension ~ .neos-content-dimension-selector-dimension {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension ~ .neos-content-dimension-selector-dimension {
   padding-left: 16px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension i {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension i {
   width: 24px;
   text-align: center;
   color: #adadad;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions {
   display: none;
   position: absolute;
   top: 40px;
@@ -8290,40 +8290,45 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension {
   padding-bottom: 16px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
   width: 24px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension select {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension select {
   width: 320px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension .chosen-container {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension .chosen-container {
   width: 320px !important;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer {
   margin-bottom: 16px;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button {
-  float: none !important;
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button {
+  float: none;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button.neos-button-success {
-  background-color: #00a338 !important;
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button.neos-button-success {
+  background-color: #00a338;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog {
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog {
   white-space: normal;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog .neos-close.neos-button {
-  float: right !important;
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog .neos-button {
+  border: none;
+  float: none;
 }
-.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog .neos-modal-footer .neos-button {
-  float: none !important;
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog .neos-button.neos-close {
+  float: right;
+  background-color: #222;
+}
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-initial-translation-dialog .neos-button.neos-close:hover {
+  background-color: #00b5ff;
 }
 .neos #neos-menu-button {
   float: left;
