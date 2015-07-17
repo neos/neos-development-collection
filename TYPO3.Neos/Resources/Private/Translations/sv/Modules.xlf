@@ -3,12 +3,12 @@
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="sv-SE">
     <body>
       <!-- Management -->
-      <trans-unit id="management.label" xml:space="preserve" approved="yes">
+      <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="sv-SE">Hantering</target></trans-unit>
-      <trans-unit id="management.description" xml:space="preserve" approved="yes">
+			<target xml:lang="sv-SE" state="translated">Hantering</target></trans-unit>
+      <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="sv-SE">Innehåller flera moduler relaterade till innehållshantering</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Innehåller flera moduler relaterade till innehållshantering</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="sv-SE" state="needs-translation">Workspaces</target></trans-unit>
@@ -72,9 +72,9 @@
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="sv-SE" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="sv-SE">{0} skapade {1} {2}.</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">{0} skapade {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
 			<target xml:lang="sv-SE" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
@@ -142,9 +142,9 @@
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="sv-SE" state="needs-translation">Repeat password</target></trans-unit>
-      <trans-unit id="users.roles" xml:space="preserve" approved="yes">
+      <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="sv-SE">Roller</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Roller</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="sv-SE" state="needs-translation">Package Management</target></trans-unit>

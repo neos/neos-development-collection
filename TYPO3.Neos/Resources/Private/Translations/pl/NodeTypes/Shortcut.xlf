@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target xml:lang="pl" state="needs-translation">Shortcut</target></trans-unit>
+			<target xml:lang="pl" state="translated">Skrót</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="pl" state="needs-translation">Shortcut options</target></trans-unit>
-      <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
+			<target xml:lang="pl" state="translated">Opcje</target></trans-unit>
+      <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="pl">Przekieruj na</target></trans-unit>
-      <trans-unit id="properties.target" xml:space="preserve" approved="yes">
+			<target xml:lang="pl" state="translated">Przekieruj na</target></trans-unit>
+      <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="pl">Wybierz cel</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wybierz cel</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target xml:lang="pl" state="needs-translation">First child node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pierwszy węzeł podrzędny</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target xml:lang="pl" state="needs-translation">Parent node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Kod nadrzędny</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target xml:lang="pl" state="needs-translation">Selected target</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wybrany cel</target></trans-unit>
     </body>
   </file>
 </xliff>

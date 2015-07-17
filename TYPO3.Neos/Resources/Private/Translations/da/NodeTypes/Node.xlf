@@ -11,12 +11,12 @@
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
 			<target xml:lang="da" state="needs-translation">Metadata</target></trans-unit>
-      <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
+      <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="da">Yderligere info</target></trans-unit>
-      <trans-unit id="groups.type" xml:space="preserve" approved="yes">
+			<target xml:lang="da" state="translated">Yderligere info</target></trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="da">Skift type</target></trans-unit>
+			<target xml:lang="da" state="translated">Skift type</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="da" state="needs-translation">Type</target></trans-unit>
