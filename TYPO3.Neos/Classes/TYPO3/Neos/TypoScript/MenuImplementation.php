@@ -183,7 +183,8 @@ class MenuImplementation extends AbstractMenuImplementation {
 		$item = array(
 			'node' => $currentNode,
 			'state' => self::STATE_NORMAL,
-			'label' => $currentNode->getLabel()
+			'label' => $currentNode->getLabel(),
+			'menuLevel' => $this->currentLevel
 		);
 
 		$item['state'] = $this->calculateItemState($currentNode);

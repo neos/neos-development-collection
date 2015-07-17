@@ -598,6 +598,7 @@ Menu item properties:
 :originalNode: (Node) Original node for the item
 :state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
 :label: (string) Full label of the node
+:menuLevel: (integer) Menu level the item is rendered on
 
 Examples:
 ^^^^^^^^^
