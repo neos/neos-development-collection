@@ -140,16 +140,16 @@
 			<target xml:lang="da" state="translated">Dig</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="da" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="da" state="translated">[uden titel]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="da" state="needs-translation">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="da" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="da" state="translated">Nodetype</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="da" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="da" state="translated">Sti</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
 			<target xml:lang="da" state="needs-translation">Relative path</target></trans-unit>
@@ -174,7 +174,7 @@
 			<target xml:lang="da" state="translated">Mål</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="da" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="da" state="translated">Mastervisning</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
 			<target xml:lang="da" state="translated">Plugin-visning</target></trans-unit>
@@ -215,7 +215,7 @@
 			<target xml:lang="da" state="translated">Åbn side i drift arbejdsrum</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="da" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="da" state="translated">Kassér alle</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="da" state="translated">Kassér alle ændringer</target></trans-unit>
@@ -224,7 +224,7 @@
 			<target xml:lang="da" state="translated">Er du sikker på at du vil slette alle ændringer i dette arbejdsrum?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="da" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="da" state="translated">Offentliggøre alle</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="da" state="translated">Publicér alle ændringer</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="da" state="translated">Er du sikker på, at du ønsker at publicere alle ændringerne?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="da" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="da" state="translated">Ventende ændringer</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
 			<target xml:lang="da" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
