@@ -17,6 +17,7 @@ use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use TYPO3\Neos\Controller\Exception\DisabledModuleException;
 
 /**
  * The TYPO3 Module
@@ -68,6 +69,10 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
 		$moduleConfiguration['path'] = $module['module'];
+
+		if (!$this->menuHelper->isModuleEnabled($moduleConfiguration['path'])) {
+			throw new DisabledModuleException(sprintf('The module "%s" is disabled. You can enable it with the "enabled" flag in Settings.yaml.', $module['module']), 1437148922);
+		}
 
 		$moduleBreadcrumb = array();
 		$path = array();
