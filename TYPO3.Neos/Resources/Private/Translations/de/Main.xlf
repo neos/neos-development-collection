@@ -317,7 +317,7 @@
 			<target xml:lang="de">Nur Buchstaben (A-Z, Umlaute usw.) und Ziffern sind erlaubt.</target><alt-trans><target xml:lang="de">Nur Buchstaben (A-Z sowie Umlaute) und Ziffern sind erlaubt.</target></alt-trans><alt-trans><target xml:lang="de">Nur Buchstaben a-z und Ziffern sind erlaubt</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="de" state="needs-translation">The given subject was not countable.</target></trans-unit>
+			<target xml:lang="de" state="translated">Das Objekt ist nicht zählbar.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
 			<target xml:lang="de" state="needs-translation">The count must be between {{minimum}} and {{maximum}}.</target></trans-unit>
@@ -347,10 +347,10 @@
 			<target xml:lang="de" state="translated">Nur Buchstaben, Ziffern, Leerzeichen und bestimmte Satzzeichen sind erlaubt.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
 				<source>This property is required.</source>
-			<target xml:lang="de" state="needs-translation">This property is required.</target></trans-unit>
+			<target xml:lang="de" state="translated">Diese Eigenschaft ist erforderlich.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
 				<source>A valid number is expected.</source>
-			<target xml:lang="de" state="needs-translation">A valid number is expected.</target></trans-unit>
+			<target xml:lang="de" state="translated">Eine gültige Zahl wird erwartet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
 				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
 			<target xml:lang="de" state="translated">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target></trans-unit>
