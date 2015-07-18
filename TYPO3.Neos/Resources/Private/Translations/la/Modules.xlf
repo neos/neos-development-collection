@@ -40,13 +40,13 @@
 				<source>created</source>
 			<target xml:lang="la-LA" state="translated">crwdns252:0crwdne252:0</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
-				<source>created</source>
+				<source>moved</source>
 			<target xml:lang="la-LA" state="translated">crwdns253:0crwdne253:0</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
-				<source>created</source>
+				<source>hidden</source>
 			<target xml:lang="la-LA" state="translated">crwdns254:0crwdne254:0</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
-				<source>created</source>
+				<source>edited</source>
 			<target xml:lang="la-LA" state="translated">crwdns255:0crwdne255:0</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
