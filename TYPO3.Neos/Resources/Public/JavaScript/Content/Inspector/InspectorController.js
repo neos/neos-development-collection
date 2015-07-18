@@ -428,9 +428,8 @@ define(
 				if (reloadPage === true || reloadElement === true) {
 					LoadingIndicator.start();
 				}
-
 				Backbone.sync('update', entity, {
-					success: function (model, result) {
+					success: function (model, result, xhr) {
 						if (reloadPage === true) {
 							if (result && result.data && result.data.nextUri) {
 								// It might happen that the page has been renamed, so we need to take the server-side URI
@@ -442,7 +441,7 @@ define(
 								LoadingIndicator.done();
 								var id = entity.id.substring(1, entity.id.length - 1),
 									$element = $('[about="' + id + '"]').first(),
-									content = $(result.data.collectionContent).find('[about="' + result.data.nodePath + '"]').first();
+									content = $(result.data.collectionContent).find('[about="' + xhr.getResponseHeader('X-Neos-AffectedNodePath') + '"]').first();
 								if (content.length === 0) {
 									console.warn('Node could not be found in rendered collection.');
 									ContentModule.reloadPage();
