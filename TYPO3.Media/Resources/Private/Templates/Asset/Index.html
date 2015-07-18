@@ -95,7 +95,7 @@
 						</f:link.action>
 						<div class="neos-sidelist-edit-actions">
 							<f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection}" title="Edit collection" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-							<button type="submit" class="neos-button-danger" title="Delete collection" data-neos-toggle="tooltip" data-toggle="modal" href="#collection-{assetCollection -> f:format.identifier()}"><i class="icon-trash"></i></button>
+							<button type="submit" class="neos-button-danger" title="Delete collection" data-neos-toggle="tooltip" data-toggle="modal" data-target="#collection-{assetCollection -> f:format.identifier()}"><i class="icon-trash"></i></button>
 						</div>
 						<div class="neos-hide" id="collection-{assetCollection -> f:format.identifier()}">
 							<div class="neos-modal">
@@ -157,7 +157,7 @@
 					</f:link.action>
 					<div class="neos-sidelist-edit-actions">
 						<f:link.action class="neos-button" action="editTag" arguments="{tag: tag.tag}" title="Edit tag" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-						<button class="neos-button-danger" title="Delete tag" data-neos-toggle="tooltip" data-toggle="modal" href="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
+						<button class="neos-button-danger" title="Delete tag" data-neos-toggle="tooltip" data-toggle="modal" data-target="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
 					</div>
 					<div class="neos-hide" id="tag-{tag.tag -> f:format.identifier()}">
 						<div class="neos-modal">

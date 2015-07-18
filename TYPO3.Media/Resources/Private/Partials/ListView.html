@@ -6,7 +6,7 @@
 				<th></th>
 				<th>
 					<f:if condition="{sort} == 'Name'">
-						<f:then>Name <i class="icon-caret-down"></i></th></f:then>
+						<f:then>Name <i class="icon-caret-down"></i></f:then>
 						<f:else>
 							<f:link.action action="index" title="Sort by name" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Name'}" addQueryString="TRUE">Name</f:link.action>
 						</f:else>
@@ -14,7 +14,7 @@
 				</th>
 				<th>
 					<f:if condition="{sort} == 'Modified'">
-						<f:then>Last modified <i class="icon-caret-down"></i></th></f:then>
+						<f:then>Last modified <i class="icon-caret-down"></i></f:then>
 						<f:else>
 							<f:link.action action="index" title="Sort by last modified" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Modified'}" addQueryString="TRUE">Last modified</f:link.action>
 						</f:else>
@@ -26,19 +26,22 @@
 				<th class="neos-action"></th>
 			</tr>
 		</thead>
+		<tbody>
 		<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
 			<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>
 					<f:if condition="{asset.width}">
 						<f:then>
 							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:image(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: asset.label) -> f:format.htmlentities()}">
+								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
+							</div>
 						</f:then>
 						<f:else>
 							<div class="neos-list-thumbnail">
+								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
+							</div>
 						</f:else>
 					</f:if>
-						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
-					</div>
 					<i class="icon-move" title="Drag and drop on tag or collection" data-neos-toggle="tooltip"></i>
 				</td>
 				<td><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
@@ -52,7 +55,7 @@
 				</td>
 				<td class="neos-action">
 					<f:link.action action="edit" title="Edit asset" class="neos-button neos-button-mini" arguments="{asset: asset}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-					<button class="neos-button neos-button-mini neos-button-danger" title="Delete asset" data-neos-toggle="tooltip" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
+					<button class="neos-button neos-button-mini neos-button-danger" title="Delete asset" data-neos-toggle="tooltip" data-toggle="modal" data-target="#asset-{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
 					<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
 						<div class="neos-modal">
 							<div class="neos-modal-header">
