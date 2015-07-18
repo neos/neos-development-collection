@@ -40,13 +40,13 @@
 				<source>created</source>
 			<target xml:lang="de">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
-				<source>created</source>
+				<source>moved</source>
 			<target xml:lang="de">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
-				<source>created</source>
+				<source>hidden</source>
 			<target xml:lang="de">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
-				<source>created</source>
+				<source>edited</source>
 			<target xml:lang="de">erstellt</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
