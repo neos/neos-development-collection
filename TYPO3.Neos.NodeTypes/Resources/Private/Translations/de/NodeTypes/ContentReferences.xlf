@@ -10,7 +10,7 @@
 			<target xml:lang="de" state="needs-translation">References</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="de" state="needs-translation">Select</target></trans-unit>
+			<target xml:lang="de" state="translated">Bitte wählen</target></trans-unit>
     </body>
   </file>
 </xliff>
