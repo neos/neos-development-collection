@@ -3,7 +3,7 @@
 Content Repository Signals Reference
 ====================================
 
-This reference was automatically generated from code on 2015-07-16
+This reference was automatically generated from code on 2015-07-18
 
 
 .. _`Content Repository Signals Reference: Context (``TYPO3\TYPO3CR\Domain\Service\Context``)`:
