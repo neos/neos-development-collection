@@ -362,10 +362,10 @@
 			<target xml:lang="de" state="translated">Eine gültige Zeichenfolge wird erwartet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="de" state="needs-translation">Valid text without any XML tags is expected.</target></trans-unit>
+			<target xml:lang="de" state="translated">Gültiger Text ohne XML-Tags wird erwartet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="de" state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
+			<target xml:lang="de" state="translated">Der Wert ist keine gültige UUID.</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
