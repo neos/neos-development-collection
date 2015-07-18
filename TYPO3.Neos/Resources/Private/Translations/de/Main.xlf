@@ -308,10 +308,10 @@
 			<target xml:lang="de" state="translated">Die Länge dieses Textes muss zwischen {{minimum}} und {{maximum}} Zeichen sein.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="de" state="needs-translation">This field must contain at least {{minimum}} characters.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieses Feld muss mindestens {{minimum}} Zeichen enthalten.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="de" state="needs-translation">This text may not exceed {{maximum}} characters.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieser Text darf {{maximum}} Zeichen nicht überschreiten.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="de">Nur Buchstaben (A-Z, Umlaute usw.) und Ziffern sind erlaubt.</target><alt-trans><target xml:lang="de">Nur Buchstaben (A-Z sowie Umlaute) und Ziffern sind erlaubt.</target></alt-trans><alt-trans><target xml:lang="de">Nur Buchstaben a-z und Ziffern sind erlaubt</target></alt-trans></trans-unit>
@@ -320,19 +320,19 @@
 			<target xml:lang="de" state="translated">Das Objekt ist nicht zählbar.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="de" state="needs-translation">The count must be between {{minimum}} and {{maximum}}.</target></trans-unit>
+			<target xml:lang="de" state="translated">Die Anzahl muss zwischen {{minimum}} und {{maximum}} liegen.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="de" state="needs-translation">The given value was not a valid date.</target></trans-unit>
+			<target xml:lang="de" state="translated">Der angegebene Wert ist kein gültiges Datum.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="de" state="needs-translation">The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="de" state="translated">Das angegebene Datum muss zwischen {{formatEarliestDate}} und {{formatLatestDate}} liegen</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="de" state="needs-translation">The given date must be after {{formatEarliestDate}}</target></trans-unit>
+			<target xml:lang="de" state="translated">Das angegebene Datum muss nach {{formatEarliestDate}} liegen</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="de" state="needs-translation">The given date must be before {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="de" state="translated">Das angegebene Datum muss vor {{formatLatestDate}} liegen</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
 			<target xml:lang="de" state="translated">Bitte geben Sie eine gültige E-Mail-Adresse an.</target></trans-unit>
