@@ -163,9 +163,9 @@
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target xml:lang="fr" state="translated">Segment de chemin d'URL</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
+      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
-			<target xml:lang="fr" state="translated">Cacher dans les menus</target></trans-unit>
+			<target xml:lang="fr">Cacher dans les menus</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
 			<target xml:lang="fr" state="translated">Mode</target></trans-unit>
@@ -178,9 +178,9 @@
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
 			<target xml:lang="fr" state="translated">Vue "Plugin"</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
+      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
-			<target xml:lang="fr" state="translated">Cacher</target></trans-unit>
+			<target xml:lang="fr">Cacher</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
 			<target xml:lang="fr" state="translated">Cacher avant</target></trans-unit>
