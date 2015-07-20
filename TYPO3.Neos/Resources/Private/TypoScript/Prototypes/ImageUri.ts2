@@ -15,11 +15,11 @@ prototype(TYPO3.Neos:ImageTag) < prototype(TYPO3.TypoScript:Tag) {
 	maximumHeight = 2560
 	allowCropping = FALSE
 	allowUpScaling = FALSE
-	@override.asset = ${this.asset}
-	@override.maximumWidth = ${this.maximumWidth}
-	@override.maximumHeight = ${this.maximumHeight}
-	@override.allowCropping = ${this.allowCropping}
-	@override.allowUpScaling = ${this.allowUpScaling}
+	@context.asset = ${this.asset}
+	@context.maximumWidth = ${this.maximumWidth}
+	@context.maximumHeight = ${this.maximumHeight}
+	@context.allowCropping = ${this.allowCropping}
+	@context.allowUpScaling = ${this.allowUpScaling}
 
 	tagName = 'img'
 	attributes {

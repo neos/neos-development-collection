@@ -4,7 +4,7 @@
 prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
 	nodePath = 'to-be-defined-by-user'
 
-	@override.nodePath = ${this.nodePath}
+	@context.nodePath = ${this.nodePath}
 	@ignoreProperties = ${['nodePath']}
 
 	default {

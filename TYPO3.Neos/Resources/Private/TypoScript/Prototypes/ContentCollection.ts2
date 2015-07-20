@@ -1,7 +1,7 @@
 # This is a helper TypoScript object which is used to render all of the child elements
 # of a current node.
 prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
-	@override.nodeAvailable = ${node && String.length(node.context.workspace.name)}
+	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
 	collection = ${nodeAvailable ? q(node).children() : []}
@@ -40,7 +40,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	# }
 	# in your site's TypoScript if you don't need that behavior.
 	attributes.class.@process.collectionClass = TYPO3.TypoScript:Case {
-		@override.collectionClass = 'neos-contentcollection'
+		@context.collectionClass = 'neos-contentcollection'
 
 		classIsString {
 			condition = ${Type.isString(value)}
@@ -57,7 +57,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 
 	# You may override this to get your content collection from a different place than the current node.
 	# The Eel helper is used to provide a better error message if no content collection could be found.
-	@override.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
+	@context.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
 	content = TYPO3.Neos:ContentCollectionRenderer
 
