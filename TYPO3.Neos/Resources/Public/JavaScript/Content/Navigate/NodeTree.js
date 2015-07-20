@@ -128,7 +128,7 @@ define(
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
 
 				$.each(availableNodeTypes, function(nodeTypeName, nodeTypeInfo) {
-					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + nodeTypeInfo.ui.label + '</option>');
+					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + I18n.translate(nodeTypeInfo.ui.label) + '</option>');
 				});
 				$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 
