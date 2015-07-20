@@ -144,10 +144,14 @@ class BackendRedirectionService {
 		if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
 			return NULL;
 		}
-		$lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
-		$q = new FlowQuery([$lastVisitedNode]);
-		$lastVisitedNodeUserWorkspace = $q->context(['workspaceName' => $workspaceName])->get(0);
-		return $lastVisitedNodeUserWorkspace;
+		try {
+			$lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
+			$q = new FlowQuery([$lastVisitedNode]);
+			$lastVisitedNodeUserWorkspace = $q->context(['workspaceName' => $workspaceName])->get(0);
+			return $lastVisitedNodeUserWorkspace;
+		} catch (\Exception $exception) {
+			return NULL;
+		}
 	}
 
 	/**
