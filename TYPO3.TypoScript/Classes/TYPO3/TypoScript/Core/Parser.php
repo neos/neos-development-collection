@@ -597,7 +597,11 @@ class Parser implements ParserInterface {
 			foreach (preg_split(self::SPLIT_PATTERN_OBJECTPATH, $objectPath) as $objectPathSegment) {
 				if ($objectPathSegment[0] === '@') {
 					$objectPathArray[] = '__meta';
-					$objectPathArray[] = substr($objectPathSegment, 1);
+					$metaProperty = substr($objectPathSegment, 1);
+					if ($metaProperty === 'override') {
+						$metaProperty = 'context';
+					}
+					$objectPathArray[] = $metaProperty;
 				} elseif (preg_match(self::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE, $objectPathSegment)) {
 					$objectPathArray[] = '__prototypes';
 

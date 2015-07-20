@@ -32,4 +32,16 @@ contextOverride.test = TYPO3.TypoScript:Array {
 		value = 'booobooobooo'
 	}
 	400.test = ${var1alias + var2alias}
+
+	500 = TYPO3.TypoScript:TestRenderer
+	500.@override.var1alias = ${var1}
+	500.@context.var1alias = ${var2}
+	500.test = ${var1alias}
+
+	600 = TYPO3.TypoScript:TestRenderer
+	600.@override.var1alias = ${var2}
+	600.@context.var1alias.@if.no = false
+	600.@override.var2alias.@process.wrap = ${value + 'Y'}
+	600.@context.var2alias = ${var2}
+	600.test = ${var1alias + var2alias}
 }
