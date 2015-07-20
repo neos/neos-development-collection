@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Insert content references</source>
-			<target xml:lang="pl" state="needs-translation">Insert content references</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wstaw referencje do treści</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
 			<target xml:lang="pl" state="translated">Odniesienia</target></trans-unit>
