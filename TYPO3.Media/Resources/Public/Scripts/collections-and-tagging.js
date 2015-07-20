@@ -57,6 +57,7 @@
 				}).fail(function() {
 					var message = 'Tagging the asset failed.';
 					if (window.Typo3Neos) {
+						message = window.Typo3Neos.I18n.translate('media.taggingAssetsFailed', message, 'TYPO3.Neos', 'Modules');
 						window.Typo3Neos.Notification.error(message);
 					} else {
 						alert(message);
@@ -99,6 +100,7 @@
 				}).fail(function() {
 					var message = 'Adding the asset to the collection failed.';
 					if (window.Typo3Neos) {
+						message = window.Typo3Neos.I18n.translate('media.addingAssetsToCollectionFailed', message, 'TYPO3.Neos', 'Modules');
 						window.Typo3Neos.Notification.error(message);
 					} else {
 						alert(message);
@@ -119,7 +121,8 @@
 			value.focus();
 			e.preventDefault();
 		} else {
-			$('button[type="submit"]', this).addClass('neos-disabled').html('Creating<span class="neos-ellipsis" />');
+			var label = window.Typo3Neos.I18n.translate('media.creating', 'Creating', 'TYPO3.Neos', 'Modules');
+			$('button[type="submit"]', this).addClass('neos-disabled').html(label + '<span class="neos-ellipsis" />');
 		}
 	});
 })(jQuery);

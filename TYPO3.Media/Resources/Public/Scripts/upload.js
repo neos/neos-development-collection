@@ -47,13 +47,24 @@
 			var message;
 			switch (err.code) {
 				case -600:
-					message = 'The file size of ' + readablizeBytes(err.file.size) + ' exceeds the allowed limit of ' + readablizeBytes(maximumFileUploadSize);
+					var readableFileSize = readablizeBytes(err.file.size);
+					var readableMaximumFileSize = readablizeBytes(maximumFileUploadSize);
+					message = 'The file size of ' + readableFileSize + ' exceeds the allowed limit of ' + readableMaximumFileSize;
+					if (window.Typo3Neos) {
+						message = window.Typo3Neos.I18n.translate('media.fileSizeExceedsAllowedLimit', message, 'TYPO3.Neos', 'Modules', [readableFileSize, readableMaximumFileSize]);
+					}
 					break;
 				default:
 					message = err.message;
 			}
 			if (err.file) {
-				message += ' for the file ' + err.file.name;
+				message += ' ';
+				if (window.Typo3Neos) {
+					message += window.Typo3Neos.I18n.translate('media.forTheFile', 'for the file', 'TYPO3.Neos', 'Modules');
+				} else {
+					message += 'for the file';
+				}
+				message += ' "' + err.file.name + '"';
 			}
 			if (window.Typo3Neos) {
 				window.Typo3Neos.Notification.error(message);
@@ -69,6 +80,7 @@
 				$('#filelist').html('');
 				var message = 'Only some of the files were successfully uploaded. Refresh the page to see the those.';
 				if (window.Typo3Neos) {
+					message = window.Typo3Neos.I18n.translate('media.onlySomeFilesWereUploaded', message, 'TYPO3.Neos', 'Modules');
 					window.Typo3Neos.Notification.warning(message);
 				} else {
 					alert(message);
