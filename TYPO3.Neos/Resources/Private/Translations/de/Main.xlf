@@ -356,7 +356,7 @@
 			<target xml:lang="de" state="translated">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
-			<target xml:lang="de" state="needs-translation">The given subject did not match the pattern ({{pattern}})</target></trans-unit>
+			<target xml:lang="de" state="translated">Das gegebene Thema stimmt nicht mit dem Muster ({{pattern}}) überein</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
 			<target xml:lang="de" state="translated">Eine gültige Zeichenfolge wird erwartet.</target></trans-unit>
