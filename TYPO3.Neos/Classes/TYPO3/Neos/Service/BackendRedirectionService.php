@@ -11,9 +11,12 @@ namespace TYPO3\Neos\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
@@ -71,6 +74,18 @@ class BackendRedirectionService {
 	protected $userService;
 
 	/**
+	 * @Flow\Inject
+	 * @var PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
 	 *
 	 * @param ActionRequest $actionRequest
@@ -85,14 +100,14 @@ class BackendRedirectionService {
 		$contentContext = $this->createContext($workspaceName);
 		// create workspace if it does not exist
 		$contentContext->getWorkspace();
-		$this->nodeDataRepository->persistEntities();
+		$this->persistenceManager->persistAll();
 
 		$uriBuilder = new UriBuilder();
 		$uriBuilder->setRequest($actionRequest);
 		$uriBuilder->setFormat('html');
 		$uriBuilder->setCreateAbsoluteUri(TRUE);
 
-		$lastVisitedNode = $this->getLastVisitedNode($contentContext);
+		$lastVisitedNode = $this->getLastVisitedNode($workspaceName);
 		if ($lastVisitedNode !== NULL) {
 			return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
 		}
@@ -109,8 +124,7 @@ class BackendRedirectionService {
 	 * @return string A possible redirection URI, if any
 	 */
 	public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest) {
-		$contentContext = $this->createContext('live');
-		$lastVisitedNode = $this->getLastVisitedNode($contentContext);
+		$lastVisitedNode = $this->getLastVisitedNode('live');
 		if ($lastVisitedNode === NULL) {
 			return NULL;
 		}
@@ -122,15 +136,18 @@ class BackendRedirectionService {
 	}
 
 	/**
-	 * @param ContentContext $contentContext
+	 *
+	 * @param string $workspaceName
 	 * @return NodeInterface
 	 */
-	protected function getLastVisitedNode(ContentContext $contentContext) {
+	protected function getLastVisitedNode($workspaceName) {
 		if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
 			return NULL;
 		}
-		$lastVisitedNode = $contentContext->getNodeByIdentifier($this->session->getData('lastVisitedNode'));
-		return $lastVisitedNode;
+		$lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
+		$q = new FlowQuery([$lastVisitedNode]);
+		$lastVisitedNodeUserWorkspace = $q->context(['workspaceName' => $workspaceName])->get(0);
+		return $lastVisitedNodeUserWorkspace;
 	}
 
 	/**
