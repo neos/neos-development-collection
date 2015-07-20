@@ -10,8 +10,11 @@
 					var e = Math.floor(Math.log(bytes) / Math.log(1024));
 					return (bytes / Math.pow(1024, e)).toFixed(2) + " " + s[e];
 				}
-				var message = 'The file size of ' + readablizeBytes(filesize) + ' exceeds the allowed limit of ' + readablizeBytes(maximumFileUploadSize);
+				var readableFileSize = readablizeBytes(filesize);
+				var readableMaximumFileSize = readablizeBytes(maximumFileUploadSize);
+				var message = 'The file size of ' + readableFileSize + ' exceeds the allowed limit of ' + readableMaximumFileSize;
 				if (window.Typo3Neos) {
+					message = window.Typo3Neos.I18n.translate('media.fileSizeExceedsAllowedLimit', message, 'TYPO3.Neos', 'Modules', [readableFileSize, readableMaximumFileSize]);
 					window.Typo3Neos.Notification.error(message);
 				} else {
 					alert(message);
@@ -20,6 +23,7 @@
 					e.preventDefault();
 					var message = 'Cannot upload the file';
 					if (window.Typo3Neos) {
+						message = window.Typo3Neos.I18n.translate('media.cannotUploadFile', message, 'TYPO3.Neos', 'Modules');
 						window.Typo3Neos.Notification.warning(message);
 					} else {
 						alert(message);
