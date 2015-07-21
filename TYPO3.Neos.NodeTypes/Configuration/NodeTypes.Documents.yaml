@@ -12,6 +12,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: ~
+          position: 100
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
@@ -24,6 +25,7 @@
         label: i18n
         inspector:
           group: ~
+          position: 110
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
