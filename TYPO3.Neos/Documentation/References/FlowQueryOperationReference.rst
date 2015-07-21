@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-07-20
+This reference was automatically generated from code on 2015-07-21
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -225,8 +225,35 @@ find
 ----
 
 "find" operation working on TYPO3CR nodes. This operation allows for retrieval
-of nodes specified by a path. The current context node is also used as a context
-for evaluating relative paths.
+of nodes specified by a path, identifier or node type (recursive).
+
+Example (node name):
+
+	q(node).find('main')
+
+Example (relative path):
+
+	q(node).find('main/text1')
+
+Example (absolute path):
+
+	q(node).find('/sites/my-site/home')
+
+Example (identifier):
+
+	q(node).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
+
+Example (node type):
+
+	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text]')
+
+Example (multiple node types):
+
+	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text],[instanceof TYPO3.Neos.NodeTypes:Image]')
+
+Example (node type with filter):
+
+	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text][text*="Neos"]')
 
 :Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FindOperation
 :Priority: 100
