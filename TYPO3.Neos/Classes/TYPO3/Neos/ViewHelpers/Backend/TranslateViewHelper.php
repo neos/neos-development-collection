@@ -112,7 +112,12 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 			}
 		}
 
-		return parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
+		// Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1
+		try {
+			return parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
+		} catch(\TYPO3\Flow\I18n\Exception $exception) {
+			return $value ?: $id;
+		}
 	}
 
 }
