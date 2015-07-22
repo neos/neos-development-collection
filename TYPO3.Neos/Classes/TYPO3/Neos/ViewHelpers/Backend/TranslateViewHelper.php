@@ -11,7 +11,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\Helper\I18nHelper;
+use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
 use TYPO3\Fluid\Core\ViewHelper;
@@ -98,7 +98,7 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 	 * @throws ViewHelper\Exception
 	 */
 	public function render($id = NULL, $value = NULL, array $arguments = array(), $source = 'Main', $package = NULL, $quantity = NULL, $languageIdentifier = NULL) {
-		if (preg_match(I18nHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
+		if (preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
 			// In the longer run, this "extended ID" format should directly be resolved in the localization service
 			list($package, $source, $id) = explode(':', $id, 3);
 			$source = str_replace('.', '/', $source);
