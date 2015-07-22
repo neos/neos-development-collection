@@ -616,7 +616,55 @@ class NodeDataRepository extends Repository
      */
     public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
     {
-        return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
+        $parentPath = strtolower($parentPath);
+        $workspaces = array();
+        while ($workspace !== null) {
+            $workspaces[] = $workspace;
+            $workspace = $workspace->getBaseWorkspace();
+        }
+
+        $queryBuilder = $this->createQueryBuilder($workspaces);
+        if ($dimensions !== null) {
+            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+        }
+
+        $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, false);
+
+        if ($nodeTypeFilter !== null) {
+            $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+        }
+
+        $queryBuilder->andWhere('n.movedTo IS NULL');
+
+        if ($includeRemovedNodes === false) {
+            $queryBuilder->andWhere('n.removed = :removed')->setParameter('removed', $includeRemovedNodes, \PDO::PARAM_BOOL);
+        }
+
+
+        $queryBuilder->select('DISTINCT n.identifier');
+        $result = $queryBuilder->getQuery()->getArrayResult();
+
+        $identifiers = [];
+        foreach ($result as $rawNodeResult) {
+            $identifiers[$rawNodeResult['identifier']] = $rawNodeResult['identifier'];
+        }
+        unset($result);
+
+        /** @var NodeInterface $removedNode */
+        foreach ($this->removedNodes as $removedNode) {
+            if (isset($identifiers[$removedNode->getIdentifier()])) {
+                unset($identifiers[$removedNode->getIdentifier()]);
+            }
+        }
+
+        /** @var NodeInterface $addedNode */
+        foreach ($this->addedNodes as $addedNode) {
+            if ($addedNode->getParentPath() === $parentPath && $this->isNodeMatchingNodeTypeFilter($addedNode, $nodeTypeFilter)) {
+                $identifiers[$addedNode->getIdentifier()] = $addedNode->getIdentifier();
+            }
+        }
+
+        return count($identifiers);
     }
 
     /**
@@ -1469,5 +1517,35 @@ class NodeDataRepository extends Repository
     {
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @param string $nodeTypeFilter
+     * @return boolean
+     */
+    protected function isNodeMatchingNodeTypeFilter(NodeInterface $node, $nodeTypeFilter)
+    {
+        if ($nodeTypeFilter === '' || $nodeTypeFilter === NULL) {
+            return true;
+        }
+
+        $constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
+
+        foreach ($constraints['excludeNodeTypes'] as $excludeNodeTypeName) {
+            if ($node->getNodeType()->getName() === $excludeNodeTypeName) {
+                return false;
+            }
+        }
+
+        foreach ($constraints['includeNodeTypes'] as $includeNodeTypeName) {
+            if ($node->getNodeType()->getName() === $includeNodeTypeName) {
+                return true;
+            }
+        }
+
+        // This might seem odd, but if we specifically included node types then at this point we want to return false.
+        // If we didn't add specific includes then this should return true at this point.
+        return ($constraints['includeNodeTypes'] === []);
     }
 }
