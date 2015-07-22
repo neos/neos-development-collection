@@ -8311,7 +8311,7 @@
   margin-bottom: 16px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button {
-  float: none !important;
+  float: none;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimensions-footer .neos-button.neos-button-success {
   background-color: #00a338;
@@ -13200,7 +13200,8 @@ disabled look for disabled choices in the results dropdown
   top: 0;
   height: 40px;
   width: 40px;
-  background: none !important;
+  background: none;
+  background-image: none !important;
   border-left: 1px solid #222;
   color: white;
   text-decoration: none;
@@ -13340,6 +13341,7 @@ disabled look for disabled choices in the results dropdown
   height: 40px;
   width: 40px;
   background: none;
+  background-image: none !important;
   color: white;
   text-decoration: none;
   border-radius: 0;
