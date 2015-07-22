@@ -13169,6 +13169,15 @@ disabled look for disabled choices in the results dropdown
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label .neos-select2-result-path {
+  display: block;
+  padding-left: 18px;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 14px;
+}
 .neos-select2-drop .neos-select2-results .neos-select2-match {
   text-decoration: none;
   font-weight: bold;
