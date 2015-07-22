@@ -581,7 +581,28 @@ class NodeDataRepository extends Repository {
 	 * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
 	 */
 	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $includeRemovedNodes = FALSE) {
-		return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
+		$parentPath = strtolower($parentPath);
+		$workspaces = array();
+		while ($workspace !== NULL) {
+			$workspaces[] = $workspace;
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		$queryBuilder = $this->createQueryBuilder($workspaces);
+		if ($dimensions !== NULL) {
+			$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+		}
+
+		$this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, FALSE);
+
+		if ($nodeTypeFilter !== NULL) {
+			$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+		}
+
+		$queryBuilder->select('COUNT(DISTINCT n.identifier)');
+		$result = $queryBuilder->getQuery()->getSingleScalarResult();
+
+		return $result;
 	}
 
 	/**
