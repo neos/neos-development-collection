@@ -59,20 +59,17 @@ class UserService {
 	 *
 	 * @return Workspace
 	 */
-	public function getCurrentWorkspace() {
-		return $this->workspaceRepository->findOneByName($this->getCurrentWorkspaceName());
+	public function getUserWorkspace() {
+		return $this->workspaceRepository->findOneByName($this->getUserWorkspaceName());
 	}
 
 	/**
-	 * Returns the Workspace name of the currently logged in user (even if that might not exist at that time)
-	 * If no user is logged in this returns "live"
-	 *
-	 * Note: This currently always constructs the workspace name from the logged in users account identifier (username)
-	 * In the future a user can have access to more than one workspace
+	 * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
+	 * If no user is logged in this method returns "live".
 	 *
 	 * @return string
 	 */
-	public function getCurrentWorkspaceName() {
+	public function getUserWorkspaceName() {
 		$account = $this->securityContext->getAccount();
 		if ($account === NULL) {
 			return 'live';

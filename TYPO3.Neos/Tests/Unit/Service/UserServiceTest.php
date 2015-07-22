@@ -73,7 +73,7 @@ class UserServiceTest extends UnitTestCase {
 		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(NULL));
 		$this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
-		$this->assertSame($mockLiveWorkspace, $this->userService->getCurrentWorkspace());
+		$this->assertSame($mockLiveWorkspace, $this->userService->getUserWorkspace());
 	}
 
 	/**
@@ -85,7 +85,7 @@ class UserServiceTest extends UnitTestCase {
 		$mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
 		$this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will($this->returnValue($mockUserWorkspace));
-		$this->assertSame($mockUserWorkspace, $this->userService->getCurrentWorkspace());
+		$this->assertSame($mockUserWorkspace, $this->userService->getUserWorkspace());
 	}
 
 	/**
@@ -93,7 +93,7 @@ class UserServiceTest extends UnitTestCase {
 	 */
 	public function getCurrentWorkspaceNameReturnsLiveIfNoUserIsLoggedIn() {
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(NULL));
-		$this->assertSame('live', $this->userService->getCurrentWorkspaceName());
+		$this->assertSame('live', $this->userService->getUserWorkspaceName());
 	}
 
 	/**
@@ -103,7 +103,7 @@ class UserServiceTest extends UnitTestCase {
 		$mockAccount = $this->getMockBuilder('TYPO3\Flow\Security\Account')->disableOriginalConstructor()->getMock();
 		$mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
-		$this->assertSame('user-TheUserName', $this->userService->getCurrentWorkspaceName());
+		$this->assertSame('user-TheUserName', $this->userService->getUserWorkspaceName());
 	}
 
 }
