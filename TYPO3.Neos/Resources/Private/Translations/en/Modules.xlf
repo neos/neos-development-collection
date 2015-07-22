@@ -175,6 +175,236 @@
 			<trans-unit id="usersettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			</trans-unit>
+
+			<!-- Media -->
+			<trans-unit id="media.field.name" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="media.field.title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="media.field.label" xml:space="preserve">
+				<source>Label</source>
+			</trans-unit>
+			<trans-unit id="media.field.caption" xml:space="preserve">
+				<source>Caption</source>
+			</trans-unit>
+			<trans-unit id="media.field.lastModified" xml:space="preserve">
+				<source>Last modified</source>
+			</trans-unit>
+			<trans-unit id="media.field.fileSize" xml:space="preserve">
+				<source>File size</source>
+			</trans-unit>
+			<trans-unit id="media.field.type" xml:space="preserve">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="media.field.tags" xml:space="preserve">
+				<source>Tags</source>
+			</trans-unit>
+			<trans-unit id="media.sortByName" xml:space="preserve">
+				<source>Sort by name</source>
+			</trans-unit>
+			<trans-unit id="media.sortByLastModified" xml:space="preserve">
+				<source>Sort by last modified</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
+				<source>Drag and drop on tag or collection</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.editAsset" xml:space="preserve">
+				<source>Edit asset</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
+				<source>Delete asset</source>
+			</trans-unit>
+			<trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
+				<source>Do you really want to delete asset "{0}"?</source>
+			</trans-unit>
+			<trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
+				<source>Do you really want to delete collection "{0}"?</source>
+			</trans-unit>
+			<trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
+				<source>Do you really want to delete tag "{0}"?</source>
+			</trans-unit>
+			<trans-unit id="media.message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the asset.</source>
+			</trans-unit>
+			<trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
+				<source>This will delete the collection, but not the assets that it contains.</source>
+			</trans-unit>
+			<trans-unit id="media.message.willDeleteTag" xml:space="preserve">
+				<source>This will delete the tag, but not the assets that has it.</source>
+			</trans-unit>
+			<trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			</trans-unit>
+			<trans-unit id="media.cancel" xml:space="preserve">
+				<source>Cancel</source>
+			</trans-unit>
+			<trans-unit id="media.saveEditing" xml:space="preserve">
+				<source>Save</source>
+			</trans-unit>
+			<trans-unit id="media.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the asset</source>
+			</trans-unit>
+			<trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
+				<source>Yes, delete the collection</source>
+			</trans-unit>
+			<trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
+				<source>Yes, delete the tag</source>
+			</trans-unit>
+			<trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
+				<source>Edit {0}</source>
+			</trans-unit>
+			<trans-unit id="media.search.title" xml:space="preserve">
+				<source>Search in assets</source>
+			</trans-unit>
+			<trans-unit id="media.search.placeholder" xml:space="preserve">
+				<source>Search</source>
+			</trans-unit>
+			<trans-unit id="media.search.itemCount" xml:space="preserve">
+				<source>{0} items</source>
+			</trans-unit>
+			<trans-unit id="media.search.foundMatches" xml:space="preserve">
+				<source>found matching "{0}"</source>
+			</trans-unit>
+			<trans-unit id="media.upload" xml:space="preserve">
+				<source>Upload</source>
+			</trans-unit>
+			<trans-unit id="media.filterOptions" xml:space="preserve">
+				<source>Filter options</source>
+			</trans-unit>
+			<trans-unit id="media.filter.title.all" xml:space="preserve">
+				<source>Display all asset types</source>
+			</trans-unit>
+			<trans-unit id="media.filter.title.images" xml:space="preserve">
+				<source>Only display image assets</source>
+			</trans-unit>
+			<trans-unit id="media.filter.title.documents" xml:space="preserve">
+				<source>Only display document assets</source>
+			</trans-unit>
+			<trans-unit id="media.filter.title.video" xml:space="preserve">
+				<source>Only display video assets</source>
+			</trans-unit>
+			<trans-unit id="media.filter.title.audio" xml:space="preserve">
+				<source>Only display audio assets</source>
+			</trans-unit>
+			<trans-unit id="media.filter.all" xml:space="preserve">
+				<source>All</source>
+			</trans-unit>
+			<trans-unit id="media.filter.images" xml:space="preserve">
+				<source>Images</source>
+			</trans-unit>
+			<trans-unit id="media.filter.documents" xml:space="preserve">
+				<source>Documents</source>
+			</trans-unit>
+			<trans-unit id="media.filter.video" xml:space="preserve">
+				<source>Video</source>
+			</trans-unit>
+			<trans-unit id="media.filter.audio" xml:space="preserve">
+				<source>Audio</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
+				<source>Sort options</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.listView" xml:space="preserve">
+				<source>List view</source>
+			</trans-unit>
+			<trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
+				<source>Thumbnail view</source>
+			</trans-unit>
+			<trans-unit id="media.collections" xml:space="preserve">
+				<source>Collections</source>
+			</trans-unit>
+			<trans-unit id="media.editCollections" xml:space="preserve">
+				<source>Edit collections</source>
+			</trans-unit>
+			<trans-unit id="media.editCollection" xml:space="preserve">
+				<source>Edit collection</source>
+			</trans-unit>
+			<trans-unit id="media.deleteCollection" xml:space="preserve">
+				<source>Delete collection</source>
+			</trans-unit>
+			<trans-unit id="media.createCollection" xml:space="preserve">
+				<source>Create collection</source>
+			</trans-unit>
+			<trans-unit id="media.newCollection.placeholder" xml:space="preserve">
+				<source>Enter collection title</source>
+			</trans-unit>
+			<trans-unit id="media.allCollections" xml:space="preserve">
+				<source>All collections</source>
+			</trans-unit>
+			<trans-unit id="media.tags" xml:space="preserve">
+				<source>Tags</source>
+			</trans-unit>
+			<trans-unit id="media.editTags" xml:space="preserve">
+				<source>Edit tags</source>
+			</trans-unit>
+			<trans-unit id="media.editTag" xml:space="preserve">
+				<source>Edit tag</source>
+			</trans-unit>
+			<trans-unit id="media.deleteTag" xml:space="preserve">
+				<source>Delete tag</source>
+			</trans-unit>
+			<trans-unit id="media.createTag" xml:space="preserve">
+				<source>Create tag</source>
+			</trans-unit>
+			<trans-unit id="media.untaggedAssets" xml:space="preserve">
+				<source>Untagged assets</source>
+			</trans-unit>
+			<trans-unit id="media.untagged" xml:space="preserve">
+				<source>Untagged</source>
+			</trans-unit>
+			<trans-unit id="media.maxUploadSize" xml:space="preserve">
+				<source>Max. upload size {0} per file</source>
+			</trans-unit>
+			<trans-unit id="media.dropFiles" xml:space="preserve">
+				<source>Drop files here</source>
+			</trans-unit>
+			<trans-unit id="media.clickToUpload" xml:space="preserve">
+				<source>or click to upload</source>
+			</trans-unit>
+			<trans-unit id="media.chooseFile" xml:space="preserve">
+				<source>Choose file</source>
+			</trans-unit>
+			<trans-unit id="media.noAssetsFound" xml:space="preserve">
+				<source>No Assets found.</source>
+			</trans-unit>
+			<trans-unit id="media.basics" xml:space="preserve">
+				<source>Basics</source>
+			</trans-unit>
+			<trans-unit id="media.delete" xml:space="preserve">
+				<source>Delete</source>
+			</trans-unit>
+			<trans-unit id="media.clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			</trans-unit>
+			<trans-unit id="media.save" xml:space="preserve">
+				<source>Save</source>
+			</trans-unit>
+			<trans-unit id="media.metadata" xml:space="preserve">
+				<source>Metadata</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.filename" xml:space="preserve">
+				<source>Filename</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.lastModified" xml:space="preserve">
+				<source>Last modified (resource)</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.fileSize" xml:space="preserve">
+				<source>File size</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.dimensions" xml:space="preserve">
+				<source>Dimensions</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.type" xml:space="preserve">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="media.metadata.identifier" xml:space="preserve">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="media.preview" xml:space="preserve">
+				<source>Preview</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
