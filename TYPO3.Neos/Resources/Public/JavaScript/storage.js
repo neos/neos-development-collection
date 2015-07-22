@@ -1,5 +1,6 @@
 define(
 [
+	'Library/jquery-with-dependencies',
 	'Content/Model/Node',
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
@@ -7,6 +8,7 @@ define(
 	'Shared/EventDispatcher',
 	'Shared/Notification'
 ], function(
+	$,
 	Entity,
 	Backbone,
 	PublishableNodes,
