@@ -174,7 +174,8 @@
 			top: 0;
 			height: $unit;
 			width: $unit;
-			background: none !important;
+			background: none;
+			background-image: none !important;
 			border-left: 1px solid $grayDark;
 			color: white;
 			text-decoration: none;
@@ -322,6 +323,7 @@
 				height: $unit;
 				width: $unit;
 				background: none;
+				background-image: none !important;
 				color: white;
 				text-decoration: none;
 				border-radius: 0;
