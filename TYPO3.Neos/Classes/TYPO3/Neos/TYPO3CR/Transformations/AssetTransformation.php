@@ -16,6 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 
@@ -66,8 +67,17 @@ class AssetTransformation extends AbstractTransformation {
 					continue;
 				}
 
+				/** @var Asset $assetObject */
 				$assetObject = $nodeProperties[$propertyName];
+				$nodeProperties[$propertyName] = NULL;
 
+				$stream = $assetObject->getResource()->getStream();
+
+				if ($stream === FALSE) {
+					continue;
+				}
+
+				fclose($stream);
 				$objectType = TypeHandling::getTypeForValue($assetObject);
 				$objectIdentifier = ObjectAccess::getProperty($assetObject, 'Persistence_Object_Identifier', TRUE);
 
@@ -75,10 +85,12 @@ class AssetTransformation extends AbstractTransformation {
 					'__flow_object_type' => $objectType,
 					'__identifier' => $objectIdentifier
 				);
-
-				$nodeUpdateQuery = $this->entityManager->getConnection()->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties=? WHERE persistence_object_identifier=?');
-				$nodeUpdateQuery->execute([serialize($nodeProperties), $this->persistenceManager->getIdentifierByObject($node)]);
 			}
+		}
+
+		if (isset($nodeProperties)) {
+			$nodeUpdateQuery = $this->entityManager->getConnection()->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties=? WHERE persistence_object_identifier=?');
+			$nodeUpdateQuery->execute([serialize($nodeProperties), $this->persistenceManager->getIdentifierByObject($node)]);
 		}
 	}
 
