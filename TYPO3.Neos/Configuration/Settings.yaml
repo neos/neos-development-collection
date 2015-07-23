@@ -132,7 +132,7 @@ TYPO3:
         # Format:
         #   'Package.Key': ['Main', 'Errors', 'NodeTypes']
         autoInclude:
-          'TYPO3.Neos': ['Main', 'Inspector', 'NodeTypes/*']
+          'TYPO3.Neos': ['Main', 'Inspector', 'Modules', 'NodeTypes/*']
 
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
