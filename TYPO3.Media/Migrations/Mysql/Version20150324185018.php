@@ -5,9 +5,11 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 	Doctrine\DBAL\Schema\Schema;
 
 /**
+ * Note: The migrations date predates the actual change because for Neos it needs to be executed before some other migrations to make everything work correctly.
+ *
  * Add property allowupscaling in typo3_media_domain_model_adjustment_abstractimageadjustment
  */
-class Version20150605145900 extends AbstractMigration {
+class Version20150324185018 extends AbstractMigration {
 
 	/**
 	 * @param Schema $schema
