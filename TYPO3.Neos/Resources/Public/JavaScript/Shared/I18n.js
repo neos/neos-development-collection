@@ -156,6 +156,7 @@ define(
 				if (endOfPlaceholder === -1 || (startOfPlaceholder + 1) >= endOfPlaceholder || (startOfNextPlaceholder !== -1 && startOfNextPlaceholder < endOfPlaceholder)) {
 					// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
 					window.console.error('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.');
+					break;
 				}
 
 				var contentBetweenBrackets = textWithPlaceholders.substr(startOfPlaceholder + 1, endOfPlaceholder - startOfPlaceholder - 1);
@@ -163,12 +164,14 @@ define(
 
 				var valueIndex = placeholderElements[0];
 				if (!parameters[valueIndex]) {
-					window.console.warn('Placeholder "' + valueIndex + '" was not provided, make sure you provide values for every placeholder.');
+					window.console.error('Placeholder "' + valueIndex + '" was not provided, make sure you provide values for every placeholder.');
+					break;
 				}
 
 				var formattedPlaceholder;
 				if (typeof placeholderElements[1] !== 'undefined') {
 					window.console.error('Placeholder formatter not supported.');
+					break;
 				} else {
 					// No formatter defined, just string-cast the value
 					formattedPlaceholder = parameters[valueIndex];
