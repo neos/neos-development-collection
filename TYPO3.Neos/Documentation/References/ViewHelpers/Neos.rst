@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-07-21
+This reference was automatically generated from code on 2015-07-23
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -671,6 +671,26 @@ Expected result::
 
 	<a href="about-us.html">see our <span>About Us</span> page</a>
 	(depending on current workspace, current node, format etc.)
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:node.closestDocument`:
+
+neos:node.closestDocument
+-------------------------
+
+ViewHelper to find the closest document node to a given node
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Node\\ClosestDocumentViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface)
 
 
 

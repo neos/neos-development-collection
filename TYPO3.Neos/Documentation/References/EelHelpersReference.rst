@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-07-21
+This reference was automatically generated from code on 2015-07-23
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -387,92 +387,6 @@ Get the year of a date
 * ``dateTime`` (\DateTime)
 
 **Return** (integer) The year of the given date
-
-
-
-
-
-
-.. _`Eel Helpers Reference: I18n`:
-
-I18n
-----
-
-I18n helper for Eel - provides methods to translate labels using XLIFF
-translations stored in Flow Packages
-
-There are three ways of usage:
-* By calling translate, you can pass all necessary parameters into one method and get back the translated string
-* By calling translate with a translation shorthand string (PackageKey:Source:trans-unit-id), this shorthat will be
-  translated directly
-* id and value will return a token object, that'll help you collect those parameters without the need to provide
-  all of them and without the need to provide them in order
-
-= Examples =
-
-<code id="Calling translate">
-${I18n.translate('my-trans-unit-id', 'myOriginalLabel', ['an argument'], 'Main', 'MyAwesome.Package', 42, 'en_US')}
-</code>
-<output>
-The translated string or my-trans-unit-id, if no translation could be found.
-</output>
-
-<code id="Calling translate with a shorthand string">
-${I18n.translate('MyAwesome.Package:Main:my-trans-unit-id')}
-</code>
-<output>
-The translated string or my-trans-unit-id, if no translation could be found.
-</output>
-
-<code id="Calling id">
-${I18n.id('my-trans-unit-id').arguments(['an argument']).package('MyAwesome.Package')}
-</code>
-<output>
-The translated string or my-trans-unit-id, if no translation could be found.
-</output>
-
-Implemented in: ``TYPO3\Eel\Helper\I18nHelper``
-
-I18n.id(id)
-^^^^^^^^^^^
-
-Start collection of parameters for translation by id
-
-* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
-
-**Return** (\TYPO3\Eel\Helper\I18n\TranslationParameterToken)
-
-I18n.translate(id, value, arguments, source, package, quantity, locale)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Get the translated value for an id or original label
-
-If only id is set and contains a translation shorthand string, translate
-according to that shorthand
-
-In all other cases:
-
-Replace all placeholders with corresponding values if they exist in the
-translated label.
-
-* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
-* ``value`` (string, *optional*) If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
-* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
-* ``source`` (string, *optional*) Name of file with translations
-* ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
-* ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
-* ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
-
-**Return** (string) Translated label or source label / ID key
-
-I18n.value(value)
-^^^^^^^^^^^^^^^^^
-
-Start collection of parameters for translation by original label
-
-* ``value`` (string)
-
-**Return** (\TYPO3\Eel\Helper\I18n\TranslationParameterToken)
 
 
 
@@ -906,6 +820,55 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 * ``groupingKey`` (string)
 
 **Return** (array)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Caching`:
+
+Neos.Caching
+------------
+
+Caching helper to make cache tag generation easier.
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\CachingHelper``
+
+Neos.Caching.descendantOfTag(nodes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for descendants of a node, an array of nodes or a FlowQuery result
+A cache entry with this tag will be flushed whenever a node
+(for any variant) that is a descendant (child on any level) of one of
+the given nodes is updated.
+
+* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+
+**Return** (array)
+
+Neos.Caching.nodeTag(nodes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery result
+A cache entry with this tag will be flushed whenever one of the
+given nodes (for any variant) is updated.
+
+* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+
+**Return** (array)
+
+Neos.Caching.nodeTypeTag(nodeType)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate an `@cache` entry tag for a node type
+A cache entry with this tag will be flushed whenever a node
+(for any variant) that is of the given node type (including inheritance)
+is updated.
+
+* ``nodeType`` (NodeType)
+
+**Return** (string)
 
 
 
@@ -1436,22 +1399,46 @@ Translation helpers for Eel contexts
 
 Implemented in: ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
 
-Translation.translateById(id, packageKey, sourceName)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Translation.id(id)
+^^^^^^^^^^^^^^^^^^
 
-Fetches a translation by its id.
+Start collection of parameters for translation by id
 
-Examples::
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 
-    Translation.translateById('some.title', 'Acme.Site') == 'Acme Inc.'
+**Return** (TranslationParameterToken)
 
-    Translation.translateById('str1407180613', 'Acme.Site', 'Ui') == 'Login'
+Translation.translate(id, originalLabel, arguments, source, package, quantity, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``id`` (string) The ID to translate
-* ``packageKey`` (string) The package key where to find the translation file
-* ``sourceName`` (string, *optional*) The source name, defaults to "Main
+Get the translated value for an id or original label
 
-**Return** (mixed)
+If only id is set and contains a translation shorthand string, translate
+according to that shorthand
+
+In all other cases:
+
+Replace all placeholders with corresponding values if they exist in the
+translated label.
+
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
+* ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
+* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
+* ``source`` (string, *optional*) Name of file with translations
+* ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
+* ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
+* ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
+
+**Return** (string) Translated label or source label / ID key
+
+Translation.value(value)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Start collection of parameters for translation by original label
+
+* ``value`` (string)
+
+**Return** (TranslationParameterToken)
 
 
 
