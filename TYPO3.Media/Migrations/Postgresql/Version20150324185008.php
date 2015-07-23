@@ -7,7 +7,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * Add property allowupscaling in typo3_media_domain_model_adjustment_abstractimageadjustment
  */
-class Version20150721221514 extends AbstractMigration {
+class Version20150324185008 extends AbstractMigration {
 
 	/**
 	 * @param Schema $schema
