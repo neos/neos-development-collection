@@ -108,13 +108,18 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 			if ($this->securityContext->getAccount()) {
 				/** @var User $user */
 				$user = $this->securityContext->getAccount()->getParty();
-				$languageIdentifier = $user->getPreferences()->get('interfaceLanguage') ? $user->getPreferences()->get('interfaceLanguage') : $this->defaultLanguageIdentifier;
+				$languageIdentifier = $user->getPreferences()->get('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
 			}
 		}
 
 		// Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1
 		try {
-			return parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
+			$translation = parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
+			// Fallback to english label if label was not available in specific language
+			if ($translation === $id && $languageIdentifier !== 'en') {
+				$translation = parent::render($id, $value, $arguments, $source, $package, $quantity, 'en');
+			}
+			return $translation;
 		} catch(\TYPO3\Flow\I18n\Exception $exception) {
 			return $value ?: $id;
 		}
