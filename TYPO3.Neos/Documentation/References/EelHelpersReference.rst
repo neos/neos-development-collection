@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-07-15
+This reference was automatically generated from code on 2015-07-23
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -826,6 +826,55 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 
 
 
+.. _`Eel Helpers Reference: Neos.Caching`:
+
+Neos.Caching
+------------
+
+Caching helper to make cache tag generation easier.
+
+Implemented in: ``TYPO3\Neos\TypoScript\Helper\CachingHelper``
+
+Neos.Caching.descendantOfTag(nodes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for descendants of a node, an array of nodes or a FlowQuery result
+A cache entry with this tag will be flushed whenever a node
+(for any variant) that is a descendant (child on any level) of one of
+the given nodes is updated.
+
+* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+
+**Return** (array)
+
+Neos.Caching.nodeTag(nodes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery result
+A cache entry with this tag will be flushed whenever one of the
+given nodes (for any variant) is updated.
+
+* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+
+**Return** (array)
+
+Neos.Caching.nodeTypeTag(nodeType)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate an `@cache` entry tag for a node type
+A cache entry with this tag will be flushed whenever a node
+(for any variant) that is of the given node type (including inheritance)
+is updated.
+
+* ``nodeType`` (NodeType)
+
+**Return** (string)
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Neos.Link`:
 
 Neos.Link
@@ -1350,22 +1399,46 @@ Translation helpers for Eel contexts
 
 Implemented in: ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
 
-Translation.translateById(id, packageKey, sourceName)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Translation.id(id)
+^^^^^^^^^^^^^^^^^^
 
-Fetches a translation by its id.
+Start collection of parameters for translation by id
 
-Examples::
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 
-    Translation.translateById('some.title', 'Acme.Site') == 'Acme Inc.'
+**Return** (TranslationParameterToken)
 
-    Translation.translateById('str1407180613', 'Acme.Site', 'Ui') == 'Login'
+Translation.translate(id, originalLabel, arguments, source, package, quantity, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``id`` (string) The ID to translate
-* ``packageKey`` (string) The package key where to find the translation file
-* ``sourceName`` (string, *optional*) The source name, defaults to "Main
+Get the translated value for an id or original label
 
-**Return** (mixed)
+If only id is set and contains a translation shorthand string, translate
+according to that shorthand
+
+In all other cases:
+
+Replace all placeholders with corresponding values if they exist in the
+translated label.
+
+* ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
+* ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
+* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
+* ``source`` (string, *optional*) Name of file with translations
+* ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
+* ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
+* ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
+
+**Return** (string) Translated label or source label / ID key
+
+Translation.value(value)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Start collection of parameters for translation by original label
+
+* ``value`` (string)
+
+**Return** (TranslationParameterToken)
 
 
 

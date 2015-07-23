@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-07-15
+The following reference was automatically generated from code on 2015-07-23
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -240,6 +240,10 @@ packages that do not yet have those migration applied.
 For every migration that has been run, it will create a commit in
 the package. This allows for easy inspection, rollback and use of
 the fixed code.
+If the affected package contains local changes or is not part of
+a git repository, the migration will be skipped. With the --force
+flag this behavior can be changed, but changes will only be committed
+if the working copy was clean before applying the migration.
 
 
 
@@ -256,6 +260,8 @@ Options
   If set, execute only the migration with the given version (e.g. "20150119114100")
 ``--verbose``
   If set, notes and skipped migrations will be rendered
+``--force``
+  By default packages that are not under version control or contain local changes are skipped. With this flag set changes are applied anyways (changes are not committed if there are local changes though)
 
 
 
@@ -1404,6 +1410,27 @@ Related commands
 
 ``typo3.kickstart:kickstart:actioncontroller``
   Kickstart a new action controller
+
+
+
+.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:documentation`:
+
+``typo3.kickstart:kickstart:documentation``
+*******************************************
+
+**Kickstart documentation**
+
+Generates a documentation skeleton for the given package.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package for the documentation
+
+
+
+
 
 
 
