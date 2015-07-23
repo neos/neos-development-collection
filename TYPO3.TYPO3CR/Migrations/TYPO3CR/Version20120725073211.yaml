@@ -1,0 +1,75 @@
+up:
+  comments: 'This is the migration to adjust your content to the Phoenix content types definition committed in the July 2012 sprint release'
+  warnings: 'As this migration adds html to titles it might not be cleanly undone by the down migration.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Text'
+      transformations:
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'headline'
+            to: 'title'
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'title'
+            newValue: '<h1>{current}</h1>'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:TextWithImage'
+      transformations:
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'headline'
+            to: 'title'
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'title'
+            newValue: '<h1>{current}</h1>'
+
+down:
+  comments: 'This tries to bring the TYPO3CR into a state suitable for content type definitions before the July 2012 sprint release.'
+  warnings: 'It might not cleanly undo the work of the up migration and it removes all HTML in titles for TYPO3.TYPO3:Text and TYPO3.TYPO3:TextWithImage content elements.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:Text'
+      transformations:
+        -
+          type: 'StripTagsOnProperty'
+          settings:
+            property: 'title'
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'title'
+            to: 'headline'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:TextWithImage'
+      transformations:
+        -
+          type: 'StripTagsOnProperty'
+          settings:
+            property: 'title'
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'title'
+            to: 'headline'

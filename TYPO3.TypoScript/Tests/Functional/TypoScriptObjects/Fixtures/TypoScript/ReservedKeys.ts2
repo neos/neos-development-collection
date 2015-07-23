@@ -1,0 +1,5 @@
+prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+
+reservedKeys = TYPO3.TypoScript:RawArray {
+	__custom = 1
+}

@@ -1,0 +1,159 @@
+// Core variables and mixins
+@import "compass";
+@import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
+@import "Foundation/mixins";
+@import "Constants";
+@import "Mixins";
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
+@import "../../Public/Library/fontawesome/scss/font-awesome.scss";
+
+$errorBoxWidth: $unit * 18;
+$errorBoxHeight: $unit * 3;
+
+body {
+	background: $grayDarker;
+	margin: 0;
+}
+
+.neos {
+	// CSS Reset
+	@import "Foundation/reset";
+
+	@import "Foundation/grid";
+
+	@include font;
+
+	.neos-error-screen {
+		background: $grayDark;
+		padding: $defaultMargin;
+		border: 1px solid $grayLight;
+		position: absolute;
+		@include transform(translateY(-50%));
+		top: 50%;
+		left: 50%;
+		width: $errorBoxWidth;
+		margin-left: -($errorBoxWidth / 2);
+		color: #fff;
+		font-size: 16px;
+		@include box-shadow(none);
+		@include border-radius(none);
+
+		.neos-message-icon {
+			color: $warning;
+			float: left;
+			margin-right: 12px;
+			margin-top: 8px;
+			height: 100%;
+
+			i {
+				font-size: 64px;
+				line-height: 1;
+				height: inherit;
+			}
+		}
+
+		h1 {
+			font-size: 26px;
+			line-height: 1.2;
+			margin-top: 8px;
+			margin-bottom: 6px;
+			margin-left: 112px;
+		}
+
+		p {
+			margin: 0 0 0 112px;
+			font-size: 16px;
+			line-height: 1.2;
+
+			+ p {
+				margin-top: $defaultMargin;
+			}
+		}
+
+		a {
+			color: $blue;
+		}
+
+		.neos-message-wrapper {
+			.neos-message-content {
+				font-size: 18px;
+			}
+
+			.neos-message-stacktrace {
+				color: $textSubtleLight;
+				padding: 0 0 $defaultMargin $defaultMargin;
+				box-sizing: border-box;
+				overflow-x: auto;
+				overflow-y: visible;
+
+				+ p {
+					margin-top: 0;
+				}
+
+				code {
+					white-space: pre;
+				}
+			}
+		}
+
+		.neos-rendering-exception {
+			background-color: transparent;
+			border: 2px dashed $warning;
+			padding: 16px;
+			font-weight: bold;
+			margin: 50px -100px 0;
+			font-size: 14px;
+			line-height: 1.2;
+
+			.neos-rendering-exception-title,
+			.neos-exception-message {
+				color: $warning;
+				font-weight: bold;
+			}
+
+			.neos-typoscript-path {
+				font-weight: normal;
+				color: #fff;
+				margin: 16px 0;
+			}
+
+			.neos-typoscript-subpath {
+				padding-left: 2em;
+			}
+		}
+	}
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+	.neos {
+		.neos-error-screen {
+			position: static;
+			top: 0;
+			margin-top: $unit;
+			margin-left: 0;
+			padding-left: $unit;
+			padding-right: $unit;
+			width: 100%;
+			height: auto;
+			@include box-sizing(border-box);
+
+			.neos-message-icon {
+				font-size: 2em;
+				margin-right: .75em;
+			}
+
+			h1 {
+				font-size: 1.6em;
+				margin-top: .3em;
+				margin-bottom: .25em;
+				margin-left: 56px;
+			}
+
+			p {
+				font-size: .9em;
+				margin-left: 56px;
+				margin-top: 0;
+			}
+		}
+	}
+}

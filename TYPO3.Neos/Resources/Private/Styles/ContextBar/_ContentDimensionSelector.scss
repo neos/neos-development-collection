@@ -1,0 +1,139 @@
+#neos-context-bar .neos-content-dimension-selector {
+	@include clearfix;
+	position: relative;
+	float: left;
+	border-right: 1px solid $grayLight;
+	@include box-sizing(border-box);
+	min-width: $unit * 8 + $defaultMargin * 2;
+
+	.neos-inline-editing-active & {
+		display: none;
+	}
+
+	&.active {
+		background-color: $grayDark;
+
+		.neos-content-dimension-selector-dimensions {
+			display: block;
+		}
+
+		.neos-content-dimension-selector-summary::before {
+			right: 3px;
+			@include rotate(-90deg);
+		}
+	}
+
+	.neos-contentelement-selected & {
+		display: none;
+	}
+
+	.neos-content-dimension-selector-summary {
+		cursor: pointer;
+		@include clearfix;
+		@include user-select(none);
+		padding-left: $defaultMargin;
+		padding-right: $defaultMargin + $unit + 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 100%;
+		@include box-sizing(border-box);
+
+		&::before {
+			content: "›";
+			font-size: 26px;
+			font-weight: normal;
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			right: -3px;
+			width: $unit;
+			line-height: $unit;
+			text-align: center;
+			@include rotate(90deg);
+		}
+
+		.neos-content-dimension-selector-dimension {
+			line-height: $unit;
+
+			~ .neos-content-dimension-selector-dimension {
+				padding-left: $defaultMargin;
+			}
+
+			i {
+				width: $defaultMargin + $relatedMargin;
+				text-align: center;
+				color: $textSubtleLight;
+			}
+		}
+	}
+
+	.neos-content-dimension-selector-dimensions {
+		display: none;
+		position: absolute;
+		top: $unit;
+		left: 0;
+		width: calc(100% + 1px);
+		min-width: $unit * 8 + $defaultMargin * 2;
+		background-color: $grayDark;
+		border-right: 1px solid $grayLight;
+		border-bottom: 1px solid $grayLight;
+		padding-top: $relatedMargin + $tightMargin + 1;
+		padding-left: $defaultMargin;
+		padding-right: $defaultMargin;
+		@include box-sizing(border-box);
+
+		.neos-content-dimension-selector-dimension {
+			padding-bottom: $defaultMargin;
+
+			i {
+				width: $defaultMargin + $relatedMargin;
+			}
+
+			label {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			select {
+				width: $unit * 8;
+			}
+
+			.chosen-container {
+				width: $unit * 8 !important;
+			}
+		}
+
+		.neos-content-dimension-selector-dimensions-footer {
+			margin-bottom: $defaultMargin;
+
+			.neos-button {
+				float: none;
+
+				&.neos-button-success {
+					background-color: $green;
+				}
+			}
+
+		}
+
+		.neos-content-dimension-selector-initial-translation-dialog {
+			white-space: normal;
+
+			.neos-button {
+				border: none;
+				float: none;
+
+				&.neos-close {
+					float: right;
+					background-color: $grayDark;
+
+					&:hover {
+						background-color: $blue;
+					}
+				}
+			}
+		}
+	}
+}

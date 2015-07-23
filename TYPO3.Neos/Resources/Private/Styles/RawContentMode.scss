@@ -1,0 +1,101 @@
+@import "compass";
+@import "Constants";
+
+// Typeplate
+@import "Typeplate/VarsTypeplate";
+@import "Typeplate/Typeplate";
+
+body {
+	margin: 0;
+}
+
+.neos-raw-content-mode {
+	background-color: #f5f5f5;
+}
+
+#neos-raw-content-container {
+	padding: 1px 10%;
+}
+
+.neos-raw-content-contentcollections {
+	margin: 0 auto;
+	max-width: 720px;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.neos-raw-content-contentcollection-container > header {
+	font-size: 160%;
+	color: $textSubtle;
+	text-transform: uppercase;
+	margin: 60px 0 20px;
+	border-bottom: 1px solid #ddd;
+}
+
+a {
+	color: $blueDark;
+}
+
+// Inline image alignments
+.typo3-image-alignment-right {
+	float: right;
+	margin-left: 1em;
+	margin-bottom: 0.5em;
+}
+
+.typo3-image-alignment-left {
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 0.5em;
+}
+
+.neos-raw-content-hidden {
+	display: none;
+}
+
+ol {
+	&.neos-list-decimal {
+		list-style-type: decimal;
+	}
+
+	&.neos-list-decimal-leading-zero {
+		list-style-type: decimal-leading-zero;
+	}
+
+	&.neos-list-lower-roman {
+		list-style-type: lower-roman;
+	}
+
+	&.neos-list-upper-roman {
+		list-style-type: upper-roman;
+	}
+
+	&.neos-list-lower-greek {
+		list-style-type: lower-greek;
+	}
+
+	&.neos-list-lower-latin {
+		list-style-type: lower-latin;
+	}
+
+	&.neos-list-upper-latin {
+		list-style-type: upper-latin;
+	}
+}
+
+ul {
+	&.neos-list-disc {
+		list-style-type: disc;
+	}
+
+	&.neos-list-circle {
+		list-style-type: circle;
+	}
+
+	&.neos-list-square {
+		list-style-type: square;
+	}
+}
