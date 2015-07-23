@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve">
 				<source>Alignment</source>
-			<target xml:lang="la-LA" state="translated">crwdns328:0crwdne328:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns328:0crwdne328:0</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target xml:lang="la-LA" state="translated">crwdns329:0crwdne329:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns329:0crwdne329:0</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="la-LA" state="translated">crwdns330:0crwdne330:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns330:0crwdne330:0</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="la-LA" state="translated">crwdns331:0crwdne331:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns331:0crwdne331:0</target></trans-unit>
     </body>
   </file>
 </xliff>
