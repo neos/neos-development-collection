@@ -128,7 +128,7 @@ The following options are allowed:
 
   ``type``
     Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
-    these three special types: ``date``, ``references``, or ``reference``. Use ``date`` to store dates / time as a
+    these three special types: ``DateTime``, ``references``, or ``reference``. Use ``DateTime`` to store dates / time as a
     DateTime object. Use ``reference`` and ``references`` to store references that point to other nodes. ``reference``
     only accepts a single node or node identifier, while ``references`` accepts an array of nodes or node identifiers.
 
