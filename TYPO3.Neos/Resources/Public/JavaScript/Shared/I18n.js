@@ -37,10 +37,12 @@ define(
 	 * @singleton
 	 */
 	return Ember.Object.extend({
-
 		defaultPackage: 'TYPO3.Neos',
 		defaultSource: 'Main',
 
+		/**
+		 * @return {void}
+		 */
 		init: function () {
 			var self = this,
 				translateHelperClosure;
@@ -55,7 +57,21 @@ define(
 			Ember.Handlebars.registerBoundHelper('boundTranslate', translateHelperClosure);
 		},
 
-		translate: function(id, fallback, packageKey, source, context) {
+		/**
+		 * Returns a translated label.
+		 *
+		 * Replaces all placeholders with corresponding values if they exist in the
+		 * translated label.
+		 *
+		 * @param {string} id Id to use for finding translation (trans-unit id in XLIFF)
+		 * @param {string} fallback Fallback value in case the no label translation was found.
+		 * @param {string} packageKey Target package key. If not set, the current package key will be used
+		 * @param {string} source Name of file with translations
+		 * @param {object} parameters Numerically indexed array of values to be inserted into placeholders
+		 * @param {string} context
+		 * @returns {string}
+		 */
+		translate: function(id, fallback, packageKey, source, parameters, context) {
 			var translatedValue, translationParts;
 			fallback = fallback || id;
 			packageKey = packageKey || this.defaultPackage;
@@ -71,6 +87,10 @@ define(
 			Ember.Logger.mute = false;
 			if (translatedValue.indexOf('Missing translation:') !== -1) {
 				return fallback;
+			}
+
+			if (parameters && parameters.length > 0) {
+				translatedValue = this._resolvePlaceholders(translatedValue, parameters);
 			}
 
 			return translatedValue;
@@ -109,16 +129,55 @@ define(
 				}
 			}
 
-			translationParts.id = translationParts.id.replace(/\./g, "_");
+			translationParts.id = translationParts.id.replace(/\./g, '_');
 			if (translationParts.id.length <= 1) {
 				translationParts.id = translationParts.id.toLowerCase();
 			} else {
 				translationParts.id = translationParts.id.substring(0, 1).toLowerCase() + translationParts.id.substring(1);
 			}
 
-			translationParts.packageKey = translationParts.packageKey.replace(/\./g, "_");
-			translationParts.source = translationParts.source.replace(/\./g, "_");
+			translationParts.packageKey = translationParts.packageKey.replace(/\./g, '_');
+			translationParts.source = translationParts.source.replace(/\./g, '_');
 			return translationParts;
+		},
+
+		/**
+		 * @param {string} textWithPlaceholders
+		 * @param {object} parameters
+		 * @returns {string}
+		 * @private
+		 */
+		_resolvePlaceholders: function(textWithPlaceholders, parameters) {
+			var startOfPlaceholder;
+			while ((startOfPlaceholder = textWithPlaceholders.indexOf('{')) !== -1) {
+				var endOfPlaceholder = textWithPlaceholders.indexOf('}');
+				var startOfNextPlaceholder = textWithPlaceholders.indexOf('{', startOfPlaceholder + 1);
+
+				if (endOfPlaceholder === -1 || (startOfPlaceholder + 1) >= endOfPlaceholder || (startOfNextPlaceholder !== -1 && startOfNextPlaceholder < endOfPlaceholder)) {
+					// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
+					window.console.error('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.');
+				}
+
+				var contentBetweenBrackets = textWithPlaceholders.substr(startOfPlaceholder + 1, endOfPlaceholder - startOfPlaceholder - 1);
+				var placeholderElements = contentBetweenBrackets.replace(' ', '').split(',');
+
+				var valueIndex = placeholderElements[0];
+				if (!parameters[valueIndex]) {
+					window.console.warn('Placeholder "' + valueIndex + '" was not provided, make sure you provide values for every placeholder.');
+				}
+
+				var formattedPlaceholder;
+				if (typeof placeholderElements[1] !== 'undefined') {
+					window.console.error('Placeholder formatter not supported.');
+				} else {
+					// No formatter defined, just string-cast the value
+					formattedPlaceholder = parameters[valueIndex];
+				}
+
+				textWithPlaceholders = textWithPlaceholders.replace('{' + contentBetweenBrackets + '}', formattedPlaceholder);
+			}
+
+			return textWithPlaceholders;
 		}
 	}).create();
 });
