@@ -183,7 +183,7 @@
 			<target xml:lang="de" state="translated">Vorname</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="de" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="de" state="translated">Zweiter Vorname</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="de" state="translated">Nachname</target></trans-unit>
