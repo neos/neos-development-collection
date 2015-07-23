@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="de">Automatisch Veröffentlichen</target></trans-unit>
+			<target xml:lang="de">Automatisch Veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
@@ -224,7 +224,7 @@
 			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="de" state="translated">Alle veröffentlichen</target><alt-trans><target xml:lang="de">Alles veröffentlichen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Alles veröffentlichen</target><alt-trans><target xml:lang="de">Alle veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="de">Alle Änderungen veröffentlichen</target></trans-unit>
