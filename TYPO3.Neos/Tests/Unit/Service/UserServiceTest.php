@@ -69,7 +69,7 @@ class UserServiceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getCurrentWorkspaceReturnsLiveWorkspaceIfNoUserIsLoggedIn() {
+	public function getUserWorkspaceReturnsLiveWorkspaceIfNoUserIsLoggedIn() {
 		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(NULL));
 		$this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
@@ -79,7 +79,7 @@ class UserServiceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getCurrentWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn() {
+	public function getUserWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn() {
 		$mockUserWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$mockAccount = $this->getMockBuilder('TYPO3\Flow\Security\Account')->disableOriginalConstructor()->getMock();
 		$mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
@@ -91,7 +91,7 @@ class UserServiceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getCurrentWorkspaceNameReturnsLiveIfNoUserIsLoggedIn() {
+	public function getUserWorkspaceNameReturnsLiveIfNoUserIsLoggedIn() {
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(NULL));
 		$this->assertSame('live', $this->userService->getUserWorkspaceName());
 	}
@@ -99,7 +99,7 @@ class UserServiceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getCurrentWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn() {
+	public function getUserWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn() {
 		$mockAccount = $this->getMockBuilder('TYPO3\Flow\Security\Account')->disableOriginalConstructor()->getMock();
 		$mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
 		$this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
