@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Module\Administration;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
@@ -56,7 +57,8 @@ class UsersController extends AbstractModuleController {
 	 */
 	protected function initializeAction() {
 		parent::initializeAction();
-		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
+		$translationHelper = new TranslationHelper();
+		$this->setTitle($translationHelper->translate($this->moduleConfiguration['label']) . ' :: ' . $translationHelper->translate(str_replace('label', 'action.', $this->moduleConfiguration['label']) . $this->request->getControllerActionName()));
 		if ($this->arguments->hasArgument('user')) {
 			$propertyMappingConfigurationForUser = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
 			$propertyMappingConfigurationForUserName = $propertyMappingConfigurationForUser->forProperty('user.name');
