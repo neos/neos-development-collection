@@ -15,13 +15,13 @@
 			<f:for each="{sitePackagesAndSites}" as="sitePackageAndSite" key="sitePackageKey">
 				<tr class="neos-folder"{f:if(condition: sitePackageAndSite.package.packageMetaData.description, then: ' title="{sitePackageAndSite.package.packageMetaData.description}"')}>
 					<td class="neos-priority1" colspan="3">
-						Package:
+						{neos:backend.translate(id: 'package', value: 'Package')}:
 						<neos:link.module path="administration/packages" section="Sites">{sitePackageAndSite.packageKey}</neos:link.module>
 						<f:if condition="{sitePackageAndSite.package}">
 							<f:then>
-								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">Deactivated</span></f:else></f:if>
+								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span></f:else></f:if>
 							</f:then>
-							<f:else><span class="neos-badge neos-badge-important">Unavailable</span></f:else>
+							<f:else><span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'unavailable', value: 'Unavailable')}</span></f:else>
 						</f:if>
 					</td>
 					<td class="neos-priority1 neos-aRight">
