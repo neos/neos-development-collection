@@ -144,7 +144,7 @@
 			<target xml:lang="it" state="translated">Nome utente</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="it" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="it" state="translated">Password</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="it" state="translated">Ripeti la password</target></trans-unit>
@@ -177,7 +177,7 @@
 			<target xml:lang="it" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="it" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="it" state="needs-translation">First Name</target></trans-unit>
@@ -335,10 +335,10 @@
 			<target xml:lang="it" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="it" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="it" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="it" state="translated">Etichetta</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="it" state="needs-translation">Caption</target></trans-unit>
@@ -350,7 +350,7 @@
 			<target xml:lang="it" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="it" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="it" state="translated">Tipologia</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="it" state="needs-translation">Tags</target></trans-unit>
@@ -413,7 +413,7 @@
 			<target xml:lang="it" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="it" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="it" state="translated">Ricerca</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="it" state="needs-translation">{0} items</target></trans-unit>
@@ -536,7 +536,7 @@
 			<target xml:lang="it" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="it" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="it" state="translated">Metadati</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="it" state="needs-translation">Filename</target></trans-unit>
@@ -551,7 +551,7 @@
 			<target xml:lang="it" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="it" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="it" state="translated">Tipologia</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="it" state="needs-translation">Identifier</target></trans-unit>

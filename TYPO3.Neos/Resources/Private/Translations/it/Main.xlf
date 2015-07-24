@@ -17,10 +17,10 @@
 			<target xml:lang="it" state="translated">Annulla</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="it" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="it" state="translated">Scegli</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="it" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="it" state="translated">Tipologia da cercare</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="it" state="translated">Contenuto</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="it" state="translated">Nascondi / Mostra</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="it" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="it" state="translated">Caricamento</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="it" state="translated">Nuovo dopo</target></trans-unit>
@@ -80,13 +80,13 @@
 			<target xml:lang="it" state="translated">Nuovo in</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="it" state="needs-translation">Navigate</target></trans-unit>
+			<target xml:lang="it" state="translated">Naviga</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
 			<target xml:lang="it" state="translated">Ok</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="it" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="it" state="translated">Pagina</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="it" state="translated">Incolla</target></trans-unit>
@@ -101,7 +101,7 @@
 			<target xml:lang="it" state="translated">Incolla in</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="it" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="it" state="translated">Password</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="it" state="translated">Anteprima</target></trans-unit>
@@ -110,10 +110,10 @@
 			<target xml:lang="it" state="translated">Pubblica</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="it" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="it" state="translated">Pubblicato il</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="it" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="it" state="translated">Workspace di destinazione</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="it" state="translated">Rimuovere</target></trans-unit>
@@ -128,10 +128,10 @@
 			<target xml:lang="it" state="translated">Salvato</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="it" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="it" state="translated">Ricerca</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="it" state="needs-translation">Toggle inspector</target></trans-unit>
+			<target xml:lang="it" state="translated">Apri/Chiudi inspector</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="it" state="translated">Nome utente</target></trans-unit>
@@ -140,53 +140,53 @@
 			<target xml:lang="it" state="translated">Utente corrente</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="it" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="it" state="translated">[senza titolo]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="it" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="it" state="translated">Etichetta</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="it" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="it" state="translated">Tipologia di nodo</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="it" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="it" state="translated">Percorso</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="it" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="it" state="translated">Percorso relativo</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="it" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="it" state="translated">Documento</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="it" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="it" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="it" state="translated">Segmento di percorso URL</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="it" state="needs-translation">Hide in menus</target></trans-unit>
+			<target xml:lang="it" state="translated">Nascondi nei menu</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="it" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="it" state="translated">Modalità del target</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="it" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="it" state="translated">Target</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="it" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="it" state="translated">Visualizzazione Principale</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="it" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="it" state="translated">Visualizzazione di plugin</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="it" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="it" state="translated">Nascondi</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="it" state="needs-translation">Hide before</target></trans-unit>
+			<target xml:lang="it" state="translated">Nascondi prima di</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="it" state="needs-translation">Hide after</target></trans-unit>
+			<target xml:lang="it" state="translated">Nascondi dopo</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -202,20 +202,20 @@
 			<target xml:lang="it" state="translated">(non è stata selezionata alcuna destinazione)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="it" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="it" state="translated">Si tratta di una scorciatoia per la prima pagina figlia. &lt; br / &gt; fare clic su {0} per passare alla pagina.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="it" state="needs-translation">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="it" state="translated">Si tratta di una scorciatoia per la  pagina padre. &lt; br / &gt; fare clic su {0} per passare alla pagina.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
 			<target xml:lang="it" state="translated">Schermo intero</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="it" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="it" state="translated">Apri pagina in un'area di lavoro dal vivo</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="it" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="it" state="translated">Scartare tutto</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="it" state="translated">Annullare tutte le modifiche</target></trans-unit>
@@ -224,22 +224,22 @@
 			<target xml:lang="it" state="translated">Sei sicuro di voler eliminare tutte le modifiche in questa area di lavoro?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="it" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="it" state="translated">Pubblicare tutto</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="it" state="translated">Pubblicare tutte le modifiche</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="it" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="it" state="translated">Sei sicuro di voler pubblicare tutti i cambiamenti?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="it" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="it" state="translated">Modifiche in sospeso</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="it" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+			<target xml:lang="it" state="translated">Il tuo spazio di lavoro personale attualmente contiene modifiche non pubblicate. Per passare a un'area di lavoro di destinazione diversa è necessario pubblicare o annullare le modifiche in sospeso prima.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="it" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+			<target xml:lang="it" state="translated">Si prega di rivedere le modifiche, pubblicare od annullarle e quindi scegliere di nuovo una nuova area di lavoro di destinazione.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="it" state="needs-translation">Editing Modes</target></trans-unit>
