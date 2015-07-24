@@ -314,7 +314,7 @@
 			<target xml:lang="it" state="needs-translation">This text may not exceed {{maximum}} characters.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="it" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="it" state="translated">Solo caratteri normali (a-z, dieresi,...) e numeri sono ammessi.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="it" state="needs-translation">The given subject was not countable.</target></trans-unit>
