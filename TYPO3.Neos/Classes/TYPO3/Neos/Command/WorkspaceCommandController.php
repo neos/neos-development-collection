@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Repository\UserRepository;
 use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -35,6 +37,12 @@ class WorkspaceCommandController extends CommandController {
 	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Service\UserService
+	 */
+	protected $userService;
 
 	/**
 	 * Publish changes of a workspace
@@ -162,9 +170,10 @@ class WorkspaceCommandController extends CommandController {
 	 * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
 	 * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
 	 * @param string $description A description explaining the purpose of the new workspace
+	 * @param string $owner The identifier of a User to own the workspace
 	 * @return void
 	 */
-	public function createCommand($workspace, $baseWorkspace = 'live', $title = NULL, $description = NULL) {
+	public function createCommand($workspace, $baseWorkspace = 'live', $title = NULL, $description = NULL, $owner = '') {
 		$workspaceName = $workspace;
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		if ($workspace instanceof Workspace) {
@@ -179,16 +188,30 @@ class WorkspaceCommandController extends CommandController {
 			$this->quit(2);
 		}
 
+		if ($owner === '') {
+			$owningUser = NULL;
+		} else {
+			$owningUser = $this->userService->getUser($owner);
+			if ($owningUser === NULL) {
+				$this->outputLine('The user "%s" specified as owner does not exist', array($owner));
+				$this->quit(3);
+			}
+		}
+
 		if ($title === NULL) {
 			$title = $workspaceName;
 		}
 
-		$workspace = new Workspace($workspaceName, $baseWorkspace);
+		$workspace = new Workspace($workspaceName, $baseWorkspace, $owningUser);
 		$workspace->setTitle($title);
 		$workspace->setDescription($description);
 		$this->workspaceRepository->add($workspace);
 
-		$this->outputLine('Created a new workspace "%s", based on workspace "%s".', array($workspaceName, $baseWorkspaceName));
+		if ($owningUser instanceof User) {
+			$this->outputLine('Created a new workspace "%s", based on workspace "%s", owned by "%s".', array($workspaceName, $baseWorkspaceName, $owner));
+		} else {
+			$this->outputLine('Created a new workspace "%s", based on workspace "%s".', array($workspaceName, $baseWorkspaceName));
+		}
 	}
 
 	/**
@@ -324,10 +347,11 @@ class WorkspaceCommandController extends CommandController {
 		}
 
 		$tableRows = array();
-		$headerRow = array('Name', 'Base Workspace', 'Title', 'Description');
+		$headerRow = array('Name', 'Base Workspace', 'Title', 'Owner', 'Description');
 
 		foreach ($workspaces as $workspace) {
-			$tableRows[] = array($workspace->getName(), ($workspace->getBaseWorkspace() ? $workspace->getBaseWorkspace()->getName() : ''), $workspace->getTitle(), $workspace->getDescription());
+			$owner = $workspace->getOwner() ? $workspace->getOwner()->getName() : '';
+			$tableRows[] = array($workspace->getName(), ($workspace->getBaseWorkspace() ? $workspace->getBaseWorkspace()->getName() : ''), $workspace->getTitle(), $owner, $workspace->getDescription());
 		}
 		$this->output->outputTable($tableRows, $headerRow);
 	}

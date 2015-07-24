@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Now;
+use TYPO3\Neos\Domain\Model\User;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
@@ -50,6 +51,12 @@ class Workspace {
 	 * @Flow\Validate(type="StringLength", options={ "minimum"=0, "maximum"=500 })
 	 */
 	protected $description;
+
+	/**
+	 * @var User
+	 * @ORM\ManyToOne
+	 */
+	protected $owner;
 
 	/**
 	 * Workspace (if any) this workspace is based on.
@@ -101,12 +108,14 @@ class Workspace {
 	 *
 	 * @param string $name Name of this workspace
 	 * @param Workspace $baseWorkspace A workspace this workspace is based on (if any)
+	 * @param User $owner The user that created the workspace (if any, "system" workspaces have none)
 	 * @api
 	 */
-	public function __construct($name, Workspace $baseWorkspace = NULL) {
+	public function __construct($name, Workspace $baseWorkspace = NULL, User $owner =  NULL) {
 		$this->name = $name;
 		$this->title = $name;
 		$this->baseWorkspace = $baseWorkspace;
+		$this->owner = $owner;
 	}
 
 	/**
@@ -170,6 +179,15 @@ class Workspace {
 	 */
 	public function setDescription($description) {
 		$this->description = $description;
+	}
+
+	/**
+	 * Returns the workspace owner.
+	 *
+	 * @return User
+	 */
+	public function getOwner() {
+		return $this->owner;
 	}
 
 	/**
