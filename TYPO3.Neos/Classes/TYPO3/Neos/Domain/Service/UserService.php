@@ -545,7 +545,9 @@ class UserService {
 				$liveWorkspace = new Workspace('live');
 				$this->workspaceRepository->add($liveWorkspace);
 			}
-			$userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace);
+			$owner = $this->getUser($accountIdentifier);
+
+			$userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace, $owner);
 			$this->workspaceRepository->add($userWorkspace);
 		}
 	}
