@@ -26,6 +26,13 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
  * A specific event which is used for TYPO3CR Nodes (i.e. content).
  *
  * @Flow\Entity
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * The following annotation is not correctly picked up so doctrine migrations would never create this index. It is still contained in the migration.
+ * @ORM\Table(
+ *    indexes={
+ *		@ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"})
+ *    }
+ * )
  */
 class NodeEvent extends Event {
 

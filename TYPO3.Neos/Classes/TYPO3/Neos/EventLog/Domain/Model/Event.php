@@ -20,6 +20,11 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\Table(
+ *    indexes={
+ * 		@ORM\Index(name="eventtype",columns={"eventtype"})
+ *    }
+ * )
  */
 class Event {
 
