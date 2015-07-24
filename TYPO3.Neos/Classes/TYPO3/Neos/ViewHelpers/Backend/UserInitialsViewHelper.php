@@ -59,7 +59,7 @@ class UserInitialsViewHelper extends AbstractViewHelper {
 	 */
 	public function render($format = 'initials') {
 		if (!in_array($format, array('fullFirstName', 'initials', 'fullName'))) {
-			throw new \InvalidArgumentException(sprintf('Format "%s" given to history:userInitials(), only supporting "fullFirstName" and "initials".', $format), 1415705861);
+			throw new \InvalidArgumentException(sprintf('Format "%s" given to history:userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
 		}
 
 		$accountIdentifier = $this->renderChildren();
