@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="la-LA" state="translated">crwdns281:0crwdne281:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns281:0crwdne281:0</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="la-LA" state="translated">crwdns282:0crwdne282:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns282:0crwdne282:0</target></trans-unit>
     </body>
   </file>
 </xliff>
