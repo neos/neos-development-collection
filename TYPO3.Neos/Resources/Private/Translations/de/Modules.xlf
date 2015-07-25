@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="de" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="de" state="translated">Zum Bearbeiten klicken</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>'Click to delete</source>
 			<target xml:lang="de" state="needs-translation">'Click to delete</target></trans-unit>
@@ -132,10 +132,10 @@
 			<target xml:lang="de">Systemstandard verwenden</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="de" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzer erstellen</target></trans-unit>
       <trans-unit id="user.actions.new.subtitle" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="de" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="de" state="translated">Neuen Benutzer erstellen</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="de" state="needs-translation">User Data</target></trans-unit>
@@ -153,7 +153,7 @@
 			<target xml:lang="de" state="needs-translation">Role(s)</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="de" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="de" state="translated">Vorname</target></trans-unit>
@@ -165,16 +165,16 @@
 			<target xml:lang="de" state="needs-translation">User Preferences</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
-			<target xml:lang="de" state="needs-translation">Interface Language</target></trans-unit>
+			<target xml:lang="de" state="translated">Sprache der Benutzeroberfläche</target></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="de" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzer erstellen</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve">
 				<source>Details for user</source>
 			<target xml:lang="de" state="needs-translation">Details for user</target></trans-unit>
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="de" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="de">Titel</target></trans-unit>
@@ -210,22 +210,22 @@
 			<target xml:lang="de" state="needs-translation">N/A</target></trans-unit>
       <trans-unit id="users.show.deleteUser" xml:space="preserve">
 				<source>Delete User</source>
-			<target xml:lang="de" state="needs-translation">Delete User</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.editUser" xml:space="preserve">
 				<source>Edit User</source>
-			<target xml:lang="de" state="needs-translation">Edit User</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzer bearbeiten</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="de" state="needs-translation">You are logged in as this user and you cannot delete yourself.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
 				<source>Click here to delete this user</source>
-			<target xml:lang="de" state="needs-translation">Click here to delete this user</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken Sie hier, um diesen Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target xml:lang="de" state="needs-translation">Do you really want to delete the user "{0}"?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
 				<source>Yes, delete the user</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete the user</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, den Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
 			<target xml:lang="de" state="needs-translation">This will delete the user, the related accounts and his personal workspace, including all unpublished content.</target></trans-unit>
@@ -283,13 +283,13 @@
 			<target xml:lang="de">Benutzer</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target xml:lang="de" state="needs-translation">User Settings</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzereinstellungen</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="de" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="de" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
       <trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="de" state="needs-translation">User Data</target></trans-unit>
@@ -298,7 +298,7 @@
 			<target xml:lang="de" state="needs-translation">User Preferences</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
-			<target xml:lang="de" state="needs-translation">Interface Language</target></trans-unit>
+			<target xml:lang="de" state="translated">Sprache der Benutzeroberfläche</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target xml:lang="de">Systemstandard verwenden</target></trans-unit>
@@ -425,7 +425,7 @@
 			<target xml:lang="de" state="needs-translation">Upload</target></trans-unit>
       <trans-unit id="media.filterOptions" xml:space="preserve">
 				<source>Filter options</source>
-			<target xml:lang="de" state="needs-translation">Filter options</target></trans-unit>
+			<target xml:lang="de" state="translated">Filteroptionen</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
 			<target xml:lang="de" state="needs-translation">Display all asset types</target></trans-unit>
@@ -443,16 +443,16 @@
 			<target xml:lang="de" state="needs-translation">Only display audio assets</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="de" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="de" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="de" state="translated">Bilder</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
 			<target xml:lang="de" state="needs-translation">Documents</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="de" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="de" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
 			<target xml:lang="de" state="needs-translation">Audio</target></trans-unit>
@@ -518,7 +518,7 @@
 			<target xml:lang="de" state="needs-translation">or click to upload</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target xml:lang="de" state="needs-translation">Choose file</target></trans-unit>
+			<target xml:lang="de" state="translated">Datei auswählen</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
 			<target xml:lang="de" state="needs-translation">No Assets found.</target></trans-unit>
@@ -539,7 +539,7 @@
 			<target xml:lang="de">Metadaten</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
-			<target xml:lang="de" state="needs-translation">Filename</target></trans-unit>
+			<target xml:lang="de" state="translated">Dateiname</target></trans-unit>
       <trans-unit id="media.metadata.lastModified" xml:space="preserve">
 				<source>Last modified (resource)</source>
 			<target xml:lang="de" state="needs-translation">Last modified (resource)</target></trans-unit>
@@ -578,7 +578,7 @@
 			<target xml:lang="de" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
-			<target xml:lang="de" state="needs-translation">Creating</target></trans-unit>
+			<target xml:lang="de" state="translated">Erstelle</target></trans-unit>
     </body>
   </file>
 </xliff>
