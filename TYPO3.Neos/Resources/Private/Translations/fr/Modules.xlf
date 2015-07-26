@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="fr" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cliquez pour modifier</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>'Click to delete</source>
-			<target xml:lang="fr" state="needs-translation">'Click to delete</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cliquer pour supprimer</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="fr" state="translated">Annuler</target></trans-unit>
@@ -32,10 +32,10 @@
 			<target xml:lang="fr" state="needs-translation">Unpublished changes</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target xml:lang="fr" state="needs-translation">Discard selected changes</target></trans-unit>
+			<target xml:lang="fr" state="translated">Ignorer les modifications sélectionnées</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
-			<target xml:lang="fr" state="needs-translation">Publish selected changes</target></trans-unit>
+			<target xml:lang="fr" state="translated">Publier les modifications sélectionnées</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="fr">Ignorer toutes les modifications</target></trans-unit>
@@ -44,22 +44,22 @@
 			<target xml:lang="fr">Publier toutes les modifications</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
-			<target xml:lang="fr" state="needs-translation">Legend</target></trans-unit>
+			<target xml:lang="fr" state="translated">Légende</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="fr" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="fr" state="translated">supprimé</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="fr" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="fr" state="translated">créé</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="fr" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="fr" state="translated">déplacé</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="fr" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="fr" state="translated">caché</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="fr" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="fr" state="translated">modifié</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="fr" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
@@ -117,7 +117,7 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="fr" state="needs-translation">Administration</target></trans-unit>
+			<target xml:lang="fr" state="translated">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
 			<target xml:lang="fr">Contient plusieurs modules associés à l'administration</target></trans-unit>
@@ -132,10 +132,10 @@
 			<target xml:lang="fr" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="fr" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un utilisateur</target></trans-unit>
       <trans-unit id="user.actions.new.subtitle" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="fr" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un nouvel utilisateur</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="fr" state="needs-translation">User Data</target></trans-unit>
@@ -168,7 +168,7 @@
 			<target xml:lang="fr" state="needs-translation">Interface Language</target></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="fr" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un utilisateur</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve">
 				<source>Details for user</source>
 			<target xml:lang="fr" state="needs-translation">Details for user</target></trans-unit>
@@ -234,10 +234,10 @@
 			<target xml:lang="fr" state="needs-translation">This operation cannot be undone</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="fr" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
+			<target xml:lang="fr" state="translated">Modifier le compte «{accountIdentifier} »</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
-			<target xml:lang="fr" state="needs-translation">Account</target></trans-unit>
+			<target xml:lang="fr" state="translated">Compte</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="fr" state="translated">Nom d'utilisateur</target></trans-unit>
@@ -246,7 +246,7 @@
 			<target xml:lang="fr" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
-			<target xml:lang="fr" state="needs-translation">Save account</target></trans-unit>
+			<target xml:lang="fr" state="translated">Enregistrer un compte</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="fr" state="needs-translation">Repeat password</target></trans-unit>
@@ -313,7 +313,7 @@
 			<target xml:lang="fr" state="needs-translation">Roles</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
-			<target xml:lang="fr" state="needs-translation">Authentication Provider</target></trans-unit>
+			<target xml:lang="fr" state="translated">Fournisseur d'authentification</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
 				<source>Electronic addresses</source>
 			<target xml:lang="fr" state="needs-translation">Electronic addresses</target></trans-unit>
@@ -446,7 +446,7 @@
 			<target xml:lang="fr" state="needs-translation">All</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="fr" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="fr" state="translated">Images</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
 			<target xml:lang="fr" state="needs-translation">Documents</target></trans-unit>
