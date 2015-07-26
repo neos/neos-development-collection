@@ -183,13 +183,13 @@
 			<target xml:lang="fr" state="translated">Prénom</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="fr" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="fr" state="translated">Deuxième prénom</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="fr" state="translated">Nom de famille</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="fr" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="fr" state="translated">Autre nom</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="fr" state="needs-translation">Accounts</target></trans-unit>
@@ -204,7 +204,7 @@
 			<target xml:lang="fr" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="fr" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="fr" state="translated">Principal</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="fr" state="needs-translation">N/A</target></trans-unit>
@@ -338,7 +338,7 @@
 			<target xml:lang="fr" state="translated">Titre</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="fr" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="fr" state="translated">Libellé</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="fr" state="needs-translation">Caption</target></trans-unit>
@@ -350,7 +350,7 @@
 			<target xml:lang="fr" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="fr" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="fr" state="translated">Type</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="fr" state="needs-translation">Tags</target></trans-unit>
@@ -452,7 +452,7 @@
 			<target xml:lang="fr" state="needs-translation">Documents</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="fr" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="fr" state="translated">Vidéo</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
 			<target xml:lang="fr" state="needs-translation">Audio</target></trans-unit>
@@ -491,7 +491,7 @@
 			<target xml:lang="fr" state="needs-translation">Tags</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="fr" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="fr" state="translated">Éditer les tags</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
 			<target xml:lang="fr" state="needs-translation">Edit tag</target></trans-unit>
@@ -530,13 +530,13 @@
 			<target xml:lang="fr" state="translated">Effacer</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="fr" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cliquer pour supprimer</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="fr" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="fr" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="fr" state="translated">Métadonnées</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="fr" state="needs-translation">Filename</target></trans-unit>
@@ -551,7 +551,7 @@
 			<target xml:lang="fr" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="fr" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="fr" state="translated">Type</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="fr" state="needs-translation">Identifier</target></trans-unit>
