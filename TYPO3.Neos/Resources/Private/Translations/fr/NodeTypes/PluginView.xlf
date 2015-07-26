@@ -7,7 +7,7 @@
 			<target xml:lang="fr" state="translated">Vue "Plugin"</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="fr" state="needs-translation">Plugin Views</target></trans-unit>
+			<target xml:lang="fr" state="translated">Vues plugin</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
 			<target xml:lang="fr" state="translated">Vue "Maître"</target></trans-unit>
