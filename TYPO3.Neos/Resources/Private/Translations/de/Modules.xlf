@@ -138,7 +138,7 @@
 			<target xml:lang="de" state="translated">Neuen Benutzer erstellen</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
-			<target xml:lang="de" state="needs-translation">User Data</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzerdaten</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="de">Benutzername</target></trans-unit>
@@ -162,7 +162,7 @@
 			<target xml:lang="de" state="translated">Nachname</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
-			<target xml:lang="de" state="needs-translation">User Preferences</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzereinstellungen</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
 			<target xml:lang="de" state="translated">Sprache der Benutzeroberfläche</target></trans-unit>
@@ -216,22 +216,22 @@
 			<target xml:lang="de" state="translated">Benutzer bearbeiten</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="de" state="needs-translation">You are logged in as this user and you cannot delete yourself.</target></trans-unit>
+			<target xml:lang="de" state="translated">Sie sind als dieser Benutzer angemeldet und können sich nicht selbst löschen.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
 				<source>Click here to delete this user</source>
 			<target xml:lang="de" state="translated">Klicken Sie hier, um diesen Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target xml:lang="de" state="needs-translation">Do you really want to delete the user "{0}"?</target></trans-unit>
+			<target xml:lang="de" state="translated">Wollen Sie den Benutzer "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
 				<source>Yes, delete the user</source>
 			<target xml:lang="de" state="translated">Ja, den Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="de" state="needs-translation">This will delete the user, the related accounts and his personal workspace, including all unpublished content.</target></trans-unit>
+			<target xml:lang="de" state="translated">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone</source>
-			<target xml:lang="de" state="needs-translation">This operation cannot be undone</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieser Vorgang kann nicht rückgängig gemacht werden</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
 			<target xml:lang="de">Benutzer "{accountIdentifier}" bearbeiten</target></trans-unit>
@@ -270,7 +270,7 @@
 			<target xml:lang="de" state="needs-translation">Create site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="de" state="needs-translation">Create a new site</target></trans-unit>
+			<target xml:lang="de" state="translated">Eine neue Seite erstellen</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="de" state="translated">Konfiguration</target></trans-unit>
@@ -292,10 +292,10 @@
 			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
       <trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
-			<target xml:lang="de" state="needs-translation">User Data</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzerdaten</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
-			<target xml:lang="de" state="needs-translation">User Preferences</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzereinstellungen</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
 			<target xml:lang="de" state="translated">Sprache der Benutzeroberfläche</target></trans-unit>
@@ -356,10 +356,10 @@
 			<target xml:lang="de" state="needs-translation">Tags</target></trans-unit>
       <trans-unit id="media.sortByName" xml:space="preserve">
 				<source>Sort by name</source>
-			<target xml:lang="de" state="needs-translation">Sort by name</target></trans-unit>
+			<target xml:lang="de" state="translated">Nach Name sortieren</target></trans-unit>
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
-			<target xml:lang="de" state="needs-translation">Sort by last modified</target></trans-unit>
+			<target xml:lang="de" state="translated">Nach Änderungsdatum sortieren</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -407,7 +407,7 @@
 			<target xml:lang="de" state="needs-translation">Yes, delete the tag</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
 				<source>Edit {0}</source>
-			<target xml:lang="de" state="needs-translation">Edit {0}</target></trans-unit>
+			<target xml:lang="de" state="translated">{0} bearbeiten</target></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
 			<target xml:lang="de" state="needs-translation">Search in assets</target></trans-unit>
@@ -416,7 +416,7 @@
 			<target xml:lang="de">Suche</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
-			<target xml:lang="de" state="needs-translation">{0} items</target></trans-unit>
+			<target xml:lang="de" state="translated">{0} Elemente</target></trans-unit>
       <trans-unit id="media.search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
 			<target xml:lang="de" state="needs-translation">found matching "{0}"</target></trans-unit>
