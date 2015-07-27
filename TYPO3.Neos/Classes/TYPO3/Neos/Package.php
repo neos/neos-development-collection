@@ -49,7 +49,7 @@ class Package extends BasePackage {
 				$q = new FlowQuery(array($node));
 				$possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
 				$i = 1;
-				while (count($q->siblings('[uriPathSegment="' . $possibleUriPathSegment . '"]')->get())) {
+				while (count($q->siblings('[instanceof TYPO3.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->get())) {
 					$possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
 				}
 				$node->setProperty('uriPathSegment', $possibleUriPathSegment);
