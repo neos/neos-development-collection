@@ -82,7 +82,7 @@ class NodeService {
 			} catch (NodeExistsException $exception) {
 				// If you have a node that has been marked as removed, but is needed again
 				// the old node is recovered
-				$childNodePath = NodePaths::addNodePathSegment($node->getPath(), $childNodeName);
+				$childNodePath = $node->getPath() . '/' . $childNodeName;
 				$contextProperties = $node->getContext()->getProperties();
 				$contextProperties['removedContentShown'] = TRUE;
 				$context = $this->contextFactory->create($contextProperties);
