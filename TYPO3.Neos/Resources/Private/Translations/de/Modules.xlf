@@ -512,7 +512,7 @@
 			<target xml:lang="de" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target xml:lang="de" state="needs-translation">Drop files here</target></trans-unit>
+			<target xml:lang="de" state="translated">Dateien hier ablegen</target></trans-unit>
       <trans-unit id="media.clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
 			<target xml:lang="de" state="needs-translation">or click to upload</target></trans-unit>
@@ -563,7 +563,7 @@
 			<target xml:lang="de" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="de" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
+			<target xml:lang="de" state="translated">Die Dateigröße von {0} übersteigt das erlaubte Limit von {1}</target></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve">
 				<source>for the file</source>
 			<target xml:lang="de" state="translated">für die Datei</target></trans-unit>
