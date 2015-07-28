@@ -458,10 +458,10 @@
 			<target xml:lang="de" state="needs-translation">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target xml:lang="de" state="needs-translation">Sort options</target></trans-unit>
+			<target xml:lang="de" state="translated">Sortieroptionen</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target xml:lang="de" state="needs-translation">List view</target></trans-unit>
+			<target xml:lang="de" state="translated">Listenansicht</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target xml:lang="de" state="needs-translation">Thumbnail view</target></trans-unit>
@@ -524,13 +524,13 @@
 			<target xml:lang="de" state="needs-translation">No Assets found.</target></trans-unit>
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
-			<target xml:lang="de" state="needs-translation">Basics</target></trans-unit>
+			<target xml:lang="de" state="translated">Grundlagen</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
 			<target xml:lang="de">Löschen</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="de" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken zum Löschen</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="de" state="translated">Speichern</target></trans-unit>
@@ -542,7 +542,7 @@
 			<target xml:lang="de" state="translated">Dateiname</target></trans-unit>
       <trans-unit id="media.metadata.lastModified" xml:space="preserve">
 				<source>Last modified (resource)</source>
-			<target xml:lang="de" state="needs-translation">Last modified (resource)</target></trans-unit>
+			<target xml:lang="de" state="translated">Zuletzt geändert (Ressource)</target></trans-unit>
       <trans-unit id="media.metadata.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="de" state="translated">Dateigröße</target></trans-unit>
@@ -566,10 +566,10 @@
 			<target xml:lang="de" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve">
 				<source>for the file</source>
-			<target xml:lang="de" state="needs-translation">for the file</target></trans-unit>
+			<target xml:lang="de" state="translated">für die Datei</target></trans-unit>
       <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="de" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
 			<target xml:lang="de" state="needs-translation">Tagging the asset failed.</target></trans-unit>
