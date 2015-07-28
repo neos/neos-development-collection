@@ -363,9 +363,9 @@ TYPO3:
         privilegeTarget: 'TYPO3.Neos:Backend.Module.User'
         submodules:
           usersettings:
-            label: 'TYPO3.Neos:Modules:usersettings.label'
+            label: 'TYPO3.Neos:Modules:userSettings.label'
             controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
-            description: 'TYPO3.Neos:Modules:usersettings.description'
+            description: 'TYPO3.Neos:Modules:userSettings.description'
             icon: 'icon-user'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.User.UserSettings'
 
