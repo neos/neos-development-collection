@@ -71,15 +71,9 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var \TYPO3\Neos\Service\UserService
 	 */
-	protected $securityContext;
-
-	/**
-	 * @Flow\InjectConfiguration("userInterface.defaultLanguage")
-	 * @var string
-	 */
-	protected $defaultLanguageIdentifier;
+	protected $userService;
 
 	/**
 	 * Renders the translated label.
@@ -104,12 +98,8 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 			$source = str_replace('.', '/', $source);
 		}
 
-		if ($languageIdentifier === NULL && $this->securityContext->canBeInitialized()) {
-			if ($this->securityContext->getAccount()) {
-				/** @var User $user */
-				$user = $this->securityContext->getAccount()->getParty();
-				$languageIdentifier = $user->getPreferences()->get('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
-			}
+		if ($languageIdentifier === NULL) {
+			$languageIdentifier = $this->userService->getInterfaceLanguage();
 		}
 
 		// Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1

@@ -84,12 +84,12 @@ class UserService {
 	 * Returns the preference of a user
 	 *
 	 * @param string $preference
-	 * @return string
+	 * @return mixed
 	 */
 	public function getUserPreference($preference) {
 		$user = $this->getBackendUser();
 		if ($user && $user->getPreferences()) {
-			return $user->getPreferences()->get($preference) ? $user->getPreferences()->get($preference) : NULL;
+			return $user->getPreferences()->get($preference) ?: NULL;
 		}
 	}
 
