@@ -56,7 +56,6 @@ define(
 						if (item.data) {
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
-							$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
 
 							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 							if (iconClass) {
@@ -139,7 +138,7 @@ define(
 						};
 						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 							item.set('text', $('.node-label', result.resource).text().trim());
-							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
+							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
 							that._updateSelect2();
 						});
 

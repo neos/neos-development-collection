@@ -17,8 +17,12 @@
 						<tr class="node-property"><th class="node-property-name">{name}</th><td class="node-property-value">{value}</td></tr>
 					</f:for>
 				</table>
-				<link rel="node-frontend" href="{neos:uri.node(node: closestDocumentNode, absolute: true, resolveShortcuts: false)}"/>
-				<link rel="node-show" href="{f:uri.action(action: 'show', controller: 'Service\Nodes', arguments: {identifier: node.identifier}, absolute: true)}"/>
+				<f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
+					<neos:link.node node="{documentNode}" absolute="true" resolveShortcuts="false" class="node-frontend-uri">
+						<neos:uri.node node="{documentNode}" absolute="false" resolveShortcuts="false" />
+					</neos:link.node>
+				</f:alias>
+				<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'Show')}</f:link.action>
 			</div>
 		</div>
 	</body>
