@@ -6,8 +6,8 @@
 				<source>Click to edit</source>
 			<target xml:lang="km" state="needs-translation">Click to edit</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>'Click to delete</source>
-			<target xml:lang="km" state="needs-translation">'Click to delete</target></trans-unit>
+				<source>Click to delete</source>
+			<target xml:lang="km" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
@@ -327,8 +327,8 @@
 				<source>Click to add a new Electronic address</source>
 			<target xml:lang="km" state="needs-translation">Click to add a new Electronic address</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
-				<source>Add electronic address cwfe</source>
-			<target xml:lang="km" state="needs-translation">Add electronic address cwfe</target></trans-unit>
+				<source>Add electronic address</source>
+			<target xml:lang="km" state="needs-translation">Add electronic address</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
