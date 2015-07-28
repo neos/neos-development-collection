@@ -192,7 +192,7 @@
 			<target xml:lang="de" state="needs-translation">Other Name</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
-			<target xml:lang="de" state="needs-translation">Accounts</target></trans-unit>
+			<target xml:lang="de" state="translated">Konten</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="de">Benutzername</target></trans-unit>
@@ -201,7 +201,7 @@
 			<target xml:lang="de">Rollen</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses" xml:space="preserve">
 				<source>Electronic Addresses</source>
-			<target xml:lang="de" state="needs-translation">Electronic Addresses</target></trans-unit>
+			<target xml:lang="de" state="translated">Elektronische Adressen</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="de" state="needs-translation">Primary</target></trans-unit>
@@ -267,7 +267,7 @@
 			<target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="de" state="needs-translation">Create site</target></trans-unit>
+			<target xml:lang="de" state="translated">Seite erstellen</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="de" state="translated">Eine neue Seite erstellen</target></trans-unit>
@@ -276,7 +276,7 @@
 			<target xml:lang="de" state="translated">Konfiguration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target xml:lang="de" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+			<target xml:lang="de" state="translated">Das Konfigurations-Modul bietet Ihnen eine Übersicht aller Konfigurationstypen.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
@@ -286,7 +286,7 @@
 			<target xml:lang="de" state="translated">Benutzereinstellungen</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="de" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
+			<target xml:lang="de" state="translated">Mit diesem Modul können Sie Ihr Benutzerprofil anpassen. Hier können Sie die Systemsprache und E-Mail-Adresse editieren. Außerdem können Sie andere allgemeine Einstellungen anpassen.</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
@@ -304,7 +304,7 @@
 			<target xml:lang="de">Systemstandard verwenden</target></trans-unit>
       <trans-unit id="userSettings.accounts" xml:space="preserve">
 				<source>Accounts</source>
-			<target xml:lang="de" state="needs-translation">Accounts</target></trans-unit>
+			<target xml:lang="de" state="translated">Konten</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="de">Benutzername</target></trans-unit>
@@ -313,16 +313,16 @@
 			<target xml:lang="de">Rollen</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
-			<target xml:lang="de" state="needs-translation">Authentication Provider</target></trans-unit>
+			<target xml:lang="de" state="translated">Authentifizierungsdienst</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
 				<source>Electronic addresses</source>
-			<target xml:lang="de" state="needs-translation">Electronic addresses</target></trans-unit>
+			<target xml:lang="de" state="translated">Elektronische Adressen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete electronic address</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, elektronische Adresse löschen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
 				<source>Click to add a new Electronic address</source>
 			<target xml:lang="de" state="needs-translation">Click to add a new Electronic address</target></trans-unit>
