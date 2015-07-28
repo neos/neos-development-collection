@@ -159,13 +159,14 @@ define(
 				var siteName = documentMetadata.data('neos-site-name'),
 					nodeType = documentMetadata.attr('typeof').substr(6),
 					nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
 					parent: this,
 					children: [
 						{
 							title: siteName,
-							tooltip: siteName + ' (' + nodeTypeConfiguration.label + ')',
+							tooltip: siteName + ' (' + I18n.translate(nodeTypeConfiguration.label) + ')',
 							href: $('link[rel="neos-site"]').attr('href'),
 							key: this.get('siteNodeContextPath'),
 							isFolder: true,
