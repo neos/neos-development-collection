@@ -6,7 +6,7 @@
 				<source>Click to edit</source>
 			</trans-unit>
 			<trans-unit id="clickToDelete" xml:space="preserve">
-				<source>'Click to delete</source>
+				<source>Click to delete</source>
 			</trans-unit>
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
@@ -339,7 +339,7 @@
 				<source>Click to add a new Electronic address</source>
 			</trans-unit>
 			<trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
-				<source>Add electronic address cwfe</source>
+				<source>Add electronic address</source>
 			</trans-unit>
 
 			<!-- Media -->
