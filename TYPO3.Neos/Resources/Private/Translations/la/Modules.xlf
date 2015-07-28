@@ -127,6 +127,24 @@
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="la-LA" state="translated">crwdns146:0crwdne146:0</target></trans-unit>
+      <trans-unit id="users.action.index" xml:space="preserve">
+				<source>Overview</source>
+			<target xml:lang="la-LA" state="translated">crwdns540:0crwdne540:0</target></trans-unit>
+      <trans-unit id="users.action.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="la-LA" state="translated">crwdns541:0crwdne541:0</target></trans-unit>
+      <trans-unit id="users.action.new" xml:space="preserve">
+				<source>New</source>
+			<target xml:lang="la-LA" state="translated">crwdns542:0crwdne542:0</target></trans-unit>
+      <trans-unit id="users.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="la-LA" state="translated">crwdns543:0crwdne543:0</target></trans-unit>
+      <trans-unit id="users.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="la-LA" state="translated">crwdns544:0crwdne544:0</target></trans-unit>
+      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="la-LA" state="translated">crwdns545:0crwdne545:0</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
 			<target xml:lang="la-LA" state="translated">crwdns147:0crwdne147:0</target></trans-unit>
@@ -287,6 +305,18 @@
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="la-LA" state="translated">crwdns525:0crwdne525:0</target></trans-unit>
+      <trans-unit id="userSettings.action.index" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="la-LA" state="translated">crwdns546:0crwdne546:0</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="la-LA" state="translated">crwdns547:0crwdne547:0</target></trans-unit>
+      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="la-LA" state="translated">crwdns548:0crwdne548:0</target></trans-unit>
+      <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="la-LA" state="translated">crwdns549:0crwdne549:0</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="la-LA" state="translated">crwdns526:0crwdne526:0</target></trans-unit>

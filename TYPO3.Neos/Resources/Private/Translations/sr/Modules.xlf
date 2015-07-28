@@ -127,6 +127,24 @@
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="sr" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+      <trans-unit id="users.action.index" xml:space="preserve">
+				<source>Overview</source>
+			<target xml:lang="sr" state="needs-translation">Overview</target></trans-unit>
+      <trans-unit id="users.action.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="sr" state="needs-translation">Show</target></trans-unit>
+      <trans-unit id="users.action.new" xml:space="preserve">
+				<source>New</source>
+			<target xml:lang="sr" state="needs-translation">New</target></trans-unit>
+      <trans-unit id="users.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="sr" state="needs-translation">Edit</target></trans-unit>
+      <trans-unit id="users.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="sr" state="needs-translation">Edit account</target></trans-unit>
+      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="sr" state="needs-translation">New electronic address</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
 			<target xml:lang="sr" state="needs-translation">Use system default</target></trans-unit>
@@ -287,6 +305,18 @@
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="sr" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
+      <trans-unit id="userSettings.action.index" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="sr" state="needs-translation">Edit</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="sr" state="needs-translation">Edit</target></trans-unit>
+      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="sr" state="needs-translation">New electronic address</target></trans-unit>
+      <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="sr" state="needs-translation">Edit account</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="sr" state="needs-translation">Personal Data</target></trans-unit>
