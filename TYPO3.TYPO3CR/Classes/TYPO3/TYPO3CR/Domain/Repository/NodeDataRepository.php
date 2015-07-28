@@ -877,7 +877,7 @@ class NodeDataRepository extends Repository {
 	 *
 	 * This method is internal and will be replaced with better search capabilities.
 	 *
-	 * @param string $term Search term
+	 * @param string|array $term Search term
 	 * @param string $nodeTypeFilter Node type filter
 	 * @param Workspace $workspace
 	 * @param array $dimensions
@@ -886,7 +886,7 @@ class NodeDataRepository extends Repository {
 	 */
 	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = NULL) {
 		$pathStartingPoint = strtolower($pathStartingPoint);
-		if (strlen($term) === 0) {
+		if (empty($term)) {
 			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
 		}
 		$workspaces = array();
@@ -898,8 +898,15 @@ class NodeDataRepository extends Repository {
 		$queryBuilder = $this->createQueryBuilder($workspaces);
 		$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
 		$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
-		// Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
-		$likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+
+		if (is_array($term)) {
+			// Build the like parameter as "key": "value" to search by a specific key and value
+			$likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
+		} else {
+			// Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+			$likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+		}
+
 		$queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
 		if (strlen($pathStartingPoint) > 0) {
