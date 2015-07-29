@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target xml:lang="fi" state="needs-translation">Shortcut</target></trans-unit>
+			<target xml:lang="fi" state="translated">Linkki</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="fi" state="needs-translation">Shortcut options</target></trans-unit>
+			<target xml:lang="fi" state="translated">Linkin asetukset</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="fi" state="needs-translation">Shortcut options</target></trans-unit>
+			<target xml:lang="fi" state="translated">Linkin asetukset</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
 			<target xml:lang="fi" state="translated">Kohdetila</target></trans-unit>
@@ -19,13 +19,13 @@
 			<target xml:lang="fi" state="translated">Kohde</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target xml:lang="fi" state="needs-translation">First child node</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ensimmäinen alasolmu</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target xml:lang="fi" state="needs-translation">Parent node</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ylemmän tason solmu</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target xml:lang="fi" state="needs-translation">Selected target</target></trans-unit>
+			<target xml:lang="fi" state="translated">Valittu kohde</target></trans-unit>
     </body>
   </file>
 </xliff>
