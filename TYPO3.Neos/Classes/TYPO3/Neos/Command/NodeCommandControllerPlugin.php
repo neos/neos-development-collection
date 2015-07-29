@@ -11,14 +11,15 @@ namespace TYPO3\Neos\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
-use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Utility;
 
@@ -49,10 +50,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	protected $contentDimensionRepository;
 
 	/**
-	 * @var ContentDimensionPresetSourceInterface
+	 * @var ContentDimensionCombinator
 	 * @Flow\Inject
 	 */
-	protected $contentDimensionPresetSource;
+	protected $dimensionCombinator;
 
 	/**
 	 * @var ConsoleOutput
@@ -117,44 +118,50 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @return void
 	 */
 	public function generateUriPathSegments($workspaceName, $dryRun) {
-		$contentDimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
-		if (isset($contentDimensionPresets['language']['presets'])) {
-			foreach ($contentDimensionPresets['language']['presets'] as $languagePreset) {
-				$this->output->outputLine('Migrating nodes for %s', array($languagePreset['label']));
-				$context = $this->createContext($workspaceName, $languagePreset['values']);
-				foreach ($context->getRootNode()->getChildNodes() as $siteNode) {
-					$this->generateUriPathSegmentsForSubtree($siteNode, $dryRun);
+		$baseContext = $this->createContext($workspaceName, []);
+		$baseContextSiteNodes = $baseContext->getNode('/sites')->getChildNodes();
+		if ($baseContextSiteNodes === []) {
+			return;
+		}
+
+		foreach ($this->dimensionCombinator->getAllAllowedCombinations() as $dimensionCombination) {
+			$flowQuery = new FlowQuery($baseContextSiteNodes);
+			$siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
+			if (count($siteNodes) > 0) {
+				$dimensionString = '';
+				foreach ($dimensionCombination as $dimensionName => $dimensionValues) {
+					$dimensionString .= $dimensionName . '=' . implode(',', $dimensionValues) . '&';
 				}
-			}
-		} else {
-			$context = $this->createContext($workspaceName);
-			foreach ($context->getRootNode()->getChildNodes() as $siteNode) {
-				$this->generateUriPathSegmentsForSubtree($siteNode, $dryRun);
+				$dimensionString = trim($dimensionString, '&');
+				$this->output->outputLine('Searching for nodes with missing URI path segment in dimension "%s"', array($dimensionString));
+				foreach ($siteNodes as $siteNode) {
+					$this->generateUriPathSegmentsForNode($siteNode, $dryRun);
+				}
 			}
 		}
 	}
 
 	/**
 	 * Traverses through the tree starting at the given root node and sets the uriPathSegment property derived from
-	 * the node label. If $force is set, uriPathSegment is overwritten even if it already contained a value.
+	 * the node label.
 	 *
-	 * @param NodeInterface $rootNode The node where the traversal starts
+	 * @param NodeInterface $node The node where the traversal starts
 	 * @param boolean $dryRun
 	 * @return void
 	 */
-	protected function generateUriPathSegmentsForSubtree(NodeInterface $rootNode, $dryRun) {
-		foreach ($rootNode->getChildNodes('TYPO3.Neos:Document') as $node) {
-			/** @var NodeInterface $node */
-			if ($node->getProperty('uriPathSegment') == '') {
-				$uriPathSegment = Utility::renderValidNodeName($node->getName());
-				if ($dryRun === FALSE) {
-					$node->setProperty('uriPathSegment', $uriPathSegment);
-				}
-				$this->output->outputLine('%s (%s) => %s', array($node->getPath(), $node->getName(), $uriPathSegment));
+	protected function generateUriPathSegmentsForNode(NodeInterface $node, $dryRun) {
+		if ((string)$node->getProperty('uriPathSegment') === '') {
+			$name = $node->getLabel() ?: $node->getName();
+			$uriPathSegment = Utility::renderValidNodeName($name);
+			if ($dryRun === FALSE) {
+				$node->setProperty('uriPathSegment', $uriPathSegment);
+				$this->output->outputLine('Added missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
+			} else {
+				$this->output->outputLine('Found missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
 			}
-			if ($node->hasChildNodes('TYPO3.Neos:Document')) {
-				$this->generateUriPathSegmentsForSubtree($node, $dryRun);
-			}
+		}
+		foreach ($node->getChildNodes('TYPO3.Neos:Document') as $childNode) {
+			$this->generateUriPathSegmentsForNode($childNode, $dryRun);
 		}
 	}
 
@@ -162,20 +169,17 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * Creates a content context for given workspace and language identifiers
 	 *
 	 * @param string $workspaceName
-	 * @param array $languageIdentifiers
+	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
-	protected function createContext($workspaceName, array $languageIdentifiers = NULL) {
+	protected function createContext($workspaceName, array $dimensions) {
 		$contextProperties = array(
 			'workspaceName' => $workspaceName,
+			'dimensions' => $dimensions,
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE
 		);
-		if ($languageIdentifiers !== NULL) {
-			$contextProperties = array_merge($contextProperties, array(
-				'dimensions' => array('language' => $languageIdentifiers)
-			));
-		}
+
 		return $this->contextFactory->create($contextProperties);
 	}
 
