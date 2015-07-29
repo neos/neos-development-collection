@@ -16,6 +16,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
 
 /**
@@ -37,6 +38,12 @@ class NodeFactory {
 	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var ContextFactoryInterface
+	 */
+	protected $contextFactory;
 
 	/**
 	 * Creates a node from the given NodeData container.
@@ -99,6 +106,24 @@ class NodeFactory {
 			return NULL;
 		}
 		return $node;
+	}
+
+	/**
+	 * Generates a Context that exactly fits the given NodeData Workspace and Dimensions.
+	 *
+	 * TODO: We could get more specific about removed and invisible content by adding some more logic here that generates fitting values.
+	 *
+	 * @param NodeData $nodeData
+	 * @return Context
+	 */
+	public function createContextMatchingNodeData(NodeData $nodeData) {
+		return $this->contextFactory->create(array(
+			'workspaceName' => $nodeData->getWorkspace()->getName(),
+			'invisibleContentShown' => TRUE,
+			'inaccessibleContentShown' => TRUE,
+			'removedContentShown' => TRUE,
+			'dimensions' => $nodeData->getDimensionValues()
+		));
 	}
 
 	/**

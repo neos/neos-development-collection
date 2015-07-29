@@ -167,11 +167,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			exit(1);
 		}
 
-		$context = $this->createContext($workspaceName);
 		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
 			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+				$context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface) {
 					continue;
