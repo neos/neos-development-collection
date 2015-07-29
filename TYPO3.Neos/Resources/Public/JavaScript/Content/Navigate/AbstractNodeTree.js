@@ -671,6 +671,9 @@ define(
 						node.data.expand = result.data.expand;
 						node.data.addClass = result.data.addClass;
 						node.setLazyNodeStatus(that.statusCodes.ok);
+						if (result.data.children) {
+							node.addChild(result.data.children);
+						}
 						node.render();
 
 						// Re-enable mouse and keyboard handling
