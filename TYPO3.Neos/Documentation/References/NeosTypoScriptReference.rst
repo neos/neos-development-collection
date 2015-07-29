@@ -631,7 +631,7 @@ Menu with custom starting point:
 	menu = Menu {
 		entryLevel = 2
 		maximumLevels = 1
-		startingPoint = ${q(site).children('metamenu').get(0)}
+		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
 	}
 
 .. _TYPO3_Neos__BreadcrumbMenu:
