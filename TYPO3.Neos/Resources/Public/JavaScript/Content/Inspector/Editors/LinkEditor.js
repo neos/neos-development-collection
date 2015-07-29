@@ -202,7 +202,7 @@ define(
 								function(result) {
 									var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
 									item.set('text', $('.node-label', result.resource).text().trim());
-									item.set('data', {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim())});
+									item.set('data', {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim())});
 									that._updateSelect2();
 								},
 								function() {

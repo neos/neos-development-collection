@@ -87,7 +87,7 @@ define(
 			require({context: 'neos'}, ['Shared/HttpRestClient', 'Shared/NodeTypeService', 'Shared/Utility'], function(HttpRestClient, NodeTypeService, Utility) {
 				HttpRestClient.getResource('neos-service-nodes', itemId, {data: that.getObjectQueryRequestData()}).then(function(result) {
 					var $node = $('.node', result.resource),
-						uri = (Utility.removeContextPath($('.node-frontend-uri', this).text().trim()) || '/');
+						uri = (Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim()) || '/');
 					callback.call(this, [{
 						'id': $('.node-identifier', $node).text(),
 						'__icon': that.getResultIcon($node, NodeTypeService),
