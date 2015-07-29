@@ -10,7 +10,7 @@
 			<target xml:lang="fi" state="translated">Otsikko</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="fi" state="needs-translation">Layout</target></trans-unit>
+			<target xml:lang="fi" state="translated">Asettelu</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout for this page only</source>
 			<target xml:lang="fi" state="needs-translation">Layout for this page only</target></trans-unit>
