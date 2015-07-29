@@ -196,7 +196,7 @@ class NodeController extends AbstractServiceController {
 	 */
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-		$this->view->assign('value', array('data' => $this->view->collectTreeNodeData($newNode), 'success' => TRUE));
+		$this->view->assignNodeAndChildNodes($newNode);
 	}
 
 	/**

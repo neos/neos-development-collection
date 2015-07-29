@@ -108,6 +108,25 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 	}
 
 	/**
+	 * Prepares this view to render a list or tree of given node including child nodes.
+	 *
+	 * @param NodeInterface $node The node to fetch child nodes of
+	 * @param string $nodeTypeFilter Criteria for filtering the child nodes
+	 * @param integer $depth How many levels of childNodes (0 = unlimited)
+	 * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
+	 * @return void
+	 */
+	public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, NodeInterface $untilNode = NULL) {
+		$this->outputStyle = self::STYLE_TREE;
+		$childNodes = array();
+		$this->collectChildNodeData($childNodes, $node, ($nodeTypeFilter === '' ? NULL : $nodeTypeFilter), $depth, $untilNode);
+		$data = $this->collectTreeNodeData($node, TRUE, $childNodes, $childNodes !== array());
+		$this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
+
+		$this->assign('value', array('data' => $data, 'success' => TRUE));
+	}
+
+	/**
 	 * Prepares this view to render a list or tree of filtered nodes.
 	 *
 	 * @param NodeInterface $node
