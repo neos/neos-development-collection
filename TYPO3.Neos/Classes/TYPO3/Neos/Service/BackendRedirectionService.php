@@ -17,7 +17,6 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -38,12 +37,6 @@ class BackendRedirectionService {
 	 * @var SessionInterface
 	 */
 	protected $session;
-
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
 
 	/**
 	 * @Flow\Inject
@@ -100,7 +93,7 @@ class BackendRedirectionService {
 	 * @return string
 	 */
 	public function getAfterLoginRedirectionUri(ActionRequest $actionRequest) {
-		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+		$user = $this->userService->getBackendUser();
 		if ($user === NULL) {
 			return NULL;
 		}
