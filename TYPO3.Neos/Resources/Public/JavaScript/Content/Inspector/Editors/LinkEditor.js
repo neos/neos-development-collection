@@ -174,6 +174,13 @@ define(
 				});
 			},
 
+			valueDidChange: function() {
+				if (this.$()) {
+					this.$().select2('container').find('.neos-select2-input').css({'display': this.get('value').length > 0 ? 'none' : 'inline-block'});
+					this._updateSelect2();
+				}
+			}.observes('value'),
+
 			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
 			value: function(key, value) {
 				var parameters, nodeIdentifier, item, that, protocol;
@@ -230,9 +237,10 @@ define(
 						default:
 							item.set('text', value);
 							item.set('data', {icon: 'icon-link'});
-							that._updateSelect2();
 						break;
 					}
+				} else if (value === '') {
+					this.set('content', null);
 				}
 				return this.get('content.id') || '';
 			}.property('content', 'content.id'),
