@@ -20,6 +20,8 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -79,6 +81,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @var array
 	 */
 	protected $pluginConfigurations = array();
+
+	/**
+	 * @var ContentDimensionCombinator
+	 * @Flow\Inject
+	 */
+	protected $contentDimensionCombinator;
 
 	/**
 	 * Returns a short description
@@ -231,11 +239,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			exit(1);
 		}
 
-		$context = $this->createContext($workspaceName);
 		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
 			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+				$context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface) {
 					continue;
@@ -319,11 +327,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			exit(1);
 		}
 
-		$context = $this->createContext($workspaceName);
 		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$defaultValues = $nodeType->getDefaultValuesForProperties();
 			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+				$context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface) {
 					continue;
@@ -414,7 +422,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
 	/**
 	 * Performs checks for disallowed child nodes according to the node's auto-create configuration and constraints
-	 * and creates removes them if found.
+	 * and removes them if found.
 	 *
 	 * @param string $workspaceName
 	 * @param boolean $dryRun Simulate?
@@ -448,8 +456,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			}
 		};
 
-		$context = $this->createContext($workspace->getName(), TRUE);
-		$removeDisallowedChildNodes($context->getRootNode());
+		// TODO: Performance could be improved by a search for all child node data instead of looping over all contexts
+		foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionConfiguration) {
+			$context = $this->createContext($workspace->getName(), $dimensionConfiguration);
+			$removeDisallowedChildNodes($context->getRootNode());
+		}
 
 		$disallowedChildNodesCount = count($nodes);
 		if ($disallowedChildNodesCount > 0) {
@@ -546,8 +557,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	public function removeUndefinedProperties(NodeType $nodeType = NULL, $workspaceName, $dryRun) {
 		$this->output->outputLine('Checking for undefined properties ...');
 
-		$context = $this->createContext($workspaceName);
-
 		/** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
 		$workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 
@@ -560,6 +569,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 				if ($nodeData->getNodeType()->getName() === 'unstructured') {
 					continue;
 				}
+				$context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface) {
 					continue;
@@ -605,15 +615,16 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * Creates a content context for given workspace
 	 *
 	 * @param string $workspaceName
-	 * @param boolean $removedContentShown
+	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
-	protected function createContext($workspaceName, $removedContentShown = FALSE) {
+	protected function createContext($workspaceName, $dimensions) {
 		return $this->contextFactory->create(array(
 			'workspaceName' => $workspaceName,
+			'dimensions' => $dimensions,
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE,
-			'removedContentShown' => $removedContentShown
+			'removedContentShown' => TRUE
 		));
 	}
 
@@ -707,7 +718,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			exit(1);
 		}
 
-		$context = $this->createContext($workspaceName);
 		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
@@ -718,6 +728,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
 				/** @var NodeInterface $childNodeBefore */
 				$childNodeBefore = NULL;
+				$context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface) {
 					continue;

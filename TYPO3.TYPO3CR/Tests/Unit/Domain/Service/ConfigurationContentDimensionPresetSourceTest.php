@@ -287,5 +287,4 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 		$this->assertcount(1, $dimensionAndPresets['country']['presets']);
 
 	}
-
 }
