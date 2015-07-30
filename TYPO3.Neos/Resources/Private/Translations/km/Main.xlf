@@ -202,10 +202,10 @@
 			<target xml:lang="km" state="translated">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &amp;lt;br /&amp;gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &amp;lt;br /&amp;gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
@@ -464,6 +464,12 @@
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
 			<target xml:lang="km" state="translated">សុំទោស ទំព័រអ្នកស្នើរ រកមិនឃើញទេ។</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+				<source>Invalid NodeType</source>
+			<target xml:lang="km" state="needs-translation">Invalid NodeType</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			<target xml:lang="km" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
     </body>
   </file>
 </xliff>

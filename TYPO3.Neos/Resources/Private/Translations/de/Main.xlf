@@ -202,10 +202,10 @@
 			<target xml:lang="de">(kein Ziel ausgewählt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&amp;lt;br /&amp;gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&amp;lt;br /&amp;gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
@@ -464,6 +464,12 @@
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, the page you requested was not found.</source>
 			<target xml:lang="de">Die angeforderte Seite konnte nicht gefunden werden.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+				<source>Invalid NodeType</source>
+			<target xml:lang="de" state="needs-translation">Invalid NodeType</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			<target xml:lang="de" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
     </body>
   </file>
 </xliff>
