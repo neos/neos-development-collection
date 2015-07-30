@@ -149,6 +149,12 @@ class PluginImplementation extends AbstractArrayTypoScriptObject {
 			$pluginResponse = new Response($parentResponse);
 
 			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
+			
+      /* Put header from sub-request into main-request */
+			if ($pluginResponse->hasHeader('Location') && !$parentResponse->hasHeader('Location')) {
+			    $parentResponse->setHeader('Location', $pluginResponse->getHeader('Location'));
+			}
+			
 			$content = $pluginResponse->getContent();
 		} catch (\Exception $exception) {
 			$content = $this->tsRuntime->handleRenderingException($this->path, $exception);
