@@ -303,3 +303,17 @@
     nodeTypes:
       'TYPO3.Neos:Document': FALSE
       '*': TRUE
+
+# The fallback node is used if you have remainings of a nodeType that doesn't exist anymore so you can at least delete it
+'TYPO3.Neos:FallbackNode':
+  superTypes:
+    'TYPO3.Neos:Node': TRUE
+  ui:
+    label: i18n
+    icon: 'icon-remove-sign'
+  properties:
+    _nodeType:
+      ui:
+        inspector:
+          editorOptions:
+            baseNodeType: 'TYPO3.Neos:Content'
