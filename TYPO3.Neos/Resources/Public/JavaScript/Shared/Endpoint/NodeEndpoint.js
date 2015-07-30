@@ -39,10 +39,10 @@ define([
 			);
 		},
 
-		createNodeForTheTree: function(referenceNode, nodeData, position, optionsOverride) {
+		createNodeForTheTree: function(referenceNode, nodeData, position, nodeTypeFilter, optionsOverride) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createNodeForTheTree'),
-				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}, optionsOverride || {})
+				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, nodeTypeFilter: nodeTypeFilter, position: position}}, optionsOverride || {})
 			);
 		},
 
