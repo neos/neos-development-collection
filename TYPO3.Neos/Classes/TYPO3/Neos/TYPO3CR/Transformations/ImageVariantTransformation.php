@@ -13,11 +13,13 @@ namespace TYPO3\Neos\TYPO3CR\Transformations;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 
 /**
  * Convert serialized (old resource management) ImageVariants to new ImageVariants.
  */
-class ImageVariantTransformation extends \TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation {
+class ImageVariantTransformation extends AbstractTransformation {
 
 	/**
 	 * @Flow\Inject
@@ -52,21 +54,20 @@ class ImageVariantTransformation extends \TYPO3\TYPO3CR\Migration\Transformation
 	protected $entityManager;
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+	 * @param NodeData $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
+	public function isTransformable(NodeData $node) {
 		return TRUE;
 	}
 
 	/**
 	 * Change the property on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+	 * @param NodeData $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-
+	public function execute(NodeData $node) {
 		foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {
 			if (isset($propertyConfiguration['type']) && ($propertyConfiguration['type'] === 'TYPO3\Media\Domain\Model\ImageInterface' || preg_match('/array\<.*\>/', $propertyConfiguration['type']))) {
 				if (!isset($nodeProperties)) {
@@ -97,7 +98,15 @@ class ImageVariantTransformation extends \TYPO3\TYPO3CR\Migration\Transformation
 									break;
 							}
 						}
+
+						$nodeProperties[$propertyName] = NULL;
 						if (isset($originalAsset)) {
+							$stream = $originalAsset->getResource()->getStream();
+							if ($stream === FALSE) {
+								continue;
+							}
+
+							fclose($stream);
 							$newImageVariant = new \TYPO3\Media\Domain\Model\ImageVariant($originalAsset);
 							foreach ($adjustments as $adjustment) {
 								$newImageVariant->addAdjustment($adjustment);
@@ -105,23 +114,40 @@ class ImageVariantTransformation extends \TYPO3\TYPO3CR\Migration\Transformation
 							$originalAsset->addVariant($newImageVariant);
 							$this->assetRepository->update($originalAsset);
 							$nodeProperties[$propertyName] = $this->persistenceManager->getIdentifierByObject($newImageVariant);
-						} else {
-							$nodeProperties[$propertyName] = NULL;
 						}
 					}
 				} elseif (preg_match('/array\<.*\>/', $propertyConfiguration['type'])) {
 					if (is_array($nodeProperties[$propertyName])) {
 						$convertedValue = [];
 						foreach ($nodeProperties[$propertyName] as $entryValue) {
-							$convertedValue[] = $this->persistenceManager->getIdentifierByObject($entryValue);
+							if (!is_object($entryValue)) {
+								continue;
+							}
+
+							$stream = $entryValue->getResource()->getStream();
+							if ($stream === FALSE) {
+								continue;
+							}
+
+							fclose($stream);
+							$existingObjectIdentifier = NULL;
+							try {
+								$existingObjectIdentifier = $this->persistenceManager->getIdentifierByObject($entryValue);
+								if ($existingObjectIdentifier !== NULL) {
+									$convertedValue[] = $existingObjectIdentifier;
+								}
+							} catch (\Exception $exception) {
+							}
 						}
 						$nodeProperties[$propertyName] = $convertedValue;
 					}
 				}
-
-				$nodeUpdateQuery = $this->entityManager->getConnection()->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties=? WHERE persistence_object_identifier=?');
-				$nodeUpdateQuery->execute([serialize($nodeProperties), $this->persistenceManager->getIdentifierByObject($node)]);
 			}
+		}
+
+		if (isset($nodeProperties)) {
+			$nodeUpdateQuery = $this->entityManager->getConnection()->prepare('UPDATE typo3_typo3cr_domain_model_nodedata SET properties=? WHERE persistence_object_identifier=?');
+			$nodeUpdateQuery->execute([serialize($nodeProperties), $this->persistenceManager->getIdentifierByObject($node)]);
 		}
 	}
 }
