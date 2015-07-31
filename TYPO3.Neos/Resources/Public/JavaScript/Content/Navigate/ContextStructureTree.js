@@ -217,6 +217,17 @@ define(
 				newNode.focus();
 				that._selectNode(newNode);
 			});
+		},
+
+		afterLoadNode: function(node) {
+			if (node.getLevel() === 1) {
+				var tree = this.$nodeTree.dynatree('getTree'),
+					currentNode = tree.getNodeByKey(NodeSelection.get('selectedNode').$element.attr('about'));
+				if (currentNode) {
+					currentNode.activate();
+					this.scrollToCurrentNode();
+				}
+			}
 		}
 	});
 });

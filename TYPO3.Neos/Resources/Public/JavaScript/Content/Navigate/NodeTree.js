@@ -503,6 +503,18 @@ define(
 						}
 					);
 				}
+			},
+
+			afterLoadNode: function(node) {
+				if (node.getLevel() === 1) {
+					var tree = this.$nodeTree.dynatree('getTree'),
+						currentNode = tree.getNodeByKey(this.get('pageNodePath'));
+					if (currentNode) {
+						currentNode.activate();
+						currentNode.select();
+						this.scrollToCurrentNode();
+					}
+				}
 			}
 		});
 	}
