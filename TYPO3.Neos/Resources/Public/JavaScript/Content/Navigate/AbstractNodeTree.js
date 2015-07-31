@@ -1062,22 +1062,16 @@ define(
 						node._currentlySendingServerRequest = false;
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						node.addChild(result.data);
-						if (node.getLevel() === 1) {
-							var tree = that.$nodeTree.dynatree('getTree'),
-								currentNode = tree.getNodeByKey(that.get('pageNodePath'));
-							if (currentNode) {
-								currentNode.activate();
-								currentNode.select();
-								that.scrollToCurrentNode();
-							}
-						}
+						that.afterLoadNode(node);
 					},
 					function() {
 						node.setLazyNodeStatus(that.statusCodes.error);
 						Notification.error('Node Tree loading error.');
 					}
 				);
-			}
+			},
+
+			afterLoadNode: Ember.K
 		});
 	}
 );
