@@ -303,7 +303,7 @@ function(
 				that.set('selectorIsActive', false);
 				that.set('showInitialTranslationDialog', false);
 
-				ContentModule.loadPage($('link[rel="node-frontend"]', result.resource).attr('href'), false, function() {
+				ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
 					that._updateSelectedDimensionsFromCurrentDocument();
 					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
 					Notification.ok('Created ' + that.get('currentDimensionChoiceText'));
