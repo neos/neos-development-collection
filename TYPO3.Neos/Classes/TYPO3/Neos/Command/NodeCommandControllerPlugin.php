@@ -21,7 +21,6 @@ use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Utility;
 
 /**
@@ -131,7 +130,13 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			$flowQuery = new FlowQuery($baseContextSiteNodes);
 			$siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
 			if (count($siteNodes) > 0) {
-				$this->output->outputLine('Searching for nodes with missing URI path segment in dimension "%s"', array(trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
+				$dimensionString = '';
+				foreach ($dimensionCombination as $dimensionName => $dimensionValues) {
+					$dimensionString .= $dimensionName . '=' . implode(',', $dimensionValues) . '&';
+				}
+				$dimensionString = trim($dimensionString, '&');
+				$this->output->outputLine('Searching for nodes with missing URI path segment in dimension "%s"', array($dimensionString));
+
 				foreach ($siteNodes as $siteNode) {
 					$this->generateUriPathSegmentsForNode($siteNode, $dryRun);
 				}
