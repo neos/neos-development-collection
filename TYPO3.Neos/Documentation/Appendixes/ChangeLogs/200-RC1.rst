@@ -1,0 +1,627 @@
+==================
+2.0.0-RC1 (2015-07-31)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Require release candidate of Flow 3.0
+-----------------------------------------------------------------------------------------
+
+* Commit: `ab472f7 <https://git.typo3.org/Neos/Distributions/Base.git/commit/ab472f7b416ea279066e0a183013bbc8330e87f5>`_
+
+[TASK] Remove composer dependency on unstable doctrine/migrations
+-----------------------------------------------------------------------------------------
+
+* Commit: `139ebc0 <https://git.typo3.org/Neos/Distributions/Base.git/commit/139ebc04a7c58d3a5a738a08dfc587c392242004>`_
+
+[TASK] Update composer.json information
+-----------------------------------------------------------------------------------------
+
+* Commit: `2ed7450 <https://git.typo3.org/Neos/Distributions/Base.git/commit/2ed7450d3ff81997ac178339682d39631144014b>`_
+
+[TASK] Update composer manifest for 2.0.x-dev
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Neos%20-%20Release/63/
+
+* Commit: `8586351 <https://git.typo3.org/Neos/Distributions/Base.git/commit/85863516db036f16c891c5edf84d37c5e9d16ce6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Neos%20-%20Release/64/
+
+* Commit: `cb602e5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cb602e5bda0e1ee6f89e9129b9bcf709cf7e6638>`_
+
+[TASK] Improve robustness of Media Transformations
+-----------------------------------------------------------------------------------------
+
+Adds extra checks for resource existence to the Media transformations
+to avoid broken transformation states while upgrading Neos to 2.x.
+
+Fixes: NEOS-1463
+
+* Commit: `59a5f2d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/59a5f2d64d51516cb9c0ebcc6c74869b9425d54a>`_
+
+[TASK] Adjust documentation to auto-generated node names
+-----------------------------------------------------------------------------------------
+
+Many have trouble with finding a child node by it's node name
+due to the change to auto-generating node names. Therefore the
+examples for getting a child page by a given name is changed to
+getting by the ``uriPathSegment`` instead, which is more visible.
+
+* Commit: `d52df52 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d52df52ca14116579c9ae52fdf5dcb48960289eb>`_
+
+[TASK] Add indices to Eventlog tables
+-----------------------------------------------------------------------------------------
+
+Especially the update query on publishing of nodes is rather complicated
+and benefits a lot from indices to speed up the process.
+
+This adds two basic indices that should be useful for publishing of nodes
+and displaying the event list.
+
+* Commit: `e096914 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e096914da1a78a526154e192d807c9f9f23942c9>`_
+
+[BUGFIX] In select boxes, allow to hard-code the placeholder text (without localization)
+-----------------------------------------------------------------------------------------
+
+Without this change, the "placeholder" can not be hardcoded anymore (which is a 2.0
+regression).
+
+* Commit: `3dc6b94 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3dc6b94e5dc5620bd75d5ab930cf9b7b62970334>`_
+
+[BUGFIX] Node created in new dimension not shown after creation
+-----------------------------------------------------------------------------------------
+
+When a node is created in a new dimension using the content
+dimension selector, the new node is not shown after creation.
+
+Related: NEOS-1450
+
+* Commit: `7c92964 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c929644c3d9906563654b27658706de206e6f48>`_
+
+[BUGFIX] Show correct tooltips for root nodes in navigate component trees
+-----------------------------------------------------------------------------------------
+
+The title attributes for the root nodes in the navigate component trees
+(node/structure) didn't take translation into account leading to labels
+like "some.label.id" or "undefined".
+With this change ``I18n.translate()`` is applied to the tooltips fixing
+that issue.
+
+Fixes: NEOS-1436
+
+* Commit: `6d4fa3b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6d4fa3b20d6497d2a13841985eb4063f319364a8>`_
+
+[BUGFIX] Avoid mismatching finalImageDimensions on load
+-----------------------------------------------------------------------------------------
+
+Due to the bindings we have, it could happen that the provided
+metadata for an image contain values for an ``ResizeAdjustment``
+that are slightly different from the calculated sizes by using a
+ratio generated from the crop values. This mismatch would lead to
+a value difference and applicable changes for an image right after
+selecting it.
+
+The change circumvents that by setting the dimensions straight from
+the provided metadata (again) after bindings have triggered.
+
+Dimensions will still be updated when cropping so it could happen that
+the crop area is modified in a way that you end up with the same crop
+area and still have a modification afterwards due to the
+calculations done. This is probably acceptable.
+
+Resolves: NEOS-1384
+
+* Commit: `dc4e433 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/dc4e433ca185930e9830bff2fd0491e692df490e>`_
+
+[BUGFIX] Remove usage of NodePaths utility in 2.0
+-----------------------------------------------------------------------------------------
+
+The NodePaths utility was introduced for master and doesn't exist in
+the 2.0 branch therefore ``I5bdbb7424c8575b8075876a4fcfeef64379ab015``
+introduced a regression by using it.
+
+This changes replaces it with string operations.
+
+* Commit: `fe77303 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fe77303a936dfbcd5286d182937b72d342e4844c>`_
+
+[BUGFIX] node:repair ``generateUriPathSegments`` should use dimensions
+-----------------------------------------------------------------------------------------
+
+The ``generateUriPathSegments`` plugin for ``node:repair`` should take
+all dimensions into consideration and not only language.
+
+This change fixes it by using the new methods added for fixing
+``node:repair`` in TYPO3CR.
+
+Additionally now applies to root nodes and uses the node label instead
+if it's name to generate the URI path segment.
+
+Depends: I995285f22fa5486d5bc53c4f96f68bb9fae831a3
+Fixes: NEOS-1466
+
+* Commit: `217d10e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/217d10e4bbc132d801a4150901a51e2ecbe75801>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8e1d9da <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8e1d9da71823ddb2472fb91b11f70618923665f1>`_
+
+[BUGFIX] CreateNodeForTheTreeAction needs to filter for tree
+-----------------------------------------------------------------------------------------
+
+The change ``Id9ea03a3935150b6f81d71ee27ef848e8e15aad1`` introduced
+a regression as the returned children are not correctly filtered for
+the tree they are displayed in.
+
+This change adds a node type filter based on the trees general
+base node type filter.
+
+Fixes: NEOS-1469
+Related: NEOS-1053
+Related: Id9ea03a3935150b6f81d71ee27ef848e8e15aad1
+
+* Commit: `d6285b4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d6285b4f77d24135e0a78ac26798b51d82b42c71>`_
+
+[BUGFIX] Fix flushing of documents when parents subpage layout changes
+-----------------------------------------------------------------------------------------
+
+The entry tag for documents is currently set to
+`DescendantOf_{documentNode.identifier}` which will flush a document if
+_any_ of the descendant nodes changes. This was originally  planned to
+flush the document for parent layout change, but fails to do so and
+causes lots of unnecessary cache flushes.
+
+With the support of array cache entry tags we can do better by directly
+referencing all parent document nodes in the tags.
+
+Fixes: NEOS-1317
+
+* Commit: `a0c1f79 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a0c1f79d55aaccaa6434e11ed07ad872a9359967>`_
+
+[BUGFIX] Selected node not active in structure tree after reload
+-----------------------------------------------------------------------------------------
+
+When the context structure tree is reloaded the currently selected
+node is not activated after reloading the tree.
+This gives an invalid state of the tree where the inline and
+structure tree are out of sync, since the root element is active
+in the structure tree instead.
+
+Fixes: NEOS-1473
+
+* Commit: `068d6c4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/068d6c45de1fe88f979e03db30a077cced0fdaa1>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f092585 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f092585e556d124290f9ef5acf85dd1198b53273>`_
+
+[BUGFIX] Load structure tree containing nodes with invalid types
+-----------------------------------------------------------------------------------------
+
+As loading the structure tree doesn't work at all if any children are
+of a NodeType that is no longer available you have no possibility to
+delete invalid nodes.
+
+To solve this issue TYPO3CR introduced a configurable NodeType fallback
+which is used by Neos to handle those invalid nodes as having the
+fallback type transparently when loading them into the structure tree.
+
+This way they can be deleted or have their type changed.
+
+Depends: Iec3727f002868398a86984d1f1a1ff6408c931b8
+Fixes: NEOS-649
+Related: NEOS-1246
+
+* Commit: `7180909 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7180909c6ee8b1deac14ae64f55daa5bd264c893>`_
+
+[BUGFIX] Link wizards & reference(s) editors display incorrect node path
+-----------------------------------------------------------------------------------------
+
+- Removes additional info for selected item in reference(s) editors
+- Fixes a couple of incorrect fetching of node frontend URI
+- Synchronizes the output for URIs across show and index actions
+- Adjusts content dimension selector to new URI output
+
+Fixes: NEOS-1450
+
+* Commit: `29f5021 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/29f50216aa3d1fc8d3dea3a7b06c25135ced9324>`_
+
+[TASK] Prevent infinite loop in JS translations with placeholders
+-----------------------------------------------------------------------------------------
+
+If a label with placeholders isn't properly used an infinite loop
+will occur, to prevent that the loop is broken if an error occurs.
+
+Related: NEOS-1264
+
+* Commit: `39441d3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/39441d323968603c83fb0524a2dfd0c771125424>`_
+
+[BUGFIX] Child nodes missing for newly created nodes in structure tree
+-----------------------------------------------------------------------------------------
+
+When inserting a node type that has auto created child nodes, the child
+nodes aren't shown until reloading the tree. This change makes sure all
+auto generated child nodes are shown for newly inserted nodes.
+
+Fixes: NEOS-1053
+
+* Commit: `b601a8e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b601a8e1ee20d5548daceec81253534b09f79b58>`_
+
+[BUGFIX] Reload structure tree after adding new nodes
+-----------------------------------------------------------------------------------------
+
+When nodes were changed in the structure tree the tree would only 
+reflect the current page after having navigated to another document
+for the second time.
+
+This was caused by a fix added with https://review.typo3.org/26158 and
+which is no longer needed, since the observer on pageNodePath is not
+triggered if the same page is reloaded.
+
+Fixes: NEOS-1343
+
+* Commit: `a9b9b3d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a9b9b3d16a3093e09c6dd15d008c883028ff4654>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ef88e86 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ef88e860cf7c948c09cd8c485e00de7b20100de5>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `366e1da <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/366e1daa6dd674787edc04adcf58da3c6dc68fec>`_
+
+[BUGFIX] Page reload shouldn't occur if ``reloadPageIfChanged`` is false
+-----------------------------------------------------------------------------------------
+
+If both ``reloadIfChanged`` and ``reloadPageIfChanged`` are false for
+a property, no content reload should occur when changing that property
+in the inspector. Currently they do due to a fallback to handle
+unexpected server responses.
+
+Related: NEOS-827
+
+* Commit: `20cec28 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/20cec288daf4851085cae7cde717a94b045ee97a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `cd7c690 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cd7c6900dbddcdc996ccb9bb6e1ffd91668290fd>`_
+
+[BUGFIX] Title in users management & user settings module broken
+-----------------------------------------------------------------------------------------
+
+The title tag in users management & user settings module contain
+untranslated translation ids due to a custom title generation.
+
+Fixes: NEOS-1453
+
+* Commit: `1b1f49f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1b1f49fe81f26a56650189aa8bc5b5d92f35935b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `a73a96b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a73a96bf22e3f90fc2e0687d0022e0f37c599852>`_
+
+[BUGFIX] ``uriPathSegment`` logic break non-document nodes with content object proxy
+-----------------------------------------------------------------------------------------
+
+When inserting a new document node on a level that has non-document
+nodes using content object proxy a fatal error is thrown for not being
+able to call ``getUriPathSegment`` on the content object proxy.
+This happens due to the ``uriPathSegment`` logic tries to find all
+siblings (regardless of being documents or not) with a certain
+``uriPathSegment``.
+This becomes a problem when the property is fetched from a content
+object proxy instead of a node, since it calls an undefined getter
+method.
+
+To fix this issue only document node types are tested for having the
+same ``uriPathSegment`` property.
+
+Fixes: NEOS-1455
+
+* Commit: `74e008e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/74e008e98654ca451659246509ac0b0a7d0d00ab>`_
+
+[TASK] Code cleanup related to user interface language
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-3
+
+* Commit: `d0088aa <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d0088aaf061d0453f4a553ae00accacb6804b98e>`_
+
+[BUGFIX] Typos in a couple of module labels
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-3
+
+* Commit: `b48c566 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b48c5665bfc5dcb17ced920dad1361ec42e012b8>`_
+
+[TASK] Remove unused shared accounts partial
+-----------------------------------------------------------------------------------------
+
+* Commit: `ce17fea <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ce17fea170a63d04949e3c522515812ce530767f>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `9664d1f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9664d1ff934dae436d295de3cedb2f17eeb425c5>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `1d8db99 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1d8db999aef9e02d8d38767b9e023d1830d1c0bb>`_
+
+[BUGFIX] Fix double encoding in flash messages of modules
+-----------------------------------------------------------------------------------------
+
+Backend modules had their flash messages escaped twice since the change
+with id I9b766f12fa84a0f231ef8aa27cc20bfa64423c49.
+
+Fixes: NEOS-1451
+
+* Commit: `5f44ec0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5f44ec0ea8214588aaba33fa8be662663014a433>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `d5e039d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d5e039d894d5e28fa0f4276121999ceac0c6742e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `39379d0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/39379d0d63e7db22e0814e0f45744cf59de9c621>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `eb9143f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/eb9143f9807a4e2fe7936ab4604bfcc92625e5b6>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `31eae45 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/31eae45d3b3568f877bc2c778abd0d23b8bb852e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `62a1069 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/62a1069228a63f32f7e28d9399c4cbb3f55f4da7>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `1882ccb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1882ccb70d417a525dc6c7ed59e186ddaf3de7a8>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e223f23 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e223f23af01378fcc826c5f99c78fd916988eaa8>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `4e23551 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4e235519a9e0965d6d1dde668ec601bc26994dea>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f5069d0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f5069d09aa67b5f09d537c04ce1971b2f8ac8a88>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e360564 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e36056442705e89dfc8b2d7aa8b7fad00c6d466c>`_
+
+[TASK] Fix error message in UserInitialsViewHelper
+-----------------------------------------------------------------------------------------
+
+* Commit: `62ef601 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/62ef601f57e2876f1785fcde4090fd3208ca1cd0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ec57172 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ec5717273185a26f1571495ad580dd817b7f60e4>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `d57da8c <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/d57da8c81bb88d4fbee628005dfdadf7613c05a7>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8a25fb1 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/8a25fb19ef1031e5449c20ad9e8774c5274d0aa5>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2392d9c <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/2392d9c159147bc1d638c68d7690cc3111a22a72>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `719d848 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/719d8482325639831b274d115a9303f9730aae7b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7492258 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/74922589e785b5103170b24c76297909321ee8d7>`_
+
+[TASK] Headline calls itself Headline again, not Title
+-----------------------------------------------------------------------------------------
+
+The Headline nodetype was named "Title" in NodeTypes/Headline.xlf.
+
+* Commit: `db98ef8 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/db98ef878e5bc639aa93438f95b0a5cd34f9c1e0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `9af2732 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/9af27321f58a8f66e7c84de980bca6559a436b44>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `cb3b90b <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/cb3b90b84cdb34bec54e56ffccf4895017b4b861>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7c5a85c <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/7c5a85ced3e7a718dfc1e98e4a77252a771d5a2d>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `385aec2 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/385aec22861a798992727e7c0a55bc83f399eac5>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `48457eb <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/48457ebd768232bae18d5cad6a26eb89891c33cf>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `552a6fc <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/552a6fc81f36bb584c228ca8f92560c1efcdfea6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] Add node migration to add dimensions
+-----------------------------------------------------------------------------------------
+
+This adds migration 20150716212459 which adds missing dimensions to
+nodes, setting their default value. This enables the addition of
+content dimensions to existing content having dimensions already.
+
+The migration uses the new AddDimensions transformation, which will
+add to a node's dimensions (as opposed to the existing SetDimensions
+transformation).
+
+Fixes: NEOS-1464
+
+* Commit: `35c3685 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/35c3685811fe22535738c50e946152a659c8b198>`_
+
+[BUGFIX] node:repair should consider dimensions
+-----------------------------------------------------------------------------------------
+
+This change makes sure that all ``node:repair`` command
+plugins operate correctly with dimensions.
+
+The NodeFactory gained an internal method to generate a context
+based on a given NodeData instance that matches the properties
+of this.
+
+Additionally ``TYPO3\\TYPO3CR\\Domain\\Service\\ContentDimensionCombinator``
+was introduced to deal with generating possible dimension configuarations
+for Context generation.
+
+Releaes: master, 2.0, 1.2
+Fixes: NEOS-1466
+
+* Commit: `16ffc6f <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/16ffc6fa022d8abd1c0e9e3bfa9dd72ee52cd3a1>`_
+
+[FEATURE] Allow configurable fallbacks for unavailable NodeTypes
+-----------------------------------------------------------------------------------------
+
+As you could have nodes which have a NodeType that is no longer available
+the TYPO3CR should have the possibility to convert those nodes at least
+to a configurable fallback NodeType that can be deleted instead of
+throwing an error and not having the possibility to cleanup those nodes
+except using ``node:repair``.
+
+You can configure the fallback NodeType name in the Settings
+configuration::
+
+  TYPO3:
+    TYPO3CR:
+      fallbackNodeType: 'Some.Package:SomeNodeType'
+
+Related: NEOS-649
+Related: NEOS-1246
+
+* Commit: `e2ef488 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/e2ef4880af21f80b9b65169789cfcf0796de77a7>`_
+
+[BUGFIX] NodeService shouldn't use non existing class
+-----------------------------------------------------------------------------------------
+
+The change ``I34b21540fc11ef9d5e7977752b94369faad5534a`` introduced
+a regression in 2.0 as the backported code contained a reference
+to a class that was only introduced in master.
+
+This change fixes it by removing the reference and directly concatinating
+the paths together.
+
+Related: I34b21540fc11ef9d5e7977752b94369faad5534a
+Fixes: NEOS-1457
+
+* Commit: `9ecf704 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9ecf7043a0761fb77bc0d556d4493312e5151b60>`_
+
+[BUGFIX] Avoid duplicate key errors with setDimensions()
+-----------------------------------------------------------------------------------------
+
+When dimensions are set, the dimensions property of NodeData is
+clear()ed, and then the given dimensions are added.
+
+If one of the added dimensions has the same name and value as one that
+was present, a duplicate key error occurs during persisting of the
+changes, because Doctrine first does the inserts and then the removal
+of records.
+
+This change fixes that by actually comparing the dimensions to be set to
+the ones already set on the node, re-using instances that have the same
+name and value.
+
+* Commit: `e252403 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/e252403b33f3f3e07088df1410eb119dbd4949a6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update site export
+-----------------------------------------------------------------------------------------
+
+* Commit: `5652195 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/565219521325564f5eaac1c7ae40ecbe822b6bc7>`_
+
+[BUGFIX] Wrong nesting of tags in Default.html template
+-----------------------------------------------------------------------------------------
+
+Removes a superfluous div in the Default.html page template.
+
+* Commit: `4dfe5b0 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/4dfe5b0a43e21a466845afa490f636acdfb7d72a>`_
+
