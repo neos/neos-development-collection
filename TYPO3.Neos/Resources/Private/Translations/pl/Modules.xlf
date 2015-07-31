@@ -7,7 +7,7 @@
 			<target xml:lang="pl" state="translated">Kliknij, aby edytować</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="pl" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="pl" state="translated">Kliknij, aby usunąć</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="pl" state="translated">Anuluj</target></trans-unit>
@@ -132,7 +132,7 @@
 			<target xml:lang="pl" state="needs-translation">Overview</target></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="pl" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pokaż</target></trans-unit>
       <trans-unit id="users.action.new" xml:space="preserve">
 				<source>New</source>
 			<target xml:lang="pl" state="needs-translation">New</target></trans-unit>
@@ -141,7 +141,7 @@
 			<target xml:lang="pl" state="translated">Edytuj</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="pl" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj konto</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="pl" state="needs-translation">New electronic address</target></trans-unit>
@@ -316,7 +316,7 @@
 			<target xml:lang="pl" state="needs-translation">New electronic address</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="pl" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj konto</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="pl" state="translated">Dane personalne</target></trans-unit>
@@ -358,7 +358,7 @@
 			<target xml:lang="pl" state="translated">Kliknij, aby dodać nowy adres elektroniczny</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
-			<target xml:lang="pl" state="needs-translation">Add electronic address</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dodaj adres elektroniczny</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
@@ -434,7 +434,7 @@
 			<target xml:lang="pl" state="needs-translation">Yes, delete the collection</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="pl" state="needs-translation">Yes, delete the tag</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tak, usuń tag</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
 				<source>Edit {0}</source>
 			<target xml:lang="pl" state="translated">Edytuj {0}</target></trans-unit>
@@ -560,7 +560,7 @@
 			<target xml:lang="pl" state="translated">Usuń</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="pl" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="pl" state="translated">Kliknij, aby usunąć</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="pl" state="translated">Zapisz</target></trans-unit>
