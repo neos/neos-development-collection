@@ -1,0 +1,14 @@
+up:
+  comments: 'Migrate from some node dimensions to default dimension values, adding missing dimension default values.'
+  migration:
+    -
+      filters: []
+      transformations:
+        -
+          type: 'AddDimensions'
+          settings:
+            addDefaultDimensionValues: TRUE
+
+down:
+  comments: 'Use migration 20140326143834 to migrate nodes with default dimensions to no migrations. This down migration does nothing.'
+  migration: []

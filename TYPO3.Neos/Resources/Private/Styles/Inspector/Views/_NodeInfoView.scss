@@ -1,0 +1,24 @@
+.node-info-view {
+	ul {
+		margin: $relatedMargin $defaultMargin $defaultMargin;
+		background-color: $grayMedium;
+
+		li {
+			padding: $relatedMargin;
+			border-bottom: 1px solid $grayDark;
+			text-align: right;
+			line-height: $unit / 2;
+			min-height: $unit / 2;
+
+			&:first-child {
+				border-top: 1px solid $grayDark;
+			}
+
+			span {
+				float: left;
+				padding-right: $relatedMargin;
+				font-weight: bold;
+			}
+		}
+	}
+}
