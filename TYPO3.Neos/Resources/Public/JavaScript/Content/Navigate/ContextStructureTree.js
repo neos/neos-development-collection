@@ -130,7 +130,8 @@ define(
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(documentMetadata)),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath,
-				documentNodeType = (page ? page.get('typo3:_nodeType'): 'TYPO3.Neos.NodeTypes:Page'); // TODO: This fallback to TYPO3.Neos.NodeTypes:Page should go away, but currently in some rare cases "page" is not yet initialized. In order to fix this loading order issue, we need to re-structure the tree, though.
+				documentNodeType = (page ? page.get('typo3:_nodeType'): 'TYPO3.Neos.NodeTypes:Page'), // TODO: This fallback to TYPO3.Neos.NodeTypes:Page should go away, but currently in some rare cases "page" is not yet initialized. In order to fix this loading order issue, we need to re-structure the tree, though.
+				documentNodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(documentNodeType);
 
 			this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 				parent: this,
@@ -145,6 +146,7 @@ define(
 						active: false,
 						unselectable: true,
 						nodeType: documentNodeType,
+						nodeTypeLabel: documentNodeTypeConfiguration.label,
 						addClass: 'typo3-neos-page',
 						iconClass: 'icon-sitemap'
 					}
@@ -167,10 +169,10 @@ define(
 					}
 				},
 				onCustomRender: function(node) {
-					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel);
-					var tooltip = node.data.title;
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel),
+						tooltip = node.data.title;
 
-					if (nodeTypeLabel == '' || tooltip.indexOf(nodeTypeLabel) == -1) {
+					if (nodeTypeLabel === '' || tooltip.indexOf(nodeTypeLabel) === -1) {
 						tooltip += ' (' + nodeTypeLabel + ')';
 					}
 					node.data.tooltip = tooltip;
