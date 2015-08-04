@@ -8,9 +8,9 @@
       <trans-unit id="groups.form" xml:space="preserve" approved="yes">
 				<source>Form</source>
 			<target xml:lang="de">Formular</target></trans-unit>
-      <trans-unit id="properties.formIdentifier" xml:space="preserve">
+      <trans-unit id="properties.formIdentifier" xml:space="preserve" approved="yes">
 				<source>Form Identifier</source>
-			<target xml:lang="de" state="translated">Formular-ID</target></trans-unit>
+			<target xml:lang="de">Formular-ID</target></trans-unit>
     </body>
   </file>
 </xliff>
