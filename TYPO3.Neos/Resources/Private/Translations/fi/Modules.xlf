@@ -7,7 +7,7 @@
 			<target xml:lang="fi" state="translated">Klikkaa muokataksesi</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="fi" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="fi" state="translated">Klikkaa poistaaksesi</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="fi" state="translated">Peruuta</target></trans-unit>
@@ -560,7 +560,7 @@
 			<target xml:lang="fi" state="translated">Poista</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="fi" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="fi" state="translated">Klikkaa poistaaksesi</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="fi" state="translated">Tallenna</target></trans-unit>
@@ -569,46 +569,46 @@
 			<target xml:lang="fi" state="translated">Metatiedot</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
-			<target xml:lang="fi" state="needs-translation">Filename</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tiedostonimi</target></trans-unit>
       <trans-unit id="media.metadata.lastModified" xml:space="preserve">
 				<source>Last modified (resource)</source>
-			<target xml:lang="fi" state="needs-translation">Last modified (resource)</target></trans-unit>
+			<target xml:lang="fi" state="translated">Viimeksi muokattu (resurssi)</target></trans-unit>
       <trans-unit id="media.metadata.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="fi" state="translated">Tiedostokoko</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
-			<target xml:lang="fi" state="needs-translation">Dimensions</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ulottuvuudet</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="fi" state="translated">Tyyppi</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target xml:lang="fi" state="needs-translation">Identifier</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tunniste</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="fi" state="translated">Esikatsele</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
-			<target xml:lang="fi" state="needs-translation">Cannot upload the file</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tiedostoa ei voitu ladata</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="fi" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tiedoston koko {0} ylitää sallitun rajan {1}</target></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve">
 				<source>for the file</source>
-			<target xml:lang="fi" state="needs-translation">for the file</target></trans-unit>
+			<target xml:lang="fi" state="translated">tiedoston</target></trans-unit>
       <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="fi" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Vain osa tiedostoista ladattiin onnistuneesti. Lataa sivu uudelleen nähdäksesi ne.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="fi" state="needs-translation">Tagging the asset failed.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Nimikkeen tagaus epäonnistui.</target></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="fi" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Nimikkeen lisääminen kokoelmaan epäonnistui.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
-			<target xml:lang="fi" state="needs-translation">Creating</target></trans-unit>
+			<target xml:lang="fi" state="translated">Luodaan</target></trans-unit>
     </body>
   </file>
 </xliff>
