@@ -210,7 +210,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	/**
 	 * Sets ratioMode
 	 *
-	 * @param integer $ratioMode One of the \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_* constants
+	 * @param string $ratioMode One of the \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_* constants
 	 * @return void
 	 * @api
 	 */
@@ -221,7 +221,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	/**
 	 * Returns ratioMode
 	 *
-	 * @return integer
+	 * @return string
 	 * @api
 	 */
 	public function getRatioMode() {
@@ -229,18 +229,19 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	}
 
 	/**
-	 * Sets allowUpScaling
+	 * Returns allowUpScaling
 	 *
 	 * @return boolean
 	 */
 	public function getAllowUpScaling() {
-		return $this->allowUpScaling;
+		return (boolean)$this->allowUpScaling;
 	}
 
 	/**
-	 * Returns allowUpScaling
+	 * Sets allowUpScaling
 	 *
 	 * @param boolean $allowUpScaling
+	 * @return void
 	 */
 	public function setAllowUpScaling($allowUpScaling) {
 		$this->allowUpScaling = $allowUpScaling;
@@ -254,11 +255,8 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 */
 	public function canBeApplied(ImagineImageInterface $image) {
 		$expectedDimensions = $this->calculateDimensions($image->getSize());
-		if ($expectedDimensions->contains($image->getSize()) && $this->getAllowUpScaling() !== TRUE) {
-			return FALSE;
-		}
 
-		return TRUE;
+		return ((string)$expectedDimensions !== (string)$image->getSize());
 	}
 
 	/**
@@ -270,7 +268,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 */
 	public function applyToImage(ImagineImageInterface $image) {
 		$ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-		return $this->resize($image, $this->calculateDimensions($image->getSize()), $ratioMode);
+		return $this->resize($image, $ratioMode);
 	}
 
 	/**
@@ -278,71 +276,142 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 	 * in this adjustment.
 	 *
 	 * @param BoxInterface $originalDimensions Dimensions of the unadjusted image
-	 * @return Box
+	 * @return BoxInterface
 	 */
 	protected function calculateDimensions(BoxInterface $originalDimensions) {
-		$width = $originalDimensions->getWidth();
-		$height = $originalDimensions->getHeight();
+		$newDimensions = clone $originalDimensions;
 
-		if ($this->getAllowUpScaling()) {
-			$this->width = $this->getMaximumWidth();
-			$this->height = $this->getMaximumHeight();
-		}
-
-		// height and width are set explicitly:
-		if ($this->width !== NULL && $this->height !== NULL) {
-			$width = $this->width;
-			$height = $this->height;
-
+		switch (TRUE) {
+			// height and width are set explicitly:
+			case ($this->width !== NULL && $this->height !== NULL):
+				$newDimensions = $this->calculateWithFixedDimensions($originalDimensions, $this->width, $this->height);
+				break;
 			// only width is set explicitly:
-		} elseif ($this->width !== NULL) {
-			$width = $this->width;
-			$height = ($this->width / $originalDimensions->getWidth()) * $originalDimensions->getHeight();
-
+			case ($this->width !== NULL):
+				$newDimensions = $this->calculateScalingToWidth($originalDimensions, $this->width);
+				break;
 			// only height is set explicitly:
-		} elseif ($this->height !== NULL) {
-			$width = ($this->height / $originalDimensions->getHeight()) * $originalDimensions->getWidth();
-			$height = $this->height;
+			case ($this->height !== NULL):
+				$newDimensions = $this->calculateScalingToHeight($originalDimensions, $this->height);
+				break;
 		}
 
-		// makes sure that maximumWidth and maximumHeight is respected:
-		if ($this->maximumWidth !== NULL && $this->maximumHeight !== NULL) {
-			if ($width > $this->maximumWidth) {
-				$width = $this->maximumWidth;
-			}
-			if ($height > $this->maximumHeight) {
-				$height = $this->maximumHeight;
-			}
-			return new Box($width, $height);
+		// We apply maximum dimensions and scale the new dimensions proportionally down to fit into the maximum.
+		if ($this->maximumWidth !== NULL && $newDimensions->getWidth() > $this->maximumWidth) {
+			$newDimensions = $newDimensions->widen($this->maximumWidth);
 		}
 
-		// no matter if width has been adjusted previously, makes sure that maximumWidth is respected:
-		if ($this->maximumWidth !== NULL) {
-			if ($width > $this->maximumWidth) {
-				$width = $this->maximumWidth;
-				$height = ($width / $originalDimensions->getWidth()) * $originalDimensions->getHeight();
-			}
+		if ($this->maximumHeight !== NULL && $newDimensions->getHeight() > $this->maximumHeight) {
+			$newDimensions = $newDimensions->heighten($this->maximumHeight);
 		}
 
-		// no matter if height has been adjusted previously, makes sure that maximumHeight is respected:
-		if ($this->maximumHeight !== NULL) {
-			if ($height > $this->maximumHeight) {
-				$height = $this->maximumHeight;
-				$width = ($height / $originalDimensions->getHeight()) * $originalDimensions->getWidth();
-			}
-		}
-
-		return new Box($width, $height);
+		return $newDimensions;
 	}
 
 	/**
+	 * @param BoxInterface $originalDimensions
+	 * @param integer $requestedWidth
+	 * @param integer $requestedHeight
+	 * @return BoxInterface
+	 */
+	protected function calculateWithFixedDimensions(BoxInterface $originalDimensions, $requestedWidth, $requestedHeight) {
+		$ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
+
+		if ($ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
+			return $this->calculateOutboundBox($originalDimensions, $requestedWidth, $requestedHeight);
+		}
+
+		$newDimensions = clone $originalDimensions;
+
+		$ratios = array(
+			$requestedWidth / $originalDimensions->getWidth(),
+			$requestedHeight / $originalDimensions->getHeight()
+		);
+
+		$ratio = min($ratios);
+		$newDimensions = $newDimensions->scale($ratio);
+
+		if ($this->getAllowUpScaling() === FALSE && $originalDimensions->contains($newDimensions) === FALSE) {
+			return clone $originalDimensions;
+		}
+
+		return $newDimensions;
+	}
+
+	/**
+	 * Calculate the final dimensions for an outbound box. usually exactly the requested width and height unless that
+	 * would require upscaling and it is not allowed.
+	 *
+	 * @param BoxInterface $originalDimensions
+	 * @param integer $requestedWidth
+	 * @param integer $requestedHeight
+	 * @return BoxInterface
+	 */
+	protected function calculateOutboundBox(BoxInterface $originalDimensions, $requestedWidth, $requestedHeight) {
+		$newDimensions = new Box($requestedWidth, $requestedHeight);
+
+		if ($this->getAllowUpScaling() === TRUE || $originalDimensions->contains($newDimensions) === TRUE) {
+			return $newDimensions;
+		}
+
+		// We need to make sure that the new dimensions are such that no upscaling is needed.
+		$ratios = array(
+			$originalDimensions->getWidth() / $requestedWidth,
+			$originalDimensions->getHeight() / $requestedHeight
+		);
+
+		$ratio = min($ratios);
+		$newDimensions = $newDimensions->scale($ratio);
+
+		return $newDimensions;
+	}
+
+	/**
+	 * Calculates new dimensions with a requested width applied. Takes upscaling into consideration.
+	 *
+	 * @param BoxInterface $originalDimensions
+	 * @param integer $requestedWidth
+	 * @return BoxInterface
+	 */
+	protected function calculateScalingToWidth(BoxInterface $originalDimensions, $requestedWidth) {
+		if ($this->getAllowUpScaling() === FALSE && $requestedWidth >= $originalDimensions->getWidth()) {
+			return $originalDimensions;
+		}
+
+		$newDimensions = clone $originalDimensions;
+		$newDimensions = $newDimensions->widen($requestedWidth);
+
+		return $newDimensions;
+	}
+
+	/**
+	 * Calculates new dimensions with a requested height applied. Takes upscaling into consideration.
+	 *
+	 * @param BoxInterface $originalDimensions
+	 * @param integer $requestedHeight
+	 * @return BoxInterface
+	 */
+	protected function calculateScalingToHeight(BoxInterface $originalDimensions, $requestedHeight) {
+		if ($this->getAllowUpScaling() === FALSE && $requestedHeight >= $originalDimensions->getHeight()) {
+			return $originalDimensions;
+		}
+
+		$newDimensions = clone $originalDimensions;
+		$newDimensions = $newDimensions->heighten($requestedHeight);
+
+		return $newDimensions;
+	}
+
+	/**
+	 * Executes the actual resizing operation on the Imagine image.
+	 * In case of an outbound resize the image will be resized and cropped.
+	 *
 	 * @param ImagineImageInterface $image
-	 * @param BoxInterface $size
 	 * @param string $mode
 	 * @param string $filter
 	 * @return \Imagine\Image\ManipulatorInterface
 	 */
-	protected function resize(ImagineImageInterface $image, BoxInterface $size, $mode = ImageInterface::RATIOMODE_INSET, $filter = ImagineImageInterface::FILTER_UNDEFINED) {
+	protected function resize(ImagineImageInterface $image, $mode = ImageInterface::RATIOMODE_INSET, $filter = ImagineImageInterface::FILTER_UNDEFINED) {
 		if ($mode !== ImageInterface::RATIOMODE_INSET &&
 			$mode !== ImageInterface::RATIOMODE_OUTBOUND
 		) {
@@ -350,51 +419,44 @@ class ResizeImageAdjustment extends AbstractImageAdjustment {
 		}
 
 		$imageSize = $image->getSize();
-		$ratios = array(
-			$size->getWidth() / $imageSize->getWidth(),
-			$size->getHeight() / $imageSize->getHeight()
-		);
-		if ($mode === ImageInterface::RATIOMODE_INSET) {
-			$ratio = min($ratios);
-		} else {
-			$ratio = max($ratios);
+		$requestedDimensions = $this->calculateDimensions($imageSize);
+
+		$resizedImage = $image->copy();
+		$resizedImage->usePalette($image->palette());
+		$resizedImage->strip();
+
+		$resizeDimensions = $requestedDimensions;
+		if ($mode === ImageInterface::RATIOMODE_OUTBOUND) {
+			$resizeDimensions = $this->calculateOutboundScalingDimensions($imageSize, $requestedDimensions);
 		}
 
-		$thumbnail = $image->copy();
-
-		$thumbnail->usePalette($image->palette());
-		$thumbnail->strip();
-		if (!$imageSize->contains($size) && $this->getAllowUpScaling()) {
-			$imageSize = $imageSize->scale($ratio);
-		} elseif ($size->contains($imageSize) && !$this->getAllowUpScaling()) {
-			return $thumbnail;
-		}
+		$resizedImage->resize($resizeDimensions, $filter);
 
 		if ($mode === ImageInterface::RATIOMODE_OUTBOUND) {
-			if (!$imageSize->contains($size)) {
-				$size = new Box(
-					min($imageSize->getWidth(), $size->getWidth()),
-					min($imageSize->getHeight(), $size->getHeight())
-				);
-			} else {
-				$imageSize = $thumbnail->getSize()->scale($ratio);
-				$thumbnail->resize($imageSize, $filter);
-			}
-			$thumbnail->crop(new Point(
-				max(0, round(($imageSize->getWidth() - $size->getWidth()) / 2)),
-				max(0, round(($imageSize->getHeight() - $size->getHeight()) / 2))
-			), $size);
-		} else {
-			if (!$imageSize->contains($size)) {
-				$imageSize = $imageSize->scale($ratio);
-				$thumbnail->resize($imageSize, $filter);
-			} else {
-				$imageSize = $thumbnail->getSize()->scale($ratio);
-				$thumbnail->resize($imageSize, $filter);
-			}
+			$resizedImage->crop(new Point(
+				max(0, round(($resizeDimensions->getWidth() - $requestedDimensions->getWidth()) / 2)),
+				max(0, round(($resizeDimensions->getHeight() - $requestedDimensions->getHeight()) / 2))
+			), $requestedDimensions);
 		}
 
-		return $thumbnail;
+		return $resizedImage;
+	}
+
+	/**
+	 * Calculates a resize dimension box that allows for outbound resize.
+	 * The scaled image will be bigger than the requested dimensions in one dimension and then cropped.
+	 *
+	 * @param BoxInterface $imageSize
+	 * @param BoxInterface $requestedDimensions
+	 * @return BoxInterface
+	 */
+	protected function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions) {
+		$ratios = array(
+			$requestedDimensions->getWidth() / $imageSize->getWidth(),
+			$requestedDimensions->getHeight() / $imageSize->getHeight()
+		);
+
+		return $imageSize->scale(max($ratios));
 	}
 
 }
