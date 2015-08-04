@@ -56,10 +56,10 @@
 			<target xml:lang="pl" state="translated">utworzone</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="pl" state="translated">utworzone</target></trans-unit>
+			<target xml:lang="pl" state="translated">ukryte</target><alt-trans><target xml:lang="pl">utworzone</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="pl" state="translated">utworzone</target></trans-unit>
+			<target xml:lang="pl" state="translated">edytowane</target><alt-trans><target xml:lang="pl">utworzone</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="pl" state="translated">Brak nieopublikowanych zmian w tym obszarze roboczym.</target></trans-unit>
@@ -138,7 +138,7 @@
 			<target xml:lang="pl" state="translated">Nowy</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edytuj</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="pl" state="translated">Edytuj konto</target></trans-unit>
@@ -279,7 +279,7 @@
 			<target xml:lang="pl" state="translated">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, zaimportować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
-			<target xml:lang="pl" state="translated">Zarządzanie stroną</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zarządzanie stroną</target><alt-trans><target xml:lang="pl">Zarządzanie stronami</target></alt-trans></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="pl" state="translated">Moduł zarządzania stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></trans-unit>
@@ -307,10 +307,10 @@
 			<target xml:lang="pl" state="translated">Moduł ten pozwala na dostosowanie profilu użytkownika administracyjnego. Możesz zmienić swój język, nazwisko i adres e-mail. Możesz zmienić inne parametry.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edytuj</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edytuj</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="pl" state="translated">Nowy adres poczty elektronicznej</target></trans-unit>
@@ -533,13 +533,13 @@
 			<target xml:lang="pl" state="translated">Utwórz tag</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target xml:lang="pl" state="needs-translation">Untagged assets</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nieoznaczony zasób</target><alt-trans><target xml:lang="pl">Nieotagowany zasób</target></alt-trans></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
-			<target xml:lang="pl" state="needs-translation">Untagged</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nieoznaczony</target><alt-trans><target xml:lang="pl">Nieotagowany</target></alt-trans></trans-unit>
       <trans-unit id="media.maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="pl" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
+			<target xml:lang="pl" state="translated">Maksymalny rozmiar pliku to {0}</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
 			<target xml:lang="pl" state="translated">Upuść tutaj pliki</target></trans-unit>
@@ -593,19 +593,19 @@
 			<target xml:lang="pl" state="translated">Nie można załadować pliku</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="pl" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
+			<target xml:lang="pl" state="translated">Rozmiar pliku {0} przekracza dozwolony limit {1}</target></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve">
 				<source>for the file</source>
 			<target xml:lang="pl" state="translated">dla pliku</target></trans-unit>
       <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="pl" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tylko niektóre pliki zostały pomyślnie załadowane. Odśwież stronę, aby zobaczyć które.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="pl" state="needs-translation">Tagging the asset failed.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tagowanie zasobu nie powiodło się.</target><alt-trans><target xml:lang="pl">Tagowanie zasobu nie udało się.</target></alt-trans></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="pl" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dodanie zasobu do kolekcji nie powiodło się.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="pl" state="translated">Tworzenie</target></trans-unit>
