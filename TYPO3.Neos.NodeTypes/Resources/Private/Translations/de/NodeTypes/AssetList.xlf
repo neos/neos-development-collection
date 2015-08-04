@@ -2,15 +2,15 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="de">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve">
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Asset list</source>
-			<target xml:lang="de" state="translated">Asset Liste</target></trans-unit>
-      <trans-unit id="groups.resources" xml:space="preserve">
+			<target xml:lang="de">Asset Liste</target></trans-unit>
+      <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target xml:lang="de" state="translated">Resourcen</target></trans-unit>
-      <trans-unit id="properties.assets" xml:space="preserve">
+			<target xml:lang="de">Ressourcen</target><alt-trans><target xml:lang="de">Resourcen</target></alt-trans></trans-unit>
+      <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
-			<target xml:lang="de" state="translated">Assets</target></trans-unit>
+			<target xml:lang="de">Assets</target></trans-unit>
     </body>
   </file>
 </xliff>
