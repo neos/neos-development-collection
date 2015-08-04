@@ -14,6 +14,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model\Adjustment;
 use Imagine\Image\Box;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * Test case for the Resize Image Adjustment
@@ -23,7 +24,25 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function widthAndHeightDeterminedByExplicitlySetWidthAndHeight() {
+	public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithInsetMode() {
+		/** @var ResizeImageAdjustment $adjustment */
+		$adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
+
+		$originalDimensions = new Box(400, 300);
+		$expectedDimensions = new Box(110, 83);
+		// The fallback mode is inset, so we do not set any mode here
+
+		$adjustment->setWidth(110);
+		$adjustment->setHeight(110);
+
+		$this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithOutboundMode() {
 		/** @var ResizeImageAdjustment $adjustment */
 		$adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
 
@@ -32,6 +51,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 
 		$adjustment->setWidth(110);
 		$adjustment->setHeight(110);
+		$adjustment->setRatioMode(ImageInterface::RATIOMODE_OUTBOUND);
 
 		$this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
 	}
@@ -44,7 +64,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 		$adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
 
 		$originalDimensions = new Box(400, 300);
-		$expectedDimensions = new Box(110, 82);
+		$expectedDimensions = new Box(110, 83);
 
 		$adjustment->setWidth(110);
 
@@ -59,7 +79,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 		$adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
 
 		$originalDimensions = new Box(400, 300);
-		$expectedDimensions = new Box(126, 95);
+		$expectedDimensions = new Box(127, 95);
 
 		$adjustment->setHeight(95);
 
@@ -73,8 +93,17 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 	 */
 	public function minimumAndMaximumDimensions() {
 		return array(
-			array(NULL, 110, NULL, NULL, 110, 82), # maximum width respects aspect ratio
-			array(NULL, 110, NULL, 80, 110, 80),   # maximum height wins
+			array(NULL, 110, NULL, NULL, 110, 83, ImageInterface::RATIOMODE_INSET, FALSE), # maximum width respects aspect ratio
+			array(NULL, 110, NULL, 80, 106, 80, ImageInterface::RATIOMODE_INSET, FALSE),   # maximum height wins and aspect ratio is considered
+			array(NULL, 110, NULL, 80, 106, 80, ImageInterface::RATIOMODE_INSET, TRUE),   # maximum height wins and aspect ratio is considered
+			array(NULL, 110, NULL, NULL, 110, 83, ImageInterface::RATIOMODE_OUTBOUND, FALSE), # maximum width respects aspect ratio
+			array(NULL, 110, NULL, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, FALSE),   # maximum height wins and aspect ratio is considered
+			array(NULL, 110, NULL, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, TRUE),   # maximum height wins and aspect ratio is considered
+			array(500, NULL, NULL, 310, 400, 300, ImageInterface::RATIOMODE_INSET, FALSE),   # upscaling not allowed, original image size wins
+			array(500, NULL, NULL, 310, 413, 310, ImageInterface::RATIOMODE_INSET, TRUE),   # upscaling allowed, maximum height wins
+			array(500, NULL, 500, NULL, 300, 300, ImageInterface::RATIOMODE_OUTBOUND, FALSE),   # upscaling not allowed, outbound box will be scaled down.
+			array(500, NULL, 500, NULL, 500, 500, ImageInterface::RATIOMODE_OUTBOUND, TRUE),   # upscaling allowed, outbound box will be exact.
+			array(500, 450, 500, 445, 445, 445, ImageInterface::RATIOMODE_OUTBOUND, TRUE),   # upscaling allowed, outbound box will be scaled to maximum sizes.
 		);
 	}
 
@@ -82,12 +111,14 @@ class ResizeImageAdjustmentTest extends UnitTestCase {
 	 * @dataProvider minimumAndMaximumDimensions()
 	 * @test
 	 */
-	public function combinationsOfMaximumAndMinimumWidthAndHeightAreCalculatedCorrectly($minimumWidth, $maximumWidth, $minimumHeight, $maximumHeight, $expectedWidth, $expectedHeight) {
+	public function combinationsOfMaximumAndMinimumWidthAndHeightAreCalculatedCorrectly($width, $maximumWidth, $height, $maximumHeight, $expectedWidth, $expectedHeight, $ratioMode, $allowUpScaling) {
 		$options = array(
-			'minimumWidth' => $minimumWidth,
+			'width' => $width,
 			'maximumWidth' => $maximumWidth,
-			'minimumHeight' => $minimumHeight,
-			'maximumHeight' => $maximumHeight
+			'height' => $height,
+			'maximumHeight' => $maximumHeight,
+			'ratioMode' => $ratioMode,
+			'allowUpScaling' => $allowUpScaling
 		);
 
 		/** @var ResizeImageAdjustment $adjustment */
