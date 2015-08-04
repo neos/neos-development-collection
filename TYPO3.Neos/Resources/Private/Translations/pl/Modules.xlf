@@ -138,7 +138,7 @@
 			<target xml:lang="pl" state="translated">Nowy</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj</target><alt-trans><target xml:lang="pl">Edycja</target></alt-trans></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="pl" state="translated">Edytuj konto</target></trans-unit>
@@ -307,10 +307,10 @@
 			<target xml:lang="pl" state="translated">Moduł ten pozwala na dostosowanie profilu użytkownika administracyjnego. Możesz zmienić swój język, nazwisko i adres e-mail. Możesz zmienić inne parametry.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj</target><alt-trans><target xml:lang="pl">Edycja</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj</target><alt-trans><target xml:lang="pl">Edycja</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="pl" state="translated">Nowy adres poczty elektronicznej</target></trans-unit>

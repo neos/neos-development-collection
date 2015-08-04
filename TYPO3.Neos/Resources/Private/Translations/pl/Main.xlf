@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="pl" state="translated">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Publikacja automatyczna</target><alt-trans><target xml:lang="pl">Auto-publikacja</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="pl" state="translated">Zastosuj</target></trans-unit>
@@ -23,7 +23,7 @@
 			<target xml:lang="pl" state="translated">Pisz, aby szukać</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="pl" state="translated">Treść</target><alt-trans><target xml:lang="pl">Zawartość</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Zawartość</target><alt-trans><target xml:lang="pl">Treść</target></alt-trans></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="pl" state="translated">Utwórz po</target><alt-trans><target xml:lang="pl">Stwórz po</target></alt-trans></trans-unit>
@@ -62,7 +62,7 @@
 			<target xml:lang="pl" state="translated">Edycja / Podgląd</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl" state="translated">Edycja</target><alt-trans><target xml:lang="pl">Edytuj</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj</target><alt-trans><target xml:lang="pl">Edycja</target></alt-trans></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			<target xml:lang="pl" state="translated">Ukryj / Pokaż</target></trans-unit>
@@ -368,7 +368,7 @@
 			<target xml:lang="pl" state="translated">Podana wartość posiada niepoprawny identyfikator.</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="pl" state="translated">Treść</target><alt-trans><target xml:lang="pl">Zawartość</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Zawartość</target><alt-trans><target xml:lang="pl">Treść</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć</target></trans-unit>
