@@ -20,7 +20,7 @@
 			<target xml:lang="ru" state="translated">Выберите</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="ru" state="translated">Начните печатать а мы найдём</target></trans-unit>
+			<target xml:lang="ru" state="translated">Введите для поиска</target><alt-trans><target xml:lang="ru">Начните печатать а мы найдём</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="ru" state="translated">Содержимое</target></trans-unit>
@@ -113,7 +113,7 @@
 			<target xml:lang="ru" state="translated">Опубликовано</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="ru" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="ru" state="translated">Целевая рабочее место</target><alt-trans><target xml:lang="ru">Целевая рабочее пространство</target></alt-trans></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="ru" state="translated">Удалить</target></trans-unit>
@@ -140,19 +140,19 @@
 			<target xml:lang="ru" state="translated">Вы</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="ru" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="ru" state="translated">[без названия]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ru" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ru" state="translated">Метка</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="ru" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="ru" state="translated">Тип узла</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="ru" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="ru" state="translated">Путь</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="ru" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="ru" state="translated">Относительный путь</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
@@ -215,7 +215,7 @@
 			<target xml:lang="ru" state="translated">Открыть страницу в публичной рабочей области</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="ru" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="ru" state="translated">Отменить все</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="ru" state="translated">Отменить все изменения</target></trans-unit>
@@ -224,7 +224,7 @@
 			<target xml:lang="ru" state="translated">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="ru" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="ru" state="translated">Опубликовать все</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="ru" state="translated">Опубликовать все изменения</target></trans-unit>
