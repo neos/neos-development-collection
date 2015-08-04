@@ -85,7 +85,9 @@ class ImageService {
 
 		// TODO: Special handling for SVG should be refactored at a later point.
 		if ($originalResource->getMediaType() === 'image/svg+xml') {
-			$resource = $this->resourceManager->importResource($originalResource->getStream(), $originalResource->getCollectionName());
+			$originalResourceStream = $originalResource->getStream();
+			$resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
+			fclose($originalResourceStream);
 			$resource->setFilename($originalResource->getFilename());
 			return [
 				'width' => NULL,
@@ -137,7 +139,9 @@ class ImageService {
 			$pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
 			$resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
 		} else {
-			$resource = $this->resourceManager->importResource($originalResource->getStream(), $originalResource->getCollectionName());
+			$originalResourceStream = $originalResource->getStream();
+			$resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
+			fclose($originalResourceStream);
 			$resource->setFilename($originalResource->getFilename());
 			$imageSize = $this->getImageSize($originalResource);
 			$imageSize = new Box($imageSize['width'], $imageSize['height']);
