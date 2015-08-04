@@ -129,22 +129,22 @@
 			<target xml:lang="de">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve">
 				<source>Overview</source>
-			<target xml:lang="de" state="needs-translation">Overview</target></trans-unit>
+			<target xml:lang="de" state="translated">Übersicht</target></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="de" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="de" state="translated">Anzeigen</target></trans-unit>
       <trans-unit id="users.action.new" xml:space="preserve">
 				<source>New</source>
-			<target xml:lang="de" state="needs-translation">New</target></trans-unit>
+			<target xml:lang="de" state="translated">Neu</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
 			<target xml:lang="de">Bearbeiten</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="de" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="de" state="translated">Account bearbeiten</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
-			<target xml:lang="de" state="needs-translation">New electronic address</target></trans-unit>
+			<target xml:lang="de" state="translated">Neue elektronische Adresse</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target xml:lang="de">Systemstandard verwenden</target></trans-unit>
@@ -168,7 +168,7 @@
 			<target xml:lang="de">Passwort wiederholen</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
-			<target xml:lang="de" state="needs-translation">Role(s)</target></trans-unit>
+			<target xml:lang="de" state="translated">Rolle(n)</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
@@ -189,7 +189,7 @@
 			<target xml:lang="de" state="translated">Benutzer erstellen</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve">
 				<source>Details for user</source>
-			<target xml:lang="de" state="needs-translation">Details for user</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzerdetails</target></trans-unit>
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
@@ -207,7 +207,7 @@
 			<target xml:lang="de" state="translated">Nachname</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="de" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="de" state="translated">Weiterer Name</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="de" state="translated">Konten</target></trans-unit>
@@ -222,10 +222,10 @@
 			<target xml:lang="de" state="translated">Elektronische Adressen</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="de" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="de" state="translated">Primär</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
-			<target xml:lang="de" state="needs-translation">N/A</target></trans-unit>
+			<target xml:lang="de" state="translated">Nicht verfügbar</target></trans-unit>
       <trans-unit id="users.show.deleteUser" xml:space="preserve">
 				<source>Delete User</source>
 			<target xml:lang="de" state="translated">Benutzer löschen</target></trans-unit>
@@ -313,10 +313,10 @@
 			<target xml:lang="de">Bearbeiten</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
-			<target xml:lang="de" state="needs-translation">New electronic address</target></trans-unit>
+			<target xml:lang="de" state="translated">Neue elektronische Adresse</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="de" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="de" state="translated">Account bearbeiten</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="de" state="translated">Persönliche Daten</target></trans-unit>
@@ -355,10 +355,10 @@
 			<target xml:lang="de" state="translated">Ja, elektronische Adresse löschen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
 				<source>Click to add a new Electronic address</source>
-			<target xml:lang="de" state="needs-translation">Click to add a new Electronic address</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken, um neue elektronische Adresse hinzuzufügen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
-			<target xml:lang="de" state="needs-translation">Add electronic address</target></trans-unit>
+			<target xml:lang="de" state="translated">Elektronische Adresse hinzufügen</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
@@ -383,7 +383,7 @@
 			<target xml:lang="de" state="translated">Typ</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="de" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="de" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.sortByName" xml:space="preserve">
 				<source>Sort by name</source>
 			<target xml:lang="de" state="translated">Nach Name sortieren</target></trans-unit>
@@ -392,31 +392,31 @@
 			<target xml:lang="de" state="translated">Nach Änderungsdatum sortieren</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="de" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
+			<target xml:lang="de" state="translated">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
-			<target xml:lang="de" state="needs-translation">Edit asset</target></trans-unit>
+			<target xml:lang="de" state="translated">Asset bearbeiten</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
-			<target xml:lang="de" state="needs-translation">Delete asset</target></trans-unit>
+			<target xml:lang="de" state="translated">Asset löschen</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="de" state="needs-translation">Do you really want to delete asset "{0}"?</target></trans-unit>
+			<target xml:lang="de" state="translated">Wollen Sie das Asset "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="de" state="needs-translation">Do you really want to delete collection "{0}"?</target></trans-unit>
+			<target xml:lang="de" state="translated">Wollen Sie die Sammlung "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
 				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="de" state="needs-translation">Do you really want to delete tag "{0}"?</target></trans-unit>
+			<target xml:lang="de" state="translated">Wollen Sie das Tag "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the asset.</source>
-			<target xml:lang="de" state="needs-translation">This will delete the asset.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird das Asset gelöscht.</target></trans-unit>
       <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="de" state="needs-translation">This will delete the collection, but not the assets that it contains.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
       <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="de" state="needs-translation">This will delete the tag, but not the assets that has it.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target></trans-unit>
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="de" state="translated">Dieser Vorgang kann nicht rückgängig gemacht werden.</target></trans-unit>
@@ -428,19 +428,19 @@
 			<target xml:lang="de" state="translated">Speichern</target></trans-unit>
       <trans-unit id="media.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the asset</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete the asset</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, Asset löschen</target><alt-trans><target xml:lang="de">Ja, bitte das Asset löschen</target></alt-trans></trans-unit>
       <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
 				<source>Yes, delete the collection</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete the collection</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, bitte die Sammlung löschen</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete the tag</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, bitte das Tag löschen</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
 				<source>Edit {0}</source>
 			<target xml:lang="de" state="translated">{0} bearbeiten</target></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
-			<target xml:lang="de" state="needs-translation">Search in assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Assets durchsuchen</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
 			<target xml:lang="de">Suche</target></trans-unit>
@@ -449,28 +449,28 @@
 			<target xml:lang="de" state="translated">{0} Elemente</target></trans-unit>
       <trans-unit id="media.search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
-			<target xml:lang="de" state="needs-translation">found matching "{0}"</target></trans-unit>
+			<target xml:lang="de" state="translated">"{0}" gefunden</target></trans-unit>
       <trans-unit id="media.upload" xml:space="preserve">
 				<source>Upload</source>
-			<target xml:lang="de" state="needs-translation">Upload</target></trans-unit>
+			<target xml:lang="de" state="translated">Upload</target></trans-unit>
       <trans-unit id="media.filterOptions" xml:space="preserve">
 				<source>Filter options</source>
 			<target xml:lang="de" state="translated">Filteroptionen</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
-			<target xml:lang="de" state="needs-translation">Display all asset types</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle Asset-Typen anzeigen</target></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
-			<target xml:lang="de" state="needs-translation">Only display image assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur Bilder anzeigen</target></trans-unit>
       <trans-unit id="media.filter.title.documents" xml:space="preserve">
 				<source>Only display document assets</source>
-			<target xml:lang="de" state="needs-translation">Only display document assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur Dokumente anzeigen</target></trans-unit>
       <trans-unit id="media.filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target xml:lang="de" state="needs-translation">Only display video assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur Videos anzeigen</target></trans-unit>
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
-			<target xml:lang="de" state="needs-translation">Only display audio assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur Audiodateien anzeigen</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
 			<target xml:lang="de" state="translated">Alle</target></trans-unit>
@@ -479,13 +479,13 @@
 			<target xml:lang="de" state="translated">Bilder</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="de" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="de" state="translated">Dokumente</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
 			<target xml:lang="de" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="de" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="de" state="translated">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="de" state="translated">Sortieroptionen</target></trans-unit>
@@ -494,64 +494,64 @@
 			<target xml:lang="de" state="translated">Listenansicht</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
-			<target xml:lang="de" state="needs-translation">Thumbnail view</target></trans-unit>
+			<target xml:lang="de" state="translated">Miniaturansicht</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="de" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="de" state="translated">Sammlungen</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target xml:lang="de" state="needs-translation">Edit collections</target></trans-unit>
+			<target xml:lang="de" state="translated">Sammlungen bearbeiten</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target xml:lang="de" state="needs-translation">Edit collection</target></trans-unit>
+			<target xml:lang="de" state="translated">Sammlung bearbeiten</target></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target xml:lang="de" state="needs-translation">Delete collection</target></trans-unit>
+			<target xml:lang="de" state="translated">Sammlung löschen</target></trans-unit>
       <trans-unit id="media.createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target xml:lang="de" state="needs-translation">Create collection</target></trans-unit>
+			<target xml:lang="de" state="translated">Sammlung erstellen</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
-			<target xml:lang="de" state="needs-translation">Enter collection title</target></trans-unit>
+			<target xml:lang="de" state="translated">Titel der Sammlung eingeben</target></trans-unit>
       <trans-unit id="media.allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target xml:lang="de" state="needs-translation">All collections</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle Sammlungen</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="de" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="de" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="de" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="de" state="translated">Tags bearbeiten</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
-			<target xml:lang="de" state="needs-translation">Edit tag</target></trans-unit>
+			<target xml:lang="de" state="translated">Tag bearbeiten</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
-			<target xml:lang="de" state="needs-translation">Delete tag</target></trans-unit>
+			<target xml:lang="de" state="translated">Tag löschen</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
-			<target xml:lang="de" state="needs-translation">Create tag</target></trans-unit>
+			<target xml:lang="de" state="translated">Tag erstellen</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target xml:lang="de" state="needs-translation">Untagged assets</target></trans-unit>
+			<target xml:lang="de" state="translated">Assets ohne Tags</target></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
-			<target xml:lang="de" state="needs-translation">Untagged</target></trans-unit>
+			<target xml:lang="de" state="translated">Ohne Tag</target></trans-unit>
       <trans-unit id="media.maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="de" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
+			<target xml:lang="de" state="translated">Max. Uploadgröße {0} pro Datei</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
 			<target xml:lang="de" state="translated">Dateien hier ablegen</target></trans-unit>
       <trans-unit id="media.clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
-			<target xml:lang="de" state="needs-translation">or click to upload</target></trans-unit>
+			<target xml:lang="de" state="translated">oder klicken, um Datei hochzuladen</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
 			<target xml:lang="de" state="translated">Datei auswählen</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
-			<target xml:lang="de" state="needs-translation">No Assets found.</target></trans-unit>
+			<target xml:lang="de" state="translated">Es wurden keine Assets gefunden.</target></trans-unit>
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
 			<target xml:lang="de" state="translated">Grundlagen</target></trans-unit>
@@ -578,19 +578,19 @@
 			<target xml:lang="de" state="translated">Dateigröße</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
-			<target xml:lang="de" state="needs-translation">Dimensions</target></trans-unit>
+			<target xml:lang="de" state="translated">Dimensionen</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="de" state="translated">Typ</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target xml:lang="de" state="needs-translation">Identifier</target></trans-unit>
+			<target xml:lang="de" state="translated">Bezeichnung</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="de">Vorschau</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
-			<target xml:lang="de" state="needs-translation">Cannot upload the file</target></trans-unit>
+			<target xml:lang="de" state="translated">Datei kann nicht hochgeladen werden</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="de" state="translated">Die Dateigröße von {0} übersteigt das erlaubte Limit von {1}</target></trans-unit>
@@ -602,10 +602,10 @@
 			<target xml:lang="de" state="translated">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="de" state="needs-translation">Tagging the asset failed.</target></trans-unit>
+			<target xml:lang="de" state="translated">Beim Zuordnen des Tags ist ein Fehler aufgetreten.</target></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="de" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
+			<target xml:lang="de" state="translated">Beim Hinzufügen des Assets zur Sammlung ist ein Fehler aufgetreten.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="de" state="translated">Erstelle</target></trans-unit>
