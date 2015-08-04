@@ -7,10 +7,10 @@
 			<target xml:lang="ru" state="needs-translation">General</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="ru" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="ru" state="translated">Метаданные</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="ru" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="ru" state="translated">Метаданные</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="ru" state="translated">Дополнительная информация</target></trans-unit>
@@ -19,7 +19,7 @@
 			<target xml:lang="ru" state="translated">Изменить тип</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="ru" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="ru" state="translated">Тип</target></trans-unit>
     </body>
   </file>
 </xliff>
