@@ -201,13 +201,13 @@
 			<target xml:lang="fi" state="translated">Etunimi</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="fi" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="fi" state="translated">Toinen nimi</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="fi" state="translated">Sukunimi</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="fi" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muu nimi</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="fi" state="translated">Tilit</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="fi" state="translated">Sähköiset osoitteet</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="fi" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ensisijainen</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="fi" state="translated">Ei saatavilla</target></trans-unit>
@@ -294,17 +294,17 @@
 			<target xml:lang="fi" state="translated">Asetukset</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target xml:lang="fi" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Asetukset-moduli näyttää yleiskatsauksen kaikista asetustyypeistä.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
 			<target xml:lang="fi" state="translated">Käyttäjä</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target xml:lang="fi" state="needs-translation">User Settings</target></trans-unit>
+			<target xml:lang="fi" state="translated">Käyttäjäasetukset</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="fi" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämän moduulin avulla voit muokata käyttäjäprofiilisi tietoja. Voit vaihtaa järjestelmän kielen, nimesi ja sähköpostiosoitteesi. Voit myös muokata muita järjestelmän yleisiä asetuksia.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
 			<target xml:lang="fi" state="translated">Muokkaa</target></trans-unit>
@@ -343,26 +343,26 @@
 			<target xml:lang="fi" state="translated">Roolit</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
-			<target xml:lang="fi" state="needs-translation">Authentication Provider</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tunnistaumispalvelu</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
 				<source>Electronic addresses</source>
-			<target xml:lang="fi" state="needs-translation">Electronic addresses</target></trans-unit>
+			<target xml:lang="fi" state="translated">Sähköiset osoitteet</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="fi" state="translated">Haluatko varmasti poistaa</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
-			<target xml:lang="fi" state="needs-translation">Yes, delete electronic address</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kyllä, poista osoite</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
 				<source>Click to add a new Electronic address</source>
-			<target xml:lang="fi" state="needs-translation">Click to add a new Electronic address</target></trans-unit>
+			<target xml:lang="fi" state="translated">Klikkaa lisätäksesi uusi osoite</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
-			<target xml:lang="fi" state="needs-translation">Add electronic address</target></trans-unit>
+			<target xml:lang="fi" state="translated">Lisää sähköinen osoite</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="fi" state="needs-translation">Name</target></trans-unit>
+			<target xml:lang="fi" state="translated">Nimi</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="fi" state="translated">Otsikko</target></trans-unit>
@@ -371,190 +371,190 @@
 			<target xml:lang="fi" state="translated">Nimike</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
-			<target xml:lang="fi" state="needs-translation">Caption</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kuvateksti</target></trans-unit>
       <trans-unit id="media.field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
-			<target xml:lang="fi" state="needs-translation">Last modified</target></trans-unit>
+			<target xml:lang="fi" state="translated">Viimeksi muokattu</target></trans-unit>
       <trans-unit id="media.field.fileSize" xml:space="preserve">
 				<source>File size</source>
-			<target xml:lang="fi" state="needs-translation">File size</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tiedostokoko</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="fi" state="translated">Tyyppi</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="fi" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tagit</target></trans-unit>
       <trans-unit id="media.sortByName" xml:space="preserve">
 				<source>Sort by name</source>
-			<target xml:lang="fi" state="needs-translation">Sort by name</target></trans-unit>
+			<target xml:lang="fi" state="translated">Järjestä nimen mukaan</target></trans-unit>
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
-			<target xml:lang="fi" state="needs-translation">Sort by last modified</target></trans-unit>
+			<target xml:lang="fi" state="translated">Järjestä viimeksi muokatun mukaan</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="fi" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Raahaa tagin tai kokoelman päälle</target></trans-unit>
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
-			<target xml:lang="fi" state="needs-translation">Edit asset</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokka nimikettä</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
-			<target xml:lang="fi" state="needs-translation">Delete asset</target></trans-unit>
+			<target xml:lang="fi" state="translated">Poista nimike</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to delete asset "{0}"?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Halutako varmasti poistaa nimikkeen "{0}"?</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to delete collection "{0}"?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Halutako varmasti poistaa kokoelman "{0}"?</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
 				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to delete tag "{0}"?</target></trans-unit>
+			<target xml:lang="fi" state="translated">Halutako varmasti poistaa tagin "{0}"?</target></trans-unit>
       <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the asset.</source>
-			<target xml:lang="fi" state="needs-translation">This will delete the asset.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä poistaa nimikkeen.</target></trans-unit>
       <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="fi" state="needs-translation">This will delete the collection, but not the assets that it contains.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä poistaa kokoelman mutta ei sen sisältämiä nimikkeitä.</target></trans-unit>
       <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="fi" state="needs-translation">This will delete the tag, but not the assets that has it.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tämä poistaa tagin mutta ei siihen liittyviä nimikkeitä.</target></trans-unit>
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
-			<target xml:lang="fi" state="needs-translation">This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tätä toimintoa ei voi kumota.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="fi" state="translated">Peruuta</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="fi" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tallenna</target></trans-unit>
       <trans-unit id="media.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the asset</source>
-			<target xml:lang="fi" state="needs-translation">Yes, delete the asset</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kyllä, poista nimike</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
 				<source>Yes, delete the collection</source>
-			<target xml:lang="fi" state="needs-translation">Yes, delete the collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kyllä, poista kokoelma</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="fi" state="needs-translation">Yes, delete the tag</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kyllä, poista tagi</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
 				<source>Edit {0}</source>
-			<target xml:lang="fi" state="needs-translation">Edit {0}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa {0}</target></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
-			<target xml:lang="fi" state="needs-translation">Search in assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Etsi nimikkeistä</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
 			<target xml:lang="fi" state="translated">Etsi</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
-			<target xml:lang="fi" state="needs-translation">{0} items</target></trans-unit>
+			<target xml:lang="fi" state="translated">{0} kohde(tta)</target></trans-unit>
       <trans-unit id="media.search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
-			<target xml:lang="fi" state="needs-translation">found matching "{0}"</target></trans-unit>
+			<target xml:lang="fi" state="translated">vastaavia löytyi "{0}"</target></trans-unit>
       <trans-unit id="media.upload" xml:space="preserve">
 				<source>Upload</source>
-			<target xml:lang="fi" state="needs-translation">Upload</target></trans-unit>
+			<target xml:lang="fi" state="translated">Lähetä</target></trans-unit>
       <trans-unit id="media.filterOptions" xml:space="preserve">
 				<source>Filter options</source>
-			<target xml:lang="fi" state="needs-translation">Filter options</target></trans-unit>
+			<target xml:lang="fi" state="translated">Suodatuksen asetukset</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
-			<target xml:lang="fi" state="needs-translation">Display all asset types</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näytä kaikki nimiketyypit</target></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
-			<target xml:lang="fi" state="needs-translation">Only display image assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näytä ainoastaan kuvanimikkeet</target></trans-unit>
       <trans-unit id="media.filter.title.documents" xml:space="preserve">
 				<source>Only display document assets</source>
-			<target xml:lang="fi" state="needs-translation">Only display document assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näytä ainoastaan dokumenttinimikkeet</target></trans-unit>
       <trans-unit id="media.filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target xml:lang="fi" state="needs-translation">Only display video assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näytä ainoastaan videonimikkeet</target></trans-unit>
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
-			<target xml:lang="fi" state="needs-translation">Only display audio assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Näytä ainoastaan audionimikkeet</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="fi" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kaikki</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="fi" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kuvat</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="fi" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="fi" state="translated">Dokumentit</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="fi" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="fi" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="fi" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="fi" state="translated">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target xml:lang="fi" state="needs-translation">Sort options</target></trans-unit>
+			<target xml:lang="fi" state="translated">Lajitteluasetukset</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target xml:lang="fi" state="needs-translation">List view</target></trans-unit>
+			<target xml:lang="fi" state="translated">Luettelonäkymä</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
-			<target xml:lang="fi" state="needs-translation">Thumbnail view</target></trans-unit>
+			<target xml:lang="fi" state="translated">Esikatselunäkymä</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="fi" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kokoelmat</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target xml:lang="fi" state="needs-translation">Edit collections</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa kokoelmia</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target xml:lang="fi" state="needs-translation">Edit collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa kokoelmaa</target></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target xml:lang="fi" state="needs-translation">Delete collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Poista kokoelma</target></trans-unit>
       <trans-unit id="media.createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target xml:lang="fi" state="needs-translation">Create collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Luo kokoelma</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
-			<target xml:lang="fi" state="needs-translation">Enter collection title</target></trans-unit>
+			<target xml:lang="fi" state="translated">Syötä kokoelman otsikko</target></trans-unit>
       <trans-unit id="media.allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target xml:lang="fi" state="needs-translation">All collections</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kaikki kokoelmat</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="fi" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tagit</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="fi" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa tageja</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
-			<target xml:lang="fi" state="needs-translation">Edit tag</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa tagia</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
-			<target xml:lang="fi" state="needs-translation">Delete tag</target></trans-unit>
+			<target xml:lang="fi" state="translated">Poista tagi</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
-			<target xml:lang="fi" state="needs-translation">Create tag</target></trans-unit>
+			<target xml:lang="fi" state="translated">Luo tagi</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target xml:lang="fi" state="needs-translation">Untagged assets</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tagaamattomat nimikkeet</target></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
-			<target xml:lang="fi" state="needs-translation">Untagged</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tagaamaton</target></trans-unit>
       <trans-unit id="media.maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="fi" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
+			<target xml:lang="fi" state="translated">Latauksen maksimikoko {0} per tiedosto</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target xml:lang="fi" state="needs-translation">Drop files here</target></trans-unit>
+			<target xml:lang="fi" state="translated">Pudota tiedostoja tähän</target></trans-unit>
       <trans-unit id="media.clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
-			<target xml:lang="fi" state="needs-translation">or click to upload</target></trans-unit>
+			<target xml:lang="fi" state="translated">tai klikkaa ladataksesi</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target xml:lang="fi" state="needs-translation">Choose file</target></trans-unit>
+			<target xml:lang="fi" state="translated">Valitse tiedosto</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
-			<target xml:lang="fi" state="needs-translation">No Assets found.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Nimikkeitä ei löytynyt.</target></trans-unit>
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
-			<target xml:lang="fi" state="needs-translation">Basics</target></trans-unit>
+			<target xml:lang="fi" state="translated">Perusteet</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
 			<target xml:lang="fi" state="translated">Poista</target></trans-unit>
@@ -563,7 +563,7 @@
 			<target xml:lang="fi" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="fi" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tallenna</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
 			<target xml:lang="fi" state="translated">Metatiedot</target></trans-unit>
@@ -575,7 +575,7 @@
 			<target xml:lang="fi" state="needs-translation">Last modified (resource)</target></trans-unit>
       <trans-unit id="media.metadata.fileSize" xml:space="preserve">
 				<source>File size</source>
-			<target xml:lang="fi" state="needs-translation">File size</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tiedostokoko</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
 			<target xml:lang="fi" state="needs-translation">Dimensions</target></trans-unit>

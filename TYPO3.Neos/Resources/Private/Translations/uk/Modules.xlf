@@ -10,7 +10,7 @@
 			<target xml:lang="uk" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="uk" state="translated">Скасувати</target></trans-unit>
+			<target xml:lang="uk" state="translated">Відмінити</target><alt-trans><target xml:lang="uk">Скасувати</target></alt-trans></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="uk" state="needs-translation">Back</target></trans-unit>
@@ -422,7 +422,7 @@
 			<target xml:lang="uk" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="uk" state="translated">Скасувати</target></trans-unit>
+			<target xml:lang="uk" state="translated">Відмінити</target><alt-trans><target xml:lang="uk">Скасувати</target></alt-trans></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="uk" state="needs-translation">Save</target></trans-unit>
