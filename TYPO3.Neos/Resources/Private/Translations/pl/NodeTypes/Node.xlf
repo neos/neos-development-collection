@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="pl" state="translated">ogólny</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ogólny</target><alt-trans><target xml:lang="pl">ogólny</target></alt-trans></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="pl" state="translated">Informacje o dokumencie</target></trans-unit>
+			<target xml:lang="pl" state="translated">Metadane</target><alt-trans><target xml:lang="pl">Informacje o dokumencie</target></alt-trans></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="pl" state="translated">Informacje o dokumencie</target></trans-unit>
+			<target xml:lang="pl" state="translated">Metadane</target><alt-trans><target xml:lang="pl">Informacje o dokumencie</target></alt-trans></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="pl" state="translated">Dodatkowe Informacje</target></trans-unit>

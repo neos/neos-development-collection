@@ -7,7 +7,7 @@
 			<target xml:lang="de">Plugin Ansicht</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="de" state="translated">Plugin Ansicht</target></trans-unit>
+			<target xml:lang="de" state="translated">Plugin Ansicht</target><alt-trans><target xml:lang="de">Pluginansichten</target></alt-trans></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
 			<target xml:lang="de">Master Ansicht</target></trans-unit>
