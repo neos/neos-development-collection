@@ -17,9 +17,9 @@
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
 			<target xml:lang="de">Typ ändern</target></trans-unit>
-      <trans-unit id="properties._nodeType" xml:space="preserve">
+      <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="de" state="translated">Typ</target></trans-unit>
+			<target xml:lang="de">Typ</target></trans-unit>
     </body>
   </file>
 </xliff>
