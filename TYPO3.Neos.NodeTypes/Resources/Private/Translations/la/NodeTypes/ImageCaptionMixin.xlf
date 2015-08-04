@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target xml:lang="la-LA" state="translated">crwdns332:0crwdne332:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns332:0crwdne332:0</target></trans-unit>
     </body>
   </file>
 </xliff>
