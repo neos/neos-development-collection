@@ -13,19 +13,19 @@
 			<target xml:lang="fr" state="translated">Niveau de départ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="fr" state="needs-translation">Four Levels Above Current Page</target></trans-unit>
+			<target xml:lang="fr" state="translated">Quatre niveaux supérieur à la page actuelle</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="fr" state="needs-translation">Three Levels Above Current Page</target></trans-unit>
+			<target xml:lang="fr" state="translated">Trois niveaux supérieur à la page actuelle</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="fr" state="needs-translation">Two Levels Above Current Page</target></trans-unit>
+			<target xml:lang="fr" state="translated">Deux niveaux supérieur à la page actuelle</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="fr" state="needs-translation">One Level Above Current Page</target></trans-unit>
+			<target xml:lang="fr" state="translated">Un niveau supérieur à la page actuelle</target><alt-trans><target xml:lang="fr">Un niveau supérieur à la page en cours</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="fr" state="needs-translation">Same Level As Current Page</target></trans-unit>
+			<target xml:lang="fr" state="translated">Même niveau que page actuelle</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
 				<source>First Level Of Website</source>
 			<target xml:lang="fr" state="needs-translation">First Level Of Website</target></trans-unit>
