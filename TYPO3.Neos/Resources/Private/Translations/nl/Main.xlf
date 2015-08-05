@@ -149,10 +149,10 @@
 			<target xml:lang="nl" state="needs-translation">Node type</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="nl" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pad</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="nl" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="nl" state="translated">Relatief pad</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
@@ -224,7 +224,7 @@
 			<target xml:lang="nl" state="translated">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="nl" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="nl" state="translated">Alles publiceren</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="nl" state="translated">Alle wijzigingen publiceren</target></trans-unit>
@@ -466,7 +466,7 @@
 			<target xml:lang="nl" state="translated">Sorry, de opgevraagde pagina is niet gevonden.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
-			<target xml:lang="nl" state="needs-translation">Invalid NodeType</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ongeldige NodeType</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="nl" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
