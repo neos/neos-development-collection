@@ -383,7 +383,7 @@
 			<target xml:lang="fr">Type</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="fr" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="fr" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.sortByName" xml:space="preserve">
 				<source>Sort by name</source>
 			<target xml:lang="fr" state="needs-translation">Sort by name</target></trans-unit>
@@ -518,7 +518,7 @@
 			<target xml:lang="fr" state="needs-translation">All collections</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="fr" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="fr" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
 			<target xml:lang="fr" state="translated">Éditer les tags</target></trans-unit>

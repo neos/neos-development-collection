@@ -26,16 +26,16 @@
 			<target xml:lang="uk" state="translated">Вміст</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="uk" state="translated">Створит після</target><alt-trans><target xml:lang="uk">Створити після</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Створити після</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="uk" state="translated">Створит новий</target><alt-trans><target xml:lang="uk">Створити новий(у)</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Створити новий(у)</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="uk" state="translated">Закрит</target><alt-trans><target xml:lang="uk">Закрити</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Зачинити</target><alt-trans><target xml:lang="uk">Закрити</target></alt-trans></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="uk" state="translated">Копіюват</target><alt-trans><target xml:lang="uk">Копіювати</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Копіювати</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
 			<target xml:lang="uk" state="translated">Вирізати</target></trans-unit>
@@ -83,7 +83,7 @@
 			<target xml:lang="uk" state="translated">Навігація</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="uk" state="translated">ТАК</target></trans-unit>
+			<target xml:lang="uk" state="translated">OK</target><alt-trans><target xml:lang="uk">ТАК</target></alt-trans></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="uk" state="needs-translation">Page</target></trans-unit>
