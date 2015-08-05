@@ -92,18 +92,20 @@ function(
 
 		/**
 		 * @param {string} nodeType
+		 * @param {string} icon
+		 * @param {string} actionData
 		 */
-		insertNode: function(nodeType) {
+		insertNode: function(nodeType, icon, actionData) {
 			var referenceNode = this.get('_node');
 			switch (this.get('_position')) {
 				case 'before':
-					NodeActions.addAbove(nodeType, referenceNode);
+					NodeActions.addAbove(nodeType, referenceNode, actionData);
 				break;
 				case 'after':
-					NodeActions.addBelow(nodeType, referenceNode);
+					NodeActions.addBelow(nodeType, referenceNode, actionData);
 				break;
 				case 'into':
-					NodeActions.addInside(nodeType, referenceNode);
+					NodeActions.addInside(nodeType, referenceNode, actionData);
 				break;
 			}
 			this.destroy();

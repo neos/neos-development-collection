@@ -68,53 +68,64 @@ class NodeTypeConfigurationEnrichmentAspect {
 	/**
 	 * @param string $nodeTypeName
 	 * @param array $configuration
-	 * @throws \TYPO3\Neos\Exception
 	 * @return void
 	 */
 	protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration) {
 		if (isset($configuration['properties']) && is_array($configuration['properties'])) {
-			foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+			$this->addEditorDefaultsToNodeTypeConfigurationPart($nodeTypeName, $configuration['properties']);
+		}
+		if (isset($configuration['ui']['wizard']['properties']) && is_array($configuration['ui']['wizard']['properties'])) {
+			$this->addEditorDefaultsToNodeTypeConfigurationPart($nodeTypeName, $configuration['ui']['wizard']['properties']);
+		}
+	}
 
-				if (!isset($propertyConfiguration['type'])) {
-					continue;
-				}
-				$type = $propertyConfiguration['type'];
-
-				if (!isset($this->dataTypesDefaultConfiguration[$type])) {
-					continue;
-				}
-
-				if (!isset($propertyConfiguration['ui']['inspector'])) {
-					continue;
-				}
-
-				$defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
-
-				// FIRST STEP: Figure out which editor should be used
-				// - Default: editor as configured from the data type
-				// - Override: editor as configured from the property configuration.
-				if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
-					$editor = $propertyConfiguration['ui']['inspector']['editor'];
-				} elseif (isset($defaultConfigurationFromDataType['editor'])) {
-					$editor = $defaultConfigurationFromDataType['editor'];
-				} else {
-					throw new \TYPO3\Neos\Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
-				}
-
-				// SECOND STEP: Build up the full inspector configuration by merging:
-				// - take configuration from editor defaults
-				// - take configuration from dataType
-				// - take configuration from properties (NodeTypes)
-				$mergedInspectorConfiguration = array();
-				if (isset($this->editorDefaultConfiguration[$editor])) {
-					$mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
-				}
-
-				$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
-				$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
-				$propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
-				$propertyConfiguration['ui']['inspector']['editor'] = $editor;
+	/**
+	 * @param string $nodeTypeName
+	 * @param array $configurationPart
+	 * @throws \TYPO3\Neos\Exception
+	 * @return void
+	 */
+	protected function addEditorDefaultsToNodeTypeConfigurationPart($nodeTypeName, &$configurationPart) {
+		foreach ($configurationPart as $propertyName => &$propertyConfiguration) {
+			if (!isset($propertyConfiguration['type'])) {
+				continue;
 			}
+			$type = $propertyConfiguration['type'];
+
+			if (!isset($this->dataTypesDefaultConfiguration[$type])) {
+				continue;
+			}
+
+			if (!isset($propertyConfiguration['ui']['inspector'])) {
+				$propertyConfiguration['ui']['inspector'] = array();
+			}
+
+			$defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
+
+			// FIRST STEP: Figure out which editor should be used
+			// - Default: editor as configured from the data type
+			// - Override: editor as configured from the property configuration.
+			if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
+				$editor = $propertyConfiguration['ui']['inspector']['editor'];
+			} elseif (isset($defaultConfigurationFromDataType['editor'])) {
+				$editor = $defaultConfigurationFromDataType['editor'];
+			} else {
+				throw new \TYPO3\Neos\Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
+			}
+
+			// SECOND STEP: Build up the full inspector configuration by merging:
+			// - take configuration from editor defaults
+			// - take configuration from dataType
+			// - take configuration from properties (NodeTypes)
+			$mergedInspectorConfiguration = array();
+			if (isset($this->editorDefaultConfiguration[$editor])) {
+				$mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
+			}
+
+			$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
+			$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
+			$propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
+			$propertyConfiguration['ui']['inspector']['editor'] = $editor;
 		}
 	}
 
