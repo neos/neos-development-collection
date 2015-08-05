@@ -28,22 +28,22 @@
 			<target xml:lang="fr" state="translated">Même niveau que page actuelle</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
 				<source>First Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">First Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Première subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve">
 				<source>Second Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">Second Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Deuxième subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve">
 				<source>Third Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">Third Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Troisième subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve">
 				<source>Fourth Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">Fourth Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Quatrième subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve">
 				<source>Fifth Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">Fifth Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Cinquième subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve">
 				<source>Sixth Level Of Website</source>
-			<target xml:lang="fr" state="needs-translation">Sixth Level Of Website</target></trans-unit>
+			<target xml:lang="fr" state="translated">Sixième subordonnée du site web</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve">
 				<source>Selection</source>
 			<target xml:lang="fr" state="translated">Sélection</target></trans-unit>
