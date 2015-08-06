@@ -57,7 +57,7 @@ class ImageVariantGarbageCollector {
 	 * @return void
 	 */
 	public function removeUnusedImageVariant(NodeInterface $node, $propertyName, $oldValue, $value) {
-		if ($oldValue !== $value || (!$oldValue instanceof ImageVariant)) {
+		if ($oldValue === $value || (!$oldValue instanceof ImageVariant)) {
 			return;
 		}
 		$identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
