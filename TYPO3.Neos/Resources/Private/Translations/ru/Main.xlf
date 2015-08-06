@@ -23,7 +23,7 @@
 			<target xml:lang="ru">Введите для поиска</target><alt-trans><target xml:lang="ru">Начните печатать а мы найдём</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="ru">Содержимое</target></trans-unit>
+			<target xml:lang="ru">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="ru">Создать после</target></trans-unit>
@@ -56,13 +56,13 @@
 			<target xml:lang="ru">Отменить изменения</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target xml:lang="ru">Правка названия</target></trans-unit>
+			<target xml:lang="ru">Правка названия</target><alt-trans><target xml:lang="ru">Переименовать</target></alt-trans></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
-			<target xml:lang="ru">Правка / просмотр</target></trans-unit>
+			<target xml:lang="ru">Правка / просмотр</target><alt-trans><target xml:lang="ru">Редактировать / просмотр</target></alt-trans></trans-unit>
       <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="ru">Править</target></trans-unit>
+			<target xml:lang="ru">Править</target><alt-trans><target xml:lang="ru">Редактировать</target></alt-trans></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target xml:lang="ru">Скрыть / Показать</target></trans-unit>
@@ -435,7 +435,7 @@
 			<target xml:lang="ru">Войти в</target><alt-trans><target xml:lang="ru">Вход в систему TYPO3 Neos</target></alt-trans></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target xml:lang="ru">Авторизация</target><alt-trans><target xml:lang="ru">Аутентификация</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Аутентификация</target><alt-trans><target xml:lang="ru">Авторизация</target></alt-trans></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
