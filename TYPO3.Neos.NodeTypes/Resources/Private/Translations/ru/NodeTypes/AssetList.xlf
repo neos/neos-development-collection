@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Asset list</source>
-			<target xml:lang="ru" state="needs-translation">Asset list</target></trans-unit>
+			<target xml:lang="ru" state="translated">Список активов</target><alt-trans><target xml:lang="ru">Список ресурсов</target></alt-trans></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>
-			<target xml:lang="ru" state="needs-translation">Resources</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ресурсы</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
-			<target xml:lang="ru" state="needs-translation">Assets</target></trans-unit>
+			<target xml:lang="ru" state="translated">Активы</target></trans-unit>
     </body>
   </file>
 </xliff>

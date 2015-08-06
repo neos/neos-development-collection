@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="ru" state="needs-translation">HTML</target></trans-unit>
+			<target xml:lang="ru" state="translated">HTML</target></trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="ru" state="needs-translation">HTML</target></trans-unit>
+			<target xml:lang="ru" state="translated">HTML</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
-			<target xml:lang="ru" state="needs-translation">HTML Content</target></trans-unit>
+			<target xml:lang="ru" state="translated">Содержимое HTML</target></trans-unit>
     </body>
   </file>
 </xliff>
