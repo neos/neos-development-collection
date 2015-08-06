@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="ru" state="translated">Плагин вид</target></trans-unit>
+			<target xml:lang="ru" state="translated">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
 			<target xml:lang="ru" state="translated">Плагины</target></trans-unit>
@@ -13,7 +13,7 @@
 			<target xml:lang="ru">Главный вид</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="ru" state="translated">Плагин вид</target></trans-unit>
+			<target xml:lang="ru" state="translated">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
