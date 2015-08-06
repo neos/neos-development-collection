@@ -177,7 +177,7 @@
 			<target xml:lang="ru">Главный вид</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="ru" state="translated">Плагин вид</target></trans-unit>
+			<target xml:lang="ru" state="translated">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target xml:lang="ru">Скрыть</target></trans-unit>
@@ -193,7 +193,7 @@
 			<target xml:lang="ru">Нажмите {0}, чтобы перейти на страницу.</target><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на страницу {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="ru">Нажмите {0}, для перехода к ресурсу.</target><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсу {0}.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Нажмите {0}, для перехода к ресурсу.</target><alt-trans><target xml:lang="ru">Нажмите {0} для просмотра файла.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсу {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
 			<target xml:lang="ru" state="translated">Нажмите {0}, чтобы перейти по ссылке.</target><alt-trans><target xml:lang="ru">Нажмите {0}, чтобы перейти на внешнюю страницу.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></alt-trans></trans-unit>
@@ -435,7 +435,7 @@
 			<target xml:lang="ru">Войти в</target><alt-trans><target xml:lang="ru">Вход в систему TYPO3 Neos</target></alt-trans></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target xml:lang="ru">Авторизация</target></trans-unit>
+			<target xml:lang="ru">Авторизация</target><alt-trans><target xml:lang="ru">Аутентификация</target></alt-trans></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
