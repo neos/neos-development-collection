@@ -23,10 +23,10 @@
 			<target xml:lang="ru">Содержит модули управления содержимым</target><alt-trans><target xml:lang="ru">Модули для управления содержимым</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="ru">Рабочее пространство</target></trans-unit>
+			<target xml:lang="ru">Workspaces</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="ru">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target xml:lang="ru">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Этот модуль содержит обзор всех элементов текущего Workspace, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target xml:lang="ru">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target></alt-trans><alt-trans><target xml:lang="ru">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes</source>
 			<target xml:lang="ru">Неопубликованные изменения</target></trans-unit>
@@ -62,10 +62,10 @@
 			<target xml:lang="ru">отредактирован</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="ru">Существуют неопубликованные изменения в этой рабочей области.</target></trans-unit>
+			<target xml:lang="ru">Существуют неопубликованные изменения в этом Workspace.</target><alt-trans><target xml:lang="ru">Существуют неопубликованные изменения в этой рабочей области.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="ru">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target></trans-unit>
+			<target xml:lang="ru">Вы действительно хотите отменить все изменения в Workspace "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="ru">Медиатека</target></trans-unit>
@@ -246,7 +246,7 @@
 			<target xml:lang="ru">Да, удалить пользователя</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></trans-unit>
+			<target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные Workspace, включая неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></alt-trans></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target xml:lang="ru">Эта операция не может быть отменена</target></trans-unit>

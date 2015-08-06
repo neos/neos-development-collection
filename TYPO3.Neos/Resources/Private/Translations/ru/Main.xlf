@@ -111,9 +111,9 @@
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="ru">Опубликовано</target></trans-unit>
-      <trans-unit id="targetWorkspace" xml:space="preserve">
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target xml:lang="ru" state="translated">Целевая рабочее место</target><alt-trans><target xml:lang="ru">Целевая рабочее пространство</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Целевой Workspace</target><alt-trans><target xml:lang="ru">Целевая рабочее место</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее место</target></alt-trans><alt-trans><target xml:lang="ru">Целевая рабочее пространство</target></alt-trans></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="ru">Удалить</target></trans-unit>
@@ -175,9 +175,9 @@
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
 			<target xml:lang="ru">Главный вид</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
+      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target xml:lang="ru" state="translated">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target xml:lang="ru">Скрыть</target></trans-unit>
@@ -194,9 +194,9 @@
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
 			<target xml:lang="ru">Нажмите {0}, для перехода к ресурсу.</target><alt-trans><target xml:lang="ru">Нажмите {0} для просмотра файла.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсу {0}.</target></alt-trans></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="ru" state="translated">Нажмите {0}, чтобы перейти по ссылке.</target><alt-trans><target xml:lang="ru">Нажмите {0}, чтобы перейти на внешнюю страницу.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Нажмите {0}, чтобы перейти по ссылке.</target><alt-trans><target xml:lang="ru">Нажмите {0}, чтобы перейти на внешнюю страницу.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
 			<target xml:lang="ru">(цель не была выбрана)</target></trans-unit>
@@ -221,7 +221,7 @@
 			<target xml:lang="ru">Отменить все изменения</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Вы уверены, что вы хотите отменить все изменения в этой рабочей области?</target></alt-trans><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этом Workspace?</target><alt-trans><target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target></alt-trans><alt-trans><target xml:lang="ru">Вы уверены, что вы хотите отменить все изменения в этой рабочей области?</target></alt-trans><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target xml:lang="ru">Опубликовать все</target></trans-unit>
@@ -234,30 +234,30 @@
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
 			<target xml:lang="ru">Ожидающие изменения</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="ru" state="translated">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопобликованные изменения.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Ваш личный Workspace в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другой целевой Workspace необходимо сначала опубликовать или отменить неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопубликованные изменения.</target></alt-trans><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопобликованные изменения.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="ru">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевое рабочее пространство.</target></trans-unit>
+			<target xml:lang="ru">Пожалуйста просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевой Workspace.</target><alt-trans><target xml:lang="ru">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевое рабочее пространство.</target></alt-trans><alt-trans><target xml:lang="ru">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевой Workspace.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="ru">Режимы редактирования</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target xml:lang="ru" state="translated">Центр предпросмотра</target></trans-unit>
+			<target xml:lang="ru">Центр предпросмотра</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target xml:lang="ru">Имеются несохраненные изменения. Что с ними сделать?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
 			<target xml:lang="ru">Выбранный элемент</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="ru" state="translated">Есть поля, которые заполнены неправильно.</target><alt-trans><target xml:lang="ru">Поля заполнены неверно.</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+			<target xml:lang="ru">Есть поля, которые заполнены неправильно.</target><alt-trans><target xml:lang="ru">Поля заполнены неверно.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="ru" state="translated">Отмеченные ошибкой поля всё еще заполнены не верно. Пожалуйста, заполните их должным образом.</target><alt-trans><target xml:lang="ru">Указанные поля заполнены неверно. Заполните их правильно.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Отмеченные ошибкой поля всё еще заполнены не верно. Пожалуйста, заполните их должным образом.</target><alt-trans><target xml:lang="ru">Указанные поля заполнены неверно. Заполните их правильно.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
 			<target xml:lang="ru">Продолжить правку</target></trans-unit>
@@ -282,9 +282,9 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
 			<target xml:lang="ru">Дата не установлена</target></trans-unit>
-      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target xml:lang="ru" state="translated">Редактировать код</target></trans-unit>
+			<target xml:lang="ru">Редактировать код</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
 			<target xml:lang="ru">Вставьте ссылку или введите для поиска</target></trans-unit>
@@ -342,9 +342,9 @@
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
 			<target xml:lang="ru">Ожидается целое число.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="ru" state="translated">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации.</target></trans-unit>
+			<target xml:lang="ru">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
 			<target xml:lang="ru">Это свойство является обязательным.</target></trans-unit>
@@ -381,9 +381,9 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
 			<target xml:lang="ru">и ее подстраниц</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru" state="translated">Операцию можно отменить в меню управления рабочей областью.</target><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления рабочей областью.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
 			<target xml:lang="ru">вставить (удерживайте для выбора позиции)</target></trans-unit>
@@ -399,9 +399,9 @@
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
 			<target xml:lang="ru">Это приведет к удалению элемента.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru" state="translated">Операцию можно отменить в меню управления рабочей областью.</target><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="ru">Медиатека</target></trans-unit>
@@ -416,7 +416,7 @@
 			<target xml:lang="ru">Отсутствует обязательное свойство: </target><alt-trans><target xml:lang="ru">Отсутствует обязательное свойство:</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="ru">Рабочее пространство</target></trans-unit>
+			<target xml:lang="ru">Workspaces</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
 			<target xml:lang="ru">Произошла ошибка при сохранении</target></trans-unit>
