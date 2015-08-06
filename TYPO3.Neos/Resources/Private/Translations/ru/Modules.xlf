@@ -8,9 +8,9 @@
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="ru" state="translated">Нажмите, чтобы удалить</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="ru" state="translated">Отмена</target></trans-unit>
+			<target xml:lang="ru">Отмена</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="ru" state="translated">Назад</target></trans-unit>
@@ -136,9 +136,9 @@
       <trans-unit id="users.action.new" xml:space="preserve">
 				<source>New</source>
 			<target xml:lang="ru" state="translated">Создать</target></trans-unit>
-      <trans-unit id="users.action.edit" xml:space="preserve">
+      <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="ru" state="translated">Править</target></trans-unit>
+			<target xml:lang="ru">Править</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="ru" state="translated">Изменить учетную запись</target></trans-unit>
@@ -157,12 +157,12 @@
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="ru" state="translated">Данные пользователя</target></trans-unit>
-      <trans-unit id="users.new.userData.username" xml:space="preserve">
+      <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
-      <trans-unit id="users.new.userData.password" xml:space="preserve">
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
+      <trans-unit id="users.new.userData.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="ru" state="translated">Пароль</target></trans-unit>
+			<target xml:lang="ru">Пароль</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="ru" state="translated">Повторите пароль</target></trans-unit>
@@ -193,9 +193,9 @@
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="ru" state="translated">Личные данные</target></trans-unit>
-      <trans-unit id="users.show.personalData.title" xml:space="preserve">
+      <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="ru" state="translated">Название</target></trans-unit>
+			<target xml:lang="ru">Название</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="ru" state="translated">Имя</target></trans-unit>
@@ -211,9 +211,9 @@
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="ru" state="translated">Учётные записи</target></trans-unit>
-      <trans-unit id="users.show.username" xml:space="preserve">
+      <trans-unit id="users.show.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ru" state="translated">Роли</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="ru" state="translated">Электронные адреса</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="ru" state="translated">Основное</target><alt-trans><target xml:lang="ru">Основной</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Основной</target><alt-trans><target xml:lang="ru">Основное</target></alt-trans></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="ru" state="translated">Н/Д</target></trans-unit>
@@ -256,9 +256,9 @@
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target xml:lang="ru" state="translated">Учетная запись</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve">
+      <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ru" state="translated">Имя пользователя не может быть изменено через пользовательский интерфейс</target></trans-unit>
@@ -305,12 +305,12 @@
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="ru" state="translated">Этот модуль позволяет вам настроить ваш профиль пользователя. Здесь вы можете изменить ваш активный системный язык, имя и адрес электронной почты. Здесь вы также можете настроить другие функции системы.</target></trans-unit>
-      <trans-unit id="userSettings.action.index" xml:space="preserve">
+      <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="ru" state="translated">Править</target></trans-unit>
-      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+			<target xml:lang="ru">Править</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="ru" state="translated">Править</target></trans-unit>
+			<target xml:lang="ru">Править</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="ru" state="translated">Новый электронный адрес</target></trans-unit>
@@ -335,9 +335,9 @@
       <trans-unit id="userSettings.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="ru" state="translated">Учётные записи</target></trans-unit>
-      <trans-unit id="userSettings.accounts.username" xml:space="preserve">
+      <trans-unit id="userSettings.accounts.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ru" state="translated">Роли</target></trans-unit>
@@ -363,12 +363,12 @@
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
 			<target xml:lang="ru" state="translated">Имя</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
+      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="ru" state="translated">Название</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve">
+			<target xml:lang="ru">Название</target></trans-unit>
+      <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="ru" state="translated">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="ru" state="translated">Подпись</target></trans-unit>
@@ -378,9 +378,9 @@
       <trans-unit id="media.field.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="ru" state="translated">Размер файла</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
+      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="ru" state="translated">Тип</target></trans-unit>
+			<target xml:lang="ru">Тип</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="ru" state="translated">Теги</target></trans-unit>
@@ -404,13 +404,13 @@
 			<target xml:lang="ru" state="translated">Вы действительно хотите удалить ресурс "{0}"?</target></trans-unit>
       <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="ru" state="translated">Вы действительно хотите удалить коллекции "{0}"?</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы действительно хотите удалить коллекцию "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите удалить коллекции "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
 				<source>Do you really want to delete tag "{0}"?</source>
 			<target xml:lang="ru" state="translated">Вы действительно хотите удалить тег "{0}"?</target></trans-unit>
       <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the asset.</source>
-			<target xml:lang="ru" state="translated">Это приведет к удалению ресурсу.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Это приведет к удалению ресурса.</target><alt-trans><target xml:lang="ru">Это приведет к удалению ресурсу.</target></alt-trans></trans-unit>
       <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
 				<source>This will delete the collection, but not the assets that it contains.</source>
 			<target xml:lang="ru" state="translated">Это приведет к удалению коллекции, но не ресурсов, которые она содержит.</target></trans-unit>
@@ -420,9 +420,9 @@
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="ru" state="translated">Эта операция не может быть отменена.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
+      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="ru" state="translated">Отмена</target></trans-unit>
+			<target xml:lang="ru">Отмена</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ru" state="translated">Сохранить</target></trans-unit>
@@ -458,7 +458,7 @@
 			<target xml:lang="ru" state="translated">Параметры фильтра</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
-			<target xml:lang="ru" state="translated">Отображает все типы ресурсов</target></trans-unit>
+			<target xml:lang="ru" state="translated">Отобразить все типы ресурсов</target><alt-trans><target xml:lang="ru">Отображает все типы ресурсов</target></alt-trans></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
 			<target xml:lang="ru" state="translated">Отображать только изображения</target></trans-unit>
@@ -533,7 +533,7 @@
 			<target xml:lang="ru" state="translated">Создать тег</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target xml:lang="ru" state="translated">Непомеченным ресурсы</target></trans-unit>
+			<target xml:lang="ru" state="translated">Непомеченные ресурсы</target><alt-trans><target xml:lang="ru">Непомеченным ресурсы</target></alt-trans></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
 			<target xml:lang="ru" state="translated">Непомеченные тэгами</target></trans-unit>
@@ -542,7 +542,7 @@
 			<target xml:lang="ru" state="translated">Максимальный размер загрузки: {0} для каждого файла</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target xml:lang="ru" state="translated">Перетащите сюда файлы</target><alt-trans><target xml:lang="ru">Перетащите файлы сюда</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Перетащите файлы сюда</target><alt-trans><target xml:lang="ru">Перетащите сюда файлы</target></alt-trans></trans-unit>
       <trans-unit id="media.clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
 			<target xml:lang="ru" state="translated">или нажмите кнопку для загрузки</target></trans-unit>
@@ -555,18 +555,18 @@
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
 			<target xml:lang="ru" state="translated">Основные</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve">
+      <trans-unit id="media.delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="ru" state="translated">Удалить</target></trans-unit>
+			<target xml:lang="ru">Удалить</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="ru" state="translated">Нажмите, чтобы удалить</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ru" state="translated">Сохранить</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
+      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="ru" state="translated">Метаданные</target></trans-unit>
+			<target xml:lang="ru">Метаданные</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="ru" state="translated">Имя файла</target></trans-unit>
@@ -578,16 +578,16 @@
 			<target xml:lang="ru" state="translated">Размер файла</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
-			<target xml:lang="ru" state="translated">Измерения</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
+			<target xml:lang="ru" state="translated">Размеры</target><alt-trans><target xml:lang="ru">Измерения</target></alt-trans></trans-unit>
+      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="ru" state="translated">Тип</target></trans-unit>
+			<target xml:lang="ru">Тип</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="ru" state="translated">Идентификатор</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve">
+      <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="ru" state="translated">Просмотр</target></trans-unit>
+			<target xml:lang="ru">Предв. Просмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ru" state="translated">Не удается загрузить файл</target></trans-unit>
