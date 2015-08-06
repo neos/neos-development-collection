@@ -143,7 +143,7 @@
 			<target xml:lang="ru" state="translated">[без названия]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ru" state="translated">Метка</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
 			<target xml:lang="ru" state="translated">Тип узла</target></trans-unit>
@@ -190,22 +190,22 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="ru" state="translated">Нажмите здесь, чтобы перейти на страницу {0}.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нажмите здесь, чтобы перейти на страницу {0}.</target><alt-trans><target xml:lang="ru">Нажмите {0}, чтобы перейти на страницу.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="ru" state="translated">Нажмите здесь, для перехода к ресурсу {0}.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нажмите {0}, для перехода к ресурсу.</target><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсу {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="ru" state="translated">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нажмите {0}, чтобы перейти на внешнюю страницу.</target><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
 			<target xml:lang="ru" state="translated">(цель не была выбрана)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru" state="translated">Это ярлык для первой дочерней страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Это ярлык для первой дочерней страницы.&amp;lt;br /&amp;gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для первой дочерней страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru" state="translated">Это ярлык для родительской страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Это ярлык для родительской страницы.&amp;lt;br /&amp;gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для родительской страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
@@ -221,7 +221,7 @@
 			<target xml:lang="ru" state="translated">Отменить все изменения</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ru" state="translated">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы уверены, что вы хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target xml:lang="ru" state="translated">Опубликовать все</target></trans-unit>
@@ -236,7 +236,7 @@
 			<target xml:lang="ru" state="translated">Ожидающие изменения</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="ru" state="translated">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопобликованные изменения.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопобликованные изменения.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
 			<target xml:lang="ru" state="translated">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевое рабочее пространство.</target></trans-unit>
@@ -254,7 +254,7 @@
 			<target xml:lang="ru" state="translated">Выбранный элемент</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="ru" state="translated">Поля заполнены неверно.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Есть поля, которые заполнены неправильно.</target><alt-trans><target xml:lang="ru">Поля заполнены неверно.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
 			<target xml:lang="ru" state="translated">Указанные поля заполнены неверно. Заполните их правильно.</target></trans-unit>
