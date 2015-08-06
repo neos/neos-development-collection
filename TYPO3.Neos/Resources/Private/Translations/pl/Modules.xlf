@@ -21,9 +21,9 @@
       <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
 			<target xml:lang="pl">Zawiera moduły do zarządzania treścią</target></trans-unit>
-      <trans-unit id="workspaces.label" xml:space="preserve">
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="pl" state="translated">Obszary robocze</target></trans-unit>
+			<target xml:lang="pl">Obszary robocze</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="pl">Ten moduł zawiera listę wszystkich elementów w bieżącym obszarze roboczym i pozwala na ich przegląd i publikowanie.</target></trans-unit>
@@ -39,9 +39,9 @@
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="pl">Odrzuć wszystkie zmiany</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="pl" state="translated">Publikuj wszystkie zmiany</target></trans-unit>
+			<target xml:lang="pl">Publikuj wszystkie zmiany</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve" approved="yes">
 				<source>Legend</source>
 			<target xml:lang="pl">Legenda</target></trans-unit>
@@ -66,9 +66,9 @@
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target xml:lang="pl">Czy na pewno zaniechać wszystkie zmiany w obszarze roboczym "{0}" ? </target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve">
+      <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="pl" state="translated">Pliki</target></trans-unit>
+			<target xml:lang="pl">Pliki</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="pl">Ten moduł umożliwia zarządzanie multimediami, włączając w to zdjęcia, filmy video, pliki audio i dokumenty.</target></trans-unit>
@@ -142,9 +142,9 @@
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target xml:lang="pl">Edytuj konto</target></trans-unit>
-      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
+      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="pl" state="translated">Nowy adres poczty elektronicznej</target></trans-unit>
+			<target xml:lang="pl">Nowy adres elektroniczny</target><alt-trans><target xml:lang="pl">Nowy adres poczty elektronicznej</target></alt-trans></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
 			<target xml:lang="pl" state="translated">Użyj domyślnego</target><alt-trans><target xml:lang="pl">Domyślna wartość systemu</target></alt-trans></trans-unit>
@@ -232,24 +232,24 @@
       <trans-unit id="users.show.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="pl">Edytuj użytkownika</target></trans-unit>
-      <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
+      <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="pl" state="translated">Jesteś zalogowany jako ten użytkownik i nie można usunąć siebie.</target></trans-unit>
-      <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
+			<target xml:lang="pl">Jesteś zalogowany jako ten użytkownik i nie możesz usunąć siebie.</target></trans-unit>
+      <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
-			<target xml:lang="pl" state="translated">Kliknij tutaj aby usunąć tego użytkownika</target></trans-unit>
-      <trans-unit id="users.show.buttonDelete" xml:space="preserve">
+			<target xml:lang="pl">Kliknij tutaj aby usunąć tego użytkownika</target></trans-unit>
+      <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target xml:lang="pl" state="translated">Czy naprawdę chcesz usunąć użytkownika "{0}"?</target></trans-unit>
-      <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
+			<target xml:lang="pl">Czy naprawdę chcesz usunąć użytkownika "{0}"?</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
-			<target xml:lang="pl" state="translated">Tak, usuń użytkownika</target></trans-unit>
-      <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
+			<target xml:lang="pl">Tak, usuń użytkownika</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="pl" state="translated">Spowoduje to usunięcie użytkownika, powiązanych kont i jego osobistego obszaru roboczego, w tym wszystkich nieopublikowanych treści.</target></trans-unit>
-      <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
+			<target xml:lang="pl">Spowoduje to usunięcie użytkownika, powiązanych kont i jego osobistego obszaru roboczego, w tym wszystkich nieopublikowanych treści.</target></trans-unit>
+      <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target xml:lang="pl" state="translated">Tej operacji nie można cofnąć</target></trans-unit>
+			<target xml:lang="pl">Tej operacji nie można cofnąć</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
 			<target xml:lang="pl">Edytuj konto "{accountIdentifier}"</target></trans-unit>
@@ -274,9 +274,9 @@
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
 			<target xml:lang="pl">Zarządzanie pakietami</target></trans-unit>
-      <trans-unit id="packages.description" xml:space="preserve">
+      <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="pl" state="translated">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, zaimportować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
+			<target xml:lang="pl">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, zaimportować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="pl">Zarządzanie stronami</target><alt-trans><target xml:lang="pl">Zarządzanie stroną</target></alt-trans></trans-unit>
@@ -292,9 +292,9 @@
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="pl">Konfiguracja</target></trans-unit>
-      <trans-unit id="configuration.description" xml:space="preserve">
+      <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target xml:lang="pl" state="translated">Moduł konfiguracyjny umożliwia podgląd wszystkich typów konfiguracji.</target></trans-unit>
+			<target xml:lang="pl">Moduł konfiguracyjny umożliwia podgląd wszystkich typów konfiguracji.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
@@ -311,9 +311,9 @@
       <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
 			<target xml:lang="pl">Edytuj</target><alt-trans><target xml:lang="pl">Edycja</target></alt-trans></trans-unit>
-      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
+      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="pl" state="translated">Nowy adres poczty elektronicznej</target></trans-unit>
+			<target xml:lang="pl">Nowy adres elektroniczny</target><alt-trans><target xml:lang="pl">Nowy adres poczty elektronicznej</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target xml:lang="pl">Edytuj konto</target></trans-unit>
@@ -344,55 +344,55 @@
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
 			<target xml:lang="pl" state="translated">Dostawca uwierzytelnień</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
+      <trans-unit id="userSettings.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic addresses</source>
-			<target xml:lang="pl" state="translated">Adresy elektroniczne</target></trans-unit>
+			<target xml:lang="pl">Adresy elektroniczne</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
+      <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
-			<target xml:lang="pl" state="translated">Tak, usuń adres elektroniczny</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
+			<target xml:lang="pl">Tak, usuń adres elektroniczny</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Click to add a new Electronic address</source>
-			<target xml:lang="pl" state="translated">Kliknij, aby dodać nowy adres elektroniczny</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
+			<target xml:lang="pl">Kliknij, aby dodać nowy adres elektroniczny</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
-			<target xml:lang="pl" state="translated">Dodaj adres elektroniczny</target></trans-unit>
+			<target xml:lang="pl">Dodaj adres elektroniczny</target></trans-unit>
       <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve">
+      <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
-			<target xml:lang="pl" state="translated">Nazwa</target></trans-unit>
+			<target xml:lang="pl">Nazwa</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="pl">Tytuł</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="pl">Etykieta</target></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve">
+      <trans-unit id="media.field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
-			<target xml:lang="pl" state="translated">Podpis</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve">
+			<target xml:lang="pl">Podpis</target></trans-unit>
+      <trans-unit id="media.field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
-			<target xml:lang="pl" state="translated">Ostatnia modyfikacja</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve">
+			<target xml:lang="pl">Ostatnia modyfikacja</target></trans-unit>
+      <trans-unit id="media.field.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="pl" state="translated">Rozmiar pliku</target></trans-unit>
+			<target xml:lang="pl">Rozmiar pliku</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
 			<target xml:lang="pl">Typ</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve">
+      <trans-unit id="media.field.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="pl" state="translated">Tagi</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve">
+			<target xml:lang="pl">Tagi</target></trans-unit>
+      <trans-unit id="media.sortByName" xml:space="preserve" approved="yes">
 				<source>Sort by name</source>
-			<target xml:lang="pl" state="translated">Sortuj według nazwy</target></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve">
+			<target xml:lang="pl">Sortuj według nazwy</target></trans-unit>
+      <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
-			<target xml:lang="pl" state="translated">Sortuj według ostatniej modyfikacji</target></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
+			<target xml:lang="pl">Sortuj według ostatniej modyfikacji</target></trans-unit>
+      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="pl" state="translated">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
+			<target xml:lang="pl">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="pl" state="translated">Edytuj zasób</target></trans-unit>
@@ -423,9 +423,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="pl">Anuluj</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve">
+      <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="pl" state="translated">Zapisz</target></trans-unit>
+			<target xml:lang="pl">Zapisz</target></trans-unit>
       <trans-unit id="media.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the asset</source>
 			<target xml:lang="pl" state="translated">Tak, Usuń zasób</target></trans-unit>
@@ -516,9 +516,9 @@
       <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
 			<target xml:lang="pl">Wszystkie kolekcje</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve">
+      <trans-unit id="media.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="pl" state="translated">Tagi</target></trans-unit>
+			<target xml:lang="pl">Tagi</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
 			<target xml:lang="pl">Edytuj tagi</target></trans-unit>
@@ -540,15 +540,15 @@
       <trans-unit id="media.maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
 			<target xml:lang="pl" state="translated">Maksymalny rozmiar pliku to {0}</target></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve">
+      <trans-unit id="media.dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
-			<target xml:lang="pl" state="translated">Upuść tutaj pliki</target></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve">
+			<target xml:lang="pl">Upuść tutaj pliki</target></trans-unit>
+      <trans-unit id="media.clickToUpload" xml:space="preserve" approved="yes">
 				<source>or click to upload</source>
-			<target xml:lang="pl" state="translated">lub kliknij, aby przesłać</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve">
+			<target xml:lang="pl">lub kliknij, aby przesłać</target></trans-unit>
+      <trans-unit id="media.chooseFile" xml:space="preserve" approved="yes">
 				<source>Choose file</source>
-			<target xml:lang="pl" state="translated">Wybierz plik</target></trans-unit>
+			<target xml:lang="pl">Wybierz plik</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
 			<target xml:lang="pl" state="translated">Nie znaleziono zasobów.</target></trans-unit>
@@ -561,54 +561,54 @@
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="pl" state="translated">Kliknij, aby usunąć</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve">
+      <trans-unit id="media.save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="pl" state="translated">Zapisz</target></trans-unit>
+			<target xml:lang="pl">Zapisz</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
 			<target xml:lang="pl">Metadane</target><alt-trans><target xml:lang="pl">Informacje o dokumencie</target></alt-trans></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve">
+      <trans-unit id="media.metadata.filename" xml:space="preserve" approved="yes">
 				<source>Filename</source>
-			<target xml:lang="pl" state="translated">Nazwa pliku</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve">
+			<target xml:lang="pl">Nazwa pliku</target></trans-unit>
+      <trans-unit id="media.metadata.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified (resource)</source>
-			<target xml:lang="pl" state="translated">Data ostatniej modyfikacji (zasób)</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve">
+			<target xml:lang="pl">Data ostatniej modyfikacji (zasób)</target></trans-unit>
+      <trans-unit id="media.metadata.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="pl" state="translated">Rozmiar pliku</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve">
+			<target xml:lang="pl">Rozmiar pliku</target></trans-unit>
+      <trans-unit id="media.metadata.dimensions" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target xml:lang="pl" state="translated">Wymiary</target></trans-unit>
+			<target xml:lang="pl">Wymiary</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
 			<target xml:lang="pl">Typ</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve">
+      <trans-unit id="media.metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target xml:lang="pl" state="translated">Identyfikator</target></trans-unit>
+			<target xml:lang="pl">Identyfikator</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="pl">Pogdląd</target></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve">
+      <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
-			<target xml:lang="pl" state="translated">Nie można załadować pliku</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
+			<target xml:lang="pl">Nie można załadować pliku</target></trans-unit>
+      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="pl" state="translated">Rozmiar pliku {0} przekracza dozwolony limit {1}</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve">
+			<target xml:lang="pl">Rozmiar pliku {0} przekracza dozwolony limit {1}</target></trans-unit>
+      <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
-			<target xml:lang="pl" state="translated">dla pliku</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
+			<target xml:lang="pl">dla pliku</target></trans-unit>
+      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="pl" state="translated">Tylko niektóre pliki zostały pomyślnie załadowane. Odśwież stronę, aby zobaczyć które.</target></trans-unit>
+			<target xml:lang="pl">Tylko niektóre pliki zostały pomyślnie załadowane. Odśwież stronę, aby zobaczyć które.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
 			<target xml:lang="pl" state="translated">Tagowanie zasobu nie powiodło się.</target><alt-trans><target xml:lang="pl">Tagowanie zasobu nie udało się.</target></alt-trans></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
 			<target xml:lang="pl" state="translated">Dodanie zasobu do kolekcji nie powiodło się.</target></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve">
+      <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
-			<target xml:lang="pl" state="translated">Tworzenie</target></trans-unit>
+			<target xml:lang="pl">Tworzenie</target></trans-unit>
     </body>
   </file>
 </xliff>

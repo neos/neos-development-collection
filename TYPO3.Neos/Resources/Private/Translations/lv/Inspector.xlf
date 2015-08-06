@@ -7,7 +7,7 @@
 			<target xml:lang="lv" state="needs-translation">Visibility</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="lv" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dokuments</target></trans-unit>
     </body>
   </file>
 </xliff>
