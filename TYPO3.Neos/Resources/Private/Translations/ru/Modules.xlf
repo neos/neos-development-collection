@@ -20,13 +20,13 @@
 			<target xml:lang="ru" state="translated">Управление</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="ru" state="translated">Модули для управления содержимым</target></trans-unit>
+			<target xml:lang="ru" state="translated">Содержит модули управления содержимым</target><alt-trans><target xml:lang="ru">Модули для управления содержимым</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="ru" state="translated">Рабочее пространство</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="ru" state="translated">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target xml:lang="ru">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes</source>
 			<target xml:lang="ru" state="translated">Неопубликованные изменения</target></trans-unit>
@@ -120,10 +120,10 @@
 			<target xml:lang="ru" state="translated">Управление</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="ru" state="translated">Модули управления</target></trans-unit>
+			<target xml:lang="ru" state="translated">Содержит модули управления</target><alt-trans><target xml:lang="ru">Модули управления</target></alt-trans></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="ru" state="translated">Пользователи</target></trans-unit>
+			<target xml:lang="ru" state="translated">Управление пользователями</target><alt-trans><target xml:lang="ru">Пользователи</target></alt-trans></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="ru" state="translated">Модуль управления пользователями даёт представление о всех пользователях в системе. Можно группировать их по свойствам для облегчения контроля их прав, точек доступа, принадлежности к группам и т. п. Это незаменимый инструмент для контроля настроек пользователей.</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target xml:lang="ru" state="translated">Электронные адреса</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ru" state="translated">Подтвердите удаление</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="ru" state="translated">Да, удалить электронный адрес</target></trans-unit>
