@@ -195,7 +195,7 @@
 			<target xml:lang="lv" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="lv" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="lv" state="translated">Virsraksts</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="lv" state="translated">Vārds</target></trans-unit>
@@ -365,10 +365,10 @@
 			<target xml:lang="lv" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="lv" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="lv" state="translated">Virsraksts</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="lv" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="lv" state="translated">Marķējums</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="lv" state="needs-translation">Caption</target></trans-unit>
@@ -380,7 +380,7 @@
 			<target xml:lang="lv" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="lv" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="lv" state="translated">Veids</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="lv" state="needs-translation">Tags</target></trans-unit>
@@ -566,7 +566,7 @@
 			<target xml:lang="lv" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="lv" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="lv" state="translated">Metadati</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="lv" state="needs-translation">Filename</target></trans-unit>
@@ -581,7 +581,7 @@
 			<target xml:lang="lv" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="lv" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="lv" state="translated">Veids</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="lv" state="needs-translation">Identifier</target></trans-unit>

@@ -5,13 +5,13 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="lv" state="needs-translation">Auto-Publish</target></trans-unit>
+			<target xml:lang="lv" state="translated">Automātiska publicēšana</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="lv" state="translated">Apstiprināt</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="lv" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Apskatīt izmaiņas</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
@@ -20,16 +20,16 @@
 			<target xml:lang="lv" state="translated">Izvēlieties</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="lv" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ierakstiet lai meklētu</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="lv" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saturs</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="lv" state="needs-translation">Create after</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot pēc</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="lv" state="needs-translation">Create new</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot jaunu</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
 			<target xml:lang="lv" state="translated">Aizvērt</target></trans-unit>
@@ -44,40 +44,40 @@
 			<target xml:lang="lv" state="translated">Dzēst</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, dzēst elementu</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="lv" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dzēst elementu</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="lv" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
 			<target xml:lang="lv" state="translated">Atmest izmaiņas</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="lv" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt virsrakstu</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="lv" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt / priekšskatīt</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
 			<target xml:lang="lv" state="translated">Labot</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="lv" state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target xml:lang="lv" state="translated">Paslēpt / parādīt</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="lv" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lejupielāde</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="lv" state="needs-translation">New After</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pievienot pēc</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="lv" state="needs-translation">New Before</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pievienot pirms</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="lv" state="needs-translation">New Into</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ievietot jaunu</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
 			<target xml:lang="lv" state="translated">Navigēt</target></trans-unit>
@@ -86,19 +86,19 @@
 			<target xml:lang="lv" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="lv" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lapa</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="lv" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iekopēt</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="lv" state="needs-translation">Paste After</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iekopēt pēc</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="lv" state="needs-translation">Paste Before</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iekopēt pirms</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="lv" state="needs-translation">Paste Into</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iekopēt</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="lv" state="translated">Parole</target></trans-unit>
@@ -107,105 +107,105 @@
 			<target xml:lang="lv" state="translated">Priekšskats</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="lv" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="lv" state="translated">Publicēt</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="lv" state="translated">Publicēts</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="lv" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mērķa darbavieta</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="lv" state="translated">Noņemt</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="lv" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atjaunot</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="lv" state="needs-translation">Saving...</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="lv" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāts</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
 			<target xml:lang="lv" state="translated">Meklēšana</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="lv" state="needs-translation">Toggle inspector</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pārslēgšanas inspektors</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="lv" state="translated">Lietotājvārds</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="lv" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jūs</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="lv" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="lv" state="translated">[bez nosaukuma]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="lv" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="lv" state="translated">Marķējums</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="lv" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="lv" state="translated">Savienojuma tips</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="lv" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ceļš</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="lv" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="lv" state="translated">Relatīvais ceļš</target></trans-unit>
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="lv" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dokuments</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="lv" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="lv" state="translated">Virsraksts</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target xml:lang="lv" state="translated">URL segments</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="lv" state="needs-translation">Hide in menus</target></trans-unit>
+			<target xml:lang="lv" state="translated">Paslēpt izvēlnē</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="lv" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mērķa režīms</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="lv" state="needs-translation">Target</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mērķis</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="lv" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šablona skats</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="lv" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="lv" state="translated">Spraudņa skats</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="lv" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="lv" state="translated">Paslēpt</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="lv" state="needs-translation">Hide before</target></trans-unit>
+			<target xml:lang="lv" state="translated">Paslēpt pirms</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="lv" state="needs-translation">Hide after</target></trans-unit>
+			<target xml:lang="lv" state="translated">Paslēpt pēc</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="needs-translation">Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai turpinātu lapu.</target><alt-trans><target xml:lang="lv">Uzklikšķiniet {0}, lai turpinātu lapu</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="lv" state="needs-translation">Click {0} to see the file.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai redzētu lapu.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="lv" state="needs-translation">Click {0} to open the link.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai atvērtu saiti.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="lv" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="lv" state="translated">(nav izvēlēts mērķis)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="needs-translation">This is a shortcut to the first child page.&amp;lt;br /&amp;gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tas ir īsceļš uz saistīto lapu.&amp;lt;br /&amp;gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="needs-translation">This is a shortcut to the parent page.&amp;lt;br /&amp;gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tas ir īsceļš uz galveno lapu.&amp;lt;br /&amp;gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
@@ -368,7 +368,7 @@
 			<target xml:lang="lv" state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="lv" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saturs</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="lv" state="needs-translation">Do you really want to delete</target></trans-unit>
