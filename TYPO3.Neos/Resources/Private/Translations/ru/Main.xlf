@@ -221,7 +221,7 @@
 			<target xml:lang="ru" state="translated">Отменить все изменения</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ru" state="translated">Вы уверены, что вы хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Вы уверены, что вы хотите отменить все изменения в этой рабочей области?</target></alt-trans><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target xml:lang="ru" state="translated">Опубликовать все</target></trans-unit>
@@ -230,7 +230,7 @@
 			<target xml:lang="ru" state="translated">Опубликовать все изменения</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="ru" state="translated">Подтвердите публикацию всех сделанных изменений.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы уверены, что хотите опубликовать все изменения?</target><alt-trans><target xml:lang="ru">Подтвердите публикацию всех сделанных изменений.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
 			<target xml:lang="ru" state="translated">Ожидающие изменения</target></trans-unit>
@@ -257,7 +257,7 @@
 			<target xml:lang="ru" state="translated">Есть поля, которые заполнены неправильно.</target><alt-trans><target xml:lang="ru">Поля заполнены неверно.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="ru" state="translated">Указанные поля заполнены неверно. Заполните их правильно.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Отмеченные ошибкой поля всё еще заполнены не верно. Пожалуйста, заполните их должным образом.</target><alt-trans><target xml:lang="ru">Указанные поля заполнены неверно. Заполните их правильно.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
 			<target xml:lang="ru" state="translated">Продолжить правку</target></trans-unit>
@@ -275,10 +275,10 @@
 			<target xml:lang="ru" state="translated">Ни один плагин не настроен</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="ru" state="translated">режим выведен на странице</target></trans-unit>
+			<target xml:lang="ru" state="translated">представление отображается на странице</target><alt-trans><target xml:lang="ru">режим выведен на странице</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="ru" state="translated">режим выведен на текущей странице</target></trans-unit>
+			<target xml:lang="ru" state="translated">представление отображается на текущей странице</target><alt-trans><target xml:lang="ru">режим выведен на текущей странице</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="ru" state="translated">Дата не установлена</target></trans-unit>
@@ -329,10 +329,10 @@
 			<target xml:lang="ru" state="translated">Данная дата должна быть между {{formatEarliestDate}} и {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="ru" state="translated">Данная дата должна быть после {{formatEarliestDate}}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Данная дата должна быть позже чем {{formatEarliestDate}}</target><alt-trans><target xml:lang="ru">Данная дата должна быть позже {{formatEarliestDate}}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть после {{formatEarliestDate}}</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="ru" state="translated">Данная дата должна быть до {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Данная дата должна быть раньше чем {{formatLatestDate}}</target><alt-trans><target xml:lang="ru">Данная дата должна быть до {{formatLatestDate}}</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
 			<target xml:lang="ru" state="translated">Пожалуйста укажите верный адрес электронной почты.</target></trans-unit>
@@ -371,7 +371,7 @@
 			<target xml:lang="ru" state="translated">Содержимое</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ru" state="translated">Подтвердите удаление</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
 			<target xml:lang="ru" state="translated">Создать новые (удерживайте для выбора позиции)</target></trans-unit>
@@ -383,7 +383,7 @@
 			<target xml:lang="ru" state="translated">и ее подстраниц</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru" state="translated">Операцию можно отменить при управлении рабочей областью.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Операцию можно отменить в меню управления рабочей областью.</target><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
 				<source>Paste (hold to select position)</source>
 			<target xml:lang="ru" state="translated">вставить (удерживайте для выбора позиции)</target></trans-unit>
@@ -392,7 +392,7 @@
 			<target xml:lang="ru" state="translated">Высота</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ru" state="translated">Подтвердите удаление</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="ru" state="translated">этот элемент</target></trans-unit>
@@ -401,7 +401,7 @@
 			<target xml:lang="ru" state="translated">Это приведет к удалению элемента.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru" state="translated">Операцию можно отменить при управлении рабочей областью.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Операцию можно отменить в меню управления рабочей областью.</target><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="ru" state="translated">Медиатека</target></trans-unit>
@@ -422,17 +422,17 @@
 			<target xml:lang="ru" state="translated">Произошла ошибка при сохранении</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="ru" state="translated">Перезагрузите страницу, чтобы попытаться исправить эту проблему.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Обновите страницу, чтобы попытаться исправить эту проблему.</target><alt-trans><target xml:lang="ru">Перезагрузите страницу, чтобы попытаться исправить эту проблему.</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="ru" state="translated">Перезагрузить бэкэнд</target></trans-unit>
+			<target xml:lang="ru" state="translated">Обновить бэкэнд</target><alt-trans><target xml:lang="ru">Перезагрузить бэкэнд</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="ru" state="translated">Перезагрузить</target></trans-unit>
+			<target xml:lang="ru" state="translated">Обновить</target><alt-trans><target xml:lang="ru">Перезагрузить</target></alt-trans></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target xml:lang="ru" state="translated">Вход в систему TYPO3 Neos</target></trans-unit>
+			<target xml:lang="ru" state="translated">Войти в</target><alt-trans><target xml:lang="ru">Вход в систему TYPO3 Neos</target></alt-trans></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="ru" state="translated">Авторизация</target></trans-unit>
