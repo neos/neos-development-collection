@@ -482,34 +482,34 @@
 			<target xml:lang="nl" state="needs-translation">Documents</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="nl" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="nl" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="nl" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="nl" state="translated">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target xml:lang="nl" state="needs-translation">Sort options</target></trans-unit>
+			<target xml:lang="nl" state="translated">Sorteeropties</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target xml:lang="nl" state="needs-translation">List view</target></trans-unit>
+			<target xml:lang="nl" state="translated">Lijstweergave</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target xml:lang="nl" state="needs-translation">Thumbnail view</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="nl" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="nl" state="translated">Collecties</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target xml:lang="nl" state="needs-translation">Edit collections</target></trans-unit>
+			<target xml:lang="nl" state="translated">Collecties bewerken</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target xml:lang="nl" state="needs-translation">Edit collection</target></trans-unit>
+			<target xml:lang="nl" state="translated">Collectie bewerken</target></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target xml:lang="nl" state="needs-translation">Delete collection</target></trans-unit>
+			<target xml:lang="nl" state="translated">Collectie verwijderen</target></trans-unit>
       <trans-unit id="media.createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target xml:lang="nl" state="needs-translation">Create collection</target></trans-unit>
+			<target xml:lang="nl" state="translated">Collectie aanmaken</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
 			<target xml:lang="nl" state="needs-translation">Enter collection title</target></trans-unit>
