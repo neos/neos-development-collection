@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns319:0crwdne319:0</target></trans-unit>
+			<target xml:lang="la-LA" state="translated">crwdns319:0crwdne319:0</target></trans-unit>
       <trans-unit id="groups.form" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns320:0crwdne320:0</target></trans-unit>
+			<target xml:lang="la-LA" state="translated">crwdns320:0crwdne320:0</target></trans-unit>
       <trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns321:0crwdne321:0</target></trans-unit>
+			<target xml:lang="la-LA" state="translated">crwdns321:0crwdne321:0</target></trans-unit>
     </body>
   </file>
 </xliff>
