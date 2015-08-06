@@ -2,15 +2,15 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="pl">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve">
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Insert content references</source>
-			<target xml:lang="pl" state="translated">Wstaw referencje do treści</target></trans-unit>
+			<target xml:lang="pl">Wstaw referencje do treści</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
 			<target xml:lang="pl" state="translated">Odniesienia</target></trans-unit>
-      <trans-unit id="properties.references" xml:space="preserve">
+      <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
-			<target xml:lang="pl" state="translated">wybierz</target></trans-unit>
+			<target xml:lang="pl">wybierz</target></trans-unit>
     </body>
   </file>
 </xliff>

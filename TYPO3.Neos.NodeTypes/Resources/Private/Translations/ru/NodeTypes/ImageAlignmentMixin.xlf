@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve">
 				<source>Alignment</source>
-			<target xml:lang="ru" state="translated">Выравнивание</target></trans-unit>
+			<target xml:lang="ru" state="translated">Расположение</target><alt-trans><target xml:lang="ru">Выравнивание</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
 			<target xml:lang="ru" state="translated">По центру</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="ru" state="translated">По левой стороне</target></trans-unit>
+			<target xml:lang="ru" state="translated">Слева</target><alt-trans><target xml:lang="ru">По левой стороне</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="ru" state="translated">По правой стороне</target></trans-unit>
+			<target xml:lang="ru" state="translated">Справа</target><alt-trans><target xml:lang="ru">справа</target></alt-trans><alt-trans><target xml:lang="ru">По правой стороне</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
