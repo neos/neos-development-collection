@@ -368,7 +368,7 @@
 			<target xml:lang="ru" state="translated">Название</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ru" state="translated">Метка</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="ru" state="translated">Подпись</target></trans-unit>
