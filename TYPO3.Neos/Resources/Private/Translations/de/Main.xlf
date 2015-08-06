@@ -469,7 +469,7 @@
 			<target xml:lang="de">Ungültiger Knotentyp</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="de">Die Konfiguration des Kontentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target></trans-unit>
+			<target xml:lang="de">Die Konfiguration des Kontentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target><alt-trans><target xml:lang="de">Die Konfiguration des Knotentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
