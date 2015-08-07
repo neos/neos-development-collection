@@ -290,7 +290,7 @@
 			<target xml:lang="lv" state="translated">Iekopēt saiti vai rakstiet, lai meklētu</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="lv" state="translated">Nevar ielādēt apakš mezgla veidus:</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nevar ielādēt apakš-mezgla veidus:</target><alt-trans><target xml:lang="lv">Nevar ielādēt apakš mezgla veidus:</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="lv" state="translated">Mainīt veidu</target></trans-unit>
@@ -314,7 +314,7 @@
 			<target xml:lang="lv" state="translated">Šis teksts nedrīkst būt garāks par {{maximum}} rakstzīmēm.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="lv" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tikai rakstzīmes (līdz z … umlauts) un numuri ir atļauti.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="lv" state="translated">Attiecīgais elements nav saskaitāms.</target></trans-unit>
@@ -457,19 +457,19 @@
 			<target xml:lang="lv" state="translated">Atvainojiet, mēs atklājām kļūdu jūsu datu bāzē. Skatieties jūsu žurnāla failus - Data/Logs/* lai iegūtu papildinformāciju.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="lv" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mēģiniet konfigurēt vai pārbaudīt jūsu datu bāzes konfigurāciju programmas uzstādījumos.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="lv" state="translated">Lapa nav atrasta</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="lv" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atvainojiet, pieprasītā lapa nav atrasta.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
 			<target xml:lang="lv" state="translated">Nederīgs savienojuma tips</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="lv" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mezgla tipa konfigurācija, kurai jāparādās, nav pieejama. Iespējams jūs esiet nomainījuši mezgla tipa nosaukumu, neizpildījāt migrācijas procesu vai vienkārši pieļāvāt gramatisku kļūdu.</target></trans-unit>
     </body>
   </file>
 </xliff>
