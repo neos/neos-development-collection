@@ -7,13 +7,13 @@
 			<target xml:lang="fr" state="translated">Alignement</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target xml:lang="fr" state="translated">Centre</target></trans-unit>
+			<target xml:lang="fr" state="translated">Centré</target><alt-trans><target xml:lang="fr">Centre</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="fr" state="translated">Gauche</target></trans-unit>
+			<target xml:lang="fr" state="translated">À gauche</target><alt-trans><target xml:lang="fr">Gauche</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="fr" state="translated">Droite</target></trans-unit>
+			<target xml:lang="fr" state="translated">À droite</target><alt-trans><target xml:lang="fr">Droite</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
