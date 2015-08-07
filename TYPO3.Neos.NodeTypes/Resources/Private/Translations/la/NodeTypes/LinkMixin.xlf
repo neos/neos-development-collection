@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.link" xml:space="preserve">
 				<source>Link</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns337:0crwdne337:0</target></trans-unit>
+			<target xml:lang="la-LA" state="translated">crwdns337:0crwdne337:0</target></trans-unit>
     </body>
   </file>
 </xliff>
