@@ -117,19 +117,19 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="lv" state="needs-translation">Administration</target></trans-unit>
+			<target xml:lang="lv" state="translated">Administrācija</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="lv" state="needs-translation">Contains multiple modules related to administration</target></trans-unit>
+			<target xml:lang="lv" state="translated">Satur vairākus administrācijas moduļus</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="lv" state="needs-translation">User Management</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotāju pārvaldība</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="lv" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotāja pārvaldības modulis sniedz pārskatu par visiem sistēmas lietotājiem. Tos var grupēt pēc to atļaujām, pieslēgumiem, dalībnieku grupām utt. Šis modulis ir neaizstājams, lai konfigurētu lietotāju uzstādījumus.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve">
 				<source>Overview</source>
-			<target xml:lang="lv" state="needs-translation">Overview</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pārskats</target></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="lv" state="needs-translation">Show</target></trans-unit>
