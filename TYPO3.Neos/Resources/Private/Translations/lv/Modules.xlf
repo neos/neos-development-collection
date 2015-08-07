@@ -7,7 +7,7 @@
 			<target xml:lang="lv" state="translated">Uzklikšķiniet, lai rediģētu</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="lv" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet, lai izdzēstu</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="lv" state="translated">Vai vēlaties atcelt visas izmaiņas šajā {0} darba virsmā?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="lv" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="lv" state="translated">Mēdiji</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="lv" state="translated">Šis modulis ļauj pārvaldīt mediju aktīvus, ieskaitot attēlus, video, audio un dokumentus.</target></trans-unit>
@@ -273,7 +273,7 @@
 			<target xml:lang="lv" state="translated">Lomas</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
-			<target xml:lang="lv" state="translated">Moduļu pārvaldība</target><alt-trans><target xml:lang="lv">Moduļu vadība</target></alt-trans></trans-unit>
+			<target xml:lang="lv" state="translated">Pakotnes pārvaldība</target><alt-trans><target xml:lang="lv">Moduļu pārvaldība</target></alt-trans><alt-trans><target xml:lang="lv">Moduļu vadība</target></alt-trans></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="lv" state="translated">Pakotnes vadības modulis sniedz pārskatu par visām pakotnēm. Ar to jūs varat aktivizēt un deaktivizēt pakotnes, importēt jaunas pakotnes un izdzēst esošās. Tas dod iespēju ieslēgt un izslēgt pakotnes izstrādes kontekstā.</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target xml:lang="lv" state="translated">Elektroniskās adreses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="lv" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vai tiešām vēlaties izdzēst</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="lv" state="translated">Jā, dzēst elektronisko adresi</target></trans-unit>
@@ -358,7 +358,7 @@
 			<target xml:lang="lv" state="translated">Uzklikšķiniet, lai pievienotu jaunu elektronisko adresi</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
-			<target xml:lang="lv" state="translated">Elektroniskās adreses pievienošana</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pievienot elektronisko adresi</target><alt-trans><target xml:lang="lv">Elektroniskās adreses pievienošana</target></alt-trans></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
@@ -389,7 +389,7 @@
 			<target xml:lang="lv" state="translated">Kārtot pēc nosaukuma</target></trans-unit>
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
-			<target xml:lang="lv" state="translated">Kārtot pēc pēdējās modificēšanas</target></trans-unit>
+			<target xml:lang="lv" state="translated">Kārtot pēc pēdējām izmaiņām</target><alt-trans><target xml:lang="lv">Kārtot pēc pēdējās modificēšanas</target></alt-trans></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="lv" state="translated">Pārvelciet uz tag vai kolekciju</target></trans-unit>
@@ -425,82 +425,82 @@
 			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="lv" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt</target></trans-unit>
       <trans-unit id="media.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the asset</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete the asset</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, dzēst aktīvu</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
 				<source>Yes, delete the collection</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete the collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, dzēst kolekciju</target></trans-unit>
       <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete the tag</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, dzēst tagu</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
 				<source>Edit {0}</source>
-			<target xml:lang="lv" state="needs-translation">Edit {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt {0}</target></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
-			<target xml:lang="lv" state="needs-translation">Search in assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Meklēt aktīvos</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
 			<target xml:lang="lv" state="translated">Meklēšana</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
-			<target xml:lang="lv" state="needs-translation">{0} items</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} elementi</target><alt-trans><target xml:lang="lv">{0} elements</target></alt-trans></trans-unit>
       <trans-unit id="media.search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
-			<target xml:lang="lv" state="needs-translation">found matching "{0}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">atrasts "{0}"</target><alt-trans><target xml:lang="lv">atrasts atbilstošs "{0}"</target></alt-trans></trans-unit>
       <trans-unit id="media.upload" xml:space="preserve">
 				<source>Upload</source>
-			<target xml:lang="lv" state="needs-translation">Upload</target></trans-unit>
+			<target xml:lang="lv" state="translated">Augšupielādēt</target></trans-unit>
       <trans-unit id="media.filterOptions" xml:space="preserve">
 				<source>Filter options</source>
-			<target xml:lang="lv" state="needs-translation">Filter options</target></trans-unit>
+			<target xml:lang="lv" state="translated">Filtra parametri</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
-			<target xml:lang="lv" state="needs-translation">Display all asset types</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt visus aktīvu veidus</target></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
-			<target xml:lang="lv" state="needs-translation">Only display image assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt tikai attēlus</target></trans-unit>
       <trans-unit id="media.filter.title.documents" xml:space="preserve">
 				<source>Only display document assets</source>
-			<target xml:lang="lv" state="needs-translation">Only display document assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt tikai dokumentus</target></trans-unit>
       <trans-unit id="media.filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target xml:lang="lv" state="needs-translation">Only display video assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt tikai video</target></trans-unit>
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
-			<target xml:lang="lv" state="needs-translation">Only display audio assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt tikai audio</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="lv" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="lv" state="translated">Viss</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="lv" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēli</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="lv" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dokumenti</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="lv" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="lv" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="lv" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="lv" state="translated">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target xml:lang="lv" state="needs-translation">Sort options</target></trans-unit>
+			<target xml:lang="lv" state="translated">Kārtošanas iespējas</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target xml:lang="lv" state="needs-translation">List view</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt saraksta veidā</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
-			<target xml:lang="lv" state="needs-translation">Thumbnail view</target></trans-unit>
+			<target xml:lang="lv" state="translated">Parādīt ikonu veidā</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="lv" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="lv" state="translated">Kolekcijas</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target xml:lang="lv" state="needs-translation">Edit collections</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt kolekcijas</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
 			<target xml:lang="lv" state="translated">Rediģēt kolekciju</target></trans-unit>
@@ -527,88 +527,88 @@
 			<target xml:lang="lv" state="translated">Rediģēt tagu</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
-			<target xml:lang="lv" state="needs-translation">Delete tag</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dzēst tagu</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
-			<target xml:lang="lv" state="needs-translation">Create tag</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot tagu</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target xml:lang="lv" state="needs-translation">Untagged assets</target></trans-unit>
+			<target xml:lang="lv" state="translated">Aktīvi bez tagiem</target></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
-			<target xml:lang="lv" state="needs-translation">Untagged</target></trans-unit>
+			<target xml:lang="lv" state="translated">Bez tagiem</target></trans-unit>
       <trans-unit id="media.maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="lv" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
+			<target xml:lang="lv" state="translated">Maksimālais augšuplādējamā faila lielums {0}</target></trans-unit>
       <trans-unit id="media.dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target xml:lang="lv" state="needs-translation">Drop files here</target></trans-unit>
+			<target xml:lang="lv" state="translated">Velciet failus šeit</target></trans-unit>
       <trans-unit id="media.clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
-			<target xml:lang="lv" state="needs-translation">or click to upload</target></trans-unit>
+			<target xml:lang="lv" state="translated">vai uzklikšķiniet lai augšupielādētu</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target xml:lang="lv" state="needs-translation">Choose file</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izvēlies failu</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
-			<target xml:lang="lv" state="needs-translation">No Assets found.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav atrasts aktīvs.</target></trans-unit>
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
-			<target xml:lang="lv" state="needs-translation">Basics</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pamati</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
 			<target xml:lang="lv" state="translated">Dzēst</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="lv" state="needs-translation">Click to delete</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet, lai izdzēstu</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="lv" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
 			<target xml:lang="lv" state="translated">Metadati</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
-			<target xml:lang="lv" state="needs-translation">Filename</target></trans-unit>
+			<target xml:lang="lv" state="translated">Faila nosaukums</target></trans-unit>
       <trans-unit id="media.metadata.lastModified" xml:space="preserve">
 				<source>Last modified (resource)</source>
-			<target xml:lang="lv" state="needs-translation">Last modified (resource)</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pēdējās izmaiņas (resursu)</target></trans-unit>
       <trans-unit id="media.metadata.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="lv" state="translated">Faila izmērs</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
-			<target xml:lang="lv" state="needs-translation">Dimensions</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izmēri</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="lv" state="translated">Veids</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target xml:lang="lv" state="needs-translation">Identifier</target></trans-unit>
+			<target xml:lang="lv" state="translated">Identifikators</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="lv" state="translated">Priekšskats</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
-			<target xml:lang="lv" state="needs-translation">Cannot upload the file</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nevar augšupielādēt failu</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="lv" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Faila lielums {0} pārsniedz pieļaujamo robežu {1}</target></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve">
 				<source>for the file</source>
-			<target xml:lang="lv" state="needs-translation">for the file</target></trans-unit>
+			<target xml:lang="lv" state="translated">failam</target></trans-unit>
       <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="lv" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tikai daži faili tika veiksmīgi augšupielādēti. Atsvaidziniet lapu, lai redzētu, ko izdevās ielādēt.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="lv" state="needs-translation">Tagging the asset failed.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Neizdevās pievienot tagu resursam.</target></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="lv" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Neizdevās pievienojot aktīvu kolekcijai.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
-			<target xml:lang="lv" state="needs-translation">Creating</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveide</target></trans-unit>
     </body>
   </file>
 </xliff>
