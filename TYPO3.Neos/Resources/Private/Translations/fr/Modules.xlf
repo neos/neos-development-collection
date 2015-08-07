@@ -129,7 +129,7 @@
 			<target xml:lang="fr">Le module de gestion des utilisateurs vous donne un aperçu de tous les utilisateurs backend. Vous pouvez les regrouper par leurs propriétés, afin de pouvoir avoir une vue d'ensemble sur leurs autorisations, points de montage de fichiers, appartenance aux groupes etc... Ce module est un outil indispensable afin de s'assurer que les utilisateurs sont correctement configurés.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
-			<target xml:lang="fr">Apercu</target></trans-unit>
+			<target xml:lang="fr">Apercu</target><alt-trans><target xml:lang="fr">Aperçu</target></alt-trans></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target xml:lang="fr">Afficher</target></trans-unit>
