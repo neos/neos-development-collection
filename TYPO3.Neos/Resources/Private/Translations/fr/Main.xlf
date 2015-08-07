@@ -17,7 +17,7 @@
 			<target xml:lang="fr">Annuler</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target xml:lang="fr">Selectionner</target><alt-trans><target xml:lang="fr">Selectionnez</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Selectionner</target><alt-trans><target xml:lang="fr">Sélectionner</target></alt-trans><alt-trans><target xml:lang="fr">Selectionnez</target></alt-trans></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
 			<target xml:lang="fr">Taper pour rechercher</target><alt-trans><target xml:lang="fr">Tapez pour rechercher</target></alt-trans></trans-unit>
@@ -56,7 +56,7 @@
 			<target xml:lang="fr">Annuler les modifications</target><alt-trans><target xml:lang="fr">Annuler</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target xml:lang="fr">Éditer le titre</target></trans-unit>
+			<target xml:lang="fr">Éditer le titre</target><alt-trans><target xml:lang="fr">Editer le titre</target></alt-trans></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
 			<target xml:lang="fr">Edition / Aperçu</target></trans-unit>
@@ -65,7 +65,7 @@
 			<target xml:lang="fr">Edition</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="fr">Masquer / afficher</target></trans-unit>
+			<target xml:lang="fr">Masquer / afficher</target><alt-trans><target xml:lang="fr">Masquer / Afficher</target></alt-trans></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="fr">En cours</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target xml:lang="fr">Coller avant</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target xml:lang="fr">Collez dans</target></trans-unit>
+			<target xml:lang="fr">Collez dans</target><alt-trans><target xml:lang="fr">Coller dans</target></alt-trans></trans-unit>
       <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target xml:lang="fr">Mot de passe</target></trans-unit>
@@ -146,7 +146,7 @@
 			<target xml:lang="fr">Libellé</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Node type</source>
-			<target xml:lang="fr">Type de nœud</target></trans-unit>
+			<target xml:lang="fr">Type de nœud</target><alt-trans><target xml:lang="fr">Type de noeud</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="fr">Chemin</target></trans-unit>
