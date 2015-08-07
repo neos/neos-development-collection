@@ -26,16 +26,16 @@
 			<target xml:lang="lv" state="translated">Darba virsmas</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="lv" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šis modulis ietver visu esošās darbavirsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target><alt-trans><target xml:lang="lv">Šis modulis ietver visu darbavirsmas elementu apskatu, dod iespēju tos komentēt un publicēt.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes</source>
 			<target xml:lang="lv" state="translated">Nepublicētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target xml:lang="lv" state="needs-translation">Discard selected changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atcelt iezīmētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
-			<target xml:lang="lv" state="needs-translation">Publish selected changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Publicēt iezīmētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="lv" state="translated">Atcelt visas izmaiņas</target></trans-unit>
@@ -44,7 +44,7 @@
 			<target xml:lang="lv" state="translated">Publicēt visas izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
-			<target xml:lang="lv" state="needs-translation">Legend</target></trans-unit>
+			<target xml:lang="lv" state="translated">Apzīmējumi</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="lv" state="translated">dzēsts</target></trans-unit>
@@ -62,74 +62,74 @@
 			<target xml:lang="lv" state="translated">labots</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="lv" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav nepublicētu izmaiņu šajā darba virsmā.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="lv" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vai vēlaties atcelt visas izmaiņas šajā {0} darba virsmā?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="lv" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="lv" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šis modulis ļauj pārvaldīt mediju aktīvus, ieskaitot attēlus, video, audio un dokumentus.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
 			<target xml:lang="lv" state="translated">Vēsture</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="lv" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šis modulis sniedz apskatu par visām darbībām, kas ietekmē šo Neos instalāciju.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="lv" state="needs-translation">Here's what happened recently in Neos:</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lūk, kas nesen notika Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="lv" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav reģistrētu notikumu, ko varētu parādīt šajā vēsturē.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} created the {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izveidoja {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izdzēsa {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izveidoja versiju {1} no {2} {3}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} changed {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izmainīja {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} moved {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} pārvietoja {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} copied {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} nokopēja {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="lv" state="needs-translation">{0} renamed {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} pārdēvēja {1} "{2}" uz "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izmainīja saturu {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izveidoja jaunu lietotāju "{1}" {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target xml:lang="lv" state="needs-translation">{0} deleted the account "{1}" of {2}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} izdzēsa kontu "{1}" {2}.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="lv" state="needs-translation">Administration</target></trans-unit>
+			<target xml:lang="lv" state="translated">Administrācija</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="lv" state="needs-translation">Contains multiple modules related to administration</target></trans-unit>
+			<target xml:lang="lv" state="translated">Satur vairākus administrācijas moduļus</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="lv" state="needs-translation">User Management</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotāju pārvaldība</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="lv" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotāja pārvaldības modulis sniedz pārskatu par visiem sistēmas lietotājiem. Tos var grupēt pēc to atļaujām, pieslēgumiem, dalībnieku grupām utt. Šis modulis ir neaizstājams, lai konfigurētu lietotāju uzstādījumus.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve">
 				<source>Overview</source>
-			<target xml:lang="lv" state="needs-translation">Overview</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pārskats</target></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="lv" state="needs-translation">Show</target></trans-unit>
