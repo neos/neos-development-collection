@@ -10,7 +10,7 @@
 			<target xml:lang="fr" state="translated">Image</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="fr" state="needs-translation">Alternative text</target></trans-unit>
+			<target xml:lang="fr" state="translated">Texte alternatif</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="fr">Titre</target></trans-unit>
