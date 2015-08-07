@@ -380,7 +380,7 @@
 			<target xml:lang="uk" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="uk" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="uk" state="translated">Тип</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="uk" state="needs-translation">Tags</target></trans-unit>
@@ -443,7 +443,7 @@
 			<target xml:lang="uk" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="uk" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="uk" state="translated">Пошук</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="uk" state="needs-translation">{0} items</target></trans-unit>
@@ -479,13 +479,13 @@
 			<target xml:lang="uk" state="needs-translation">Images</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="uk" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="uk" state="translated">Документи</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="uk" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="uk" state="translated">Відео</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="uk" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="uk" state="translated">Аудіо</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="uk" state="needs-translation">Sort options</target></trans-unit>
@@ -566,7 +566,7 @@
 			<target xml:lang="uk" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="uk" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="uk" state="translated">Метадані</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="uk" state="needs-translation">Filename</target></trans-unit>
@@ -581,7 +581,7 @@
 			<target xml:lang="uk" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="uk" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="uk" state="translated">Тип</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="uk" state="needs-translation">Identifier</target></trans-unit>
@@ -608,7 +608,7 @@
 			<target xml:lang="uk" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
-			<target xml:lang="uk" state="needs-translation">Creating</target></trans-unit>
+			<target xml:lang="uk" state="translated">Створення</target></trans-unit>
     </body>
   </file>
 </xliff>
