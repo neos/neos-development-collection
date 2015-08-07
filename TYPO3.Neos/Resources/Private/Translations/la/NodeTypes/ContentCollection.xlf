@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Content Collection</source>
-			<target xml:lang="la-LA" state="translated">crwdns285:0crwdne285:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns285:0crwdne285:0</target></trans-unit>
     </body>
   </file>
 </xliff>
