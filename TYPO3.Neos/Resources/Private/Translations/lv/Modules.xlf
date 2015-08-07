@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="lv" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="lv" state="translated">Uzklikšķiniet, lai rediģētu</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="lv" state="needs-translation">Click to delete</target></trans-unit>
@@ -13,23 +13,23 @@
 			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="lv" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atpakaļ</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="lv" state="needs-translation">Management</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vadība</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="lv" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
+			<target xml:lang="lv" state="translated">Satur vairākus moduļus, kas saistīti ar satura pārvaldību</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="lv" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="lv" state="translated">Darba virsmas</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="lv" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes</source>
-			<target xml:lang="lv" state="needs-translation">Unpublished changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nepublicētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="lv" state="needs-translation">Discard selected changes</target></trans-unit>
@@ -38,28 +38,28 @@
 			<target xml:lang="lv" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="lv" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atcelt visas izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="lv" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="lv" state="translated">Publicēt visas izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
 			<target xml:lang="lv" state="needs-translation">Legend</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="lv" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="lv" state="translated">dzēsts</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="lv" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="lv" state="translated">izveidots</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="lv" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="lv" state="translated">pārvietots</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="lv" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="lv" state="translated">paslēpts</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="lv" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="lv" state="translated">labots</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="lv" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
@@ -165,7 +165,7 @@
 			<target xml:lang="lv" state="translated">Parole</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
-			<target xml:lang="lv" state="needs-translation">Repeat password</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atkārtot paroli</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="lv" state="needs-translation">Role(s)</target></trans-unit>
@@ -201,13 +201,13 @@
 			<target xml:lang="lv" state="translated">Vārds</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="lv" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tēvvārds</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="lv" state="translated">Uzvārds</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="lv" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="lv" state="translated">Cits nosaukums</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="lv" state="needs-translation">Accounts</target></trans-unit>
@@ -216,13 +216,13 @@
 			<target xml:lang="lv" state="translated">Lietotājvārds</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="lv" state="needs-translation">Roles</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lomas</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses" xml:space="preserve">
 				<source>Electronic Addresses</source>
 			<target xml:lang="lv" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="lv" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="lv" state="translated">Galvenais</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="lv" state="needs-translation">N/A</target></trans-unit>
@@ -255,53 +255,53 @@
 			<target xml:lang="lv" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
-			<target xml:lang="lv" state="needs-translation">Account</target></trans-unit>
+			<target xml:lang="lv" state="translated">Konts</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="lv" state="translated">Lietotājvārds</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="lv" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotājvārdu nevar mainīt izmantojot lietotāja interfeisu</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
-			<target xml:lang="lv" state="needs-translation">Save account</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt kontu</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
-			<target xml:lang="lv" state="needs-translation">Repeat password</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atkārtot paroli</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="lv" state="needs-translation">Roles</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lomas</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
-			<target xml:lang="lv" state="needs-translation">Package Management</target></trans-unit>
+			<target xml:lang="lv" state="translated">Moduļu pārvaldība</target><alt-trans><target xml:lang="lv">Moduļu vadība</target></alt-trans></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="lv" state="needs-translation">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
-			<target xml:lang="lv" state="needs-translation">Sites Management</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vietņu pārvaldība</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="lv" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="lv" state="needs-translation">Create site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vietnes izveide</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="lv" state="needs-translation">Create a new site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot jaunu vietni</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
-			<target xml:lang="lv" state="needs-translation">Configuration</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iestatījumi</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target xml:lang="lv" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iestatījuma modulis dod pārskatu par visiem iestatījuma veidiem.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
 			<target xml:lang="lv" state="translated">Lietotājs</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target xml:lang="lv" state="needs-translation">User Settings</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lietotāja iestatījumi</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="lv" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
@@ -340,7 +340,7 @@
 			<target xml:lang="lv" state="translated">Lietotājvārds</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
-			<target xml:lang="lv" state="needs-translation">Roles</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lomas</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
 			<target xml:lang="lv" state="needs-translation">Authentication Provider</target></trans-unit>
@@ -503,28 +503,28 @@
 			<target xml:lang="lv" state="needs-translation">Edit collections</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target xml:lang="lv" state="needs-translation">Edit collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt kolekciju</target></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target xml:lang="lv" state="needs-translation">Delete collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izdzēst kolekciju</target></trans-unit>
       <trans-unit id="media.createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target xml:lang="lv" state="needs-translation">Create collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot kolekciju</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
-			<target xml:lang="lv" state="needs-translation">Enter collection title</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ievadiet kolekcijas nosaukumu</target></trans-unit>
       <trans-unit id="media.allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target xml:lang="lv" state="needs-translation">All collections</target></trans-unit>
+			<target xml:lang="lv" state="translated">Visas kolekcijas</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="lv" state="needs-translation">Tags</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="lv" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tagu rediģēšana</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
-			<target xml:lang="lv" state="needs-translation">Edit tag</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt tagu</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
 			<target xml:lang="lv" state="needs-translation">Delete tag</target></trans-unit>
