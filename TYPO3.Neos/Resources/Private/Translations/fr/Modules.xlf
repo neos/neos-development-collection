@@ -11,9 +11,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fr">Annuler</target></trans-unit>
-      <trans-unit id="back" xml:space="preserve">
+      <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target xml:lang="fr" state="translated">Retour</target></trans-unit>
+			<target xml:lang="fr">Retour</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
@@ -471,69 +471,69 @@
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
 			<target xml:lang="fr" state="translated">Uniquement les fichiers audio</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve">
+      <trans-unit id="media.filter.all" xml:space="preserve" approved="yes">
 				<source>All</source>
-			<target xml:lang="fr" state="translated">Tous</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve">
+			<target xml:lang="fr">Tous</target></trans-unit>
+      <trans-unit id="media.filter.images" xml:space="preserve" approved="yes">
 				<source>Images</source>
-			<target xml:lang="fr" state="translated">Images</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve">
+			<target xml:lang="fr">Images</target></trans-unit>
+      <trans-unit id="media.filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target xml:lang="fr" state="translated">Documents</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve">
+			<target xml:lang="fr">Documents</target></trans-unit>
+      <trans-unit id="media.filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target xml:lang="fr" state="translated">Vidéo</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve">
+			<target xml:lang="fr">Vidéo</target></trans-unit>
+      <trans-unit id="media.filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target xml:lang="fr" state="translated">Audio</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
+			<target xml:lang="fr">Audio</target></trans-unit>
+      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve" approved="yes">
 				<source>Sort options</source>
-			<target xml:lang="fr" state="translated">Options de tri</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve">
+			<target xml:lang="fr">Options de tri</target></trans-unit>
+      <trans-unit id="media.tooltip.listView" xml:space="preserve" approved="yes">
 				<source>List view</source>
-			<target xml:lang="fr" state="translated">Vue Liste</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
+			<target xml:lang="fr">Vue Liste</target></trans-unit>
+      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
-			<target xml:lang="fr" state="translated">Vue miniature</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve">
+			<target xml:lang="fr">Vue miniature</target></trans-unit>
+      <trans-unit id="media.collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target xml:lang="fr" state="translated">Collections</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve">
+			<target xml:lang="fr">Collections</target></trans-unit>
+      <trans-unit id="media.editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target xml:lang="fr" state="translated">Editer des collections</target></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve">
+			<target xml:lang="fr">Editer des collections</target></trans-unit>
+      <trans-unit id="media.editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target xml:lang="fr" state="translated">Editer cette collection</target><alt-trans><target xml:lang="fr">Editer des collections</target></alt-trans></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve">
+			<target xml:lang="fr">Editer cette collection</target><alt-trans><target xml:lang="fr">Editer des collections</target></alt-trans></trans-unit>
+      <trans-unit id="media.deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
-			<target xml:lang="fr" state="translated">Supprimer cette collection</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve">
+			<target xml:lang="fr">Supprimer cette collection</target></trans-unit>
+      <trans-unit id="media.createCollection" xml:space="preserve" approved="yes">
 				<source>Create collection</source>
-			<target xml:lang="fr" state="translated">Créer une collection</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
+			<target xml:lang="fr">Créer une collection</target></trans-unit>
+      <trans-unit id="media.newCollection.placeholder" xml:space="preserve" approved="yes">
 				<source>Enter collection title</source>
-			<target xml:lang="fr" state="translated">Entrez le titre de la collection</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve">
+			<target xml:lang="fr">Entrez le titre de la collection</target></trans-unit>
+      <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
-			<target xml:lang="fr" state="translated">Toutes les collections</target></trans-unit>
+			<target xml:lang="fr">Toutes les collections</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="fr" state="translated">Étiquettes</target><alt-trans><target xml:lang="fr">Tags</target></alt-trans></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve">
+      <trans-unit id="media.editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
-			<target xml:lang="fr" state="translated">Éditer les tags</target></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve">
+			<target xml:lang="fr">Éditer les tags</target></trans-unit>
+      <trans-unit id="media.editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target xml:lang="fr" state="translated">Editer l’étiquette</target></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve">
+			<target xml:lang="fr">Editer l’étiquette</target></trans-unit>
+      <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
-			<target xml:lang="fr" state="translated">Supprimer l’étiquette</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve">
+			<target xml:lang="fr">Supprimer l’étiquette</target></trans-unit>
+      <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
-			<target xml:lang="fr" state="translated">Créer une étiquette</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve">
+			<target xml:lang="fr">Créer une étiquette</target></trans-unit>
+      <trans-unit id="media.untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target xml:lang="fr" state="translated">Ressources multimédias non étiquetées</target></trans-unit>
+			<target xml:lang="fr">Ressources multimédias non étiquetées</target></trans-unit>
       <trans-unit id="media.untagged" xml:space="preserve">
 				<source>Untagged</source>
 			<target xml:lang="fr" state="translated">Sans étiquette</target></trans-unit>
