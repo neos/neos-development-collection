@@ -236,28 +236,28 @@
 			<target xml:lang="lv" state="translated">Gaidāmās izmaiņas</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="lv" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jūsu personīgā darba virsma satur nepublicētas izmaiņas. Lai pārslēgtos uz citu vietu darba virsmā, jums nepieciešams vispirms publicēt vai atcelt veiktās izmaiņas.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="lv" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lūdzu, pārskatiet savas izmaiņas, publicēt vai atcelt tās, un vēlreiz izvēlieties citu vietu darba virsmā.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="lv" state="translated">Rediģēšānas režīmi</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="lv" state="needs-translation">Preview Central</target></trans-unit>
+			<target xml:lang="lv" state="translated">Priekšskatījuma centrāle</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="lv" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="lv" state="translated">Joprojām ir nesaglabātas izmaiņas. Ko jūs vēlaties darīt ar viņām?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="lv" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iezīmētais elements</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="lv" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ir lauki, kas nav pareizi aizpildīti.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="lv" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lauki, kas atzīmēti ar kļūdām vai vēl nav pareizi aizpildīti. Lūdzu, laukus aizpildiet pareizi.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
 			<target xml:lang="lv" state="translated">Turpināt rediģēšanu</target></trans-unit>
