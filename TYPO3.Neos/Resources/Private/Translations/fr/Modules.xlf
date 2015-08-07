@@ -349,7 +349,7 @@
 			<target xml:lang="fr">Adresses électroniques</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fr">Confirmez-vous la suppression</target></trans-unit>
+			<target xml:lang="fr">Confirmez-vous la suppression</target><alt-trans><target xml:lang="fr">Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="fr">Oui, supprimer l'adresse électronique</target></trans-unit>
@@ -386,10 +386,10 @@
 			<target xml:lang="fr" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.sortByName" xml:space="preserve">
 				<source>Sort by name</source>
-			<target xml:lang="fr" state="needs-translation">Sort by name</target></trans-unit>
+			<target xml:lang="fr" state="translated">Trier par nom</target></trans-unit>
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
-			<target xml:lang="fr" state="needs-translation">Sort by last modified</target></trans-unit>
+			<target xml:lang="fr" state="translated">Trier par dernière modification</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="fr" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -425,7 +425,7 @@
 			<target xml:lang="fr">Annuler</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="fr" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="fr" state="translated">Enregistrer</target></trans-unit>
       <trans-unit id="media.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the asset</source>
 			<target xml:lang="fr" state="needs-translation">Yes, delete the asset</target></trans-unit>
@@ -563,7 +563,7 @@
 			<target xml:lang="fr" state="translated">Cliquer pour supprimer</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="fr" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="fr" state="translated">Enregistrer</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
 			<target xml:lang="fr">Métadonnées</target></trans-unit>
