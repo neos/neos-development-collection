@@ -199,7 +199,7 @@
 			<target xml:lang="fr">Cliquez ici pour ouvrir le lien {0}.</target><alt-trans><target xml:lang="fr">Cliquez ici pour continuer vers la page externe {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target xml:lang="fr">(aucune cible n'a été sélectionné)</target></trans-unit>
+			<target xml:lang="fr">(aucune cible n'a été sélectionné)</target><alt-trans><target xml:lang="fr">(aucune cible n'a été sélectionnée)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="fr">Il s'agit d'un raccourci vers la première sous-page. &amp;lt;br /&amp;gt; Cliquez sur {0} pour continuer vers la sous-page.</target></trans-unit>
@@ -221,7 +221,7 @@
 			<target xml:lang="fr">Ignorer toutes les modifications</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="fr">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></trans-unit>
+			<target xml:lang="fr">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target><alt-trans><target xml:lang="fr">Etes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target xml:lang="fr">Publier tous</target></trans-unit>
@@ -230,16 +230,16 @@
 			<target xml:lang="fr">Publier toutes les modifications</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="fr">Êtes-vous sûr de vouloir publier toutes les modifications ?</target></trans-unit>
+			<target xml:lang="fr">Êtes-vous sûr de vouloir publier toutes les modifications ?</target><alt-trans><target xml:lang="fr">Etes-vous sûr de vouloir publier toutes les modifications ?</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
 			<target xml:lang="fr">Modifications en attente</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="fr">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter  les changements en attente.</target></trans-unit>
+			<target xml:lang="fr">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter  les changements en attente.</target><alt-trans><target xml:lang="fr">Votre espace de travail personnel contient des modifications non publiées. Pour changer d'espace de travail, vous devez publier ou rejeter les modifications en attente.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="fr">Veuillez consulter vos modifications, publiez ou rejetez-les et puis choisissez un nouvel espace de travail cible à nouveau.</target></trans-unit>
+			<target xml:lang="fr">Veuillez consulter vos modifications, publiez ou rejetez-les et puis choisissez un nouvel espace de travail cible à nouveau.</target><alt-trans><target xml:lang="fr">Veuillez consulter vos modifications, publiez ou rejetez-les. Puis choisissez un nouvel espace de travail.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="fr">Modes d'édition</target></trans-unit>
@@ -248,7 +248,7 @@
 			<target xml:lang="fr">Preview Central</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="fr">Vous avez encore des modifications. Que voulez-vous faire avec ?</target></trans-unit>
+			<target xml:lang="fr">Vous avez encore des modifications. Que voulez-vous faire avec ?</target><alt-trans><target xml:lang="fr">Vous avez encore des modifications. Que souhaitez-vous faire avec ?</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
 			<target xml:lang="fr">Élément sélectionné</target></trans-unit>
@@ -344,7 +344,7 @@
 			<target xml:lang="fr">Un nombre entier valide est attendu.</target></trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus.</target></trans-unit>
+			<target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus.</target><alt-trans><target xml:lang="fr">Seules les lettres, les nombres, les espaces et certaines ponctuations sont attendues.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
 			<target xml:lang="fr">Cette propriété est obligatoire.</target></trans-unit>
@@ -353,7 +353,7 @@
 			<target xml:lang="fr">Un nombre valide est attendu.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
-			<target xml:lang="fr">Veuillez entrer un numéro valide entre {{minimum}} et {{maximum}}</target></trans-unit>
+			<target xml:lang="fr">Veuillez entrer un numéro valide entre {{minimum}} et {{maximum}}</target><alt-trans><target xml:lang="fr">Veuillez entrer un nombre valide entre {{minimum}} et {{maximum}}</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
 			<target xml:lang="fr">Le sujet donné ne correspond pas au modèle ({{pattern}})</target></trans-unit>
@@ -371,13 +371,13 @@
 			<target xml:lang="fr">Contenu</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fr">Confirmez-vous la suppression</target></trans-unit>
+			<target xml:lang="fr">Confirmez-vous la suppression</target><alt-trans><target xml:lang="fr">Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
 			<target xml:lang="fr">Créer un nouveau (maintenir enfoncé pour sélectionner la position)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="fr">Cet action supprimera l'élément</target></trans-unit>
+			<target xml:lang="fr">Cet action supprimera l'élément</target><alt-trans><target xml:lang="fr">Cette action supprimera l'élément</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
 			<target xml:lang="fr">et ses sous-éléments</target></trans-unit>
@@ -392,13 +392,13 @@
 			<target xml:lang="fr">Hauteur</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="fr">Confirmez-vous la suppression</target></trans-unit>
+			<target xml:lang="fr">Confirmez-vous la suppression</target><alt-trans><target xml:lang="fr">Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
 			<target xml:lang="fr">cet élément</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
-			<target xml:lang="fr">Ceci supprimera l'élément.</target></trans-unit>
+			<target xml:lang="fr">Ceci supprimera l'élément.</target><alt-trans><target xml:lang="fr">Cet action supprimera l'élément.</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="fr">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
@@ -410,10 +410,10 @@
 			<target xml:lang="fr">Recadrer</target></trans-unit>
       <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target xml:lang="fr">Largeur </target></trans-unit>
+			<target xml:lang="fr">Largeur </target><alt-trans><target xml:lang="fr">Largeur</target></alt-trans></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="fr">Propriété requise manquante: </target><alt-trans><target xml:lang="fr">Propriété requise manquante:</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Propriété requise manquante: </target><alt-trans><target xml:lang="fr">Propriété requise manquante:</target></alt-trans><alt-trans><target xml:lang="fr">Propriété requise manquante :</target></alt-trans></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="fr">Espaces de travail</target></trans-unit>
