@@ -17,10 +17,10 @@
 			<target xml:lang="uk" state="translated">Відмінити</target><alt-trans><target xml:lang="uk">Скасувати</target></alt-trans></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="uk" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вибрати</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="uk" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="uk" state="translated">Введіть для пошуку</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="uk" state="translated">Вміст</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="uk" state="translated">Приховати / Показати</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="uk" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="uk" state="translated">Завантаження</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="uk" state="translated">Новий(а) після</target></trans-unit>
@@ -86,7 +86,7 @@
 			<target xml:lang="uk" state="translated">OK</target><alt-trans><target xml:lang="uk">ТАК</target></alt-trans></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="uk" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сторінка</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="uk" state="translated">Вставити</target></trans-unit>
@@ -110,7 +110,7 @@
 			<target xml:lang="uk" state="translated">Опублікувати</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="uk" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="uk" state="translated">Опубліковано</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="uk" state="needs-translation">Target workspace</target></trans-unit>
@@ -128,7 +128,7 @@
 			<target xml:lang="uk" state="translated">Збережені</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="uk" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="uk" state="translated">Пошук</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="uk" state="translated">Відкрити / закрити інспектор</target></trans-unit>
@@ -137,16 +137,16 @@
 			<target xml:lang="uk" state="translated">Ім'я користувача</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="uk" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="uk" state="translated">ви</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="uk" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="uk" state="translated">[без назви]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="uk" state="needs-translation">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="uk" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="uk" state="translated">Тип вузла</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			<target xml:lang="uk" state="needs-translation">Path</target></trans-unit>
