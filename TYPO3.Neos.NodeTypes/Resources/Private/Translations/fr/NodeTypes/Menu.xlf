@@ -2,24 +2,24 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="fr">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve">
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Menu</source>
-			<target xml:lang="fr" state="translated">Menu</target></trans-unit>
-      <trans-unit id="groups.options" xml:space="preserve">
+			<target xml:lang="fr">Menu</target></trans-unit>
+      <trans-unit id="groups.options" xml:space="preserve" approved="yes">
 				<source>Options</source>
-			<target xml:lang="fr" state="translated">Options</target></trans-unit>
-      <trans-unit id="properties.startLevel" xml:space="preserve">
+			<target xml:lang="fr">Options</target></trans-unit>
+      <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
-			<target xml:lang="fr" state="translated">Niveau de départ</target></trans-unit>
-      <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
+			<target xml:lang="fr">Niveau de départ</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="fr" state="translated">Quatre niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Quatre niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
-      <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
+			<target xml:lang="fr">Quatre niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Quatre niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="fr" state="translated">Trois niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Trois niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
-      <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
+			<target xml:lang="fr">Trois niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Trois niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve" approved="yes">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="fr" state="translated">Deux niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Deux niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Deux niveaux au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Deux niveaux supérieur à la page actuelle</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
 				<source>One Level Above Current Page</source>
 			<target xml:lang="fr" state="translated">Un niveau au-dessus de la page actuelle</target><alt-trans><target xml:lang="fr">Un niveau supérieur à la page actuelle</target></alt-trans><alt-trans><target xml:lang="fr">Un niveau supérieur à la page en cours</target></alt-trans></trans-unit>
