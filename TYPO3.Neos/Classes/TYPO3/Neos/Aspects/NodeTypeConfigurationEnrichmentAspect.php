@@ -136,6 +136,10 @@ class NodeTypeConfigurationEnrichmentAspect {
 			if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
 				$this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
 			}
+
+			if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['aloha'], 'placeholder')) {
+				$propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
+			}
 		}
 	}
 
