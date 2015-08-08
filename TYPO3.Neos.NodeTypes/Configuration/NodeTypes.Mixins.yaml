@@ -27,7 +27,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: '<p>Enter text here</p>'
+          placeholder: i18n
           autoparagraph: TRUE
           'format':
             'strong': TRUE
@@ -103,7 +103,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: '<p>Enter caption here</p>'
+          placeholder: i18n
           autoparagraph: TRUE
 
 # Image alignment mixin
