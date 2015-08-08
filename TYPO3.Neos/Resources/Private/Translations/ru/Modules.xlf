@@ -117,7 +117,7 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="ru" state="translated">Администрирование</target><alt-trans><target xml:lang="ru">Администрация</target></alt-trans></trans-unit>
+			<target xml:lang="ru" state="translated">Администрация</target><alt-trans><target xml:lang="ru">Администрирование</target></alt-trans></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
 			<target xml:lang="ru" state="translated">Содержит модули администрации</target><alt-trans><target xml:lang="ru">Содержит модули администрирования</target></alt-trans></trans-unit>

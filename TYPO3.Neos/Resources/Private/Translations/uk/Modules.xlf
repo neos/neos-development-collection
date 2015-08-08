@@ -13,7 +13,7 @@
 			<target xml:lang="uk" state="translated">Відмінити</target><alt-trans><target xml:lang="uk">Скасувати</target></alt-trans></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="uk" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="uk" state="translated">Назад</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -44,13 +44,13 @@
 			<target xml:lang="uk" state="translated">Опублікувати всі зміни</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
-			<target xml:lang="uk" state="needs-translation">Legend</target></trans-unit>
+			<target xml:lang="uk" state="translated">Легенда</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="uk" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="uk" state="translated">видалено</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="uk" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="uk" state="translated">створено</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
 			<target xml:lang="uk" state="needs-translation">moved</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="uk" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="uk" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="uk" state="translated">Медіа</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="uk" state="translated">Цей модуль дозволяє управляти медіа активами, у тому числі фотографіями, відео, аудіо та документами.</target></trans-unit>
@@ -195,7 +195,7 @@
 			<target xml:lang="uk" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="uk" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="uk" state="needs-translation">First Name</target></trans-unit>
@@ -365,7 +365,7 @@
 			<target xml:lang="uk" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="uk" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="uk" state="needs-translation">Label</target></trans-unit>
