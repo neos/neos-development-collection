@@ -14,9 +14,9 @@
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="pl">Przekieruj na</target></trans-unit>
-      <trans-unit id="properties.target" xml:space="preserve">
+      <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target xml:lang="pl" state="translated">Wybierz cel</target></trans-unit>
+			<target xml:lang="pl">Cel</target><alt-trans><target xml:lang="pl">Wybierz cel</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
 			<target xml:lang="pl">Pierwszy węzeł podrzędny</target></trans-unit>
