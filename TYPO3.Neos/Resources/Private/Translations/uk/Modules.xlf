@@ -74,7 +74,7 @@
 			<target xml:lang="uk" state="translated">Цей модуль дозволяє управляти медіа активами, у тому числі фотографіями, відео, аудіо та документами.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="uk" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="uk" state="translated">Історія</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="uk" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
@@ -174,10 +174,10 @@
 			<target xml:lang="uk" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="uk" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ім'я</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="uk" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Прізвище</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="uk" state="needs-translation">User Preferences</target></trans-unit>
@@ -198,16 +198,16 @@
 			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="uk" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ім'я</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="uk" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">По батькові</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="uk" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Прізвище</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="uk" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Інші назви</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="uk" state="needs-translation">Accounts</target></trans-unit>
@@ -222,16 +222,16 @@
 			<target xml:lang="uk" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="uk" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="uk" state="translated">Первинний</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="uk" state="needs-translation">N/A</target></trans-unit>
       <trans-unit id="users.show.deleteUser" xml:space="preserve">
 				<source>Delete User</source>
-			<target xml:lang="uk" state="needs-translation">Delete User</target></trans-unit>
+			<target xml:lang="uk" state="translated">Видалити користувача</target></trans-unit>
       <trans-unit id="users.show.editUser" xml:space="preserve">
 				<source>Edit User</source>
-			<target xml:lang="uk" state="needs-translation">Edit User</target></trans-unit>
+			<target xml:lang="uk" state="translated">Редагувати користувача</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="uk" state="needs-translation">You are logged in as this user and you cannot delete yourself.</target></trans-unit>
@@ -243,7 +243,7 @@
 			<target xml:lang="uk" state="needs-translation">Do you really want to delete the user "{0}"?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
 				<source>Yes, delete the user</source>
-			<target xml:lang="uk" state="needs-translation">Yes, delete the user</target></trans-unit>
+			<target xml:lang="uk" state="translated">Так, видаліть користувача</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
 			<target xml:lang="uk" state="needs-translation">This will delete the user, the related accounts and his personal workspace, including all unpublished content.</target></trans-unit>
@@ -285,13 +285,13 @@
 			<target xml:lang="uk" state="translated">Модуль управління сайтів надає огляд всіх сайтів. Можна редагувати, додавати і видаляти інформацію про ваші сайти, такі як додавання нового домену.</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="uk" state="needs-translation">Create site</target></trans-unit>
+			<target xml:lang="uk" state="translated">Створити сайт</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="uk" state="needs-translation">Create a new site</target></trans-unit>
+			<target xml:lang="uk" state="translated">Створити новий сайт</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
-			<target xml:lang="uk" state="needs-translation">Configuration</target></trans-unit>
+			<target xml:lang="uk" state="translated">конфігурація</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="uk" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
@@ -362,7 +362,7 @@
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="uk" state="needs-translation">Name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ім'я</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
@@ -377,7 +377,7 @@
 			<target xml:lang="uk" state="needs-translation">Last modified</target></trans-unit>
       <trans-unit id="media.field.fileSize" xml:space="preserve">
 				<source>File size</source>
-			<target xml:lang="uk" state="needs-translation">File size</target></trans-unit>
+			<target xml:lang="uk" state="translated">Розмір файлу</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="uk" state="translated">Тип</target></trans-unit>
@@ -473,7 +473,7 @@
 			<target xml:lang="uk" state="needs-translation">Only display audio assets</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="uk" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="uk" state="translated">Всі</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
 			<target xml:lang="uk" state="needs-translation">Images</target></trans-unit>
@@ -524,13 +524,13 @@
 			<target xml:lang="uk" state="needs-translation">Edit tags</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
-			<target xml:lang="uk" state="needs-translation">Edit tag</target></trans-unit>
+			<target xml:lang="uk" state="translated">Редагувати тег</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
-			<target xml:lang="uk" state="needs-translation">Delete tag</target></trans-unit>
+			<target xml:lang="uk" state="translated">Видалити тег</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
-			<target xml:lang="uk" state="needs-translation">Create tag</target></trans-unit>
+			<target xml:lang="uk" state="translated">Створити тег</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
 			<target xml:lang="uk" state="needs-translation">Untagged assets</target></trans-unit>
@@ -548,13 +548,13 @@
 			<target xml:lang="uk" state="needs-translation">or click to upload</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target xml:lang="uk" state="needs-translation">Choose file</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вибрати файл</target></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
 			<target xml:lang="uk" state="needs-translation">No Assets found.</target></trans-unit>
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
-			<target xml:lang="uk" state="needs-translation">Basics</target></trans-unit>
+			<target xml:lang="uk" state="translated">Основи</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
 			<target xml:lang="uk" state="translated">Видалити</target></trans-unit>
@@ -575,7 +575,7 @@
 			<target xml:lang="uk" state="needs-translation">Last modified (resource)</target></trans-unit>
       <trans-unit id="media.metadata.fileSize" xml:space="preserve">
 				<source>File size</source>
-			<target xml:lang="uk" state="needs-translation">File size</target></trans-unit>
+			<target xml:lang="uk" state="translated">Розмір файлу</target></trans-unit>
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
 			<target xml:lang="uk" state="needs-translation">Dimensions</target></trans-unit>
