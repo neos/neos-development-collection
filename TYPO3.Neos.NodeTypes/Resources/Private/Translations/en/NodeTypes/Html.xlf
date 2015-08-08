@@ -11,6 +11,9 @@
 			<trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
 			</trans-unit>
+			<trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
+				<source>Edit HTML source</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
