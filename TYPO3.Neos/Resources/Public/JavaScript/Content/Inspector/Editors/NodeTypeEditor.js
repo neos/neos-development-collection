@@ -69,7 +69,7 @@ define(
 							return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 						});
 						nodeTypesInGroup.forEach(function(nodeType) {
-							groupedNodeTypes.push($.extend(nodeType, {group: group.label}));
+							groupedNodeTypes.push($.extend(nodeType, {group: I18n.translate(group.label)}));
 						});
 					});
 				} else {

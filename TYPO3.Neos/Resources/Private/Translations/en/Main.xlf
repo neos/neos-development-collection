@@ -151,39 +151,15 @@
 				<source>Relative path</source>
 			</trans-unit>
 
-			<!-- nodetypes -->
-			<trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
-				<source>Document</source>
+			<!-- node types -->
+			<trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+				<source>General</source>
 			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
-				<source>Title</source>
+			<trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+				<source>Structure</source>
 			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
-				<source>URL path segment</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
-				<source>Hide in menus</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
-				<source>Target mode</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
-				<source>Target</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
-				<source>Master View</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
-				<source>Plugin View</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
-				<source>Hide</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
-				<source>Hide before</source>
-			</trans-unit>
-			<trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
-				<source>Hide after</source>
+			<trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+				<source>Plugins</source>
 			</trans-unit>
 
 			<!-- shortcuts -->
