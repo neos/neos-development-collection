@@ -434,6 +434,17 @@
 				<source>Reload</source>
 			</trans-unit>
 
+			<!-- Edit / preview modes -->
+			<trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+				<source>In-Place</source>
+			</trans-unit>
+			<trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+				<source>Raw Content</source>
+			</trans-unit>
+			<trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+				<source>Desktop</source>
+			</trans-unit>
+
 			<!-- Login -->
 			<trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
