@@ -82,7 +82,7 @@ function(
 					groups[group.name].nodeTypes.sort(function(a, b) {
 						return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 					});
-					groups[group.name].label = group.label;
+					groups[group.name].label = I18n.translate(group.label);
 					data.push(groups[group.name]);
 				}
 			});
