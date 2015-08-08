@@ -11,6 +11,9 @@
 			<trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
 			</trans-unit>
+			<trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
+				<source>Select the Form identifier</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
