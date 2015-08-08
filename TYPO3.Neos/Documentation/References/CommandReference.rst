@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-08-07
+The following reference was automatically generated from code on 2015-08-08
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
