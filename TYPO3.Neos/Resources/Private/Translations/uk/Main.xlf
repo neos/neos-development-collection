@@ -156,10 +156,10 @@
       <!-- nodetypes -->
       <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="uk" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="uk" state="translated">Документ</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="uk" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target xml:lang="uk" state="needs-translation">URL path segment</target></trans-unit>
@@ -296,13 +296,13 @@
 			<target xml:lang="uk" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="uk" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="uk" state="translated">Додаткова інформація</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="uk" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="uk" state="translated">Видимість</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="uk" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="uk" state="translated">Параметри документа</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
 			<target xml:lang="uk" state="needs-translation">The length of this text must be between {{minimum}} and {{maximum}} characters.</target></trans-unit>
@@ -389,7 +389,7 @@
 			<target xml:lang="uk" state="needs-translation">Paste (hold to select position)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="uk" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="uk" state="translated">Висота</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="uk" state="needs-translation">Do you really want to delete</target></trans-unit>
@@ -404,13 +404,13 @@
 			<target xml:lang="uk" state="translated">Цю операцію можна скасувати в модулі керування робочими областями.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="uk" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="uk" state="translated">Медіа</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="uk" state="needs-translation">Crop</target></trans-unit>
+			<target xml:lang="uk" state="translated">Кадрування</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="uk" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ширина</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="uk" state="translated">Відсутня обов'язкова властивість : </target><alt-trans><target xml:lang="uk">Відсутня обов'язкова властивість :</target></alt-trans></trans-unit>
@@ -419,7 +419,7 @@
 			<target xml:lang="uk" state="translated">Робочі області</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="uk" state="translated">Помилка під час збереження</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сталася помилка під час збереження</target><alt-trans><target xml:lang="uk">Помилка під час збереження</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
 			<target xml:lang="uk" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
@@ -432,10 +432,10 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target xml:lang="uk" state="translated">TYPO3 Neos Логін</target></trans-unit>
+			<target xml:lang="uk" state="translated">Логін в</target><alt-trans><target xml:lang="uk">Логін</target></alt-trans><alt-trans><target xml:lang="uk">TYPO3 Neos Логін</target></alt-trans></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="uk" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="uk" state="translated">Автентифікації</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
