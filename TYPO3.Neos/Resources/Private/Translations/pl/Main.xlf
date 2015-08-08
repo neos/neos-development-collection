@@ -169,9 +169,9 @@
       <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="pl">Przekieruj na</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
+      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target xml:lang="pl" state="translated">Wybierz cel</target></trans-unit>
+			<target xml:lang="pl">Cel</target><alt-trans><target xml:lang="pl">Wybierz cel</target></alt-trans></trans-unit>
       <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
 			<target xml:lang="pl">Główny widok</target></trans-unit>
@@ -188,31 +188,31 @@
 				<source>Hide after</source>
 			<target xml:lang="pl">Ukryj po</target></trans-unit>
       <!-- shortcuts -->
-      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="pl" state="translated">Kliknij tutaj, aby przejść do strony {0}.</target></trans-unit>
+			<target xml:lang="pl">Kliknij {0}, aby przejść do strony.</target><alt-trans><target xml:lang="pl">Kliknij tutaj, aby przejść do strony {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
 			<target xml:lang="pl">Kliknij {0} aby zobaczyć plik.</target><alt-trans><target xml:lang="pl">Kliknij tutaj, aby przejść o zasobu {0}.</target></alt-trans></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="pl" state="translated">Kliknij tutaj, aby przejść do strony rozszerzenia {0}.</target></trans-unit>
-      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+			<target xml:lang="pl">Kliknij {0}, aby otworzyć odnośnik.</target><alt-trans><target xml:lang="pl">Kliknij tutaj, aby przejść do strony rozszerzenia {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target xml:lang="pl" state="translated">(strona docelowa nie została ustawiona)</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+			<target xml:lang="pl">(cel nie został wybrany)</target><alt-trans><target xml:lang="pl">(strona docelowa nie została ustawiona)</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="pl" state="translated">To jest skrót do pierwszej podstrony. &amp;lt;br /&amp;gt;Kliknij {0}, aby do niej przejść.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+			<target xml:lang="pl">To jest skrót do pierwszej podstrony. &amp;lt;br /&amp;gt;Kliknij {0}, aby do niej przejść.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="pl" state="translated">To jest skrót do strony nadrzędnej. &amp;lt;br /&amp;gt;Kliknij {0}, aby przejść do strony.</target></trans-unit>
+			<target xml:lang="pl">To jest skrót do strony nadrzędnej. &amp;lt;br /&amp;gt;Kliknij {0}, aby przejść do strony.</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
-			<target xml:lang="pl" state="translated">Pełny ekran</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+			<target xml:lang="pl">Pełny ekran</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
-			<target xml:lang="pl" state="translated">Otwórz stronę w przestrzeni roboczej live</target></trans-unit>
+			<target xml:lang="pl">Otwórz stronę w przestrzeni roboczej live</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="pl">Odrzuć wszystko</target></trans-unit>
@@ -357,51 +357,51 @@
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
 			<target xml:lang="pl">Podany ciąg znaków nie odpowiada wzorcowi ({{pattern}})</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
-			<target xml:lang="pl" state="translated">Oczekiwany jest poprawny ciąg znaków.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwany jest poprawny ciąg znaków.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="pl" state="translated">Oczekiwany jest poprawny tekst bez żadnych znaczników XML.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwany jest poprawny tekst bez żadnych znaczników XML.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="pl" state="translated">Podana wartość posiada niepoprawny identyfikator.</target></trans-unit>
+			<target xml:lang="pl">Podana wartość posiada niepoprawny identyfikator.</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="pl">Treść</target><alt-trans><target xml:lang="pl">Zawartość</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+			<target xml:lang="pl">Czy na pewno chcesz usunąć</target></trans-unit>
+      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="pl" state="translated">Utwórz nowy (przytrzymaj aby wybrać pozycję)</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+			<target xml:lang="pl">Utwórz nowy (przytrzymaj aby wybrać pozycję)</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="pl" state="translated">To spowoduje usunięcie strony</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+			<target xml:lang="pl">Spowoduje to usunięcie elementu</target><alt-trans><target xml:lang="pl">To spowoduje usunięcie strony</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target xml:lang="pl" state="translated">wraz z jej podstronami</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="pl">wraz z jego dziećmi</target><alt-trans><target xml:lang="pl">wraz z jej podstronami</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="pl" state="translated">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+			<target xml:lang="pl">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
+      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="pl" state="translated">Wklej (przytrzymaj aby wybrać pozycję)</target></trans-unit>
+			<target xml:lang="pl">Wklej (przytrzymaj aby wybrać pozycję)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="pl">Wysokość</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć</target></trans-unit>
+			<target xml:lang="pl">Czy na pewno chcesz usunąć</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
 			<target xml:lang="pl">ten element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
 			<target xml:lang="pl">To spowoduje usunięcie elementu.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="pl" state="translated">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
+			<target xml:lang="pl">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="pl">Pliki</target></trans-unit>
@@ -420,9 +420,9 @@
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
 			<target xml:lang="pl">Wystąpił błąd podczas zapisywania</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="pl" state="translated">Przeładuj stronę, co może pomóc rozwiązać ten problem.</target></trans-unit>
+			<target xml:lang="pl">Przeładuj stronę aby spróbować rozwiązać ten problem.</target><alt-trans><target xml:lang="pl">Przeładuj stronę, co może pomóc rozwiązać ten problem.</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
 			<target xml:lang="pl">Przeładuj backend</target></trans-unit>
@@ -437,27 +437,27 @@
 				<source>Authenticating</source>
 			<target xml:lang="pl">Uwierzytelnianie</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
-			<target xml:lang="pl" state="translated">Przejdź do konfiguracji</target></trans-unit>
+			<target xml:lang="pl">Przejdź do konfiguracji</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target xml:lang="pl">Brak strony głównej</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
 			<target xml:lang="pl">Prawdopodobnie żadna strona nie została zdefiniowana, witryna nie zawiera strony głównej, bądź nie można określić aktywnej strony.</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="pl" state="translated">Możesz chcieć ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target></trans-unit>
+			<target xml:lang="pl">Powinieneś ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target><alt-trans><target xml:lang="pl">Możesz chcieć ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="pl">Błąd bazy danych</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
 			<target xml:lang="pl">Przepraszamy, wykryliśmy błąd w twojej bazie danych. Sprawdź swoje pliki dziennika w Data/Logs/* aby uzyskać więcej informacji.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="pl" state="translated">Możesz chcieć skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target></trans-unit>
+			<target xml:lang="pl">Powinieneś skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target><alt-trans><target xml:lang="pl">Możesz chcieć skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="pl">Nie znaleziono strony</target></trans-unit>
@@ -467,9 +467,9 @@
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
 			<target xml:lang="pl">Niepoprawny węzeł</target><alt-trans><target xml:lang="pl">Niepoprawny NodeType</target></alt-trans></trans-unit>
-      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="pl" state="translated">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target><alt-trans><target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę NodeType i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></alt-trans></trans-unit>
+			<target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target><alt-trans><target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę NodeType i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
