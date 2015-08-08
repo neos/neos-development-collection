@@ -10,7 +10,7 @@
 			<target xml:lang="uk" state="needs-translation">Image</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="uk" state="needs-translation">Alternative text</target></trans-unit>
+			<target xml:lang="uk" state="translated">Текст заміщення</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
