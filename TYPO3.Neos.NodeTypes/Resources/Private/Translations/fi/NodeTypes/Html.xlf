@@ -13,7 +13,7 @@
 			<target xml:lang="fi" state="translated">HTML-sisältö</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
-			<target xml:lang="fi" state="needs-translation">Edit HTML source</target></trans-unit>
+			<target xml:lang="fi" state="translated">Muokkaa HTML-sisältöä</target></trans-unit>
     </body>
   </file>
 </xliff>
