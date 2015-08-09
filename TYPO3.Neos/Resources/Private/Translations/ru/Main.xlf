@@ -153,40 +153,16 @@
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative path</source>
 			<target xml:lang="ru">Относительный путь</target></trans-unit>
-      <!-- nodetypes -->
-      <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve" approved="yes">
-				<source>Document</source>
-			<target xml:lang="ru">Документ</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve" approved="yes">
-				<source>Title</source>
-			<target xml:lang="ru">Название</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve" approved="yes">
-				<source>URL path segment</source>
-			<target xml:lang="ru">Сегмент пути URL-адреса</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve" approved="yes">
-				<source>Hide in menus</source>
-			<target xml:lang="ru">Скрыть в меню</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve" approved="yes">
-				<source>Target mode</source>
-			<target xml:lang="ru">Целевой режим</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve" approved="yes">
-				<source>Target</source>
-			<target xml:lang="ru">Цель</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve" approved="yes">
-				<source>Master View</source>
-			<target xml:lang="ru">Главный вид</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve" approved="yes">
-				<source>Plugin View</source>
-			<target xml:lang="ru">Плагины</target><alt-trans><target xml:lang="ru">Плагин вид</target></alt-trans></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve" approved="yes">
-				<source>Hide</source>
-			<target xml:lang="ru">Скрыть</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve" approved="yes">
-				<source>Hide before</source>
-			<target xml:lang="ru">Скрыть перед</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve" approved="yes">
-				<source>Hide after</source>
-			<target xml:lang="ru">Скрыть после</target></trans-unit>
+      <!-- node types -->
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
+				<source>General</source>
+			<target xml:lang="ru">Общие</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="ru" state="needs-translation">Structure</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+				<source>Plugins</source>
+			<target xml:lang="ru" state="needs-translation">Plugins</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
@@ -429,6 +405,16 @@
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
 				<source>Reload</source>
 			<target xml:lang="ru">Обновить</target><alt-trans><target xml:lang="ru">Перезагрузить</target></alt-trans></trans-unit>
+      <!-- Edit / preview modes -->
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+				<source>In-Place</source>
+			<target xml:lang="ru" state="needs-translation">In-Place</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+				<source>Raw Content</source>
+			<target xml:lang="ru" state="needs-translation">Raw Content</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+				<source>Desktop</source>
+			<target xml:lang="ru" state="needs-translation">Desktop</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
