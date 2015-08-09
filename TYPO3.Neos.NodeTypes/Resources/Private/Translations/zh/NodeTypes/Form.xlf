@@ -11,6 +11,9 @@
       <trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
 			<target xml:lang="zh-TW" state="needs-translation">Form Identifier</target></trans-unit>
+      <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
+				<source>Select the Form identifier</source>
+			<target xml:lang="zh-TW" state="needs-translation">Select the Form identifier</target></trans-unit>
     </body>
   </file>
 </xliff>

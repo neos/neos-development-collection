@@ -5,6 +5,9 @@
       <trans-unit id="properties.alignment" xml:space="preserve">
 				<source>Alignment</source>
 			<target xml:lang="fi" state="translated">Tasaus</target></trans-unit>
+      <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
+				<source>Default</source>
+			<target xml:lang="fi" state="needs-translation">Default</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
 			<target xml:lang="fi" state="translated">Keskitetty</target></trans-unit>
