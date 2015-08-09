@@ -411,10 +411,10 @@
 			<target xml:lang="de" state="needs-translation">In-Place</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target xml:lang="de" state="needs-translation">Raw Content</target></trans-unit>
+			<target xml:lang="de" state="translated">Roh-Ansicht</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="de" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="de" state="translated">PC-Ansicht</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
