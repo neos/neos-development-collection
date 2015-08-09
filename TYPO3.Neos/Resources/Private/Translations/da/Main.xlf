@@ -113,7 +113,7 @@
 			<target xml:lang="da" state="translated">Udgivet</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="da" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="da" state="translated">Arbejdsområde</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="da" state="translated">Fjern</target></trans-unit>
@@ -143,7 +143,7 @@
 			<target xml:lang="da" state="translated">[uden titel]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="da" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="da" state="translated">Etiket</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
 			<target xml:lang="da" state="translated">Nodetype</target></trans-unit>
@@ -218,7 +218,7 @@
 			<target xml:lang="da" state="translated">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="da" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="da" state="translated">Redigering</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			<target xml:lang="da" state="translated">Førvisnings Central</target></trans-unit>
@@ -251,10 +251,10 @@
 			<target xml:lang="da" state="translated">Intet plugin konfigureret</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="da" state="needs-translation">view is displayed on page</target></trans-unit>
+			<target xml:lang="da" state="translated">visningen findes på side</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="da" state="needs-translation">view is displayed on current page</target></trans-unit>
+			<target xml:lang="da" state="translated">visningen findes på denne side</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="da" state="translated">Ingen dato angivet</target></trans-unit>
@@ -408,13 +408,13 @@
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target xml:lang="da" state="needs-translation">In-Place</target></trans-unit>
+			<target xml:lang="da" state="translated">Direkte</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target xml:lang="da" state="needs-translation">Raw Content</target></trans-unit>
+			<target xml:lang="da" state="translated">Uden layout</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="da" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="da" state="translated">Computer</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
@@ -452,10 +452,10 @@
 			<target xml:lang="da" state="translated">Beklager, den ønskede side blev ikke fundet.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
-			<target xml:lang="da" state="needs-translation">Invalid NodeType</target></trans-unit>
+			<target xml:lang="da" state="translated">Ugyldig indholdstype</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="da" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+			<target xml:lang="da" state="translated">Indholdstypen som blev forsøgt vist, kunne ikke findes. Måske er indholdstypen blevet omdøbt og det mangler at blive rettet eller måske er der tale om en simpel stavefejl.</target></trans-unit>
     </body>
   </file>
 </xliff>
