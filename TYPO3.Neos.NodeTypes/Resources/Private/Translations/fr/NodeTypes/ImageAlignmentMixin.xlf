@@ -7,7 +7,7 @@
 			<target xml:lang="fr">Alignement</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Default</source>
-			<target xml:lang="fr" state="needs-translation">Default</target></trans-unit>
+			<target xml:lang="fr" state="translated">Par défaut</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
 			<target xml:lang="fr">Centré</target><alt-trans><target xml:lang="fr">Centre</target></alt-trans></trans-unit>
