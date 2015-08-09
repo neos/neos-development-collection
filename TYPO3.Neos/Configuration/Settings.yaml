@@ -279,19 +279,19 @@ TYPO3:
           isEditingMode: TRUE
           isPreviewMode: FALSE
           typoScriptRenderingPath: ''
-          title: 'In-Place'
+          title: 'TYPO3.Neos:Main:editPreviewModes.inPlace'
           position: 100
         rawContent:
           isEditingMode: TRUE
           isPreviewMode: FALSE
           typoScriptRenderingPath: 'rawContent'
-          title: 'Raw Content'
+          title: 'TYPO3.Neos:Main:editPreviewModes.rawContent'
           position: 200
         desktop:
           isEditingMode: FALSE
           isPreviewMode: TRUE
           typoScriptRenderingPath: ''
-          title: 'Desktop'
+          title: 'TYPO3.Neos:Main:editPreviewModes.desktop'
           position: 100
 
     moduleConfiguration:
