@@ -408,13 +408,13 @@
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target xml:lang="fr" state="needs-translation">In-Place</target></trans-unit>
+			<target xml:lang="fr" state="translated">Édition "In-Place"</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
 			<target xml:lang="fr" state="translated">Contenu brut</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="fr" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="fr" state="translated">Affichage ordinateur de bureau</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
