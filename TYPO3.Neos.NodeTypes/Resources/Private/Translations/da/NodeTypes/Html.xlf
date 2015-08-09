@@ -13,7 +13,7 @@
 			<target xml:lang="da" state="translated">HTML-indhold</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
-			<target xml:lang="da" state="needs-translation">Edit HTML source</target></trans-unit>
+			<target xml:lang="da" state="translated">Redigere HTML kode</target></trans-unit>
     </body>
   </file>
 </xliff>
