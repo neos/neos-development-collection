@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target xml:lang="la-LA" state="translated">crwdns332:0crwdne332:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns332:0crwdne332:0</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="la-LA" state="translated"><![CDATA[<p>crwdns569:0crwdne569:0</p>]]></target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation"><![CDATA[<p>crwdns569:0crwdne569:0</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

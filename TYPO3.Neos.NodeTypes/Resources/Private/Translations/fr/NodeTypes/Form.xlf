@@ -13,7 +13,7 @@
 			<target xml:lang="fr">Identifiant du formulaire</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
-			<target xml:lang="fr" state="needs-translation">Select the Form identifier</target></trans-unit>
+			<target xml:lang="fr" state="translated">Sélectionner l'identifiant du formulaire</target></trans-unit>
     </body>
   </file>
 </xliff>
