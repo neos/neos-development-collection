@@ -11,6 +11,9 @@
       <trans-unit id="properties.source" xml:space="preserve" approved="yes">
 				<source>HTML Content</source>
 			<target xml:lang="pl">Zawartość HTML</target></trans-unit>
+      <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
+				<source>Edit HTML source</source>
+			<target xml:lang="pl" state="needs-translation">Edit HTML source</target></trans-unit>
     </body>
   </file>
 </xliff>
