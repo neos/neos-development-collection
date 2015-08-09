@@ -159,10 +159,10 @@
 			<target xml:lang="fi" state="translated">Yleiset</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="fi" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="fi" state="translated">Rakenne</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="fi" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="fi" state="translated">Liitännäiset</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -411,7 +411,7 @@
 			<target xml:lang="fi" state="needs-translation">In-Place</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target xml:lang="fi" state="needs-translation">Raw Content</target></trans-unit>
+			<target xml:lang="fi" state="translated">Pelkkä sisältö</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="fi" state="needs-translation">Desktop</target></trans-unit>
