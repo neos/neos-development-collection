@@ -7,7 +7,7 @@
 			<target xml:lang="lv" state="translated">Izlīdzinājums</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Default</source>
-			<target xml:lang="lv" state="needs-translation">Default</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklusētais</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
 			<target xml:lang="lv" state="translated">Centrs</target></trans-unit>

@@ -13,7 +13,7 @@
 			<target xml:lang="lv" state="translated">Formas identifikators</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
-			<target xml:lang="lv" state="needs-translation">Select the Form identifier</target></trans-unit>
+			<target xml:lang="lv" state="translated">Atzīmējiet formas Id</target></trans-unit>
     </body>
   </file>
 </xliff>
