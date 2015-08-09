@@ -153,40 +153,16 @@
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
 			<target xml:lang="fi" state="translated">Suhteellinen polku</target></trans-unit>
-      <!-- nodetypes -->
-      <trans-unit id="nodetypes.TYPO3.Neos.Document" xml:space="preserve">
-				<source>Document</source>
-			<target xml:lang="fi" state="translated">Dokumentti</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.title" xml:space="preserve">
-				<source>Title</source>
-			<target xml:lang="fi" state="translated">Otsikko</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties.uriPathSegment" xml:space="preserve">
-				<source>URL path segment</source>
-			<target xml:lang="fi" state="translated">URL-polun osa</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Document.properties._hiddenInIndex" xml:space="preserve">
-				<source>Hide in menus</source>
-			<target xml:lang="fi" state="translated">Piilota valikoissa</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.targetMode" xml:space="preserve">
-				<source>Target mode</source>
-			<target xml:lang="fi" state="translated">Kohdetila</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Shortcut.properties.target" xml:space="preserve">
-				<source>Target</source>
-			<target xml:lang="fi" state="translated">Kohde</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.plugin" xml:space="preserve">
-				<source>Master View</source>
-			<target xml:lang="fi" state="translated">Päänäkymä</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.PluginView.properties.view" xml:space="preserve">
-				<source>Plugin View</source>
-			<target xml:lang="fi" state="translated">Laajennusnkäymä</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Hidable.properties.hide" xml:space="preserve">
-				<source>Hide</source>
-			<target xml:lang="fi" state="translated">Piilota</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenBeforeDateTime" xml:space="preserve">
-				<source>Hide before</source>
-			<target xml:lang="fi" state="translated">Piilota ennen</target></trans-unit>
-      <trans-unit id="nodetypes.TYPO3.Neos.Timable.properties._hiddenAfterDateTime" xml:space="preserve">
-				<source>Hide after</source>
-			<target xml:lang="fi" state="translated">Piilota jälkeen</target></trans-unit>
+      <!-- node types -->
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+				<source>General</source>
+			<target xml:lang="fi" state="translated">Yleiset</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="fi" state="needs-translation">Structure</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+				<source>Plugins</source>
+			<target xml:lang="fi" state="needs-translation">Plugins</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -429,6 +405,16 @@
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
 			<target xml:lang="fi" state="translated">Lataa uudelleen</target></trans-unit>
+      <!-- Edit / preview modes -->
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+				<source>In-Place</source>
+			<target xml:lang="fi" state="needs-translation">In-Place</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+				<source>Raw Content</source>
+			<target xml:lang="fi" state="needs-translation">Raw Content</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+				<source>Desktop</source>
+			<target xml:lang="fi" state="needs-translation">Desktop</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>

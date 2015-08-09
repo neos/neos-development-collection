@@ -193,9 +193,9 @@
       <trans-unit id="users.show.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="fr">Données personnelles</target></trans-unit>
-      <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
+      <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="fr">Titre</target></trans-unit>
+			<target xml:lang="fr" state="translated">Titre</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
 			<target xml:lang="fr">Prénom</target></trans-unit>
@@ -363,9 +363,9 @@
       <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="fr">Nom</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
+      <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="fr">Titre</target></trans-unit>
+			<target xml:lang="fr" state="translated">Titre</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="fr">Libellé</target></trans-unit>
