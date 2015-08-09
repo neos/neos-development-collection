@@ -408,13 +408,13 @@
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target xml:lang="fi" state="needs-translation">In-Place</target></trans-unit>
+			<target xml:lang="fi" state="translated">Upotettu</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
 			<target xml:lang="fi" state="translated">Pelkkä sisältö</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="fi" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="fi" state="translated">Tietokone</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
