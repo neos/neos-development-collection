@@ -13,7 +13,7 @@
 			<target xml:lang="da" state="translated">Genvejs instillinger</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="da" state="needs-translation">Target mode</target></trans-unit>
+			<target xml:lang="da" state="translated">Siden skal åbne</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
 			<target xml:lang="da" state="translated">Mål</target></trans-unit>
