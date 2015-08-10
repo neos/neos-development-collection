@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-08-09
+The following reference was automatically generated from code on 2015-08-10
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -1540,6 +1540,21 @@ Related commands
 
 Package *TYPO3.MEDIA*
 ---------------------
+
+
+.. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:clearthumbnails`:
+
+``typo3.media:media:clearthumbnails``
+*************************************
+
+**Remove all thumbnail objects and resources**
+
+
+
+
+
+
+
 
 
 .. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:importresources`:
