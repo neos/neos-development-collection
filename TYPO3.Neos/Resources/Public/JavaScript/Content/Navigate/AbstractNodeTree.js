@@ -804,7 +804,8 @@ define(
 				NodeEndpoint.createNodeForTheTree(
 					activeNode.data.key,
 					parameters,
-					position
+					position,
+					this.baseNodeType
 				).then(
 					function(result) {
 						// Actualizing the created dynatree node

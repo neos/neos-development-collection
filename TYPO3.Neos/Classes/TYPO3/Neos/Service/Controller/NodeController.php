@@ -191,12 +191,13 @@ class NodeController extends AbstractServiceController {
 	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
+	 * @param string $nodeTypeFilter
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
+	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '') {
 		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-		$this->view->assignNodeAndChildNodes($newNode);
+		$this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
 	}
 
 	/**
