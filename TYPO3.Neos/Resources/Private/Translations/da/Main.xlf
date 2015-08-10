@@ -24,158 +24,158 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="da">Indhold</target></trans-unit>
-      <trans-unit id="createAfter" xml:space="preserve">
+      <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target xml:lang="da" state="translated">Opret efter</target></trans-unit>
-      <trans-unit id="createNew" xml:space="preserve">
+			<target xml:lang="da">Opret efter</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
-			<target xml:lang="da" state="translated">Opret ny</target></trans-unit>
-      <trans-unit id="close" xml:space="preserve">
+			<target xml:lang="da">Opret ny</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve" approved="yes">
 				<source>Close</source>
-			<target xml:lang="da" state="translated">Luk</target></trans-unit>
-      <trans-unit id="copy" xml:space="preserve">
+			<target xml:lang="da">Luk</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target xml:lang="da" state="translated">Kopiér</target></trans-unit>
-      <trans-unit id="cut" xml:space="preserve">
+			<target xml:lang="da">Kopiér</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
-			<target xml:lang="da" state="translated">Klip</target></trans-unit>
-      <trans-unit id="delete" xml:space="preserve">
+			<target xml:lang="da">Klip</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="da" state="translated">Slet</target></trans-unit>
-      <trans-unit id="deleteElement" xml:space="preserve">
+			<target xml:lang="da">Slet</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
 				<source>Yes, delete the element</source>
-			<target xml:lang="da" state="translated">Ja, slet elementet</target></trans-unit>
-      <trans-unit id="deleteElementTitle" xml:space="preserve">
+			<target xml:lang="da">Ja, slet elementet</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
 				<source>Delete the element</source>
-			<target xml:lang="da" state="translated">Slet elementet</target></trans-unit>
-      <trans-unit id="discard" xml:space="preserve">
+			<target xml:lang="da">Slet elementet</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="da" state="translated">Kassér</target></trans-unit>
-      <trans-unit id="discardChanges" xml:space="preserve">
+			<target xml:lang="da">Kassér</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="da" state="translated">Kassér ændringer</target></trans-unit>
-      <trans-unit id="editTitle" xml:space="preserve">
+			<target xml:lang="da">Kassér ændringer</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target xml:lang="da" state="translated">Redigér titel</target></trans-unit>
-      <trans-unit id="editPreview" xml:space="preserve">
+			<target xml:lang="da">Redigér titel</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
-			<target xml:lang="da" state="translated">Rediger / Forhåndsvisning</target></trans-unit>
-      <trans-unit id="edit" xml:space="preserve">
+			<target xml:lang="da">Rediger / Forhåndsvisning</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="da" state="translated">Rediger</target></trans-unit>
-      <trans-unit id="hideUnhide" xml:space="preserve">
+			<target xml:lang="da">Redigér</target><alt-trans><target xml:lang="da">Rediger</target></alt-trans></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="da" state="translated">Skjul / Vis</target></trans-unit>
-      <trans-unit id="loading" xml:space="preserve">
+			<target xml:lang="da">Skjul / Vis</target></trans-unit>
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
-			<target xml:lang="da" state="translated">Indlæser</target></trans-unit>
-      <trans-unit id="newAfter" xml:space="preserve">
+			<target xml:lang="da">Indlæser</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
-			<target xml:lang="da" state="translated">Ny efter</target></trans-unit>
-      <trans-unit id="newBefore" xml:space="preserve">
+			<target xml:lang="da">Ny efter</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve" approved="yes">
 				<source>New Before</source>
-			<target xml:lang="da" state="translated">Ny før</target></trans-unit>
-      <trans-unit id="newInto" xml:space="preserve">
+			<target xml:lang="da">Ny før</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve" approved="yes">
 				<source>New Into</source>
-			<target xml:lang="da" state="translated">Ny indeni</target></trans-unit>
-      <trans-unit id="navigate" xml:space="preserve">
+			<target xml:lang="da">Ny indeni</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="da" state="translated">Navigér</target></trans-unit>
-      <trans-unit id="okay" xml:space="preserve">
+			<target xml:lang="da">Navigér</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
-			<target xml:lang="da" state="translated">Ok</target></trans-unit>
-      <trans-unit id="page" xml:space="preserve">
+			<target xml:lang="da">Ok</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="da" state="translated">Side</target></trans-unit>
-      <trans-unit id="paste" xml:space="preserve">
+			<target xml:lang="da">Side</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve" approved="yes">
 				<source>Paste</source>
-			<target xml:lang="da" state="translated">Indsæt</target></trans-unit>
-      <trans-unit id="pasteAfter" xml:space="preserve">
+			<target xml:lang="da">Indsæt</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve" approved="yes">
 				<source>Paste After</source>
-			<target xml:lang="da" state="translated">Indsæt efter</target></trans-unit>
-      <trans-unit id="pasteBefore" xml:space="preserve">
+			<target xml:lang="da">Indsæt efter</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve" approved="yes">
 				<source>Paste Before</source>
-			<target xml:lang="da" state="translated">Indsæt før</target></trans-unit>
-      <trans-unit id="pasteInto" xml:space="preserve">
+			<target xml:lang="da">Indsæt før</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target xml:lang="da" state="translated">Indsæt i</target></trans-unit>
-      <trans-unit id="password" xml:space="preserve">
+			<target xml:lang="da">Indsæt indeni</target><alt-trans><target xml:lang="da">Indsæt i</target></alt-trans></trans-unit>
+      <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="da" state="translated">Adgangskode</target></trans-unit>
-      <trans-unit id="preview" xml:space="preserve">
+			<target xml:lang="da">Adgangskode</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="da" state="translated">Forhåndsvisning</target></trans-unit>
-      <trans-unit id="publish" xml:space="preserve">
+			<target xml:lang="da">Forhåndsvisning</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
-			<target xml:lang="da" state="translated">Publicér</target></trans-unit>
-      <trans-unit id="published" xml:space="preserve">
+			<target xml:lang="da">Publicér</target></trans-unit>
+      <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
-			<target xml:lang="da" state="translated">Udgivet</target></trans-unit>
-      <trans-unit id="targetWorkspace" xml:space="preserve">
+			<target xml:lang="da">Publiceret</target><alt-trans><target xml:lang="da">Udgivet</target></alt-trans></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target xml:lang="da" state="translated">Arbejdsområde</target></trans-unit>
-      <trans-unit id="remove" xml:space="preserve">
+			<target xml:lang="da">Destinationsarbejdsområde</target><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
+      <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
-			<target xml:lang="da" state="translated">Fjern</target></trans-unit>
-      <trans-unit id="refresh" xml:space="preserve">
+			<target xml:lang="da">Fjern</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="da" state="translated">Opdatér</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+			<target xml:lang="da">Opdatér</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
-			<target xml:lang="da" state="translated">Gemmer…</target></trans-unit>
-      <trans-unit id="saved" xml:space="preserve">
+			<target xml:lang="da">Gemmer…</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
-			<target xml:lang="da" state="translated">Gemt</target></trans-unit>
-      <trans-unit id="search" xml:space="preserve">
+			<target xml:lang="da">Gemt</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="da" state="translated">Søg</target></trans-unit>
-      <trans-unit id="toggleInspector" xml:space="preserve">
+			<target xml:lang="da">Søg</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
-			<target xml:lang="da" state="translated">Skjul/vis inspektør</target></trans-unit>
-      <trans-unit id="username" xml:space="preserve">
+			<target xml:lang="da">Skjul/vis inspektør</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="da" state="translated">Brugernavn</target></trans-unit>
-      <trans-unit id="you" xml:space="preserve">
+			<target xml:lang="da">Brugernavn</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="da" state="translated">Dig</target></trans-unit>
-      <trans-unit id="noTitle" xml:space="preserve">
+			<target xml:lang="da">Dig</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve" approved="yes">
 				<source>[no title]</source>
-			<target xml:lang="da" state="translated">[uden titel]</target></trans-unit>
-      <trans-unit id="labelCaption" xml:space="preserve">
+			<target xml:lang="da">[uden titel]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="da" state="translated">Etiket</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+			<target xml:lang="da">Etiket</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Node type</source>
-			<target xml:lang="da" state="translated">Nodetype</target></trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
+			<target xml:lang="da">Nodetype</target></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
-			<target xml:lang="da" state="translated">Sti</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+			<target xml:lang="da">Sti</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative path</source>
-			<target xml:lang="da" state="translated">Relativ sti</target></trans-unit>
+			<target xml:lang="da">Relativ sti</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
 			<target xml:lang="da">Generelt</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
 				<source>Structure</source>
-			<target xml:lang="da" state="translated">Struktur</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+			<target xml:lang="da">Struktur</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
 				<source>Plugins</source>
-			<target xml:lang="da" state="translated">Plugins</target></trans-unit>
+			<target xml:lang="da">Plugins</target></trans-unit>
       <!-- shortcuts -->
-      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="translated">Klik her for at fortsætte til siden {0}.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+			<target xml:lang="da">Klik {0} for at fortsætte til siden.</target><alt-trans><target xml:lang="da">Klik her for at fortsætte til siden {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="da" state="translated">Klik {0} for at se filen.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+			<target xml:lang="da">Klik {0} for at se filen.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="da" state="translated">Klik her for at fortsætte til den eksterne side {0}.</target></trans-unit>
-      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+			<target xml:lang="da">Klik {0} for at fortsætte til den eksterne side.</target><alt-trans><target xml:lang="da">Klik her for at fortsætte til den eksterne side {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target xml:lang="da" state="translated">(Ingen destination valgt)</target></trans-unit>
+			<target xml:lang="da">(ingen destination valgt)</target><alt-trans><target xml:lang="da">(Ingen destination valgt)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="da">Dette er en genvej til den første underside.&lt;br /&gt;Klik {0} for at fortsætte til siden.</target></trans-unit>
@@ -183,235 +183,235 @@
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="da">Dette er en genvej til den overordnede side. &lt;br /&gt; Klik på {0} at fortsætte til siden.</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
-			<target xml:lang="da" state="translated">Fuld skærm</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+			<target xml:lang="da">Fuld skærm</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
-			<target xml:lang="da" state="translated">Åbn side i drift arbejdsrum</target></trans-unit>
-      <trans-unit id="discardAll" xml:space="preserve">
+			<target xml:lang="da">Åbn side i drift arbejdsrum</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
-			<target xml:lang="da" state="translated">Kassér alle</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+			<target xml:lang="da">Kassér alle</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="da" state="translated">Kassér alle ændringer</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+			<target xml:lang="da">Kassér alle ændringer</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="da" state="translated">Er du sikker på at du vil slette alle ændringer i dette arbejdsrum?</target></trans-unit>
-      <trans-unit id="publishAll" xml:space="preserve">
+			<target xml:lang="da">Er du sikker på at du vil slette alle ændringer i dette arbejdsrum?</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
-			<target xml:lang="da" state="translated">Offentliggøre alle</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+			<target xml:lang="da">Publicér alle</target><alt-trans><target xml:lang="da">Offentliggøre alle</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="da" state="translated">Publicér alle ændringer</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+			<target xml:lang="da">Publicér alle ændringer</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="da" state="translated">Er du sikker på, at du ønsker at publicere alle ændringerne?</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+			<target xml:lang="da">Er du sikker på, at du ønsker at publicere alle ændringerne?</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
-			<target xml:lang="da" state="translated">Ventende ændringer</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="da">Ventende ændringer</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="da" state="translated">Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+			<target xml:lang="da">Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="da" state="translated">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+			<target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target><alt-trans><target xml:lang="da">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target xml:lang="da" state="translated">Redigering</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+			<target xml:lang="da">Redigeringmåder</target><alt-trans><target xml:lang="da">Redigering</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target xml:lang="da" state="translated">Førvisnings Central</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+			<target xml:lang="da">Forhåndsvisninger</target><alt-trans><target xml:lang="da">Førvisnings Central</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="da" state="translated">Du har stadig ændringer. Hvad ønsker du at gøre med dem?</target></trans-unit>
-      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+			<target xml:lang="da">Du har stadig ændringer. Hvad ønsker du at gøre med dem?</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
-			<target xml:lang="da" state="translated">Valgte element</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+			<target xml:lang="da">Valgte element</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="da" state="translated">Der er felter, der ikke er korrekt udfyldt.</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+			<target xml:lang="da">Der er felter, der ikke er korrekt udfyldt.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="da" state="translated">Felterne markeret med en fejl er endnu ikke korrekt udfyldt. Udfyld dem rigtigt.</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+			<target xml:lang="da">Felterne markeret med en fejl er endnu ikke korrekt udfyldt. Udfyld dem rigtigt.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
-			<target xml:lang="da" state="translated">Fortsæt redigering</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+			<target xml:lang="da">Fortsæt redigering</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve" approved="yes">
 				<source>Throw away</source>
-			<target xml:lang="da" state="translated">Kassér</target></trans-unit>
+			<target xml:lang="da">Kassér</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="da">Anvend</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
 				<source>Select a Plugin</source>
-			<target xml:lang="da" state="translated">Vælg et plugin</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+			<target xml:lang="da">Vælg et plugin</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
 				<source>No plugin configured</source>
-			<target xml:lang="da" state="translated">Intet plugin konfigureret</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+			<target xml:lang="da">Intet plugin konfigureret</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on page</source>
-			<target xml:lang="da" state="translated">visningen findes på side</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+			<target xml:lang="da">visningen findes på side</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on current page</source>
-			<target xml:lang="da" state="translated">visningen findes på denne side</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+			<target xml:lang="da">visningen findes på denne side</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
-			<target xml:lang="da" state="translated">Ingen dato angivet</target></trans-unit>
-      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+			<target xml:lang="da">Ingen dato angivet</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target xml:lang="da" state="translated">Rediger kode</target></trans-unit>
-      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+			<target xml:lang="da">Rediger kode</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="da" state="translated">Indsæt et link, eller skriv for at søge</target></trans-unit>
-      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+			<target xml:lang="da">Indsæt et link, eller skriv for at søge</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="da" state="translated">Kunne ikke indlæse underliggende knudetyper af:</target></trans-unit>
-      <trans-unit id="content.inspector.groups.type" xml:space="preserve">
+			<target xml:lang="da">Kunne ikke indlæse underliggende nodetyper af:</target><alt-trans><target xml:lang="da">Kunne ikke indlæse underliggende knudetyper af:</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="da" state="translated">Skift type</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+			<target xml:lang="da">Skift type</target></trans-unit>
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="da" state="translated">Yderligere info</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+			<target xml:lang="da">Yderligere info</target></trans-unit>
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="da" state="translated">Synlighed</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+			<target xml:lang="da">Synlighed</target></trans-unit>
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target xml:lang="da" state="translated">Dokumentindstillinger</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+			<target xml:lang="da">Dokumentindstillinger</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
-			<target xml:lang="da" state="translated">Længden af denne tekst skal være mellem {{minimum}} og {{maximum}} tegn.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+			<target xml:lang="da">Længden af denne tekst skal være mellem {{minimum}} og {{maximum}} tegn.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="da" state="translated">Dette felt skal indeholde mindst {{minimum}} tegn.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+			<target xml:lang="da">Dette felt skal indeholde mindst {{minimum}} tegn.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="da" state="translated">Denne tekst må ikke overstige {{maximum}} tegn.</target></trans-unit>
+			<target xml:lang="da">Denne tekst må ikke overstige {{maximum}} tegn.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="da">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target><alt-trans><target xml:lang="da">Kun tegnene a-z og tal er tilladt</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="da" state="translated">Givet emne var ikke tællelig.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+			<target xml:lang="da">Givet emne var ikke tællelig.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="da" state="translated">Optællingen skal være mellem {{minimum}} og {{maximum}}.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
+			<target xml:lang="da">Optællingen skal være mellem {{minimum}} og {{maximum}}.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="da" state="translated">Den angivne værdi er ikke en gyldig dato.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+			<target xml:lang="da">Den angivne værdi er ikke en gyldig dato.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="da" state="translated">Den angivne dato skal være mellem {{formatEarliestDate}} og {{formatLatestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+			<target xml:lang="da">Den angivne dato skal være mellem {{formatEarliestDate}} og {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="da" state="translated">Den angivne dato skal være efter {{formatEarliestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+			<target xml:lang="da">Den angivne dato skal være efter {{formatEarliestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="da" state="translated">Den angivne dato skal være før {{formatLatestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
+			<target xml:lang="da">Den angivne dato skal være før {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
-			<target xml:lang="da" state="translated">Angiv venligst en gyldig e-mail-adresse.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
+			<target xml:lang="da">Angiv venligst en gyldig e-mailadresse.</target><alt-trans><target xml:lang="da">Angiv venligst en gyldig e-mail-adresse.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="da" state="translated">Et gyldigt float-tal forventes.</target><alt-trans><target xml:lang="da">Et gyldigt heltal forventes.</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
+			<target xml:lang="da">Et gyldigt decimaltal forventes.</target><alt-trans><target xml:lang="da">Et gyldigt float-tal forventes.</target></alt-trans><alt-trans><target xml:lang="da">Et gyldigt heltal forventes.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
-			<target xml:lang="da" state="translated">Et gyldigt heltal forventes.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+			<target xml:lang="da">Et gyldigt heltal forventes.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="da" state="translated">Kun bogstaver, tal, mellemrum og visse skilletegn forventes.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
+			<target xml:lang="da">Kun bogstaver, tal, mellemrum og visse skilletegn forventes.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target xml:lang="da" state="translated">Denne egenskab er påkrævet.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
+			<target xml:lang="da">Dette felt er påkrævet.</target><alt-trans><target xml:lang="da">Denne egenskab er påkrævet.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
-			<target xml:lang="da" state="translated">Et gyldigt tal forventes.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+			<target xml:lang="da">Et gyldigt tal forventes.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
-			<target xml:lang="da" state="translated">Angiv venligst et gyldigt tal mellem {{minimum}} og {{maximum}}</target><alt-trans><target xml:lang="da">Angiv et gyldigt tal mellem {{minimum}} og {{maximum}}</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+			<target xml:lang="da">Angiv venligst et gyldigt tal mellem {{minimum}} og {{maximum}}</target><alt-trans><target xml:lang="da">Angiv et gyldigt tal mellem {{minimum}} og {{maximum}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
-			<target xml:lang="da" state="translated">DEn givne genstand matcher ikke mønsteret ({{pattern}})</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+			<target xml:lang="da">Den givne værdi matcher ikke mønsteret ({{pattern}})</target><alt-trans><target xml:lang="da">DEn givne genstand matcher ikke mønsteret ({{pattern}})</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
-			<target xml:lang="da" state="translated">En gyldig streng forventes.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+			<target xml:lang="da">En gyldig streng forventes.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="da" state="translated">Gyldig tekst uden XML-tags er forventet.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+			<target xml:lang="da">Gyldig tekst uden XML-tags er forventet.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="da" state="translated">Det givne emne er ikke en gyldig UUID.</target></trans-unit>
+			<target xml:lang="da">Det givne emne er ikke et gyldigt UUID.</target><alt-trans><target xml:lang="da">Det givne emne er ikke en gyldig UUID.</target></alt-trans></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="da">Indhold</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="da" state="translated">Er du sikker på, at du vil slette</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+			<target xml:lang="da">Er du sikker på, at du vil slette</target></trans-unit>
+      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="da" state="translated">Opret ny (hold nede for at vælge position)</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+			<target xml:lang="da">Opret ny (hold nede for at vælge position)</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="da" state="translated">Dette vil slette siden</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+			<target xml:lang="da">Dette vil slette elementet</target><alt-trans><target xml:lang="da">Dette vil slette siden</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target xml:lang="da" state="translated">og dens undersider</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="da">og dens undersider</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="da" state="translated">Denne handling kan fortrydes i arbejdsrum administration.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+			<target xml:lang="da">Denne handling kan fortrydes i arbejdsrumsadministration.</target><alt-trans><target xml:lang="da">Denne handling kan fortrydes i arbejdsrum administration.</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="da" state="translated">Indsæt (hold nede for at vælge position)</target></trans-unit>
-      <trans-unit id="height" xml:space="preserve">
+			<target xml:lang="da">Indsæt (hold nede for at vælge position)</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
-			<target xml:lang="da" state="translated">Højde</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+			<target xml:lang="da">Højde</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="da" state="translated">Er du sikker på, at du vil slette</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+			<target xml:lang="da">Er du sikker på, at du vil slette</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
-			<target xml:lang="da" state="translated">dette element</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+			<target xml:lang="da">dette element</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
-			<target xml:lang="da" state="translated">Dette vil slette elementet.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="da">Dette vil slette elementet.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="da" state="translated">Denne handling kan fortrydes i arbejdsrum administration.</target></trans-unit>
-      <trans-unit id="media" xml:space="preserve">
+			<target xml:lang="da">Denne handling kan fortrydes i arbejdsrumsadministration.</target><alt-trans><target xml:lang="da">Denne handling kan fortrydes i arbejdsrum administration.</target></alt-trans></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="da" state="translated">Medie</target></trans-unit>
-      <trans-unit id="crop" xml:space="preserve">
+			<target xml:lang="da">Medie</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
 				<source>Crop</source>
-			<target xml:lang="da" state="translated">Beskær</target></trans-unit>
-      <trans-unit id="width" xml:space="preserve">
+			<target xml:lang="da">Beskær</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target xml:lang="da" state="translated">Bredde</target></trans-unit>
-      <trans-unit id="translate.requiredProperty" xml:space="preserve">
+			<target xml:lang="da">Bredde</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="da" state="translated">Mangler påkrævet felt: </target><alt-trans><target xml:lang="da">Mangler påkrævet felt:</target></alt-trans></trans-unit>
-      <trans-unit id="workspaces" xml:space="preserve">
+			<target xml:lang="da">Mangler påkrævet felt: </target><alt-trans><target xml:lang="da">Mangler påkrævet felt:</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="da" state="translated">Arbejdsrum</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+			<target xml:lang="da">Arbejdsrum</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
-			<target xml:lang="da" state="translated">Der opstod en fejl under lagring</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+			<target xml:lang="da">Der opstod en fejl i forbindelse med at gemme</target><alt-trans><target xml:lang="da">Der opstod en fejl under lagring</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="da" state="translated">Genindlæs siden for at forsøge at løse problemet.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+			<target xml:lang="da">Genindlæs siden for at forsøge at løse problemet.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
-			<target xml:lang="da" state="translated">Genindlæs backenden</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+			<target xml:lang="da">Genindlæs backenden</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
 				<source>Reload</source>
-			<target xml:lang="da" state="translated">Genindlæs</target></trans-unit>
+			<target xml:lang="da">Genindlæs</target></trans-unit>
       <!-- Edit / preview modes -->
-      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
 				<source>In-Place</source>
-			<target xml:lang="da" state="translated">Direkte</target></trans-unit>
-      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+			<target xml:lang="da">Direkte</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
-			<target xml:lang="da" state="translated">Uden layout</target></trans-unit>
+			<target xml:lang="da">Uden layout</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="da" state="translated">Computer</target></trans-unit>
