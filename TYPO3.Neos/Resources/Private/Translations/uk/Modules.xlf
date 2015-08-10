@@ -195,7 +195,7 @@
 			<target xml:lang="uk" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
+			<target xml:lang="uk" state="translated">Заголовок</target><alt-trans><target xml:lang="uk">Назва</target></alt-trans></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="uk" state="translated">Ім'я</target></trans-unit>
@@ -365,7 +365,7 @@
 			<target xml:lang="uk" state="translated">Ім'я</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="uk" state="translated">Назва</target></trans-unit>
+			<target xml:lang="uk" state="translated">Заголовок</target><alt-trans><target xml:lang="uk">Назва</target></alt-trans></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="uk" state="needs-translation">Label</target></trans-unit>
