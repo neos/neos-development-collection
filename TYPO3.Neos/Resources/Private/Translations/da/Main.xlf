@@ -113,7 +113,7 @@
 			<target xml:lang="da">Publiceret</target><alt-trans><target xml:lang="da">Udgivet</target></alt-trans></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target xml:lang="da">Destinationsarbejdsområde</target><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
+			<target xml:lang="da">Destinationsarbejdsrum</target><alt-trans><target xml:lang="da">Destinationsarbejdsområde</target></alt-trans><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="da">Fjern</target></trans-unit>
@@ -146,7 +146,7 @@
 			<target xml:lang="da">Etiket</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Node type</source>
-			<target xml:lang="da">Nodetype</target></trans-unit>
+			<target xml:lang="da">Indholdstype</target><alt-trans><target xml:lang="da">Nodetype</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="da">Sti</target></trans-unit>
@@ -212,10 +212,10 @@
 			<target xml:lang="da">Ventende ændringer</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="da">Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></trans-unit>
+			<target xml:lang="da">Din personlige arbejdsrum indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsrum, skal ændringerne enten publiceres eller kasseres.</target><alt-trans><target xml:lang="da">Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target><alt-trans><target xml:lang="da">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
+			<target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsrum igen.</target><alt-trans><target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans><alt-trans><target xml:lang="da">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="da">Redigeringmåder</target><alt-trans><target xml:lang="da">Redigering</target></alt-trans></trans-unit>
@@ -266,7 +266,7 @@
 			<target xml:lang="da">Indsæt et link, eller skriv for at søge</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="da">Kunne ikke indlæse underliggende nodetyper af:</target><alt-trans><target xml:lang="da">Kunne ikke indlæse underliggende knudetyper af:</target></alt-trans></trans-unit>
+			<target xml:lang="da">Kunne ikke indlæse underliggende indholdstyper af:</target><alt-trans><target xml:lang="da">Kunne ikke indlæse underliggende nodetyper af:</target></alt-trans><alt-trans><target xml:lang="da">Kunne ikke indlæse underliggende knudetyper af:</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
 			<target xml:lang="da">Skift type</target></trans-unit>
@@ -412,50 +412,50 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
 			<target xml:lang="da">Uden layout</target></trans-unit>
-      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
-			<target xml:lang="da" state="translated">Computer</target></trans-unit>
+			<target xml:lang="da">Computer</target><alt-trans><target xml:lang="da">Skrivebord</target></alt-trans></trans-unit>
       <!-- Login -->
-      <trans-unit id="login.index.title" xml:space="preserve">
+      <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target xml:lang="da" state="translated">TYPO3 Neos Log ind</target></trans-unit>
-      <trans-unit id="authenticating" xml:space="preserve">
+			<target xml:lang="da">Login til</target><alt-trans><target xml:lang="da">TYPO3 Neos Log ind</target></alt-trans></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target xml:lang="da" state="translated">Verificerer</target></trans-unit>
+			<target xml:lang="da">Autentificerer</target><alt-trans><target xml:lang="da">Verificerer</target></alt-trans></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
-			<target xml:lang="da" state="translated">Gå til opsætning</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+			<target xml:lang="da">Gå til opsætning</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
-			<target xml:lang="da" state="translated">Der blev ikke fundet en hjemmeside</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+			<target xml:lang="da">Der blev ikke fundet en hjemmeside</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="da" state="translated">Enten er der ikke defineret noget websted, webstedet indeholder ikke en hjemmeside, eller det aktive websted kunne ikke bestemmes.</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+			<target xml:lang="da">Enten er der ikke defineret noget websted, webstedet indeholder ikke en hjemmeside, eller det aktive websted kunne ikke bestemmes.</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="da" state="translated">Du kan angive webstedets domæne eller importere et nyt websted i opsætningen.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+			<target xml:lang="da">Du kan angive webstedets domæne eller importere et nyt websted i opsætningen.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
-			<target xml:lang="da" state="translated">Database fejl</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+			<target xml:lang="da">Databasefejl</target><alt-trans><target xml:lang="da">Database fejl</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="da" state="translated">Beklager, vi opdagede en fejl med din database. Tjek dine log filer i Data/Logs/* for mere information.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+			<target xml:lang="da">Beklager, vi opdagede en fejl med din database. Tjek dine log filer i Data/Logs/* for mere information.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="da" state="translated">Du kan konfigurere eller tjekke din database konfiguration i opsætningen.</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+			<target xml:lang="da">Du kan konfigurere eller tjekke din database konfiguration i opsætningen.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
-			<target xml:lang="da" state="translated">Siden blev ikke fundet</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+			<target xml:lang="da">Siden blev ikke fundet</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="da" state="translated">Beklager, den ønskede side blev ikke fundet.</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+			<target xml:lang="da">Beklager, den ønskede side blev ikke fundet.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
-			<target xml:lang="da" state="translated">Ugyldig indholdstype</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+			<target xml:lang="da">Ugyldig indholdstype</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="da" state="translated">Indholdstypen som blev forsøgt vist, kunne ikke findes. Måske er indholdstypen blevet omdøbt og det mangler at blive rettet eller måske er der tale om en simpel stavefejl.</target></trans-unit>
+			<target xml:lang="da">Indholdstypen som blev forsøgt vist, kunne ikke findes. Måske er indholdstypen blevet omdøbt og det mangler at blive rettet eller måske er der tale om en simpel stavefejl.</target></trans-unit>
     </body>
   </file>
 </xliff>
