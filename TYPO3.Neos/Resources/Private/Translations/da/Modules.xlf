@@ -2,22 +2,22 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="da">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
+      <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target xml:lang="da" state="translated">Klik for at redigerer</target></trans-unit>
+			<target xml:lang="da">Klik for at redigere</target><alt-trans><target xml:lang="da">Klik for at redigerer</target></alt-trans></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="da" state="translated">Klik for at slette</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="da" state="translated">Anuller</target></trans-unit>
-      <trans-unit id="back" xml:space="preserve">
+			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target xml:lang="da" state="translated">Tilbage</target></trans-unit>
+			<target xml:lang="da">Tilbage</target></trans-unit>
       <!-- Management -->
-      <trans-unit id="management.label" xml:space="preserve">
+      <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target xml:lang="da" state="translated">Administration</target></trans-unit>
+			<target xml:lang="da">Management</target><alt-trans><target xml:lang="da">Administration</target></alt-trans></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
 			<target xml:lang="da" state="translated">Indeholder flere moduler relateret til administration af indhold</target></trans-unit>
@@ -172,12 +172,12 @@
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="da" state="translated">Personlig information</target></trans-unit>
-      <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
+      <trans-unit id="users.new.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="da" state="translated">Fornavn</target></trans-unit>
-      <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
+			<target xml:lang="da">Fornavn</target></trans-unit>
+      <trans-unit id="users.new.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="da" state="translated">Efternavn</target></trans-unit>
+			<target xml:lang="da">Efternavn</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="da" state="translated">Brugerindstillinger</target></trans-unit>
@@ -193,21 +193,21 @@
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="da" state="translated">Personlig information</target></trans-unit>
-      <trans-unit id="users.show.personalData.title" xml:space="preserve">
+      <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="da" state="translated">Titel</target></trans-unit>
-      <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
+			<target xml:lang="da">Titel</target></trans-unit>
+      <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="da" state="translated">Fornavn</target></trans-unit>
-      <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
+			<target xml:lang="da">Fornavn</target></trans-unit>
+      <trans-unit id="users.show.personalData.middleName" xml:space="preserve" approved="yes">
 				<source>Middle Name</source>
-			<target xml:lang="da" state="translated">Mellemnavn</target></trans-unit>
-      <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
+			<target xml:lang="da">Mellemnavn</target></trans-unit>
+      <trans-unit id="users.show.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="da" state="translated">Efternavn</target></trans-unit>
-      <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
+			<target xml:lang="da">Efternavn</target></trans-unit>
+      <trans-unit id="users.show.personalData.otherName" xml:space="preserve" approved="yes">
 				<source>Other Name</source>
-			<target xml:lang="da" state="translated">Andet navn</target></trans-unit>
+			<target xml:lang="da">Andet navn</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="da" state="translated">Konti</target></trans-unit>
@@ -363,9 +363,9 @@
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
 			<target xml:lang="da" state="translated">Navn</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
+      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="da" state="translated">Titel</target></trans-unit>
+			<target xml:lang="da">Titel</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="da" state="translated">Etiket</target></trans-unit>
@@ -378,9 +378,9 @@
       <trans-unit id="media.field.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="da" state="translated">Filstørrelse</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
+      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="da" state="translated">Type</target></trans-unit>
+			<target xml:lang="da">Type</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="da" state="translated">Tags</target></trans-unit>
@@ -420,9 +420,9 @@
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="da" state="translated">Denne handling kan ikke fortrydes.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
+      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="da" state="translated">Anuller</target></trans-unit>
+			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="da" state="translated">Gem</target></trans-unit>
@@ -564,9 +564,9 @@
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="da" state="translated">Gem</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
+      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="da" state="translated">Metadata</target></trans-unit>
+			<target xml:lang="da">Metadata</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="da" state="translated">Filnavn</target></trans-unit>
@@ -579,9 +579,9 @@
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
 			<target xml:lang="da" state="translated">Dimensioner</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
+      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="da" state="translated">Type</target></trans-unit>
+			<target xml:lang="da">Type</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="da" state="translated">Identifikator</target></trans-unit>
