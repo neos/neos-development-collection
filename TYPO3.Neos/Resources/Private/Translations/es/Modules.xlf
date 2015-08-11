@@ -446,13 +446,13 @@
 			<target xml:lang="es-ES" state="translated">Editar {0}</target></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
-			<target xml:lang="es-ES" state="needs-translation">Search in assets</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Buscar en activos</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
 			<target xml:lang="es-ES" state="translated">Buscar</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
-			<target xml:lang="es-ES" state="needs-translation">{0} items</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">{0} elementos</target></trans-unit>
       <trans-unit id="media.search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
 			<target xml:lang="es-ES" state="translated">encontrados coincidentes con "{0}"</target></trans-unit>
