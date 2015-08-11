@@ -178,10 +178,10 @@
 			<target xml:lang="pl">(cel nie został wybrany)</target><alt-trans><target xml:lang="pl">(strona docelowa nie została ustawiona)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="pl">To jest skrót do pierwszej podstrony. &amp;lt;br /&amp;gt;Kliknij {0}, aby do niej przejść.</target></trans-unit>
+			<target xml:lang="pl">To jest skrót do pierwszej podstrony. &lt;br /&gt;Kliknij {0}, aby do niej przejść.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="pl">To jest skrót do strony nadrzędnej. &amp;lt;br /&amp;gt;Kliknij {0}, aby przejść do strony.</target></trans-unit>
+			<target xml:lang="pl">To jest skrót do strony nadrzędnej. &lt;br /&gt;Kliknij {0}, aby przejść do strony.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>

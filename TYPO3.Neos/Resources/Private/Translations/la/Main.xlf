@@ -3,459 +3,459 @@
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
       <!-- general translations like button -->
-      <trans-unit id="autoPublish" xml:space="preserve">
+      <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns1:0crwdne1:0</target></trans-unit>
-      <trans-unit id="apply" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns1:0crwdne1:0</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns2:0crwdne2:0</target></trans-unit>
-      <trans-unit id="applyChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns2:0crwdne2:0</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve" approved="yes">
 				<source>Apply changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns3:0crwdne3:0</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns3:0crwdne3:0</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns4:0crwdne4:0</target></trans-unit>
-      <trans-unit id="choose" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns4:0crwdne4:0</target></trans-unit>
+      <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns5:0crwdne5:0</target></trans-unit>
-      <trans-unit id="typeToSearch" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns5:0crwdne5:0</target></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns6:0crwdne6:0</target></trans-unit>
-      <trans-unit id="content" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns6:0crwdne6:0</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns7:0crwdne7:0</target></trans-unit>
-      <trans-unit id="createAfter" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns7:0crwdne7:0</target></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns8:0crwdne8:0</target></trans-unit>
-      <trans-unit id="createNew" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns8:0crwdne8:0</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns9:0crwdne9:0</target></trans-unit>
-      <trans-unit id="close" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns9:0crwdne9:0</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve" approved="yes">
 				<source>Close</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns10:0crwdne10:0</target></trans-unit>
-      <trans-unit id="copy" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns10:0crwdne10:0</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns11:0crwdne11:0</target></trans-unit>
-      <trans-unit id="cut" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns11:0crwdne11:0</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns12:0crwdne12:0</target></trans-unit>
-      <trans-unit id="delete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns12:0crwdne12:0</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns13:0crwdne13:0</target></trans-unit>
-      <trans-unit id="deleteElement" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns13:0crwdne13:0</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
 				<source>Yes, delete the element</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns14:0crwdne14:0</target></trans-unit>
-      <trans-unit id="deleteElementTitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns14:0crwdne14:0</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
 				<source>Delete the element</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns15:0crwdne15:0</target></trans-unit>
-      <trans-unit id="discard" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns15:0crwdne15:0</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns16:0crwdne16:0</target></trans-unit>
-      <trans-unit id="discardChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns16:0crwdne16:0</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns17:0crwdne17:0</target></trans-unit>
-      <trans-unit id="editTitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns17:0crwdne17:0</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns18:0crwdne18:0</target></trans-unit>
-      <trans-unit id="editPreview" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns18:0crwdne18:0</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns19:0crwdne19:0</target></trans-unit>
-      <trans-unit id="edit" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns19:0crwdne19:0</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns20:0crwdne20:0</target></trans-unit>
-      <trans-unit id="hideUnhide" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns20:0crwdne20:0</target></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns21:0crwdne21:0</target></trans-unit>
-      <trans-unit id="loading" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns21:0crwdne21:0</target></trans-unit>
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns22:0crwdne22:0</target></trans-unit>
-      <trans-unit id="newAfter" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns22:0crwdne22:0</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns23:0crwdne23:0</target></trans-unit>
-      <trans-unit id="newBefore" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns23:0crwdne23:0</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve" approved="yes">
 				<source>New Before</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns24:0crwdne24:0</target></trans-unit>
-      <trans-unit id="newInto" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns24:0crwdne24:0</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve" approved="yes">
 				<source>New Into</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns25:0crwdne25:0</target></trans-unit>
-      <trans-unit id="navigate" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns25:0crwdne25:0</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns26:0crwdne26:0</target></trans-unit>
-      <trans-unit id="okay" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns26:0crwdne26:0</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns27:0crwdne27:0</target></trans-unit>
-      <trans-unit id="page" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns27:0crwdne27:0</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns28:0crwdne28:0</target></trans-unit>
-      <trans-unit id="paste" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns28:0crwdne28:0</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve" approved="yes">
 				<source>Paste</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns29:0crwdne29:0</target></trans-unit>
-      <trans-unit id="pasteAfter" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns29:0crwdne29:0</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve" approved="yes">
 				<source>Paste After</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns30:0crwdne30:0</target></trans-unit>
-      <trans-unit id="pasteBefore" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns30:0crwdne30:0</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve" approved="yes">
 				<source>Paste Before</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns31:0crwdne31:0</target></trans-unit>
-      <trans-unit id="pasteInto" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns31:0crwdne31:0</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns32:0crwdne32:0</target></trans-unit>
-      <trans-unit id="password" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns32:0crwdne32:0</target></trans-unit>
+      <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns33:0crwdne33:0</target></trans-unit>
-      <trans-unit id="preview" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns33:0crwdne33:0</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns34:0crwdne34:0</target></trans-unit>
-      <trans-unit id="publish" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns34:0crwdne34:0</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns35:0crwdne35:0</target></trans-unit>
-      <trans-unit id="published" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns35:0crwdne35:0</target></trans-unit>
+      <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns36:0crwdne36:0</target></trans-unit>
-      <trans-unit id="targetWorkspace" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns36:0crwdne36:0</target></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns236:0crwdne236:0</target></trans-unit>
-      <trans-unit id="remove" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns236:0crwdne236:0</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns37:0crwdne37:0</target></trans-unit>
-      <trans-unit id="refresh" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns37:0crwdne37:0</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns38:0crwdne38:0</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns38:0crwdne38:0</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns39:0crwdne39:0</target></trans-unit>
-      <trans-unit id="saved" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns39:0crwdne39:0</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns40:0crwdne40:0</target></trans-unit>
-      <trans-unit id="search" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns40:0crwdne40:0</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns41:0crwdne41:0</target></trans-unit>
-      <trans-unit id="toggleInspector" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns41:0crwdne41:0</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns42:0crwdne42:0</target></trans-unit>
-      <trans-unit id="username" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns42:0crwdne42:0</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns43:0crwdne43:0</target></trans-unit>
-      <trans-unit id="you" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns43:0crwdne43:0</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns44:0crwdne44:0</target></trans-unit>
-      <trans-unit id="noTitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns44:0crwdne44:0</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve" approved="yes">
 				<source>[no title]</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns237:0crwdne237:0</target></trans-unit>
-      <trans-unit id="labelCaption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns237:0crwdne237:0</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns238:0crwdne238:0</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns238:0crwdne238:0</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Node type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns239:0crwdne239:0</target></trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns239:0crwdne239:0</target></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns240:0crwdne240:0</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns240:0crwdne240:0</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative path</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns241:0crwdne241:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns241:0crwdne241:0</target></trans-unit>
       <!-- node types -->
-      <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns560:0crwdne560:0</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns560:0crwdne560:0</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
 				<source>Structure</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns561:0crwdne561:0</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns561:0crwdne561:0</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
 				<source>Plugins</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns562:0crwdne562:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns562:0crwdne562:0</target></trans-unit>
       <!-- shortcuts -->
-      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns57:0{0}crwdne57:0</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns57:0{0}crwdne57:0</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns58:0{0}crwdne58:0</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns58:0{0}crwdne58:0</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns59:0{0}crwdne59:0</target></trans-unit>
-      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns59:0{0}crwdne59:0</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns60:0crwdne60:0</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns60:0crwdne60:0</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns61:0{0}crwdne61:0</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns61:0{0}crwdne61:0</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns62:0{0}crwdne62:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns62:0{0}crwdne62:0</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns63:0crwdne63:0</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns63:0crwdne63:0</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns64:0crwdne64:0</target></trans-unit>
-      <trans-unit id="discardAll" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns64:0crwdne64:0</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns279:0crwdne279:0</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns279:0crwdne279:0</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns65:0crwdne65:0</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns65:0crwdne65:0</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns66:0crwdne66:0</target></trans-unit>
-      <trans-unit id="publishAll" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns66:0crwdne66:0</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns280:0crwdne280:0</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns280:0crwdne280:0</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns67:0crwdne67:0</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns67:0crwdne67:0</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns68:0crwdne68:0</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns68:0crwdne68:0</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns242:0crwdne242:0</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns242:0crwdne242:0</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns243:0crwdne243:0</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns243:0crwdne243:0</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns244:0crwdne244:0</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns244:0crwdne244:0</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns69:0crwdne69:0</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns69:0crwdne69:0</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns70:0crwdne70:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns70:0crwdne70:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns71:0crwdne71:0</target></trans-unit>
-      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns71:0crwdne71:0</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns72:0crwdne72:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns72:0crwdne72:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns73:0crwdne73:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns73:0crwdne73:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns74:0crwdne74:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns74:0crwdne74:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns75:0crwdne75:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns75:0crwdne75:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve" approved="yes">
 				<source>Throw away</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns76:0crwdne76:0</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns76:0crwdne76:0</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
 				<source>Apply</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns77:0crwdne77:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns77:0crwdne77:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
 				<source>Select a Plugin</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns78:0crwdne78:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns78:0crwdne78:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
 				<source>No plugin configured</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns79:0crwdne79:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns79:0crwdne79:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on page</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns80:0crwdne80:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns80:0crwdne80:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on current page</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns81:0crwdne81:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns81:0crwdne81:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns82:0crwdne82:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns82:0crwdne82:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns83:0crwdne83:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns83:0crwdne83:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns84:0crwdne84:0</target></trans-unit>
-      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns84:0crwdne84:0</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns85:0crwdne85:0</target></trans-unit>
-      <trans-unit id="content.inspector.groups.type" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns85:0crwdne85:0</target></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns86:0crwdne86:0</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns86:0crwdne86:0</target></trans-unit>
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns87:0crwdne87:0</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns87:0crwdne87:0</target></trans-unit>
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns88:0crwdne88:0</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns88:0crwdne88:0</target></trans-unit>
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns89:0crwdne89:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns89:0crwdne89:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns258:0{{minimum}}crwdnd258:0{{maximum}}crwdne258:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns258:0{{minimum}}crwdnd258:0{{maximum}}crwdne258:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns259:0{{minimum}}crwdne259:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns259:0{{minimum}}crwdne259:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns260:0{{maximum}}crwdne260:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns260:0{{maximum}}crwdne260:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns261:0crwdne261:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns261:0crwdne261:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns262:0crwdne262:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns262:0crwdne262:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns263:0{{minimum}}crwdnd263:0{{maximum}}crwdne263:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns263:0{{minimum}}crwdnd263:0{{maximum}}crwdne263:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns264:0crwdne264:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns264:0crwdne264:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns265:0{{formatEarliestDate}}crwdnd265:0{{formatLatestDate}}crwdne265:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns265:0{{formatEarliestDate}}crwdnd265:0{{formatLatestDate}}crwdne265:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns266:0{{formatEarliestDate}}crwdne266:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns266:0{{formatEarliestDate}}crwdne266:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns267:0{{formatLatestDate}}crwdne267:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns267:0{{formatLatestDate}}crwdne267:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns268:0crwdne268:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns268:0crwdne268:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns269:0crwdne269:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns269:0crwdne269:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns270:0crwdne270:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns270:0crwdne270:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns271:0crwdne271:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns271:0crwdne271:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns272:0crwdne272:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns272:0crwdne272:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns273:0crwdne273:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns273:0crwdne273:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns274:0{{minimum}}crwdnd274:0{{maximum}}crwdne274:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns274:0{{minimum}}crwdnd274:0{{maximum}}crwdne274:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns275:0{{pattern}}crwdne275:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns275:0{{pattern}}crwdne275:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns276:0crwdne276:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns276:0crwdne276:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns277:0crwdne277:0</target></trans-unit>
-      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns277:0crwdne277:0</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns278:0crwdne278:0</target></trans-unit>
-      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns278:0crwdne278:0</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns90:0crwdne90:0</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns90:0crwdne90:0</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns91:0crwdne91:0</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns91:0crwdne91:0</target></trans-unit>
+      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns92:0crwdne92:0</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns92:0crwdne92:0</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns93:0crwdne93:0</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns93:0crwdne93:0</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns94:0crwdne94:0</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns94:0crwdne94:0</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns95:0crwdne95:0</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns95:0crwdne95:0</target></trans-unit>
+      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns96:0crwdne96:0</target></trans-unit>
-      <trans-unit id="height" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns96:0crwdne96:0</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns97:0crwdne97:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns97:0crwdne97:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns98:0crwdne98:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns98:0crwdne98:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns99:0crwdne99:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns99:0crwdne99:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns100:0crwdne100:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns100:0crwdne100:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns101:0crwdne101:0</target></trans-unit>
-      <trans-unit id="media" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns101:0crwdne101:0</target></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns102:0crwdne102:0</target></trans-unit>
-      <trans-unit id="crop" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns102:0crwdne102:0</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
 				<source>Crop</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns103:0crwdne103:0</target></trans-unit>
-      <trans-unit id="width" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns103:0crwdne103:0</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns104:0crwdne104:0</target></trans-unit>
-      <trans-unit id="translate.requiredProperty" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns104:0crwdne104:0</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns105:0crwdne105:0 </target></trans-unit>
-      <trans-unit id="workspaces" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns105:0crwdne105:0 </target></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns106:0crwdne106:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns106:0crwdne106:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns107:0crwdne107:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns107:0crwdne107:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns108:0crwdne108:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns108:0crwdne108:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns109:0crwdne109:0</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns109:0crwdne109:0</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
 				<source>Reload</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns110:0crwdne110:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns110:0crwdne110:0</target></trans-unit>
       <!-- Edit / preview modes -->
-      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
 				<source>In-Place</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns563:0crwdne563:0</target></trans-unit>
-      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns563:0crwdne563:0</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns564:0crwdne564:0</target></trans-unit>
-      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns564:0crwdne564:0</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns565:0crwdne565:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns565:0crwdne565:0</target></trans-unit>
       <!-- Login -->
-      <trans-unit id="login.index.title" xml:space="preserve">
+      <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns111:0crwdne111:0</target></trans-unit>
-      <trans-unit id="authenticating" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns111:0crwdne111:0</target></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns113:0crwdne113:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns113:0crwdne113:0</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns114:0crwdne114:0</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns114:0crwdne114:0</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns115:0crwdne115:0</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns115:0crwdne115:0</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns116:0crwdne116:0</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns116:0crwdne116:0</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns117:0crwdne117:0</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns117:0crwdne117:0</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns118:0crwdne118:0</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns118:0crwdne118:0</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns119:0crwdne119:0</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns119:0crwdne119:0</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns120:0crwdne120:0</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns120:0crwdne120:0</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns121:0crwdne121:0</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns121:0crwdne121:0</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns122:0crwdne122:0</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns122:0crwdne122:0</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns550:0crwdne550:0</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns550:0crwdne550:0</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns551:0crwdne551:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns551:0crwdne551:0</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -8,9 +8,9 @@
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="nl" state="translated">Klik om te verwijderen</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="nl" state="translated">Annuleren</target></trans-unit>
+			<target xml:lang="nl">Annuleren</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="nl" state="translated">Terug</target></trans-unit>
@@ -27,9 +27,9 @@
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="nl" state="translated">Deze module bevat een overzicht van alle elementen in de huidige workspace en geeft de mogelijkheid de review en publicatie workflow voort te zetten.</target></trans-unit>
-      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes</source>
-			<target xml:lang="nl" state="translated">Niet-gepubliceerde wijzigingen</target></trans-unit>
+			<target xml:lang="nl">Niet gepubliceerde wijzigingen</target><alt-trans><target xml:lang="nl">Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="nl" state="translated">Geselecteerde wijzigingen verwijderen</target></trans-unit>
@@ -136,9 +136,9 @@
       <trans-unit id="users.action.new" xml:space="preserve">
 				<source>New</source>
 			<target xml:lang="nl" state="translated">Nieuw</target></trans-unit>
-      <trans-unit id="users.action.edit" xml:space="preserve">
+      <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="nl" state="translated">Bewerken</target></trans-unit>
+			<target xml:lang="nl">Bewerken</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="nl" state="translated">Bewerk account</target></trans-unit>
@@ -157,12 +157,12 @@
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="nl" state="translated">Gebruikersgegevens</target></trans-unit>
-      <trans-unit id="users.new.userData.username" xml:space="preserve">
+      <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
-      <trans-unit id="users.new.userData.password" xml:space="preserve">
+			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
+      <trans-unit id="users.new.userData.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="nl" state="translated">Wachtwoord</target></trans-unit>
+			<target xml:lang="nl">Wachtwoord</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="nl" state="translated">Wachtwoord herhalen</target></trans-unit>
@@ -193,9 +193,9 @@
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="nl" state="translated">Persoonlijke gegevens</target></trans-unit>
-      <trans-unit id="users.show.personalData.title" xml:space="preserve">
+      <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
+			<target xml:lang="nl">Titel</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="nl" state="translated">Voornaam</target></trans-unit>
@@ -211,9 +211,9 @@
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="nl" state="translated">Gebruikers Accounts</target></trans-unit>
-      <trans-unit id="users.show.username" xml:space="preserve">
+      <trans-unit id="users.show.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
+			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="nl" state="translated">Rollen</target></trans-unit>
@@ -256,9 +256,9 @@
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target xml:lang="nl" state="translated">Gebruiker account</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve">
+      <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
+			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="nl" state="translated">De gebruikersnaam kan niet worden gewijzigd via de gebruikersinterface</target></trans-unit>
@@ -305,12 +305,12 @@
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="nl" state="translated">Deze module geeft u de mogelijkheid uw backend gebruikersprofiel aan te passen. Hier kunt u uw actieve systeem taal, naam en e-mailadres wijzigen. U kunt ook andere algemene instellingen configureren in het systeem.</target></trans-unit>
-      <trans-unit id="userSettings.action.index" xml:space="preserve">
+      <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="nl" state="translated">Bewerken</target></trans-unit>
-      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+			<target xml:lang="nl">Bewerken</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="nl" state="translated">Bewerken</target></trans-unit>
+			<target xml:lang="nl">Bewerken</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="nl" state="translated">Nieuw electronisch adres</target></trans-unit>
@@ -335,9 +335,9 @@
       <trans-unit id="userSettings.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="nl" state="translated">Gebruikers Accounts</target></trans-unit>
-      <trans-unit id="userSettings.accounts.username" xml:space="preserve">
+      <trans-unit id="userSettings.accounts.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
+			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="nl" state="translated">Rollen</target></trans-unit>
@@ -363,12 +363,12 @@
       <trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
 			<target xml:lang="nl" state="translated">Naam</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
+      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve">
+			<target xml:lang="nl">Titel</target></trans-unit>
+      <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="nl" state="translated">Label</target></trans-unit>
+			<target xml:lang="nl">Label</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="nl" state="translated">Onderschrift</target></trans-unit>
@@ -378,9 +378,9 @@
       <trans-unit id="media.field.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="nl" state="translated">Bestandsgrootte</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
+      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="nl" state="translated">Type</target></trans-unit>
+			<target xml:lang="nl">Type</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="nl" state="translated">Tags</target></trans-unit>
@@ -420,9 +420,9 @@
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="nl" state="translated">Deze bewerking kan niet ongedaan worden gemaakt.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
+      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="nl" state="translated">Annuleren</target></trans-unit>
+			<target xml:lang="nl">Annuleren</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="nl" state="translated">Sla op</target></trans-unit>
@@ -441,9 +441,9 @@
       <trans-unit id="media.search.title" xml:space="preserve">
 				<source>Search in assets</source>
 			<target xml:lang="nl" state="translated">Zoek binnen assets</target></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve">
+      <trans-unit id="media.search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="nl" state="translated">Zoeken</target></trans-unit>
+			<target xml:lang="nl">Zoeken</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="nl" state="translated">{0} items</target></trans-unit>
@@ -555,18 +555,18 @@
       <trans-unit id="media.basics" xml:space="preserve">
 				<source>Basics</source>
 			<target xml:lang="nl" state="translated">Basis</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve">
+      <trans-unit id="media.delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="nl" state="translated">Verwijder</target></trans-unit>
+			<target xml:lang="nl">Verwijderen</target><alt-trans><target xml:lang="nl">Verwijder</target></alt-trans></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="nl" state="translated">Klik om te verwijderen</target></trans-unit>
       <trans-unit id="media.save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="nl" state="translated">Sla op</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
+      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="nl" state="translated">Metadata</target></trans-unit>
+			<target xml:lang="nl">Metadata</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="nl" state="translated">Bestandsnaam</target></trans-unit>
@@ -579,15 +579,15 @@
       <trans-unit id="media.metadata.dimensions" xml:space="preserve">
 				<source>Dimensions</source>
 			<target xml:lang="nl" state="translated">Dimensies</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
+      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="nl" state="translated">Type</target></trans-unit>
+			<target xml:lang="nl">Type</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="nl" state="translated">Identifier</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve">
+      <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="nl" state="translated">Voorbeeld</target></trans-unit>
+			<target xml:lang="nl">Voorbeeld</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="nl" state="translated">Kan het bestand niet uploaden</target></trans-unit>

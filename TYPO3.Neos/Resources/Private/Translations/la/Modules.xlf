@@ -2,613 +2,613 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
+      <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns482:0crwdne482:0</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns482:0crwdne482:0</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns483:0crwdne483:0</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns483:0crwdne483:0</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns484:0crwdne484:0</target></trans-unit>
-      <trans-unit id="back" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns484:0crwdne484:0</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns485:0crwdne485:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns485:0crwdne485:0</target></trans-unit>
       <!-- Management -->
-      <trans-unit id="management.label" xml:space="preserve">
+      <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns123:0crwdne123:0</target></trans-unit>
-      <trans-unit id="management.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns123:0crwdne123:0</target></trans-unit>
+      <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns124:0crwdne124:0</target></trans-unit>
-      <trans-unit id="workspaces.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns124:0crwdne124:0</target></trans-unit>
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns125:0crwdne125:0</target></trans-unit>
-      <trans-unit id="workspaces.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns125:0crwdne125:0</target></trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns126:0crwdne126:0</target></trans-unit>
-      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns126:0crwdne126:0</target></trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns245:0crwdne245:0</target></trans-unit>
-      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns245:0crwdne245:0</target></trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns246:0crwdne246:0</target></trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns246:0crwdne246:0</target></trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Publish selected changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns247:0crwdne247:0</target></trans-unit>
-      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns247:0crwdne247:0</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns248:0crwdne248:0</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns248:0crwdne248:0</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns249:0crwdne249:0</target></trans-unit>
-      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns249:0crwdne249:0</target></trans-unit>
+      <trans-unit id="workspaces.legendCaption" xml:space="preserve" approved="yes">
 				<source>Legend</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns250:0crwdne250:0</target></trans-unit>
-      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns250:0crwdne250:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns251:0crwdne251:0</target></trans-unit>
-      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns251:0crwdne251:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns252:0crwdne252:0</target></trans-unit>
-      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns252:0crwdne252:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns253:0crwdne253:0</target></trans-unit>
-      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns253:0crwdne253:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns254:0crwdne254:0</target></trans-unit>
-      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns254:0crwdne254:0</target></trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns255:0crwdne255:0</target></trans-unit>
-      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns255:0crwdne255:0</target></trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns256:0crwdne256:0</target></trans-unit>
-      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns256:0crwdne256:0</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns257:0{0}crwdne257:0</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns257:0{0}crwdne257:0</target></trans-unit>
+      <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns127:0crwdne127:0</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns127:0crwdne127:0</target></trans-unit>
+      <trans-unit id="media.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns128:0crwdne128:0</target></trans-unit>
-      <trans-unit id="history.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns128:0crwdne128:0</target></trans-unit>
+      <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns129:0crwdne129:0</target></trans-unit>
-      <trans-unit id="history.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns129:0crwdne129:0</target></trans-unit>
+      <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns130:0crwdne130:0</target></trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns130:0crwdne130:0</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns131:0crwdne131:0</target></trans-unit>
-      <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns131:0crwdne131:0</target></trans-unit>
+      <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns132:0crwdne132:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns132:0crwdne132:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns133:0{0}crwdnd133:0{1}crwdnd133:0{2}crwdne133:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns133:0{0}crwdnd133:0{1}crwdnd133:0{2}crwdne133:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns134:0{0}crwdnd134:0{1}crwdnd134:0{2}crwdne134:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns134:0{0}crwdnd134:0{1}crwdnd134:0{2}crwdne134:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns135:0{0}crwdnd135:0{1}crwdnd135:0{2}crwdnd135:0{3}crwdne135:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns135:0{0}crwdnd135:0{1}crwdnd135:0{2}crwdnd135:0{3}crwdne135:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns136:0{0}crwdnd136:0{1}crwdnd136:0{2}crwdne136:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns136:0{0}crwdnd136:0{1}crwdnd136:0{2}crwdne136:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
 				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns137:0{0}crwdnd137:0{1}crwdnd137:0{2}crwdne137:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns137:0{0}crwdnd137:0{1}crwdnd137:0{2}crwdne137:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
 				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns138:0{0}crwdnd138:0{1}crwdnd138:0{2}crwdne138:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns138:0{0}crwdnd138:0{1}crwdnd138:0{2}crwdne138:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
 				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns139:0{0}crwdnd139:0{1}crwdnd139:0{2}crwdnd139:0{3}crwdne139:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns139:0{0}crwdnd139:0{1}crwdnd139:0{2}crwdnd139:0{3}crwdne139:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
 				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns140:0{0}crwdnd140:0{1}crwdnd140:0{2}crwdne140:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns140:0{0}crwdnd140:0{1}crwdnd140:0{2}crwdne140:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns141:0{0}crwdnd141:0{1}crwdnd141:0{2}crwdne141:0</target></trans-unit>
-      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns141:0{0}crwdnd141:0{1}crwdnd141:0{2}crwdne141:0</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns142:0{0}crwdnd142:0{1}crwdnd142:0{2}crwdne142:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns142:0{0}crwdnd142:0{1}crwdnd142:0{2}crwdne142:0</target></trans-unit>
       <!-- Administration -->
-      <trans-unit id="administration.label" xml:space="preserve">
+      <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns143:0crwdne143:0</target></trans-unit>
-      <trans-unit id="administration.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns143:0crwdne143:0</target></trans-unit>
+      <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns144:0crwdne144:0</target></trans-unit>
-      <trans-unit id="users.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns144:0crwdne144:0</target></trans-unit>
+      <trans-unit id="users.label" xml:space="preserve" approved="yes">
 				<source>User Management</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns145:0crwdne145:0</target></trans-unit>
-      <trans-unit id="users.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns145:0crwdne145:0</target></trans-unit>
+      <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns146:0crwdne146:0</target></trans-unit>
-      <trans-unit id="users.action.index" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns146:0crwdne146:0</target></trans-unit>
+      <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns540:0crwdne540:0</target></trans-unit>
-      <trans-unit id="users.action.show" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns540:0crwdne540:0</target></trans-unit>
+      <trans-unit id="users.action.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns541:0crwdne541:0</target></trans-unit>
-      <trans-unit id="users.action.new" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns541:0crwdne541:0</target></trans-unit>
+      <trans-unit id="users.action.new" xml:space="preserve" approved="yes">
 				<source>New</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns542:0crwdne542:0</target></trans-unit>
-      <trans-unit id="users.action.edit" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns542:0crwdne542:0</target></trans-unit>
+      <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns543:0crwdne543:0</target></trans-unit>
-      <trans-unit id="users.action.editAccount" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns543:0crwdne543:0</target></trans-unit>
+      <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns544:0crwdne544:0</target></trans-unit>
-      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns544:0crwdne544:0</target></trans-unit>
+      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns545:0crwdne545:0</target></trans-unit>
-      <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns545:0crwdne545:0</target></trans-unit>
+      <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns147:0crwdne147:0</target></trans-unit>
-      <trans-unit id="users.actions.new.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns147:0crwdne147:0</target></trans-unit>
+      <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns486:0crwdne486:0</target></trans-unit>
-      <trans-unit id="user.actions.new.subtitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns486:0crwdne486:0</target></trans-unit>
+      <trans-unit id="user.actions.new.subtitle" xml:space="preserve" approved="yes">
 				<source>Create a new user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns487:0crwdne487:0</target></trans-unit>
-      <trans-unit id="users.new.userData" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns487:0crwdne487:0</target></trans-unit>
+      <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns488:0crwdne488:0</target></trans-unit>
-      <trans-unit id="users.new.userData.username" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns488:0crwdne488:0</target></trans-unit>
+      <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns489:0crwdne489:0</target></trans-unit>
-      <trans-unit id="users.new.userData.password" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns489:0crwdne489:0</target></trans-unit>
+      <trans-unit id="users.new.userData.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns490:0crwdne490:0</target></trans-unit>
-      <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns490:0crwdne490:0</target></trans-unit>
+      <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns491:0crwdne491:0</target></trans-unit>
-      <trans-unit id="users.new.userData.roles" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns491:0crwdne491:0</target></trans-unit>
+      <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns492:0crwdne492:0</target></trans-unit>
-      <trans-unit id="users.new.personalData" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns492:0crwdne492:0</target></trans-unit>
+      <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns493:0crwdne493:0</target></trans-unit>
-      <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns493:0crwdne493:0</target></trans-unit>
+      <trans-unit id="users.new.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns494:0crwdne494:0</target></trans-unit>
-      <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns494:0crwdne494:0</target></trans-unit>
+      <trans-unit id="users.new.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns495:0crwdne495:0</target></trans-unit>
-      <trans-unit id="users.new.userPreferences" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns495:0crwdne495:0</target></trans-unit>
+      <trans-unit id="users.new.userPreferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns496:0crwdne496:0</target></trans-unit>
-      <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns496:0crwdne496:0</target></trans-unit>
+      <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns497:0crwdne497:0</target></trans-unit>
-      <trans-unit id="users.new.createButton" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns497:0crwdne497:0</target></trans-unit>
+      <trans-unit id="users.new.createButton" xml:space="preserve" approved="yes">
 				<source>Create user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns498:0crwdne498:0</target></trans-unit>
-      <trans-unit id="users.show.subtitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns498:0crwdne498:0</target></trans-unit>
+      <trans-unit id="users.show.subtitle" xml:space="preserve" approved="yes">
 				<source>Details for user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns499:0crwdne499:0</target></trans-unit>
-      <trans-unit id="users.show.personalData" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns499:0crwdne499:0</target></trans-unit>
+      <trans-unit id="users.show.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns500:0crwdne500:0</target></trans-unit>
-      <trans-unit id="users.show.personalData.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns500:0crwdne500:0</target></trans-unit>
+      <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns501:0crwdne501:0</target></trans-unit>
-      <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns501:0crwdne501:0</target></trans-unit>
+      <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns502:0crwdne502:0</target></trans-unit>
-      <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns502:0crwdne502:0</target></trans-unit>
+      <trans-unit id="users.show.personalData.middleName" xml:space="preserve" approved="yes">
 				<source>Middle Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns503:0crwdne503:0</target></trans-unit>
-      <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns503:0crwdne503:0</target></trans-unit>
+      <trans-unit id="users.show.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns504:0crwdne504:0</target></trans-unit>
-      <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns504:0crwdne504:0</target></trans-unit>
+      <trans-unit id="users.show.personalData.otherName" xml:space="preserve" approved="yes">
 				<source>Other Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns505:0crwdne505:0</target></trans-unit>
-      <trans-unit id="users.show.accounts" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns505:0crwdne505:0</target></trans-unit>
+      <trans-unit id="users.show.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns506:0crwdne506:0</target></trans-unit>
-      <trans-unit id="users.show.username" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns506:0crwdne506:0</target></trans-unit>
+      <trans-unit id="users.show.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns507:0crwdne507:0</target></trans-unit>
-      <trans-unit id="users.show.roles" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns507:0crwdne507:0</target></trans-unit>
+      <trans-unit id="users.show.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns508:0crwdne508:0</target></trans-unit>
-      <trans-unit id="users.show.electronicAddresses" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns508:0crwdne508:0</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic Addresses</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns509:0crwdne509:0</target></trans-unit>
-      <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns509:0crwdne509:0</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns510:0crwdne510:0</target></trans-unit>
-      <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns510:0crwdne510:0</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve" approved="yes">
 				<source>N/A</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns511:0crwdne511:0</target></trans-unit>
-      <trans-unit id="users.show.deleteUser" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns511:0crwdne511:0</target></trans-unit>
+      <trans-unit id="users.show.deleteUser" xml:space="preserve" approved="yes">
 				<source>Delete User</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns512:0crwdne512:0</target></trans-unit>
-      <trans-unit id="users.show.editUser" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns512:0crwdne512:0</target></trans-unit>
+      <trans-unit id="users.show.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns513:0crwdne513:0</target></trans-unit>
-      <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns513:0crwdne513:0</target></trans-unit>
+      <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns514:0crwdne514:0</target></trans-unit>
-      <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns514:0crwdne514:0</target></trans-unit>
+      <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns515:0crwdne515:0</target></trans-unit>
-      <trans-unit id="users.show.buttonDelete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns515:0crwdne515:0</target></trans-unit>
+      <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns516:0{0}crwdne516:0</target></trans-unit>
-      <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns516:0{0}crwdne516:0</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns517:0crwdne517:0</target></trans-unit>
-      <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns517:0crwdne517:0</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns518:0crwdne518:0</target></trans-unit>
-      <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns518:0crwdne518:0</target></trans-unit>
+      <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns519:0crwdne519:0</target></trans-unit>
-      <trans-unit id="users.editAccount.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns519:0crwdne519:0</target></trans-unit>
+      <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns150:0{accountIdentifier}crwdne150:0</target></trans-unit>
-      <trans-unit id="users.account" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns150:0{accountIdentifier}crwdne150:0</target></trans-unit>
+      <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns151:0crwdne151:0</target></trans-unit>
-      <trans-unit id="users.username" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns151:0crwdne151:0</target></trans-unit>
+      <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns152:0crwdne152:0</target></trans-unit>
-      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns152:0crwdne152:0</target></trans-unit>
+      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve" approved="yes">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns153:0crwdne153:0</target></trans-unit>
-      <trans-unit id="users.saveAccount" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns153:0crwdne153:0</target></trans-unit>
+      <trans-unit id="users.saveAccount" xml:space="preserve" approved="yes">
 				<source>Save account</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns154:0crwdne154:0</target></trans-unit>
-      <trans-unit id="users.repeatPassword" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns154:0crwdne154:0</target></trans-unit>
+      <trans-unit id="users.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns155:0crwdne155:0</target></trans-unit>
-      <trans-unit id="users.roles" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns155:0crwdne155:0</target></trans-unit>
+      <trans-unit id="users.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns156:0crwdne156:0</target></trans-unit>
-      <trans-unit id="packages.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns156:0crwdne156:0</target></trans-unit>
+      <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns157:0crwdne157:0</target></trans-unit>
-      <trans-unit id="packages.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns157:0crwdne157:0</target></trans-unit>
+      <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns158:0crwdne158:0</target></trans-unit>
-      <trans-unit id="sites.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns158:0crwdne158:0</target></trans-unit>
+      <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns159:0crwdne159:0</target></trans-unit>
-      <trans-unit id="sites.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns159:0crwdne159:0</target></trans-unit>
+      <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns160:0crwdne160:0</target></trans-unit>
-      <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns160:0crwdne160:0</target></trans-unit>
+      <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns520:0crwdne520:0</target></trans-unit>
-      <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns520:0crwdne520:0</target></trans-unit>
+      <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns521:0crwdne521:0</target></trans-unit>
-      <trans-unit id="configuration.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns521:0crwdne521:0</target></trans-unit>
+      <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns522:0crwdne522:0</target></trans-unit>
-      <trans-unit id="configuration.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns522:0crwdne522:0</target></trans-unit>
+      <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns523:0crwdne523:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns523:0crwdne523:0</target></trans-unit>
       <!-- User -->
-      <trans-unit id="user.label" xml:space="preserve">
+      <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns163:0crwdne163:0</target></trans-unit>
-      <trans-unit id="userSettings.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns163:0crwdne163:0</target></trans-unit>
+      <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns524:0crwdne524:0</target></trans-unit>
-      <trans-unit id="userSettings.description" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns524:0crwdne524:0</target></trans-unit>
+      <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns525:0crwdne525:0</target></trans-unit>
-      <trans-unit id="userSettings.action.index" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns525:0crwdne525:0</target></trans-unit>
+      <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns546:0crwdne546:0</target></trans-unit>
-      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns546:0crwdne546:0</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns547:0crwdne547:0</target></trans-unit>
-      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns547:0crwdne547:0</target></trans-unit>
+      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns548:0crwdne548:0</target></trans-unit>
-      <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns548:0crwdne548:0</target></trans-unit>
+      <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns549:0crwdne549:0</target></trans-unit>
-      <trans-unit id="userSettings.personalData" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns549:0crwdne549:0</target></trans-unit>
+      <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns526:0crwdne526:0</target></trans-unit>
-      <trans-unit id="userSettings.userData" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns526:0crwdne526:0</target></trans-unit>
+      <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns527:0crwdne527:0</target></trans-unit>
-      <trans-unit id="userSettings.preferences" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns527:0crwdne527:0</target></trans-unit>
+      <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns528:0crwdne528:0</target></trans-unit>
-      <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns528:0crwdne528:0</target></trans-unit>
+      <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns529:0crwdne529:0</target></trans-unit>
-      <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns529:0crwdne529:0</target></trans-unit>
+      <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns530:0crwdne530:0</target></trans-unit>
-      <trans-unit id="userSettings.accounts" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns530:0crwdne530:0</target></trans-unit>
+      <trans-unit id="userSettings.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns531:0crwdne531:0</target></trans-unit>
-      <trans-unit id="userSettings.accounts.username" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns531:0crwdne531:0</target></trans-unit>
+      <trans-unit id="userSettings.accounts.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns532:0crwdne532:0</target></trans-unit>
-      <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns532:0crwdne532:0</target></trans-unit>
+      <trans-unit id="userSettings.accounts.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns533:0crwdne533:0</target></trans-unit>
-      <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns533:0crwdne533:0</target></trans-unit>
+      <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns534:0crwdne534:0</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns534:0crwdne534:0</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic addresses</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns535:0crwdne535:0</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns535:0crwdne535:0</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns536:0crwdne536:0</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns536:0crwdne536:0</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns537:0crwdne537:0</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns537:0crwdne537:0</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Click to add a new Electronic address</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns538:0crwdne538:0</target></trans-unit>
-      <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns538:0crwdne538:0</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns539:0crwdne539:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns539:0crwdne539:0</target></trans-unit>
       <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve">
+      <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns392:0crwdne392:0</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns392:0crwdne392:0</target></trans-unit>
+      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns393:0crwdne393:0</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns393:0crwdne393:0</target></trans-unit>
+      <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns394:0crwdne394:0</target></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns394:0crwdne394:0</target></trans-unit>
+      <trans-unit id="media.field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns395:0crwdne395:0</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns395:0crwdne395:0</target></trans-unit>
+      <trans-unit id="media.field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns396:0crwdne396:0</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns396:0crwdne396:0</target></trans-unit>
+      <trans-unit id="media.field.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns397:0crwdne397:0</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns397:0crwdne397:0</target></trans-unit>
+      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns398:0crwdne398:0</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns398:0crwdne398:0</target></trans-unit>
+      <trans-unit id="media.field.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns399:0crwdne399:0</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns399:0crwdne399:0</target></trans-unit>
+      <trans-unit id="media.sortByName" xml:space="preserve" approved="yes">
 				<source>Sort by name</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns400:0crwdne400:0</target></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns400:0crwdne400:0</target></trans-unit>
+      <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns401:0crwdne401:0</target></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns401:0crwdne401:0</target></trans-unit>
+      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns402:0crwdne402:0</target></trans-unit>
-      <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns402:0crwdne402:0</target></trans-unit>
+      <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns403:0crwdne403:0</target></trans-unit>
-      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns403:0crwdne403:0</target></trans-unit>
+      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns404:0crwdne404:0</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns404:0crwdne404:0</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns405:0{0}crwdne405:0</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns405:0{0}crwdne405:0</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns406:0{0}crwdne406:0</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns406:0{0}crwdne406:0</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns407:0{0}crwdne407:0</target></trans-unit>
-      <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns407:0{0}crwdne407:0</target></trans-unit>
+      <trans-unit id="media.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns408:0crwdne408:0</target></trans-unit>
-      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns408:0crwdne408:0</target></trans-unit>
+      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns409:0crwdne409:0</target></trans-unit>
-      <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns409:0crwdne409:0</target></trans-unit>
+      <trans-unit id="media.message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns410:0crwdne410:0</target></trans-unit>
-      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns410:0crwdne410:0</target></trans-unit>
+      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns411:0crwdne411:0</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns411:0crwdne411:0</target></trans-unit>
+      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns412:0crwdne412:0</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns412:0crwdne412:0</target></trans-unit>
+      <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns413:0crwdne413:0</target></trans-unit>
-      <trans-unit id="media.message.confirmDelete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns413:0crwdne413:0</target></trans-unit>
+      <trans-unit id="media.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns414:0crwdne414:0</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns414:0crwdne414:0</target></trans-unit>
+      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns415:0crwdne415:0</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns415:0crwdne415:0</target></trans-unit>
+      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve" approved="yes">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns416:0crwdne416:0</target></trans-unit>
-      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns416:0crwdne416:0</target></trans-unit>
+      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve" approved="yes">
 				<source>Edit {0}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns417:0{0}crwdne417:0</target></trans-unit>
-      <trans-unit id="media.search.title" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns417:0{0}crwdne417:0</target></trans-unit>
+      <trans-unit id="media.search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns418:0crwdne418:0</target></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns418:0crwdne418:0</target></trans-unit>
+      <trans-unit id="media.search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns419:0crwdne419:0</target></trans-unit>
-      <trans-unit id="media.search.itemCount" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns419:0crwdne419:0</target></trans-unit>
+      <trans-unit id="media.search.itemCount" xml:space="preserve" approved="yes">
 				<source>{0} items</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns420:0{0}crwdne420:0</target></trans-unit>
-      <trans-unit id="media.search.foundMatches" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns420:0{0}crwdne420:0</target></trans-unit>
+      <trans-unit id="media.search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns421:0{0}crwdne421:0</target></trans-unit>
-      <trans-unit id="media.upload" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns421:0{0}crwdne421:0</target></trans-unit>
+      <trans-unit id="media.upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns422:0crwdne422:0</target></trans-unit>
-      <trans-unit id="media.filterOptions" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns422:0crwdne422:0</target></trans-unit>
+      <trans-unit id="media.filterOptions" xml:space="preserve" approved="yes">
 				<source>Filter options</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns423:0crwdne423:0</target></trans-unit>
-      <trans-unit id="media.filter.title.all" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns423:0crwdne423:0</target></trans-unit>
+      <trans-unit id="media.filter.title.all" xml:space="preserve" approved="yes">
 				<source>Display all asset types</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns424:0crwdne424:0</target></trans-unit>
-      <trans-unit id="media.filter.title.images" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns424:0crwdne424:0</target></trans-unit>
+      <trans-unit id="media.filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns425:0crwdne425:0</target></trans-unit>
-      <trans-unit id="media.filter.title.documents" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns425:0crwdne425:0</target></trans-unit>
+      <trans-unit id="media.filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns426:0crwdne426:0</target></trans-unit>
-      <trans-unit id="media.filter.title.video" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns426:0crwdne426:0</target></trans-unit>
+      <trans-unit id="media.filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns427:0crwdne427:0</target></trans-unit>
-      <trans-unit id="media.filter.title.audio" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns427:0crwdne427:0</target></trans-unit>
+      <trans-unit id="media.filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns428:0crwdne428:0</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns428:0crwdne428:0</target></trans-unit>
+      <trans-unit id="media.filter.all" xml:space="preserve" approved="yes">
 				<source>All</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns429:0crwdne429:0</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns429:0crwdne429:0</target></trans-unit>
+      <trans-unit id="media.filter.images" xml:space="preserve" approved="yes">
 				<source>Images</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns430:0crwdne430:0</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns430:0crwdne430:0</target></trans-unit>
+      <trans-unit id="media.filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns431:0crwdne431:0</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns431:0crwdne431:0</target></trans-unit>
+      <trans-unit id="media.filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns432:0crwdne432:0</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns432:0crwdne432:0</target></trans-unit>
+      <trans-unit id="media.filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns433:0crwdne433:0</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns433:0crwdne433:0</target></trans-unit>
+      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve" approved="yes">
 				<source>Sort options</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns434:0crwdne434:0</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns434:0crwdne434:0</target></trans-unit>
+      <trans-unit id="media.tooltip.listView" xml:space="preserve" approved="yes">
 				<source>List view</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns435:0crwdne435:0</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns435:0crwdne435:0</target></trans-unit>
+      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns436:0crwdne436:0</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns436:0crwdne436:0</target></trans-unit>
+      <trans-unit id="media.collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns437:0crwdne437:0</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns437:0crwdne437:0</target></trans-unit>
+      <trans-unit id="media.editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns438:0crwdne438:0</target></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns438:0crwdne438:0</target></trans-unit>
+      <trans-unit id="media.editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns439:0crwdne439:0</target></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns439:0crwdne439:0</target></trans-unit>
+      <trans-unit id="media.deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns440:0crwdne440:0</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns440:0crwdne440:0</target></trans-unit>
+      <trans-unit id="media.createCollection" xml:space="preserve" approved="yes">
 				<source>Create collection</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns441:0crwdne441:0</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns441:0crwdne441:0</target></trans-unit>
+      <trans-unit id="media.newCollection.placeholder" xml:space="preserve" approved="yes">
 				<source>Enter collection title</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns442:0crwdne442:0</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns442:0crwdne442:0</target></trans-unit>
+      <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns443:0crwdne443:0</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns443:0crwdne443:0</target></trans-unit>
+      <trans-unit id="media.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns444:0crwdne444:0</target></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns444:0crwdne444:0</target></trans-unit>
+      <trans-unit id="media.editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns445:0crwdne445:0</target></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns445:0crwdne445:0</target></trans-unit>
+      <trans-unit id="media.editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns446:0crwdne446:0</target></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns446:0crwdne446:0</target></trans-unit>
+      <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns447:0crwdne447:0</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns447:0crwdne447:0</target></trans-unit>
+      <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns448:0crwdne448:0</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns448:0crwdne448:0</target></trans-unit>
+      <trans-unit id="media.untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns449:0crwdne449:0</target></trans-unit>
-      <trans-unit id="media.untagged" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns449:0crwdne449:0</target></trans-unit>
+      <trans-unit id="media.untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns450:0crwdne450:0</target></trans-unit>
-      <trans-unit id="media.maxUploadSize" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns450:0crwdne450:0</target></trans-unit>
+      <trans-unit id="media.maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns451:0{0}crwdne451:0</target></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns451:0{0}crwdne451:0</target></trans-unit>
+      <trans-unit id="media.dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns452:0crwdne452:0</target></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns452:0crwdne452:0</target></trans-unit>
+      <trans-unit id="media.clickToUpload" xml:space="preserve" approved="yes">
 				<source>or click to upload</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns453:0crwdne453:0</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns453:0crwdne453:0</target></trans-unit>
+      <trans-unit id="media.chooseFile" xml:space="preserve" approved="yes">
 				<source>Choose file</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns454:0crwdne454:0</target></trans-unit>
-      <trans-unit id="media.noAssetsFound" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns454:0crwdne454:0</target></trans-unit>
+      <trans-unit id="media.noAssetsFound" xml:space="preserve" approved="yes">
 				<source>No Assets found.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns455:0crwdne455:0</target></trans-unit>
-      <trans-unit id="media.basics" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns455:0crwdne455:0</target></trans-unit>
+      <trans-unit id="media.basics" xml:space="preserve" approved="yes">
 				<source>Basics</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns456:0crwdne456:0</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns456:0crwdne456:0</target></trans-unit>
+      <trans-unit id="media.delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns457:0crwdne457:0</target></trans-unit>
-      <trans-unit id="media.clickToDelete" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns457:0crwdne457:0</target></trans-unit>
+      <trans-unit id="media.clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns458:0crwdne458:0</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns458:0crwdne458:0</target></trans-unit>
+      <trans-unit id="media.save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns459:0crwdne459:0</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns459:0crwdne459:0</target></trans-unit>
+      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns460:0crwdne460:0</target></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns460:0crwdne460:0</target></trans-unit>
+      <trans-unit id="media.metadata.filename" xml:space="preserve" approved="yes">
 				<source>Filename</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns461:0crwdne461:0</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns461:0crwdne461:0</target></trans-unit>
+      <trans-unit id="media.metadata.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified (resource)</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns462:0crwdne462:0</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns462:0crwdne462:0</target></trans-unit>
+      <trans-unit id="media.metadata.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns463:0crwdne463:0</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns463:0crwdne463:0</target></trans-unit>
+      <trans-unit id="media.metadata.dimensions" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns464:0crwdne464:0</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns464:0crwdne464:0</target></trans-unit>
+      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns465:0crwdne465:0</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns465:0crwdne465:0</target></trans-unit>
+      <trans-unit id="media.metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns466:0crwdne466:0</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns466:0crwdne466:0</target></trans-unit>
+      <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns467:0crwdne467:0</target></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns467:0crwdne467:0</target></trans-unit>
+      <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns468:0crwdne468:0</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns468:0crwdne468:0</target></trans-unit>
+      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns469:0{0}crwdnd469:0{1}crwdne469:0</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns469:0{0}crwdnd469:0{1}crwdne469:0</target></trans-unit>
+      <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns470:0crwdne470:0</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns470:0crwdne470:0</target></trans-unit>
+      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns471:0crwdne471:0</target></trans-unit>
-      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns471:0crwdne471:0</target></trans-unit>
+      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns472:0crwdne472:0</target></trans-unit>
-      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns472:0crwdne472:0</target></trans-unit>
+      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns473:0crwdne473:0</target></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns473:0crwdne473:0</target></trans-unit>
+      <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns474:0crwdne474:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns474:0crwdne474:0</target></trans-unit>
     </body>
   </file>
 </xliff>
