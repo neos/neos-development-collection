@@ -151,14 +151,15 @@ TYPO3:
         'da': 'Dansk – Danish'
         'de': 'Deutsch – German'
         'en': 'English – English'
-        'es': 'Español – Spanish'
+#        'es': 'Español – Spanish'
+        'fi': 'Suomi – Finnish'
         'fr': 'Français – French'
-        'km': 'ភាសាខ្មែរ – Khmer'
+#        'km': 'ភាសាខ្មែរ – Khmer'
         'lv': 'Latviešu – Latvian'
         'nl': 'Nederlands – Dutch'
         'pl': 'Polski – Polish'
         'ru': 'Pусский – Russian'
-        'sv': 'Svenska – Swedish'
+#        'sv': 'Svenska – Swedish'
 
       navigateComponent:
         nodeTree:
