@@ -172,12 +172,12 @@
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="nl">Persoonlijke gegevens</target></trans-unit>
-      <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
+      <trans-unit id="users.new.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="nl" state="translated">Voornaam</target></trans-unit>
-      <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
+			<target xml:lang="nl">Voornaam</target></trans-unit>
+      <trans-unit id="users.new.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="nl" state="translated">Achternaam</target></trans-unit>
+			<target xml:lang="nl">Achternaam</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="nl">Gebruikersvoorkeuren</target></trans-unit>
@@ -196,18 +196,18 @@
       <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="nl">Titel</target></trans-unit>
-      <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
+      <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target xml:lang="nl" state="translated">Voornaam</target></trans-unit>
-      <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
+			<target xml:lang="nl">Voornaam</target></trans-unit>
+      <trans-unit id="users.show.personalData.middleName" xml:space="preserve" approved="yes">
 				<source>Middle Name</source>
-			<target xml:lang="nl" state="translated">Tussenvoegsel</target></trans-unit>
-      <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
+			<target xml:lang="nl">Tussenvoegsel</target></trans-unit>
+      <trans-unit id="users.show.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target xml:lang="nl" state="translated">Achternaam</target></trans-unit>
-      <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
+			<target xml:lang="nl">Achternaam</target></trans-unit>
+      <trans-unit id="users.show.personalData.otherName" xml:space="preserve" approved="yes">
 				<source>Other Name</source>
-			<target xml:lang="nl" state="translated">Andere naam</target></trans-unit>
+			<target xml:lang="nl">Achtervoegsel</target><alt-trans><target xml:lang="nl">Andere naam</target></alt-trans></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
 			<target xml:lang="nl">Gebruikers Accounts</target></trans-unit>
@@ -220,9 +220,9 @@
       <trans-unit id="users.show.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic Addresses</source>
 			<target xml:lang="nl">Elektronische adressen</target></trans-unit>
-      <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
+      <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
-			<target xml:lang="nl" state="translated">Primair</target></trans-unit>
+			<target xml:lang="nl">Primair</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve" approved="yes">
 				<source>N/A</source>
 			<target xml:lang="nl">N/B</target></trans-unit>
