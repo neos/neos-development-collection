@@ -359,6 +359,12 @@
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target xml:lang="da">Tilføj elektronisk adresse</target></trans-unit>
+      <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
+				<source>Save User</source>
+			<target xml:lang="da">Gem bruger</target></trans-unit>
+      <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
+				<source>Edit User</source>
+			<target xml:lang="da">Rediger bruger</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>

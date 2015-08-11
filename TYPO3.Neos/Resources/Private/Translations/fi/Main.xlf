@@ -24,6 +24,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="fi">Sisältö</target></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve" approved="yes">
+				<source>Content View</source>
+			<target xml:lang="fi">Sisältönäkymä</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="fi">Luo jälkeen</target></trans-unit>
