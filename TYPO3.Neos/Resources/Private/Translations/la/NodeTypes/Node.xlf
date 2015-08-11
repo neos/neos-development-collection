@@ -2,24 +2,24 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
-      <trans-unit id="tabs.default" xml:space="preserve">
+      <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns290:0crwdne290:0</target></trans-unit>
-      <trans-unit id="tabs.meta" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns290:0crwdne290:0</target></trans-unit>
+      <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns291:0crwdne291:0</target></trans-unit>
-      <trans-unit id="views.nodeInfo" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns291:0crwdne291:0</target></trans-unit>
+      <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns292:0crwdne292:0</target></trans-unit>
-      <trans-unit id="groups.nodeInfo" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns292:0crwdne292:0</target></trans-unit>
+      <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns293:0crwdne293:0</target></trans-unit>
-      <trans-unit id="groups.type" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns293:0crwdne293:0</target></trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns294:0crwdne294:0</target></trans-unit>
-      <trans-unit id="properties._nodeType" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns294:0crwdne294:0</target></trans-unit>
+      <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="la-LA" state="needs-translation">crwdns295:0crwdne295:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns295:0crwdne295:0</target></trans-unit>
     </body>
   </file>
 </xliff>

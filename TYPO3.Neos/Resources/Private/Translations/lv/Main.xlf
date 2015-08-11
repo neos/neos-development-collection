@@ -3,459 +3,459 @@
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
       <!-- general translations like button -->
-      <trans-unit id="autoPublish" xml:space="preserve">
+      <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="lv" state="translated">Automātiska publicēšana</target></trans-unit>
-      <trans-unit id="apply" xml:space="preserve">
+			<target xml:lang="lv">Automātiska publicēšana</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
-			<target xml:lang="lv" state="translated">Apstiprināt</target></trans-unit>
-      <trans-unit id="applyChanges" xml:space="preserve">
+			<target xml:lang="lv">Apstiprināt</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve" approved="yes">
 				<source>Apply changes</source>
-			<target xml:lang="lv" state="translated">Apskatīt izmaiņas</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+			<target xml:lang="lv">Apskatīt izmaiņas</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
-      <trans-unit id="choose" xml:space="preserve">
+			<target xml:lang="lv">Atcelt</target></trans-unit>
+      <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target xml:lang="lv" state="translated">Izvēlieties</target></trans-unit>
-      <trans-unit id="typeToSearch" xml:space="preserve">
+			<target xml:lang="lv">Izvēlieties</target></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target xml:lang="lv" state="translated">Ierakstiet lai meklētu</target></trans-unit>
-      <trans-unit id="content" xml:space="preserve">
+			<target xml:lang="lv">Ierakstiet lai meklētu</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="lv" state="translated">Saturs</target></trans-unit>
-      <trans-unit id="createAfter" xml:space="preserve">
+			<target xml:lang="lv">Saturs</target></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target xml:lang="lv" state="translated">Izveidot pēc</target></trans-unit>
-      <trans-unit id="createNew" xml:space="preserve">
+			<target xml:lang="lv">Izveidot pēc</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
-			<target xml:lang="lv" state="translated">Izveidot jaunu</target></trans-unit>
-      <trans-unit id="close" xml:space="preserve">
+			<target xml:lang="lv">Izveidot jaunu</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve" approved="yes">
 				<source>Close</source>
-			<target xml:lang="lv" state="translated">Aizvērt</target></trans-unit>
-      <trans-unit id="copy" xml:space="preserve">
+			<target xml:lang="lv">Aizvērt</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target xml:lang="lv" state="translated">Kopēt</target></trans-unit>
-      <trans-unit id="cut" xml:space="preserve">
+			<target xml:lang="lv">Kopēt</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
-			<target xml:lang="lv" state="translated">Izgriezt</target></trans-unit>
-      <trans-unit id="delete" xml:space="preserve">
+			<target xml:lang="lv">Izgriezt</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="lv" state="translated">Dzēst</target></trans-unit>
-      <trans-unit id="deleteElement" xml:space="preserve">
+			<target xml:lang="lv">Dzēst</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
 				<source>Yes, delete the element</source>
-			<target xml:lang="lv" state="translated">Jā, dzēst elementu</target></trans-unit>
-      <trans-unit id="deleteElementTitle" xml:space="preserve">
+			<target xml:lang="lv">Jā, dzēst elementu</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
 				<source>Delete the element</source>
-			<target xml:lang="lv" state="translated">Dzēst elementu</target></trans-unit>
-      <trans-unit id="discard" xml:space="preserve">
+			<target xml:lang="lv">Dzēst elementu</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="lv" state="translated">Atcelt</target></trans-unit>
-      <trans-unit id="discardChanges" xml:space="preserve">
+			<target xml:lang="lv">Atcelt</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="lv" state="translated">Atmest izmaiņas</target></trans-unit>
-      <trans-unit id="editTitle" xml:space="preserve">
+			<target xml:lang="lv">Atmest izmaiņas</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target xml:lang="lv" state="translated">Rediģēt virsrakstu</target></trans-unit>
-      <trans-unit id="editPreview" xml:space="preserve">
+			<target xml:lang="lv">Rediģēt virsrakstu</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
-			<target xml:lang="lv" state="translated">Rediģēt / priekšskatīt</target></trans-unit>
-      <trans-unit id="edit" xml:space="preserve">
+			<target xml:lang="lv">Rediģēt / priekšskatīt</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target xml:lang="lv" state="translated">Labot</target></trans-unit>
-      <trans-unit id="hideUnhide" xml:space="preserve">
+			<target xml:lang="lv">Labot</target></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target xml:lang="lv" state="translated">Paslēpt / parādīt</target></trans-unit>
-      <trans-unit id="loading" xml:space="preserve">
+			<target xml:lang="lv">Paslēpt / parādīt</target></trans-unit>
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
-			<target xml:lang="lv" state="translated">Lejupielāde</target></trans-unit>
-      <trans-unit id="newAfter" xml:space="preserve">
+			<target xml:lang="lv">Lejupielāde</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
-			<target xml:lang="lv" state="translated">Pievienot pēc</target></trans-unit>
-      <trans-unit id="newBefore" xml:space="preserve">
+			<target xml:lang="lv">Pievienot pēc</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve" approved="yes">
 				<source>New Before</source>
-			<target xml:lang="lv" state="translated">Pievienot pirms</target></trans-unit>
-      <trans-unit id="newInto" xml:space="preserve">
+			<target xml:lang="lv">Pievienot pirms</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve" approved="yes">
 				<source>New Into</source>
-			<target xml:lang="lv" state="translated">Ievietot jaunu</target></trans-unit>
-      <trans-unit id="navigate" xml:space="preserve">
+			<target xml:lang="lv">Ievietot jaunu</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
-			<target xml:lang="lv" state="translated">Navigēt</target></trans-unit>
-      <trans-unit id="okay" xml:space="preserve">
+			<target xml:lang="lv">Navigēt</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
-			<target xml:lang="lv" state="translated">OK</target></trans-unit>
-      <trans-unit id="page" xml:space="preserve">
+			<target xml:lang="lv">OK</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="lv" state="translated">Lapa</target></trans-unit>
-      <trans-unit id="paste" xml:space="preserve">
+			<target xml:lang="lv">Lapa</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve" approved="yes">
 				<source>Paste</source>
-			<target xml:lang="lv" state="translated">Iekopēt</target></trans-unit>
-      <trans-unit id="pasteAfter" xml:space="preserve">
+			<target xml:lang="lv">Iekopēt</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve" approved="yes">
 				<source>Paste After</source>
-			<target xml:lang="lv" state="translated">Iekopēt pēc</target></trans-unit>
-      <trans-unit id="pasteBefore" xml:space="preserve">
+			<target xml:lang="lv">Iekopēt pēc</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve" approved="yes">
 				<source>Paste Before</source>
-			<target xml:lang="lv" state="translated">Iekopēt pirms</target></trans-unit>
-      <trans-unit id="pasteInto" xml:space="preserve">
+			<target xml:lang="lv">Iekopēt pirms</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target xml:lang="lv" state="translated">Iekopēt</target></trans-unit>
-      <trans-unit id="password" xml:space="preserve">
+			<target xml:lang="lv">Iekopēt</target></trans-unit>
+      <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="lv" state="translated">Parole</target></trans-unit>
-      <trans-unit id="preview" xml:space="preserve">
+			<target xml:lang="lv">Parole</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="lv" state="translated">Priekšskats</target></trans-unit>
-      <trans-unit id="publish" xml:space="preserve">
+			<target xml:lang="lv">Priekšskats</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
-			<target xml:lang="lv" state="translated">Publicēt</target></trans-unit>
-      <trans-unit id="published" xml:space="preserve">
+			<target xml:lang="lv">Publicēt</target></trans-unit>
+      <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
-			<target xml:lang="lv" state="translated">Publicēts</target></trans-unit>
-      <trans-unit id="targetWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Publicēts</target></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target xml:lang="lv" state="translated">Mērķa darbavieta</target></trans-unit>
-      <trans-unit id="remove" xml:space="preserve">
+			<target xml:lang="lv">Mērķa darbavieta</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
-			<target xml:lang="lv" state="translated">Noņemt</target></trans-unit>
-      <trans-unit id="refresh" xml:space="preserve">
+			<target xml:lang="lv">Noņemt</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target xml:lang="lv" state="translated">Atjaunot</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+			<target xml:lang="lv">Atjaunot</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
-			<target xml:lang="lv" state="translated">Saglabāt</target></trans-unit>
-      <trans-unit id="saved" xml:space="preserve">
+			<target xml:lang="lv">Saglabāt</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
-			<target xml:lang="lv" state="translated">Saglabāts</target></trans-unit>
-      <trans-unit id="search" xml:space="preserve">
+			<target xml:lang="lv">Saglabāts</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="lv" state="translated">Meklēšana</target></trans-unit>
-      <trans-unit id="toggleInspector" xml:space="preserve">
+			<target xml:lang="lv">Meklēšana</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
-			<target xml:lang="lv" state="translated">Pārslēgšanas inspektors</target></trans-unit>
-      <trans-unit id="username" xml:space="preserve">
+			<target xml:lang="lv">Pārslēgšanas inspektors</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="lv" state="translated">Lietotājvārds</target></trans-unit>
-      <trans-unit id="you" xml:space="preserve">
+			<target xml:lang="lv">Lietotājvārds</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="lv" state="translated">Jūs</target></trans-unit>
-      <trans-unit id="noTitle" xml:space="preserve">
+			<target xml:lang="lv">Jūs</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve" approved="yes">
 				<source>[no title]</source>
-			<target xml:lang="lv" state="translated">[bez nosaukuma]</target></trans-unit>
-      <trans-unit id="labelCaption" xml:space="preserve">
+			<target xml:lang="lv">[bez nosaukuma]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="lv" state="translated">Marķējums</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+			<target xml:lang="lv">Marķējums</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Node type</source>
-			<target xml:lang="lv" state="translated">Mezgla tips</target><alt-trans><target xml:lang="lv">Savienojuma tips</target></alt-trans></trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
+			<target xml:lang="lv">Mezgla tips</target><alt-trans><target xml:lang="lv">Savienojuma tips</target></alt-trans></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
-			<target xml:lang="lv" state="translated">Ceļš</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+			<target xml:lang="lv">Ceļš</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative path</source>
-			<target xml:lang="lv" state="translated">Relatīvais ceļš</target></trans-unit>
+			<target xml:lang="lv">Relatīvais ceļš</target></trans-unit>
       <!-- node types -->
-      <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target xml:lang="lv" state="translated">Galvenais</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+			<target xml:lang="lv">Galvenais</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
 				<source>Structure</source>
-			<target xml:lang="lv" state="translated">Struktūra</target></trans-unit>
-      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+			<target xml:lang="lv">Struktūra</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
 				<source>Plugins</source>
-			<target xml:lang="lv" state="translated">Spraudņi</target></trans-unit>
+			<target xml:lang="lv">Spraudņi</target></trans-unit>
       <!-- shortcuts -->
-      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai turpinātu lapu.</target><alt-trans><target xml:lang="lv">Uzklikšķiniet {0}, lai turpinātu lapu</target></alt-trans></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+			<target xml:lang="lv">Uzklikšķiniet {0}, lai turpinātu lapu.</target><alt-trans><target xml:lang="lv">Uzklikšķiniet {0}, lai turpinātu lapu</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai redzētu lapu.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+			<target xml:lang="lv">Uzklikšķiniet {0}, lai redzētu lapu.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="lv" state="translated">Uzklikšķiniet {0}, lai atvērtu saiti.</target></trans-unit>
-      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+			<target xml:lang="lv">Uzklikšķiniet {0}, lai atvērtu saiti.</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target xml:lang="lv" state="translated">(nav izvēlēts mērķis)</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+			<target xml:lang="lv">(nav izvēlēts mērķis)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="translated">Tas ir īsceļš uz saistīto lapu.&amp;lt;br /&amp;gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
-      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+			<target xml:lang="lv">Tas ir īsceļš uz saistīto lapu.&lt;br /&gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="lv" state="translated">Tas ir īsceļš uz galveno lapu.&amp;lt;br /&amp;gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
+			<target xml:lang="lv">Tas ir īsceļš uz galveno lapu.&lt;br /&gt;Klikšķiniet {0}, lai turpinātu lapu.</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
-			<target xml:lang="lv" state="translated">Pilnekrāns</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+			<target xml:lang="lv">Pilnekrāns</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
-			<target xml:lang="lv" state="translated">Atvērt lapu tiešsaistes vietā</target></trans-unit>
-      <trans-unit id="discardAll" xml:space="preserve">
+			<target xml:lang="lv">Atvērt lapu tiešsaistes vietā</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
-			<target xml:lang="lv" state="translated">Atcelt visu</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+			<target xml:lang="lv">Atcelt visu</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="lv" state="translated">Atcelt visas izmaiņas</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+			<target xml:lang="lv">Atcelt visas izmaiņas</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="lv" state="translated">Vai esiet pārliecināti, ka vēlaties atcelt visas izmaiņas šajā vietā?</target></trans-unit>
-      <trans-unit id="publishAll" xml:space="preserve">
+			<target xml:lang="lv">Vai esiet pārliecināti, ka vēlaties atcelt visas izmaiņas šajā vietā?</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
-			<target xml:lang="lv" state="translated">Publicēt visu</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+			<target xml:lang="lv">Publicēt visu</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="lv" state="translated">Publicēt visas izmaiņas</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+			<target xml:lang="lv">Publicēt visas izmaiņas</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="lv" state="translated">Vai tiešam vēlaties publicēt visas izmaiņas?</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+			<target xml:lang="lv">Vai tiešam vēlaties publicēt visas izmaiņas?</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
-			<target xml:lang="lv" state="translated">Gaidāmās izmaiņas</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="lv">Gaidāmās izmaiņas</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="lv" state="translated">Jūsu personīgā darba virsma satur nepublicētas izmaiņas. Lai pārslēgtos uz citu vietu darba virsmā, jums nepieciešams vispirms publicēt vai atcelt veiktās izmaiņas.</target></trans-unit>
-      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+			<target xml:lang="lv">Jūsu personīgā darba virsma satur nepublicētas izmaiņas. Lai pārslēgtos uz citu vietu darba virsmā, jums nepieciešams vispirms publicēt vai atcelt veiktās izmaiņas.</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="lv" state="translated">Lūdzu, pārskatiet savas izmaiņas, publicēt vai atcelt tās, un vēlreiz izvēlieties citu vietu darba virsmā.</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+			<target xml:lang="lv">Lūdzu, pārskatiet savas izmaiņas, publicēt vai atcelt tās, un vēlreiz izvēlieties citu vietu darba virsmā.</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target xml:lang="lv" state="translated">Rediģēšānas režīmi</target></trans-unit>
-      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+			<target xml:lang="lv">Rediģēšānas režīmi</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target xml:lang="lv" state="translated">Priekšskatījuma centrāle</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+			<target xml:lang="lv">Priekšskatījuma centrāle</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="lv" state="translated">Joprojām ir nesaglabātas izmaiņas. Ko jūs vēlaties darīt ar viņām?</target></trans-unit>
-      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+			<target xml:lang="lv">Joprojām ir nesaglabātas izmaiņas. Ko jūs vēlaties darīt ar viņām?</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
-			<target xml:lang="lv" state="translated">Iezīmētais elements</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+			<target xml:lang="lv">Iezīmētais elements</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="lv" state="translated">Ir lauki, kas nav pareizi aizpildīti.</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+			<target xml:lang="lv">Ir lauki, kas nav pareizi aizpildīti.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="lv" state="translated">Lauki, kas atzīmēti ar kļūdām vai vēl nav pareizi aizpildīti. Lūdzu, laukus aizpildiet pareizi.</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+			<target xml:lang="lv">Lauki, kas atzīmēti ar kļūdām vai vēl nav pareizi aizpildīti. Lūdzu, laukus aizpildiet pareizi.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
-			<target xml:lang="lv" state="translated">Turpināt rediģēšanu</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+			<target xml:lang="lv">Turpināt rediģēšanu</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve" approved="yes">
 				<source>Throw away</source>
-			<target xml:lang="lv" state="translated">Izmest</target></trans-unit>
-      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+			<target xml:lang="lv">Izmest</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
 				<source>Apply</source>
-			<target xml:lang="lv" state="translated">Apstiprināt</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+			<target xml:lang="lv">Apstiprināt</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
 				<source>Select a Plugin</source>
-			<target xml:lang="lv" state="translated">Izvēlaties spraudni</target></trans-unit>
-      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+			<target xml:lang="lv">Izvēlaties spraudni</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
 				<source>No plugin configured</source>
-			<target xml:lang="lv" state="translated">Spraudnis nav konfigurēts</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+			<target xml:lang="lv">Spraudnis nav konfigurēts</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on page</source>
-			<target xml:lang="lv" state="translated">skats tiek rādīts lapā</target></trans-unit>
-      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+			<target xml:lang="lv">skats tiek rādīts lapā</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on current page</source>
-			<target xml:lang="lv" state="translated">skats tiek rādīts pašreizējā lapā</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+			<target xml:lang="lv">skats tiek rādīts pašreizējā lapā</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
-			<target xml:lang="lv" state="translated">Nav iestatīts datums</target></trans-unit>
-      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+			<target xml:lang="lv">Nav iestatīts datums</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target xml:lang="lv" state="translated">Rediģēt kodu</target></trans-unit>
-      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+			<target xml:lang="lv">Rediģēt kodu</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="lv" state="translated">Iekopēt saiti vai rakstiet, lai meklētu</target></trans-unit>
-      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+			<target xml:lang="lv">Iekopēt saiti vai rakstiet, lai meklētu</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="lv" state="translated">Nevar ielādēt apakš-mezgla veidus:</target><alt-trans><target xml:lang="lv">Nevar ielādēt apakš mezgla veidus:</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.groups.type" xml:space="preserve">
+			<target xml:lang="lv">Nevar ielādēt apakš-mezgla veidus:</target><alt-trans><target xml:lang="lv">Nevar ielādēt apakš mezgla veidus:</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="lv" state="translated">Mainīt veidu</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+			<target xml:lang="lv">Mainīt veidu</target></trans-unit>
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="lv" state="translated">Papildus info</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+			<target xml:lang="lv">Papildus info</target></trans-unit>
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="lv" state="translated">Redzamība</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+			<target xml:lang="lv">Redzamība</target></trans-unit>
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target xml:lang="lv" state="translated">Dokumenta opcijas</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+			<target xml:lang="lv">Dokumenta opcijas</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
-			<target xml:lang="lv" state="translated">Šim tekstam jābūt starp {{minimum}} un {{maximum}} rakstzīmēm.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+			<target xml:lang="lv">Šim tekstam jābūt starp {{minimum}} un {{maximum}} rakstzīmēm.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="lv" state="translated">Šim laukam jāsatur vismaz {{minimum}} rakstzīmes.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+			<target xml:lang="lv">Šim laukam jāsatur vismaz {{minimum}} rakstzīmes.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="lv" state="translated">Šis teksts nedrīkst būt garāks par {{maximum}} rakstzīmēm.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
+			<target xml:lang="lv">Šis teksts nedrīkst būt garāks par {{maximum}} rakstzīmēm.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="lv" state="translated">Tikai rakstzīmes (līdz z … umlauts) un numuri ir atļauti.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
+			<target xml:lang="lv">Tikai rakstzīmes (līdz z … umlauts) un numuri ir atļauti.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="lv" state="translated">Attiecīgais elements nav saskaitāms.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+			<target xml:lang="lv">Attiecīgais elements nav saskaitāms.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="lv" state="translated">Skaitam ir jābūt starp {{minimum}} un {{maximum}}.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
+			<target xml:lang="lv">Skaitam ir jābūt starp {{minimum}} un {{maximum}}.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="lv" state="translated">Noteiktā vērtība nav derīgs datums.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+			<target xml:lang="lv">Noteiktā vērtība nav derīgs datums.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="lv" state="translated">Dotajam datumam jābūt starp {{formatEarliestDate}} un {{formatLatestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+			<target xml:lang="lv">Dotajam datumam jābūt starp {{formatEarliestDate}} un {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="lv" state="translated">Dotajam datumam jābūt pēc {{formatEarliestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+			<target xml:lang="lv">Dotajam datumam jābūt pēc {{formatEarliestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="lv" state="translated">Dotajam datumam jābūt pirms {{formatLatestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
+			<target xml:lang="lv">Dotajam datumam jābūt pirms {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
-			<target xml:lang="lv" state="translated">Lūdzu, norādiet derīgu e-pasta adresi.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
+			<target xml:lang="lv">Lūdzu, norādiet derīgu e-pasta adresi.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs mainīgais.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
+			<target xml:lang="lv">Tiek gaidīts derīgs mainīgais.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
-			<target xml:lang="lv" state="translated">Tiek gaidīts vesels skaitlis.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+			<target xml:lang="lv">Tiek gaidīts vesels skaitlis.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="lv" state="translated">Ir paredzēts tikai burtiem, cipariem, atstarpēm un dažām interpunkcijas zīmēm.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
+			<target xml:lang="lv">Ir paredzēts tikai burtiem, cipariem, atstarpēm un dažām interpunkcijas zīmēm.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target xml:lang="lv" state="translated">Šī vērtība ir nepieciešama.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
+			<target xml:lang="lv">Šī vērtība ir nepieciešama.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
-			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs skaitlis.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+			<target xml:lang="lv">Tiek gaidīts derīgs skaitlis.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
-			<target xml:lang="lv" state="translated">Lūdzu, ievadiet derīgu skaitli starp {{minimum}} un {{maximum}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+			<target xml:lang="lv">Lūdzu, ievadiet derīgu skaitli starp {{minimum}} un {{maximum}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({{pattern}})</source>
-			<target xml:lang="lv" state="translated">Attiecīgais lauks neatbilst šablonam ({{pattern}})</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+			<target xml:lang="lv">Attiecīgais lauks neatbilst šablonam ({{pattern}})</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
-			<target xml:lang="lv" state="translated">Tiek gaidīts teksts.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+			<target xml:lang="lv">Tiek gaidīts teksts.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs teksts, bez jebkādiem XML tagiem.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+			<target xml:lang="lv">Tiek gaidīts derīgs teksts, bez jebkādiem XML tagiem.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="lv" state="translated">Attiecīgajā vērtībā nav derīgs UUID.</target><alt-trans><target xml:lang="lv">Attiecīgajā jautājumā nav derīgs UUID.</target></alt-trans></trans-unit>
-      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+			<target xml:lang="lv">Attiecīgajā vērtībā nav derīgs UUID.</target><alt-trans><target xml:lang="lv">Attiecīgajā jautājumā nav derīgs UUID.</target></alt-trans></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="lv" state="translated">Saturs</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+			<target xml:lang="lv">Saturs</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="lv" state="translated">Vai tiešām vēlaties izdzēst</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+			<target xml:lang="lv">Vai tiešām vēlaties izdzēst</target></trans-unit>
+      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
 				<source>Create new (hold to select position)</source>
-			<target xml:lang="lv" state="translated">Izveidot jaunu (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+			<target xml:lang="lv">Izveidot jaunu (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target xml:lang="lv" state="translated">Lapa tiks izdzēsta</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+			<target xml:lang="lv">Lapa tiks izdzēsta</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target xml:lang="lv" state="translated">un tās pakārtotās lapas</target></trans-unit>
-      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="lv">un tās pakārtotās lapas</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="lv" state="translated">Šo darbību var atsaukt darba virsmas vadības panelī.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+			<target xml:lang="lv">Šo darbību var atsaukt darba virsmas vadības panelī.</target></trans-unit>
+      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
 				<source>Paste (hold to select position)</source>
-			<target xml:lang="lv" state="translated">Ielīmēt (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
-      <trans-unit id="height" xml:space="preserve">
+			<target xml:lang="lv">Ielīmēt (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
-			<target xml:lang="lv" state="translated">Augstums</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+			<target xml:lang="lv">Augstums</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target xml:lang="lv" state="translated">Vai tiešām vēlaties izdzēst</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+			<target xml:lang="lv">Vai tiešām vēlaties izdzēst</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
-			<target xml:lang="lv" state="translated">Šis elements</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+			<target xml:lang="lv">Šis elements</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
-			<target xml:lang="lv" state="translated">Elements tiks dzēsts.</target><alt-trans><target xml:lang="lv">Lapa tiks izdzēsta.</target></alt-trans></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+			<target xml:lang="lv">Elements tiks dzēsts.</target><alt-trans><target xml:lang="lv">Lapa tiks izdzēsta.</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="lv" state="translated">Šo darbību var atsaukt darba virsmas vadības panelī.</target></trans-unit>
-      <trans-unit id="media" xml:space="preserve">
+			<target xml:lang="lv">Šo darbību var atsaukt darba virsmas vadības panelī.</target></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="lv" state="translated">Mēdiji</target></trans-unit>
-      <trans-unit id="crop" xml:space="preserve">
+			<target xml:lang="lv">Mēdiji</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
 				<source>Crop</source>
-			<target xml:lang="lv" state="translated">Izgriezt</target></trans-unit>
-      <trans-unit id="width" xml:space="preserve">
+			<target xml:lang="lv">Izgriezt</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target xml:lang="lv" state="translated">Platums</target></trans-unit>
-      <trans-unit id="translate.requiredProperty" xml:space="preserve">
+			<target xml:lang="lv">Platums</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="lv" state="translated">Trūkst nepieciešamo rekvizītu: </target><alt-trans><target xml:lang="lv">Trūkst nepieciešamo rekvizītu:</target></alt-trans></trans-unit>
-      <trans-unit id="workspaces" xml:space="preserve">
+			<target xml:lang="lv">Trūkst nepieciešamo rekvizītu: </target><alt-trans><target xml:lang="lv">Trūkst nepieciešamo rekvizītu:</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="lv" state="translated">Darba virsmas</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+			<target xml:lang="lv">Darba virsmas</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
-			<target xml:lang="lv" state="translated">Kļūda saglabājot</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+			<target xml:lang="lv">Kļūda saglabājot</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="lv" state="translated">Pārlādēt lapu, lai mēģinātu novērst šo problēmu.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+			<target xml:lang="lv">Pārlādēt lapu, lai mēģinātu novērst šo problēmu.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
-			<target xml:lang="lv" state="translated">Pārlādēt redaktora konsoli</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+			<target xml:lang="lv">Pārlādēt redaktora konsoli</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
 				<source>Reload</source>
-			<target xml:lang="lv" state="translated">Pārlādēt</target></trans-unit>
+			<target xml:lang="lv">Pārlādēt</target></trans-unit>
       <!-- Edit / preview modes -->
-      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
 				<source>In-Place</source>
-			<target xml:lang="lv" state="translated">Šajā vietā</target></trans-unit>
-      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+			<target xml:lang="lv">Šajā vietā</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
-			<target xml:lang="lv" state="translated">Jēldatu saturs</target></trans-unit>
-      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+			<target xml:lang="lv">Jēldatu saturs</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
-			<target xml:lang="lv" state="translated">Darbvirsma</target></trans-unit>
+			<target xml:lang="lv">Darbvirsma</target></trans-unit>
       <!-- Login -->
-      <trans-unit id="login.index.title" xml:space="preserve">
+      <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target xml:lang="lv" state="translated">Ieiet Neos</target><alt-trans><target xml:lang="lv">Neos Login</target></alt-trans></trans-unit>
-      <trans-unit id="authenticating" xml:space="preserve">
+			<target xml:lang="lv">Ieiet Neos</target><alt-trans><target xml:lang="lv">Neos Login</target></alt-trans></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target xml:lang="lv" state="translated">Autentifikācija</target></trans-unit>
+			<target xml:lang="lv">Autentifikācija</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
-			<target xml:lang="lv" state="translated">Iet uz sākuma uzstādījumiem</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+			<target xml:lang="lv">Iet uz sākuma uzstādījumiem</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
-			<target xml:lang="lv" state="translated">Trūkst mājas lapas</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+			<target xml:lang="lv">Trūkst mājas lapas</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="lv" state="translated">Iespējams vietne nav izveidota, vietne nesatur mājaslapu vai nevar noteikt aktīvo vietni.</target></trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+			<target xml:lang="lv">Iespējams vietne nav izveidota, vietne nesatur mājaslapu vai nevar noteikt aktīvo vietni.</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="lv" state="translated">Iestatiet vietnes domēnu vai importējiet jaunu vietni uzstādīšanas programmā.</target><alt-trans><target xml:lang="lv">Iestatiet vietnes domēnu vai importējiet jaunu uzstādīšanas programmā.</target></alt-trans></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+			<target xml:lang="lv">Iestatiet vietnes domēnu vai importējiet jaunu vietni uzstādīšanas programmā.</target><alt-trans><target xml:lang="lv">Iestatiet vietnes domēnu vai importējiet jaunu uzstādīšanas programmā.</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
-			<target xml:lang="lv" state="translated">Datubāzes kļūda</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+			<target xml:lang="lv">Datubāzes kļūda</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="lv" state="translated">Atvainojiet, mēs atklājām kļūdu jūsu datu bāzē. Skatieties jūsu žurnāla failus - Data/Logs/* lai iegūtu papildinformāciju.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+			<target xml:lang="lv">Atvainojiet, mēs atklājām kļūdu jūsu datu bāzē. Skatieties jūsu žurnāla failus - Data/Logs/* lai iegūtu papildinformāciju.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="lv" state="translated">Mēģiniet konfigurēt vai pārbaudīt jūsu datu bāzes konfigurāciju programmas uzstādījumos.</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+			<target xml:lang="lv">Mēģiniet konfigurēt vai pārbaudīt jūsu datu bāzes konfigurāciju programmas uzstādījumos.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
-			<target xml:lang="lv" state="translated">Lapa nav atrasta</target></trans-unit>
-      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+			<target xml:lang="lv">Lapa nav atrasta</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="lv" state="translated">Atvainojiet, pieprasītā lapa nav atrasta.</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+			<target xml:lang="lv">Atvainojiet, pieprasītā lapa nav atrasta.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
-			<target xml:lang="lv" state="translated">Nederīgs savienojuma tips</target></trans-unit>
-      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+			<target xml:lang="lv">Nederīgs savienojuma tips</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="lv" state="translated">Mezgla tipa konfigurācija, kurai jāparādās, nav pieejama. Iespējams jūs esiet nomainījuši mezgla tipa nosaukumu, neizpildījāt migrācijas procesu vai vienkārši pieļāvāt gramatisku kļūdu.</target></trans-unit>
+			<target xml:lang="lv">Mezgla tipa konfigurācija, kurai jāparādās, nav pieejama. Iespējams jūs esiet nomainījuši mezgla tipa nosaukumu, neizpildījāt migrācijas procesu vai vienkārši pieļāvāt gramatisku kļūdu.</target></trans-unit>
     </body>
   </file>
 </xliff>

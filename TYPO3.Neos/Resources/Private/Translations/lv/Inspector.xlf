@@ -2,12 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
-      <trans-unit id="groups.visibility" xml:space="preserve">
+      <trans-unit id="groups.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="lv" state="translated">Redzamība</target></trans-unit>
-      <trans-unit id="groups.document" xml:space="preserve">
+			<target xml:lang="lv">Redzamība</target></trans-unit>
+      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Document</source>
-			<target xml:lang="lv" state="translated">Dokuments</target></trans-unit>
+			<target xml:lang="lv">Dokuments</target></trans-unit>
     </body>
   </file>
 </xliff>
