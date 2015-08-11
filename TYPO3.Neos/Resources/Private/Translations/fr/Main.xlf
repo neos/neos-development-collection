@@ -178,10 +178,10 @@
 			<target xml:lang="fr">(aucune cible n'a été sélectionné)</target><alt-trans><target xml:lang="fr">(aucune cible n'a été sélectionnée)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="fr">Il s'agit d'un raccourci vers la première sous-page. &amp;lt;br /&amp;gt; Cliquez sur {0} pour continuer vers la sous-page.</target></trans-unit>
+			<target xml:lang="fr">Il s'agit d'un raccourci vers la première sous-page. &lt;br /&gt; Cliquez sur {0} pour continuer vers la sous-page.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="fr">Il s'agit d'un raccourci vers la page parente. &amp;lt;br /&amp;gt; Cliquez sur {0} pour continuer vers cette page.</target></trans-unit>
+			<target xml:lang="fr">Il s'agit d'un raccourci vers la page parente. &lt;br /&gt; Cliquez sur {0} pour continuer vers cette page.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>

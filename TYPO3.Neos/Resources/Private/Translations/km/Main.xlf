@@ -178,10 +178,10 @@
 			<target xml:lang="km" state="translated">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &amp;lt;br /&amp;gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &amp;lt;br /&amp;gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>

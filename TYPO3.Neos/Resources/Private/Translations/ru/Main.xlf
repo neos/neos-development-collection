@@ -178,10 +178,10 @@
 			<target xml:lang="ru">(цель не была выбрана)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru">Это ярлык для первой дочерней страницы.&amp;lt;br /&amp;gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для первой дочерней страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Это ярлык для первой дочерней страницы.&lt;br /&gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru">Это ярлык для родительской страницы.&amp;lt;br /&amp;gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для родительской страницы. &amp;lt;br /&amp;gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Это ярлык для родительской страницы.&lt;br /&gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
