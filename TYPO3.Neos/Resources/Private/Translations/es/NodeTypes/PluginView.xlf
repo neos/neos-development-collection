@@ -7,7 +7,7 @@
 			<target xml:lang="es-ES" state="translated">Vista de la extensión</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="es-ES" state="needs-translation">Plugin Views</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Vistas de la extensión</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
 			<target xml:lang="es-ES" state="translated">Vista general</target></trans-unit>

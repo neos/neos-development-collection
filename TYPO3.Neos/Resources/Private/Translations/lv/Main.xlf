@@ -26,7 +26,7 @@
 			<target xml:lang="lv">Saturs</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="lv" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="lv" state="translated">Satura skats</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="lv">Izveidot pēc</target></trans-unit>
