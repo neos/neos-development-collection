@@ -2,24 +2,24 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
-      <trans-unit id="tabs.default" xml:space="preserve">
+      <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target xml:lang="lv" state="translated">Galvenais</target></trans-unit>
-      <trans-unit id="tabs.meta" xml:space="preserve">
+			<target xml:lang="lv">Galvenais</target></trans-unit>
+      <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="lv" state="translated">Metadati</target></trans-unit>
-      <trans-unit id="views.nodeInfo" xml:space="preserve">
+			<target xml:lang="lv">Metadati</target></trans-unit>
+      <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="lv" state="translated">Metadati</target></trans-unit>
-      <trans-unit id="groups.nodeInfo" xml:space="preserve">
+			<target xml:lang="lv">Metadati</target></trans-unit>
+      <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target xml:lang="lv" state="translated">Papildus info</target></trans-unit>
-      <trans-unit id="groups.type" xml:space="preserve">
+			<target xml:lang="lv">Papildus info</target></trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="lv" state="translated">Mainīt veidu</target></trans-unit>
-      <trans-unit id="properties._nodeType" xml:space="preserve">
+			<target xml:lang="lv">Mainīt veidu</target></trans-unit>
+      <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="lv" state="translated">Veids</target></trans-unit>
+			<target xml:lang="lv">Veids</target></trans-unit>
     </body>
   </file>
 </xliff>

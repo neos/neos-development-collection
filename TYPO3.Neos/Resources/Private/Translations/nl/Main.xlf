@@ -178,10 +178,10 @@
 			<target xml:lang="nl" state="translated">(geen doel is geselecteerd)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="nl" state="translated">Dit is een snelkoppeling naar het eerste onderliggende pagina. &amp;lt; br / &amp;gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="nl" state="translated">Dit is een snelkoppeling naar de bovenliggende pagina. &amp;lt; br / &amp;gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit is een snelkoppeling naar de bovenliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
@@ -288,9 +288,9 @@
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {{maximum}} characters.</source>
 			<target xml:lang="nl" state="translated">Deze tekst mag niet langer zijn dan {{maximum}} karakters.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="nl" state="translated">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
+			<target xml:lang="nl">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="nl" state="translated">Het gegeven onderwerp is niet telbaar.</target></trans-unit>
