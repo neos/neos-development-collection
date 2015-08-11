@@ -113,10 +113,9 @@ With Neos 2.0, we've added some first tools which help in improving search engin
 - machine-readable links to alternative-language versions
 - XML sitemap generation
 
-Furthermore, the appearance of a website when embedded inside tweets or Facebook posts can be adjusted.
+Furthermore, the appearance of a website when embedded inside tweets or Facebook posts can be adjusted (Open Graph).
 
-These features are provided by a separate package which can be removed using Composer by removing the ``typo3/neos-seo``
-package if so desired.
+These features are provided by a separate package https://packagist.org/packages/typo3/neos-seo
 
 
 Google Analytics
@@ -126,8 +125,8 @@ For many websites, getting key insights on their usage patterns is a requirement
 created a seamless integration of Google Analytics; showing the current access numbers in an inspector tab of the current
 page.
 
-Google Analytics integration for Neos 2.0 can be easily installed by adding the ``typo3/neos-googleanalytics`` package
-to your website via Composer.
+Google Analytics integration for Neos 2.0 can be easily installed by adding the package
+https://packagist.org/packages/typo3/neos-googleanalytics
 
 
 Media browser/module
