@@ -343,7 +343,7 @@
 			<target xml:lang="da">Roller</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target xml:lang="da">Autentificeringtjeneste</target><alt-trans><target xml:lang="da">Tjeneste</target></alt-trans></trans-unit>
+			<target xml:lang="da">Autentificeringstjeneste</target><alt-trans><target xml:lang="da">Autentificeringtjeneste</target></alt-trans><alt-trans><target xml:lang="da">Tjeneste</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic addresses</source>
 			<target xml:lang="da">Elektroniske adresser</target></trans-unit>
