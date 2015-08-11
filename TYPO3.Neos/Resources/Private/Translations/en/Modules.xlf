@@ -371,6 +371,12 @@
 			<trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
 			</trans-unit>
+			<trans-unit id="userSettings.saveUser" xml:space="preserve">
+				<source>Save User</source>
+			</trans-unit>
+			<trans-unit id="userSettings.editUser" xml:space="preserve">
+				<source>Edit User</source>
+			</trans-unit>
 
 			<!-- Media -->
 			<trans-unit id="media.field.name" xml:space="preserve">

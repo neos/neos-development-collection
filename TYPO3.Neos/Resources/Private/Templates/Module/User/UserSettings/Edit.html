@@ -3,7 +3,7 @@
 
 <f:section name="subtitle">
 	<div class="neos-module-container">
-		<h2>{neos:backend.translate(id: 'userSettings.editUser', value: 'Edit User')} "{f:if(condition: user.name.firstName, then: user.name, else: user.accounts.0.accountIdentifier)}"</h2>
+		<h2>{neos:backend.translate(id: 'userSettings.editUser', source: 'Modules', value: 'Edit User')} "{f:if(condition: user.name.firstName, then: user.name, else: user.accounts.0.accountIdentifier)}"</h2>
 	</div>
 </f:section>
 
@@ -13,7 +13,7 @@
 
 		<div class="neos-footer">
 			<neos:link.module path="management" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</neos:link.module>
-			<f:form.submit value="{neos:backend.translate(id: 'userSettings.saveUser', value: 'Save user')}" class="neos-button neos-button-primary" />
+			<f:form.submit value="{neos:backend.translate(id: 'userSettings.saveUser', source: 'Modules', value: 'Save user')}" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
