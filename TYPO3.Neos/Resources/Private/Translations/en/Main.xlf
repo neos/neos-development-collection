@@ -24,6 +24,9 @@
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>
+			<trans-unit id="contentView" xml:space="preserve">
+				<source>Content View</source>
+			</trans-unit>
 			<trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			</trans-unit>
