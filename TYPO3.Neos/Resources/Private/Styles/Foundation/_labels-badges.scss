@@ -1,0 +1,69 @@
+//
+// Labels and badges
+// --------------------------------------------------
+
+
+// Base classes
+.neos-label,
+.neos-badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: $baseFontSize * .846;
+  font-weight: bold;
+  line-height: 14px; // ensure proper line-height if floated
+  color: $white;
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  background-color: $grayLight;
+}
+// Set unique padding and border-radius
+.neos-badge {
+  padding-left: 4px;
+  padding-right: 4px;
+  @include border-radius(3px);
+}
+
+// Empty labels/badges collapse
+.neos-label,
+.neos-badge {
+  &:empty {
+    display: none;
+  }
+}
+
+// Hover/focus state, but only for links
+a {
+  &.neos-label:hover,
+  &.neos-label:focus,
+  &.neos-badge:hover,
+  &.neos-badge:focus {
+    color: $white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+// Colors
+// Only give background-color difference to links (and to simplify, we don't qualifty with `a` but [href] attribute)
+@each $item in neos-label, neos-badge {
+  // Important (red)
+  .#{$item}-important         { background-color: $warning; }
+  // Warnings (orange)
+  .#{$item}-warning           { background-color: $orange; }
+  // Success (green)
+  .#{$item}-success           { background-color: $green; }
+  // Info (turquoise)
+  .#{$item}-info              { background-color: $blue; }
+  // Inverse (black)
+  .#{$item}-inverse           { background-color: $grayDark; }
+}
+
+// Quick fix for labels/badges in buttons
+.neos-button {
+  .neos-label,
+  .neos-badge {
+    position: relative;
+    top: -1px;
+  }
+}

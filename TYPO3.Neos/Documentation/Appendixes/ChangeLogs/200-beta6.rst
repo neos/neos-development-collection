@@ -1,0 +1,1624 @@
+==================
+2.0.0-beta6 (2015-07-23)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Use more specific version of doctrine/migrations
+-----------------------------------------------------------------------------------------
+
+This pins the version to a release candidate
+(~1.0.0 is specified in TYPO3.Flow) instead of the dev-master version
+that is implied by "@dev".
+
+Fixes: NEOS-1385
+
+* Commit: `38b6ad5 <https://git.typo3.org/Neos/Distributions/Base.git/commit/38b6ad53860ab300b7eb9bf00aef7d1b8bffb507>`_
+
+[BUGFIX] require 3.0-x-dev of Flow packages
+-----------------------------------------------------------------------------------------
+
+During development of the 2.0 branch, we want to
+test the upcoming Neos release with the upcoming
+Flow release. That's why it makes a lot of sense
+to require the 3.0.x-dev branch-tip instead of the
+last Beta version.
+
+(discussed together with Karsten)
+
+* Commit: `727b523 <https://git.typo3.org/Neos/Distributions/Base.git/commit/727b52359ce2bd7588c9128a4b8edc92b55d03c4>`_
+
+[TASK] Update composer manifest for 2.0.x-dev
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/62/
+
+* Commit: `1b5dc8a <https://git.typo3.org/Neos/Distributions/Base.git/commit/1b5dc8a89dd291e6bded1c5beedaefe5c1c62ec4>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Neos%20-%20Release/63/
+
+* Commit: `77f68c6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/77f68c6943159151112a44769e7f290b7de57a7c>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `d9c251a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d9c251af0bfab9e8f6a5fd34019d28189bf45fbd>`_
+
+[TASK] Fix version in conf.py
+-----------------------------------------------------------------------------------------
+
+* Commit: `9660c89 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9660c89783c4ab606a6e3b2b07c9a54f0751128b>`_
+
+[TASK] Use fallback labels if no translation is available
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1439
+
+* Commit: `73bdc01 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/73bdc01d9250058baf0c5011da64bfadadf767f8>`_
+
+[TASK] Translatable backend modules
+-----------------------------------------------------------------------------------------
+
+Replaces all hardcoded labels with translatable labels for
+the core backend modules & module menu.
+
+Resolves: NEOS-1439
+
+* Commit: `9c2b7f5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9c2b7f543ffe763fb3b0ebab384e67ded742250f>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `63b3f0f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/63b3f0fc464d479d8c290e69fd52eb5255c4db17>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `6cfb41b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6cfb41bf6c58614a7d2a9362deea6e9786ecf0d4>`_
+
+[FEATURE] Add Caching EEL helper
+-----------------------------------------------------------------------------------------
+
+Introduce EEL caching helper with methods to allow generating
+correct caching configuration for multiple nodes.
+That would allow to fix caching of
+``TYPO3.Neos.NodeTypes:ContentReferences``.
+
+Resolves: NEOS-1437
+
+* Commit: `09d084c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/09d084cb5b2509cd50572813cef87eea019081af>`_
+
+[TASK] Translations for JS labels in media browser/module
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1264
+Depends: I1fc53e11cc8b332d515cf711572582f6cff966da
+
+* Commit: `8697c5b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8697c5b34782dbff847ec3d8a5b7ac9c16273aea>`_
+
+[FEATURE] Support placeholder parameters in I18n JS helper
+-----------------------------------------------------------------------------------------
+
+Adds support for using placeholders in translation labels in
+the I18n helper for JavaScript.
+
+Related: NEOS-1264
+
+* Commit: `7a0e816 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7a0e816bf67da3d1218c7081deecfaa0030af526>`_
+
+[TASK] Make menu level available for menu items
+-----------------------------------------------------------------------------------------
+
+This change adds the possibility to access the current menu level
+in a TYPO3.Neos:Menu TypoScript Object.
+Use {item.menuLevel} to access the current Level in your fluid template.
+
+Resolves: NEOS-1375
+
+* Commit: `c04c89c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c04c89c54b983e9a9d5ffeaac12cddc805412df9>`_
+
+[TASK] Wrong type for DateTime editor in documentation
+-----------------------------------------------------------------------------------------
+
+This change replace the old ```date``` editor type, with the new
+```DateTime```.
+
+* Commit: `3733158 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/373315848d416cab04aa05a41119b3e921cbd759>`_
+
+[BUGFIX] Fix tooltip translations in context bar
+-----------------------------------------------------------------------------------------
+
+The fullscreen and live view buttons are having proper translated labels
+with this change.
+
+* Commit: `d5a0e76 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d5a0e76d5f7af29112f7947678eec64b4b1c4e41>`_
+
+[TASK] Translate labels in media browser and module
+-----------------------------------------------------------------------------------------
+
+Copies all the templates to the Neos package in order to
+be able to translate the labels using the backend users
+language setting.
+
+Resolves: NEOS-1264
+
+* Commit: `927a20a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/927a20a27d03004ed945786680be83831fd64253>`_
+
+[TASK] Expose I18n helper in external JS API
+-----------------------------------------------------------------------------------------
+
+Adds the I18n helper for backend translation to the external
+JavaScript API. Example usage::
+
+  window.Typo3Neos.I18n.translate('id', 'Fallback', 'TYPO3.Neos', 'Main');
+
+Related: NEOS-1264
+
+* Commit: `e925d3c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e925d3c783b4e1e29a3a5980d9f6cdb9a4301611>`_
+
+[TASK] Adapt image editor to support change in ResizeImageAdjustment
+-----------------------------------------------------------------------------------------
+
+The ResizeImageAdjustment has been updated to support image upscaling in
+Ib53a23c07b28baa65ee02a38f00d9d9a0a7f84ad, this change adapact the JS
+Image Editor to support this new property.
+
+Related: FLOW-297
+
+* Commit: `8794749 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/879474967dde7ef67d29aa71baac160d1b067d39>`_
+
+[TASK] Display node URI in link wizard, link editor & reference(s) editors
+-----------------------------------------------------------------------------------------
+
+Display the node URI under the label in the Aloha link wizard, link editor and
+in the reference(s) editors. The link wizard already shows the path, however
+that is changed to the node URI since that's human readable as opposed to the path.
+
+This commit also introduces the node.closestDocument view helper,
+which returns the closest (itself included) node of type
+``TYPO3.Neos:Document`` for a given node.
+
+Resolves: NEOS-825
+
+* Commit: `648f37e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/648f37e19895ec24194d9948a102df12bd827009>`_
+
+[TASK] Use Flow TranslationHelper
+-----------------------------------------------------------------------------------------
+
+As functionality has been moved to the Flow ``TranslationHelper`` we use
+that instead of the one that was in Eel.
+
+* Commit: `d166066 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d16606614b60f66f60916039a0adc4646d086b5e>`_
+
+[BUGFIX] Prevent exception when backend module doesn't have XLIFF file
+-----------------------------------------------------------------------------------------
+
+When a backend module creates a flash message it's translated by default
+and if a module doesn't have any XLIFF files, an exception will be
+thrown. This is breaking and unexpected behavior and thus the exception
+is caught to prevent breaking modules for not having translations.
+
+Related: NEOS-1439
+
+* Commit: `f31d6df <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f31d6dfbce943b53d1679024529b5475a6f2e9ed>`_
+
+[BUGFIX] Background-image shown in link editors clear button
+-----------------------------------------------------------------------------------------
+
+In `I152f6ab8734f5ade6edc56d0ff14d8f55d5ef244` a regression was
+introduced for high resolution displays since the removed background
+was shown again due to usage of "!important" in the high resolution
+styles.
+
+* Commit: `38c3b04 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/38c3b043da56d5d808d48f3ee113c715754a27fe>`_
+
+[BUGFIX] Missing ``$`` (jQuery) dependency in ``storage.js``
+-----------------------------------------------------------------------------------------
+
+``$`` (jQuery) is used in ``storage.js`` however that dependency is not
+included, thus it only works if jQuery is available globally.
+
+Related: NEOS-1368
+Related: I50700e30034b33ac95d963f99f258aac1b832194
+
+* Commit: `b456f5f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b456f5f7a1463142c5ed02b0edb13955b3a4411e>`_
+
+[TASK] Prevent errors with invalid lastVisitedNode
+-----------------------------------------------------------------------------------------
+
+As the last visited node is not really relevant we can ignore all
+Exceptions while trying to resolve it. If an Exception happened we
+will return NULL and redirect to the site root with default dimensions.
+
+Related: NEOS-1330
+
+* Commit: `440802c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/440802c4771a38d979156b0c3bbf8afe57912e47>`_
+
+[TASK] change lastVisitedNode to contextPath
+-----------------------------------------------------------------------------------------
+
+In order to consider the current dimensions when redirecting the
+user to the backend, we use the entire contextPath, but only change
+the workspace to the the users afterwards.
+
+Related: NEOS-1330
+
+* Commit: `9b84f2a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9b84f2a10b6f47d5f09c282bdeebece950bde681>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5278c23 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5278c2369b28ec0bc3fb193927222d778e82eaa5>`_
+
+[TASK] Adjust to new ``@context`` TypoScript alias
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1379
+
+* Commit: `182a079 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/182a07917d9ec97595a54905fd533abe81005e41>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `06e7d17 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/06e7d177bef10e473d3ef48c6fba7830b3ff1320>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `3b85c58 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3b85c5860940dc11005d6616ec1be4d0be3d6432>`_
+
+[BUGFIX] Translate the node type labels in the node type filter
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1435
+
+* Commit: `3899aca <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3899aca90e1f89cfc60a40f84aab9ddf3a882b2a>`_
+
+[BUGFIX] Translate nodetype labels in history view
+-----------------------------------------------------------------------------------------
+
+Depends: I1fc0042cd74f85636c4816def6c81764383e8134
+Resolves: NEOS-1428
+
+* Commit: `df030e4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/df030e4e8f61bac04eb8aefc0e84742590897349>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7c7192d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c7192dee9696f07c101090e855ce5a09e3ce388>`_
+
+[BUGFIX] Update content correctly after applying inspector changes
+-----------------------------------------------------------------------------------------
+
+When applying changes in the inspector for properties that require a
+reload, the element wasn't updated correctly due to the change
+``I18f86eeaa9f47737506fdb289833c2fe982bcb79`` changing the response
+from a JSON formatted response to a redirect to a HTML response.
+
+This change adjustes the Backbone sync to handle this change and
+additionally makes the XHR request available for the success callback.
+
+Related: NEOS-1368
+
+* Commit: `6206ff9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6206ff9f1d2e27d7fadc077ce03eeaeeb38c61f7>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8840e63 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8840e6332e9bad2c5c9d09ad9026a1f298c55dd5>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ca4384c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ca4384cddc8defc7b328cab6926a7537c73793a0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `a1eba9f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a1eba9f8cf278fef9b18281f8bd8e1499577cad0>`_
+
+[TASK] Make initial setup step clearer
+-----------------------------------------------------------------------------------------
+
+Adds an explanation about the image libraries and slightly changes the
+styling of the alerts to make clearer that it is OK to just have one of
+the listed libraries. Also warns about the usage of GD in production due
+to the memory issues experienced.
+
+Additionally removes the "upload" test that in fact just tested if a
+resource is accessible and if file_get_contents works on remote resources.
+The second was a reported point of failure and due to the shutup "@"
+operator nothing would be logged or displayed just the setup would say
+your configuration is not ready to upload anything (which might or not
+be true at this point).
+
+We could reintroduce an automatic AJAX upload and display the upload
+again to prove it worked.
+
+* Commit: `46b7537 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/46b7537f1fd0b5b50218616ed1e48a9fa4a57431>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `c1050f1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c1050f15e03c7775de552c7ab68f2abea784a9ea>`_
+
+[BUGFIX] fix labels in management / workspaces
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1427
+
+* Commit: `da048a2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/da048a2603ddae3331872ecaf6550e1bf96458cb>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `a022062 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a02206284ddef9e31ddbe5fa5a2eb4e0a01dda17>`_
+
+[BUGFIX] fix regression in ImageEditor introduced by I40311648344e1cf3015e4006c035d8d079d0e254
+-----------------------------------------------------------------------------------------
+
+Without this change, the Image Editor is completely broken.
+
+Related: NEOS-1392
+
+(cherry picked from commit 25d96382d6701f981a45c4c3d593000571d4c924)
+
+* Commit: `2addd5e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2addd5ea554221af5fa32930ad88fe2854ae152b>`_
+
+[BUGFIX] MIssing label for shortcut inspector group
+-----------------------------------------------------------------------------------------
+
+* Commit: `1427972 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/14279729e0eeeada9f2810988a80b46f78814f80>`_
+
+[TASK] Fix various styling issues in content dimension selector
+-----------------------------------------------------------------------------------------
+
+- Get rid of usage of "!important"
+- Remove left-border on buttons
+- Fix background-color on dialog close button
+
+* Commit: `faca5e3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/faca5e3b08afba276ed62cfe2a6fc46f2743d91b>`_
+
+[BUGFIX] Translation regression in Content Dimension Selector Dialog
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-3
+
+* Commit: `7972da3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7972da3cd4c5a1cea6c83585cf58c77ef8e0135f>`_
+
+[TASK] Create new ImageVariants on change
+-----------------------------------------------------------------------------------------
+
+Changing the properties of an ImageVariant in the Neos backend
+should result in the creation of a new ImageVariant instead of
+modifying the old one. Otherwise changes would immediately be
+visible in other workspaces as well.
+
+Fixes: NEOS-1392
+
+(cherry picked from commit c84dcb5e940b53997f9a9052ef2a7ea5c055111c)
+
+* Commit: `4d04b18 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4d04b184933d670f528c9dff734e7b4e91c0d2ef>`_
+
+[TASK] Disable history by default
+-----------------------------------------------------------------------------------------
+
+As we are in beta we should disable the History module by default
+as new features are not added anymore before final.
+
+If you want to try out the history module, you need the following configuration::
+
+  TYPO3:
+    Neos:
+      modules:
+        management:
+          submodules:
+            history:
+              enabled: TRUE
+      eventLog:
+        enabled: TRUE
+
+Fixes: NEOS-1270
+
+* Commit: `233d66d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/233d66d53d6ccb3a758e7b1b78a23c849db6c250>`_
+
+[TASK] Allow to disable backend modules in Settings
+-----------------------------------------------------------------------------------------
+
+We need this in order to easily disable/re-enable e.g. the
+history module.
+
+Example usage::
+
+  TYPO3:
+    Neos:
+      modules:
+        management:
+          submodules:
+            history:
+              enabled: FALSE
+
+Resolves: NEOS-1412
+
+(cherry picked from commit 92dfe4748bc86b3f6b1b86566ee730fd2db1e51d)
+
+* Commit: `2b8744a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2b8744adddc709d8c7e8bc7231cda5a4eee1e0d9>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5c2e68d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5c2e68dfdc5720b3af5679a94217e9e20f2ba385>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5d06170 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5d06170909f24b7fc9f14699593092d6c166a032>`_
+
+[BUGFIX] Avoid side-effects when rendering content for node creation/updating
+-----------------------------------------------------------------------------------------
+
+The ``Service\\NodeController`` which is used to render nodes via
+AJAX in backend operations breaks on inserting plugins as linking in
+plugins is broken due to a wrong parent request.
+
+This change moves rendering fully to the ``Frontend\\NodeController``
+so the parent request for plugins is always correct. It triggers a
+redirect to the showAction with internal arguments needed to render
+the node out of band.
+
+Fixes: NEOS-1368
+
+* Commit: `fc4eb65 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fc4eb651068b9f640ca05d3cff511dfeeb2a67ee>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `97c57a2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/97c57a2494229f5598e7b423a888a74a0fdd3d54>`_
+
+[TASK] added a section "Custom TypoScript Objects" to the "Extend Neos" documentation
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit cde7f62292df65466b0e2182fd0a726853c09b44)
+
+* Commit: `46be742 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/46be742e68d5aad6984e55ca3151f6be98f2204c>`_
+
+[TASK] added a section "Custom Edit Preview Mode" to the "Extend Neos" documentation
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 220c3b1d886d857bfc4fdf1e4a8f83707441995a)
+
+* Commit: `d3ab842 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d3ab8423ea7e816b058877f3516bd7129f52ae9b>`_
+
+[TASK] added a section "Custom FlowQuery Operations" to "Extend Neos"
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit faae7f3adebffab80f313c4e4b088efc270adf2b)
+
+* Commit: `de531c6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/de531c680fdf6b26229f27b74f3b0c54dd18d2b0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `67f28f0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/67f28f0637ed8485c2a01617d353aa11badeda89>`_
+
+[TASK] Clean up Release Notes
+-----------------------------------------------------------------------------------------
+
+The 1.0 release notes are merely links to the Changelogs.
+The >=1.1 release notes could be useful even when they are for older
+versions of the docs. So, this archives <1.0 and keeps >1.0.
+
+This also adds a :reversed: flag to the TOC, so that the the release
+notes can be listed in reverse chronological order.
+
+* Commit: `37207df <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/37207df31d47650686400687d153dc9044679c1f>`_
+
+[BUGFIX] Allow publishing/discarding of removed nodes
+-----------------------------------------------------------------------------------------
+
+This tweaks the propertyMappingConfiguration of "nodes" argument
+in the ``Workspaces`` module allowing submission/reversion of
+deleted nodes.
+
+Previously they triggered a property mapping exception because
+the specified nodes weren't found.
+
+* Commit: `13cbf2f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/13cbf2fba35f0b74cc00db7c0a9d2e3128d2604b>`_
+
+[BUGFIX] Various label translation regressions in
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1407
+
+* Commit: `803a5ce <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/803a5cec431f4e544acbdde693044d0d1e7ef5ef>`_
+
+[TASK] Replace logo with header in backend login screen
+-----------------------------------------------------------------------------------------
+
+Since there isn't any official logo currently, the logo for the in the
+backend login screen is replaced with a header with the text:
+"Login to {siteName}"
+
+* Commit: `ccd7983 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ccd798335bd243db4e6b492e8e9aadba2d4bb269>`_
+
+[TASK] Display content collections in workspaces module
+-----------------------------------------------------------------------------------------
+
+Previously content collections were not displayed as changes in the
+workspaces module, since they usually didn't matter. However now they
+can be actual content elements as well and are included in the publish
+counts so they should be shown for consistency reasons.
+
+Related: NEOS-268
+
+* Commit: `d5527d8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d5527d8a6e4273c483619a349b397c76d89f45b0>`_
+
+[TASK] Remove visible TYPO3 references
+-----------------------------------------------------------------------------------------
+
+Removes the notion of TYPO3 Neos and the TYPO3 logo from visible
+places in the Neos UI.
+
+Resolves: NEOS-1352
+
+* Commit: `73a8ec4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/73a8ec415a61bdd1b052ef6ee0d5502457f3f5d9>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `c78f861 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c78f86131adaf403d6bb55122ad5dc765e17aad3>`_
+
+[!!!][TASK] Remove unused Service\\NodeController::getPageByNodePathAction
+-----------------------------------------------------------------------------------------
+
+The action is unused and additionally creates a hardcoded live context
+which would lead to unexpected results anyway.
+
+Resolves: NEOS-1391
+
+* Commit: `4268ecf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4268ecf979e996295988abfa97e0c09556c55272>`_
+
+[TASK] added a section "Custom ViewHelpers" to the "Extend Neos" documentation
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit d7e3993ce0abd4dfeac387093d487cb7ecfe4454)
+
+* Commit: `b7abea2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b7abea25cbc271118e7aa5aeb4a9a320d80d7d75>`_
+
+[TASK] added section "Custom EelHelpers" to the "Extend Neos" section.
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 6835badeaa0f220cf14bab301418bae35c87b6a2)
+
+* Commit: `bf73205 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bf73205a735719bea3fa28fdf06edfacc0216782>`_
+
+[TASK] viewDefinition labels could be translated
+-----------------------------------------------------------------------------------------
+
+Views are introduced as a kind of an abstract Document 
+in TYPO3.Neos.GoogleAnalytics. Translations where possible
+for properties as the common way.
+
+Related: NEOS-1268
+(cherry picked from commit 6a42c02c0a3bc4aab6a6c740f721d708d7ccdcf8)
+
+* Commit: `4da8a73 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4da8a73d43e1e7ed7bfac27eeb432b0c8a2cce4f>`_
+
+[BUGFIX] Prevent AssetEditor items to be removed randomly
+-----------------------------------------------------------------------------------------
+
+If you removed an asset from an ``AssetList`` using the ``AssetEditor``,
+other assets were removed too.
+
+Background:
+
+Apparently the reason for this behavior is that the ``remove()``
+function is used by the ``Ember View`` implementation and probably
+it's called by the framework when redrawing the View.
+
+Fixes: NEOS-959
+
+* Commit: `1ed3348 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1ed33484408c8f0f10bfe79a790f69789c3e31dc>`_
+
+[TASK] Remove ChangeLogs for other branches from documentation
+-----------------------------------------------------------------------------------------
+
+Having the ChangeLogs of all previous branches only balloons the
+documentation without a real gain.
+
+* Commit: `f53070c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f53070c648d9f32692749c465cf2ffad6e3641fd>`_
+
+[TASK] restructure documentation of NodeType definition
+-----------------------------------------------------------------------------------------
+
+- Extract NodeTypeDefinition out of ContentStructure
+- Move the PropertyEditorReference from NodeTypeDefinition to the
+  reference-section
+- Extracted CustomValidator and CustomEditor sections to the extend
+  neos section
+- Mentioned DataSources in the CustomizingInspector section
+
+* Commit: `e026d36 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e026d365d4751e0a837efb55758073b447e16b43>`_
+
+[BUGFIX] Translate various backend services
+-----------------------------------------------------------------------------------------
+
+In order to translate labels correctly based on the
+backend users language setting for the backend services,
+we need to set the locale for those requests.
+
+Related: NEOS-3
+
+* Commit: `e04528e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e04528e0bdaf1c97f3347c7fa0002ce4bc2fcbed>`_
+
+[BUGFIX] Return backend user even if security context is uninitialized
+-----------------------------------------------------------------------------------------
+
+If the security context has not yet been initialized the user service
+would return NULL instead of initializing the security context and then
+check if there was a backend user. Instead of only returning it if it's
+already initialized, it checks if it's possible to initialize or not.
+
+* Commit: `b027502 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b027502f88e5d5d3cdfe0b2e5b6e025502199cfc>`_
+
+[BUGFIX] Prevent client-side performance issue when refreshing editables
+-----------------------------------------------------------------------------------------
+
+Refreshing an editable should take the same approach as enabling the
+editing in `create.js`. There could be sever client-side performance
+issues when calling `midgardEditable` on an element that has lots of
+nested editables because that will end up in many RDFa entity
+extractions (VIE load).
+
+This changes implements an explicit loading of entities from RDFa from
+the given element and gives the `midgardEditable` widget an explicit
+model.
+
+Fixes: NEOS-1405
+
+* Commit: `62289f2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/62289f2f143e33c1f4f2d13f2790f9d710605607>`_
+
+[BUGFIX] ChangeType of node must ignore unknown properties
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-981
+
+Depends: Ie5ed58d95739bfc171a1ce9f67516c2b9a7e9b79
+(cherry picked from commit 56edac3dc00d5ca96d07bb8397c594e132c80b58)
+
+* Commit: `68d6e36 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/68d6e3646bd35da8bf13f4f0bacb2e22e15bfc90>`_
+
+[TASK] Adjust DocTools configuration
+-----------------------------------------------------------------------------------------
+
+Adjusts the DocTools configuration further and moves it to the end of
+the Settings.yaml (as it's not that important for everyone).
+
+* Commit: `aa683bb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/aa683bb210b3bc4ae4928c1cc1caf0efcd79814b>`_
+
+[TASK] Add documentation for NodeType Translations
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1182
+(cherry picked from commit 2d7b85774b3db42e1685479e3940276107f03633)
+
+* Commit: `509a40c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/509a40c5f24bd0baea87189eab22fedebeb962a4>`_
+
+[TASK] add a short abbreviation of the installation requirements to the neos documentation
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit bad1434e3251435585d4771a42a641f8f70a7ede)
+
+* Commit: `ef85796 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ef85796e3c9f34a317e7cec43a40695ffdd8c9d7>`_
+
+[TASK] Use methods to get label instead of accessing raw configuration
+-----------------------------------------------------------------------------------------
+
+* Commit: `6f5e0ac <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6f5e0ac332e7f0c72bdefa69709880e4e4e926a7>`_
+
+[TASK] Remove unused ImageController
+-----------------------------------------------------------------------------------------
+
+The ``Backend\\ImageController`` is no used anymore as all tasks are
+fulfilled by the ``Backend\\ContentController``. There is not even a
+route to access the controller actions therefore it is removed.
+
+Resolves: NEOS-1390
+
+* Commit: `7540e08 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7540e081f79a75b135eebc31f0db562f2863445a>`_
+
+[BUGFIX] Editables and vie are not updated correctly
+-----------------------------------------------------------------------------------------
+
+View and Create entities of child nodes need to be updated after
+replacing the markup of updated nodes with the new one from the
+server.
+
+The wrong behavior can be tested by changing the layout of a
+multi-column element. This will the result in $columnsCount publishable
+changes but in fact it should be $columnsCount+1 as the content element
+itself is changed as well. This is only correctly reflected in the UI
+after reloading. This change fixes that.
+
+Fixes: NEOS-1387
+
+* Commit: `7701c84 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7701c84ab6ac3568ea3775aa4032ed6c2846d94c>`_
+
+[BUGFIX] Adjust TypoScript rendering tests to removal of TYPO3 mentions
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1352
+
+* Commit: `d8b90f8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d8b90f8e6e49eebe653feabc19af0466af54ac21>`_
+
+[BUGFIX] Manually change workspace in vie model only on update
+-----------------------------------------------------------------------------------------
+
+When inline editing we just update the node to the server without
+actually changing the dom, so we need to override the node workspace
+name manually in the vie model to have the correct count of publishable
+nodes. If we re-render an updated node we replace the markup with the
+newly rendered so the vie model is already refreshed. In that request
+the workspace name is not given correctly so the JS updated it to
+undefined which resulted in wrong change counts.
+
+Fixes: NEOS-1394
+
+* Commit: `f6a71d7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f6a71d7d41ca93c61fdc5cdbb79b70387a4d2068>`_
+
+[TASK] Don't trigger check for publishable nodes on vie create
+-----------------------------------------------------------------------------------------
+
+This change improves the performance by omitting unnecessary events in
+PublishableNodes.
+
+The user interface would trigger updates of the publishable node count
+as many times as there where vie entities on the page, iterating all
+the entities as it was bound to the vie create event.
+
+This is replaced by listening to internal events.
+
+* Commit: `01efa98 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/01efa987de216b827293682ba00cfad24e1fdc3e>`_
+
+[BUGFIX] Rendering of Neos elements only in backend
+-----------------------------------------------------------------------------------------
+
+This is a follow up to I2c48f66716dfee756418f4fdb95b958a2bb24f01
+which changed the way it was checked if Neos meta data should be
+rendered. First of all the cache context should match with used
+context variables. Now ``documentNode`` is used everywhere.
+Without this fix it could happen that the meta data was rendered
+in the frontend as well due to evaluation of the not existing
+context variable.
+Additionally security checks in the templates can the removed as
+the context check also checks for backend access permissions.
+
+* Commit: `2c7636f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2c7636f9539d432a880f815326301674eec8b3e4>`_
+
+[TASK] updated the "create a Plugin" docs for Neos 2.0 and Flow 3.0
+-----------------------------------------------------------------------------------------
+
+The following changes are covered in this change:
+
+- added section headlines
+- updated the documentation of the migration-generation
+- added a basic Policy.yaml
+- altered the suggested route configuration to be compatible with neos
+- added documentation for the configuring of TypoScript autoloading in 
+  Settings.yaml
+- added a section about settings variables from TypoScript was added
+- added a section for plugin linking
+- added short sentences regarding routing and view-configuration.
+
+Resolves: NEOS-226
+
+(cherry picked from commit 91fd8b0199858580eff0cb98e79a29b5e289dc22)
+
+* Commit: `553f2c7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/553f2c75ccbe4010747f4612a97f251949621953>`_
+
+[TASK] add a copy of the fluid documentation from flow to neos
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 7e87f878c995bf84f3f94edc533b5179c9dea8b6)
+
+* Commit: `d1aba7f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d1aba7f8a1f3532814e9242a4ecc1b54ebbcc5f6>`_
+
+[TASK] Rework documentation structure
+-----------------------------------------------------------------------------------------
+
+Also include auto generated docs of more packages.
+
+Structure of the Documentation:
+
+* Getting Started
+* Technical Principles
+* User Guide
+* Creating a Site
+* Extending Neos
+* Inside of Neos
+* References
+* Contribute
+* How Tos
+* Running Neos
+* Appendixes
+
+The configuration for the auto generated documentations was moved into
+the settings of the Neos package and was extended to cover all packages
+that are part of a Neos demo installation.
+
+The existing parts were not altered yet. They were simply moved into the
+new structure.
+
+Resolves: NEOS-1376
+
+* Commit: `1f650e6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1f650e647d45a1a16cacf3933be492d5ecc5b515>`_
+
+[BUGFIX] Global editableOptions should not get a model set
+-----------------------------------------------------------------------------------------
+
+The change I5dc73d0d09408c9985e309ad7ca24acdec0c9b45 introduced a
+regression by adding ``model`` to the global editableOptions breaking
+``refreshEdit`` as the model would be a wrong one.
+This breaks image uploads and crop for example.
+
+Fixes: NEOS-1374
+
+* Commit: `9da3db3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9da3db3ce635dd903fbf25e40f64add347aa4da4>`_
+
+[!!!][TASK] Adjust translation handling code
+-----------------------------------------------------------------------------------------
+
+Adds translation capability for NodeTypes and separate
+xliff sources.
+
+The ``translationLabelId`` is no longer used and can be removed
+from all NodeType configurations.
+
+NodeType configuration will be automatically amended with translation
+ids for labels if a label is either specifically set to NULL
+``label: ~ `` or if it is set exactly to the string ``'i18n:auto'``.
+If you modify properties from a superType and you want to keep the
+label you should not set the ``label`` at all. To overwrite it with a
+autogenerated label matching the inheriting NodeType you can set it to
+NULL or to a custom label string.
+
+So if the default id format is used only xliff files need to be
+added to existing packages to translate them.
+
+Valid label id formats are now::
+
+  Vendor.Package:SourceFile:identifier
+  Vendor.Package:identifier
+  identifier
+
+SourceFile will default to "Main" and "Vendor.Package" will default to
+"TYPO3.Neos" if not set.
+
+You can have any XLIFF files labels included in the user interface by
+setting::
+
+  TYPO3:
+    Neos:
+      userInterface:
+        translation:
+          autoInclude:
+            'TYPO3.Neos': ['Main', 'Inspector', 'NodeTypes/*']
+
+Where the key is your package key and the array is an array of files
+with globbing inside of your translation folder. See the Neos package
+for an example.
+
+Note::
+
+  To use NodeType translations the XLIFF files must be included by you.
+
+Additionally mutes all missing translation logging on client side.
+
+The following is technical information that is not relevant
+for integrators.
+
+PackageKeys are now converted to be separated by underscore instead
+of "." which means the package key is always one level in the translation
+data structure and not multiple. This prevents problems with the source
+naming. Before the source "NodeTypes" from the TYPO3.Neos package would
+go into "TYPO3.Neos.NodeTypes" which conflicts with the labels from the
+"TYPO3.Neos.NodeTypes" package. This happens only for consumption in
+the JavaScript user interface.
+
+JavaScript code was cleaned up and adjusted to other parts of Neos.
+
+Package and source given in the label id have precedence over package
+and source given directly to the translate helper.
+
+Fixes the problem of ``script`` tags in tag attributes by making the
+translate helper an unbound helper.
+
+This is only breaking if you used the label id format with a `i18n:`
+prefix that was introduced during development of the backend translation
+feature.
+
+Fixes: NEOS-1277
+Resolves: NEOS-1258
+
+* Commit: `ccf7b3b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ccf7b3bf12f7785949dd0c5f1f8c6c4d80b4cef8>`_
+
+[BUGFIX] Render only metadata for removed elements
+-----------------------------------------------------------------------------------------
+
+Removed elements are rendered for detecting publishable changes
+on the current document. As we do not display them we can as well
+render only the metadata container.
+
+* Commit: `6bdd157 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6bdd1573149e0148f72d75326afcde889474a7f8>`_
+
+[BUGFIX] Translate error messages in JS validators
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-487
+
+(cherry picked from commit f16e654af3aa3235ee687f418fe224fc2b6772fa)
+
+* Commit: `87795c2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/87795c20e3366438b49c27a52b21358c4867eda7>`_
+
+[TASK] More reliable appending of "neos-backend" css class to body tag
+-----------------------------------------------------------------------------------------
+
+This adds the "neos-backend" class to the body tag via TypoScript if
+the backend is loaded. This allows reliable to check via JavaScript if
+the backend is loaded or not, without having to wait for the JS backend
+to be bootstrapped. It works with existing custom added css classes for
+the body tag which are already added via TypoScript on::
+
+  prototype(TYPO3.Neos:Page).body.bodyTag.attributes.class
+
+Resolves: NEOS-1360
+
+* Commit: `de38ac5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/de38ac5ff0c8db5e3d121becf84cbf0a09523adb>`_
+
+[FEATURE] SVG support for image content
+-----------------------------------------------------------------------------------------
+
+This allows upload and usage of SVGs in image elements.
+SVG images automatically disable resizing and cropping.
+
+Resolves: NEOS-93
+
+* Commit: `66484f2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/66484f269f97d0dd3497143492649154f4b8d339>`_
+
+[TASK] Display technical node type in title for insert new new options
+-----------------------------------------------------------------------------------------
+
+- show the nodetype name including the namespace in the hover title
+
+Resolves: NEOS-1123
+
+(cherry picked from commit ffb674ec1774544b9168d54399029834e975c67e)
+
+* Commit: `18cdfcf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/18cdfcfca0fbe1b79ba50de0247df4376328fa8f>`_
+
+[BUGFIX] Creating asset collection inside image browser
+-----------------------------------------------------------------------------------------
+
+The regex of the privilege target 
+```TYPO3.Neos:Backend.Module.Media.ManageAssetCollections```
+doesn't match the namespace and therefore it is not possible to
+create collections from inside the image browser.
+
+Related: NEOS-1373
+
+* Commit: `3e56c4f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3e56c4f35473ccdc815384dd8354a6f8b9a325cd>`_
+
+[BUGFIX] Ensure ``contentElementWrapping`` processor is executed last
+-----------------------------------------------------------------------------------------
+
+In some cases where integrators add their own ``@process`` rules to
+content, the ``contentElementWrapping`` process is not executed last
+potentially causing the wrapping to be added to a wrong wrapper element.
+
+This is solved by setting the position of the processor to::
+
+  @position = 'end 999999999'
+
+Related: NEOS-1326
+(cherry picked from commit aeaece7b1fffcc793e5928c6055af7b9b90bdb51)
+
+* Commit: `15ff0aa <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/15ff0aa78864065e2da156f6cb2b6ae96e9b737d>`_
+
+[BUGFIX] When triggering page reload return from _insertNode
+-----------------------------------------------------------------------------------------
+
+The ``_reloadPage`` function in ``NodeActions.js`` requires additional
+JavaScript which makes the reloading deferred. To avoid running into
+errors in the code following the call to ``_reloadPage`` the function
+should return at this point.
+
+(cherry picked from commit 4466e607c5fc69d293b7a9d890598edf956b4366)
+
+* Commit: `1a7f216 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1a7f2161248f927c00d538f8ed55c87c0807f0b1>`_
+
+[BUGFIX] Select2 background image visible in high resolution
+-----------------------------------------------------------------------------------------
+
+In `I152f6ab8734f5ade6edc56d0ff14d8f55d5ef244` a regression was
+introduced for high resolution displays since the removed background
+was shown again due to usage of "!important" in the high resolution
+styles.
+
+* Commit: `bfff9d7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bfff9d7df1ae359c045b06374a995cd3a712e2db>`_
+
+[BUGFIX] Fix select2x2.png not found error
+-----------------------------------------------------------------------------------------
+
+Adjusts the Gruntfile to fix the path for that file as well.
+
+* Commit: `acc328e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/acc328e33197b02732e3336c185897b91de8a632>`_
+
+[BUGFIX] Do not trigger loading of entities when initializing editables
+-----------------------------------------------------------------------------------------
+
+Since we already load all entities on a document after loading, there's
+no need to load VIE entities again. This can cause delays of several
+seconds when entities are nested (e.g. content collections) on complex
+documents.
+
+* Commit: `b585be5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b585be537bff3c653db712e54765ad63a6b98d88>`_
+
+[TASK] Make PHP the default language for code blocks
+-----------------------------------------------------------------------------------------
+
+The documentation now uses PHP as default language for code blocks,
+so that even when using just two colons to start a code-block it is
+highlighted.
+
+* Commit: `8a48ee6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8a48ee6d620a65140c71aa85e1aeb596f02c89a3>`_
+
+[BUGFIX] Crop values comparison doesn't rely on property order
+-----------------------------------------------------------------------------------------
+
+The crop property order was important for comparison, this change
+turns that into a specific compare method that compares all properties
+separately so the order is no longer important.
+
+(cherry picked from commit bf24cc83ab71aa4b9b65da05998fa2215b747dae)
+
+* Commit: `24b1945 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/24b19459cf64e1bde2d1e0921ce76df4fbb92d65>`_
+
+[TASK] Fix some rST errors in changelog for beta3 and beta4
+-----------------------------------------------------------------------------------------
+
+* Commit: `0650089 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0650089fe12d581d116dfdd40276c702cf5b43df>`_
+
+[TASK] Add support for sphinx-autobuild
+-----------------------------------------------------------------------------------------
+
+This adds support for sphinx-autobuild, which watches the Documentation
+directory and automatically re-renders docs on change. This allows for
+a livepreview while editing the docs.
+
+To use it, install `sphinx-autobuild`_::
+
+    pip install sphinx-autobuild
+
+To use livepreview just run ``make livehtml`` instead of ``make html``.
+Then, visit http://127.0.0.1:8000 to see the livereload version of the
+docs. Note, this builds the docs in ``_build/livehtml`` instead of
+``_build/html`` because the docs include some javascript to make
+livereload work.
+
+.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
+
+* Commit: `988151a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/988151adac5944234a05b946ba0195c3f2e86353>`_
+
+[TASK] Add changelog for Neos 1.2.9 & 1.1.7
+-----------------------------------------------------------------------------------------
+
+* Commit: `67362d2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/67362d2949b41fa4b7ea4edf872ed17728b6191c>`_
+
+[TASK] Make PHP highlighting work for snippets
+-----------------------------------------------------------------------------------------
+
+This adds the "official" hack to turn on startinline for all php
+codeblocks whether they're a snippet or a full file.
+
+Sphinx and docutils don't support setting the startinline option for
+pygments. That means that snippets of PHP code that don't have
+"<?php ?>" don't get highlighted. The hack was documented here:
+http://mbless.de/blog/2015/03/02/php-syntax-highlighting-in-sphinx.html
+https://github.com/fabpot/sphinx-php
+
+* Commit: `4576e76 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4576e764864bc2437ffd7b7567601056cf768295>`_
+
+[TASK] Make Workspaces module translatable
+-----------------------------------------------------------------------------------------
+
+This change replaces hardcoded labels in the Workspaces module by
+translation view helpers.
+
+Resolves: NEOS-1363
+
+* Commit: `af1c8f8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/af1c8f8ba84e8f1fbda8e0a5b3f2c0b5b7881ab5>`_
+
+[TASK] Always load javascript after stylesheet
+-----------------------------------------------------------------------------------------
+
+This change add a @position attribute to the javascripts TS path to
+include javascripts just after stylesheets. This is a best practice
+for web performance.
+
+* Commit: `c909f6b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c909f6b0895284b8744c27ae7703ba49fd8b9548>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `c52d162 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/c52d16209327aefe2e5fa754dd649045c12de439>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `b8673cb <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/b8673cb5a2e853f345ea8eea51212be9b1a3dd6d>`_
+
+[BUGFIX] Fix missing entryTag for referenced nodes in ``ContentReferences`` object
+-----------------------------------------------------------------------------------------
+
+``TYPO3.Neos.NodeTypes:ContentReferences`` object is missing correct
+caching configuraion. Add entryTags for each referenced node.
+
+Depends: Ie0a408ca5bc76d4494c3dfe146fc9028be4fa1f2
+
+Fixes: NEOS-1437
+
+* Commit: `29128c0 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/29128c09757d016efb7c782b0823b5585a861e5a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `c85acf4 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/c85acf4e871474165948acdab7aaec5f28f6b629>`_
+
+[TASK] Make sure that a documents subpageLayout is displayed below layout
+-----------------------------------------------------------------------------------------
+
+The layout setting for a document should always be rendered before 
+the subpageLayout setting.
+This change sets for either layout and subpageLayout positions to make 
+sure they are always rendered in the correct ordering.
+
+Resolves: NEOS-1441
+
+* Commit: `53c7c07 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/53c7c078ae08d6fe3b33fbe73398d8cb211cdc86>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5a63899 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/5a638996021d7ac9c8122c35426c4ea4d45388b0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5bafa8f <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/5bafa8f707e4cd6a727e4a003b2f7695da0c8901>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2acae13 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/2acae1326ae45e0443328097694ca20b282cd227>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f1c30f1 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/f1c30f1470ee75b40186acee2fa0335ceef4533c>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `faf8815 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/faf88154916c4e7bac321352efcf28ef358878d0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `79a3b11 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/79a3b11d0f471251127f1e310490af607349b8ea>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `4158488 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/41584881a885686b33bf0fe5159249b8fc70783e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8d70776 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/8d70776ec725e315f1c020a8a4a6a604f38103f9>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2153024 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/21530244965a9f76a15c0dc8a410531d9b69ff72>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `0741daf <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/0741daf196b5a7d2427be2c8e17fcc83dc55c903>`_
+
+[TASK] translate NodeTypes package (Node Type Names)
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1265
+
+* Commit: `0e0d304 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/0e0d30439203a07cf380d62d1cec6419edf6bb07>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Use Flow TranslationHelper
+-----------------------------------------------------------------------------------------
+
+As functionality has been moved to the Flow ``TranslationHelper`` we set
+that for and ``I18n`` key in the TS context of the labelGenerator.
+
+* Commit: `cd22ad7 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/cd22ad70985b771efb14ad6afbe66bce5f45e213>`_
+
+[BUGFIX] find() operation should support multiple filters
+-----------------------------------------------------------------------------------------
+
+This change adds support for additional attribute filters after
+instanceof filters. These were ignored before which was not intuitive
+and consistent in the way find() works in jQuery.
+
+Fixes: NEOS-1366
+
+Depends: I49a9391e2d576f21c377bf3344202f9c3de2767c
+
+* Commit: `6fd13e6 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/6fd13e6e372cd22354b94b609f3a408ba4ffaf66>`_
+
+[TASK] Fix source documentation on dimension migration tooling
+-----------------------------------------------------------------------------------------
+
+Fixes some doc comments in SetDimensions and DimensionValues.
+
+* Commit: `d979408 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/d97940888ff6928330311d6d5b99441b330613fc>`_
+
+[BUGFIX] Update child nodes when changing the type of a node
+-----------------------------------------------------------------------------------------
+
+If the node type is changed and you have child nodes that are not part
+of the schema, they are now marked as removed in the users workspace.
+After publishing they are therefore cleaned up.
+
+If the user switches to another node type that might again contain a
+child node with the same name that would cause a conflict, so we just
+restore this child node.
+
+Reverting deletion of nodes is not done recursively as the user still
+has the possibility to discard the changes in his workspace.
+
+Note:
+
+Currently there is still a limitation when changing the node type to a
+type with less/no child nodes: Those child nodes will be marked removed
+but they won't be deleted from the database upon publish because they
+don't belong to the document node according to the schema.
+This can be worked around by publishing all changes (or using the
+Workspaces module).
+
+Fixes: NEOS-268
+
+* Commit: `f8ac679 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/f8ac679a1354484ffff54abf1fe81b139cb62a4c>`_
+
+[TASK] Remove superflorious isset in node type getLabel
+-----------------------------------------------------------------------------------------
+
+* Commit: `f47948d <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/f47948d3d61ee6079e992bef65b8a733a2f0965f>`_
+
+[BUGFIX] Compatibility for mysqli driver
+-----------------------------------------------------------------------------------------
+
+When using the ``mysqli`` driver you can't use prepared statements
+with named parameters (http://www.doctrine-project.org/jira/browse/DBAL-915).
+Using ``executeQuery()`` the named parameters are converted correctly.
+
+Related: NEOS-1191
+
+(cherry picked from commit ac857f17f1c18aad1d34c4099ff68a462a8dd9d7)
+
+* Commit: `220e7ab <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/220e7ab92034f54aded80b3bdc14353d11745437>`_
+
+[BUGFIX] NodeConverter should accept skip for unknown properties
+-----------------------------------------------------------------------------------------
+
+This change improves the handling of switching-node-types (e.g. from
+"page" to "shortcut").
+
+Related: NEOS-981
+
+(cherry picked from commit 5c8e24e85eca8b04348072e816a8986ad8082eed)
+
+* Commit: `0b28d00 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/0b28d004b031b6b15cba317ef4132dfe9276f0a4>`_
+
+[FEATURE] ``parentsUntil`` FlowQuery operations
+-----------------------------------------------------------------------------------------
+
+Introduces a new FlowQuery operation for getting all parents or
+all parents until a node matching the optional filter expression
+is found.
+
+The operation allows an additional argument to filter the result.
+
+Example of usage::
+
+  parentsUntil = ${q(node).parentsUntil('[instanceof Acme:Node]')}
+
+Resolves: NEOS-1274
+
+(cherry picked from commit 6298236fce824a269bc396c4078d25bd50566763)
+
+* Commit: `9cde22b <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9cde22b968215d9ebb18ea7e640795ae4aba9af6>`_
+
+[FEATURE] ``nextUntil`` & ``prevUntil`` FlowQuery operations
+-----------------------------------------------------------------------------------------
+
+Introduces two new FlowQuery operations for getting all following or
+previous siblings to a given node until a node matching the filter
+condition is found.
+
+Both operations allow an additional argument to filter the result.
+
+Example of usage::
+
+  siblingsBefore = ${q(node).prevUntil('[instanceof Acme:Node]')}
+  siblingsAfter = ${q(node).nextUntil('[instanceof Acme:Node]')}
+
+Resolves: NEOS-1273
+
+(cherry picked from commit ee3559872f667e05c635fed7dfcd54294548f2b8)
+
+* Commit: `1c69c48 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/1c69c481203ea2a948183ddde81ec9f54f3b407a>`_
+
+[FEATURE] ``prevAll`` & ``nextAll`` FlowQuery operations
+-----------------------------------------------------------------------------------------
+
+Introduces two new FlowQuery operations for getting all following or
+previous siblings to a given  node.  Both operations allow a filter
+argument, to filter the siblings like the ``next`` and ``prev``
+operations.
+
+Additionally fixes the comments of the  ``next``and ``prev``
+operations, since they proclaim to do what the ``nextAll`` and
+``prevAll`` actually do.
+
+Example of usage::
+
+  siblingsBefore = ${q(node).prevAll('[instanceof Acme:Node]')}
+  siblingsAfter = ${q(node).nextAll('[instanceof Acme:Node]')}
+
+Resolves: NEOS-1271
+
+(cherry picked from commit fa2e204921cd0d9bade358e769ae2841b85a114e)
+
+* Commit: `d21eac0 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/d21eac016ec6e90a3b24a2f535b087e951ab05db>`_
+
+[TASK] add i18n helper to NodeLabelGeneration Context
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-437
+
+* Commit: `9fc31e1 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9fc31e1d8ad0fb62b72a3674931df7ea23bd3309>`_
+
+[BUGFIX] Moving content in different dimensions should not break
+-----------------------------------------------------------------------------------------
+
+Without this fix you could end up loosing nodes when you had a variant
+of a Node in different dimensions and moved one of the variants to a
+different path and back to the old path. This would (depending on the
+order of operations and dimensions) either lead to an exception
+because the variant would be found on the (old) path and thus the path
+marked as blocked or the node would get a different node name rendering
+the node inaccessible as then two nodes with the same identifier but
+different name (same parentpath) would exist.
+
+Both cases are fixed by making the checks for existence stricter and
+excluding variants in other dimensions.
+
+Fixes: NEOS-1339
+(cherry picked from commit 3daf19e7f77d08e1bf3324abafbf441e1b878a04)
+
+* Commit: `006f0d2 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/006f0d2e2624035de2fd6ee6b4aea15dc588bc49>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Use Flow TranslationHelper
+-----------------------------------------------------------------------------------------
+
+As functionality has been moved to the Flow ``TranslationHelper``
+we set that for both the ``Translation`` and ``I18n`` keys.
+One of the two should be deprecated in the future.
+
+* Commit: `f956c3c <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/f956c3c1972ff936b0cd7fdf635fc4e461e21af2>`_
+
+[BUGFIX] Merge ``@context`` & ``@override`` on a parser level
+-----------------------------------------------------------------------------------------
+
+For backwards compatibility the ``@context`` & ``@override`` meta
+properties are merged on a parser level, so child meta properties
+and merged together. The parsing order is important here in case
+both are used on the same path, however it should be fine in most
+cases since mixing them should be avoided.
+
+Related: NEOS-1379
+
+* Commit: `35da995 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/35da9956b8083853678647a50ff9331790050ca0>`_
+
+[TASK] Include context I18nHelper to TypoScript defaultContext.
+-----------------------------------------------------------------------------------------
+
+The context is needed to translate nodetype labels
+
+Related: NEOS-1428
+
+* Commit: `7bc74ee <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/7bc74ee8e8d3d2e5c9fbe05958d402bb555062f9>`_
+
+[TASK] Support keys starting with two underscores if not reserved
+-----------------------------------------------------------------------------------------
+
+Using keys starting with two underscores they are ignored since they
+are considered internal. This is changed to only apply to certain
+reserved keys, which if used will throw an exception.
+
+Resolves: NEOS-1411
+
+(cherry picked from commit 6285b3585273bc8cf2e584aeed88abea3050ae68)
+
+* Commit: `bebb6a3 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/bebb6a3f32331579dc7bd047f86049dc649920fc>`_
+
+[TASK] Code cleanup in Parser and Runtime
+-----------------------------------------------------------------------------------------
+
+* Commit: `04a1e27 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/04a1e2761cb13aea4ff8c08a39c500eb3c816270>`_
+
+[!!!][TASK] Deprecate ``@override`` and replace it by ``@context``
+-----------------------------------------------------------------------------------------
+
+The functionality of ``@override`` is often misunderstood, therefore
+the alias ``@context`` is introduced since it's more self-explanatory
+since it's about adding a variable to the context.
+
+We still support the (deprecated) ``@override`` syntax; but you should
+nevertheless update to ``@override``.
+
+Resolves: NEOS-1379
+
+(cherry picked from commit b3b0ab63a0773d96e832bb956177a530b548b499)
+
+* Commit: `109440c <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/109440c249a9a97336c37c37ad949b6410d6e786>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Migration for upscaling must predate Version20150324185019
+-----------------------------------------------------------------------------------------
+
+It is necessary to add the upscaling DB fields before executing some
+migrations in other packages as doctrine will reference all properties
+available code wise and any queries break for other migrations
+transforming Assets from serialized state.
+
+* Commit: `66ad2fe <https://git.typo3.org/Packages/TYPO3.Media.git/commit/66ad2febad9969eb23b726d0e5dc8d092816d1f6>`_
+
+[TASK] Use translated labels if Neos I18n helper is available
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1264
+Depends: Ie5b379d066d0ce664dca78db02f9892d10522a52
+Depends: I20d67187b9b54c53c3fc5c3aea05c45c363a192f
+Depends: Ib0a9aa678e52159bc958d0ae097ad65d24fac933
+
+* Commit: `e12e7ac <https://git.typo3.org/Packages/TYPO3.Media.git/commit/e12e7ac7f8f4a51b23201ae07411be36824cead0>`_
+
+[BUGFIX] Image upscaling does not work
+-----------------------------------------------------------------------------------------
+
+The new resource management introduced a regressing by removing the
+support to upscale images. This change requires a database migration as
+the ``allowUpScaling`` option is now persisted in the database.
+
+Resolves: FLOW-297
+
+* Commit: `efee90e <https://git.typo3.org/Packages/TYPO3.Media.git/commit/efee90e00c2ce278b3f0ad9fabac3562651df840>`_
+
+[BUGFIX] invalid markup in templates
+-----------------------------------------------------------------------------------------
+
+HTML tags where missing or not placed properly.
+The opening of modals was done by having a href attribute on a button
+element which is invalid and is now being replaced by data-target.
+
+Related: NEOS-1264
+
+* Commit: `976f5dc <https://git.typo3.org/Packages/TYPO3.Media.git/commit/976f5dcb3227da21bff5745b3ffb7d3b85d0e851>`_
+
+[BUGFIX] ImageVariant conversion should use property mapping
+-----------------------------------------------------------------------------------------
+
+This fixes a problem when building ImageVariants from given
+adjustment values. The adjustment values should be mapped
+as well to avoid invalid variable types.
+
+Additionally adds the missing identity of the ``originalAsset``
+when converting an ``ImageVariant`` to an array.
+
+Related: I40311648344e1cf3015e4006c035d8d079d0e254
+Related: NEOS-1392
+
+(cherry picked from commit c8f10306208031b27a36edb77f4988f8e0aa1b3e)
+
+* Commit: `3724b03 <https://git.typo3.org/Packages/TYPO3.Media.git/commit/3724b03db2af343531d981ab108477630db1eb41>`_
+
+[FEATURE] Support other file types that are supported in Imagine
+-----------------------------------------------------------------------------------------
+
+With this feature all image file formats that are valid for the
+configured imagine driver will work with the media package.
+This includes SVG with the Imagick driver.
+
+Additionally SVG is specially treated now and Images with no
+dimensions are possible.
+
+Resolves: FLOW-144
+Related: NEOS-93
+
+* Commit: `749388b <https://git.typo3.org/Packages/TYPO3.Media.git/commit/749388b90ba468f34eee409f8c4194d64387d4f2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] update Sites.xml (resolve merge conflict)
+-----------------------------------------------------------------------------------------
+
+* Commit: `9c91642 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/9c916424496a67d65916b8a7514be50fbddccb3d>`_
+
+[TASK] translate nodeType labels and properties
+-----------------------------------------------------------------------------------------
+
+Resolves: NEOS-1263
+
+(cherry picked from commit 8f3689b6b0b8239fd501fb870664fe40e5b51186)
+
+* Commit: `782dbe5 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/782dbe5950fe4e7d17cd447cd5a078779caaaaf5>`_
+
+[BUGFIX] Sites.xml shouldn't contain git conflict markers
+-----------------------------------------------------------------------------------------
+
+* Commit: `11ab85b <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/11ab85b27bba7375f4b6b404a8dec67c7a51da91>`_
+
+[TASK] Remove visible TYPO3 references & adjust links
+-----------------------------------------------------------------------------------------
+
+Removes the mention of TYPO3 in the site content, contact form example,
+composer.json & css files.
+
+Additionally updates a link to the new website URL.
+
+Resolves: NEOS-1352
+
+* Commit: `4cb7cd2 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/4cb7cd25bf8594666b45429bf7bc186349aed5f4>`_
+

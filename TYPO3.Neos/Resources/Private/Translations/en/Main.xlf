@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext">
+		<body>
+			<!-- general translations like button -->
+			<trans-unit id="autoPublish" xml:space="preserve">
+				<source>Auto-Publish</source>
+			</trans-unit>
+			<trans-unit id="apply" xml:space="preserve">
+				<source>Apply</source>
+			</trans-unit>
+			<trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			</trans-unit>
+			<trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			</trans-unit>
+			<trans-unit id="choose" xml:space="preserve">
+				<source>Choose</source>
+			</trans-unit>
+			<trans-unit id="typeToSearch" xml:space="preserve">
+				<source>Type to search</source>
+			</trans-unit>
+			<trans-unit id="content" xml:space="preserve">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="contentView" xml:space="preserve">
+				<source>Content View</source>
+			</trans-unit>
+			<trans-unit id="createAfter" xml:space="preserve">
+				<source>Create after</source>
+			</trans-unit>
+			<trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+			</trans-unit>
+			<trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			</trans-unit>
+			<trans-unit id="copy" xml:space="preserve">
+				<source>Copy</source>
+			</trans-unit>
+			<trans-unit id="cut" xml:space="preserve">
+				<source>Cut</source>
+			</trans-unit>
+			<trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			</trans-unit>
+			<trans-unit id="deleteElement" xml:space="preserve">
+				<source>Yes, delete the element</source>
+			</trans-unit>
+			<trans-unit id="deleteElementTitle" xml:space="preserve">
+				<source>Delete the element</source>
+			</trans-unit>
+			<trans-unit id="discard" xml:space="preserve">
+				<source>Discard</source>
+			</trans-unit>
+			<trans-unit id="discardChanges" xml:space="preserve">
+				<source>Discard changes</source>
+			</trans-unit>
+			<trans-unit id="editTitle" xml:space="preserve">
+				<source>Edit title</source>
+			</trans-unit>
+			<trans-unit id="editPreview" xml:space="preserve">
+				<source>Edit / Preview</source>
+			</trans-unit>
+			<trans-unit id="edit" xml:space="preserve">
+				<source>Edit</source>
+			</trans-unit>
+			<trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+			</trans-unit>
+			<trans-unit id="loading" xml:space="preserve">
+				<source>Loading</source>
+			</trans-unit>
+			<trans-unit id="newAfter" xml:space="preserve">
+				<source>New After</source>
+			</trans-unit>
+			<trans-unit id="newBefore" xml:space="preserve">
+				<source>New Before</source>
+			</trans-unit>
+			<trans-unit id="newInto" xml:space="preserve">
+				<source>New Into</source>
+			</trans-unit>
+			<trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+			</trans-unit>
+			<trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+			</trans-unit>
+			<trans-unit id="page" xml:space="preserve">
+				<source>Page</source>
+			</trans-unit>
+			<trans-unit id="paste" xml:space="preserve">
+				<source>Paste</source>
+			</trans-unit>
+			<trans-unit id="pasteAfter" xml:space="preserve">
+				<source>Paste After</source>
+			</trans-unit>
+			<trans-unit id="pasteBefore" xml:space="preserve">
+				<source>Paste Before</source>
+			</trans-unit>
+			<trans-unit id="pasteInto" xml:space="preserve">
+				<source>Paste Into</source>
+			</trans-unit>
+			<trans-unit id="password" xml:space="preserve">
+				<source>Password</source>
+			</trans-unit>
+			<trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			</trans-unit>
+			<trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+			</trans-unit>
+			<trans-unit id="published" xml:space="preserve">
+				<source>Published</source>
+			</trans-unit>
+			<trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+			</trans-unit>
+			<trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+			</trans-unit>
+			<trans-unit id="saving" xml:space="preserve">
+				<source>Saving...</source>
+			</trans-unit>
+			<trans-unit id="saved" xml:space="preserve">
+				<source>Saved</source>
+			</trans-unit>
+			<trans-unit id="search" xml:space="preserve">
+				<source>Search</source>
+			</trans-unit>
+			<trans-unit id="toggleInspector" xml:space="preserve">
+				<source>Toggle inspector</source>
+			</trans-unit>
+			<trans-unit id="username" xml:space="preserve">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="you" xml:space="preserve">
+				<source>You</source>
+			</trans-unit>
+			<trans-unit id="noTitle" xml:space="preserve">
+				<source>[no title]</source>
+			</trans-unit>
+			<trans-unit id="labelCaption" xml:space="preserve">
+				<source>Label</source>
+			</trans-unit>
+			<trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Node type</source>
+			</trans-unit>
+			<trans-unit id="pathCaption" xml:space="preserve">
+				<source>Path</source>
+			</trans-unit>
+			<trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative path</source>
+			</trans-unit>
+
+			<!-- node types -->
+			<trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+				<source>General</source>
+			</trans-unit>
+			<trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+				<source>Structure</source>
+			</trans-unit>
+			<trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+				<source>Plugins</source>
+			</trans-unit>
+
+			<!-- shortcuts -->
+			<trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+				<source>Click {0} to continue to the page.</source>
+			</trans-unit>
+			<trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+				<source>Click {0} to see the file.</source>
+			</trans-unit>
+			<trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+				<source>Click {0} to open the link.</source>
+			</trans-unit>
+			<trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+				<source>(no target has been selected)</source>
+			</trans-unit>
+			<trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			</trans-unit>
+			<trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			</trans-unit>
+
+			<!-- javascript -->
+			<trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+				<source>Full Screen</source>
+			</trans-unit>
+			<trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+				<source>Open page in live workspace</source>
+			</trans-unit>
+			<trans-unit id="discardAll" xml:space="preserve">
+				<source>Discard all</source>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+				<source>Discard all changes</source>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			</trans-unit>
+			<trans-unit id="publishAll" xml:space="preserve">
+				<source>Publish all</source>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+				<source>Publish all changes</source>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+				<source>Are you sure that you want to publish all changes?</source>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+				<source>Editing Modes</source>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+				<source>Preview Central</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+				<source>You still have changes. What do you want to do with them?</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+				<source>Selected element</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+				<source>There are fields that are not correctly filled in.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+				<source>Continue editing</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+				<source>Throw away</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+				<source>Apply</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+				<source>Select a Plugin</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+				<source>No plugin configured</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+				<source>view is displayed on page</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+				<source>view is displayed on current page</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+				<source>No date set</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+				<source>Edit code</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+				<source>Paste a link, or type to search</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+				<source>Unable to load sub node types of:</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.groups.type" xml:space="preserve">
+				<source>Change type</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+				<source>Additional info</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+				<source>Visibility</source>
+			</trans-unit>
+			<trans-unit id="content-inspector-groups-document" xml:space="preserve">
+				<source>Document options</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+				<source>This field must contain at least {{minimum}} characters.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+				<source>This text may not exceed {{maximum}} characters.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
+				<source>The given subject was not countable.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+				<source>The count must be between {{minimum}} and {{maximum}}.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
+				<source>The given value was not a valid date.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+				<source>The given date must be after {{formatEarliestDate}}</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+				<source>The given date must be before {{formatLatestDate}}</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
+				<source>Please specify a valid email address.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
+				<source>A valid float number is expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
+				<source>A valid integer number is expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
+				<source>This property is required.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
+				<source>A valid number is expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+				<source>The given subject did not match the pattern ({{pattern}})</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+				<source>A valid string is expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+				<source>Valid text without any XML tags is expected.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+				<source>The given subject is not a valid UUID.</source>
+			</trans-unit>
+
+			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
+				<source>Create new (hold to select position)</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+				<source>This will delete the element</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+				<source>and it's children</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
+				<source>Paste (hold to select position)</source>
+			</trans-unit>
+			<trans-unit id="height" xml:space="preserve">
+				<source>Height</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+				<source>this element</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+				<source>This will delete the element.</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			</trans-unit>
+			<trans-unit id="media" xml:space="preserve">
+				<source>Media</source>
+			</trans-unit>
+			<trans-unit id="crop" xml:space="preserve">
+				<source>Crop</source>
+			</trans-unit>
+			<trans-unit id="width" xml:space="preserve">
+				<source>Width</source>
+			</trans-unit>
+			<trans-unit id="translate.requiredProperty" xml:space="preserve">
+				<source>Missing required property: </source>
+			</trans-unit>
+			<trans-unit id="workspaces" xml:space="preserve">
+				<source>Workspaces</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			</trans-unit>
+
+			<!-- Edit / preview modes -->
+			<trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+				<source>In-Place</source>
+			</trans-unit>
+			<trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+				<source>Raw Content</source>
+			</trans-unit>
+			<trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+				<source>Desktop</source>
+			</trans-unit>
+
+			<!-- Login -->
+			<trans-unit id="login.index.title" xml:space="preserve">
+				<source>Login to</source>
+			</trans-unit>
+			<trans-unit id="authenticating" xml:space="preserve">
+				<source>Authenticating</source>
+			</trans-unit>
+
+			<!-- Error handlers -->
+			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
+				<source>Go to setup</source>
+			</trans-unit>
+
+			<trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+				<source>Missing Homepage</source>
+			</trans-unit>
+			<trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			</trans-unit>
+			<trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			</trans-unit>
+
+			<trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+				<source>Database Error</source>
+			</trans-unit>
+			<trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			</trans-unit>
+			<trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			</trans-unit>
+
+			<trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+				<source>Page Not Found</source>
+			</trans-unit>
+			<trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			</trans-unit>
+			<trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+				<source>Invalid NodeType</source>
+			</trans-unit>
+			<trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
