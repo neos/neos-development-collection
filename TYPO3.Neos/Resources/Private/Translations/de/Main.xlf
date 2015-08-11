@@ -26,7 +26,7 @@
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="de" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="de" state="translated">Inhaltsansicht</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="de">Erstellen nach</target></trans-unit>

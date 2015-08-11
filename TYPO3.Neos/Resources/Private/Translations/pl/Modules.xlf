@@ -359,9 +359,9 @@
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target xml:lang="pl">Dodaj adres elektroniczny</target></trans-unit>
-      <trans-unit id="userSettings.saveUser" xml:space="preserve">
+      <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
 				<source>Save User</source>
-			<target xml:lang="pl" state="needs-translation">Save User</target></trans-unit>
+			<target xml:lang="pl">Zapisz użytkownika</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="pl">Edytuj użytkownika</target></trans-unit>

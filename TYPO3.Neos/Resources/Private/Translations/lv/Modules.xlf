@@ -361,7 +361,7 @@
 			<target xml:lang="lv">Pievienot elektronisko adresi</target><alt-trans><target xml:lang="lv">Elektroniskās adreses pievienošana</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.saveUser" xml:space="preserve">
 				<source>Save User</source>
-			<target xml:lang="lv" state="needs-translation">Save User</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt lietotāju</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="lv">Rediģēt lietotāju</target></trans-unit>
