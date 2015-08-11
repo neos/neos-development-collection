@@ -24,6 +24,9 @@
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve">
+				<source>Content View</source>
+			<target xml:lang="km" state="needs-translation">Content View</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="km" state="translated">បង្កើតពេលបន្ទាប់</target></trans-unit>

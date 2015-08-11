@@ -24,6 +24,9 @@
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="af" state="needs-translation">Content</target></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve">
+				<source>Content View</source>
+			<target xml:lang="af" state="needs-translation">Content View</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="af" state="needs-translation">Create after</target></trans-unit>

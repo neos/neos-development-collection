@@ -359,6 +359,12 @@
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target xml:lang="la-LA">crwdns539:0crwdne539:0</target></trans-unit>
+      <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
+				<source>Save User</source>
+			<target xml:lang="la-LA">crwdns572:0crwdne572:0</target></trans-unit>
+      <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
+				<source>Edit User</source>
+			<target xml:lang="la-LA">crwdns573:0crwdne573:0</target></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
