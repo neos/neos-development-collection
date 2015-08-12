@@ -115,12 +115,12 @@
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="ru">{0} удалил учётную запись «{1}» из {2}.</target></trans-unit>
       <!-- Administration -->
-      <trans-unit id="administration.label" xml:space="preserve">
+      <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
-			<target xml:lang="ru" state="translated">Администрация</target><alt-trans><target xml:lang="ru">Администрирование</target></alt-trans></trans-unit>
-      <trans-unit id="administration.description" xml:space="preserve">
+			<target xml:lang="ru">Администрирование</target><alt-trans><target xml:lang="ru">Администрация</target></alt-trans></trans-unit>
+      <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="ru" state="translated">Содержит модули администрации</target><alt-trans><target xml:lang="ru">Содержит модули администрирования</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Содержит модули администрирования</target><alt-trans><target xml:lang="ru">Содержит модули администрации</target></alt-trans></trans-unit>
       <trans-unit id="users.label" xml:space="preserve" approved="yes">
 				<source>User Management</source>
 			<target xml:lang="ru">Управление пользователями</target><alt-trans><target xml:lang="ru">Пользователи</target></alt-trans></trans-unit>
@@ -359,9 +359,9 @@
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target xml:lang="ru">Добавить электронный адрес</target></trans-unit>
-      <trans-unit id="userSettings.saveUser" xml:space="preserve">
+      <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
 				<source>Save User</source>
-			<target xml:lang="ru" state="needs-translation">Save User</target></trans-unit>
+			<target xml:lang="ru">Сохранить Пользователя</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="ru">Редактирование пользователя</target></trans-unit>
