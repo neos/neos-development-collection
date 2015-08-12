@@ -13,7 +13,7 @@
 			<target xml:lang="de">Verweisoptionen</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target xml:lang="de">Zielmodus</target></trans-unit>
+			<target xml:lang="de">Zielmodus</target><alt-trans><target xml:lang="de">Ziel des Verweises</target></alt-trans></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
 			<target xml:lang="de">Ziel</target></trans-unit>
