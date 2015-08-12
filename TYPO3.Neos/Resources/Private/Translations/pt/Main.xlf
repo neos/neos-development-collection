@@ -26,7 +26,7 @@
 			<target xml:lang="pt-BR" state="translated">Conteúdo</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="pt-BR" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibição de Conteúdo</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="pt-BR" state="translated">Criar depois</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target xml:lang="pt-BR" state="translated">Publicado</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Espaço de trabalho de destino</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="pt-BR" state="translated">Remover</target></trans-unit>
@@ -143,29 +143,29 @@
 			<target xml:lang="pt-BR" state="translated">Você</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="pt-BR" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">[sem título]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="pt-BR" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Rótulo</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="pt-BR" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tipo de nó</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="pt-BR" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Caminho</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
-			<target xml:lang="pt-BR" state="needs-translation">Relative path</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Caminho relativo</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="pt-BR" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Geral</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="pt-BR" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Estrutura</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="pt-BR" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Plugins</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -194,7 +194,7 @@
 			<target xml:lang="pt-BR" state="translated">Página aberta em espaço de trabalho ao vivo</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="pt-BR" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Descartar todos</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="pt-BR" state="translated">Descartar todas as alterações</target></trans-unit>
@@ -203,7 +203,7 @@
 			<target xml:lang="pt-BR" state="translated">Tem certeza que deseja descartar todas as alterações neste espaço de trabalho?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="pt-BR" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Publicar todos</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="pt-BR" state="translated">Publicar todas as alterações</target></trans-unit>
@@ -212,13 +212,13 @@
 			<target xml:lang="pt-BR" state="translated">Tem certeza que deseja publicar todas as alterações?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="pt-BR" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Alterações pendentes</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Seu espaço de trabalho pessoal atualmente contém alterações inéditas. Para alternar para uma área de destino diferente, você precisa publicar ou descartar as alterações pendentes primeiro.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Por favor reveja suas alterações, publique ou descarte-as, e em seguida escolha um novo espaço de trabalho de destino.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="pt-BR" state="translated">Modos de Edição</target></trans-unit>
@@ -284,40 +284,40 @@
 			<target xml:lang="pt-BR" state="translated">Opções de Documento</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
-			<target xml:lang="pt-BR" state="needs-translation">The length of this text must be between {{minimum}} and {{maximum}} characters.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O comprimento deste texto deve estar entre {{minimum}} e {{maximum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="pt-BR" state="needs-translation">This field must contain at least {{minimum}} characters.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Este campo deve conter pelo menos {{minimum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="pt-BR" state="needs-translation">This text may not exceed {{maximum}} characters.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Este texto não pode exceder {{maximum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="pt-BR" state="translated">Somente letras baixas (a a z , tremas, ... ) e números são permitidos.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="pt-BR" state="needs-translation">The given subject was not countable.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O assunto fornecido não é contável.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="pt-BR" state="needs-translation">The count must be between {{minimum}} and {{maximum}}.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">A contagem deve estar entre {{minimum}} e {{maximum}}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="pt-BR" state="needs-translation">The given value was not a valid date.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O valor fornecido não é uma data válida.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="pt-BR" state="needs-translation">The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">A data deve estar entre {{formatEarliestDate}} e {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="pt-BR" state="needs-translation">The given date must be after {{formatEarliestDate}}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">A data deve ser depois de {{formatEarliestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="pt-BR" state="needs-translation">The given date must be before {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">A data deve ser antes de {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Please specify a valid email address.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Por favor, especifique um endereço de email válido.</target></trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="pt-BR" state="needs-translation">A valid float number is expected.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">É esperado um número flutuador válido.</target></trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
 				<source>A valid integer number is expected.</source>
 			<target xml:lang="pt-BR" state="needs-translation">A valid integer number is expected.</target></trans-unit>
