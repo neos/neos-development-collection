@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="es-ES" state="needs-translation">Image</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Imagen</target></trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="es-ES" state="needs-translation">Image</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Imagen</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="es-ES" state="needs-translation">Alternative text</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Texto alternativo</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
