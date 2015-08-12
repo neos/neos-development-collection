@@ -374,7 +374,7 @@
 			<target xml:lang="pt-BR" state="translated">Título</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="pt-BR" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Rótulo</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="pt-BR" state="needs-translation">Caption</target></trans-unit>
@@ -386,7 +386,7 @@
 			<target xml:lang="pt-BR" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="pt-BR" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tipo</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="pt-BR" state="needs-translation">Tags</target></trans-unit>
@@ -572,7 +572,7 @@
 			<target xml:lang="pt-BR" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="pt-BR" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Metadados</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="pt-BR" state="needs-translation">Filename</target></trans-unit>
@@ -587,7 +587,7 @@
 			<target xml:lang="pt-BR" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="pt-BR" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tipo</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="pt-BR" state="needs-translation">Identifier</target></trans-unit>
