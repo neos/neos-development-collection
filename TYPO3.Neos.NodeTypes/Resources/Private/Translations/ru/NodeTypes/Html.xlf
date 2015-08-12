@@ -11,9 +11,9 @@
       <trans-unit id="properties.source" xml:space="preserve" approved="yes">
 				<source>HTML Content</source>
 			<target xml:lang="ru">Содержимое HTML</target><alt-trans><target xml:lang="ru">HTML-контент</target></alt-trans></trans-unit>
-      <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
+      <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve" approved="yes">
 				<source>Edit HTML source</source>
-			<target xml:lang="ru" state="translated">Редактировать исходный код HTML</target></trans-unit>
+			<target xml:lang="ru">Редактировать исходный код HTML</target></trans-unit>
     </body>
   </file>
 </xliff>
