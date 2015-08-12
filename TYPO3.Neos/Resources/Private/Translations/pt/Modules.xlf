@@ -461,79 +461,79 @@
 			<target xml:lang="pt-BR" state="translated">Carregar</target></trans-unit>
       <trans-unit id="media.filterOptions" xml:space="preserve">
 				<source>Filter options</source>
-			<target xml:lang="pt-BR" state="needs-translation">Filter options</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Opções de filtro</target></trans-unit>
       <trans-unit id="media.filter.title.all" xml:space="preserve">
 				<source>Display all asset types</source>
-			<target xml:lang="pt-BR" state="needs-translation">Display all asset types</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir todos os tipos de itens</target></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
-			<target xml:lang="pt-BR" state="needs-translation">Only display image assets</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir somente os itens de imagem</target></trans-unit>
       <trans-unit id="media.filter.title.documents" xml:space="preserve">
 				<source>Only display document assets</source>
-			<target xml:lang="pt-BR" state="needs-translation">Only display document assets</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir somente os itens de documento</target></trans-unit>
       <trans-unit id="media.filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target xml:lang="pt-BR" state="needs-translation">Only display video assets</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir somente os itens de vídeo</target></trans-unit>
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
-			<target xml:lang="pt-BR" state="needs-translation">Only display audio assets</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir somente itens de áudio</target></trans-unit>
       <trans-unit id="media.filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="pt-BR" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tudo</target></trans-unit>
       <trans-unit id="media.filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="pt-BR" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Imagens</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="pt-BR" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Documentos</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="pt-BR" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Vídeo</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="pt-BR" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Áudio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target xml:lang="pt-BR" state="needs-translation">Sort options</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Opções de ordenação</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target xml:lang="pt-BR" state="needs-translation">List view</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir em lista</target></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
-			<target xml:lang="pt-BR" state="needs-translation">Thumbnail view</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibição de miniaturas</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="pt-BR" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Coleções</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target xml:lang="pt-BR" state="needs-translation">Edit collections</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Editar coleções</target></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target xml:lang="pt-BR" state="needs-translation">Edit collection</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Editar coleção</target></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target xml:lang="pt-BR" state="needs-translation">Delete collection</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Excluir coleção</target></trans-unit>
       <trans-unit id="media.createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target xml:lang="pt-BR" state="needs-translation">Create collection</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Criar coleção</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
-			<target xml:lang="pt-BR" state="needs-translation">Enter collection title</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Digite o título da coleção</target></trans-unit>
       <trans-unit id="media.allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target xml:lang="pt-BR" state="needs-translation">All collections</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Todas as coleções</target></trans-unit>
       <trans-unit id="media.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="pt-BR" state="translated">Tags</target></trans-unit>
       <trans-unit id="media.editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="pt-BR" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Editar tags</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve">
 				<source>Edit tag</source>
-			<target xml:lang="pt-BR" state="needs-translation">Edit tag</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Editar tag</target></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
-			<target xml:lang="pt-BR" state="needs-translation">Delete tag</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Excluir tag</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
 			<target xml:lang="pt-BR" state="translated">Criar tag</target><alt-trans><target xml:lang="pt-BR">Criar Tag</target></alt-trans></trans-unit>
