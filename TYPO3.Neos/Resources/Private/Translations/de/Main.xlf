@@ -29,10 +29,10 @@
 			<target xml:lang="de" state="translated">Inhaltsansicht</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target xml:lang="de">Erstellen nach</target></trans-unit>
+			<target xml:lang="de">Erstellen nach</target><alt-trans><target xml:lang="de">Danach erstellen</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
-			<target xml:lang="de">Neu erstellen</target></trans-unit>
+			<target xml:lang="de">Neu erstellen</target><alt-trans><target xml:lang="de">Neues Element erstellen</target></alt-trans></trans-unit>
       <trans-unit id="close" xml:space="preserve" approved="yes">
 				<source>Close</source>
 			<target xml:lang="de">Schließen</target></trans-unit>
@@ -71,7 +71,7 @@
 			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
-			<target xml:lang="de">Lade</target></trans-unit>
+			<target xml:lang="de">Lade</target><alt-trans><target xml:lang="de">Lädt</target></alt-trans></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
 			<target xml:lang="de">Neues Element danach</target></trans-unit>
@@ -125,7 +125,7 @@
 			<target xml:lang="de">Aktualisieren</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving...</source>
-			<target xml:lang="de">Speichern...</target></trans-unit>
+			<target xml:lang="de">Speichern...</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="de">Gespeichert</target></trans-unit>
@@ -169,10 +169,10 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="de">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zur Seite {0} zu gelangen.</target><alt-trans><target xml:lang="de">Klicken Sie {0}, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="de">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target><alt-trans><target xml:lang="de">Klicken Sie {0}, um die Datei anzuzeigen.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
 			<target xml:lang="de">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
@@ -181,10 +181,10 @@
 			<target xml:lang="de">(kein Ziel ausgewählt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken Sie {0}, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie {0}, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
@@ -218,13 +218,13 @@
 			<target xml:lang="de">Ihr persönlicher Arbeitsbereich enthält derzeit unveröffentlichte Änderungen. Um zu einem anderen Ziel-Arbeitsbereich zu wechseln, müssen Sie die Inhalte zunächst entweder veröffentlichen oder verwerfen.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="de">Bitte überprüfen Sie Ihre Änderungen, veröffentlichen oder verwerfen sie und wählen Sie dann erneut einen neuen Ziel-Arbeitsbereich.</target></trans-unit>
+			<target xml:lang="de">Bitte überprüfen Sie Ihre Änderungen, veröffentlichen oder verwerfen sie und wählen Sie dann erneut einen neuen Ziel-Arbeitsbereich.</target><alt-trans><target xml:lang="de">Bitte überprüfen Sie Ihre Änderungen, veröffentlichen oder verwerfen Sie sie und wählen Sie dann erneut einen neuen Ziel-Arbeitsbereich.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="de">Bearbeitungsmodus</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target xml:lang="de">Vorschau Zentrale</target></trans-unit>
+			<target xml:lang="de">Vorschau Zentrale</target><alt-trans><target xml:lang="de">Vorschauzentrale</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target xml:lang="de">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target></trans-unit>
@@ -266,7 +266,7 @@
 			<target xml:lang="de">Code bearbeiten</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="de">Link einfügen oder Eingabe zur Suche</target></trans-unit>
+			<target xml:lang="de">Link einfügen oder Eingabe zur Suche</target><alt-trans><target xml:lang="de">Link einfügen oder lostippen, um zu suchen</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
 			<target xml:lang="de">Kann untergeordnete Nodetypen von Folgenden nicht laden:</target></trans-unit>
@@ -317,10 +317,10 @@
 			<target xml:lang="de">Bitte geben Sie eine gültige E-Mail-Adresse an.</target></trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="de">Eine gültige Dezimalzahl wird erwartet.</target></trans-unit>
+			<target xml:lang="de">Eine gültige Dezimalzahl wird erwartet.</target><alt-trans><target xml:lang="de">Eine gültige Fließkommazahl wird erwartet.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
-			<target xml:lang="de">Eine gültige Ganzzahl wird erwartet.</target></trans-unit>
+			<target xml:lang="de">Eine gültige Ganzzahl wird erwartet.</target><alt-trans><target xml:lang="de">Eine gültige ganze Zahl wird erwartet.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
 			<target xml:lang="de">Nur Buchstaben, Ziffern, Leerzeichen und bestimmte Satzzeichen sind erlaubt.</target></trans-unit>

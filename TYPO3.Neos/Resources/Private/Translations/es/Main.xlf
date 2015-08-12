@@ -20,7 +20,7 @@
 			<target xml:lang="es-ES" state="translated">Elegir</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="es-ES" state="translated">Escribe para buscar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Escriba para buscar</target><alt-trans><target xml:lang="es-ES">Escribe para buscar</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
@@ -209,7 +209,7 @@
 			<target xml:lang="es-ES" state="translated">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="es-ES" state="translated">¿Seguro que quieres publicar todos los cambios?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Seguro que quiere publicar todos los cambios?</target><alt-trans><target xml:lang="es-ES">¿Seguro que quieres publicar todos los cambios?</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
 			<target xml:lang="es-ES" state="translated">Cambios pendientes</target></trans-unit>
@@ -266,7 +266,7 @@
 			<target xml:lang="es-ES" state="translated">Editar código</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="es-ES" state="translated">Pega un enlace o escribe para buscar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Pegue un enlace o escriba para buscar</target><alt-trans><target xml:lang="es-ES">Pega un enlace o escribe para buscar</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
 			<target xml:lang="es-ES" state="translated">No se pueden cargar los tipos de nodo secundario de:</target></trans-unit>
@@ -293,7 +293,7 @@
 			<target xml:lang="es-ES" state="translated">Este texto no puede superar {{maximum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="es-ES" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sólo están permitidos caracteres alfabéticos (de la a a la z, tildes,...) y números.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="es-ES" state="translated">El objeto no es contable.</target></trans-unit>
@@ -350,7 +350,7 @@
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="translated">Realmente quieres borrar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
 				<source>Create new (hold to select position)</source>
 			<target xml:lang="es-ES" state="translated">Crear nuevo (mantenga para seleccionar posición)</target></trans-unit>
@@ -371,7 +371,7 @@
 			<target xml:lang="es-ES" state="translated">Altura</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="translated">Realmente quieres borrar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target xml:lang="es-ES" state="translated">este elemento</target></trans-unit>
@@ -428,7 +428,7 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="es-ES" state="translated">Ir a configuración</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ir a la configuración</target><alt-trans><target xml:lang="es-ES">Ir a configuración</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="es-ES" state="translated">Falta la página de inicio</target></trans-unit>
@@ -437,7 +437,7 @@
 			<target xml:lang="es-ES" state="translated">No se ha definido ningún sitio, el sitio no contiene una página de inicio o el sitio activo no ha podido ser determinado.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="es-ES" state="translated">Puedes configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Puede configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target><alt-trans><target xml:lang="es-ES">Puedes configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
 			<target xml:lang="es-ES" state="translated">Error de base de datos</target></trans-unit>
@@ -446,7 +446,7 @@
 			<target xml:lang="es-ES" state="translated">Lo sentimos, hemos detectado un error con su base de datos. Revise los archivos de registro de datos, logs, etc... para obtener más información.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="es-ES" state="translated">Tal vez quieras configurar o comprobar la configuración de la base de datos en la configuración.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tal vez quiera configurar o comprobar la configuración de la base de datos en la configuración.</target><alt-trans><target xml:lang="es-ES">Tal vez quieras configurar o comprobar la configuración de la base de datos en la configuración.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="es-ES" state="translated">Página no encontrada</target></trans-unit>
