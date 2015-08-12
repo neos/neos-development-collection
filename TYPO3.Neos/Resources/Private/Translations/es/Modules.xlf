@@ -201,13 +201,13 @@
 			<target xml:lang="es-ES" state="translated">Nombre</target><alt-trans><target xml:lang="es-ES">Nombre de pila</target></alt-trans></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="es-ES" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Segundo nombre</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="es-ES" state="translated">Apellidos</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="es-ES" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Otro nombre</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="es-ES" state="translated">Cuentas</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="es-ES" state="translated">Direcciones electrónicas</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="es-ES" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Primario</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="es-ES" state="translated">N/A</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target xml:lang="es-ES" state="translated">Direcciones electrónicas</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="es-ES" state="translated">Realmente quieres borrar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="es-ES" state="translated">Sí, eliminar correo electrónico</target></trans-unit>
@@ -467,13 +467,13 @@
 			<target xml:lang="es-ES" state="translated">Mostrar todos los tipos de activos</target></trans-unit>
       <trans-unit id="media.filter.title.images" xml:space="preserve">
 				<source>Only display image assets</source>
-			<target xml:lang="es-ES" state="translated">Sólo mostrar activos de imágenes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de imágenes</target><alt-trans><target xml:lang="es-ES">Sólo mostrar activos de imágenes</target></alt-trans></trans-unit>
       <trans-unit id="media.filter.title.documents" xml:space="preserve">
 				<source>Only display document assets</source>
 			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de documento</target></trans-unit>
       <trans-unit id="media.filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target xml:lang="es-ES" state="translated">Mostrar sólo videos</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de video</target><alt-trans><target xml:lang="es-ES">Mostrar sólo videos</target></alt-trans></trans-unit>
       <trans-unit id="media.filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
 			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de audio</target></trans-unit>
@@ -554,7 +554,7 @@
 			<target xml:lang="es-ES" state="translated">o haga clic para subir</target></trans-unit>
       <trans-unit id="media.chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target xml:lang="es-ES" state="translated">Seleccione Archivo</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Seleccione archivo</target><alt-trans><target xml:lang="es-ES">Seleccione Archivo</target></alt-trans></trans-unit>
       <trans-unit id="media.noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
 			<target xml:lang="es-ES" state="translated">No se han encontrado activos.</target></trans-unit>
@@ -608,10 +608,10 @@
 			<target xml:lang="es-ES" state="translated">Sólo algunos de los archivos fueron subidos con éxito. Actualice la página para ver cuales han sido.</target></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="es-ES" state="translated">El etiquetado ha fallado.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El etiquetado del activo ha fallado.</target><alt-trans><target xml:lang="es-ES">El etiquetado ha fallado.</target></alt-trans></trans-unit>
       <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="es-ES" state="translated">No pudo agregar el recurso a la colección.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El agregar el recurso a la colección ha fallado.</target><alt-trans><target xml:lang="es-ES">No pudo agregar el recurso a la colección.</target></alt-trans></trans-unit>
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="es-ES" state="translated">Creando</target></trans-unit>
