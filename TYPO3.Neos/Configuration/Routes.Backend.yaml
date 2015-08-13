@@ -1,0 +1,97 @@
+#                                                                        #
+# "Backend" subroutes configuration for the TYPO3.Neos package           #
+#                                                                        #
+
+-
+  name: 'Overview'
+  uriPattern: ''
+  defaults:
+    '@controller': 'Backend\Backend'
+
+-
+  name: 'Content Module - Media Browser'
+  uriPattern: 'content/assets(/{@action})'
+  defaults:
+    '@package':    'TYPO3.Media'
+    '@controller': 'Asset'
+  appendExceedingArguments: true
+
+-
+  name: 'Content Module - Images'
+  uriPattern: 'content/imageWithMetadata/{image}'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'imageWithMetadata'
+
+-
+  name: 'Content Module - Plugin Views'
+  uriPattern: 'content/pluginViews'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'pluginViews'
+
+-
+  name: 'Content Module - Master Plugins'
+  uriPattern: 'content/masterPlugins'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'masterPlugins'
+
+-
+  name: 'Content Module'
+  uriPattern: 'content/{@action}'
+  defaults:
+    '@controller': 'Backend\Content'
+  appendExceedingArguments: true
+
+-
+  name: 'Schema - VIE'
+  uriPattern: 'schema/vie'
+  defaults:
+    '@controller': 'Backend\Schema'
+    '@action':     'vieSchema'
+  appendExceedingArguments: true
+
+-
+  name: 'Schema - NodeType'
+  uriPattern: 'schema/node-type'
+  defaults:
+    '@controller': 'Backend\Schema'
+    '@action':     'nodeTypeSchema'
+  appendExceedingArguments: true
+
+-
+  name: 'Menu'
+  uriPattern: 'menu'
+  defaults:
+    '@controller': 'Backend\Menu'
+  appendExceedingArguments: true
+
+-
+  name: 'Settings'
+  uriPattern: 'settings/{@action}'
+  defaults:
+    '@controller': 'Backend\Settings'
+  appendExceedingArguments: true
+
+-
+  name: 'Modules'
+  uriPattern: '{module}'
+  defaults:
+    '@controller': 'Backend\Module'
+  routeParts:
+    module:
+      handler: 'TYPO3\Neos\Routing\BackendModuleRoutePartHandler'
+
+-
+  name: 'Modules & arguments'
+  uriPattern: '{module}/{moduleArguments}'
+  defaults:
+    '@controller': 'Backend\Module'
+  routeParts:
+    module:
+      handler: 'TYPO3\Neos\Routing\BackendModuleRoutePartHandler'
+    moduleArguments:
+      handler: 'TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
+  toLowerCase: false
+  appendExceedingArguments: true

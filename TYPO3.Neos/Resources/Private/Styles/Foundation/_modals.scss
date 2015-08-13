@@ -1,0 +1,147 @@
+//
+// Modals
+// --------------------------------------------------
+
+// Background
+.neos-modal-backdrop {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: $zindexModalBackdrop;
+	background-color: $black;
+	// Fade for backdrop
+	&.neos-fade { opacity: 0; }
+}
+
+.neos-modal-backdrop,
+.neos-modal-backdrop.neos-fade.neos-in {
+	@include opacity(.35);
+}
+
+// Base modal
+.neos-modal {
+	position: fixed;
+	top: 120px;
+	left: 50%;
+	z-index: $zindexModal;
+	margin: 0px 0px 0px -17.5%;
+	color: $textOnGray;
+	background: $grayDark;
+	border: 1px solid $grayLight;
+	padding: 0px;
+	width: 35%;
+	@include border-radius(0);
+	@include font();
+	// Remove focus outline from opened modal
+	outline: none;
+
+	&.neos-modal-wide {
+		width: 50%;
+		left: 42.5%;
+	}
+
+	&.neos-fade {
+		@include transition(opacity .3s linear, top .3s ease-out);
+		top: -25%;
+	}
+
+	&.neos-fade.neos-in {
+		top: 10%;
+	}
+
+	.neos-modal-header {
+		padding: 0px;
+		border: 0px;
+		// Heading
+		h3 {
+			margin: 0;
+			line-height: 30px;
+		}
+
+		.neos-close {
+			margin: 0;
+			color: #fff;
+			font-size: 18px;
+			line-height: 100%;
+			width: $unit;
+			height: $unit;
+			margin-left: $defaultMargin;
+			border-left: none;
+			@include text-shadow(none);
+			@include opacity(1);
+			@include icon-FontAwesome();
+			@include box-sizing(border-box);
+
+			&:before {
+				content: $remove;
+			}
+
+			&:hover {
+				background: $blue;
+			}
+		}
+
+		// Top area
+		.neos-header {
+			font-size: 16px;
+			line-height: 100%;
+			padding: $defaultMargin;
+			line-height: $unit / 2;
+			@include box-sizing(border-box);
+		}
+	}
+
+	// Header
+	.neos-subheader {
+		font-size: 14px;
+		padding: $defaultMargin;
+		padding-top: 0;
+		line-height: 18px;
+		font-weight: normal;
+		margin: 0;
+		color: $textSubtleLight;
+	}
+
+	ul {
+		border-bottom: 1px solid $grayLight;
+		padding: 0px $defaultMargin;
+		margin: 0px;
+		width: 100%;
+		@include box-sizing(border-box);
+
+		a {
+			color: #fff;
+
+			&:hover {
+				color: $blue;
+				cursor: pointer;
+				text-decoration: none;
+			}
+		}
+	}
+
+	// Footer area
+	.neos-modal-footer {
+		background: transparent;
+		@include box-shadow(0px 0px 0px transparent);
+		@include border-radius(0px);
+		border: 0px;
+		padding: $defaultMargin;
+		text-align: right;
+		@include clearfix(); // clear it in case folks use .neos-pull-* classes on buttons
+
+		// Properly space out buttons
+		.neos-button {
+			margin-left: 5px;
+			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+		}
+	}
+
+}
+
+// Remove bottom margin if need be
+.neos-modal-form {
+	margin-bottom: 0;
+}

@@ -1,0 +1,66 @@
+///////// SIMPLE PROTOTYPE INHERITANCE
+
+// First, set up a base object...
+prototype(TYPO3.TypoScript:PrototypeInheritance.Base) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+
+	value = 'BaseNotModified'
+}
+
+// Then subclass it. changes to the subclass should only be visible in the subclass.
+prototype(TYPO3.TypoScript:PrototypeInheritance.SubWithOverride) < prototype(TYPO3.TypoScript:PrototypeInheritance.Base) {
+	value = 'Sub'
+}
+
+// subclass it again, without modification...
+prototype(TYPO3.TypoScript:PrototypeInheritance.SubWithoutOverride) < prototype(TYPO3.TypoScript:PrototypeInheritance.Base)
+
+// change the parent class; this should be reflected in "SubWithOverride" and "Base"
+// -- THIS IS THE ACTUAL PROTOTYPE INHERITANCE TEST!
+prototype(TYPO3.TypoScript:PrototypeInheritance.Base).value = 'BaseModified'
+
+prototypeInheritance {
+	base = PrototypeInheritance.Base
+	subWithOverride = PrototypeInheritance.SubWithOverride
+	subWithoutOverride = PrototypeInheritance.SubWithoutOverride
+}
+
+///////// ADVANCED PROTOTYPE INHERITANCE
+// Here, we test context-dependent prototypes such as prototype(Foo).prototype(Bar).
+// This should now also take the inheritance into account, if Foo e.g. has a parent type.
+
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.Base).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\WrappedNestedObjectRenderer'
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.Base) {
+	prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
+	prepend = 'prepend_beforeOverride'
+	append = 'append_beforeOverride'
+	value = PrototypeInheritance.Advanced.Value
+}
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.SubWithOverride) < prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.Base) {
+	prepend = 'prepend_inSub'
+}
+
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride) < prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.Base)
+
+prototype(TYPO3.TypoScript:PrototypeInheritance.Advanced.WrappedNested.Base) {
+	append = 'append_afterOverride'
+	prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_nested_prototype|'
+}
+
+prototypeInheritanceAdvanced {
+	// when evaluating "base", the following should happen:
+	// - prepend_beforeOverride
+	// - value_from_nested_prototype
+	// - append_afterOverride
+	base = PrototypeInheritance.Advanced.WrappedNested.Base
+
+	// same as "base"; as nothing has changed. THIS IS WHERE PROTOTYPE INHERITANCE SHOWS
+	subWithoutOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride
+
+	// when evaluating this, the following should happen:
+	// - prepend_inSub
+	// - value_from_nested_prototype
+	// - append_afterOverride
+	subWithOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
+}

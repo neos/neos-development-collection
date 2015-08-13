@@ -1,0 +1,299 @@
+//
+// Tables
+// --------------------------------------------------
+
+
+// BASE TABLES
+// -----------------
+
+table {
+	max-width: 100%;
+	background-color: $tableBackground;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+// BASELINE STYLES
+// ---------------
+
+.neos-table {
+	width: 100%;
+	margin-bottom: $baseLineHeight;
+	// Cells
+	th,
+	td {
+		padding: 8px;
+		line-height: $baseLineHeight;
+		text-align: left;
+		vertical-align: top;
+		border-top: 1px solid $tableBorder;
+		color: $white;
+	}
+	th {
+		font-weight: bold;
+	}
+	// Bottom align for column headings
+	thead th {
+		vertical-align: bottom;
+	}
+	// Remove top border from thead by default
+	caption + thead tr:first-child th,
+	caption + thead tr:first-child td,
+	colgroup + thead tr:first-child th,
+	colgroup + thead tr:first-child td,
+	thead:first-child tr:first-child th,
+	thead:first-child tr:first-child td {
+		border-top: 0;
+	}
+
+	// grey bg for tablerows
+	tbody td {
+		background: $grayMedium;
+	}
+
+	// buttons in tables
+	.neos-action {
+		white-space: nowrap;
+		padding: 0!important;
+		.neos-modal {
+			white-space: normal;
+		}
+	}
+	.neos-button {
+		margin-top: 0;
+		vertical-align: top;
+	}
+
+	// Account for multiple tbody instances
+	tbody + tbody {
+		border-top: 2px solid $tableBorder;
+	}
+
+	// Nesting
+	.neos-table {
+		background-color: $bodyBackground;
+	}
+}
+
+
+
+// CONDENSED TABLE W/ HALF PADDING
+// -------------------------------
+
+.neos-table-condensed {
+	th,
+	td {
+		padding: 4px 5px;
+		color: $white;
+	}
+}
+
+
+// BORDERED VERSION
+// ----------------
+
+.neos-table-bordered {
+  border: 1px solid $tableBorder;
+  border-collapse: separate; // Done so we can round those corners!
+  *border-collapse: collapse; // IE7 can't round corners anyway
+  border-left: 0;
+  @include border-radius($baseBorderRadius);
+  th,
+  td {
+    border-left: 1px solid $tableBorder;
+  }
+  // Prevent a double border
+  caption + thead tr:first-child th,
+  caption + tbody tr:first-child th,
+  caption + tbody tr:first-child td,
+  colgroup + thead tr:first-child th,
+  colgroup + tbody tr:first-child th,
+  colgroup + tbody tr:first-child td,
+  thead:first-child tr:first-child th,
+  tbody:first-child tr:first-child th,
+  tbody:first-child tr:first-child td {
+    border-top: 0;
+  }
+  // For first th/td in the first row in the first thead or tbody
+  thead:first-child tr:first-child > th:first-child,
+  tbody:first-child tr:first-child > td:first-child,
+  tbody:first-child tr:first-child > th:first-child {
+    @include border-top-left-radius($baseBorderRadius);
+  }
+  // For last th/td in the first row in the first thead or tbody
+  thead:first-child tr:first-child > th:last-child,
+  tbody:first-child tr:first-child > td:last-child,
+  tbody:first-child tr:first-child > th:last-child {
+    @include border-top-right-radius($baseBorderRadius);
+  }
+  // For first th/td (can be either) in the last row in the last thead, tbody, and tfoot
+  thead:last-child tr:last-child > th:first-child,
+  tbody:last-child tr:last-child > td:first-child,
+  tbody:last-child tr:last-child > th:first-child,
+  tfoot:last-child tr:last-child > td:first-child,
+  tfoot:last-child tr:last-child > th:first-child {
+    @include border-bottom-left-radius($baseBorderRadius);
+  }
+  // For last th/td (can be either) in the last row in the last thead, tbody, and tfoot
+  thead:last-child tr:last-child > th:last-child,
+  tbody:last-child tr:last-child > td:last-child,
+  tbody:last-child tr:last-child > th:last-child,
+  tfoot:last-child tr:last-child > td:last-child,
+  tfoot:last-child tr:last-child > th:last-child {
+    @include border-bottom-right-radius($baseBorderRadius);
+  }
+
+  // Clear border-radius for first and last td in the last row in the last tbody for table with tfoot
+  tfoot + tbody:last-child tr:last-child td:first-child {
+    @include border-bottom-left-radius(0);
+  }
+  tfoot + tbody:last-child tr:last-child td:last-child {
+    @include border-bottom-right-radius(0);
+  }
+
+  // Special fixes to round the left border on the first td/th
+  caption + thead tr:first-child th:first-child,
+  caption + tbody tr:first-child td:first-child,
+  colgroup + thead tr:first-child th:first-child,
+  colgroup + tbody tr:first-child td:first-child {
+    @include border-top-left-radius($baseBorderRadius);
+  }
+  caption + thead tr:first-child th:last-child,
+  caption + tbody tr:first-child td:last-child,
+  colgroup + thead tr:first-child th:last-child,
+  colgroup + tbody tr:first-child td:last-child {
+    @include border-top-right-radius($baseBorderRadius);
+  }
+
+}
+
+
+
+
+// ZEBRA-STRIPING
+// --------------
+
+// Default zebra-stripe styles (alternating gray and transparent backgrounds)
+.neos-table-striped {
+  tbody {
+    > tr:nth-child(odd) > td,
+    > tr:nth-child(odd) > th {
+      background-color: $tableBackgroundAccent;
+    }
+  }
+}
+
+
+// HOVER EFFECT
+// ------------
+// Placed here since it has to come after the potential zebra striping
+.neos-table-hover {
+  tbody {
+    tr:hover > td,
+    tr:hover > th {
+      background-color: $tableBackgroundHover;
+    }
+  }
+}
+
+
+// TABLE CELL SIZING
+// -----------------
+
+// Reset default grid behavior
+table td[class*="neos-span"],
+table th[class*="neos-span"],
+.neos-row-fluid table td[class*="neos-span"],
+.neos-row-fluid table th[class*="neos-span"] {
+  display: table-cell;
+  float: none; // undo default grid column styles
+  margin-left: 0; // undo default grid column styles
+}
+
+// Change the column widths to account for td/th padding
+.neos-table td,
+.neos-table th {
+  @for $i from 1 through 12 {
+    &.neos-span#{$i} { @include tableColumns($i); }
+  }
+}
+
+
+
+// TABLE BACKGROUNDS
+// -----------------
+// Exact selectors below required to override .neos-table-striped
+
+.neos-table tbody tr {
+  &.neos-success > td {
+    background-color: $successBackground;
+  }
+  &.neos-error > td {
+    background-color: $errorBackground;
+  }
+  &.neos-warning > td {
+    background-color: $warningBackground;
+  }
+  &.neos-info > td {
+    background-color: $infoBackground;
+  }
+}
+
+// Hover states for .neos-table-hover
+.neos-table-hover tbody tr {
+  &.neos-success:hover > td {
+    background-color: darken($successBackground, 5%);
+  }
+  &.neos-error:hover > td {
+    background-color: darken($errorBackground, 5%);
+  }
+  &.neos-warning:hover > td {
+    background-color: darken($warningBackground, 5%);
+  }
+  &.neos-info:hover > td {
+    background-color: darken($infoBackground, 5%);
+  }
+}
+
+// TABLE UTILITY CLASSES
+// ---------------------
+// Used for text-alignment and responsive priority
+table {
+	.neos-aCenter {
+		text-align: center;
+	}
+
+	.neos-aLeft {
+		text-align: left;
+	}
+
+	.neos-aRight {
+		text-align: right;
+	}
+
+	// insert these into responsive
+	.neos-priority1,
+	.neos-priority2,
+	.neos-priority3,
+	.neos-priority4 {
+
+	}
+
+	@media screen and (max-width: 1024px) {
+		.neos-priority4 {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 864px) {
+		.neos-priority3 {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		.neos-priority2 {
+			display: none;
+		}
+	}
+}

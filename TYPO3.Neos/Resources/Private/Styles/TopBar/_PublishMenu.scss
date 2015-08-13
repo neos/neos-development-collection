@@ -1,0 +1,88 @@
+#neos-publish-menu.neos-button-group {
+	@include font;
+	float: right;
+
+	.neos-publish-button.neos-publish-menu-active,
+	.neos-dropdown-toggle.neos-publish-menu-active {
+		background-color: $orange;
+		cursor: pointer;
+		@include opacity(1);
+		@include box-shadow(none);
+	}
+
+	&.neos-open {
+		.neos-dropdown-toggle {
+			@include opacity(1);
+
+			&::before {
+				@include rotate(-90deg);
+				left: -3px;
+			}
+		}
+	}
+
+	.neos-publish-button {
+		min-width: 165px;
+		background-color: $green;
+		font-size: $generalFontSize;
+		cursor: default;
+		@include opacity(.5);
+		margin-right: 2px;
+
+		&.neos-connection-status-down {
+			background-color: $warning;
+		}
+	}
+
+	.neos-dropdown-toggle {
+		width: $unit;
+		border: 0;
+		@include border-radius(0);
+		padding: 0;
+		background-color: $green;
+		line-height: 0;
+		@include box-sizing(content-box);
+		@include opacity(.5);
+
+		&::before {
+			content: "›";
+			font-size: 26px;
+			font-weight: normal;
+			display: inline-block;
+			position: relative;
+			top: 0;
+			line-height: $unit;
+			@include rotate(90deg);
+			left: 3px;
+		}
+	}
+
+	.neos-dropdown-menu {
+		.neos-publish-all-button {
+			&.neos-button {
+				width: 100%;
+				font-size: $generalFontSize;
+				background-color: $grayMedium;
+				text-align: left;
+			}
+
+			&:hover {
+				background-color: $blue;
+			}
+
+			&.disabled {
+				color: $textSubtle;
+				cursor: not-allowed;
+
+				&:hover {
+					background-color: $grayMedium;
+				}
+			}
+		}
+
+		.neos-checkbox {
+			margin-top: $relatedMargin;
+			margin-left: $defaultMargin + $tightMargin;
+		}
+	}
+}

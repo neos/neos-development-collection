@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Raw Content Mode</title>
+		<f:section name="headerIncludes">
+			<script>window.jQuery || document.write("<script src='{f:uri.resource(path: 'Library/jquery/jquery-1.10.2.js')}'>\x3C/script>")</script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/RawContentMode.css')}" />
+		</f:section>
+	</head>
+	<body>
+		<f:section name="body">
+			<div id="neos-raw-content-container">
+				{allContentCollections -> f:format.raw()}
+			</div>
+		</f:section>
+	</body>
+</html>

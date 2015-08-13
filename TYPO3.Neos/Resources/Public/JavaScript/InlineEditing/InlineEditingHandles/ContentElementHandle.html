@@ -1,0 +1,40 @@
+<div class="neos-button-toolbar">
+	<div class="neos-button-group">
+		<button class="neos-button action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
+			{{#if view._thisElementIsAddingNewContent}}
+				<i class="neos-handle-loading"></i>
+			{{else}}
+				<i class="icon-plus"></i>
+			{{/if}}
+		</button>
+		{{#if view._showHide}}
+			<button {{bindAttr title="view._hideToggleTitle" class=":neos-button :action-toggle-hidden view._hidden:neos-active"}} {{action "toggleHidden" target="view"}} tabindex="-1">
+				<i class="icon-eye-close"></i>
+			</button>
+		{{/if}}
+		{{#if view._showCut}}
+			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="Cut" {{action "cut" target="view"}} tabindex="-1">
+				<i class="icon-cut"></i>
+			</button>
+		{{/if}}
+		{{#if view._showCopy}}
+			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="Copy" {{action "copy" target="view"}} tabindex="-1">
+				<i class="icon-copy"></i>
+			</button>
+		{{/if}}
+		{{#if view.nodeActions.clipboardContainsContent}}
+			<button class="neos-button action-paste" {{bindAttr title="view._pasteTitle"}} {{action "paste" target="view"}} tabindex="-1">
+				{{#if view._pasteInProgress}}
+					<i class="neos-handle-loading"></i>
+				{{else}}
+					<i class="icon-paste"></i>
+				{{/if}}
+			</button>
+		{{/if}}
+		{{#if view._showRemove}}
+			<button class="neos-button action-remove" title="Remove" {{action "remove" target="view"}} tabindex="-1">
+				<i class="icon-trash"></i>
+			</button>
+		{{/if}}
+	</div>
+</div>

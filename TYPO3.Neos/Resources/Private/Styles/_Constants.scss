@@ -1,0 +1,34 @@
+$baseFontSize: 100%;
+$baseIconFontFamily: FontAwesome;
+
+/* Color palette */
+$grayDarker: #141414;
+$grayDark: #222;
+$grayMedium: #323232;
+$grayLight: #3f3f3f;
+$grayLighter: #eee;
+$textOnWhite: #252525;
+$textOnGray: #fff;
+$textSubtle: #5b5b5b;
+$textSubtleLight: #adadad;
+$blue: #00b5ff;
+$blueLight: #39c6ff;
+$blueDark: #007fb2;
+$green: #00a338;
+$warning: #ff460d;
+$orange: #ff8700; // "TYPO3 orange"
+
+/* Sizes & margins */
+$unit: 40px;
+$defaultMargin: 16px;
+$relatedMargin: 8px;
+$tightMargin: 4px;
+$wideMargin: 32px;
+
+/* Components */
+$inspectorWidth: $unit * 8;
+$navigatePanelWidth: $unit * 8;
+$menuWidth: $unit * 8;
+$editPreviewPanelHeight: $unit * 2.5;
+$menuButtonWidth: 54px;
+$generalFontSize: 14px;

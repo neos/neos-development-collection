@@ -1,0 +1,16 @@
+{
+    "name": "typo3/neos-kickstarter",
+    "type": "typo3-flow-package",
+    "description": "A simple generator for Neos assets, like sites and plugins.",
+    "license": "GPL-3.0+",
+    "require": {
+        "typo3/neos": "1.0.*",
+        "typo3/kickstart": "*",
+        "typo3/neos-nodetypes": "1.0.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Neos\\Kickstarter": "Classes"
+        }
+    }
+}

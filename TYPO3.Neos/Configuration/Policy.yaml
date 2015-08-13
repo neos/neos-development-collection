@@ -1,0 +1,74 @@
+#                                                                        #
+# Security policy for the TYPO3 Neos package                             #
+#                                                                        #
+
+resources:
+  methods:
+    TYPO3_Neos_AllControllerActions: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
+    TYPO3_Neos_WidgetControllers: 'method(TYPO3\Fluid\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(TYPO3\Fluid\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
+
+    TYPO3_Neos_PublicFrontendAccess: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction())'
+    TYPO3_Neos_BackendLogin: 'method(TYPO3\Neos\Controller\LoginController->(index|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
+
+    TYPO3_Neos_Backend_GeneralAccess: 'method(TYPO3\Neos\Controller\Backend\BackendController->indexAction()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
+
+    TYPO3_Neos_Backend_Module_Content: 'method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction()) || method(TYPO3\Neos\Controller\Backend\SettingsController->editPreviewAction())'
+    TYPO3_Neos_Backend_EditContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|delete|searchPage|getPageByNodePath|extError)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadImage|imageWithMetadata|pluginViews|masterPlugins)Action()) || method(TYPO3\Neos\Controller\Service\NodeController->(index|show)Action())'
+    TYPO3_Neos_Backend_AccessContentInOwnOrLiveWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == "live"))'
+    TYPO3_Neos_Backend_AccessContentInOthersWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != current.userInformation.currentWorkspaceName)) && method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != "live"))'
+    TYPO3_Neos_Backend_PublishOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.currentWorkspaceName))'
+    TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(discardNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.currentWorkspaceName))'
+
+    TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
+    TYPO3_Neos_Backend_Module_User_UserSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
+    TYPO3_Neos_Backend_Module_User_UserSettings_UpdateOwnSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(account == current.securityContext.account)) && method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(person == current.securityContext.party))'
+    TYPO3_Neos_Backend_EditUserPreferences: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\UserController->(getPreference|updatePreferences|extError)Action())'
+
+    TYPO3_Neos_Backend_Module_Management: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
+    TYPO3_Neos_Backend_Module_Management_Workspaces: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishNode|discardNode|publishOrDiscardNodes)Action())'
+    TYPO3_Neos_Backend_Module_Management_Workspaces_ManageOwnWorkspace: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace == NULL))'
+
+    TYPO3_Neos_Backend_Module_Administration: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
+    TYPO3_Neos_Backend_Module_Administration_Users: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|)Action())'
+    TYPO3_Neos_Backend_Module_Administration_Packages: 'method(TYPO3\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'
+    TYPO3_Neos_Backend_Module_Administration_Sites: 'method(TYPO3\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
+
+roles:
+  Editor: [ TYPO3.TYPO3CR:Administrator ]
+  Administrator: [ Editor ]
+
+acls:
+  Everybody:
+    methods:
+      TYPO3_Neos_PublicFrontendAccess: GRANT
+      TYPO3_Neos_Backend_AccessContentInOthersWorkspace: DENY
+      TYPO3_Neos_Backend_AccessContentInOwnOrLiveWorkspace: GRANT
+      TYPO3_Neos_BackendLogin: GRANT
+      TYPO3_Neos_WidgetControllers: GRANT
+
+  Editor:
+    methods:
+      TYPO3_Neos_Backend_GeneralAccess: GRANT
+
+      TYPO3_Neos_Backend_Module_Content: GRANT
+      TYPO3_Neos_Backend_EditContent: GRANT
+      TYPO3_Neos_Backend_PublishOwnWorkspaceContent: GRANT
+      TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: GRANT
+
+      TYPO3_Media_ManageAssets: GRANT
+
+      TYPO3_Neos_Backend_Module_User: GRANT
+      TYPO3_Neos_Backend_Module_User_UserSettings: GRANT
+      TYPO3_Neos_Backend_Module_User_UserSettings_UpdateOwnSettings: GRANT
+      TYPO3_Neos_Backend_EditUserPreferences: GRANT
+
+      TYPO3_Neos_Backend_Module_Management: GRANT
+      TYPO3_Neos_Backend_Module_Management_Workspaces: GRANT
+      TYPO3_Neos_Backend_Module_Management_Workspaces_ManageOwnWorkspace: GRANT
+
+  Administrator:
+    methods:
+      TYPO3_Neos_Backend_Module_Administration: GRANT
+      TYPO3_Neos_Backend_Module_Administration_Users: GRANT
+      TYPO3_Neos_Backend_Module_Administration_Packages: GRANT
+      TYPO3_Neos_Backend_Module_Administration_Sites: GRANT

@@ -1,0 +1,511 @@
+&.media-browser {
+	background-color: transparent;
+
+	&:not(.media-module) {
+		padding: $unit $menuButtonWidth;
+
+		.neos-footer {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: 0;
+		}
+	}
+
+	// Styles for Media view Options
+	.neos-media-options {
+		overflow: hidden;
+		margin-bottom: $wideMargin;
+		border-bottom: 1px solid $grayLight;
+
+		.neos-file-options {
+			float: left;
+
+			.count {
+				float: left;
+				display: block;
+				height: $unit;
+				line-height: $unit;
+				padding: 0 $relatedMargin 0 0;
+				border-right: 1px solid $grayLight;
+			}
+
+			i {
+				margin-right: $tightMargin;
+				line-height: $unit;
+				vertical-align: middle;
+			}
+		}
+
+		.neos-view-options {
+			float: right;
+
+			> a {
+				border-right: 1px solid $grayLight;
+				color: #fff;
+
+				&.neos-active {
+					color: $blue;
+				}
+
+				&:hover {
+					background: $blue;
+					color: #fff;
+				}
+
+				&:first-child {
+					border-left: 1px solid $grayLight;
+				}
+
+				i {
+					line-height: 21px;
+				}
+			}
+		}
+
+		a {
+			display: block;
+			float: left;
+			height: $unit;
+			min-width: 24px;
+			line-height: $unit;
+			text-align: center;
+			padding: 0 $relatedMargin;
+			color: $blue;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+
+	//Styles for "Sort by tag" sidebar in Media view
+	.neos-sort-tags {
+		margin-bottom: $wideMargin;
+
+		> h2 {
+			line-height: $unit;
+
+			#neos-tags-list-edit-toggle {
+				float: right;
+				background-color: $grayDark;
+
+				&.neos-active {
+					background-color: $blue;
+				}
+
+				&:hover {
+					background-color: $blue;
+				}
+			}
+		}
+
+		.neos-tags-list {
+			&.neos-tags-list-editing-active {
+				li button[type="submit"] {
+					display: block;
+				}
+			}
+
+			li {
+				position: relative;
+
+				a {
+					display: block;
+					color: #fff;
+					padding: ($tightMargin * 2 + 1) ($unit + $tightMargin) ($tightMargin * 2 + 2) $tightMargin;
+					border-radius: 0;
+					text-shadow: none;
+					font-weight: 400;
+					font-size: $baseFontSize;
+					line-height: 1.5;
+					border-top: 1px solid $grayLight;
+
+					&.neos-active {
+						color: $blue;
+					}
+
+					&.neos-drag-active {
+						background-color: $green;
+					}
+
+					&:hover,
+					&.neos-drag-hover {
+						background-color: $blue;
+						color: #fff;
+
+						span {
+							background-color: #fff;
+							color: $blue;
+						}
+					}
+
+					span {
+						position: absolute;
+						top: $relatedMargin + 2;
+						right: $relatedMargin;
+						background-color: $blue;
+						color: #fff;
+						padding: $tightMargin;
+						line-height: 1;
+					}
+				}
+
+				button {
+					background-color: $grayDark;
+
+					&:hover {
+						background-color: $blue;
+					}
+				}
+
+				button[type="submit"] {
+					position: absolute;
+					top: 1px;
+					right: 0;
+					background-color: $grayDark;
+					display: none;
+
+					&:hover {
+						background-color: $warning;
+					}
+				}
+			}
+		}
+
+		input {
+			width: 100%;
+		}
+	}
+
+	//Styles for Media grid view
+	.neos-thumbnails {
+		margin-bottom: $wideMargin;
+		font-size: 0;
+
+		li {
+			margin-left: 0;
+			margin-right: 16px;
+			@include box-sizing(border-box);
+			float: none;
+			display: inline-block;
+			vertical-align: top;
+
+			@media (max-width: 1023px) {
+				width: calc((100% - 16px * 3) / 4);
+
+				&:nth-child(4n) {
+					margin-right: 0;
+					@include clearfix;
+				}
+			}
+
+			@media (min-width: 1024px) and (max-width: 1199px) {
+				width: calc((100% - 16px * 4) / 5);
+
+				&:nth-child(5n) {
+					margin-right: 0;
+					@include clearfix;
+				}
+			}
+
+			@media (min-width: 1200px) {
+				width: calc((100% - 16px * 5) / 6);
+
+				&:nth-child(6n) {
+					margin-right: 0;
+					@include clearfix;
+				}
+			}
+
+			.neos-img-container {
+				position: relative;
+				background-color: $grayDarker;
+				padding-bottom: 100%;
+				height: 0;
+				margin-bottom: $relatedMargin * 1.5;
+				@include box-sizing(border-box);
+			}
+
+			.neos-caption {
+				padding: 0;
+				display: block;
+				font-size: 12px;
+				line-height: 1.2;
+				color: $textSubtleLight;
+				word-break: break-word;
+			}
+
+			a {
+				border: 0;
+				border-radius: 0;
+				display: block;
+				box-shadow: none;
+				position: relative;
+				padding: 0;
+
+				&:hover {
+					box-shadow: none;
+					text-decoration: none;
+				}
+
+				img {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					@include translate(-50%, -50%);
+					height: auto;
+					width: auto;
+					max-height: 100%;
+					max-width: 100%;
+				}
+			}
+		}
+	}
+
+	&:not(.media-module) {
+		.neos-thumbnails li .neos-img-container:hover {
+			cursor: pointer;
+			outline: $tightMargin solid $blue;
+		}
+	}
+
+	//Styles for pagination
+	.page-navigation {
+		ul {
+			border-top: 1px solid $grayLight;
+			text-align: center;
+			font-size: 0;
+
+			li {
+				display: inline-block;
+				font-size: 14px;
+				width: $unit;
+
+				&.previous,
+				&.next {
+					position: relative;
+					border: 1px solid $grayLight;
+					border-top: 0;
+					overflow: hidden;
+
+					a {
+						text-indent: -9999px;
+
+						&:before {
+							position: relative;
+							top: 5px;
+							display: block;
+							width: $unit;
+							height: $unit;
+							text-align: center;
+							font-size: 26px;
+							line-height: 26px;
+							font-weight: normal;
+							font-style: normal;
+							text-decoration: inherit;
+							-webkit-font-smoothing: antialiased;
+							text-indent: 0;
+							color: #fff;
+						}
+					}
+				}
+
+				&.previous {
+					float: left;
+
+					a {
+
+						&:before {
+							content: "‹";
+						}
+					}
+				}
+
+				&.next {
+					float: right;
+
+					a {
+						&:before {
+							content: "›";
+						}
+					}
+				}
+
+				&.current {
+					border: 1px solid $grayLight;
+					border-top: 0;
+					height: $unit;
+					width: $unit;
+					line-height: $unit;
+					color: $blue;
+				}
+
+				a {
+					display: block;
+					width: $unit;
+					height: $unit;
+					line-height: $unit;
+					text-align: center;
+					color: #fff;
+
+					&:hover {
+						color: #fff;
+						background-color: $blue;
+						text-decoration: none;
+					}
+				}
+			}
+		}
+	}
+
+	//Styles for upload/edit image
+	.neos-row-fluid .neos-image-inputs {
+		float: left;
+		margin-left: 0;
+
+		legend {
+			display: none;
+		}
+
+		input[type="text"],
+		select,
+		textarea {
+			width: 100%;
+			margin-bottom: $relatedMargin * 2;
+			background: $grayLight;
+			border: 0;
+			border-radius: 0;
+			padding: $relatedMargin;
+			@include font();
+			@include box-sizing(border-box);
+			&:focus {
+				background: #fff;
+				outline: 0;
+			}
+		}
+
+		.neos-tag-select {
+			margin-bottom: $wideMargin;
+		}
+
+		.neos-button {
+			margin-right: $relatedMargin;
+			margin-bottom: $wideMargin;
+		}
+	}
+
+	//Styles for image preview in edit mode
+	.neos-row-fluid [class*="neos-span"].neos-image-example {
+		label {
+			text-align: right;
+
+			@media screen and (max-width: 767px) {
+				text-align: left;
+			}
+		}
+
+		.neos-preview-image {
+			overflow: hidden;
+			height: 0;
+			padding-bottom: 100%;
+			background: #323232;
+			position: relative;
+
+			img {
+				float: none;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+				display: block;
+				margin: 0 auto;
+				@include translate(-50%, -50%);
+			}
+		}
+	}
+
+	table.neos-table {
+		tbody tr.asset td:first-child {
+			padding-left: 0 !important;
+		}
+
+		.neos-list-thumbnail {
+			background-color: $grayDarker;
+			height: $unit;
+			width: $unit;
+			position: relative;
+
+			img {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				@include translate(-50%, -50%);
+			}
+		}
+
+		.neos-action {
+			width: 10%;
+
+			form {
+				text-align: right;
+			}
+		}
+	}
+
+	.draggable-asset {
+		cursor: move;
+	}
+
+	&:not(.media-module) {
+		table.neos-table {
+			tbody tr:hover td {
+				background-color: $blue;
+				cursor: pointer;
+			}
+
+			.neos-action {
+				display: none;
+			}
+		}
+	}
+
+	.neos-upload-area {
+		text-align: center;
+		padding: $wideMargin;
+		border: 2px dashed $grayLight;
+		margin-bottom: $wideMargin;
+
+		#resource {
+			display: none;
+		}
+
+		&:hover {
+			border-color: $blue;
+		}
+
+		> span {
+			display: block;
+			margin-bottom: $relatedMargin;
+			color: $textSubtleLight;
+
+			&:first-child {
+				color: #fff;
+			}
+		}
+
+		label {
+			margin-bottom: 0;
+		}
+	}
+
+	#resource {
+		visibility: hidden;
+		position: absolute;
+		left: -9999px;
+	}
+}

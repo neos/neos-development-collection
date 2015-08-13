@@ -1,0 +1,22 @@
+prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+
+template.basicTemplate = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	myVariable = 'foo'
+}
+
+template.basicTemplateWithEelVariable = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	bar = ${'b' + 'a' + 'r'}
+	myVariable = ${'foo' + this.bar}
+}
+
+template.partial = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'PartialTemplate.html'}
+	partialPath = ${fixtureDirectory + 'Partials/'}
+}
+
+template.layout = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'LayoutTemplate.html'}
+	layoutPath = ${fixtureDirectory + 'Layouts'}
+}

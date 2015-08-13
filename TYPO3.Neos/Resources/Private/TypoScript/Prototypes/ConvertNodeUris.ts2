@@ -1,0 +1,9 @@
+# ConvertNodeUris implementation
+#
+# replaces all occurrences of "node://<UUID>" by proper URIs.
+#
+prototype(TYPO3.Neos:ConvertNodeUris) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ConvertNodeUrisImplementation'
+	value = ${value}
+	node = ${node}
+}

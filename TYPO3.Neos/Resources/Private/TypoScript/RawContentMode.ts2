@@ -1,0 +1,51 @@
+prototype(TYPO3.Neos:RawContent) >
+prototype(TYPO3.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
+	columns = TYPO3.TypoScript:Collection {
+		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
+		itemName = 'node'
+		itemRenderer = TYPO3.TypoScript:Template {
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
+			node = ${node}
+			attributes = TYPO3.TypoScript:Attributes {
+				class = 'column'
+			}
+			columnContent = TYPO3.Neos:ContentCollection {
+				nodePath = '.'
+			}
+
+		}
+	}
+}
+
+rawContent = TYPO3.Neos:Page {
+	head {
+		stylesheets = TYPO3.TypoScript:Template {
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
+			sectionName = 'headerIncludes'
+		}
+	}
+
+	bodyTag.attributes.class = 'neos-raw-content-mode'
+
+	body {
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
+		sectionName = 'body'
+
+		parts {
+			menu = TYPO3.Neos:Menu {
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/Menu.html'
+				entryLevel = 1
+				maximumLevels = 4
+			}
+			breadcrumb = TYPO3.Neos:Breadcrumb {
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/BreadcrumbMenu.html'
+			}
+		}
+
+		allContentCollections = TYPO3.Neos:PrimaryContent {
+			nodePath = '.'
+			default.type = 'TYPO3.Neos:RawContent'
+		}
+	}
+}

@@ -1,0 +1,8 @@
+TYPO3:
+  TypoScript:
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+
+    # Register an additional prefixed helper for functional tests
+    defaultContext:
+      'Testing.String': 'TYPO3\Eel\Helper\StringHelper'

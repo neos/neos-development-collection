@@ -1,0 +1,34 @@
+# Node Types for Functional Tests
+
+'TYPO3.TYPO3CR:TestingNodeType':
+  properties:
+    test1:
+      defaultValue: 'default value 1'
+'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes':
+  childNodes:
+    subnode1:
+      type: 'TYPO3.TYPO3CR:TestingNodeType'
+
+'TYPO3.TYPO3CR:TestingNodeTypeWithProcessor':
+  properties:
+    test1:
+      defaultValue: 'default value 1'
+  postprocessors:
+    'processor1':
+      postprocessor: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessorOptions:
+        someOption: 'someValue'
+    'processor2':
+      postprocessor: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessorOptions:
+        someOption: 'someOverriddenValue'
+        someOtherOption: 'someOtherValue'
+
+'TYPO3.TYPO3CR:TestingNodeTypeWithReferences':
+  properties:
+    property1:
+      type: string
+    property2:
+      type: reference
+    property3:
+      type: references

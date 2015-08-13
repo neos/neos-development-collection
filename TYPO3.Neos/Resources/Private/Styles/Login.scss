@@ -1,0 +1,228 @@
+// Core variables and mixins
+@import "compass";
+@import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
+@import "Foundation/mixins";
+@import "Constants";
+@import "Mixins";
+@import url('http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
+@import "../../Public/Library/fontawesome/scss/font-awesome.scss";
+
+$loginBoxWidth: $unit * 8;
+
+body {
+	background: #141414;
+	margin: 0;
+}
+
+.neos {
+	// CSS Reset
+	@import "Foundation/reset";
+
+	@import "Foundation/grid";
+	@import "Foundation/forms";
+	@import "Foundation/tooltip";
+
+	@include font;
+
+	input[type="text"],
+	input[type="password"] {
+		width: 100%;
+		min-width: $inspectorWidth - $defaultMargin * 2;
+		height: $unit;
+		border: 2px solid $grayMedium;
+		background-color: $grayMedium;
+		color: $textOnGray;
+		font-size: 14px;
+		padding: 0 ($defaultMargin - 2px);
+		margin: 0;
+		@include border-radius(0);
+		@include box-sizing(border-box);
+		@include box-shadow(none);
+		@include transition(none);
+		@include font;
+
+		&:focus {
+			background-color: #fff;
+			border: 2px solid #fff;
+			color: $textOnWhite;
+			@include box-shadow(none);
+		}
+
+		&:-webkit-autofill {
+			-webkit-box-shadow: 0 0 0 50px $grayMedium inset;
+			-webkit-text-fill-color: $textOnGray;
+
+			&:focus {
+				-webkit-box-shadow: 0 0 0 50px #fff inset;
+				-webkit-text-fill-color: $textOnWhite;
+			}
+		}
+	}
+
+	#neos-login-box {
+		background: transparent;
+		border: none;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: $loginBoxWidth;
+		margin-top: -125px;
+		margin-left: -($loginBoxWidth / 2);
+		z-index: 10;
+		@include box-shadow(none);
+		@include border-radius(none);
+
+		.neos-login-logo {
+			margin-bottom: 30px;
+		}
+
+		.neos-login-body {
+			padding: 0;
+			overflow: visible;
+		}
+
+		.neos-actions {
+			bottom: 0;
+			width: 100%;
+			height: $unit;
+			border-top: 1px solid $grayDark;
+			background-color: $grayDark;
+
+			button {
+				height: $unit;
+				color: #fff;
+				border: none;
+				background-image: none;
+				font-size: 14px;
+				@include text-shadow(none);
+				@include box-shadow(none);
+				@include box-sizing(border-box);
+				@include font;
+
+				&:focus {
+					outline: none;
+				}
+
+				&.neos-login-btn {
+					background-color: $blue;
+					width: 100%;
+				}
+			}
+		}
+
+		.neos-controls {
+			height: $unit;
+			margin-bottom: 15px;
+		}
+
+		.neos-tooltip {
+			left: -4px;
+			top: 0;
+			width: 100%;
+			position: relative;
+			clear: both;
+			float: none;
+
+			&.neos-bottom {
+				padding: $relatedMargin 0 0 0;
+				margin-left: $tightMargin;
+				margin-top: -1px;
+			}
+
+			&.neos-in {
+				@include opacity(1);
+			}
+
+			.neos-tooltip-arrow {
+				margin-left: -$relatedMargin;
+				border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+			}
+
+			.neos-tooltip-inner {
+				max-width: $loginBoxWidth;
+				font-size: 13px;
+				color: #fff;
+				@include border-radius(0);
+				@include box-sizing(border-box);
+			}
+		}
+
+		.neos-tooltip-error {
+			.neos-tooltip-arrow {
+				border-bottom-color: $warning;
+			}
+
+			.neos-tooltip-inner {
+				background-color: $warning;
+			}
+		}
+
+		.neos-tooltip-notice {
+			.neos-tooltip-arrow {
+				border-bottom-color: $green;
+			}
+
+			.neos-tooltip-inner {
+				background-color: $green;
+			}
+		}
+	}
+
+	#neos-login-footer {
+		width: 100%;
+		position: absolute;
+		bottom: 4%;
+		padding: 0 $unit;
+		@include font;
+		@include box-sizing(border-box);
+
+		p {
+			font-size: 12px;
+			color: #535353;
+			line-height: 1.3em;
+			margin: 0;
+		}
+
+		a {
+			color: #535353;
+		}
+	}
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+	.neos {
+		#neos-login-box {
+			position: static;
+			top: 0;
+			margin-top: $unit;
+			margin-left: 0;
+			padding-left: $unit;
+			padding-right: $unit;
+			width: 100%;
+			height: auto;
+			@include box-sizing(border-box);
+		}
+
+		#neos-login-footer {
+			position: static;
+			margin-top: $unit;
+			margin-bottom: 20px;
+		}
+	}
+}
+
+@media (min-width: 1000px) {
+	.neos #neos-login-footer {
+		width: 70%;
+		left: 50%;
+		margin-left: -35%;
+	}
+}
+
+@media (min-width: 1500px) {
+	.neos #neos-login-footer {
+		width: 50%;
+		left: 50%;
+		margin-left: -25%;
+	}
+}

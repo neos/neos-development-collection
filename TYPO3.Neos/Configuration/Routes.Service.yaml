@@ -1,0 +1,20 @@
+#                                                                        #
+# "Service" subroutes configuration for the TYPO3.Neos package           #
+#                                                                        #
+
+-
+  name: 'Nodes - index'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Node'
+  appendExceedingArguments: true
+  httpMethods: ['GET']
+
+-
+  name: 'Nodes - single node'
+  uriPattern: 'nodes/{identifier}'
+  defaults:
+    '@controller': 'Service\Node'
+    '@action':     'show'
+  appendExceedingArguments: true
+  httpMethods: ['GET']
