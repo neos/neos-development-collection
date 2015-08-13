@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-07-02
+This reference was automatically generated from code on 2015-08-13
 
 
 Array
@@ -725,6 +725,27 @@ on the sign of the number.
 * ``x`` (float) A number
 
 **Return** (integer) The integral part of the given number
+
+
+
+
+
+
+Node
+----
+
+Eel helper for TYPO3CR Nodes
+
+Node.nearestContentCollection(node, nodePath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
+if no content collection could be found
+
+* ``node`` (NodeInterface) 
+* ``nodePath`` (string) 
+
+**Return** (NodeInterface) 
 
 
 
