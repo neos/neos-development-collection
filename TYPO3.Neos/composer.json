@@ -2,7 +2,7 @@
     "name": "typo3/neos",
     "type": "typo3-flow-package",
     "license": "GPL-3.0+",
-    "description": "The next generation of the popular open-source CMS.",
+    "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
         "typo3/flow": "2.2.*",
         "typo3/media": "1.1.*",
@@ -12,7 +12,7 @@
         "typo3/typoscript": "1.1.*"
     },
     "suggest": {
-        "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
+        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."
     },
     "autoload": {
         "psr-0": {
