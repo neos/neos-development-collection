@@ -644,14 +644,32 @@ class NodeData extends AbstractNodeData {
 	/**
 	 * Internal use, do not manipulate collection directly
 	 *
-	 * @param array $dimensions
+	 * @param array<NodeDimension> $dimensionsToBeSet
 	 * @return void
 	 */
-	public function setDimensions(array $dimensions) {
-		$this->dimensions->clear();
-		foreach ($dimensions as $dimension) {
-			$this->dimensions->add($dimension);
+	public function setDimensions(array $dimensionsToBeSet) {
+		if ($this->dimensions->count() > 0) {
+			$givenDimensions = $dimensionsToBeSet;
+			$dimensionsToBeSet = array();
+			/** @var NodeDimension $dimensionToBeSet */
+			foreach ($givenDimensions as $dimensionToBeSet) {
+				$dimensionExisted = FALSE;
+				/** @var NodeDimension $dimension */
+				foreach ($this->dimensions as $dimension) {
+					if ($dimension->getName() === $dimensionToBeSet->getName() && $dimensionToBeSet->getValue() === $dimension->getValue()) {
+						$dimensionsToBeSet[] = $dimension;
+						$dimensionExisted = TRUE;
+					}
+				}
+
+				if (!$dimensionExisted) {
+					$dimensionToBeSet->setNodeData($this);
+					$dimensionsToBeSet[] = $dimensionToBeSet;
+				}
+			}
 		}
+
+		$this->dimensions = new ArrayCollection($dimensionsToBeSet);
 		$this->buildDimensionValues();
 	}
 
