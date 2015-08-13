@@ -204,7 +204,7 @@ Evaluate any value as a TypoScript object
 Example::
 
 	myValue = Value {
-		myValue.value = 'Hello World'
+		value = 'Hello World'
 	}
 
 .. note:: Most of the time this can be simplified by directly assigning the value instead of using the ``Value`` object.
