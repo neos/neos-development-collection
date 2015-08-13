@@ -7,7 +7,7 @@
 			<target xml:lang="pt-BR" state="translated">Título</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="pt-BR" state="translated">Diretório de seguimento URL</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Segmento de URL</target><alt-trans><target xml:lang="pt-BR">Diretório de seguimento URL</target></alt-trans></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="pt-BR" state="translated">Esconder em menus</target></trans-unit>
