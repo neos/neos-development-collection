@@ -1,0 +1,232 @@
+====================
+1.1.8
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Use compatible ``flowpack/behat`` dependency to fix installation
+-----------------------------------------------------------------------------------------
+
+Current composer installation breaks due to incompatible dependencies
+caused by a dependency on ``dev-master`` of ``flowpack/behat``, which
+now only supports Flow 3.x
+
+* Commit: `593c703 <https://git.typo3.org/Neos/Distributions/Base.git/commit/593c7035395b23a9a7189d4e8511d42d6ee44eff>`_
+
+[TASK] Update composer.json information
+-----------------------------------------------------------------------------------------
+
+* Commit: `9cde4b0 <https://git.typo3.org/Neos/Distributions/Base.git/commit/9cde4b059162cfb4685f7a1f8e3103741f9abd78>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/59/
+
+* Commit: `3832366 <https://git.typo3.org/Neos/Distributions/Base.git/commit/383236605ed1b86f9b5428733a79fa495bc3258d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Neos%20-%20Release/66/
+
+* Commit: `53b0f72 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/53b0f7246bd4a607ac2e86d8ac75fe000155081e>`_
+
+[BUGFIX] Flush content cache of source collection when moving content
+-----------------------------------------------------------------------------------------
+
+Fixes a node being duplicated when cutting from one content
+collection and pasting into another one. This happens since
+the content cache for the previous collection isn't cleared
+when the node is moved.
+
+Depends: I865c6a8ebd6a8427730f03e995c14e0fbf2dba62
+
+Fixes: NEOS-1224
+
+* Commit: `66cfaa1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/66cfaa1bc96473d50229576e3c8f0b07416aa31e>`_
+
+[BUGFIX] Ensure ``contentElementWrapping`` processor is executed last
+-----------------------------------------------------------------------------------------
+
+In some cases where integrators add their own ``@process`` rules to
+content, the ``contentElementWrapping`` process is not executed last
+potentially causing the wrapping to be added to a wrong wrapper element.
+
+This is solved by setting the position of the processor to::
+
+  @position = 'end 999999999'
+
+Related: NEOS-1326
+
+* Commit: `f92f50d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f92f50df82a101a95ae7fcb6cf4111a7dd0bab48>`_
+
+[BUGFIX] Reload structure tree after adding new nodes
+-----------------------------------------------------------------------------------------
+
+When nodes were changed in the structure tree the tree would only
+reflect the current page after having navigated to another document
+for the second time.
+
+This was caused by a fix added with https://review.typo3.org/26158 and
+which is no longer needed, since the observer on pageNodePath is not
+triggered if the same page is reloaded.
+
+Fixes: NEOS-1343
+
+* Commit: `cc88b4d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cc88b4dec845047af43c64e0d7ff080e84780126>`_
+
+[TASK] Clean up Release Notes and ChangeLogs
+-----------------------------------------------------------------------------------------
+
+The 1.0 release notes are merely links to the Changelogs.
+The >=1.1 release notes could be useful even when they are for older
+versions of the docs. So, this archives <1.0 and keeps >1.0.
+
+This also updates the ChangeLogs so that they don't loose all of the
+formatting fixes that were added in later branches. Now that this is the
+only copy of those ChangeLogs, they need to be as usable as possible.
+
+* Commit: `65a449c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/65a449c051d3b7e59d1b68c275b6a41cf2dd24c7>`_
+
+[TASK] Remove ChangeLogs for other branches from documentation
+-----------------------------------------------------------------------------------------
+
+Having the ChangeLogs of all previous branches only balloons the
+documentation without a real gain.
+
+* Commit: `24ceaba <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/24ceaba0f6d7b17832eb46781e00885fb2846dfb>`_
+
+[BUGFIX] Return backend user even if security context is uninitialized
+-----------------------------------------------------------------------------------------
+
+If the security context has not yet been initialized the user service
+would return NULL instead of initializing the security context and then
+check if there was a backend user. Instead of only returning it if it's
+already initialized, it checks if it's possible to initialize or not.
+
+* Commit: `3f15433 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3f1543361f3a84abb5eb8a18658db0371b6c0007>`_
+
+[TASK] Move Doc Config from DocTools package
+-----------------------------------------------------------------------------------------
+
+This moves the doc configuration from the DocTools package to the Neos
+package so that it can be changed per branch. To see the DocTools
+change, refer to I9b56df70f6b5140b41b41893a8fb6f516b8f1843
+
+* Commit: `a76c4e3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a76c4e34f5bdaf88e945537f877c2d112df8060f>`_
+
+[TASK] Make PHP the default language for code blocks
+-----------------------------------------------------------------------------------------
+
+The documentation now uses PHP as default language for code blocks,
+so that even when using just two colons to start a code-block it is
+highlighted.
+
+* Commit: `4477fed <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4477fedfd4148118049f7d462b0a0e22a28c5a43>`_
+
+[TASK] Add support for sphinx-autobuild
+-----------------------------------------------------------------------------------------
+
+This adds support for sphinx-autobuild, which watches the Documentation
+directory and automatically re-renders docs on change. This allows for
+a livepreview while editing the docs.
+
+To use it, install `sphinx-autobuild`_::
+
+    pip install sphinx-autobuild
+
+To use livepreview just run ``make livehtml`` instead of ``make html``.
+Then, visit http://127.0.0.1:8000 to see the livereload version of the
+docs. Note, this builds the docs in ``_build/livehtml`` instead of
+``_build/html`` because the docs include some javascript to make
+livereload work.
+
+.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
+
+* Commit: `9b422c1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9b422c131a94f5ffd636e777f605a115e24d4dd0>`_
+
+[TASK] Add date to title for 1.1.7 change log
+-----------------------------------------------------------------------------------------
+
+* Commit: `4c4bf50 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4c4bf502c79d4303831b66bf7b65af2d87716feb>`_
+
+[TASK] Make PHP highlighting work for snippets
+-----------------------------------------------------------------------------------------
+
+This adds the "official" hack to turn on startinline for all php
+codeblocks whether they're a snippet or a full file.
+
+Sphinx and docutils don't support setting the startinline option for
+pygments. That means that snippets of PHP code that don't have
+"<?php ?>" don't get highlighted. The hack was documented here:
+http://mbless.de/blog/2015/03/02/php-syntax-highlighting-in-sphinx.html
+https://github.com/fabpot/sphinx-php
+
+* Commit: `cf34288 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cf34288275d10cdd1bc4a9d1ecd0d6bd768a29d4>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] `BeforeNodeMove` & `AfterNodeMove` signals
+-----------------------------------------------------------------------------------------
+
+Backports two signals for node moving needed to solve a
+bug with content cache flushing.
+
+Related: NEOS-1224
+
+* Commit: `ca5d770 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ca5d7702a6ed33129dafb54ae3412cc35cac3dc3>`_
+
+[BUGFIX] UnpublishedNodes includes root node in PublishingService
+-----------------------------------------------------------------------------------------
+
+The getUnpublishedNodes method in the PublishingService shouldn't
+include the root node, since it's not publishable.
+
+Besides that the getUnpublishedNodes() method now returns 0
+if it's called for the live workspace as this workspace will
+never have unpublished nodes.
+
+* Commit: `5d8d7bf <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/5d8d7bf283f87d91e3071f7bfaa758c45f6ceb64>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove unnecessary TypoScript for main menu
+-----------------------------------------------------------------------------------------
+
+* Commit: `ab93ab1 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/ab93ab1238fc6253059a83b5103e3a2067c8f1bb>`_
+
