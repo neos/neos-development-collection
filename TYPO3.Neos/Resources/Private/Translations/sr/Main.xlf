@@ -146,13 +146,13 @@
 			<target xml:lang="sr" state="translated">[без наслова]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="sr" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="sr" state="translated">Ознака</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Node type</source>
-			<target xml:lang="sr" state="needs-translation">Node type</target></trans-unit>
+			<target xml:lang="sr" state="translated">Тип чвора</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="sr" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="sr" state="translated">Путања</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative path</source>
 			<target xml:lang="sr" state="needs-translation">Relative path</target></trans-unit>

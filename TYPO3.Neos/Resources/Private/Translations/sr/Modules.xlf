@@ -174,10 +174,10 @@
 			<target xml:lang="sr" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="sr" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Име</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="sr" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Презиме</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="sr" state="needs-translation">User Preferences</target></trans-unit>
@@ -198,16 +198,16 @@
 			<target xml:lang="sr" state="translated">Наслов</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="sr" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Име</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="sr" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Средње име</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="sr" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Презиме</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="sr" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="sr" state="translated">Друго име</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="sr" state="needs-translation">Accounts</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="sr" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="sr" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="sr" state="translated">Osnovno</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="sr" state="needs-translation">N/A</target></trans-unit>
@@ -374,7 +374,7 @@
 			<target xml:lang="sr" state="translated">Наслов</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="sr" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="sr" state="translated">Ознака</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="sr" state="needs-translation">Caption</target></trans-unit>
