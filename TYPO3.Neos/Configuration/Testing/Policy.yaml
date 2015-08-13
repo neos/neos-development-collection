@@ -1,0 +1,7 @@
+#                                                                        #
+# Security policy for the TYPO3 Neos package in testing context          #
+#                                                                        #
+
+resources:
+  methods:
+    TYPO3_Neos_AllControllerActions: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->.*Action()) &&! method(public .*\Tests\.*\Fixtures\.*->.*Action())'

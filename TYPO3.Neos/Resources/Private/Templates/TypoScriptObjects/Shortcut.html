@@ -1,0 +1,19 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<div id="neos-shortcut">
+	<p>
+		<f:switch expression="{targetMode}">
+			<f:case value="selectedNode">
+				This is a shortcut to a specific page.<br />
+				Click <neos:link.node node="{targetNode}">here</neos:link.node> to continue to the page.
+			</f:case>
+			<f:case value="firstChildNode">
+				This is a shortcut to the first child page.<br />
+				Click <neos:link.node node="{firstChildNode}">here</neos:link.node> to continue to the page.
+			</f:case>
+			<f:case value="parentNode">
+				This is a shortcut to the parent page.<br />
+				Click <neos:link.node node="{node.parent}">here</neos:link.node> to continue to the page.
+			</f:case>
+		</f:switch>
+	</p>
+</div>
