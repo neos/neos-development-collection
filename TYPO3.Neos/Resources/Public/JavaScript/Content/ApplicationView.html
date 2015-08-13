@@ -1,0 +1,13 @@
+{{#unbound if view._isContentModule}}
+	{{view view.ContentContextBar}}
+	{{view view.EditPreviewPanel}}
+	{{view view.SecondaryInspectorView}}
+
+	<button id="neos-inspector-button" title="Toggle inspector" {{bindAttr class=":neos-button view.inspectorController.inspectorMode:neos-pressed"}} {{action "toggleInspectorMode" target="view.inspectorController"}}></button>
+
+	{{view view.InspectorView}}
+	{{view view.NavigatePanel}}
+	{{view view.InlineEditingHandles}}
+{{/unbound}}
+
+{{view view.MenuPanel}}

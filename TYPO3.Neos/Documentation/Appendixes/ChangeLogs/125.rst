@@ -1,0 +1,101 @@
+==================
+1.2.5 (2015-04-18)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/34/
+
+* Commit: `2fe70e9 <https://git.typo3.org/Neos/Distributions/Base.git/commit/2fe70e999fde1bb7cd4f086066b232418bb19122>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/42/
+
+* Commit: `cd838ab <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/cd838abe267c5387ddebe92d237e352efb2fb41c>`_
+
+[BUGFIX] Shortcut resolves to first node instead of sibling
+-----------------------------------------------------------------------------------------
+
+Shortcuts pointing to the first child node resolves to the next
+sibling of the current page when navigating the child pages of the
+shortcut. This happens because the child nodes are fetched from the
+first level node cache, which can have a array pointer that has been
+moved.
+
+Fixes: NEOS-1220
+
+* Commit: `1d513ec <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1d513ecd5f81c370444eddc7749fdce36e586060>`_
+
+[TASK] Add release date to 1.1.4 changelog
+-----------------------------------------------------------------------------------------
+
+* Commit: `3176ff3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3176ff360aa465e139935cd4d563d784365302ec>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.1 & 1.1.2
+-----------------------------------------------------------------------------------------
+
+* Commit: `23d9189 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/23d91895a8adff3d74927786ff605ddb8fca71bd>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.4
+-----------------------------------------------------------------------------------------
+
+* Commit: `1e08354 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1e08354747354835c96770ee36190268dbee74e5>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Uncached segments should be able to override context
+-----------------------------------------------------------------------------------------
+
+This bug was only exposed after ``Iace3a6faf9752028ac219b7346a2546bdf0423cb``
+got merged. Overrides need to happen after reducing the context to
+only the cached variables, as otherwise you would be required to
+name also all overriden variables in the cache configuration.
+
+This change fixes the order and proves the correct behavior with
+a functional test.
+
+* Commit: `8920641 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/8920641fc90de374693cd9d890bd5abc7192bf8d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

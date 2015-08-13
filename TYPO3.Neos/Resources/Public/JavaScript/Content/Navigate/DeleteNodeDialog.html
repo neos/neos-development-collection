@@ -1,0 +1,17 @@
+<div class="neos-modal">
+	<div class="neos-modal-header">
+		<button class="neos-close neos-button" title="Close" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">Do you really want to delete "{{view.title}}"?</div>
+	</div>
+	<div>
+		<div class="neos-subheader">
+			This will delete the element{{#if view.numberOfChildren}} and it's children{{/if}}.<br />
+			This action can be undone in the workspace management.
+		</div>
+	</div>
+	<div class="neos-modal-footer">
+		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+		<button class="neos-button neos-button-danger" title="Delete the element" {{action "deleteNode" target="view"}}>Yes, delete the element</button>
+	</div>
+</div>
+<div class="neos-modal-backdrop neos-in"></div>
