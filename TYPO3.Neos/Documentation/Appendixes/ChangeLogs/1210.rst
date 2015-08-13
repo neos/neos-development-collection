@@ -1,0 +1,430 @@
+==================
+1.2.10 (2015-08-13)
+==================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer.json information
+-----------------------------------------------------------------------------------------
+
+* Commit: `f61a441 <https://git.typo3.org/Neos/Distributions/Base.git/commit/f61a441765680aa37a927e19d8f4dc0dd0c696ad>`_
+
+[TASK] Revert composer manifest to dev versions
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/60/
+
+* Commit: `be06ac9 <https://git.typo3.org/Neos/Distributions/Base.git/commit/be06ac913988d4f7603ebcd9ee3a49b3114c9633>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Neos%20-%20Release/68/
+
+* Commit: `96befbf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/96befbf009a7f52dc01c540c275bec9c3bbd8961>`_
+
+[TASK] Update description in composer.json
+-----------------------------------------------------------------------------------------
+
+* Commit: `34c0321 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/34c03212ad38eb35bc44e981d074f66c7e91aa94>`_
+
+[BUGFIX] node:repair ``generateUriPathSegments`` should use dimensions
+-----------------------------------------------------------------------------------------
+
+The ``generateUriPathSegments`` plugin for ``node:repair`` should take
+all dimensions into consideration and not only language.
+
+This change fixes it by using the new methods added for fixing
+``node:repair`` in TYPO3CR.
+
+Additionally now applies to root nodes and uses the node label instead
+if it's name to generate the URI path segment.
+
+Depends: I995285f22fa5486d5bc53c4f96f68bb9fae831a3
+Fixes: NEOS-1466
+
+* Commit: `070d8b5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/070d8b570d3053e21d82beaec49c16396ebb25e4>`_
+
+[TASK] Adjust documentation to auto-generated node names
+-----------------------------------------------------------------------------------------
+
+Many have trouble with finding a child node by it's node name
+due to the change to auto-generating node names. Therefore the
+examples for getting a child page by a given name is changed to
+getting by the ``uriPathSegment`` instead, which is more visible.
+
+* Commit: `77ae7c7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/77ae7c76801d6fa1b4401705a67dbbcc9fbb46aa>`_
+
+[BUGFIX] CreateNodeForTheTreeAction needs to filter for tree
+-----------------------------------------------------------------------------------------
+
+The change ``Id9ea03a3935150b6f81d71ee27ef848e8e15aad1`` introduced
+a regression as the returned children are not correctly filtered for
+the tree they are displayed in.
+
+This change adds a node type filter based on the trees general
+base node type filter.
+
+Fixes: NEOS-1469
+Related: NEOS-1053
+Related: Id9ea03a3935150b6f81d71ee27ef848e8e15aad1
+
+* Commit: `da19f19 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/da19f196a0913d351d517ad0a0fb771e5949d26e>`_
+
+[BUGFIX] Incorrect documentation example of TypoScript Value object
+-----------------------------------------------------------------------------------------
+
+* Commit: `06997ff <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/06997ff83d39e609326bb969e30e32e2cc12ce38>`_
+
+[BUGFIX] Child nodes missing for newly created nodes in structure tree
+-----------------------------------------------------------------------------------------
+
+When inserting a node type that has auto created child nodes, the child
+nodes aren't shown until reloading the tree. This change makes sure all
+auto generated child nodes are shown for newly inserted nodes.
+
+Fixes: NEOS-1053
+
+* Commit: `6aa08f8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6aa08f852b05361edafec4adc02f152690ba85b6>`_
+
+[BUGFIX] Prevent AssetEditor items to be removed randomly
+-----------------------------------------------------------------------------------------
+
+If you removed an asset from an ``AssetList`` using the ``AssetEditor``,
+other assets were removed too.
+
+Background:
+
+Apparently the reason for this behavior is that the ``remove()``
+function is used by the ``Ember View`` implementation and probably
+it's called by the framework when redrawing the View.
+
+Fixes: NEOS-959
+
+* Commit: `2183551 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/218355191b427f7bdb5dead22e4be12c3914287d>`_
+
+[BUGFIX] Discarding changes doesn't reset link inspector editor
+-----------------------------------------------------------------------------------------
+
+When discard changes in the inspector, link editors aren't updated
+correctly. If a value is selected and then discarded, the newly
+selected value remains. If a value has already been selected and
+that is removed, discarding that change will result in a the input
+field appearing when there's already a value selected.
+
+Fixes: NEOS-135
+
+* Commit: `b3aed7b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b3aed7b1bd3fc1dc91c898b826273ca73cde361f>`_
+
+[BUGFIX] Selected node not active in structure tree after reload
+-----------------------------------------------------------------------------------------
+
+When the context structure tree is reloaded the currently selected
+node is not activated after reloading the tree.
+This gives an invalid state of the tree where the inline and
+structure tree are out of sync, since the root element is active
+in the structure tree instead.
+
+Fixes: NEOS-1473
+
+* Commit: `54b897e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/54b897e162fbcb6d33ee48456552c1f4b6735a5b>`_
+
+[BUGFIX] Allow publishing/discarding of removed nodes
+-----------------------------------------------------------------------------------------
+
+This tweaks the propertyMappingConfiguration of "nodes" argument
+in the ``Workspaces`` module allowing submission/reversion of
+deleted nodes.
+
+Previously they triggered a property mapping exception because
+the specified nodes weren't found.
+
+Fixes: NEOS-1041
+
+* Commit: `2b86bbb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2b86bbb2c62e6309f6b0ba9e46a0ce7818f22eda>`_
+
+[BUGFIX] Reload structure tree after adding new nodes
+-----------------------------------------------------------------------------------------
+
+When nodes were changed in the structure tree the tree would only
+reflect the current page after having navigated to another document
+for the second time.
+
+This was caused by a fix added with https://review.typo3.org/26158 and
+which is no longer needed, since the observer on pageNodePath is not
+triggered if the same page is reloaded.
+
+Fixes: NEOS-1343
+
+* Commit: `2a6a837 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2a6a837a8b7a2dc4f8356f90792a1408036e9f1d>`_
+
+[BUGFIX] ``uriPathSegment`` logic break non-document nodes with content object proxy
+-----------------------------------------------------------------------------------------
+
+When inserting a new document node on a level that has non-document
+nodes using content object proxy a fatal error is thrown for not being
+able to call ``getUriPathSegment`` on the content object proxy.
+This happens due to the ``uriPathSegment`` logic tries to find all
+siblings (regardless of being documents or not) with a certain
+``uriPathSegment``.
+This becomes a problem when the property is fetched from a content
+object proxy instead of a node, since it calls an undefined getter
+method.
+
+To fix this issue only document node types are tested for having the
+same ``uriPathSegment`` property.
+
+Fixes: NEOS-1455
+
+* Commit: `0ccfce0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0ccfce02e79f418e1c6d93084bbe81e1b816328e>`_
+
+[BUGFIX] Ensure ``contentElementWrapping`` processor is executed last
+-----------------------------------------------------------------------------------------
+
+In some cases where integrators add their own ``@process`` rules to
+content, the ``contentElementWrapping`` process is not executed last
+potentially causing the wrapping to be added to a wrong wrapper element.
+
+This is solved by setting the position of the processor to::
+
+  @position = 'end 999999999'
+
+Related: NEOS-1326
+
+* Commit: `22151f7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/22151f713b5e0acbfb718f4e4f69a9768222cc91>`_
+
+[BUGFIX] Background-image shown in link editors clear button
+-----------------------------------------------------------------------------------------
+
+In `I152f6ab8734f5ade6edc56d0ff14d8f55d5ef244` a regression was
+introduced for high resolution displays since the removed background
+was shown again due to usage of "!important" in the high resolution
+styles.
+
+* Commit: `fa96d71 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fa96d7119db0a937a4424c2bc8a2af9196837666>`_
+
+[TASK] Clean up Release Notes and ChangeLogs
+-----------------------------------------------------------------------------------------
+
+The 1.0 release notes are merely links to the Changelogs.
+The >=1.1 release notes could be useful even when they are for older
+versions of the docs. So, this archives <1.0 and keeps >1.0.
+
+This also adds a :reversed: flag to the TOC, so that the the release
+notes can be listed in reverse chronological order.
+
+This also updates the ChangeLogs so that they don't loose all of the
+formatting fixes that were added in later branches. Now that this is the
+only copy of those ChangeLogs, they need to be as usable as possible.
+
+* Commit: `f0b7497 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f0b74972e94a96c9f0079e3a4589a13255a057d1>`_
+
+[TASK] Remove ChangeLogs for other branches from documentation
+-----------------------------------------------------------------------------------------
+
+Having the ChangeLogs of all previous branches only balloons the
+documentation without a real gain.
+
+* Commit: `19e3bb2 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/19e3bb2a273aa1aa03ddf12b05e00e65e20d55cf>`_
+
+[BUGFIX] Return backend user even if security context is uninitialized
+-----------------------------------------------------------------------------------------
+
+If the security context has not yet been initialized the user service
+would return NULL instead of initializing the security context and then
+check if there was a backend user. Instead of only returning it if it's
+already initialized, it checks if it's possible to initialize or not.
+
+* Commit: `240ec27 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/240ec2722abf06a227214b788fafc0fda304cd86>`_
+
+[TASK] Move Doc Config from DocTools package
+-----------------------------------------------------------------------------------------
+
+This moves the doc configuration from the DocTools package to the Neos
+package so that it can be changed per branch. To see the DocTools
+change, refer to I9b56df70f6b5140b41b41893a8fb6f516b8f1843
+
+* Commit: `4f87e01 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4f87e01e8d642e7acf16e312e474f963e12f3d54>`_
+
+[BUGFIX] Select2 background image visible in high resolution
+-----------------------------------------------------------------------------------------
+
+In `I152f6ab8734f5ade6edc56d0ff14d8f55d5ef244` a regression was
+introduced for high resolution displays since the removed background
+was shown again due to usage of "!important" in the high resolution
+styles.
+
+* Commit: `f682c51 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f682c5161d6f91f6d89da15f910cfb1624c6b607>`_
+
+[BUGFIX] Fix select2x2.png not found error
+-----------------------------------------------------------------------------------------
+
+Adjusts the Gruntfile to fix the path for that file as well.
+
+* Commit: `463e5c4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/463e5c4d013c84caeded94cd1dde66b43afbd1da>`_
+
+[TASK] Make PHP the default language for code blocks
+-----------------------------------------------------------------------------------------
+
+The documentation now uses PHP as default language for code blocks,
+so that even when using just two colons to start a code-block it is
+highlighted.
+
+* Commit: `7df402c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7df402cbc8a8354f32f5721520cd42bfab359d12>`_
+
+[TASK] Add support for sphinx-autobuild
+-----------------------------------------------------------------------------------------
+
+This adds support for sphinx-autobuild, which watches the Documentation
+directory and automatically re-renders docs on change. This allows for
+a livepreview while editing the docs.
+
+To use it, install `sphinx-autobuild`_::
+
+    pip install sphinx-autobuild
+
+To use livepreview just run ``make livehtml`` instead of ``make html``.
+Then, visit http://127.0.0.1:8000 to see the livereload version of the
+docs. Note, this builds the docs in ``_build/livehtml`` instead of
+``_build/html`` because the docs include some javascript to make
+livereload work.
+
+.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
+
+* Commit: `42bfae0 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/42bfae0aabea06370258c970d6a5c524dbb8576e>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.7
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/TYPO3%20Neos%20Release/59/
+
+* Commit: `087ad64 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/087ad640b13448f740e548a38c010794ec3910f6>`_
+
+[TASK] Make PHP highlighting work for snippets
+-----------------------------------------------------------------------------------------
+
+This adds the "official" hack to turn on startinline for all php
+codeblocks whether they're a snippet or a full file.
+
+Sphinx and docutils don't support setting the startinline option for
+pygments. That means that snippets of PHP code that don't have
+"<?php ?>" don't get highlighted. The hack was documented here:
+http://mbless.de/blog/2015/03/02/php-syntax-highlighting-in-sphinx.html
+https://github.com/fabpot/sphinx-php
+
+* Commit: `95b1e58 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/95b1e58918bfea3818b4c609ec2cc1d2f2c6a591>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Make sure that a documents subpageLayout is displayed below layout
+-----------------------------------------------------------------------------------------
+
+The layout setting for a document should always be rendered before 
+the subpageLayout setting.
+This change sets for either layout and subpageLayout positions to make 
+sure they are always rendered in the correct ordering.
+
+Resolves: NEOS-1441
+
+* Commit: `ef8ef57 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/ef8ef57055970b4578e2edb9ff5a4a35fb89b31c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] node:repair should consider dimensions
+-----------------------------------------------------------------------------------------
+
+This change makes sure that all ``node:repair`` command
+plugins operate correctly with dimensions.
+
+The NodeFactory gained an internal method to generate a context
+based on a given NodeData instance that matches the properties
+of this.
+
+Additionally ``TYPO3\\TYPO3CR\\Domain\\Service\\ContentDimensionCombinator``
+was introduced to deal with generating possible dimension configuarations
+for Context generation.
+
+Releaes: master, 2.0, 1.2
+Fixes: NEOS-1466
+
+* Commit: `ac5d3fe <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/ac5d3fe494f4592d75e8a52ac091d44f05b36c42>`_
+
+[BUGFIX] Moving content in different dimensions should not break
+-----------------------------------------------------------------------------------------
+
+Without this fix you could end up loosing nodes when you had a variant
+of a Node in different dimensions and moved one of the variants to a
+different path and back to the old path. This would (depending on the
+order of operations and dimensions) either lead to an exception
+because the variant would be found on the (old) path and thus the path
+marked as blocked or the node would get a different node name rendering
+the node inaccessible as then two nodes with the same identifier but
+different name (same parentpath) would exist.
+
+Both cases are fixed by making the checks for existence stricter and
+excluding variants in other dimensions.
+
+Fixes: NEOS-1339
+
+* Commit: `1e00fd8 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/1e00fd86b13d02a790f3224e4286c70c2dedf1c7>`_
+
+[BUGFIX] Avoid duplicate key errors with setDimensions()
+-----------------------------------------------------------------------------------------
+
+When dimensions are set, the dimensions property of NodeData is
+clear()ed, and then the given dimensions are added.
+
+If one of the added dimensions has the same name and value as one that
+was present, a duplicate key error occurs during persisting of the
+changes, because Doctrine first does the inserts and then the removal
+of records.
+
+This change fixes that by actually comparing the dimensions to be set to
+the ones already set on the node, re-using instances that have the same
+name and value.
+
+Fixes: NEOS-1462
+
+* Commit: `aea6d61 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/aea6d6116ce8f800e891eec35e494babce3663e7>`_
+
+[TASK] Fix source documentation on dimension migration tooling
+-----------------------------------------------------------------------------------------
+
+Fixes some doc comments in SetDimensions and DimensionValues.
+
+* Commit: `070ea06 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/070ea0646b58842e3bfa2a8e8c49162a846e528b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
