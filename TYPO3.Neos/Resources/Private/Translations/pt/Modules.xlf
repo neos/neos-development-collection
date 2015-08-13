@@ -201,13 +201,13 @@
 			<target xml:lang="pt-BR" state="translated">Primeiro nome</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="pt-BR" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Nome do meio</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="pt-BR" state="translated">Sobrenome</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="pt-BR" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Outro nome</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="pt-BR" state="translated">Contas</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="pt-BR" state="translated">Endereços Eletrônicos</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="pt-BR" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Primário</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="pt-BR" state="translated">N/D</target></trans-unit>
