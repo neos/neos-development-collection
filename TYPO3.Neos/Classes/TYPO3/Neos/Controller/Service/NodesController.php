@@ -20,7 +20,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\Neos\Domain\Service\NodeSearchService;
+use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -61,7 +61,7 @@ class NodesController extends ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeSearchService
+	 * @var NodeSearchServiceInterface
 	 */
 	protected $nodeSearchService;
 
