@@ -24,9 +24,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
-      <trans-unit id="contentView" xml:space="preserve">
+      <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
-			<target xml:lang="de" state="translated">Inhaltsansicht</target></trans-unit>
+			<target xml:lang="de">Inhaltsansicht</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="de">Erstellen nach</target><alt-trans><target xml:lang="de">Danach erstellen</target></alt-trans></trans-unit>
