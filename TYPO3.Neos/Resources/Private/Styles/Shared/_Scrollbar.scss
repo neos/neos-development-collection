@@ -1,0 +1,32 @@
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: $grayLight;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: $grayDark;
+	border: 1px solid $grayLight;
+}
+
+::-webkit-scrollbar-corner {
+	background-color: $grayLight;
+}
+
+@mixin scroll-bar-light {
+	::-webkit-scrollbar-track {
+		background-color: #fff;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #ccc;
+		border: 1px solid #fff;
+	}
+
+	::-webkit-scrollbar-corner {
+		background-color: #fff;
+	}
+}

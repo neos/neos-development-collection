@@ -1,0 +1,63 @@
+#neos-context-structure {
+	position: relative;
+}
+
+.neos-node-tree-toolbar.neos-context-structure-toolbar {
+	position: relative;
+	height: $unit;
+	top: 0;
+	font-size: 14px;
+	line-height: $unit;
+	border-top: 1px solid $grayLight;
+	margin-top: -1px;
+	text-indent: $defaultMargin;
+}
+
+#neos-context-structure-tree-container {
+	position: relative;
+	white-space: nowrap;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	padding: $relatedMargin 0;
+	@include box-sizing(border-box);
+
+	ul.neos-dynatree-container {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+
+.neos-context-structure-collapse {
+	float: right;
+	width: $unit;
+	height: $unit;
+	cursor: pointer;
+	text-indent: 0;
+
+	&:hover {
+		background-color: $blue;
+		color: #fff;
+	}
+
+	&::before {
+		content: "›";
+		font-size: 26px;
+		font-weight: normal;
+		display: inline-block;
+		position: relative;
+		top: 0;
+		line-height: $unit;
+	}
+
+	&.collapsed::before {
+		@include rotate(-90deg);
+		left: 13px;
+	}
+
+	&.open::before {
+		@include rotate(90deg);
+		left: 19px;
+	}
+}

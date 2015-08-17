@@ -1,0 +1,5 @@
+#
+# Set the entryLevel to -1
+#
+page1.body.parts.productCategoryMenu.entryLevel = -1
+page1.body.parts.productCategoryMenu.@context.documentNode = ${q(this.startingPoint).find('frameworks').get(0)}

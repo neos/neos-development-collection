@@ -1,0 +1,14 @@
+<table class="neos-tableview-table">
+	{{#each row in view._rowsValues}}
+		<tr>
+			{{#each column in row}}
+				<td>
+					{{#if column.icon}}
+						<i {{bindAttr class=":neos-icon column.icon"}}></i>
+					{{/if}}
+					{{column.value}}{{column.suffix}}
+				</td>
+			{{/each}}
+		</tr>
+	{{/each}}
+</table>
