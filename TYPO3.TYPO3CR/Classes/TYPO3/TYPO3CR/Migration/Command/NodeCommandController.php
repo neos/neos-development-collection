@@ -55,7 +55,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $contextFactory;
 
 	/**
-	 * Do the configured migrations in the given migration file for the given workspace
+	 * Do the configured migrations in the given migration.
 	 *
 	 * By default the up direction is applied, using the direction parameter this can
 	 * be changed.
