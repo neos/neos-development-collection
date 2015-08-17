@@ -1,0 +1,30 @@
+.neos-columnview-columns-3 .neos-columnview-column {
+	width: 33%;
+}
+.neos-columnview-columns-2 .neos-columnview-column {
+	width: 50%;
+}
+.neos-columnview-hero {
+	line-height: 54px;
+	margin-bottom: 16px;
+
+	.neos-columnview-value {
+		font-size: 54px;
+	}
+	.neos-columnview-label {
+		color: $textSubtleLight;
+		margin-left: 6px;
+	}
+}
+.neos-columnview-column {
+	float: left;
+
+	.neos-columnview-value {
+		font-size: 20px;
+		margin-bottom: 6px;
+	}
+	.neos-columnview-label {
+		color: $textSubtleLight;
+
+	}
+}

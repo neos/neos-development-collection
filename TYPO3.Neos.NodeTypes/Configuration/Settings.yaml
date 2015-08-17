@@ -1,0 +1,10 @@
+TYPO3:
+  Neos:
+    typoScript:
+      autoInclude:
+        'TYPO3.Neos.NodeTypes': TRUE
+
+    userInterface:
+      translation:
+        autoInclude:
+          'TYPO3.Neos.NodeTypes': ['NodeTypes/*']
