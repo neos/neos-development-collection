@@ -1,0 +1,29 @@
+<div class="neos-modal neos-modal-wide neos-insert-node-panel">
+	<div class="neos-modal-header">
+		<button class="neos-close neos-button" title="Close" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">Create new</div>
+	</div>
+	<div class="neos-modal-body">
+		{{#each view.nodeTypeGroups}}
+			<div class="neos-subheader">{{unbound label}}</div>
+			<ul class="neos-clearfix">
+				{{#each nodeTypes}}
+					<li class="neos-content-new-selecttype-button">
+						<button class="neos-content-new" {{bindAttr title="label"}} {{action "insertNode" nodeType icon target="view"}}>
+							{{#if icon}}
+								<i class="{{unbound icon}}"></i>
+							{{else}}
+								<i class="icon-sign-blank"></i>
+							{{/if}}
+							{{unbound label}}
+						</button>
+					</li>
+				{{/each}}
+			</ul>
+		{{/each}}
+	</div>
+	<div class="neos-modal-footer">
+		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+	</div>
+</div>
+<div class="neos-modal-backdrop neos-in"></div>

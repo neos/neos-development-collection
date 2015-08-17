@@ -1,0 +1,14 @@
+<div class="neos-modal">
+	<div class="neos-modal-header">
+		<button class="neos-close neos-button" data-dismiss="modal" title="Close" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">An error occurred during saving</div>
+	</div>
+	<div>
+		<div class="neos-subheader">Reload the page to attempt to fix the problem.</div>
+	</div>
+	<div class="neos-modal-footer">
+		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+		<button class="neos-button neos-button-danger" title="Reload the backend" {{action "reload" target="view"}}>Reload</button>
+	</div>
+</div>
+<div class="neos-modal-backdrop neos-in"></div>

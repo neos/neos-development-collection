@@ -1,0 +1,47 @@
+# Default case for ContentCollection TS Object
+#
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
+
+	nodePath = 'to-be-set-by-user'
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+
+	attributes.class = 'neos-contentcollection'
+
+	# You may override this to get your content collection from a different place than the current node.
+	# The Eel helper is used to provide a better error message if no content collection could be found.
+	@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
+
+	@process.contentElementWrapping {
+		node = ${contentCollectionNode}
+	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			collection = ${contentCollectionNode}
+			baseUri = ${String.toString(request.httpRequest.baseUri)}
+		}
+
+		entryTags {
+			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
+			2 = ${'Node_' + contentCollectionNode.identifier}
+		}
+
+		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
+	}
+}
+
+prototype(TYPO3.Neos:Content) {
+	prototype(TYPO3.Neos:ContentCollection) {
+		# Make ContentCollection inside content node types embedded by default.
+		# Usually there's no need for a separate cache entry for container content elements, but depending on the use-case
+		# the mode can safely be switched to 'cached'.
+		@cache {
+			mode = 'embed'
+		}
+	}
+}
