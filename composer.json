@@ -1,0 +1,33 @@
+{
+  "name": "neos/neos-development-collection",
+  "type": "neos-package-collection",
+  "require": {
+    "neos/flow-collection": "*",
+    "flowpack/composer-plugin": "*",
+    "typo3/setup": "*",
+    "typo3/twitter-bootstrap": "*",
+    "gedmo/doctrine-extensions": "2.3.*",
+    "typo3/imagine": "*"
+  },
+  "replace": {
+    "typo3/media": "dev-master",
+    "typo3/neos-kickstarter": "dev-master",
+    "typo3/neos-nodetypes": "dev-master",
+    "typo3/neos": "dev-master",
+    "typo3/typo3cr": "dev-master",
+    "typo3/typoscript": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Media": "TYPO3.Media/Classes",
+      "TYPO3\\Neos\\Kickstarter": "TYPO3.Neos.Kickstarter/Classes",
+      "TYPO3\\Neos\\NodeTypes": "TYPO3.Neos.NodeTypes/Classes",
+      "TYPO3\\Neos": "TYPO3.Neos/Classes",
+      "TYPO3\\TYPO3CR": "TYPO3.TYPO3CR/Classes",
+      "TYPO3\\TypoScript": "TYPO3.TypoScript/Classes"
+    }
+  },
+  "extra": {
+    "installer-name": "Neos"
+  }
+}
