@@ -2,8 +2,8 @@
   "name": "neos/neos-development-collection",
   "type": "neos-package-collection",
   "require": {
-    "neos/flow-collection": "*",
-    "flowpack/composer-plugin": "*",
+    "neos/flow-development-collection": "*",
+    "neos/composer-plugin": "*",
     "typo3/setup": "*",
     "typo3/twitter-bootstrap": "*",
     "gedmo/doctrine-extensions": "2.3.*",
