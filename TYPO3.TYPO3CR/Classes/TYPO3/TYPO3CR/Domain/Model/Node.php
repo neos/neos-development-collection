@@ -814,43 +814,53 @@ class Node implements NodeInterface, CacheAwareInterface
      * there if it is gettable.
      *
      * @param string $propertyName Name of the property
-     * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
+	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeInterface instances
      * @return mixed value of the property
      * @api
      */
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
     {
         $value = $this->nodeData->getProperty($propertyName);
-        if (!empty($value)) {
+		if (empty($value)) {
+			return $value;
+		}
+
             $nodeType = $this->getNodeType();
-            if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
+		if (!$nodeType->hasConfiguration('properties.' . $propertyName)) {
+			return $value;
+		}
+
                 $expectedPropertyType = $nodeType->getPropertyType($propertyName);
-                switch ($expectedPropertyType) {
-                    case 'references' :
-                        if ($returnNodesAsIdentifiers === false) {
-                            $nodes = array();
-                            foreach ($value as $nodeIdentifier) {
-                                $node = $this->context->getNodeByIdentifier($nodeIdentifier);
-                                // $node can be NULL if the node is not visible according to the current content context:
-                                if ($node !== null) {
-                                    $nodes[] = $node;
+		if ($expectedPropertyType === 'references') {
+			return $this->resolvePropertyReferences($returnNodesAsIdentifiers, $value);
                                 }
+
+		if ($expectedPropertyType === 'reference') {
+			return ($returnNodesAsIdentifiers ? $value : $this->context->getNodeByIdentifier($value));
                             }
-                            $value = $nodes;
+
+		return $this->propertyMapper->convert($value, $expectedPropertyType);
                         }
-                        break;
-                    case 'reference' :
-                        if ($returnNodesAsIdentifiers === false) {
-                            $value = $this->context->getNodeByIdentifier($value);
+
+	/**
+	 * Maps the property value (an array of node identifiers) to the Node objects if needed.
+	 *
+	 * @param boolean $returnNodesAsIdentifiers
+	 * @param array $value
+	 * @return array
+	 */
+	protected function resolvePropertyReferences($returnNodesAsIdentifiers, $value = []) {
+		if ($returnNodesAsIdentifiers) {
+			return $value;
                         }
-                        break;
-                    default:
-                        $value = $this->propertyMapper->convert($value, $expectedPropertyType);
-                        break;
-                }
-            }
-        }
-        return $value;
+
+		$nodes = array_map(function($nodeIdentifier) {
+			return $this->context->getNodeByIdentifier($nodeIdentifier);
+		}, $value);
+
+		return array_filter($nodes, function($node) {
+			return ($node !== NULL);
+		});
     }
 
     /**
