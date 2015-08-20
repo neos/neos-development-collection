@@ -248,7 +248,7 @@ class Node implements NodeInterface, CacheAwareInterface
 	 */
 	protected function moveVariantOrChild($aggregateOriginalPath, $aggregateDestinationPath, NodeInterface $nodeToMove = NULL) {
 		if ($nodeToMove === NULL) {
-			return FALSE;
+			return NULL;
         }
 
 		$variantOriginalPath = $nodeToMove->getPath();
