@@ -118,6 +118,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setName($newName)
     {
+		if ($this->getName() === $newName) {
+			return;
+		}
+
         if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
             throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
         }
@@ -126,9 +130,6 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeException('The root node cannot be renamed.', 1346778388);
         }
 
-        if ($this->getName() === $newName) {
-            return;
-        }
 
         $this->setPath(NodePaths::addNodePathSegment($this->getParentPath(), $newName));
         $this->nodeDataRepository->persistEntities();
@@ -148,72 +149,126 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param string $path
      * @param boolean $checkForExistence Checks for existence at target path, internally used for recursions and shadow nodes.
+	 * @return void
      * @throws NodeException
-     * @internal This method is purely internal and Node objects can call this on other Node objects
      */
-    public function setPath($path, $checkForExistence = true)
+	protected function setPath($path, $checkForExistence = true)
     {
         $originalPath = $this->nodeData->getPath();
         if ($originalPath === $path) {
             return;
         }
 
-        if ($checkForExistence) {
-            $existingNodeDataArray = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
-            /** @var NodeData $existingNodeData */
-            foreach ($existingNodeDataArray as $existingNodeData) {
-                if ($existingNodeData->getIdentifier() !== $this->getIdentifier()) {
+		$pathAvailable = $checkForExistence ? $this->isNodePathAvailable($path) : TRUE;
+		if (!$pathAvailable) {
                     throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
                 }
+
+		$changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
+		$this->nodeDataRepository->persistEntities();
+		array_walk($changedNodePathsCollection, function($changedNodePathInformation) { call_user_func_array([$this, 'emitNodePathChanged'], $changedNodePathInformation); });
             }
-        }
 
-        $changedNodePathsCollection = array();
+	/**
+	 * Checks if the given node path is available for this node, so either no node with this path exists or an existing node has the same identifier.
+	 *
+	 * @param string $path
+	 * @return boolean
+	 */
+	protected function isNodePathAvailable($path) {
+		$existingNodeDataArray = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
 
-        if ($this->getNodeType()->isAggregate()) {
-            $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
+		$nonMatchingNodeData = array_filter($existingNodeDataArray, function(NodeData $nodeData) {
+			return ($nodeData->getIdentifier() !== $this->getIdentifier());
+		});
 
-            /** @var NodeData $nodeData */
-            foreach ($nodeDataVariantsAndChildren as $nodeData) {
-                // $nodeDataVariants at this point also contains *our own NodeData reference* ($this->nodeData), as we find all NodeData objects
-                // (across all dimensions) with the same path.
-                //
-                // We need to ensure that our own Node object's nodeData reference ($this->nodeData) is also updated correctly if a new NodeData object
-                // is returned; as we rely on the fact that $this->getPath() will return the new node path in all circumstances.
-                //
-                // However, $this->createNodeForVariant() only returns $this if the Context object is the same as $this->context; which is not
-                // the case if $this->context contains dimension fallbacks such as "Language: EN, DE".
-                //
-                // The "if" statement below is actually a workaround to ensure that if the NodeData object is our own one, we update *ourselves* correctly,
-                // and thus return the correct (new) Node Path when calling $this->getPath() afterwards.
-                if ($this->nodeData === $nodeData) {
-                    $nodeVariant = $this;
-                } else {
-                    $nodeVariant = $this->createNodeForVariant($nodeData);
+		return ($nonMatchingNodeData === []);
                 }
 
-                if ($nodeVariant !== null) {
-                    $relativePathSegment = NodePaths::getRelativePathBetween($originalPath, $nodeVariant->getPath());
-                    $newNodeVariantPath = NodePaths::addNodePathSegment($path, $relativePathSegment);
-                    $possibleShadowedNodeData = $nodeData->move($newNodeVariantPath, $this->context->getWorkspace());
-                    $nodeVariant->setNodeData($possibleShadowedNodeData);
-                    $changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), !$checkForExistence);
+	/**
+	 * Moves a node and sub nodes to the new path.
+	 * This process is different depending on the fact if the node is an aggregate type or not.
+	 *
+	 * @param string $destinationPath the new node path
+	 * @param boolean $recursiveCall is this a recursive call
+	 * @return array NodeVariants and old and new paths
+	 */
+	protected function setPathInternal($destinationPath, $recursiveCall) {
+		if ($this->getNodeType()->isAggregate()) {
+			return $this->setPathInternalForAggregate($destinationPath, $recursiveCall);
                 }
-            }
-        } else {
+
+		$originalPath = $this->nodeData->getPath();
+
             /** @var Node $childNode */
             foreach ($this->getChildNodes() as $childNode) {
-                $childNode->setPath(NodePaths::addNodePathSegment($path, $childNode->getName()), false);
+			$childNode->setPath(NodePaths::addNodePathSegment($destinationPath, $childNode->getName()), FALSE);
+		}
+
+		$this->moveNodeToDestinationPath($this, $destinationPath);
+		return [
+			[$this, $originalPath, $this->getNodeData()->getPath(), $recursiveCall]
+		];
+	}
+
+	/**
+	 * Moves a node and sub nodes to the new path given with special logic for aggregate node types.
+	 *
+	 * @param string $destinationPath the new node path
+	 * @param boolean $recursiveCall is this a recursive call
+	 * @return array of arrays with NodeVariant and old and new path and if this was a recursive call
+	 */
+	protected function setPathInternalForAggregate($destinationPath, $recursiveCall) {
+		$originalPath = $this->nodeData->getPath();
+		$nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE, TRUE);
+
+		$changedNodePathsCollection = array_map(function($nodeData) use ($destinationPath, $originalPath, $recursiveCall) {
+			$recursiveCall = $recursiveCall || ($this->nodeData !== $nodeData);
+			$nodeVariant = $this->createNodeForVariant($nodeData);
+
+			$moveVariantResult = $nodeVariant === NULL ? NULL : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
+			if ($moveVariantResult !== NULL) array_push($moveVariantResult, $recursiveCall);
+
+			return $moveVariantResult;
+		}, $nodeDataVariantsAndChildren);
+
+		return array_filter($changedNodePathsCollection, function($moveVariantResult) {
+			return ($moveVariantResult !== NULL);
+		});
             }
-            $possibleShadowedNodeData = $this->nodeData->move($path, $this->context->getWorkspace());
-            $this->setNodeData($possibleShadowedNodeData);
-            $changedNodePathsCollection[] = array($this, $originalPath, $this->getNodeData()->getPath(), $checkForExistence);
+
+	/**
+	 * Moves the given variant or child node to the destination defined by the given path which is
+	 * the new path for the originally moved (parent|variant) node
+	 *
+	 * @param string $aggregateOriginalPath
+	 * @param string $aggregateDestinationPath
+	 * @param NodeInterface $nodeToMove
+	 * @return array NodeVariant and old and new path
+	 */
+	protected function moveVariantOrChild($aggregateOriginalPath, $aggregateDestinationPath, NodeInterface $nodeToMove = NULL) {
+		if ($nodeToMove === NULL) {
+			return FALSE;
         }
 
-        $this->nodeDataRepository->persistEntities();
-        foreach ($changedNodePathsCollection as $nodePathChangedArguments) {
-            call_user_func_array(array($this, 'emitNodePathChanged'), $nodePathChangedArguments);
+		$variantOriginalPath = $nodeToMove->getPath();
+		$relativePathSegment = NodePaths::getRelativePathBetween($aggregateOriginalPath, $variantOriginalPath);
+		$variantDestinationPath = NodePaths::addNodePathSegment($aggregateDestinationPath, $relativePathSegment);
+		$this->moveNodeToDestinationPath($nodeToMove, $variantDestinationPath);
+
+		return [$nodeToMove, $variantOriginalPath, $nodeToMove->getPath()];
         }
+
+	/**
+	 * Moves the given node to the destination path by modifying the underlaying NodeData object.
+	 *
+	 * @param NodeInterface $node
+	 * @param string $destinationPath
+	 */
+	protected function moveNodeToDestinationPath(NodeInterface $node, $destinationPath) {
+		$nodeData = $node->getNodeData();
+		$possibleShadowedNodeData = $nodeData->move($destinationPath, $this->context->getWorkspace());
+		$node->setNodeData($possibleShadowedNodeData);
     }
 
     /**
@@ -221,15 +276,13 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getOtherNodeVariants()
     {
-        $otherNodeVariants = array();
-        $allNodeVariants = $this->context->getNodeVariantsByIdentifier($this->getIdentifier());
-        foreach ($allNodeVariants as $index => $node) {
-            if ($node->getNodeData() !== $this->nodeData) {
-                $otherNodeVariants[] = $node;
+		return array_filter(
+			$this->context->getNodeVariantsByIdentifier($this->getIdentifier()),
+			function($node) {
+				return ($node->getNodeData() !== $this->nodeData);
             }
+		);
         }
-        return $otherNodeVariants;
-    }
 
     /**
      * @return \DateTimeInterface
@@ -1620,7 +1673,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeData $nodeData
      * @return void
      */
-    public function setNodeData(NodeData $nodeData)
+	protected function setNodeData(NodeData $nodeData)
     {
         $this->nodeData = $nodeData;
         $this->nodeDataIsMatchingContext = null;

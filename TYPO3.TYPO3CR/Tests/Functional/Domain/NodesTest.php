@@ -113,14 +113,14 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function setPathWorksRecursively()
+	public function setNameWorksRecursively() {
     {
         $rootNode = $this->context->getRootNode();
 
         $fooNode = $rootNode->createNode('foo');
         $bazNode = $fooNode->createNode('bar')->createNode('baz');
 
-        $fooNode->setPath('/quux');
+		$fooNode->setName('quux');
 
         $this->assertEquals('/quux/bar/baz', $bazNode->getPath());
     }

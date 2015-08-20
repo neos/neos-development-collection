@@ -920,7 +920,7 @@ class NodeData extends AbstractNodeData
      * @param string $path The (original) path for the node data
      * @return NodeData
      */
-    public function createShadow($path)
+	protected function createShadow($path)
     {
         $shadowNode = new NodeData($path, $this->workspace, $this->identifier, $this->dimensionValues);
         $shadowNode->similarize($this);
@@ -935,7 +935,7 @@ class NodeData extends AbstractNodeData
      * @param NodeData $nodeData
      * @return void
      */
-    public function setAsShadowOf(NodeData $nodeData = null)
+	protected function setAsShadowOf(NodeData $nodeData = null)
     {
         $this->setMovedTo($nodeData);
         $this->setRemoved(($nodeData !== null));
