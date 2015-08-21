@@ -232,9 +232,7 @@ class Node implements NodeInterface, CacheAwareInterface
 			return $moveVariantResult;
 		}, $nodeDataVariantsAndChildren);
 
-		return array_filter($changedNodePathsCollection, function($moveVariantResult) {
-			return ($moveVariantResult !== NULL);
-		});
+		return array_filter($changedNodePathsCollection);
             }
 
 	/**
@@ -858,9 +856,7 @@ class Node implements NodeInterface, CacheAwareInterface
 			return $this->context->getNodeByIdentifier($nodeIdentifier);
 		}, $value);
 
-		return array_filter($nodes, function($node) {
-			return ($node !== NULL);
-		});
+		return array_filter($nodes);
     }
 
     /**
