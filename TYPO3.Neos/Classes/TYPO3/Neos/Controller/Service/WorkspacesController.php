@@ -31,6 +31,12 @@ class WorkspacesController extends ActionController {
 	protected $workspaceRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Service\UserService
+	 */
+	protected $userService;
+
+	/**
 	 * @var array
 	 */
 	protected $viewFormatToObjectNameMap = array(
@@ -69,19 +75,29 @@ class WorkspacesController extends ActionController {
 	}
 
 	/**
-	 * Shows details of the given workspace
+	 * Create a workspace
 	 *
 	 * @param string $workspaceName
 	 * @param Workspace $baseWorkspace
+	 * @param string $ownerAccountIdentifier
 	 * @return string
 	 */
-	public function createAction($workspaceName, Workspace $baseWorkspace) {
+	public function createAction($workspaceName, Workspace $baseWorkspace, $ownerAccountIdentifier = NULL) {
 		$existingWorkspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 		if ($existingWorkspace !== NULL) {
 			$this->throwStatus(409, 'Workspace already exists', '');
 		}
 
-		$workspace = new Workspace($workspaceName, $baseWorkspace);
+		if ($ownerAccountIdentifier !== NULL) {
+			$owner = $this->userService->getUser($ownerAccountIdentifier);
+			if ($owner === NULL) {
+				$this->throwStatus(422, 'Requested owner account does not exist', '');
+			}
+		} else {
+			$owner = NULL;
+		}
+
+		$workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
 		$this->workspaceRepository->add($workspace);
 		$this->throwStatus(201, 'Workspace created', '');
 	}
