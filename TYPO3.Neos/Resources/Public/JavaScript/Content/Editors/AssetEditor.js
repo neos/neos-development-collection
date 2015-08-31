@@ -2,7 +2,7 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/FileUpload',
+	'Content/Editors/FileUpload',
 	'text!./AssetEditor.html',
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Utility',

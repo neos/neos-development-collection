@@ -1,7 +1,7 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/SelectBoxEditor',
+	'Content/Editors/SelectBoxEditor',
 	'Shared/I18n'
 ],
 function(

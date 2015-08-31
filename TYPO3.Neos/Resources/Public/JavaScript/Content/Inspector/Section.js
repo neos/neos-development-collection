@@ -4,7 +4,7 @@
 define(
 [
 	'emberjs',
-	'./PropertyEditor',
+	'Content/PropertyEditor',
 	'./ViewView',
 	'Content/Model/NodeSelection'
 ], function(
