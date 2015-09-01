@@ -97,7 +97,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	static public function getSubCommandShortDescription($controllerCommandName) {
 		switch ($controllerCommandName) {
 			case 'repair':
-				return 'Run several operations to ensure the node integrity';
+				return 'Run checks for basic node integrity in the content repository';
 		}
 	}
 
@@ -367,7 +367,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @return void
 	 */
 	protected function removeAbstractAndUndefinedNodes($workspaceName, $dryRun) {
-		$this->output->outputLine('<b>Checking for nodes with abstract or undefined node types ...</b>');
+		$this->output->outputLine('Checking for nodes with abstract or undefined node types ...');
 
 		$abstractNodeTypes = array();
 		$nonAbstractNodeTypes = array();
@@ -493,7 +493,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @return void
 	 */
 	protected function removeOrphanNodes($workspaceName, $dryRun) {
-		$this->output->outputLine('<b>Checking for orphan nodes ...</b>');
+		$this->output->outputLine('Checking for orphan nodes ...');
 
 		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
 		$queryBuilder = $this->entityManager->createQueryBuilder();
