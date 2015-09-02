@@ -84,7 +84,6 @@ class Thumbnail implements ImageInterface {
 		if (!$originalAsset instanceof ImageInterface) {
 			throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
 		}
-
 		$this->originalAsset = $originalAsset;
 		$this->maximumWidth = $maximumWidth;
 		$this->maximumHeight = $maximumHeight;
