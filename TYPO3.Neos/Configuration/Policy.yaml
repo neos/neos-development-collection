@@ -106,10 +106,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'
 
 
-  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
+#  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
 
-    'TYPO3.Neos:RestrictedWorkspaces':
-      matcher: 'isType("TYPO3\TYPO3CR\Domain\Model\Workspace") && !(property("owner").equals("context.userInformation.backendUser")) && property("owner") != NULL && property("name") !=  context.userInformation.userWorkspaceName'
+#    'TYPO3.Neos:RestrictedWorkspaces':
+#      matcher: 'isType("TYPO3\TYPO3CR\Domain\Model\Workspace") && !(property("owner").equals("context.userInformation.backendUser")) && property("owner") != NULL && property("name") !=  context.userInformation.userWorkspaceName'
 
 roles:
 
@@ -152,9 +152,9 @@ roles:
         privilegeTarget: 'TYPO3.Neos:Backend.AccessContentInOthersWorkspace'
         permission: GRANT
 
-      -
-        privilegeTarget: 'TYPO3.Neos:RestrictedWorkspaces'
-        permission: GRANT
+#      -
+#        privilegeTarget: 'TYPO3.Neos:RestrictedWorkspaces'
+#        permission: GRANT
 
   'TYPO3.Neos:RestrictedEditor':
     parentRoles: ['TYPO3.TYPO3CR:Administrator']
