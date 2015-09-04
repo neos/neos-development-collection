@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
@@ -660,6 +661,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 				/** @var NodeData $nodeData */
 				foreach ($properties as $propertyName => $propertyType) {
 					$propertyValue = $nodeData->getProperty($propertyName);
+					$convertedProperty = NULL;
+
+					if (is_object($propertyValue)) {
+						$convertedProperty = $propertyValue;
+					}
 					if (is_string($propertyValue) && strlen($propertyValue) === 36) {
 						$convertedProperty = $this->propertyMapper->convert($propertyValue, $propertyType);
 						if ($convertedProperty === NULL) {
@@ -668,6 +674,16 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 							$brokenReferencesCount ++;
 						}
 					}
+					if ($convertedProperty instanceof \Doctrine\ORM\Proxy\Proxy) {
+						try {
+							$convertedProperty->__load();
+						} catch (EntityNotFoundException $e) {
+							$nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
+							$this->output->outputLine('Broken reference in "%s", property "%s" (%s) referring to %s.', array($nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+							$brokenReferencesCount ++;
+						}
+					}
+
 				}
 			}
 		}
