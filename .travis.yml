@@ -1,0 +1,68 @@
+language: php
+php:
+  - 5.5
+  - 5.6
+#  - hhvm
+#  - nightly
+before_install:
+  - cd ..; mkdir Build; cd Build
+  - |
+  cat <<EOF > composer.json
+  {
+      "name": "typo3/neos-base-distribution",
+      "description" : "TYPO3 Neos Base Distribution",
+      "config": {
+          "vendor-dir": "Packages/Libraries",
+          "bin-dir": "bin"
+      },
+      "require": {
+          "neos/neos-development-collection": "dev-${TRAVIS_BRANCH}",
+          "neos/flow-development-collection": "dev-master",
+
+          "typo3/neosdemotypo3org": "dev-master",
+          "typo3/neos-kickstarter": "dev-master",
+
+          "doctrine/migrations": "@dev",
+
+          "typo3/party": "@dev",
+          "typo3/neos-seo": "@dev",
+          "typo3/imagine": "@dev",
+          "typo3/twitter-bootstrap": "@dev",
+          "typo3/form": "@dev",
+          "typo3/setup": "@dev",
+          "flowpack/neos-frontendlogin": "@dev"
+      },
+      "require-dev": {
+          "typo3/buildessentials": "dev-master",
+          "mikey179/vfsstream": "1.5.*",
+          "phpunit/phpunit": "4.6.*",
+          "flowpack/behat": "dev-master"
+      },
+      "suggest": {
+          "ext-pdo_sqlite": "For running functional tests out-of-the-box this is required"
+      },
+      "scripts": {
+          "post-update-cmd": "TYPO3\\\\Flow\\\\Composer\\\\InstallerScripts::postUpdateAndInstall",
+          "post-install-cmd": "TYPO3\\\\Flow\\\\Composer\\\\InstallerScripts::postUpdateAndInstall",
+          "post-package-update": "TYPO3\\\\Flow\\\\Composer\\\\InstallerScripts::postPackageUpdateAndInstall",
+          "post-package-install": "TYPO3\\\\Flow\\\\Composer\\\\InstallerScripts::postPackageUpdateAndInstall"
+      }
+  }
+install:
+  - composer install
+  - rm -rf Packages/Neos
+  - mv ../neos-development-collection Packages/Neos
+  - |
+  cat <<EOF > Configuration/Routes.yaml
+  -
+    name: 'TYPO3 Neos'
+    uriPattern: '<TYPO3NeosSubroutes>'
+    subRoutes:
+      'TYPO3NeosSubroutes':
+        package: 'TYPO3.Neos'
+        variables:
+          'defaultUriSuffix': '.html'
+  - cat Configuration/Routes.yaml
+script:
+  - bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml
+  - bin/phpunit -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml
