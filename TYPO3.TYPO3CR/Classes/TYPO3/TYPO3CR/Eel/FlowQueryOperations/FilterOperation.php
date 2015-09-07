@@ -130,14 +130,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 				return $operand[0] === '!' ? $isOfType === FALSE : $isOfType;
 			}
 		} else if ($operator === '!instanceof' && $value instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
-			if ($this->operandIsSimpleType($operand)) {
-				return !$this->handleSimpleTypeOperand($operand, $value);
-			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface' || $operand === 'TYPO3\TYPO3CR\Domain\Model\Node') {
-				return FALSE;
-			} else {
-				$isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
-				return $operand[0] === '!' ? $isOfType : $isOfType === FALSE;
-			}
+			return !$this->evaluateOperator($value, 'instanceof', $operand);
 		}
 		return parent::evaluateOperator($value, $operator, $operand);
 	}
