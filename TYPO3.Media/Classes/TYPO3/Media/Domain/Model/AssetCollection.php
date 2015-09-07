@@ -37,7 +37,7 @@ class AssetCollection {
 
 	/**
 	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
-	 * @ORM\ManyToMany
+	 * @ORM\ManyToMany(inversedBy="assetCollections")
 	 * @ORM\OrderBy({"label"="ASC"})
 	 * @Flow\Lazy
 	 */
