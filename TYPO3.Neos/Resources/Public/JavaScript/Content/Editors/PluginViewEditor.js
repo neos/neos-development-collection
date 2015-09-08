@@ -2,7 +2,7 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/SelectBoxEditor',
+	'Content/Inspector/SelectBoxEditor',
 	'Content/Inspector/InspectorController',
 	'Shared/I18n'
 ],

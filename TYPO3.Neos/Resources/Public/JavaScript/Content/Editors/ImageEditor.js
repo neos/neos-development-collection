@@ -2,10 +2,10 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/FileUpload',
+	'Content/Editors/FileUpload',
 	'text!./ImageEditor.html',
 	'text!./ImageEditorCrop.html',
-	'Content/Inspector/Editors/BooleanEditor',
+	'Content/Editors/BooleanEditor',
 	'Library/spinjs/spin',
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Notification',

@@ -121,6 +121,39 @@ additionalProperties:
 
         'position': { type: integer, description: 'Position of the node type in the insert new panels' }
 
+        'wizard':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'properties':
+              type: ['dictionary', 'null']
+              additionalProperties:
+                # for each property...
+                type: dictionary
+                properties:
+                  'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
+
+                  'defaultValue': { type: any, description: "Default value of this property. Type must match specified 'type'." }
+
+                  'validation':
+                    type: ['dictionary', 'null']
+
+                  'ui':
+                    type: dictionary
+                    additionalProperties: FALSE
+                    properties:
+
+                      'label': { type: string, description: "Human-readable label for this property." }
+
+                      'inspector':
+                        type: dictionary
+                        additionalProperties: FALSE
+                        properties:
+
+                          'editor': { type: string, description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
+
+                          'editorOptions': { type: dictionary, description: 'options for the given editor' }
+
         'inspector':
           type: dictionary
           additionalProperties: FALSE

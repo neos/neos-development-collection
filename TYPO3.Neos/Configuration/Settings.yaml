@@ -141,7 +141,7 @@ TYPO3:
 
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
-        'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
+        'TYPO3.Neos/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Editors/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: 'en'
@@ -174,18 +174,18 @@ TYPO3:
       inspector:
         dataTypes:
           'string':
-            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            editor: 'TYPO3.Neos/Editors/TextFieldEditor'
           'integer':
-            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            editor: 'TYPO3.Neos/Editors/TextFieldEditor'
           'boolean':
-            editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+            editor: 'TYPO3.Neos/Editors/BooleanEditor'
           'array':
-            editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+            editor: 'TYPO3.Neos/Editors/SelectBoxEditor'
             editorOptions:
               multiple: TRUE
               placeholder: 'Choose'
           'TYPO3\Media\Domain\Model\ImageInterface':
-            editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
+            editor: 'TYPO3.Neos/Editors/ImageEditor'
             editorOptions:
               # With this option you can limit the maximum file size to the specified number of bytes.
               # Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb"
@@ -222,49 +222,49 @@ TYPO3:
                     width: 0
                     height: 0
           'TYPO3\Media\Domain\Model\Asset':
-            editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
+            editor: 'TYPO3.Neos/Editors/AssetEditor'
           'array<TYPO3\Media\Domain\Model\Asset>':
-            editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
+            editor: 'TYPO3.Neos/Editors/AssetEditor'
             editorOptions:
               multiple: TRUE
           'DateTime':
-            editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
+            editor: 'TYPO3.Neos/Editors/DateTimeEditor'
             editorOptions:
               format: 'd-m-Y'
           'reference':
-            editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
+            editor: 'TYPO3.Neos/Editors/ReferenceEditor'
           'references':
-            editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
+            editor: 'TYPO3.Neos/Editors/ReferencesEditor'
         editors:
-          'TYPO3.Neos/Inspector/Editors/CodeEditor':
+          'TYPO3.Neos/Editors/CodeEditor':
             editorOptions:
               buttonLabel: 'TYPO3.Neos:Main:content.inspector.editors.codeEditor.editCode'
 
-          'TYPO3.Neos/Inspector/Editors/DateTimeEditor':
+          'TYPO3.Neos/Editors/DateTimeEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:content.inspector.editors.dateTimeEditor.noDateSet'
 
-          'TYPO3.Neos/Inspector/Editors/AssetEditor':
+          'TYPO3.Neos/Editors/AssetEditor':
             editorOptions:
               fileChooserLabel: 'TYPO3.Neos:Main:choose'
 
-          'TYPO3.Neos/Inspector/Editors/ImageEditor':
+          'TYPO3.Neos/Editors/ImageEditor':
             editorOptions:
               fileChooserLabel: 'TYPO3.Neos:Main:choose'
 
-          'TYPO3.Neos/Inspector/Editors/LinkEditor':
+          'TYPO3.Neos/Editors/LinkEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:content.inspector.editors.linkEditor.search'
 
-          'TYPO3.Neos/Inspector/Editors/ReferencesEditor':
+          'TYPO3.Neos/Editors/ReferencesEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:typeToSearch'
 
-          'TYPO3.Neos/Inspector/Editors/ReferenceEditor':
+          'TYPO3.Neos/Editors/ReferenceEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:typeToSearch'
 
-          'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
+          'TYPO3.Neos/Editors/SelectBoxEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:choose'
 
@@ -387,6 +387,12 @@ TYPO3:
             accountIdentifier: '${entity.accountIdentifier}'
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
+
+    actionsOnNodeCreation:
+      defaultContext:
+        String: 'TYPO3\Eel\Helper\StringHelper'
+        Array: 'TYPO3\Eel\Helper\ArrayHelper'
+        Date: 'TYPO3\Eel\Helper\DateHelper'
 
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']

@@ -1,0 +1,21 @@
+<div class="neos-modal neos-modal-wide neos-insert-node-panel">
+	<div class="neos-modal-header">
+		<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view.parentView"}}></button>
+		<div class="neos-header">Configure {{view.selectedNodeType}}</div>
+	</div>
+	<div class="neos-modal-body wizard-body">
+		{{#each property in view.properties}}
+			<label title="{{unbound property.ui.label}}">{{unbound property.ui.label}}</label>
+			{{view view.PropertyEditor propertyDefinitionBinding="property" inspectorBinding="view"}}
+		{{/each}}
+	</div>
+	<div class="neos-modal-footer">
+		<button class="neos-content-new" {{action "deselectNodeType" target="view.parentView"}}>
+			Back
+		</button>
+		<button class="neos-content-new" {{action "insertNode" view.selectedNodeType icon view.nodeProperties target="view.parentView"}}>
+			Create
+		</button>
+	</div>
+</div>
+<div class="neos-modal-backdrop neos-in"></div>

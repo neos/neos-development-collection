@@ -120,3 +120,9 @@ prototype(TYPO3.Neos.NodeTypes:ContentReferences) {
 		}
 	}
 }
+
+prototype(TYPO3.Neos.NodeTypes:Gallery) < prototype(TYPO3.TypoScript:Tag) {
+	iterator = ${iterator}
+	content = TYPO3.Neos:ContentCollectionRenderer
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+}

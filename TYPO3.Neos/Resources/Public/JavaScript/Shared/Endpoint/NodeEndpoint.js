@@ -25,24 +25,24 @@ define([
 			);
 		},
 
-		create: function(referenceNode, nodeData, position, optionsOverride) {
+		create: function(referenceNode, nodeData, position, optionsOverride, actionData) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-create'),
-				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, position: position}}, optionsOverride || {})
+				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, position: position, actionData: actionData || {} }}, optionsOverride || {})
 			);
 		},
 
-		createAndRender: function(referenceNode, typoScriptPath, nodeData, position, optionsOverride) {
+		createAndRender: function(referenceNode, typoScriptPath, nodeData, position, optionsOverride, actionData) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createAndRender'),
-				$.extend({data: {referenceNode: referenceNode, typoScriptPath: typoScriptPath, nodeData: nodeData, position: position}}, optionsOverride || {})
+				$.extend({data: {referenceNode: referenceNode, typoScriptPath: typoScriptPath, nodeData: nodeData, position: position, actionData: actionData || {} }}, optionsOverride || {})
 			);
 		},
 
-		createNodeForTheTree: function(referenceNode, nodeData, position, nodeTypeFilter, optionsOverride) {
+		createNodeForTheTree: function(referenceNode, nodeData, position, nodeTypeFilter, optionsOverride, actionData) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createNodeForTheTree'),
-				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, nodeTypeFilter: nodeTypeFilter, position: position}}, optionsOverride || {})
+				$.extend({data: {referenceNode: referenceNode, nodeData: nodeData, nodeTypeFilter: nodeTypeFilter, position: position, actionData: actionData || {} }}, optionsOverride || {})
 			);
 		},
 

@@ -43,3 +43,18 @@
         layout:
           label: i18n
           position: 150
+    wizard:
+      properties:
+        'title':
+          type: 'string'
+          ui:
+            label: 'Title'
+            inspector:
+              editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+  options:
+    actionsOnNodeCreation:
+      setTitle:
+        type: 'setProperties'
+        options:
+          properties:
+            'title': '${data.title}'

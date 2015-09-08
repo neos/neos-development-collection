@@ -581,9 +581,9 @@ define(
 
 				InsertNodePanel.create({
 					allowedNodeTypes: allowedNodeTypes,
-					insertNode: function(nodeType, icon) {
+					insertNode: function(nodeType, icon, actionData) {
 						that.set('insertNodePanelShown', false);
-						that.createNode(activeNode, null, nodeType, icon, position);
+						that.createNode(activeNode, null, nodeType, icon, position, actionData);
 						this.cancel();
 					},
 					willDestroyElement: function() {
@@ -617,7 +617,7 @@ define(
 				});
 			},
 
-			createNode: function(activeNode, title, nodeType, iconClass, position) {
+			createNode: function(activeNode, title, nodeType, iconClass, position, actionData) {
 				var data = {
 						title: title ? title : 'Loading ...',
 						nodeType: nodeType,
@@ -637,10 +637,10 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				this.persistNode(activeNode, newNode, nodeType, title, position);
+				this.persistNode(activeNode, newNode, nodeType, title, position, actionData);
 			},
 
-			persistNode: function(activeNode, node, nodeType, title, position) {
+			persistNode: function(activeNode, node, nodeType, title, position, actionData) {
 				var that = this,
 					tree = node.tree,
 					parameters = {
@@ -657,7 +657,9 @@ define(
 					activeNode.data.key,
 					parameters,
 					position,
-					this.baseNodeType
+					this.baseNodeType,
+					null,
+					actionData
 				).then(
 					function(result) {
 						// Actualizing the created dynatree node

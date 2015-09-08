@@ -198,9 +198,10 @@ define(
 		 *
 		 * @param {string} nodeType
 		 * @param {object} referenceNode
+		 * @param {object} actionData
 		 */
-		addAbove: function(nodeType, referenceNode) {
-			this._add(nodeType, referenceNode, 'before');
+		addAbove: function(nodeType, referenceNode, actionData) {
+			this._add(nodeType, referenceNode, 'before', actionData);
 		},
 
 		/**
@@ -208,9 +209,10 @@ define(
 		 *
 		 * @param {string} nodeType
 		 * @param {object} referenceNode
+		 * @param {object} actionData
 		 */
-		addBelow: function(nodeType, referenceNode) {
-			this._add(nodeType, referenceNode, 'after');
+		addBelow: function(nodeType, referenceNode, actionData) {
+			this._add(nodeType, referenceNode, 'after', actionData);
 		},
 
 		/**
@@ -218,9 +220,10 @@ define(
 		 *
 		 * @param {string} nodeType
 		 * @param {object} referenceNode
+		 * @param {object} actionData
 		 */
-		addInside: function(nodeType, referenceNode) {
-			this._add(nodeType, referenceNode, 'into');
+		addInside: function(nodeType, referenceNode, actionData) {
+			this._add(nodeType, referenceNode, 'into', actionData);
 		},
 
 		/**
@@ -229,8 +232,9 @@ define(
 		 * @param {string} nodeType
 		 * @param {object} referenceNode
 		 * @param {string} position
+		 * @param {object} actionData
 		 */
-		_add: function(nodeType, referenceNode, position) {
+		_add: function(nodeType, referenceNode, position, actionData) {
 			var that = this,
 				referenceNodeEntity = referenceNode.get('_vieEntity'),
 				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
@@ -251,7 +255,8 @@ define(
 					xhr: function() {
 						return localXhr;
 					}
-				}
+				},
+				actionData
 			).then(
 				function(result) {
 					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);

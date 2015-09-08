@@ -381,7 +381,7 @@ define(
 				});
 			},
 
-			createNode: function(activeNode, title, nodeType, iconClass, position) {
+			createNode: function(activeNode, title, nodeType, iconClass, position, actionData) {
 				var that = this,
 					data = {
 						title: title,
@@ -443,7 +443,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
-						that.persistNode(activeNode, newNode, nodeType, title, position);
+						that.persistNode(activeNode, newNode, nodeType, title, position, actionData);
 					}
 				});
 			},
