@@ -11,4 +11,5 @@ prototype(TYPO3.Neos:PluginView) < prototype(TYPO3.Neos:Content) {
 			1 = 'node'
 		}
 	}
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
