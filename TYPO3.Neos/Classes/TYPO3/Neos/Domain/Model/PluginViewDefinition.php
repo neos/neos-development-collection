@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
@@ -91,7 +92,8 @@ class PluginViewDefinition
      */
     public function getLabel()
     {
-        return isset($this->configuration['label']) ? $this->configuration['label'] : '';
+        $translationHelper = new TranslationHelper();
+        return isset($this->configuration['label']) ? $translationHelper->translate($this->configuration['label']) : '';
     }
 
     /**
