@@ -66,6 +66,10 @@ class PluginViewImplementation extends PluginImplementation {
 
 		// Set the node to render this to the masterPlugin node
 		$this->node = $this->propertyMapper->convert($pluginNodePath, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		if ($this->node === NULL) {
+			return $pluginRequest;
+		}
+
 		$pluginRequest->setArgument('__node', $this->node);
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 		$this->passArgumentsToPluginRequest($pluginRequest);
