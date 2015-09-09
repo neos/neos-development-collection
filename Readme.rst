@@ -1,5 +1,8 @@
 .. image:: https://travis-ci.org/neos/neos-development-collection.svg
     :target: https://travis-ci.org/neos/neos-development-collection
+.. image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
+   :target: https://codeclimate.com/github/neos/neos-development-collection
+   :alt: Code Climate
 
 ---------------------------
 Neos development collection
