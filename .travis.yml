@@ -25,4 +25,4 @@ before_script:
   - FLOW_CONTEXT=Testing ./flow configuration:show --type Settings --path TYPO3.Flow.persistence.backendOptions
 script:
   - bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml
-  - bin/phpunit --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml
+  - bin/phpunit --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
