@@ -1,4 +1,5 @@
 exclude_paths:
+  - 'TYPO3.Media/Resources/Public/Libraries/*'
   - 'TYPO3.Neos/Resources/Public/Library/*'
   - 'TYPO3.Neos/Tests/*'
   - 'TYPO3.Media/Tests/*'
