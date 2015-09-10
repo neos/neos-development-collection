@@ -49,6 +49,8 @@ events occur:
 * **Neos.EditPreviewPanelClosed** When the edit/preview panel is closed.
 * **Neos.MenuPanelOpened** When the menu panel is opened.
 * **Neos.MenuPanelClosed** When the menu panel is closed.
+* **Neos.FullScreenModeActivated** When the backend switches to fullscreen mode.
+* **Neos.FullScreenModeDeactivated** When the backend leaves the fullscreen mode.
 
 Example of listening for the ``LayoutChanged`` event.
 
