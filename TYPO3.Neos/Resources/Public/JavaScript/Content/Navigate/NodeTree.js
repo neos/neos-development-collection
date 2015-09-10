@@ -361,6 +361,7 @@ define(
 									node.data.fullTitle = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
 									node.render();
+									$(node.span).addClass('neos-dynatree-dirty');
 									if (isCurrentNode) {
 										ContentModule.loadPage(node.data.href);
 									}
