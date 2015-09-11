@@ -17,6 +17,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Exception\NoThumbnailAvailableException;
@@ -73,21 +74,18 @@ class ThumbnailService
      * the original asset is used.
      *
      * @param AssetInterface $asset The asset to render a thumbnail for
-     * @param integer $maximumWidth The thumbnail's maximum width in pixels
-     * @param integer $maximumHeight The thumbnail's maximum height in pixels
-     * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
-     * @param boolean $allowUpScaling Whether the resulting image should be upscaled
+     * @param ThumbnailConfiguration $configuration
      * @return Thumbnail
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, $maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        $thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight, $allowUpScaling);
+        $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
         if ($thumbnail === null) {
             if (!$asset instanceof ImageInterface) {
                 throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
             }
-            $thumbnail = new Thumbnail($asset, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
+            $thumbnail = new Thumbnail($asset, $configuration);
 
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
             $this->thumbnailRepository->add($thumbnail);

@@ -7,6 +7,10 @@ TYPO3:
             events: ['postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
   Media:
+    # The setting simulate how Neos 1.2 handle image cropping with maximumWidth and maximumHeight
+    # this behaviour is deprecated and will be remove in Neos 3.0, maximumWidth and maximumHeight
+    # need to be replace by width and height if you need fixed dimensions.
+    behaviourFlag: '1.2'
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document
