@@ -9456,6 +9456,9 @@
   text-align: center;
   padding-right: 4px;
 }
+.neos.neos-module.neos-module-management-history {
+  text-align: center;
+}
 .neos.neos-module.neos-module-management-history .neos-history-events-divider {
   margin: 0;
   padding: 0;
@@ -9464,6 +9467,9 @@
 .neos.neos-module.neos-module-management-history .neos-history {
   max-width: 1000px;
   margin: 0 auto;
+}
+.neos.neos-module.neos-module-management-history .neos-history-nextpage {
+  display: none;
 }
 .neos.neos-module.neos-module-management-history .neos-history-day .neos-history-date {
   margin-left: 50%;
@@ -9488,27 +9494,6 @@
   border: 1px solid transparent;
   content: "";
   clear: both;
-}
-.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-left {
-  text-align: right;
-  border-right: 4px solid #323232;
-}
-.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-left .neos-history-event-time {
-  float: right;
-  margin-right: 10px;
-  width: 65px;
-  text-align: right;
-}
-.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-right {
-  text-align: left;
-  margin-left: 50%;
-  border-left: 4px solid #323232;
-}
-.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-right .neos-history-event-time {
-  float: left;
-  margin-left: 10px;
-  width: 65px;
-  text-align: left;
 }
 .neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event {
   text-align: left;
@@ -9540,6 +9525,31 @@
 }
 .neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event .neos-history-event-description a {
   text-decoration: underline;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day:nth-child(even) .neos-history-events.neos-history-alignment {
+  text-align: right;
+  border-right: 4px solid #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day:nth-child(even) .neos-history-events.neos-history-alignment .neos-history-event-time {
+  float: right;
+  margin-right: 10px;
+  width: 65px;
+  text-align: right;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day:nth-child(odd) .neos-history-events.neos-history-alignment {
+  text-align: left;
+  margin-left: 50%;
+  border-left: 4px solid #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day:nth-child(odd) .neos-history-events.neos-history-alignment .neos-history-event-time {
+  float: left;
+  margin-left: 10px;
+  width: 65px;
+  text-align: left;
+}
+.neos.neos-module.neos-module-management-history .loadMore {
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 .neos.neos-module > .neos-module-wrap {
   position: relative;

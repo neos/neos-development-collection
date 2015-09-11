@@ -34,18 +34,32 @@ class HistoryController extends AbstractModuleController
 
     /**
      * Show event overview.
-     *
+     * @param integer $offset
+     * @param integer $limit
      * @return void
      */
-    public function indexAction()
+    public function indexAction($offset = 0, $limit = 10)
     {
-        $events = $this->eventRepository->findRelevantEvents()->toArray();
+        $events = $this->eventRepository->findRelevantEvents($offset, $limit + 1)->toArray();
+
+        if (count($events) == $limit + 1) {
+            $events = array_slice($events, 0, 10);
+
+            $nextPage = $this
+                ->controllerContext
+                ->getUriBuilder()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+        } else {
+            $nextPage = null;
+        }
 
         $eventsByDate = array();
         foreach ($events as $event) {
             if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
                 continue;
             }
+
             /* @var $event Event */
             $day = $event->getTimestamp()->format('Y-m-d');
             if (!isset($eventsByDate[$day])) {
@@ -57,7 +71,10 @@ class HistoryController extends AbstractModuleController
             $eventsOnThisDay->add($event);
         }
 
-        $this->view->assign('eventsByDate', $eventsByDate);
+        $this->view->assignMultiple(array(
+            'eventsByDate' => $eventsByDate,
+            'nextPage' => $nextPage
+        ));
     }
 
     /**
