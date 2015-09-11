@@ -34,11 +34,13 @@ class HistoryController extends AbstractModuleController {
 
 	/**
 	 * Show event overview.
-	 *
+	 * @param integer $offset
+	 * @param integer $limit
 	 * @return void
 	 */
-	public function indexAction() {
-		$events = $this->eventRepository->findRelevantEvents()->toArray();
+	public function indexAction($offset = 0, $limit = 10) {
+
+		$events = $this->eventRepository->findRelevantEvents($offset, $limit)->toArray();
 
 		$eventsByDate = array();
 		foreach ($events as $event) {
@@ -56,7 +58,16 @@ class HistoryController extends AbstractModuleController {
 			$eventsOnThisDay->add($event);
 		}
 
-		$this->view->assign('eventsByDate', $eventsByDate);
+		if (count($events) >= $limit) {
+			$nextPage = $this->controllerContext->getUriBuilder()->setCreateAbsoluteUri(TRUE)->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+		} else {
+			$nextPage = NULL;
+		}
+
+		$this->view->assignMultiple(array(
+			'eventsByDate' => $eventsByDate,
+			'nextPage' => $nextPage
+		));
 	}
 
 	/**
