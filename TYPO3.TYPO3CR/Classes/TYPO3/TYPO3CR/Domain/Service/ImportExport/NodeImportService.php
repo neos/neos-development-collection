@@ -512,6 +512,9 @@ class NodeImportService {
 	 */
 	protected function parseEndElement(\XMLReader $reader) {
 		switch ($reader->name) {
+			case 'hiddenBeforeDateTime':
+			case 'hiddenAfterDateTime':
+			case 'contentObjectProxy':
 			case 'creationDateTime':
 			case 'lastModificationDateTime':
 			case 'lastPublicationDateTime':
