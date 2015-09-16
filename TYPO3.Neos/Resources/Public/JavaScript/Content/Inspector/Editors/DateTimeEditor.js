@@ -198,7 +198,8 @@ function (Ember, $, template) {
 		reset: function() {
 			this.close();
 			this.set('hrValue', '');
-			this.$('.neos-editor-datetimepicker').datetimepicker('update', null);
+			this.$('.neos-editor-datetimepicker').datetimepicker('update', new Date());
+			this.$('.neos-editor-datetimepicker').datetimepicker('showMode', 2);
 			this.set('value', '');
 		},
 
