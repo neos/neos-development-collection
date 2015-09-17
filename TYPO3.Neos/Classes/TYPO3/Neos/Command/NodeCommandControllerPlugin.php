@@ -70,7 +70,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	static public function getSubCommandShortDescription($controllerCommandName) {
 		switch ($controllerCommandName) {
 			case 'repair':
-				return 'Generate missing URI path segments';
+				return 'Run integrity checks related to Neos features';
 		}
 	}
 
@@ -131,7 +131,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			$flowQuery = new FlowQuery($baseContextSiteNodes);
 			$siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
 			if (count($siteNodes) > 0) {
-				$this->output->outputLine('Searching for nodes with missing URI path segment in dimension "%s"', array(trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
+				$this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', array(trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
 				foreach ($siteNodes as $siteNode) {
 					$this->generateUriPathSegmentsForNode($siteNode, $dryRun);
 				}

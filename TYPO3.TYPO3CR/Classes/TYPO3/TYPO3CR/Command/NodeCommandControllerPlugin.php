@@ -11,9 +11,11 @@ namespace TYPO3\TYPO3CR\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -21,7 +23,6 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -78,6 +79,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	protected $entityManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * @var array
 	 */
 	protected $pluginConfigurations = array();
@@ -97,7 +104,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	static public function getSubCommandShortDescription($controllerCommandName) {
 		switch ($controllerCommandName) {
 			case 'repair':
-				return 'Run several operations to ensure the node integrity';
+				return 'Run checks for basic node integrity in the content repository';
 		}
 	}
 
@@ -138,7 +145,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					PHP_EOL .
 					'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
 					'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
-					'the default value for that property will be set.' . PHP_EOL;
+					'the default value for that property will be set.' . PHP_EOL .
+					PHP_EOL .
+					'<u>Remove broken object references</u>' . PHP_EOL .
+					PHP_EOL .
+					'Detects and removes references from nodes to entities which don\'t exist anymore (for' . PHP_EOL .
+					'example Image nodes referencing ImageVariant objects which are gone for some reason).' . PHP_EOL;
 		}
 	}
 
@@ -162,6 +174,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 					$this->removeOrphanNodes($workspaceName, $dryRun);
 					$this->removeDisallowedChildNodes($workspaceName, $dryRun);
 					$this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
+					$this->removeBrokenEntityReferences($workspaceName, $dryRun);
 				}
 				$this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
 				$this->reorderChildNodes($nodeType, $workspaceName, $dryRun);
@@ -367,7 +380,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @return void
 	 */
 	protected function removeAbstractAndUndefinedNodes($workspaceName, $dryRun) {
-		$this->output->outputLine('<b>Checking for nodes with abstract or undefined node types ...</b>');
+		$this->output->outputLine('Checking for nodes with abstract or undefined node types ...');
 
 		$abstractNodeTypes = array();
 		$nonAbstractNodeTypes = array();
@@ -493,7 +506,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 	 * @return void
 	 */
 	protected function removeOrphanNodes($workspaceName, $dryRun) {
-		$this->output->outputLine('<b>Checking for orphan nodes ...</b>');
+		$this->output->outputLine('Checking for orphan nodes ...');
 
 		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
 		$queryBuilder = $this->entityManager->createQueryBuilder();
@@ -609,6 +622,91 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 			}
 			$this->output->outputLine();
 		}
+	}
+
+	/**
+	 * Remove broken entity references
+	 *
+	 * This removes references from nodes to entities which don't exist anymore.
+	 *
+	 * @param string $workspaceName
+	 * @param boolean $dryRun
+	 * @return void
+	 */
+	public function removeBrokenEntityReferences($workspaceName, $dryRun) {
+		$this->output->outputLine('Checking for broken entity references ...');
+
+		/** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
+		$workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+
+		$nodeTypesWithEntityReferences = array();
+		foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+			/** @var NodeType $nodeType */
+			foreach (array_keys($nodeType->getProperties()) as $propertyName) {
+				$propertyType = $nodeType->getPropertyType($propertyName);
+				if (strpos($propertyType, '\\') !== FALSE) {
+					if (!isset($nodeTypesWithEntityReferences[$nodeType->getName()])) {
+						$nodeTypesWithEntityReferences[$nodeType->getName()] = array();
+					}
+					$nodeTypesWithEntityReferences[$nodeType->getName()][$propertyName] = $propertyType;
+				}
+			}
+		}
+
+		$nodesWithBrokenEntityReferences = array();
+		$brokenReferencesCount = 0;
+		foreach ($nodeTypesWithEntityReferences as $nodeTypeName => $properties) {
+			$nodeDatas = $this->nodeDataRepository->findByParentAndNodeTypeRecursively('/', $nodeTypeName, $workspace);
+			foreach ($nodeDatas as $nodeData) {
+				/** @var NodeData $nodeData */
+				foreach ($properties as $propertyName => $propertyType) {
+					$propertyValue = $nodeData->getProperty($propertyName);
+					$convertedProperty = NULL;
+
+					if (is_object($propertyValue)) {
+						$convertedProperty = $propertyValue;
+					}
+					if (is_string($propertyValue) && strlen($propertyValue) === 36) {
+						$convertedProperty = $this->propertyMapper->convert($propertyValue, $propertyType);
+						if ($convertedProperty === NULL) {
+							$nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
+							$this->output->outputLine('Broken reference in "%s", property "%s" (%s) referring to %s.', array($nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+							$brokenReferencesCount ++;
+						}
+					}
+					if ($convertedProperty instanceof \Doctrine\ORM\Proxy\Proxy) {
+						try {
+							$convertedProperty->__load();
+						} catch (EntityNotFoundException $e) {
+							$nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
+							$this->output->outputLine('Broken reference in "%s", property "%s" (%s) referring to %s.', array($nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+							$brokenReferencesCount ++;
+						}
+					}
+
+				}
+			}
+		}
+
+		if ($brokenReferencesCount > 0) {
+			$this->output->outputLine();
+			if (!$dryRun) {
+				$self = $this;
+				$this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function() use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount, $workspaceName, $dryRun) {
+					foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
+						foreach ($properties as $propertyName => $nodeData) {
+							/** @var NodeData $nodeData */
+							$nodeData->setProperty($propertyName, NULL);
+						}
+					}
+					$self->output->outputLine('Removed %s broken entity reference%s.', array($brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : ''));
+				});
+			} else {
+				$this->output->outputLine('Found %s broken entity reference%s to be removed.', array($brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : ''));
+			}
+			$this->output->outputLine();
+		}
+
 	}
 
 	/**
