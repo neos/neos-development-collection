@@ -51,6 +51,11 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 	protected $linkingService;
 
 	/**
+	 * @var array
+	 */
+	protected $unresolvedUris = array();
+
+	/**
 	 * Convert URIs matching a supported scheme with generated URIs
 	 *
 	 * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -80,33 +85,11 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 			return $text;
 		}
 
-		$unresolvedUris = array();
-		$linkingService = $this->linkingService;
-		$controllerContext = $this->tsRuntime->getControllerContext();
+		$processedContent = preg_replace_callback($this->getPatternSupportedUris(), array($this, 'resolveUri'), $text);
 
-		$processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function(array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
-			switch ($matches[1]) {
-				case 'node':
-					$resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
-					break;
-				case 'asset':
-					$resolvedUri = $linkingService->resolveAssetUri($matches[0]);
-					break;
-				default:
-					$resolvedUri = NULL;
-			}
-
-			if ($resolvedUri === NULL) {
-				$unresolvedUris[] = $matches[0];
-				return $matches[0];
-			}
-
-			return $resolvedUri;
-		}, $text);
-
-		if ($unresolvedUris !== array()) {
+		if ($this->unresolvedUris !== array()) {
 			$processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
-			$processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
+			$processedContent = preg_replace($this->getPatternSupportedUris(), '', $processedContent);
 		}
 
 		$processedContent = $this->replaceLinkTargets($processedContent);
@@ -152,6 +135,41 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 			$processedContent
 		);
 		return $processedContent;
+	}
+
+	/**
+	 * Resolve Uri
+	 *
+	 * @param array $matches
+	 * @return null|string
+	 */
+	protected function resolveUri(array $matches) {
+		switch ($matches[1]) {
+			case 'node':
+				$resolvedUri = $this->linkingService->resolveNodeUri($matches[0], $this->tsValue('node'), $this->tsRuntime->getControllerContext());
+				break;
+			case 'asset':
+				$resolvedUri = $this->linkingService->resolveAssetUri($matches[0]);
+				break;
+			default:
+				$resolvedUri = NULL;
+		}
+
+		if ($resolvedUri === NULL) {
+			$this->unresolvedUris[] = $matches[0];
+			return $matches[0];
+		}
+
+		return $resolvedUri;
+	}
+
+	/**
+	 * Get the supported uris patter
+	 *
+	 * @return string
+	 */
+	protected function getPatternSupportedUris() {
+		return LinkingService::PATTERN_SUPPORTED_URIS;
 	}
 
 }
