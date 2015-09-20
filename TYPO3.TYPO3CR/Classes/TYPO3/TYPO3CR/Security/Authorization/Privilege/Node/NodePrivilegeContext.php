@@ -85,6 +85,29 @@ class NodePrivilegeContext {
 	}
 
 	/**
+	 * @param string $nodePathOrIdentifier
+	 * @return boolean
+	 */
+	public function isParentNodeOf($nodePathOrIdentifier) {
+		if ($this->node === NULL) {
+			return TRUE;
+		}
+		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
+			if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
+				return TRUE;
+			}
+			$node = $this->getNodeByIdentifier($nodePathOrIdentifier);
+			if ($node === NULL) {
+				return FALSE;
+			}
+			$nodePath = $node->getPath() . '/';
+		} else {
+			$nodePath = rtrim($nodePathOrIdentifier, '/') . '/';
+		}
+		return substr($nodePath . '/', 0, strlen($this->node->getPath())) === $this->node->getPath();
+	}
+
+	/**
 	 * @param string|array $nodeTypes
 	 * @return boolean
 	 */
