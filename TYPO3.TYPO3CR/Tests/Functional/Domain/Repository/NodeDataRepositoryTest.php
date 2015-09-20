@@ -103,4 +103,45 @@ class NodeDataRepositoryTest extends FunctionalTestCase {
 
 		$this->assertCount(1, $result);
 	}
+
+	/**
+	 * @test
+	 */
+	public function findNodeByPropertySearch() {
+		$this->createNodesForNodeSearchTest();
+
+		$result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+		$this->assertCount(2, $result);
+		$this->assertEquals('test-node-1', array_shift($result)->getName());
+		$this->assertEquals('test-node-2', array_shift($result)->getName());
+	}
+
+	/**
+	 * @test
+	 */
+	public function findNodesByPropertyKeyAndValue() {
+		$this->createNodesForNodeSearchTest();
+
+		$result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+		$this->assertCount(1, $result);
+		$this->assertEquals('test-node-2', array_shift($result)->getName());
+	}
+
+	/**
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+	 */
+	protected function createNodesForNodeSearchTest() {
+		$rootNode = $this->context->getRootNode();
+
+		$newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+		$newNode1->setProperty('test1', 'simpleTestValue');
+
+		$newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+		$newNode2->setProperty('test2', 'simpleTestValue');
+
+		$newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+		$newNode2->setProperty('test1', 'otherValue');
+
+		$this->persistenceManager->persistAll();
+	}
 }
