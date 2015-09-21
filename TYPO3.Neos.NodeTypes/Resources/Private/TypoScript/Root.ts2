@@ -119,6 +119,7 @@ prototype(TYPO3.Neos.NodeTypes:ContentReferences) {
 		entryTags {
 			1 = ${'Node_' + node.identifier}
 			2 = ${Neos.Caching.nodeTag(referenceNodesArray)}
+			3 = ${Neos.Caching.descendantOfTag(referenceNodesArray)}
 		}
 	}
 }
