@@ -88,7 +88,7 @@ class CachingHelper implements ProtectedContextAwareInterface {
 	 * @return array
 	 */
 	public function descendantOfTag($nodes) {
-		return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'descendantOf');
+		return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'DescendantOf');
 	}
 
 	/**
