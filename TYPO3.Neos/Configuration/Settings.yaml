@@ -161,6 +161,33 @@ TYPO3:
         'ru': 'Pусский – Russian'
 #        'sv': 'Svenska – Swedish'
 
+      # Aloha presets used in nodeType configuration
+      aloha:
+        presets:
+          'Standard':
+            placeholder: i18n
+            autoparagraph: TRUE
+            'format':
+              'strong': TRUE
+              'em': TRUE
+              'u': FALSE
+              'sub': FALSE
+              'sup': FALSE
+              'del': FALSE
+              'p': TRUE
+              'h1': TRUE
+              'h2': TRUE
+              'h3': TRUE
+              'pre': TRUE
+              'removeFormat': TRUE
+            'table':
+              'table': TRUE
+            'list':
+              'ol': TRUE
+              'ul': TRUE
+            'link':
+              'a': TRUE
+
       navigateComponent:
         nodeTree:
           # number of levels inside the node tree which shall be loaded eagerly, at start.
