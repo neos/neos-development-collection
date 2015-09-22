@@ -7,6 +7,7 @@
     "typo3/setup": "*",
     "typo3/twitter-bootstrap": "*",
     "gedmo/doctrine-extensions": "2.3.*",
+    "typo3/party": "*",
     "typo3/imagine": "*"
   },
   "replace": {
