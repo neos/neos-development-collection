@@ -19,14 +19,15 @@ use TYPO3\Flow\Annotations as Flow;
  * //tsPath collection *Collection
  * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
  */
-class CollectionImplementation extends AbstractCollectionImplementation {
-
-	/**
-	 * Evaluate the collection nodes
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		return parent::evaluate();
-	}
+class CollectionImplementation extends AbstractCollectionImplementation
+{
+    /**
+     * Evaluate the collection nodes
+     *
+     * @return string
+     */
+    public function evaluate()
+    {
+        return parent::evaluate();
+    }
 }

@@ -66,80 +66,81 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  * </output>
  *
  */
-class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
+class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper
+{
+    /**
+     * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+     * @Flow\Inject
+     */
+    protected $resourcePublisher;
 
-	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
-	 * @Flow\Inject
-	 */
-	protected $resourcePublisher;
+    /**
+     * @var \TYPO3\Media\Service\ImageService
+     * @Flow\Inject
+     */
+    protected $imageService;
 
-	/**
-	 * @var \TYPO3\Media\Service\ImageService
-	 * @Flow\Inject
-	 */
-	protected $imageService;
+    /**
+     * name of the tag to be created by this view helper
+     *
+     * @var string
+     */
+    protected $tagName = 'img';
 
-	/**
-	 * name of the tag to be created by this view helper
-	 *
-	 * @var string
-	 */
-	protected $tagName = 'img';
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
+        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
+        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
+        // @deprecated since 1.1.0 image argument replaced with asset argument
+        $this->registerArgument('image', 'ImageInterface', 'The image to be rendered', false);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', TRUE);
-		$this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', FALSE);
-		$this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', FALSE);
-		// @deprecated since 1.1.0 image argument replaced with asset argument
-		$this->registerArgument('image', 'ImageInterface', 'The image to be rendered', FALSE);
-	}
+    /**
+     * Renders an HTML tag from a given asset.
+     *
+     * @param AssetInterface $asset The asset to be rendered as an image
+     * @param integer $maximumWidth Desired maximum height of the image
+     * @param integer $maximumHeight Desired maximum width of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @return string an <img...> html tag
+     * @throws Exception
+     */
+    public function render(AssetInterface $asset = null, $maximumWidth = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    {
+        // Fallback for deprecated image argument
+        $asset = $asset === null && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
+        if (!$asset instanceof AssetInterface) {
+            throw new ViewHelperException('No asset given for rendering.', 1415797903);
+        }
 
-	/**
-	 * Renders an HTML tag from a given asset.
-	 *
-	 * @param AssetInterface $asset The asset to be rendered as an image
-	 * @param integer $maximumWidth Desired maximum height of the image
-	 * @param integer $maximumHeight Desired maximum width of the image
-	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
-	 * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-	 * @return string an <img...> html tag
-	 * @throws Exception
-	 */
-	public function render(AssetInterface $asset = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		// Fallback for deprecated image argument
-		$asset = $asset === NULL && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
-		if (!$asset instanceof AssetInterface) {
-			throw new ViewHelperException('No asset given for rendering.', 1415797903);
-		}
+        try {
+            if ($asset instanceof ImageInterface) {
+                $thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+                $this->tag->addAttributes(array(
+                    'width' => $thumbnailImage->getWidth(),
+                    'height' => $thumbnailImage->getHeight(),
+                    'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
+                ));
+            } else {
+                $thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+                $this->tag->addAttributes(array(
+                    'width' => $thumbnailImage['width'],
+                    'height' => $thumbnailImage['height'],
+                    'src' => $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'],
+                ));
+            }
+        } catch (\Exception $exception) {
+            $this->systemLogger->logException($exception);
+            return '<!-- Unable to render image, exception code ' . $exception->getCode() . ' -->';
+        }
 
-		try {
-			if ($asset instanceof ImageInterface) {
-				$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-				$this->tag->addAttributes(array(
-					'width' => $thumbnailImage->getWidth(),
-					'height' => $thumbnailImage->getHeight(),
-					'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
-				));
-			} else {
-				$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-				$this->tag->addAttributes(array(
-					'width' => $thumbnailImage['width'],
-					'height' => $thumbnailImage['height'],
-					'src' => $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'],
-				));
-			}
-		} catch (\Exception $exception) {
-			$this->systemLogger->logException($exception);
-			return '<!-- Unable to render image, exception code ' . $exception->getCode() . ' -->';
-		}
-
-		return $this->tag->render();
-	}
-
+        return $this->tag->render();
+    }
 }

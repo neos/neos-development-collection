@@ -14,11 +14,10 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * A "no such dimension value" exception
  */
-class NoSuchDimensionValueException extends \TYPO3\Neos\Routing\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class NoSuchDimensionValueException extends \TYPO3\Neos\Routing\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

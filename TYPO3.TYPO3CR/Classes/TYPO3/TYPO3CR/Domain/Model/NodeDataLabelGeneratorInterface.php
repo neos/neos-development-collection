@@ -17,14 +17,14 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *
  * @deprecated Since version 1.2. Use NodeLabelGeneratorInterface
  */
-interface NodeDataLabelGeneratorInterface {
-
-	/**
-	 * Render a node label
-	 *
-	 * @param AbstractNodeData $nodeData
-	 * @return string
-	 * @api
-	 */
-	public function getLabel(AbstractNodeData $nodeData);
+interface NodeDataLabelGeneratorInterface
+{
+    /**
+     * Render a node label
+     *
+     * @param AbstractNodeData $nodeData
+     * @return string
+     * @api
+     */
+    public function getLabel(AbstractNodeData $nodeData);
 }

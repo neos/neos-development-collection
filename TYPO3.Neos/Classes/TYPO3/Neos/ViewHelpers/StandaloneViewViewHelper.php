@@ -32,17 +32,17 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
-
-	/**
-	 * @param string $templatePathAndFilename Path and filename of the template to render
-	 * @param array $arguments Arguments to assign to the template before rendering
-	 * @return string
-	 */
-	public function render($templatePathAndFilename, $arguments = array()) {
-		$standaloneView = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
-		$standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
-		return $standaloneView->assignMultiple($arguments)->render();
-	}
-
+class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @param string $templatePathAndFilename Path and filename of the template to render
+     * @param array $arguments Arguments to assign to the template before rendering
+     * @return string
+     */
+    public function render($templatePathAndFilename, $arguments = array())
+    {
+        $standaloneView = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
+        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
+        return $standaloneView->assignMultiple($arguments)->render();
+    }
 }

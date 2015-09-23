@@ -16,19 +16,19 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
  */
-class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     */
+    protected $backendAssetsUtility;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Utility\BackendAssetsUtility
-	 */
-	protected $backendAssetsUtility;
-
-	/**
-	 * @return boolean
-	 */
-	public function render() {
-		return $this->backendAssetsUtility->shouldLoadMinifiedJavascript();
-	}
-
+    /**
+     * @return boolean
+     */
+    public function render()
+    {
+        return $this->backendAssetsUtility->shouldLoadMinifiedJavascript();
+    }
 }

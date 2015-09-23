@@ -17,12 +17,11 @@ use TYPO3\Media\Domain\Repository\ImageRepository;
 /**
  * Controller for browsing images in the ImageEditor
  */
-class ImageBrowserController extends MediaBrowserController {
-
-	/**
-	 * @Flow\Inject
-	 * @var ImageRepository
-	 */
-	protected $assetRepository;
-
+class ImageBrowserController extends MediaBrowserController
+{
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $assetRepository;
 }

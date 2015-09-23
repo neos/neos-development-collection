@@ -19,42 +19,43 @@ use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 /**
  * REST service controller for managing content dimensions
  */
-class ContentDimensionsController extends ActionController {
+class ContentDimensionsController extends ActionController
+{
+    /**
+     * @var array
+     */
+    protected $viewFormatToObjectNameMap = array(
+        'html' => 'TYPO3\Fluid\View\TemplateView',
+        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $viewFormatToObjectNameMap = array(
-		'html' => 'TYPO3\Fluid\View\TemplateView',
-		'json' => 'TYPO3\Flow\Mvc\View\JsonView'
-	);
+    /**
+     * @var array
+     */
+    protected $supportedMediaTypes = array(
+        'text/html',
+        'application/json'
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $supportedMediaTypes = array(
-		'text/html',
-		'application/json'
-	);
+    /**
+     * @var ContentDimensionPresetSourceInterface
+     * @Flow\Inject
+     */
+    protected $contentDimensionPresetSource;
 
-	/**
-	 * @var ContentDimensionPresetSourceInterface
-	 * @Flow\Inject
-	 */
-	protected $contentDimensionPresetSource;
-
-	/**
-	 * Returns the full content dimension presets as JSON object; see
-	 * ContentDimensionPresetSourceInterface::getAllPresets() for a format
-	 * description.
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-		if ($this->view instanceof JsonView) {
-			$this->view->assign('value', $this->contentDimensionPresetSource->getAllPresets());
-		} else {
-			$this->view->assign('contentDimensionsPresets', $this->contentDimensionPresetSource->getAllPresets());
-		}
-	}
+    /**
+     * Returns the full content dimension presets as JSON object; see
+     * ContentDimensionPresetSourceInterface::getAllPresets() for a format
+     * description.
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        if ($this->view instanceof JsonView) {
+            $this->view->assign('value', $this->contentDimensionPresetSource->getAllPresets());
+        } else {
+            $this->view->assign('contentDimensionsPresets', $this->contentDimensionPresetSource->getAllPresets());
+        }
+    }
 }

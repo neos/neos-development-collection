@@ -15,25 +15,27 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * Testcase for the "Domain" domain model
  *
  */
-class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain()
+    {
+        $domain = new \TYPO3\Neos\Domain\Model\Domain();
+        $domain->setHostPattern('typo3.com');
+        $this->assertSame('typo3.com', $domain->getHostPattern());
+    }
 
-	/**
-	 * @test
-	 */
-	public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain() {
-		$domain = new \TYPO3\Neos\Domain\Model\Domain();
-		$domain->setHostPattern('typo3.com');
-		$this->assertSame('typo3.com', $domain->getHostPattern());
-	}
+    /**
+     * @test
+     */
+    public function setSiteSetsTheSiteTheDomainIsPointingTo()
+    {
+        $mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', false);
 
-	/**
-	 * @test
-	 */
-	public function setSiteSetsTheSiteTheDomainIsPointingTo() {
-		$mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', FALSE);
-
-		$domain = new \TYPO3\Neos\Domain\Model\Domain;
-		$domain->setSite($mockSite);
-		$this->assertSame($mockSite, $domain->getSite());
-	}
+        $domain = new \TYPO3\Neos\Domain\Model\Domain;
+        $domain->setSite($mockSite);
+        $this->assertSame($mockSite, $domain->getSite());
+    }
 }

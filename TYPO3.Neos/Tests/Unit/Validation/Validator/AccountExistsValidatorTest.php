@@ -17,51 +17,53 @@ use TYPO3\Neos\Validation\Validator\AccountExistsValidator;
  * Testcase for the AccountExistsValidator
  *
  */
-class AccountExistsValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AccountExistsValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidSubjectException
+     */
+    public function validateThrowsExceptionForNonStringValue()
+    {
+        $validator = new AccountExistsValidator();
+        $validator->validate(false);
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidSubjectException
-	 */
-	public function validateThrowsExceptionForNonStringValue() {
-		$validator = new AccountExistsValidator();
-		$validator->validate(FALSE);
-	}
+    /**
+     * @test
+     */
+    public function validateReturnsNoErrorsWithNullAccount()
+    {
+        $validator = new AccountExistsValidator();
 
-	/**
-	 * @test
-	 */
-	public function validateReturnsNoErrorsWithNullAccount() {
-		$validator = new AccountExistsValidator();
+        $mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
+        $this->inject($validator, 'accountRepository', $mockAccountRepository);
 
-		$mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
-		$this->inject($validator, 'accountRepository', $mockAccountRepository);
+        $result = $validator->validate('j.doe');
 
-		$result = $validator->validate('j.doe');
+        $this->assertFalse($result->hasErrors());
+    }
 
-		$this->assertFalse($result->hasErrors());
-	}
+    /**
+     * @test
+     */
+    public function validateReturnsAnErrorWithExistingAccount()
+    {
+        $validator = new AccountExistsValidator();
 
-	/**
-	 * @test
-	 */
-	public function validateReturnsAnErrorWithExistingAccount() {
-		$validator = new AccountExistsValidator();
+        $mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
+        $this->inject($validator, 'accountRepository', $mockAccountRepository);
 
-		$mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
-		$this->inject($validator, 'accountRepository', $mockAccountRepository);
+        $mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
 
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
+        $mockAccountRepository
+            ->expects($this->atLeastOnce())
+            ->method('findByAccountIdentifierAndAuthenticationProviderName')
+            ->with('j.doe', $this->anything())
+            ->will($this->returnValue($mockAccount));
 
-		$mockAccountRepository
-			->expects($this->atLeastOnce())
-			->method('findByAccountIdentifierAndAuthenticationProviderName')
-			->with('j.doe', $this->anything())
-			->will($this->returnValue($mockAccount));
+        $result = $validator->validate('j.doe');
 
-		$result = $validator->validate('j.doe');
-
-		$this->assertTrue($result->hasErrors());
-	}
-
+        $this->assertTrue($result->hasErrors());
+    }
 }

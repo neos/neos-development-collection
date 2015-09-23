@@ -15,6 +15,6 @@ namespace TYPO3\TypoScript\Exception;
  * This exception is thrown if the PHP implementation class for a given TypoScript
  * object could not be found; i.e. it was not set using @class.
  */
-class MissingTypoScriptImplementationException extends \TYPO3\TypoScript\Exception {
-
+class MissingTypoScriptImplementationException extends \TYPO3\TypoScript\Exception
+{
 }

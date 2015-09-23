@@ -24,145 +24,150 @@ use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
  *
  * @Flow\Scope("singleton")
  */
-class SiteExportService {
+class SiteExportService
+{
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * @Flow\Inject
+     *
+     * @var NodeExportService
+     */
+    protected $nodeExportService;
 
-	/**
-	 * @Flow\Inject
-	 *
-	 * @var NodeExportService
-	 */
-	protected $nodeExportService;
+    /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PackageManagerInterface
-	 */
-	protected $packageManager;
+    /**
+     * Absolute path to exported resources, or NULL if resources should be inlined in the exported XML
+     *
+     * @var string
+     */
+    protected $resourcesPath = null;
 
-	/**
-	 * Absolute path to exported resources, or NULL if resources should be inlined in the exported XML
-	 *
-	 * @var string
-	 */
-	protected $resourcesPath = NULL;
+    /**
+     * The XMLWriter that is used to construct the export.
+     *
+     * @var \XMLWriter
+     */
+    protected $xmlWriter;
 
-	/**
-	 * The XMLWriter that is used to construct the export.
-	 *
-	 * @var \XMLWriter
-	 */
-	protected $xmlWriter;
+    /**
+     * Fetches the site with the given name and exports it into XML.
+     *
+     * @param array<Site> $sites
+     * @param boolean $tidy Whether to export formatted XML
+     * @return string
+     */
+    public function export(array $sites, $tidy = false)
+    {
+        $this->xmlWriter = new \XMLWriter();
+        $this->xmlWriter->openMemory();
+        $this->xmlWriter->setIndent($tidy);
 
-	/**
-	 * Fetches the site with the given name and exports it into XML.
-	 *
-	 * @param array<Site> $sites
-	 * @param boolean $tidy Whether to export formatted XML
-	 * @return string
-	 */
-	public function export(array $sites, $tidy = FALSE) {
-		$this->xmlWriter = new \XMLWriter();
-		$this->xmlWriter->openMemory();
-		$this->xmlWriter->setIndent($tidy);
+        $this->exportSites($sites);
 
-		$this->exportSites($sites);
+        return $this->xmlWriter->outputMemory(true);
+    }
 
-		return $this->xmlWriter->outputMemory(TRUE);
-	}
+    /**
+     * Fetches the site with the given name and exports it into XML in the given package.
+     *
+     * @param array<Site> $sites
+     * @param boolean $tidy Whether to export formatted XML
+     * @param string $packageKey Package key where the export output should be saved to
+     * @return void
+     */
+    public function exportToPackage(array $sites, $tidy = false, $packageKey)
+    {
+        if (!$this->packageManager->isPackageActive($packageKey)) {
+            throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1404375719);
+        }
+        $contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
 
-	/**
-	 * Fetches the site with the given name and exports it into XML in the given package.
-	 *
-	 * @param array<Site> $sites
-	 * @param boolean $tidy Whether to export formatted XML
-	 * @param string $packageKey Package key where the export output should be saved to
-	 * @return void
-	 */
-	public function exportToPackage(array $sites, $tidy = FALSE, $packageKey) {
-		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1404375719);
-		}
-		$contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
+        $this->resourcesPath = Files::concatenatePaths(array(dirname($contentPathAndFilename), 'Resources'));
+        Files::createDirectoryRecursively($this->resourcesPath);
 
-		$this->resourcesPath = Files::concatenatePaths(array(dirname($contentPathAndFilename), 'Resources'));
-		Files::createDirectoryRecursively($this->resourcesPath);
+        $this->xmlWriter = new \XMLWriter();
+        $this->xmlWriter->openUri($contentPathAndFilename);
+        $this->xmlWriter->setIndent($tidy);
 
-		$this->xmlWriter = new \XMLWriter();
-		$this->xmlWriter->openUri($contentPathAndFilename);
-		$this->xmlWriter->setIndent($tidy);
+        $this->exportSites($sites);
 
-		$this->exportSites($sites);
+        $this->xmlWriter->flush();
+    }
 
-		$this->xmlWriter->flush();
-	}
+    /**
+     * Fetches the site with the given name and exports it as XML into the given file.
+     *
+     * @param array<Site> $sites
+     * @param boolean $tidy Whether to export formatted XML
+     * @param string $pathAndFilename Path to where the export output should be saved to
+     * @return void
+     */
+    public function exportToFile(array $sites, $tidy = false, $pathAndFilename)
+    {
+        $this->resourcesPath = Files::concatenatePaths(array(dirname($pathAndFilename), 'Resources'));
+        Files::createDirectoryRecursively($this->resourcesPath);
 
-	/**
-	 * Fetches the site with the given name and exports it as XML into the given file.
-	 *
-	 * @param array<Site> $sites
-	 * @param boolean $tidy Whether to export formatted XML
-	 * @param string $pathAndFilename Path to where the export output should be saved to
-	 * @return void
-	 */
-	public function exportToFile(array $sites, $tidy = FALSE, $pathAndFilename) {
-		$this->resourcesPath = Files::concatenatePaths(array(dirname($pathAndFilename), 'Resources'));
-		Files::createDirectoryRecursively($this->resourcesPath);
+        $this->xmlWriter = new \XMLWriter();
+        $this->xmlWriter->openUri($pathAndFilename);
+        $this->xmlWriter->setIndent($tidy);
 
-		$this->xmlWriter = new \XMLWriter();
-		$this->xmlWriter->openUri($pathAndFilename);
-		$this->xmlWriter->setIndent($tidy);
+        $this->exportSites($sites);
 
-		$this->exportSites($sites);
+        $this->xmlWriter->flush();
+    }
 
-		$this->xmlWriter->flush();
-	}
+    /**
+     * Exports the given sites to the XMLWriter
+     *
+     * @param array<Site> $sites
+     * @return void
+     */
+    protected function exportSites(array $sites)
+    {
+        $this->xmlWriter->startDocument('1.0', 'UTF-8');
+        $this->xmlWriter->startElement('root');
 
-	/**
-	 * Exports the given sites to the XMLWriter
-	 *
-	 * @param array<Site> $sites
-	 * @return void
-	 */
-	protected function exportSites(array $sites) {
-		$this->xmlWriter->startDocument('1.0', 'UTF-8');
-		$this->xmlWriter->startElement('root');
+        foreach ($sites as $site) {
+            $this->exportSite($site);
+        }
 
-		foreach ($sites as $site) {
-			$this->exportSite($site);
-		}
+        $this->xmlWriter->endElement();
+        $this->xmlWriter->endDocument();
+    }
 
-		$this->xmlWriter->endElement();
-		$this->xmlWriter->endDocument();
-	}
+    /**
+     * Export the given $site to the XMLWriter
+     *
+     * @param Site $site
+     * @return void
+     */
+    protected function exportSite(Site $site)
+    {
+        $contentContext = $this->contextFactory->create(array(
+            'currentSite' => $site,
+            'invisibleContentShown' => true,
+            'inaccessibleContentShown' => true
+        ));
 
-	/**
-	 * Export the given $site to the XMLWriter
-	 *
-	 * @param Site $site
-	 * @return void
-	 */
-	protected function exportSite(Site $site) {
-		$contentContext = $this->contextFactory->create(array(
-			'currentSite' => $site,
-			'invisibleContentShown' => TRUE,
-			'inaccessibleContentShown' => TRUE
-		));
+        $siteNode = $contentContext->getCurrentSiteNode();
+        $this->xmlWriter->startElement('site');
+        $this->xmlWriter->writeAttribute('name', $site->getName());
+        $this->xmlWriter->writeAttribute('state', $site->getState());
+        $this->xmlWriter->writeAttribute('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
+        $this->xmlWriter->writeAttribute('siteNodeName', $siteNode->getName());
 
-		$siteNode = $contentContext->getCurrentSiteNode();
-		$this->xmlWriter->startElement('site');
-		$this->xmlWriter->writeAttribute('name', $site->getName());
-		$this->xmlWriter->writeAttribute('state', $site->getState());
-		$this->xmlWriter->writeAttribute('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
-		$this->xmlWriter->writeAttribute('siteNodeName', $siteNode->getName());
+        $this->nodeExportService->export($siteNode->getPath(), $contentContext->getWorkspaceName(), $this->xmlWriter, false, false, $this->resourcesPath);
 
-		$this->nodeExportService->export($siteNode->getPath(), $contentContext->getWorkspaceName(), $this->xmlWriter, FALSE, FALSE, $this->resourcesPath);
-
-		$this->xmlWriter->endElement();
-	}
+        $this->xmlWriter->endElement();
+    }
 }

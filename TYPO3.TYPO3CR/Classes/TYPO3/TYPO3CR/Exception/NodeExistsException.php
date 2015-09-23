@@ -15,6 +15,6 @@ namespace TYPO3\TYPO3CR\Exception;
  * A node exists exception
  *
  */
-class NodeExistsException extends \TYPO3\TYPO3CR\Exception\NodeException {
-
+class NodeExistsException extends \TYPO3\TYPO3CR\Exception\NodeException
+{
 }

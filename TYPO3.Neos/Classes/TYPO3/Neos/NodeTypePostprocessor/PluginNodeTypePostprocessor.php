@@ -21,46 +21,47 @@ use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
  * This Processor updates the PluginViews NodeType with the existing
  * Plugins and it's corresponding available Views
  */
-class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface {
+class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
+{
+    /**
+     * @var ConfigurationManager
+     * @Flow\Inject
+     */
+    protected $configurationManager;
 
-	/**
-	 * @var ConfigurationManager
-	 * @Flow\Inject
-	 */
-	protected $configurationManager;
+    /**
+     * @var PluginService
+     * @Flow\Inject
+     */
+    protected $pluginService;
 
-	/**
-	 * @var PluginService
-	 * @Flow\Inject
-	 */
-	protected $pluginService;
-
-	/**
-	 * Returns the processed Configuration
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType (uninitialized) The node type to process
-	 * @param array $configuration input configuration
-	 * @param array $options The processor options
-	 * @return void
-	 */
-	public function process(NodeType $nodeType, array &$configuration, array $options) {
-		$pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($nodeType);
-		if ($pluginViewDefinitions === array()) {
-			return;
-		}
-		$configuration['ui']['inspector']['groups']['pluginViews'] = array(
-			'position' => '9999',
-			'label' => 'Plugin Views'
-		);
-		$configuration['properties']['views'] = array(
-			'type' => 'string',
-			'ui' => array(
-				'inspector' => array(
-					'group' => 'pluginViews',
-					'position' => '20',
-					'editor' => 'TYPO3.Neos/Inspector/Editors/PluginViewsEditor'
-				)
-			)
-		);
-	}
+    /**
+     * Returns the processed Configuration
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType (uninitialized) The node type to process
+     * @param array $configuration input configuration
+     * @param array $options The processor options
+     * @return void
+     */
+    public function process(NodeType $nodeType, array &$configuration, array $options)
+    {
+        $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($nodeType);
+        if ($pluginViewDefinitions === array()) {
+            return;
+        }
+        $configuration['ui']['inspector']['groups']['pluginViews'] = array(
+            'position' => '9999',
+            'label' => 'Plugin Views'
+        );
+        $configuration['properties']['views'] = array(
+            'type' => 'string',
+            'ui' => array(
+                'inspector' => array(
+                    'group' => 'pluginViews',
+                    'position' => '20',
+                    'editor' => 'TYPO3.Neos/Inspector/Editors/PluginViewsEditor'
+                )
+            )
+        );
+    }
 }

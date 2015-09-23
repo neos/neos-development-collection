@@ -18,31 +18,31 @@ use TYPO3\Flow\Aop\JoinPointInterface;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class TypoScriptCachingAspect {
+class TypoScriptCachingAspect
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     */
+    protected $typoScriptCache;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
-	 */
-	protected $typoScriptCache;
+    /**
+     * @Flow\Around("setting(TYPO3.Neos.typoScript.enableObjectTreeCache) && method(TYPO3\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @return mixed
+     */
+    public function cacheGetMergedTypoScriptObjectTree(JoinPointInterface $joinPoint)
+    {
+        $currentSiteNode = $joinPoint->getMethodArgument('startNode');
+        $cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
 
-	/**
-	 * @Flow\Around("setting(TYPO3.Neos.typoScript.enableObjectTreeCache) && method(TYPO3\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return mixed
-	 */
-	public function cacheGetMergedTypoScriptObjectTree(JoinPointInterface $joinPoint) {
-		$currentSiteNode = $joinPoint->getMethodArgument('startNode');
-		$cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
+        if ($this->typoScriptCache->has($cacheIdentifier)) {
+            $typoScriptObjectTree = $this->typoScriptCache->get($cacheIdentifier);
+        } else {
+            $typoScriptObjectTree = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            $this->typoScriptCache->set($cacheIdentifier, $typoScriptObjectTree);
+        }
 
-		if ($this->typoScriptCache->has($cacheIdentifier)) {
-			$typoScriptObjectTree = $this->typoScriptCache->get($cacheIdentifier);
-		} else {
-			$typoScriptObjectTree = $joinPoint->getAdviceChain()->proceed($joinPoint);
-			$this->typoScriptCache->set($cacheIdentifier, $typoScriptObjectTree);
-		}
-
-		return $typoScriptObjectTree;
-	}
-
+        return $typoScriptObjectTree;
+    }
 }

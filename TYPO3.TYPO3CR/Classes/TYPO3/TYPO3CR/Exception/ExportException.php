@@ -15,6 +15,6 @@ use TYPO3\TYPO3CR\Exception;
 /**
  * This exception is thrown as composite exception if something goes wrong during the node export.
  */
-class ExportException extends Exception {
-
+class ExportException extends Exception
+{
 }

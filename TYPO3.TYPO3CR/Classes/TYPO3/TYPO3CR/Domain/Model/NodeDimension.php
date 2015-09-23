@@ -22,75 +22,82 @@ use TYPO3\Flow\Annotations as Flow;
  * @ORM\Entity
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="nodeData_name_value",columns={"nodedata", "name", "value"})})
  */
-class NodeDimension {
+class NodeDimension
+{
+    /**
+     * @ORM\ManyToOne(inversedBy="dimensions")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
+     */
+    protected $nodeData;
 
-	/**
-	 * @ORM\ManyToOne(inversedBy="dimensions")
-	 * @ORM\JoinColumn(onDelete="CASCADE")
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
-	 */
-	protected $nodeData;
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var string
+     */
+    protected $value;
 
-	/**
-	 * @var string
-	 */
-	protected $value;
+    /**
+     * @param NodeData $nodeData
+     * @param string $name
+     * @param string $value
+     */
+    public function __construct(NodeData $nodeData, $name, $value)
+    {
+        $this->nodeData = $nodeData;
+        $this->name = $name;
+        $this->value = $value;
+    }
 
-	/**
-	 * @param NodeData $nodeData
-	 * @param string $name
-	 * @param string $value
-	 */
-	public function __construct(NodeData $nodeData, $name, $value) {
-		$this->nodeData = $nodeData;
-		$this->name = $name;
-		$this->value = $value;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 
-	/**
-	 * @param string $value
-	 */
-	public function setValue($value) {
-		$this->value = $value;
-	}
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getValue() {
-		return $this->value;
-	}
+    /**
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     */
+    public function setNodeData($nodeData)
+    {
+        $this->nodeData = $nodeData;
+    }
 
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
-	 */
-	public function setNodeData($nodeData) {
-		$this->nodeData = $nodeData;
-	}
-
-	/**
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
-	 */
-	public function getNodeData() {
-		return $this->nodeData;
-	}
+    /**
+     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     */
+    public function getNodeData()
+    {
+        return $this->nodeData;
+    }
 }

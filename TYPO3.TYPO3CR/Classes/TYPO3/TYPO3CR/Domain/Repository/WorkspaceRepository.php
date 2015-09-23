@@ -18,6 +18,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class WorkspaceRepository extends \TYPO3\Flow\Persistence\Repository {
-
+class WorkspaceRepository extends \TYPO3\Flow\Persistence\Repository
+{
 }

@@ -21,40 +21,42 @@ use TYPO3\Neos\Service\VieSchemaBuilder;
  *
  * @Flow\Scope("singleton")
  */
-class SchemaController extends ActionController {
+class SchemaController extends ActionController
+{
+    /**
+     * @var VieSchemaBuilder
+     * @Flow\Inject
+     */
+    protected $vieSchemaBuilder;
 
-	/**
-	 * @var VieSchemaBuilder
-	 * @Flow\Inject
-	 */
-	protected $vieSchemaBuilder;
+    /**
+     * @var NodeTypeSchemaBuilder
+     * @Flow\Inject
+     */
+    protected $nodeTypeSchemaBuilder;
 
-	/**
-	 * @var NodeTypeSchemaBuilder
-	 * @Flow\Inject
-	 */
-	protected $nodeTypeSchemaBuilder;
+    /**
+     * Generate and renders the JSON schema for the node types for VIE.
+     * Schema format example: http://schema.rdfs.org/all.json
+     *
+     * @return string
+     */
+    public function vieSchemaAction()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
 
-	/**
-	 * Generate and renders the JSON schema for the node types for VIE.
-	 * Schema format example: http://schema.rdfs.org/all.json
-	 *
-	 * @return string
-	 */
-	public function vieSchemaAction() {
-		$this->response->setHeader('Content-Type', 'application/json');
+        return json_encode($this->vieSchemaBuilder->generateVieSchema());
+    }
 
-		return json_encode($this->vieSchemaBuilder->generateVieSchema());
-	}
+    /**
+     * Get the node type configuration schema for the Neos UI
+     *
+     * @return string
+     */
+    public function nodeTypeSchemaAction()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
 
-	/**
-	 * Get the node type configuration schema for the Neos UI
-	 *
-	 * @return string
-	 */
-	public function nodeTypeSchemaAction() {
-		$this->response->setHeader('Content-Type', 'application/json');
-
-		return json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
-	}
+        return json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
+    }
 }

@@ -18,24 +18,25 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\BackendRedirectionService
+     */
+    protected $backendRedirectionService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\BackendRedirectionService
-	 */
-	protected $backendRedirectionService;
-
-	/**
-	 * Default action of the backend controller.
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-		$redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
-		if ($redirectionUri === NULL) {
-			$redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
-		}
-		$this->redirectToUri($redirectionUri);
-	}
+    /**
+     * Default action of the backend controller.
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
+        if ($redirectionUri === null) {
+            $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
+        }
+        $this->redirectToUri($redirectionUri);
+    }
 }

@@ -43,62 +43,63 @@ use TYPO3\Media\Exception as MediaException;
  *
  * @see \TYPO3\Media\ViewHelpers\ImageViewHelper
  */
-class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+     * @Flow\Inject
+     */
+    protected $resourcePublisher;
 
-	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
-	 * @Flow\Inject
-	 */
-	protected $resourcePublisher;
+    /**
+     * @var \TYPO3\Media\Service\ImageService
+     * @Flow\Inject
+     */
+    protected $imageService;
 
-	/**
-	 * @var \TYPO3\Media\Service\ImageService
-	 * @Flow\Inject
-	 */
-	protected $imageService;
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        // @deprecated since 1.1.0 image argument replaced with asset argument
+        $this->registerArgument('image', 'ImageInterface', 'The image to be rendered', false);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		// @deprecated since 1.1.0 image argument replaced with asset argument
-		$this->registerArgument('image', 'ImageInterface', 'The image to be rendered', FALSE);
-	}
+    /**
+     * Renders the path to a thumbnail image, created from a given asset.
+     *
+     * @param AssetInterface $image The asset to be rendered as an image
+     * @param integer $maximumWidth Desired maximum height of the image
+     * @param integer $maximumHeight Desired maximum width of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @return string the relative image path, to be used as src attribute for <img /> tags
+     * @throws Exception
+     */
+    public function render(AssetInterface $asset = null, $maximumWidth = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    {
+        // Fallback for deprecated image argument
+        $asset = $asset === null && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
+        if (!$asset instanceof AssetInterface) {
+            throw new ViewHelperException('No asset given for rendering.', 1415797902);
+        }
 
-	/**
-	 * Renders the path to a thumbnail image, created from a given asset.
-	 *
-	 * @param AssetInterface $image The asset to be rendered as an image
-	 * @param integer $maximumWidth Desired maximum height of the image
-	 * @param integer $maximumHeight Desired maximum width of the image
-	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
-	 * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-	 * @return string the relative image path, to be used as src attribute for <img /> tags
-	 * @throws Exception
-	 */
-	public function render(AssetInterface $asset = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		// Fallback for deprecated image argument
-		$asset = $asset === NULL && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
-		if (!$asset instanceof AssetInterface) {
-			throw new ViewHelperException('No asset given for rendering.', 1415797902);
-		}
-
-		try {
-			if ($asset instanceof ImageInterface) {
-				$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-				return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
-			} else {
-				$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-				return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
-			}
-		} catch (MediaException $exception) {
-			$this->systemLogger->logException($exception);
-			return NULL;
-		} catch (InvalidConfigurationException $exception) {
-			$this->systemLogger->logException($exception);
-			return NULL;
-		}
-	}
-
+        try {
+            if ($asset instanceof ImageInterface) {
+                $thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+                return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
+            } else {
+                $thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+                return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
+            }
+        } catch (MediaException $exception) {
+            $this->systemLogger->logException($exception);
+            return null;
+        } catch (InvalidConfigurationException $exception) {
+            $this->systemLogger->logException($exception);
+            return null;
+        }
+    }
 }

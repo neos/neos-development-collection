@@ -20,47 +20,49 @@ use TYPO3\Flow\Aop\JoinPointInterface;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class SiteRepositoryCachingAspect {
+class SiteRepositoryCachingAspect
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Utility\Environment
+     */
+    protected $environment;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Utility\Environment
-	 */
-	protected $environment;
+    /**
+     * @var \TYPO3\Neos\Domain\Model\Site|boolean
+     */
+    protected $firstOnlineSite = false;
 
-	/**
-	 * @var \TYPO3\Neos\Domain\Model\Site|boolean
-	 */
-	protected $firstOnlineSite = FALSE;
+    /**
+     * @var \TYPO3\Neos\Domain\Model\Domain|boolean
+     */
+    protected $domainForActiveRequest = false;
 
-	/**
-	 * @var \TYPO3\Neos\Domain\Model\Domain|boolean
-	 */
-	protected $domainForActiveRequest = FALSE;
+    /**
+     * @Flow\Around("method(TYPO3\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @return mixed
+     */
+    public function cacheFirstOnlineSite(JoinPointInterface $joinPoint)
+    {
+        if ($this->firstOnlineSite === false || $this->environment->getContext()->isTesting()) {
+            $site = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            $this->firstOnlineSite = $site;
+        }
+        return $this->firstOnlineSite;
+    }
 
-	/**
-	 * @Flow\Around("method(TYPO3\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return mixed
-	 */
-	public function cacheFirstOnlineSite(JoinPointInterface $joinPoint) {
-		if ($this->firstOnlineSite === FALSE || $this->environment->getContext()->isTesting()) {
-			$site = $joinPoint->getAdviceChain()->proceed($joinPoint);
-			$this->firstOnlineSite = $site;
-		}
-		return $this->firstOnlineSite;
-	}
-
-	/**
-	 * @Flow\Around("method(TYPO3\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return mixed
-	 */
-	public function cacheDomainForActiveRequest(JoinPointInterface $joinPoint) {
-		if ($this->domainForActiveRequest === FALSE || $this->environment->getContext()->isTesting()) {
-			$domain = $joinPoint->getAdviceChain()->proceed($joinPoint);
-			$this->domainForActiveRequest = $domain;
-		}
-		return $this->domainForActiveRequest;
-	}
+    /**
+     * @Flow\Around("method(TYPO3\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @return mixed
+     */
+    public function cacheDomainForActiveRequest(JoinPointInterface $joinPoint)
+    {
+        if ($this->domainForActiveRequest === false || $this->environment->getContext()->isTesting()) {
+            $domain = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            $this->domainForActiveRequest = $domain;
+        }
+        return $this->domainForActiveRequest;
+    }
 }

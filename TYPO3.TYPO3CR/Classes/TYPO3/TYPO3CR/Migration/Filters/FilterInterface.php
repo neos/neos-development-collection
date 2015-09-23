@@ -19,14 +19,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * Settings given to a transformation will be passed to accordingly named setters.
  */
-interface FilterInterface {
-
-	/**
-	 * If the given node satisfies the filter constraints, TRUE is returned.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
-
+interface FilterInterface
+{
+    /**
+     * If the given node satisfies the filter constraints, TRUE is returned.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
 }

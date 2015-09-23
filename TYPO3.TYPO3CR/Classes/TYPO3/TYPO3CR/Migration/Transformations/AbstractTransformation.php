@@ -16,27 +16,29 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Abstract transformation class, transformations should inherit from this.
  */
-abstract class AbstractTransformation implements TransformationInterface {
+abstract class AbstractTransformation implements TransformationInterface
+{
+    /**
+     * Returns TRUE, indicating that the given node can be transformed by this transformation.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return true;
+    }
 
-	/**
-	 * Returns TRUE, indicating that the given node can be transformed by this transformation.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return TRUE;
-	}
-
-	/**
-	 * Execute the transformation on the given node.
-	 *
-	 * This implementation returns the given node unchanged.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return $node;
-	}
+    /**
+     * Execute the transformation on the given node.
+     *
+     * This implementation returns the given node unchanged.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return $node;
+    }
 }

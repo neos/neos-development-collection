@@ -31,43 +31,44 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * @see NEOS-121
  * @deprecated DO NOT USE!
  */
-class AssetListImplementation extends TemplateImplementation {
+class AssetListImplementation extends TemplateImplementation
+{
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $imageRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ImageRepository
-	 */
-	protected $imageRepository;
+    /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var AssetRepository
-	 */
-	protected $assetRepository;
+    /**
+     * @param FluidView $view
+     * @return void
+     */
+    public function initializeView(FluidView $view)
+    {
+        $assets = $this->tsValue('assets');
+        $processedAssets = array();
 
-	/**
-	 * @param FluidView $view
-	 * @return void
-	 */
-	public function initializeView(FluidView $view) {
-		$assets = $this->tsValue('assets');
-		$processedAssets = array();
+        /** @var Asset $asset */
+        if (is_array($assets)) {
+            foreach ($assets as $asset) {
+                if ($asset->getResource() === null) {
+                    if ($asset instanceof Image) {
+                        $processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
+                    } elseif ($asset instanceof Asset) {
+                        $processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
+                    }
+                } else {
+                    $processedAssets[] = $asset;
+                }
+            }
+        }
 
-		/** @var Asset $asset */
-		if (is_array($assets)) {
-			foreach ($assets as $asset) {
-				if ($asset->getResource() === NULL) {
-					if ($asset instanceof Image) {
-						$processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
-					} elseif ($asset instanceof Asset) {
-						$processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
-					}
-				} else {
-					$processedAssets[] = $asset;
-				}
-			}
-		}
-
-		$view->assign('assets', $processedAssets);
-	}
+        $view->assign('assets', $processedAssets);
+    }
 }
