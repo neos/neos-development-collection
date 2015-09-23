@@ -17,21 +17,23 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 /**
  * Test renderer
  */
-class TestRenderer extends AbstractArrayTypoScriptObject {
+class TestRenderer extends AbstractArrayTypoScriptObject
+{
+    /**
+     * @return mixed
+     */
+    public function getTest()
+    {
+        return $this->tsValue('test');
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getTest() {
-		return $this->tsValue('test');
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		return 'X' . $this->getTest();
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function evaluate()
+    {
+        return 'X' . $this->getTest();
+    }
 }

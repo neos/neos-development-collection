@@ -17,57 +17,59 @@ use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 /**
  * Filter nodes by their dimensions.
  */
-class DimensionValues implements FilterInterface {
+class DimensionValues implements FilterInterface
+{
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionRepository
+     */
+    protected $contentDimensionRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContentDimensionRepository
-	 */
-	protected $contentDimensionRepository;
+    /**
+     * The array of dimension values to filter for.
+     *
+     * @var array
+     */
+    protected $dimensionValues = array();
 
-	/**
-	 * The array of dimension values to filter for.
-	 *
-	 * @var array
-	 */
-	protected $dimensionValues = array();
+    /**
+     * Overrides the given dimensionValues with dimension defaults.
+     *
+     * @var boolean
+     */
+    protected $filterForDefaultDimensionValues = false;
 
-	/**
-	 * Overrides the given dimensionValues with dimension defaults.
-	 *
-	 * @var boolean
-	 */
-	protected $filterForDefaultDimensionValues = FALSE;
+    /**
+     * @param array $dimensionValues
+     */
+    public function setDimensionValues($dimensionValues)
+    {
+        $this->dimensionValues = $dimensionValues;
+    }
 
-	/**
-	 * @param array $dimensionValues
-	 */
-	public function setDimensionValues($dimensionValues) {
-		$this->dimensionValues = $dimensionValues;
-	}
+    /**
+     * @param boolean $filterForDefaultDimensionValues
+     */
+    public function setFilterForDefaultDimensionValues($filterForDefaultDimensionValues)
+    {
+        $this->filterForDefaultDimensionValues = $filterForDefaultDimensionValues;
+    }
 
-	/**
-	 * @param boolean $filterForDefaultDimensionValues
-	 */
-	public function setFilterForDefaultDimensionValues($filterForDefaultDimensionValues) {
-		$this->filterForDefaultDimensionValues = $filterForDefaultDimensionValues;
-	}
+    /**
+     * Returns TRUE if the given node has the default dimension values.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        if ($this->filterForDefaultDimensionValues === true) {
+            $configuredDimensions = $this->contentDimensionRepository->findAll();
+            foreach ($configuredDimensions as $dimension) {
+                $this->dimensionValues[$dimension->getIdentifier()] = array($dimension->getDefault());
+            }
+        }
 
-	/**
-	 * Returns TRUE if the given node has the default dimension values.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		if ($this->filterForDefaultDimensionValues === TRUE) {
-			$configuredDimensions = $this->contentDimensionRepository->findAll();
-			foreach ($configuredDimensions as $dimension) {
-				$this->dimensionValues[$dimension->getIdentifier()] = array($dimension->getDefault());
-			}
-		}
-
-		return ($node->getDimensionValues() === $this->dimensionValues);
-	}
-
+        return ($node->getDimensionValues() === $this->dimensionValues);
+    }
 }

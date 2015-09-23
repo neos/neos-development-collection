@@ -18,20 +18,20 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class TagRepository extends \TYPO3\Flow\Persistence\Repository {
+class TagRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
-
-	/**
-	 * @param string $searchTerm
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
-	 */
-	public function findBySearchTerm($searchTerm) {
-		$query = $this->createQuery();
-		return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
-	}
-
+    /**
+     * @param string $searchTerm
+     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     */
+    public function findBySearchTerm($searchTerm)
+    {
+        $query = $this->createQuery();
+        return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
+    }
 }

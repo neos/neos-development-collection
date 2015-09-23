@@ -20,68 +20,69 @@ use TYPO3\Neos\View\Service\AssetJsonView;
  *
  * @Flow\Scope("singleton")
  */
-class AssetsController extends ActionController {
+class AssetsController extends ActionController
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
-	 */
-	protected $assetRepository;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     */
+    protected $tagRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Repository\TagRepository
-	 */
-	protected $tagRepository;
+    /**
+     * @var array
+     */
+    protected $viewFormatToObjectNameMap = array(
+        'html' => 'TYPO3\Fluid\View\TemplateView',
+        'json' => 'TYPO3\Neos\View\Service\AssetJsonView'
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $viewFormatToObjectNameMap = array(
-		'html' => 'TYPO3\Fluid\View\TemplateView',
-		'json' => 'TYPO3\Neos\View\Service\AssetJsonView'
-	);
+    /**
+     * A list of IANA media types which are supported by this controller
+     *
+     * @var array
+     * @see http://www.iana.org/assignments/media-types/index.html
+     */
+    protected $supportedMediaTypes = array(
+        'text/html',
+        'application/json'
+    );
 
-	/**
-	 * A list of IANA media types which are supported by this controller
-	 *
-	 * @var array
-	 * @see http://www.iana.org/assignments/media-types/index.html
-	 */
-	protected $supportedMediaTypes = array(
-		'text/html',
-		'application/json'
-	);
+    /**
+     * Shows a list of assets
+     *
+     * @param string $searchTerm An optional search term used for filtering the list of assets
+     * @return string
+     */
+    public function indexAction($searchTerm = '')
+    {
+        $assets = $this->assetRepository->findBySearchTermOrTags(
+            $searchTerm,
+            $this->tagRepository->findBySearchTerm($searchTerm)->toArray()
+        );
 
-	/**
-	 * Shows a list of assets
-	 *
-	 * @param string $searchTerm An optional search term used for filtering the list of assets
-	 * @return string
-	 */
-	public function indexAction($searchTerm = '') {
-		$assets = $this->assetRepository->findBySearchTermOrTags(
-			$searchTerm,
-			$this->tagRepository->findBySearchTerm($searchTerm)->toArray()
-		);
+        $this->view->assign('assets', $assets->toArray());
+    }
 
-		$this->view->assign('assets', $assets->toArray());
-	}
+    /**
+     * Shows a specific asset
+     *
+     * @param string $identifier Specifies the asset to look up
+     * @return string
+     */
+    public function showAction($identifier)
+    {
+        $asset = $this->assetRepository->findByIdentifier($identifier);
 
-	/**
-	 * Shows a specific asset
-	 *
-	 * @param string $identifier Specifies the asset to look up
-	 * @return string
-	 */
-	public function showAction($identifier) {
-		$asset = $this->assetRepository->findByIdentifier($identifier);
+        if ($asset === null) {
+            $this->throwStatus(404);
+        }
 
-		if ($asset === NULL) {
-			$this->throwStatus(404);
-		}
-
-		$this->view->assign('asset', $asset);
-	}
-
+        $this->view->assign('asset', $asset);
+    }
 }

@@ -15,6 +15,6 @@ use TYPO3\TYPO3CR\Exception;
 /**
  * An "Invalid node type postprocessor" exception
  */
-class InvalidNodeTypePostprocessorException extends Exception {
-
+class InvalidNodeTypePostprocessorException extends Exception
+{
 }

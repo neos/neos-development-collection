@@ -14,25 +14,26 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 /**
  * Test case for NodeTemplate
  */
-class NodeTemplateTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class NodeTemplateTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function setNameWithValidNameUpdatesName()
+    {
+        $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $nodeTemplate->setName('valid-node-name');
 
-	/**
-	 * @test
-	 */
-	public function setNameWithValidNameUpdatesName() {
-		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
-		$nodeTemplate->setName('valid-node-name');
+        $this->assertEquals('valid-node-name', $nodeTemplate->getName());
+    }
 
-		$this->assertEquals('valid-node-name', $nodeTemplate->getName());
-	}
-
-	/**
-	 * @test
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function setNameWithInvalidNameThrowsException() {
-		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
-		$nodeTemplate->setName(',?/invalid-node-name');
-	}
-
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function setNameWithInvalidNameThrowsException()
+    {
+        $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $nodeTemplate->setName(',?/invalid-node-name');
+    }
 }

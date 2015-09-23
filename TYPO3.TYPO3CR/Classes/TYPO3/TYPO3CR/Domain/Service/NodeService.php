@@ -25,119 +25,122 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * @Flow\Scope("singleton")
  * @api
  */
-class NodeService {
+class NodeService
+{
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeTypeManager
-	 */
-	protected $nodeTypeManager;
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
 
-	/**
-	 * @Flow\Inject
-	 * @var SystemLoggerInterface
-	 */
-	protected $systemLogger;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
+    /**
+     * Set default node property base on the target node type configuration
+     *
+     * @param NodeInterface $node
+     * @param NodeType $targetNodeType
+     * @return void
+     */
+    public function setDefaultValues(NodeInterface $node, NodeType $targetNodeType = null)
+    {
+        $nodeType = $targetNodeType ?: $node->getNodeType();
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            if (trim($node->getProperty($propertyName)) === '') {
+                $node->setProperty($propertyName, $defaultValue);
+            }
+        }
+    }
 
-	/**
-	 * Set default node property base on the target node type configuration
-	 *
-	 * @param NodeInterface $node
-	 * @param NodeType $targetNodeType
-	 * @return void
-	 */
-	public function setDefaultValues(NodeInterface $node, NodeType $targetNodeType = NULL) {
-		$nodeType = $targetNodeType ?: $node->getNodeType();
-		foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-			if (trim($node->getProperty($propertyName)) === '') {
-				$node->setProperty($propertyName, $defaultValue);
-			}
-		}
-	}
+    /**
+     * Create missing child nodes based on target node type configuration
+     *
+     * @param NodeInterface $node
+     * @param NodeType $targetNodeType
+     * @return void
+     */
+    public function createChildNodes(NodeInterface $node, NodeType $targetNodeType = null)
+    {
+        $nodeType = $targetNodeType ?: $node->getNodeType();
+        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
+            try {
+                $node->createNode($childNodeName, $childNodeType);
+            } catch (NodeExistsException $exception) {
+            }
+        }
+    }
 
-	/**
-	 * Create missing child nodes based on target node type configuration
-	 *
-	 * @param NodeInterface $node
-	 * @param NodeType $targetNodeType
-	 * @return void
-	 */
-	public function createChildNodes(NodeInterface $node, NodeType $targetNodeType = NULL) {
-		$nodeType = $targetNodeType ?: $node->getNodeType();
-		foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-			try {
-				$node->createNode($childNodeName, $childNodeType);
-			} catch (NodeExistsException $exception) {
+    /**
+     * Remove all property not configured in the current Node Type
+     *
+     * @param NodeInterface $node
+     * @return void
+     */
+    public function cleanUpProperties(NodeInterface $node)
+    {
+        $nodeTypeProperties = $node->getNodeType()->getProperties();
+        foreach ($node->getProperties() as $name => $value) {
+            if (!isset($nodeTypeProperties[$name])) {
+                try {
+                    $this->systemLogger->log(sprintf('Remove property "%s" from: %s', $name, (string)$node), LOG_DEBUG, null, 'TYPO3CR');
+                    $node->removeProperty($name);
+                } catch (NodeException $exception) {
+                }
+            }
+        }
+    }
 
-			}
-		}
-	}
+    /**
+     * @param NodeInterface $node
+     * @param NodeType $nodeType
+     * @return boolean
+     */
+    public function isNodeOfType(NodeInterface $node, NodeType $nodeType)
+    {
+        if ($node->getNodeType()->getName() === $nodeType->getName()) {
+            return true;
+        }
+        $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName());
+        return isset($subNodeTypes[$node->getNodeType()->getName()]);
+    }
 
-	/**
-	 * Remove all property not configured in the current Node Type
-	 *
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function cleanUpProperties(NodeInterface $node) {
-		$nodeTypeProperties = $node->getNodeType()->getProperties();
-		foreach ($node->getProperties() as $name => $value) {
-			if (!isset($nodeTypeProperties[$name])) {
-				try {
-					$this->systemLogger->log(sprintf('Remove property "%s" from: %s', $name, (string)$node), LOG_DEBUG, NULL, 'TYPO3CR');
-					$node->removeProperty($name);
-				} catch (NodeException $exception) {
+    /**
+     * Checks if the given node path exists in any possible context already.
+     *
+     * @param string $nodePath
+     * @return boolean
+     */
+    public function nodePathExistsInAnyContext($nodePath)
+    {
+        return $this->nodeDataRepository->pathExists($nodePath);
+    }
 
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param NodeInterface $node
-	 * @param NodeType $nodeType
-	 * @return boolean
-	 */
-	public function isNodeOfType(NodeInterface $node, NodeType $nodeType) {
-		if ($node->getNodeType()->getName() === $nodeType->getName()) {
-			return TRUE;
-		}
-		$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName());
-		return isset($subNodeTypes[$node->getNodeType()->getName()]);
-	}
-
-	/**
-	 * Checks if the given node path exists in any possible context already.
-	 *
-	 * @param string $nodePath
-	 * @return boolean
-	 */
-	public function nodePathExistsInAnyContext($nodePath) {
-		return $this->nodeDataRepository->pathExists($nodePath);
-	}
-
-	/**
-	 * Checks if the given node path can be used for the given node.
-	 *
-	 * @param string $nodePath
-	 * @param NodeInterface $node
-	 * @return boolean
-	 */
-	public function nodePathAvailableForNode($nodePath, NodeInterface $node) {
-		/** @var NodeData $existingNodeData */
-		$existingNodeDataObjects = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), TRUE);
-		foreach ($existingNodeDataObjects as $existingNodeData) {
-			if ($existingNodeData->getMovedTo() !== NULL && $existingNodeData->getMovedTo() === $node->getNodeData()) {
-				return TRUE;
-			}
-		}
-		return !$this->nodePathExistsInAnyContext($nodePath);
-	}
-
+    /**
+     * Checks if the given node path can be used for the given node.
+     *
+     * @param string $nodePath
+     * @param NodeInterface $node
+     * @return boolean
+     */
+    public function nodePathAvailableForNode($nodePath, NodeInterface $node)
+    {
+        /** @var NodeData $existingNodeData */
+        $existingNodeDataObjects = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), true);
+        foreach ($existingNodeDataObjects as $existingNodeData) {
+            if ($existingNodeData->getMovedTo() !== null && $existingNodeData->getMovedTo() === $node->getNodeData()) {
+                return true;
+            }
+        }
+        return !$this->nodePathExistsInAnyContext($nodePath);
+    }
 }

@@ -15,6 +15,6 @@ namespace TYPO3\TYPO3CR\Exception;
  * A "node type not found" exception
  *
  */
-class NodeTypeNotFoundException extends \TYPO3\TYPO3CR\Exception {
-
+class NodeTypeNotFoundException extends \TYPO3\TYPO3CR\Exception
+{
 }

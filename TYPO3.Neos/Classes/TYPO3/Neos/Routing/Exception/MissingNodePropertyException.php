@@ -14,6 +14,6 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * An exception for nodes missing a required property
  */
-class MissingNodePropertyException extends \TYPO3\Neos\Routing\Exception {
-
+class MissingNodePropertyException extends \TYPO3\Neos\Routing\Exception
+{
 }

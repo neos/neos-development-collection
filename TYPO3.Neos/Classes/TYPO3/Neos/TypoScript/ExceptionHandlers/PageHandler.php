@@ -22,76 +22,77 @@ use TYPO3\Neos\Service\ContentElementWrappingService;
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
  * handlers depending on the login status.
  */
-class PageHandler extends AbstractRenderingExceptionHandler {
+class PageHandler extends AbstractRenderingExceptionHandler
+{
+    /**
+     * @Flow\Inject
+     * @var AccessDecisionManagerInterface
+     */
+    protected $accessDecisionManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var AccessDecisionManagerInterface
-	 */
-	protected $accessDecisionManager;
+    /**
+     * @Flow\Inject
+     * @var ContentElementWrappingService
+     */
+    protected $contentElementWrappingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContentElementWrappingService
-	 */
-	protected $contentElementWrappingService;
+    /**
+     * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
+     *
+     * @param array $typoScriptPath path causing the exception
+     * @param \Exception $exception exception to handle
+     * @param integer $referenceCode
+     * @return string
+     */
+    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    {
+        $handler = new ContextDependentHandler();
+        $handler->setRuntime($this->runtime);
+        $output = $handler->handleRenderingException($typoScriptPath, $exception);
+        $currentContext = $this->runtime->getCurrentContext();
+        /** @var NodeInterface $documentNode */
+        $documentNode = isset($currentContext['documentNode']) ? $currentContext['documentNode'] : null;
 
-	/**
-	 * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
-	 *
-	 * @param array $typoScriptPath path causing the exception
-	 * @param \Exception $exception exception to handle
-	 * @param integer $referenceCode
-	 * @return string
-	 */
-	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		$handler = new ContextDependentHandler();
-		$handler->setRuntime($this->runtime);
-		$output = $handler->handleRenderingException($typoScriptPath, $exception);
-		$currentContext = $this->runtime->getCurrentContext();
-		/** @var NodeInterface $documentNode */
-		$documentNode = isset($currentContext['documentNode']) ? $currentContext['documentNode'] : NULL;
+        /** @var NodeInterface $node */
+        $node = isset($currentContext['node']) ? $currentContext['node'] : null;
 
-		/** @var NodeInterface $node */
-		$node = isset($currentContext['node']) ? $currentContext['node'] : NULL;
+        $fluidView = $this->prepareFluidView();
+        $isBackend = false;
+        /** @var NodeInterface $siteNode */
+        $siteNode = isset($currentContext['site']) ? $currentContext['site'] : null;
 
-		$fluidView = $this->prepareFluidView();
-		$isBackend = FALSE;
-		/** @var NodeInterface $siteNode */
-		$siteNode = isset($currentContext['site']) ? $currentContext['site'] : NULL;
+        if ($documentNode === null) {
+            // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
+            $documentNode = $siteNode ? $siteNode : $node;
+        }
 
-		if ($documentNode === NULL) {
-			// Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
-			$documentNode = $siteNode ? $siteNode : $node;
-		}
+        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+            $isBackend = true;
+            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>', true));
+        }
 
-		if ($documentNode !== NULL && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
-			$isBackend = TRUE;
-			$fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>', TRUE));
-		}
+        $fluidView->assignMultiple(array(
+            'isBackend' => $isBackend,
+            'message' => $output,
+            'node' => $node
+        ));
 
-		$fluidView->assignMultiple(array(
-			'isBackend' => $isBackend,
-			'message' => $output,
-			'node' => $node
-		));
+        return $fluidView->render();
+    }
 
-		return $fluidView->render();
-	}
-
-	/**
-	 * Prepare fluid view for rendering error page with neos backend
-	 *
-	 * @return \TYPO3\Fluid\View\StandaloneView
-	 */
-	protected function prepareFluidView() {
-		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
-		$fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
-		$fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
-		// FIXME find a better way than using templates as partials
-		$fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
-		$fluidView->setFormat('html');
-		return $fluidView;
-	}
-
+    /**
+     * Prepare fluid view for rendering error page with neos backend
+     *
+     * @return \TYPO3\Fluid\View\StandaloneView
+     */
+    protected function prepareFluidView()
+    {
+        $fluidView = new \TYPO3\Fluid\View\StandaloneView();
+        $fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
+        $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
+        // FIXME find a better way than using templates as partials
+        $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
+        $fluidView->setFormat('html');
+        return $fluidView;
+    }
 }

@@ -18,35 +18,36 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class CacheManager {
+class CacheManager
+{
+    /**
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $configurationCache;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
-	 */
-	protected $configurationCache;
+    /**
+     * Get the version of the configuration cache
+     *
+     * This value will be changed on every change of configuration files or relevant domain
+     * model changes (Site or Domain).
+     *
+     * @return string
+     */
+    public function getConfigurationCacheVersion()
+    {
+        $version = $this->configurationCache->get('ConfigurationVersion');
+        if ($version === false) {
+            $version = time();
+            $this->configurationCache->set('ConfigurationVersion', (string)$version);
+        }
+        return $version;
+    }
 
-	/**
-	 * Get the version of the configuration cache
-	 *
-	 * This value will be changed on every change of configuration files or relevant domain
-	 * model changes (Site or Domain).
-	 *
-	 * @return string
-	 */
-	public function getConfigurationCacheVersion() {
-		$version = $this->configurationCache->get('ConfigurationVersion');
-		if ($version === FALSE) {
-			$version = time();
-			$this->configurationCache->set('ConfigurationVersion', (string)$version);
-		}
-		return $version;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $configurationCache
-	 */
-	public function setConfigurationCache($configurationCache) {
-		$this->configurationCache = $configurationCache;
-	}
-
+    /**
+     * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $configurationCache
+     */
+    public function setConfigurationCache($configurationCache)
+    {
+        $this->configurationCache = $configurationCache;
+    }
 }

@@ -16,110 +16,115 @@ use TYPO3\Media\Domain\Model\Tag;
  * Testcase for an asset repository
  *
  */
-class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
+class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
+{
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
-	 */
-	protected $assetRepository;
+    /**
+     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     */
+    protected $tagRepository;
 
-	/**
-	 * @var \TYPO3\Media\Domain\Repository\TagRepository
-	 */
-	protected $tagRepository;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+            $this->markTestSkipped('Doctrine persistence is not enabled');
+        }
+        $this->prepareTemporaryDirectory();
+        $this->prepareResourceManager();
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
-			$this->markTestSkipped('Doctrine persistence is not enabled');
-		}
-		$this->prepareTemporaryDirectory();
-		$this->prepareResourceManager();
+        $this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
+        $this->tagRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\TagRepository');
+    }
 
-		$this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
-		$this->tagRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\TagRepository');
-	}
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        $reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
+        $reflectedProperty->setAccessible(true);
+        $reflectedProperty->setValue($this->resourceManager, $this->oldPersistentResourcesStorageBaseUri);
 
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		parent::tearDown();
-		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
-		$reflectedProperty->setAccessible(TRUE);
-		$reflectedProperty->setValue($this->resourceManager, $this->oldPersistentResourcesStorageBaseUri);
+        \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
+    }
 
-		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
-	}
+    /**
+     * @test
+     */
+    public function assetsCanBePersisted()
+    {
+        $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+        $asset = new \TYPO3\Media\Domain\Model\Asset($resource);
 
-	/**
-	 * @test
-	 */
-	public function assetsCanBePersisted() {
-		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
-		$asset = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $this->assetRepository->add($asset);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
 
-		$this->assetRepository->add($asset);
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
+        $this->assertCount(1, $this->assetRepository->findAll());
+        $this->assertInstanceOf('TYPO3\Media\Domain\Model\Asset', $this->assetRepository->findAll()->getFirst());
+    }
 
-		$this->assertCount(1, $this->assetRepository->findAll());
-		$this->assertInstanceOf('TYPO3\Media\Domain\Model\Asset', $this->assetRepository->findAll()->getFirst());
-	}
+    /**
+     * @test
+     */
+    public function findBySearchTermReturnsFilteredResult()
+    {
+        $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
 
-	/**
-	 * @test
-	 */
-	public function findBySearchTermReturnsFilteredResult() {
-		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+        $asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $asset1->setTitle('foo bar');
+        $asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $asset2->setTitle('foobar');
 
-		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
-		$asset1->setTitle('foo bar');
-		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
-		$asset2->setTitle('foobar');
+        $this->assetRepository->add($asset1);
+        $this->assetRepository->add($asset2);
 
-		$this->assetRepository->add($asset1);
-		$this->assetRepository->add($asset2);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
 
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
+        $this->assertCount(2, $this->assetRepository->findAll());
+        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('foo'));
+        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags(' bar'));
+        $this->assertCount(0, $this->assetRepository->findBySearchTermOrTags('baz'));
+    }
 
-		$this->assertCount(2, $this->assetRepository->findAll());
-		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('foo'));
-		$this->assertCount(1, $this->assetRepository->findBySearchTermOrTags(' bar'));
-		$this->assertCount(0, $this->assetRepository->findBySearchTermOrTags('baz'));
-	}
+    /**
+     * @test
+     */
+    public function findBySearchTermAndTagsReturnsFilteredResult()
+    {
+        $tag = new Tag('home');
+        $this->tagRepository->add($tag);
 
-	/**
-	 * @test
-	 */
-	public function findBySearchTermAndTagsReturnsFilteredResult() {
-		$tag = new Tag('home');
-		$this->tagRepository->add($tag);
+        $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+        $asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $asset1->setTitle('asset for homepage');
+        $asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $asset2->setTitle('just another asset');
+        $asset2->addTag($tag);
 
-		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
-		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
-		$asset1->setTitle('asset for homepage');
-		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
-		$asset2->setTitle('just another asset');
-		$asset2->addTag($tag);
+        $this->assetRepository->add($asset1);
+        $this->assetRepository->add($asset2);
 
-		$this->assetRepository->add($asset1);
-		$this->assetRepository->add($asset2);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
 
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
-
-		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', array($tag)));
-		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', array($tag)));
-		$this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', array($tag)));
-	}
+        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', array($tag)));
+        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', array($tag)));
+        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', array($tag)));
+    }
 }

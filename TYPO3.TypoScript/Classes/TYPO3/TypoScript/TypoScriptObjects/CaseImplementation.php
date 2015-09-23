@@ -23,95 +23,98 @@ use TYPO3\Flow\Annotations as Flow;
  * object; and all its children are by-default interpreted as "Matcher" TypoScript
  * objects if no others are specified.
  */
-class CaseImplementation extends ArrayImplementation {
+class CaseImplementation extends ArrayImplementation
+{
+    /**
+     * This constant should be returned by individual matchers if the matcher
+     * did not match.
+     *
+     * You should not rely on the contents or type of this constant.
+     */
+    const MATCH_NORESULT = '_____________NO_MATCH_RESULT_____________';
 
-	/**
-	 * This constant should be returned by individual matchers if the matcher
-	 * did not match.
-	 *
-	 * You should not rely on the contents or type of this constant.
-	 */
-	const MATCH_NORESULT = '_____________NO_MATCH_RESULT_____________';
+    /**
+     * Execute each matcher until the first one matches
+     *
+     * @return mixed
+     */
+    public function evaluate()
+    {
+        $this->unsetIgnoredProperties();
 
-	/**
-	 * Execute each matcher until the first one matches
-	 *
-	 * @return mixed
-	 */
-	public function evaluate() {
-		$this->unsetIgnoredProperties();
+        $matcherKeys = $this->sortNestedTypoScriptKeys();
 
-		$matcherKeys = $this->sortNestedTypoScriptKeys();
+        foreach ($matcherKeys as $matcherName) {
+            $renderedMatcher = $this->renderMatcher($matcherName);
+            if ($this->matcherMatched($renderedMatcher)) {
+                return $renderedMatcher;
+            }
+        }
 
-		foreach ($matcherKeys as $matcherName) {
-			$renderedMatcher = $this->renderMatcher($matcherName);
-			if ($this->matcherMatched($renderedMatcher)) {
-				return $renderedMatcher;
-			}
-		}
+        return null;
+    }
 
-		return NULL;
-	}
+    /**
+     * Unset ignored properties to exclude them when sorting the array and evaluating matchers
+     *
+     * @return void
+     */
+    protected function unsetIgnoredProperties()
+    {
+        $ignoredProperties = $this->tsValue('__meta/ignoreProperties');
+        if (is_array($ignoredProperties)) {
+            foreach ($ignoredProperties as $ignoredProperty) {
+                unset($this->properties[$ignoredProperty]);
+            }
+        }
+    }
 
-	/**
-	 * Unset ignored properties to exclude them when sorting the array and evaluating matchers
-	 *
-	 * @return void
-	 */
-	protected function unsetIgnoredProperties() {
-		$ignoredProperties = $this->tsValue('__meta/ignoreProperties');
-		if (is_array($ignoredProperties)) {
-			foreach ($ignoredProperties as $ignoredProperty) {
-				unset($this->properties[$ignoredProperty]);
-			}
-		}
-	}
+    /**
+     * Render the given matcher
+     *
+     * A result value of MATCH_NORESULT means that the condition of the matcher did not match and the case should
+     * continue.
+     *
+     * @param string $matcherKey
+     * @return string
+     * @throws \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException
+     */
+    protected function renderMatcher($matcherKey)
+    {
+        $renderedMatcher = null;
 
-	/**
-	 * Render the given matcher
-	 *
-	 * A result value of MATCH_NORESULT means that the condition of the matcher did not match and the case should
-	 * continue.
-	 *
-	 * @param string $matcherKey
-	 * @return string
-	 * @throws \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException
-	 */
-	protected function renderMatcher($matcherKey) {
-		$renderedMatcher = NULL;
+        if (isset($this->properties[$matcherKey]['__objectType'])) {
+            // object type already set, so no need to set it
+            $renderedMatcher = $this->tsRuntime->render(
+                sprintf('%s/%s', $this->path, $matcherKey)
+            );
+            return $renderedMatcher;
+        } elseif (!is_array($this->properties[$matcherKey])) {
+            throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
+        } elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
+            throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
+        } else {
+            // No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
+            $renderedMatcher = $this->tsRuntime->render(
+                sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherKey)
+            );
+            return $renderedMatcher;
+        }
+    }
 
-		if (isset($this->properties[$matcherKey]['__objectType'])) {
-			// object type already set, so no need to set it
-			$renderedMatcher = $this->tsRuntime->render(
-				sprintf('%s/%s', $this->path, $matcherKey)
-			);
-			return $renderedMatcher;
-		} elseif (!is_array($this->properties[$matcherKey])) {
-			throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
-		} elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
-			throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
-		} else {
-			// No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
-			$renderedMatcher = $this->tsRuntime->render(
-				sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherKey)
-			);
-			return $renderedMatcher;
-		}
-	}
-
-	/**
-	 * Test whether the output of the matcher does not equal the MATCH_NORESULT
-	 *
-	 * If the debug mode is enabled, we have to strip the debug output before comparing the rendered result.
-	 *
-	 * @param string $renderedMatcher
-	 * @return boolean
-	 */
-	protected function matcherMatched($renderedMatcher) {
-		if ($this->tsRuntime->isDebugMode()) {
-			$renderedMatcher = preg_replace('/\s*<!--.*?-->\s*/', '', $renderedMatcher);
-		}
-		return $renderedMatcher !== self::MATCH_NORESULT;
-	}
-
+    /**
+     * Test whether the output of the matcher does not equal the MATCH_NORESULT
+     *
+     * If the debug mode is enabled, we have to strip the debug output before comparing the rendered result.
+     *
+     * @param string $renderedMatcher
+     * @return boolean
+     */
+    protected function matcherMatched($renderedMatcher)
+    {
+        if ($this->tsRuntime->isDebugMode()) {
+            $renderedMatcher = preg_replace('/\s*<!--.*?-->\s*/', '', $renderedMatcher);
+        }
+        return $renderedMatcher !== self::MATCH_NORESULT;
+    }
 }

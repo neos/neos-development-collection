@@ -20,22 +20,21 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * Settings given to a transformation will be passed to accordingly named setters.
  */
-interface TransformationInterface {
+interface TransformationInterface
+{
+    /**
+     * Returns TRUE if the given node can be transformed by this transformation.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
 
-	/**
-	 * Returns TRUE if the given node can be transformed by this transformation.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
-
-	/**
-	 * Execute the transformation on the given node.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
-
+    /**
+     * Execute the transformation on the given node.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
 }

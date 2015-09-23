@@ -19,32 +19,32 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * @Flow\Scope("singleton")
  */
-class NodeSerializer extends AbstractTypeConverter {
+class NodeSerializer extends AbstractTypeConverter
+{
+    /**
+     * @var array
+     */
+    protected $sourceTypes = array('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-	/**
-	 * @var array
-	 */
-	protected $sourceTypes = array('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+    /**
+     * @var string
+     */
+    protected $targetType = 'string';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'string';
+    /**
+     * @var integer
+     */
+    protected $priority = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * @param NodeInterface $source The node instance
-	 * @param string $targetType not used
-	 * @param array $subProperties not used
-	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return string The node context path
-	 */
-	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
-		return $source->getContextPath();
-	}
-
+    /**
+     * @param NodeInterface $source The node instance
+     * @param string $targetType not used
+     * @param array $subProperties not used
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return string The node context path
+     */
+    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    {
+        return $source->getContextPath();
+    }
 }

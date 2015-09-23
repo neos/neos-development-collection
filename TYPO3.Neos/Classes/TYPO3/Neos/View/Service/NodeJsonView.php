@@ -21,38 +21,38 @@ use TYPO3\Flow\Mvc\View\JsonView;
  *
  * @Flow\Scope("prototype")
  */
-class NodeJsonView extends JsonView {
+class NodeJsonView extends JsonView
+{
+    /**
+     * Configures rendering according to the set variable(s) and calls
+     * render on the parent.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if (isset($this->variables['nodes'])) {
+            $this->setConfiguration(
+                array(
+                    'nodes' => array(
+                        '_descendAll' => array(
+                            '_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
+                        )
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('nodes'));
+        } else {
+            $this->setConfiguration(
+                array(
+                    'node' => array(
+                        '_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('node'));
+        }
 
-	/**
-	 * Configures rendering according to the set variable(s) and calls
-	 * render on the parent.
-	 *
-	 * @return string
-	 */
-	public function render() {
-		if (isset($this->variables['nodes'])) {
-			$this->setConfiguration(
-				array(
-					'nodes' => array(
-						'_descendAll' => array(
-							'_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
-						)
-					)
-				)
-			);
-			$this->setVariablesToRender(array('nodes'));
-		} else {
-			$this->setConfiguration(
-				array(
-					'node' => array(
-						'_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
-					)
-				)
-			);
-			$this->setVariablesToRender(array('node'));
-		}
-
-		return parent::render();
-	}
-
+        return parent::render();
+    }
 }

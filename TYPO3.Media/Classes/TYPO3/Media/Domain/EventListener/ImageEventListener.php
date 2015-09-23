@@ -20,49 +20,51 @@ use TYPO3\Media\Domain\Model\Image;
  *
  * @Flow\Scope("singleton")
  */
-class ImageEventListener {
+class ImageEventListener
+{
+    /**
+     * @var \TYPO3\Flow\Cache\CacheManager
+     * @Flow\Inject
+     */
+    protected $cacheManager;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
-	 * @Flow\Inject
-	 */
-	protected $cacheManager;
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        if ($entity instanceof Image) {
+            $entity->initializeImageSizeAndType();
+        }
+    }
 
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function prePersist(LifecycleEventArgs $eventArgs) {
-		$entity = $eventArgs->getEntity();
-		if ($entity instanceof Image) {
-			$entity->initializeImageSizeAndType();
-		}
-	}
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function preUpdate(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        if ($entity instanceof Image) {
+            $entity->initializeImageSizeAndType();
+        }
+    }
 
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function preUpdate(LifecycleEventArgs $eventArgs) {
-		$entity = $eventArgs->getEntity();
-		if ($entity instanceof Image) {
-			$entity->initializeImageSizeAndType();
-		}
-	}
-
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function postRemove(LifecycleEventArgs $eventArgs) {
-		$entity = $eventArgs->getEntity();
-		if ($entity instanceof Image) {
-			/** @var \TYPO3\Flow\Resource\Resource $resource */
-			$resource = $eventArgs->getEntity()->getResource();
-			if ($resource !== NULL) {
-				$this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getResourcePointer()->getHash());
-			}
-		}
-	}
-
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function postRemove(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        if ($entity instanceof Image) {
+            /** @var \TYPO3\Flow\Resource\Resource $resource */
+            $resource = $eventArgs->getEntity()->getResource();
+            if ($resource !== null) {
+                $this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getResourcePointer()->getHash());
+            }
+        }
+    }
 }

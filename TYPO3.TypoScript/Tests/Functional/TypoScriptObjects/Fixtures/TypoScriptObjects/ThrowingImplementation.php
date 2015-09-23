@@ -11,23 +11,24 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\TypoScrip
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-class ThrowingImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
+class ThrowingImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
+{
+    /**
+     * @return boolean
+     */
+    protected function getShouldThrow()
+    {
+        return $this->tsValue('shouldThrow');
+    }
 
-	/**
-	 * @return boolean
-	 */
-	protected function getShouldThrow() {
-		return $this->tsValue('shouldThrow');
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function evaluate() {
-		if ($this->getShouldThrow()) {
-			throw new \TYPO3\TypoScript\Exception('Just testing an exception', 1396557841);
-		}
-		return 'It depends';
-	}
-
+    /**
+     * {@inheritdoc}
+     */
+    public function evaluate()
+    {
+        if ($this->getShouldThrow()) {
+            throw new \TYPO3\TypoScript\Exception('Just testing an exception', 1396557841);
+        }
+        return 'It depends';
+    }
 }

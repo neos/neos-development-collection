@@ -20,126 +20,134 @@ use TYPO3\Flow\Mvc\ActionRequest;
  * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
  * @api
  */
-class TemplateImplementation extends AbstractArrayTypoScriptObject {
+class TemplateImplementation extends AbstractArrayTypoScriptObject
+{
+    /**
+     * Path to the template which should be rendered
+     *
+     * @return string
+     */
+    public function getTemplatePath()
+    {
+        return $this->tsValue('templatePath');
+    }
 
-	/**
-	 * Path to the template which should be rendered
-	 *
-	 * @return string
-	 */
-	public function getTemplatePath() {
-		return $this->tsValue('templatePath');
-	}
+    /**
+     * Path to the partial root
+     *
+     * @return string
+     */
+    public function getPartialRootPath()
+    {
+        return $this->tsValue('partialRootPath');
+    }
 
-	/**
-	 * Path to the partial root
-	 *
-	 * @return string
-	 */
-	public function getPartialRootPath() {
-		return $this->tsValue('partialRootPath');
-	}
+    /**
+     * Path to the layout root
+     *
+     * @return string
+     */
+    public function getLayoutRootPath()
+    {
+        return $this->tsValue('layoutRootPath');
+    }
 
-	/**
-	 * Path to the layout root
-	 *
-	 * @return string
-	 */
-	public function getLayoutRootPath() {
-		return $this->tsValue('layoutRootPath');
-	}
+    /**
+     * Name of a specific section, if only this section should be rendered.
+     *
+     * @return string
+     */
+    public function getSectionName()
+    {
+        return $this->tsValue('sectionName');
+    }
 
-	/**
-	 * Name of a specific section, if only this section should be rendered.
-	 *
-	 * @return string
-	 */
-	public function getSectionName() {
-		return $this->tsValue('sectionName');
-	}
+    /**
+     * @return string
+     * @internal
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
 
-	/**
-	 * @return string
-	 * @internal
-	 */
-	public function getPath() {
-		return $this->path;
-	}
+    /**
+     * @return \TYPO3\TypoScript\Core\Runtime
+     * @internal
+     */
+    public function getTsRuntime()
+    {
+        return $this->tsRuntime;
+    }
 
-	/**
-	 * @return \TYPO3\TypoScript\Core\Runtime
-	 * @internal
-	 */
-	public function getTsRuntime() {
-		return $this->tsRuntime;
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function evaluate()
+    {
+        $actionRequest =  $this->tsRuntime->getControllerContext()->getRequest();
+        if (!$actionRequest instanceof ActionRequest) {
+            $actionRequest = null;
+        }
+        $fluidTemplate = new Helpers\FluidView($this, $actionRequest);
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		$actionRequest =  $this->tsRuntime->getControllerContext()->getRequest();
-		if (!$actionRequest instanceof ActionRequest) {
-			$actionRequest = NULL;
-		}
-		$fluidTemplate = new Helpers\FluidView($this, $actionRequest);
+        $templatePath = $this->getTemplatePath();
+        if ($templatePath === null) {
+            throw new \Exception(sprintf('Template path "%s" at path "%s"  not found', $templatePath, $this->path));
+        }
+        $fluidTemplate->setTemplatePathAndFilename($templatePath);
 
-		$templatePath = $this->getTemplatePath();
-		if ($templatePath === NULL) {
-			throw new \Exception(sprintf('Template path "%s" at path "%s"  not found', $templatePath, $this->path));
-		}
-		$fluidTemplate->setTemplatePathAndFilename($templatePath);
+        $partialRootPath = $this->getPartialRootPath();
+        if ($partialRootPath !== null) {
+            $fluidTemplate->setPartialRootPath($partialRootPath);
+        }
 
-		$partialRootPath = $this->getPartialRootPath();
-		if ($partialRootPath !== NULL) {
-			$fluidTemplate->setPartialRootPath($partialRootPath);
-		}
+        $layoutRootPath = $this->getLayoutRootPath();
+        if ($layoutRootPath !== null) {
+            $fluidTemplate->setLayoutRootPath($layoutRootPath);
+        }
 
-		$layoutRootPath = $this->getLayoutRootPath();
-		if ($layoutRootPath !== NULL) {
-			$fluidTemplate->setLayoutRootPath($layoutRootPath);
-		}
+            // Template resources need to be evaluated from the templates package not the requests package.
+        if (strpos($templatePath, 'resource://') === 0) {
+            $templateResourcePathParts = parse_url($templatePath);
+            $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
+        }
 
-			// Template resources need to be evaluated from the templates package not the requests package.
-		if (strpos($templatePath, 'resource://') === 0) {
-			$templateResourcePathParts = parse_url($templatePath);
-			$fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
-		}
+        foreach ($this->properties as $key => $value) {
+            if (!is_array($value)) {
+                // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
+                    // we can just evaluate it (to handle processors) and then assign it to the template.
+                $evaluatedValue = $this->tsValue($key);
+                $fluidTemplate->assign($key, $evaluatedValue);
+            } else {
+                // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
+                    // nested TypoScript object, Eel expression or simple value.
+                $fluidTemplate->assign($key, new Helpers\TypoScriptPathProxy($this, $this->path . '/' . $key, $value));
+            }
+        }
 
-		foreach ($this->properties as $key => $value) {
-			if (!is_array($value)) {
-					// if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
-					// we can just evaluate it (to handle processors) and then assign it to the template.
-				$evaluatedValue = $this->tsValue($key);
-				$fluidTemplate->assign($key, $evaluatedValue);
-			} else {
-					// It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
-					// nested TypoScript object, Eel expression or simple value.
-				$fluidTemplate->assign($key, new Helpers\TypoScriptPathProxy($this, $this->path . '/' . $key, $value));
-			}
-		}
+        $this->initializeView($fluidTemplate);
 
-		$this->initializeView($fluidTemplate);
+        $sectionName = $this->getSectionName();
 
-		$sectionName = $this->getSectionName();
+        if ($sectionName !== null) {
+            return $fluidTemplate->renderSection($sectionName);
+        } else {
+            return $fluidTemplate->render();
+        }
+    }
 
-		if ($sectionName !== NULL) {
-			return $fluidTemplate->renderSection($sectionName);
-		} else {
-			return $fluidTemplate->render();
-		}
-	}
-
-	/**
-	 * This is a template method which can be overridden in subclasses to add new variables which should
-	 * be available inside the Fluid template. It is needed e.g. for Expose.
-	 *
-	 * @param Helpers\FluidView $view
-	 * @return void
-	 */
-	protected function initializeView(Helpers\FluidView $view) {
-		// template method
-	}
+    /**
+     * This is a template method which can be overridden in subclasses to add new variables which should
+     * be available inside the Fluid template. It is needed e.g. for Expose.
+     *
+     * @param Helpers\FluidView $view
+     * @return void
+     */
+    protected function initializeView(Helpers\FluidView $view)
+    {
+        // template method
+    }
 }

@@ -14,71 +14,75 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 /**
  * Functional test case.
  */
-class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     */
+    protected $context;
 
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected $context;
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-	}
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->inject($this->contextFactory, 'contextInstances', array());
+    }
 
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		parent::tearDown();
-		$this->inject($this->contextFactory, 'contextInstances', array());
-	}
+    /**
+     * @test
+     */
+    public function createNodeFromTemplateUsesIdentifierFromTemplate()
+    {
+        $identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
+        $template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $template->setName('new-node');
+        $template->setIdentifier($identifier);
 
-	/**
-	 * @test
-	 */
-	public function createNodeFromTemplateUsesIdentifierFromTemplate() {
-		$identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
-		$template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
-		$template->setName('new-node');
-		$template->setIdentifier($identifier);
+        $rootNode = $this->context->getRootNode();
+        $newNode = $rootNode->createNodeFromTemplate($template);
 
-		$rootNode = $this->context->getRootNode();
-		$newNode = $rootNode->createNodeFromTemplate($template);
+        $this->assertSame($identifier, $newNode->getIdentifier());
+    }
 
-		$this->assertSame($identifier, $newNode->getIdentifier());
-	}
+    /**
+     * @test
+     */
+    public function inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized()
+    {
+        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodesWithAndWithoutDimensions.xml', $this->context);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->inject($this->contextFactory, 'contextInstances', array());
 
-	/**
-	 * @test
-	 */
-	public function inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized() {
-		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodesWithAndWithoutDimensions.xml', $this->context);
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
-		$this->inject($this->contextFactory, 'contextInstances', array());
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        $nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        // The identifier comes from the Fixture.
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(true), array());
 
-		// The context is not important here, just a quick way to get a (live) workspace
-		$context = $this->contextFactory->create();
-		$nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-		// The identifier comes from the Fixture.
-		$resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(TRUE), array());
-
-		$this->assertEmpty($resultingNodeData->getDimensions());
-	}
+        $this->assertEmpty($resultingNodeData->getDimensions());
+    }
 }

@@ -14,66 +14,71 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model;
 /**
  * A simple cache aware model
  */
-class TestModel implements \TYPO3\Flow\Cache\CacheAwareInterface {
+class TestModel implements \TYPO3\Flow\Cache\CacheAwareInterface
+{
+    /**
+     * @var string
+     */
+    protected $id;
 
-	/**
-	 * @var string
-	 */
-	protected $id;
+    /**
+     * @var string
+     */
+    protected $value;
 
-	/**
-	 * @var string
-	 */
-	protected $value;
+    /**
+     * @var integer
+     */
+    protected $counter = 0;
 
-	/**
-	 * @var integer
-	 */
-	protected $counter = 0;
+    public function __construct($id, $value)
+    {
+        $this->id = $id;
+        $this->value = $value;
+    }
 
-	public function __construct($id, $value) {
-		$this->id = $id;
-		$this->value = $value;
-	}
+    /**
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 
-	/**
-	 * @param string $value
-	 */
-	public function setValue($value) {
-		$this->value = $value;
-	}
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getValue() {
-		return $this->value;
-	}
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getId() {
-		return $this->id;
-	}
+    /**
+     * Increment and get counter
+     *
+     * @return integer
+     */
+    public function getCounter()
+    {
+        $this->counter++;
+        return $this->counter;
+    }
 
-	/**
-	 * Increment and get counter
-	 *
-	 * @return integer
-	 */
-	public function getCounter() {
-		$this->counter++;
-		return $this->counter;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function getCacheEntryIdentifier() {
-		return $this->id;
-	}
-
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getCacheEntryIdentifier()
+    {
+        return $this->id;
+    }
 }

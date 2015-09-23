@@ -17,14 +17,13 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
 /**
  * Interface for the node search service for finding nodes based on a fulltext search
  */
-interface NodeSearchServiceInterface {
-
-	/**
-	 * @param string $term
-	 * @param array $searchNodeTypes
-	 * @param Context $context
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
-	 */
-	public function findByProperties($term, array $searchNodeTypes, Context $context);
-
+interface NodeSearchServiceInterface
+{
+    /**
+     * @param string $term
+     * @param array $searchNodeTypes
+     * @param Context $context
+     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     */
+    public function findByProperties($term, array $searchNodeTypes, Context $context);
 }

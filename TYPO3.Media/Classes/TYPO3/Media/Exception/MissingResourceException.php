@@ -16,6 +16,6 @@ namespace TYPO3\Media\Exception;
  *
  * @api
  */
-class MissingResourceException extends \TYPO3\Media\Exception {
-
+class MissingResourceException extends \TYPO3\Media\Exception
+{
 }

@@ -16,22 +16,23 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Remove a given node (hard).
  */
-class RemoveNode extends AbstractTransformation {
+class RemoveNode extends AbstractTransformation
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * Remove the given node
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return void
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		$node->setRemoved(TRUE);
-		$this->nodeDataRepository->remove($node);
-	}
+    /**
+     * Remove the given node
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return void
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        $node->setRemoved(true);
+        $this->nodeDataRepository->remove($node);
+    }
 }

@@ -12,7 +12,6 @@ namespace TYPO3\Neos\Domain\Model;
  *                                                                        */
 
 use TYPO3\Party\Domain\Model\Person;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -22,30 +21,31 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @Flow\Scope("prototype")
  */
-class User extends Person {
+class User extends Person
+{
+    /**
+     * Preferences of this user
+     *
+     * @var \TYPO3\Neos\Domain\Model\UserPreferences
+     * @ORM\OneToOne
+     */
+    protected $preferences;
 
-	/**
-	 * Preferences of this user
-	 *
-	 * @var \TYPO3\Neos\Domain\Model\UserPreferences
-	 * @ORM\OneToOne
-	 */
-	protected $preferences;
+    /**
+     * Constructs this User object
+     *
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->preferences = new UserPreferences();
+    }
 
-	/**
-	 * Constructs this User object
-	 *
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->preferences = new UserPreferences();
-	}
-
-	/**
-	 * @return \TYPO3\Neos\Domain\Model\UserPreferences
-	 */
-	public function getPreferences() {
-		return $this->preferences;
-	}
-
+    /**
+     * @return \TYPO3\Neos\Domain\Model\UserPreferences
+     */
+    public function getPreferences()
+    {
+        return $this->preferences;
+    }
 }

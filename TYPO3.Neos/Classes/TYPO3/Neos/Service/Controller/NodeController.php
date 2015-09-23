@@ -32,318 +32,332 @@ use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
  *       Since this is a rather big endeavor, we slice the elephant and move methods in a clean way from here to the
  *       new NodesController (\TYPO3\Neos\Controller\Service\NodesController)
  */
-class NodeController extends AbstractServiceController {
+class NodeController extends AbstractServiceController
+{
+    /**
+     * @var NodeView
+     */
+    protected $view;
 
-	/**
-	 * @var NodeView
-	 */
-	protected $view;
+    /**
+     * @var string
+     */
+    protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
 
-	/**
-	 * @var string
-	 */
-	protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeTypeManager
-	 */
-	protected $nodeTypeManager;
+    /**
+     * @Flow\Inject
+     * @var NodeSearchService
+     */
+    protected $nodeSearchService;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeSearchService
-	 */
-	protected $nodeSearchService;
+    /**
+     * @Flow\Inject
+     * @var NodeFactory
+     */
+    protected $nodeFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\NodeOperations
+     */
+    protected $nodeOperations;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\NodeOperations
-	 */
-	protected $nodeOperations;
+    /**
+     * Select special error action
+     *
+     * @return void
+     */
+    protected function initializeAction()
+    {
+        if ($this->arguments->hasArgument('referenceNode')) {
+            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+        }
+        $this->uriBuilder->setRequest($this->request->getMainRequest());
+    }
 
-	/**
-	 * Select special error action
-	 *
-	 * @return void
-	 */
-	protected function initializeAction() {
-		if ($this->arguments->hasArgument('referenceNode')) {
-			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
-		}
-		$this->uriBuilder->setRequest($this->request->getMainRequest());
-	}
+    #
+    # Actions which are not yet refactored to REST below (see NEOS-199):
+    #
 
-	#
-	# Actions which are not yet refactored to REST below (see NEOS-199):
-	#
+    /**
+     * Return child nodes of specified node for usage in a TreeLoader
+     *
+     * @param Node $node The node to find child nodes for
+     * @param string $nodeTypeFilter A node type filter
+     * @param integer $depth levels of childNodes (0 = unlimited)
+     * @param Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
+     * @return void
+     */
+    public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode)
+    {
+        $this->view->assignChildNodes($node, $nodeTypeFilter, NodeView::STYLE_TREE, $depth, $untilNode);
+    }
 
-	/**
-	 * Return child nodes of specified node for usage in a TreeLoader
-	 *
-	 * @param Node $node The node to find child nodes for
-	 * @param string $nodeTypeFilter A node type filter
-	 * @param integer $depth levels of childNodes (0 = unlimited)
-	 * @param Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
-	 * @return void
-	 */
-	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode) {
-		$this->view->assignChildNodes($node, $nodeTypeFilter, NodeView::STYLE_TREE, $depth, $untilNode);
-	}
+    /**
+     * Return child nodes of specified node for usage in a TreeLoader based on filter
+     *
+     * @param Node $node The node to find child nodes for
+     * @param string $term
+     * @param string $nodeType
+     * @return void
+     */
+    public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
+    {
+        $nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false));
+        $context = $node->getContext();
+        if ($term !== '') {
+            $nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
+        } else {
+            $nodes = array();
+            $nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
+            foreach ($nodeDataRecords as $nodeData) {
+                $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+                if ($node !== null) {
+                    $nodes[$node->getPath()] = $node;
+                }
+            }
+        }
+        $this->view->assignFilteredChildNodes(
+            $node,
+            $nodes
+        );
+    }
 
-	/**
-	 * Return child nodes of specified node for usage in a TreeLoader based on filter
-	 *
-	 * @param Node $node The node to find child nodes for
-	 * @param string $term
-	 * @param string $nodeType
-	 * @return void
-	 */
-	public function filterChildNodesForTreeAction(Node $node, $term, $nodeType) {
-		$nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', FALSE));
-		$context = $node->getContext();
-		if ($term !== '') {
-			$nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
-		} else {
-			$nodes = array();
-			$nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
-			foreach ($nodeDataRecords as $nodeData) {
-				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-				if ($node !== NULL) {
-					$nodes[$node->getPath()] = $node;
-				}
-			}
-		}
-		$this->view->assignFilteredChildNodes(
-			$node,
-			$nodes
-		);
-	}
+    /**
+     * Creates a new node
+     *
+     * We need to call persistEntities() in order to return the nextUri.
+     *
+     * @param Node $referenceNode
+     * @param array $nodeData
+     * @param string $position where the node should be added (allowed: before, into, after)
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function createAction(Node $referenceNode, array $nodeData, $position)
+    {
+        $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
-	/**
-	 * Creates a new node
-	 *
-	 * We need to call persistEntities() in order to return the nextUri.
-	 *
-	 * @param Node $referenceNode
-	 * @param array $nodeData
-	 * @param string $position where the node should be added (allowed: before, into, after)
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 */
-	public function createAction(Node $referenceNode, array $nodeData, $position) {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+        $this->nodeDataRepository->persistEntities();
 
-		$this->nodeDataRepository->persistEntities();
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
+        $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
+    }
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
-	}
+    /**
+     * Creates a new node and renders the node inside the containing section
+     *
+     * @param Node $referenceNode
+     * @param string $typoScriptPath The TypoScript path of the collection
+     * @param array $nodeData
+     * @param string $position where the node should be added (allowed: before, into, after)
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position)
+    {
+        $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
-	/**
-	 * Creates a new node and renders the node inside the containing section
-	 *
-	 * @param Node $referenceNode
-	 * @param string $typoScriptPath The TypoScript path of the collection
-	 * @param array $nodeData
-	 * @param string $position where the node should be added (allowed: before, into, after)
-	 * @return string
-	 * @throws \InvalidArgumentException
-	 */
-	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+        $view = new TypoScriptView();
+        $this->controllerContext->getRequest()->setFormat('html');
+        $view->setControllerContext($this->controllerContext);
+        $view->setOption('enableContentCache', false);
 
-		$view = new TypoScriptView();
-		$this->controllerContext->getRequest()->setFormat('html');
-		$view->setControllerContext($this->controllerContext);
-		$view->setOption('enableContentCache', FALSE);
+        $view->setTypoScriptPath($typoScriptPath);
+        $view->assign('value', $newNode->getParent());
 
-		$view->setTypoScriptPath($typoScriptPath);
-		$view->assign('value', $newNode->getParent());
+        $result = $view->render();
+        $this->response->setContent(json_encode((object)array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
 
-		$result = $view->render();
-		$this->response->setContent(json_encode((object)array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
+        return '';
+    }
 
-		return '';
-	}
+    /**
+     * Creates a new node and returns tree structure
+     *
+     * @param Node $referenceNode
+     * @param array $nodeData
+     * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
+     * @param string $nodeTypeFilter
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '')
+    {
+        $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
+        $this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
+    }
 
-	/**
-	 * Creates a new node and returns tree structure
-	 *
-	 * @param Node $referenceNode
-	 * @param array $nodeData
-	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
-	 * @param string $nodeTypeFilter
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 */
-	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '') {
-		$newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-		$this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
-	}
+    /**
+     * Move $node before, into or after $targetNode
+     *
+     * @param Node $node
+     * @param Node $targetNode
+     * @param string $position where the node should be added (allowed: before, into, after)
+     * @return void
+     * @throws NodeException
+     */
+    public function moveAction(Node $node, Node $targetNode, $position)
+    {
+        $node = $this->nodeOperations->move($node, $targetNode, $position);
 
-	/**
-	 * Move $node before, into or after $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @param string $position where the node should be added (allowed: before, into, after)
-	 * @return void
-	 * @throws NodeException
-	 */
-	public function moveAction(Node $node, Node $targetNode, $position) {
-		$node = $this->nodeOperations->move($node, $targetNode, $position);
+        $this->nodeDataRepository->persistEntities();
 
-		$this->nodeDataRepository->persistEntities();
+        $data = array('newNodePath' => $node->getContextPath());
+        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+        }
+        $this->view->assign('value', array('data' => $data, 'success' => true));
+    }
 
-		$data = array('newNodePath' => $node->getContextPath());
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			$data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-		}
-		$this->view->assign('value', array('data' => $data, 'success' => TRUE));
-	}
+    /**
+     * Copy $node before, into or after $targetNode
+     *
+     * @param Node $node the node to be copied
+     * @param Node $targetNode the target node to be copied "to", see $position
+     * @param string $position where the node should be added in relation to $targetNode (allowed: before, into, after)
+     * @param string $nodeName optional node name (if empty random node name will be generated)
+     * @return void
+     * @throws NodeException
+     */
+    public function copyAction(Node $node, Node $targetNode, $position, $nodeName = null)
+    {
+        $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
-	/**
-	 * Copy $node before, into or after $targetNode
-	 *
-	 * @param Node $node the node to be copied
-	 * @param Node $targetNode the target node to be copied "to", see $position
-	 * @param string $position where the node should be added in relation to $targetNode (allowed: before, into, after)
-	 * @param string $nodeName optional node name (if empty random node name will be generated)
-	 * @return void
-	 * @throws NodeException
-	 */
-	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = NULL) {
-		$copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+        $this->nodeDataRepository->persistEntities();
 
-		$this->nodeDataRepository->persistEntities();
+        $q = new FlowQuery(array($copiedNode));
+        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
-		$q = new FlowQuery(array($copiedNode));
-		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $requestData = array(
+            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
+            'newNodePath' => $copiedNode->getContextPath()
+        );
 
-		$requestData = array(
-			'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
-			'newNodePath' => $copiedNode->getContextPath()
-		);
+        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
+        }
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			$requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
-		}
+        $this->view->assign('value', array('data' => $requestData, 'success' => true));
+    }
 
-		$this->view->assign('value', array('data' => $requestData, 'success' => TRUE));
-	}
+    /**
+     * Updates the specified node. Returns the following data:
+     * - the (possibly changed) workspace name of the node
+     * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
+     *   This is important to handle renamings of nodes correctly.
+     *
+     * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
+     *
+     * @param Node $node
+     * @return void
+     */
+    public function updateAction(Node $node)
+    {
+        $this->nodeDataRepository->persistEntities();
+        $q = new FlowQuery(array($node));
+        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
+        $this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => true));
+    }
 
-	/**
-	 * Updates the specified node. Returns the following data:
-	 * - the (possibly changed) workspace name of the node
-	 * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
-	 *   This is important to handle renamings of nodes correctly.
-	 *
-	 * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
-	 *
-	 * @param Node $node
-	 * @return void
-	 */
-	public function updateAction(Node $node) {
-		$this->nodeDataRepository->persistEntities();
-		$q = new FlowQuery(array($node));
-		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
-		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
-	}
+    /**
+     * Deletes the specified node and all of its sub nodes
+     *
+     * @param Node $node
+     * @return void
+     */
+    public function deleteAction(Node $node)
+    {
+        $this->nodeDataRepository->persistEntities();
+        $q = new FlowQuery(array($node));
+        $node->remove();
+        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
 
-	/**
-	 * Deletes the specified node and all of its sub nodes
-	 *
-	 * @param Node $node
-	 * @return void
-	 */
-	public function deleteAction(Node $node) {
-		$this->nodeDataRepository->persistEntities();
-		$q = new FlowQuery(array($node));
-		$node->remove();
-		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
+        $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
+    }
 
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
-	}
+    /**
+     * Search a page, needed for internal links.
+     *
+     * @param string $query
+     * @return void
+     */
+    public function searchPageAction($query)
+    {
+        $searchResult = array();
 
-	/**
-	 * Search a page, needed for internal links.
-	 *
-	 * @param string $query
-	 * @return void
-	 */
-	public function searchPageAction($query) {
-		$searchResult = array();
+        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document');
+        /** @var NodeInterface $node */
+        foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
+            $searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
+        }
 
-		$documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document');
-		/** @var NodeInterface $node */
-		foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
-			$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
-		}
+        $this->view->assign('value', array('searchResult' => $searchResult, 'success' => true));
+    }
 
-		$this->view->assign('value', array('searchResult' => $searchResult, 'success' => TRUE));
-	}
+    /**
+     * Get the page by the node path, needed for internal links.
+     *
+     * @param string $nodePath
+     * @return void
+     */
+    public function getPageByNodePathAction($nodePath)
+    {
+        $contentContext = $this->createContext('live');
 
-	/**
-	 * Get the page by the node path, needed for internal links.
-	 *
-	 * @param string $nodePath
-	 * @return void
-	 */
-	public function getPageByNodePathAction($nodePath) {
-		$contentContext = $this->createContext('live');
+        $node = $contentContext->getNode($nodePath);
+        $this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => true));
+    }
 
-		$node = $contentContext->getNode($nodePath);
-		$this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => TRUE));
-	}
+    /**
+     * Returns an array with the data needed by for example the Hallo and Aloha
+     * link plugins to represent the passed Node instance.
+     *
+     * @param NodeInterface $node
+     * @return array
+     */
+    protected function processNodeForEditorPlugins(NodeInterface $node)
+    {
+        return array(
+            'id' => $node->getPath(),
+            'name' => $node->getLabel(),
+            'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
+            'type' => 'neos/internal-link'
+        );
+    }
 
-	/**
-	 * Returns an array with the data needed by for example the Hallo and Aloha
-	 * link plugins to represent the passed Node instance.
-	 *
-	 * @param NodeInterface $node
-	 * @return array
-	 */
-	protected function processNodeForEditorPlugins(NodeInterface $node) {
-		return array(
-			'id' => $node->getPath(),
-			'name' => $node->getLabel(),
-			'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
-			'type' => 'neos/internal-link'
-		);
-	}
+    /**
+     * Create a Context for a workspace given by name to be used in this controller.
+     *
+     * @param string $workspaceName Name of the current workspace
+     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     */
+    protected function createContext($workspaceName)
+    {
+        $contextProperties = array(
+            'workspaceName' => $workspaceName
+        );
 
-	/**
-	 * Create a Context for a workspace given by name to be used in this controller.
-	 *
-	 * @param string $workspaceName Name of the current workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected function createContext($workspaceName) {
-		$contextProperties = array(
-			'workspaceName' => $workspaceName
-		);
-
-		return $this->contextFactory->create($contextProperties);
-	}
+        return $this->contextFactory->create($contextProperties);
+    }
 }
