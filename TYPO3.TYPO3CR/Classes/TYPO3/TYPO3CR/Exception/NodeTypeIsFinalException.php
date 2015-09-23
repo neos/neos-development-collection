@@ -15,6 +15,6 @@ namespace TYPO3\TYPO3CR\Exception;
  * A "node type is final" exception
  *
  */
-class NodeTypeIsFinalException extends \TYPO3\TYPO3CR\Exception {
-
+class NodeTypeIsFinalException extends \TYPO3\TYPO3CR\Exception
+{
 }

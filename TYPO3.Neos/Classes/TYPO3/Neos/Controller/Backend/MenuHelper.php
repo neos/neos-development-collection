@@ -19,126 +19,130 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
  *
  * @Flow\Scope("singleton")
  */
-class MenuHelper {
+class MenuHelper
+{
+    /**
+     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @Flow\Inject
+     */
+    protected $siteRepository;
 
-	/**
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
-	 * @Flow\Inject
-	 */
-	protected $siteRepository;
+    /**
+     * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+     * @Flow\Inject
+     */
+    protected $accessDecisionManager;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $accessDecisionManager;
+    /**
+     * @var array
+     */
+    protected $settings;
 
-	/**
-	 * @var array
-	 */
-	protected $settings;
+    /**
+     * @param array $settings
+     */
+    public function injectSettings(array $settings)
+    {
+        $this->settings = $settings;
+    }
 
-	/**
-	 * @param array $settings
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
+    /**
+     * Build a list of sites
+     *
+     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @return array
+     */
+    public function buildSiteList(ControllerContext $controllerContext)
+    {
+        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
 
-	/**
-	 * Build a list of sites
-	 *
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
-	 * @return array
-	 */
-	public function buildSiteList(ControllerContext $controllerContext) {
-		$requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
-		$baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        $domainsFound = false;
+        $sites = array();
+        foreach ($this->siteRepository->findOnline() as $site) {
+            $uri = null;
+            /** @var $site \TYPO3\Neos\Domain\Model\Site */
+            if ($site->hasActiveDomains()) {
+                $uri = $controllerContext->getUriBuilder()
+                    ->reset()
+                    ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+                $uri = sprintf('%s://%s%s%s',
+                    $requestUri->getScheme(),
+                    $site->getFirstActiveDomain()->getHostPattern(),
+                    rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
+                    $uri
+                );
+                $domainsFound = true;
+            }
 
-		$domainsFound = FALSE;
-		$sites = array();
-		foreach ($this->siteRepository->findOnline() as $site) {
-			$uri = NULL;
-			/** @var $site \TYPO3\Neos\Domain\Model\Site */
-			if ($site->hasActiveDomains()) {
-				$uri = $controllerContext->getUriBuilder()
-					->reset()
-					->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-				$uri = sprintf('%s://%s%s%s',
-					$requestUri->getScheme(),
-					$site->getFirstActiveDomain()->getHostPattern(),
-					rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
-					$uri
-				);
-				$domainsFound = TRUE;
-			}
+            $sites[] = array(
+                'name' => $site->getName(),
+                'nodeName' => $site->getNodeName(),
+                'uri' => $uri,
+                'active' => parse_url($uri, PHP_URL_HOST) === $requestUri->getHost() ? true : false
+            );
+        }
 
-			$sites[] = array(
-				'name' => $site->getName(),
-				'nodeName' => $site->getNodeName(),
-				'uri' => $uri,
-				'active' => parse_url($uri, PHP_URL_HOST) === $requestUri->getHost() ? TRUE : FALSE
-			);
-		}
+        if ($domainsFound === false) {
+            $uri = $controllerContext->getUriBuilder()
+                ->reset()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+            $sites[0]['uri'] = $uri;
+        }
 
-		if ($domainsFound === FALSE) {
-			$uri = $controllerContext->getUriBuilder()
-				->reset()
-				->setCreateAbsoluteUri(TRUE)
-				->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-			$sites[0]['uri'] = $uri;
-		}
+        return $sites;
+    }
 
-		return $sites;
-	}
+    /**
+     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @return array
+     */
+    public function buildModuleList(ControllerContext $controllerContext)
+    {
+        $modules = array();
+        foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
+            if (isset($moduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($moduleConfiguration['resource'])) {
+                continue;
+            }
+            $submodules = array();
+            if (isset($moduleConfiguration['submodules'])) {
+                foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
+                    if (isset($submoduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($submoduleConfiguration['resource'])) {
+                        continue;
+                    }
+                    $submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
+                }
+            }
+            $modules[] = array_merge(
+                $this->collectModuleData($controllerContext, $module, $moduleConfiguration, $module),
+                array('group' => $module, 'submodules' => $submodules)
+            );
+        }
+        return $modules;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
-	 * @return array
-	 */
-	public function buildModuleList(ControllerContext $controllerContext) {
-		$modules = array();
-		foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
-			if (isset($moduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($moduleConfiguration['resource'])) {
-				continue;
-			}
-			$submodules = array();
-			if (isset($moduleConfiguration['submodules'])) {
-				foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
-					if (isset($submoduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($submoduleConfiguration['resource'])) {
-						continue;
-					}
-					$submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
-				}
-			}
-			$modules[] = array_merge(
-				$this->collectModuleData($controllerContext, $module, $moduleConfiguration, $module),
-				array('group' => $module, 'submodules' => $submodules)
-			);
-		}
-		return $modules;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
-	 * @param string $module
-	 * @param array $moduleConfiguration
-	 * @param string $modulePath
-	 * @return array
-	 */
-	protected function collectModuleData(ControllerContext $controllerContext, $module, $moduleConfiguration, $modulePath) {
-		$moduleUri = $controllerContext->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'TYPO3.Neos');
-		return array(
-			'module' => $module,
-			'modulePath' => $modulePath,
-			'uri' => $moduleUri,
-			'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
-			'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
-			'icon' => isset($moduleConfiguration['icon']) ? $moduleConfiguration['icon'] : '',
-			'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : FALSE
-		);
-	}
+    /**
+     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param string $module
+     * @param array $moduleConfiguration
+     * @param string $modulePath
+     * @return array
+     */
+    protected function collectModuleData(ControllerContext $controllerContext, $module, $moduleConfiguration, $modulePath)
+    {
+        $moduleUri = $controllerContext->getUriBuilder()
+            ->reset()
+            ->setCreateAbsoluteUri(true)
+            ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'TYPO3.Neos');
+        return array(
+            'module' => $module,
+            'modulePath' => $modulePath,
+            'uri' => $moduleUri,
+            'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
+            'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
+            'icon' => isset($moduleConfiguration['icon']) ? $moduleConfiguration['icon'] : '',
+            'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : false
+        );
+    }
 }

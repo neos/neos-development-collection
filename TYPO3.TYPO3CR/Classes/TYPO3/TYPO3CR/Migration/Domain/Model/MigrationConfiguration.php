@@ -17,64 +17,70 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Migration configuration for a specific direction.
  */
-class MigrationConfiguration {
+class MigrationConfiguration
+{
+    /**
+     * @var string
+     */
+    protected $comments;
 
-	/**
-	 * @var string
-	 */
-	protected $comments;
+    /**
+     * @var string
+     */
+    protected $warnings;
 
-	/**
-	 * @var string
-	 */
-	protected $warnings;
+    /**
+     * @var array
+     */
+    protected $migration;
 
-	/**
-	 * @var array
-	 */
-	protected $migration;
+    /**
+     * @param array $configuration
+     */
+    public function __construct(array $configuration = array())
+    {
+        $this->comments = isset($configuration['comments']) ? $configuration['comments'] : null;
+        $this->warnings = isset($configuration['warnings']) ? $configuration['warnings'] : null;
+        $this->migration = isset($configuration['migration']) ? $configuration['migration'] : null;
+    }
 
-	/**
-	 * @param array $configuration
-	 */
-	public function __construct(array $configuration = array()) {
-		$this->comments = isset($configuration['comments']) ? $configuration['comments'] : NULL;
-		$this->warnings = isset($configuration['warnings']) ? $configuration['warnings'] : NULL;
-		$this->migration = isset($configuration['migration']) ? $configuration['migration'] : NULL;
-	}
+    /**
+     * @return string
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getComments() {
-		return $this->comments;
-	}
+    /**
+     * @return boolean
+     */
+    public function hasComments()
+    {
+        return ($this->comments !== null);
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function hasComments() {
-		return ($this->comments !== NULL);
-	}
+    /**
+     * @return array
+     */
+    public function getMigration()
+    {
+        return $this->migration;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getMigration() {
-		return $this->migration;
-	}
+    /**
+     * @return string
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getWarnings() {
-		return $this->warnings;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasWarnings() {
-		return ($this->warnings !== NULL);
-	}
+    /**
+     * @return boolean
+     */
+    public function hasWarnings()
+    {
+        return ($this->warnings !== null);
+    }
 }

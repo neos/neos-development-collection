@@ -17,30 +17,32 @@ use TYPO3\Flow\Annotations as Flow;
  * Migration factory.
  *
  */
-class MigrationFactory {
+class MigrationFactory
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface
+     */
+    protected $migrationConfiguration;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface
-	 */
-	protected $migrationConfiguration;
+    /**
+     * @param string $version
+     * @return \TYPO3\TYPO3CR\Migration\Domain\Model\Migration
+     */
+    public function getMigrationForVersion($version)
+    {
+        $migrationConfiguration = $this->migrationConfiguration->getMigrationVersion($version);
+        $migration = new \TYPO3\TYPO3CR\Migration\Domain\Model\Migration($version, $migrationConfiguration);
+        return $migration;
+    }
 
-	/**
-	 * @param string $version
-	 * @return \TYPO3\TYPO3CR\Migration\Domain\Model\Migration
-	 */
-	public function getMigrationForVersion($version) {
-		$migrationConfiguration = $this->migrationConfiguration->getMigrationVersion($version);
-		$migration = new \TYPO3\TYPO3CR\Migration\Domain\Model\Migration($version, $migrationConfiguration);
-		return $migration;
-	}
-
-	/**
-	 * Return array of all available migrations with the current configuration type
-	 *
-	 * @return array
-	 */
-	public function getAvailableMigrationsForCurrentConfigurationType() {
-		return $this->migrationConfiguration->getAvailableVersions();
-	}
+    /**
+     * Return array of all available migrations with the current configuration type
+     *
+     * @return array
+     */
+    public function getAvailableMigrationsForCurrentConfigurationType()
+    {
+        return $this->migrationConfiguration->getAvailableVersions();
+    }
 }

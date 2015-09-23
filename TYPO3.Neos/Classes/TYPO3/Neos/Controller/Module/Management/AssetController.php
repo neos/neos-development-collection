@@ -21,48 +21,49 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
  *
  * @Flow\Scope("singleton")
  */
-class AssetController extends \TYPO3\Media\Controller\AssetController {
+class AssetController extends \TYPO3\Media\Controller\AssetController
+{
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
+    /**
+     * @Flow\Inject
+     * @var ConfigurationManager
+     */
+    protected $configurationManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var ConfigurationManager
-	 */
-	protected $configurationManager;
+    /**
+     *
+     */
+    public function initializeObject()
+    {
+        $this->settings = $this->configurationManager->getConfiguration('Settings', 'TYPO3.Media');
+    }
 
-	/**
-	 *
-	 */
-	public function initializeObject() {
-		$this->settings = $this->configurationManager->getConfiguration('Settings', 'TYPO3.Media');
-	}
+    /**
+     * Delete an asset
+     *
+     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @return void
+     */
+    public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
+    {
+        $identifier = $this->persistenceManager->getIdentifierByObject($asset);
+        $relatedNodes = $this->nodeDataRepository->findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($identifier, array(
+            'TYPO3\Media\Domain\Model\Asset' => '',
+            'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
+        ));
+        if (count($relatedNodes) > 0) {
+            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING);
+            $this->redirect('index');
+        }
 
-	/**
-	 * Delete an asset
-	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
-	 * @return void
-	 */
-	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$identifier = $this->persistenceManager->getIdentifierByObject($asset);
-		$relatedNodes = $this->nodeDataRepository->findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($identifier, array(
-			'TYPO3\Media\Domain\Model\Asset' => '',
-			'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
-		));
-		if (count($relatedNodes) > 0) {
-			$this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING);
-			$this->redirect('index');
-		}
-
-		// FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
-		$this->assetRepository->remove($asset);
-		$this->addFlashMessage('Asset has been deleted.');
-		$this->redirect('index');
-	}
-
+        // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
+        $this->assetRepository->remove($asset);
+        $this->addFlashMessage('Asset has been deleted.');
+        $this->redirect('index');
+    }
 }

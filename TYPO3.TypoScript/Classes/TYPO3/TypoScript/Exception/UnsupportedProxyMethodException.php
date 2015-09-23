@@ -15,6 +15,6 @@ namespace TYPO3\TypoScript\Exception;
  * This exception is thrown if a non-supported array access method was called
  * on TypoScriptPathProxy.
  */
-class UnsupportedProxyMethodException extends \TYPO3\TypoScript\Exception {
-
+class UnsupportedProxyMethodException extends \TYPO3\TypoScript\Exception
+{
 }

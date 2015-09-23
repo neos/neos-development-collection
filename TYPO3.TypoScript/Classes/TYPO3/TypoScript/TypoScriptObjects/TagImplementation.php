@@ -20,61 +20,64 @@ use TYPO3\Flow\Annotations as Flow;
  * //tsPath content Content for the body of the tag (optional)
  * @api
  */
-class TagImplementation extends AbstractTypoScriptObject {
+class TagImplementation extends AbstractTypoScriptObject
+{
+    /**
+     * List of self-closing tags
+     *
+     * @var array
+     */
+    protected static $SELF_CLOSING_TAGS = array('area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr');
 
-	/**
-	 * List of self-closing tags
-	 *
-	 * @var array
-	 */
-	protected static $SELF_CLOSING_TAGS = array('area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr');
+    /**
+     * The tag name (e.g. 'body', 'head', 'title', ...)
+     *
+     * @return string
+     */
+    public function getTagName()
+    {
+        $tagName = $this->tsValue('tagName');
+        if ($tagName === null) {
+            $tagName = 'div';
+        }
+        return $tagName;
+    }
 
-	/**
-	 * The tag name (e.g. 'body', 'head', 'title', ...)
-	 *
-	 * @return string
-	 */
-	public function getTagName() {
-		$tagName = $this->tsValue('tagName');
-		if ($tagName === NULL) {
-			$tagName = 'div';
-		}
-		return $tagName;
-	}
+    /**
+     * Whether to leave out the closing tag (defaults to FALSE)
+     *
+     * @return boolean
+     */
+    public function getOmitClosingTag()
+    {
+        return $this->tsValue('omitClosingTag');
+    }
 
-	/**
-	 * Whether to leave out the closing tag (defaults to FALSE)
-	 *
-	 * @return boolean
-	 */
-	public function getOmitClosingTag() {
-		return $this->tsValue('omitClosingTag');
-	}
+    /**
+     * Whether to force a self closing tag (e.g. '<div />')
+     *
+     * @param string $tagName
+     * @return boolean
+     */
+    public function isSelfClosingTag($tagName)
+    {
+        return in_array($tagName, self::$SELF_CLOSING_TAGS, true) || (boolean)$this->tsValue('selfClosingTag');
+    }
 
-	/**
-	 * Whether to force a self closing tag (e.g. '<div />')
-	 *
-	 * @param string $tagName
-	 * @return boolean
-	 */
-	public function isSelfClosingTag($tagName) {
-		return in_array($tagName, self::$SELF_CLOSING_TAGS, TRUE) || (boolean)$this->tsValue('selfClosingTag');
-	}
-
-	/**
-	 * Return a tag
-	 *
-	 * @return mixed
-	 */
-	public function evaluate() {
-		$tagName = $this->getTagName();
-		$omitClosingTag = $this->getOmitClosingTag();
-		$selfClosingTag = $this->isSelfClosingTag($tagName);
-		$content = '';
-		if (!$omitClosingTag && !$selfClosingTag) {
-			$content = $this->tsValue('content');
-		}
-		return '<' . $tagName . $this->tsValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
-	}
-
+    /**
+     * Return a tag
+     *
+     * @return mixed
+     */
+    public function evaluate()
+    {
+        $tagName = $this->getTagName();
+        $omitClosingTag = $this->getOmitClosingTag();
+        $selfClosingTag = $this->isSelfClosingTag($tagName);
+        $content = '';
+        if (!$omitClosingTag && !$selfClosingTag) {
+            $content = $this->tsValue('content');
+        }
+        return '<' . $tagName . $this->tsValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+    }
 }

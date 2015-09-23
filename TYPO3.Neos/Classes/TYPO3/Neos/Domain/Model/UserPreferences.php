@@ -24,39 +24,41 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @todo Provide a more capable implementation
  */
-class UserPreferences {
+class UserPreferences
+{
+    /**
+     * The actual settings
+     *
+     * @var array
+     */
+    protected $preferences = array();
 
-	/**
-	 * The actual settings
-	 *
-	 * @var array
-	 */
-	protected $preferences = array();
+    /**
+     * Get preferences
+     *
+     * @return array
+     */
+    public function getPreferences()
+    {
+        return $this->preferences;
+    }
 
-	/**
-	 * Get preferences
-	 *
-	 * @return array
-	 */
-	public function getPreferences() {
-		return $this->preferences;
-	}
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function set($key, $value)
+    {
+        $this->preferences[$key] = $value;
+    }
 
-	/**
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function set($key, $value) {
-		$this->preferences[$key] = $value;
-	}
-
-	/**
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return isset($this->preferences[$key]) ? $this->preferences[$key] : NULL;
-	}
-
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return isset($this->preferences[$key]) ? $this->preferences[$key] : null;
+    }
 }

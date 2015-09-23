@@ -18,19 +18,19 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * ViewHelper for rendering the current version identifier for the
  * configuration cache.
  */
-class ConfigurationCacheVersionViewHelper extends AbstractViewHelper {
+class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var \TYPO3\Neos\Cache\CacheManager
+     * @Flow\Inject
+     */
+    protected $cacheManager;
 
-	/**
-	 * @var \TYPO3\Neos\Cache\CacheManager
-	 * @Flow\Inject
-	 */
-	protected $cacheManager;
-
-	/**
-	 * @return string The current cache version identifier
-	 */
-	public function render() {
-		return $this->cacheManager->getConfigurationCacheVersion();
-	}
-
+    /**
+     * @return string The current cache version identifier
+     */
+    public function render()
+    {
+        return $this->cacheManager->getConfigurationCacheVersion();
+    }
 }

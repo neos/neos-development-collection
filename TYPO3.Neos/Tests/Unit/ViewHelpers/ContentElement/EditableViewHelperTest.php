@@ -26,212 +26,222 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 /**
  * Test for the contentElement.editable ViewHelper
  */
-class EditableViewHelperTest extends ViewHelperBaseTestcase {
+class EditableViewHelperTest extends ViewHelperBaseTestcase
+{
+    /**
+     * @var EditableViewHelper
+     */
+    protected $editableViewHelper;
 
-	/**
-	 * @var EditableViewHelper
-	 */
-	protected $editableViewHelper;
+    /**
+     * @var AccessDecisionManagerInterface
+     */
+    protected $mockAccessDecisionManager;
 
-	/**
-	 * @var AccessDecisionManagerInterface
-	 */
-	protected $mockAccessDecisionManager;
+    /**
+     * @var TemplateImplementation
+     */
+    protected $mockTemplateImplementation;
 
-	/**
-	 * @var TemplateImplementation
-	 */
-	protected $mockTemplateImplementation;
+    /**
+     * @var Runtime
+     */
+    protected $mockTsRuntime;
 
-	/**
-	 * @var Runtime
-	 */
-	protected $mockTsRuntime;
+    /**
+     * @var array
+     */
+    protected $mockTsContext;
 
-	/**
-	 * @var array
-	 */
-	protected $mockTsContext;
+    /**
+     * @var NodeInterface
+     */
+    protected $mockNode;
 
-	/**
-	 * @var NodeInterface
-	 */
-	protected $mockNode;
+    /**
+     * @var ContentContext
+     */
+    protected $mockContentContext;
 
-	/**
-	 * @var ContentContext
-	 */
-	protected $mockContentContext;
+    /**
+     * @var FluidView
+     */
+    protected $mockView;
 
-	/**
-	 * @var FluidView
-	 */
-	protected $mockView;
+    /**
+     * @var array
+     */
+    protected $templateVariables = array();
 
-	/**
-	 * @var array
-	 */
-	protected $templateVariables = array();
+    public function setUp()
+    {
+        parent::setUp();
+        $this->editableViewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper', array('renderChildren'));
 
-	public function setUp() {
-		parent::setUp();
-		$this->editableViewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper', array('renderChildren'));
+        $this->mockAccessDecisionManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface')->getMock();
+        $this->inject($this->editableViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
 
-		$this->mockAccessDecisionManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface')->getMock();
-		$this->inject($this->editableViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
+        $this->mockTemplateImplementation = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation')->disableOriginalConstructor()->getMock();
 
-		$this->mockTemplateImplementation = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
 
-		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockContentContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
 
-		$this->mockContentContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+        $this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
 
-		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
+        $this->mockTsContext = array('node' => $this->mockNode);
+        $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
+        $this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
+        $this->mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', false);
+        $this->mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($this->mockTemplateImplementation));
 
-		$this->mockTsContext = array('node' => $this->mockNode);
-		$this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
-		$this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
-		$this->mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
-		$this->mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($this->mockTemplateImplementation));
+        $this->editableViewHelper->initializeArguments();
+    }
 
-		$this->editableViewHelper->initializeArguments();
-	}
+    /**
+     * @param AbstractViewHelper $viewHelper
+     * @return void
+     */
+    protected function injectDependenciesIntoViewHelper(AbstractViewHelper $viewHelper)
+    {
+        parent::injectDependenciesIntoViewHelper($viewHelper);
+        $templateVariables = $this->templateVariables;
+        $this->templateVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(function ($variableName) use ($templateVariables) {
+            return isset($templateVariables[$variableName]);
+        }));
+        $this->templateVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(function ($variableName) use ($templateVariables) {
+            return $templateVariables[$variableName];
+        }));
+    }
 
-	/**
-	 * @param AbstractViewHelper $viewHelper
-	 * @return void
-	 */
-	protected function injectDependenciesIntoViewHelper(AbstractViewHelper $viewHelper) {
-		parent::injectDependenciesIntoViewHelper($viewHelper);
-		$templateVariables = $this->templateVariables;
-		$this->templateVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(function($variableName) use ($templateVariables) {
-			return isset($templateVariables[$variableName]);
-		}));
-		$this->templateVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(function($variableName) use ($templateVariables) {
-			return $templateVariables[$variableName];
-		}));
-	}
+    /**
+     * Mocks access to the TypoScriptObject
+     */
+    protected function injectTypoScriptObject()
+    {
+        $this->viewHelperVariableContainer->expects($this->any())->method('getView')->will($this->returnValue($this->mockView));
+    }
 
-	/**
-	 * Mocks access to the TypoScriptObject
-	 */
-	protected function injectTypoScriptObject() {
-		$this->viewHelperVariableContainer->expects($this->any())->method('getView')->will($this->returnValue($this->mockView));
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     */
+    public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
+    {
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
-	 */
-	public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible() {
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     */
+    public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue',
+        );
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->editableViewHelper->render('someProperty');
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
-	 */
-	public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-		);
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderSetsThePropertyValueAsTagContentIfItExists()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
+        $this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-	/**
-	 * @test
-	 */
-	public function renderSetsThePropertyValueAsTagContentIfItExists() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
-		$this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderSetsTheChildNodesAsTagContentIfTheyAreSet()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
 
-	/**
-	 * @test
-	 */
-	public function renderSetsTheChildNodesAsTagContentIfTheyAreSet() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
+        $this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
+        $this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-		$this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
-		$this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderDoesNotAddEditingMetaDataAttributesIfInLiveWorkspace()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
 
-	/**
-	 * @test
-	 */
-	public function renderDoesNotAddEditingMetaDataAttributesIfInLiveWorkspace() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
+        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('live'));
+        $this->tagBuilder->expects($this->never())->method('addAttribute');
 
-		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('live'));
-		$this->tagBuilder->expects($this->never())->method('addAttribute');
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderDoesNotAddEditingMetaDataAttributesIfUserHasNoAccessToBackend()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
 
-	/**
-	 * @test
-	 */
-	public function renderDoesNotAddEditingMetaDataAttributesIfUserHasNoAccessToBackend() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
+        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
+        $this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(false));
+        $this->tagBuilder->expects($this->never())->method('addAttribute');
 
-		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-		$this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(FALSE));
-		$this->tagBuilder->expects($this->never())->method('addAttribute');
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasNoAccessToBackend()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
 
-	/**
-	 * @test
-	 */
-	public function renderAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasNoAccessToBackend() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
+        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
+        $this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(true));
+        $this->tagBuilder->expects($this->atLeastOnce())->method('addAttribute');
 
-		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-		$this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(TRUE));
-		$this->tagBuilder->expects($this->atLeastOnce())->method('addAttribute');
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->injectTypoScriptObject();
+        $this->editableViewHelper->render('someProperty');
+    }
 
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->injectTypoScriptObject();
-		$this->editableViewHelper->render('someProperty');
-	}
+    /**
+     * @test
+     */
+    public function renderUsesTheNodeArgumentIfSet()
+    {
+        $this->templateVariables = array(
+            'someProperty' => 'somePropertyValue'
+        );
 
-	/**
-	 * @test
-	 */
-	public function renderUsesTheNodeArgumentIfSet() {
-		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue'
-		);
+        $this->tagBuilder->expects($this->once())->method('render');
 
-		$this->tagBuilder->expects($this->once())->method('render');
-
-		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-		$this->editableViewHelper->render('someProperty', 'div', $this->mockNode);
-	}
-
+        $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+        $this->editableViewHelper->render('someProperty', 'div', $this->mockNode);
+    }
 }

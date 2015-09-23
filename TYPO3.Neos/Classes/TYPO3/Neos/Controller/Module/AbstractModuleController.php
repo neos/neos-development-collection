@@ -18,51 +18,55 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @var array
+     */
+    protected $moduleConfiguration;
 
-	/**
-	 * @var array
-	 */
-	protected $moduleConfiguration;
+    /**
+     * @return void
+     */
+    protected function initializeAction()
+    {
+        $this->moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
+    }
 
-	/**
-	 * @return void
-	 */
-	protected function initializeAction() {
-		$this->moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
-	}
+    /**
+     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    {
+        $view->assign('moduleConfiguration', $this->moduleConfiguration);
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
-	 * @return void
-	 */
-	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
-		$view->assign('moduleConfiguration', $this->moduleConfiguration);
-	}
+    /**
+     * Use this method to set an alternative title than the module label
+     *
+     * @param string $title
+     * @return void
+     */
+    public function setTitle($title)
+    {
+        $this->request->setArgument('title', $title);
+    }
 
-	/**
-	 * Use this method to set an alternative title than the module label
-	 *
-	 * @param string $title
-	 * @return void
-	 */
-	public function setTitle($title) {
-		$this->request->setArgument('title', $title);
-	}
+    /**
+     * @return void
+     */
+    public function indexAction()
+    {
+    }
 
-	/**
-	 * @return void
-	 */
-	public function indexAction() {
-	}
-
-	/**
-	 * Display no flash message at all on errors.
-	 *
-	 * @return \TYPO3\Flow\Error\Message returns FALSE
-	 */
-	protected function getErrorFlashMessage() {
-		return FALSE;
-	}
-
+    /**
+     * Display no flash message at all on errors.
+     *
+     * @return \TYPO3\Flow\Error\Message returns FALSE
+     */
+    protected function getErrorFlashMessage()
+    {
+        return false;
+    }
 }

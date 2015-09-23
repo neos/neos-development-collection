@@ -16,6 +16,6 @@ namespace TYPO3\TypoScript\Exception;
  * could not be determined, f.e. if the user forgets to define "page = Page" in his
  * TypoScript.
  */
-class MissingTypoScriptObjectException extends \TYPO3\TypoScript\Exception {
-
+class MissingTypoScriptObjectException extends \TYPO3\TypoScript\Exception
+{
 }

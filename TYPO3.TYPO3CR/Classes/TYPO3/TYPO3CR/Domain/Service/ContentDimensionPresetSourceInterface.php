@@ -26,56 +26,55 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * The default implementation ConfigurationContentDimensionPresetSource will read the available presets from settings.
  */
-interface ContentDimensionPresetSourceInterface {
+interface ContentDimensionPresetSourceInterface
+{
+    /**
+     * Get the full presets configuration as an array
+     *
+     * Example:
+     *
+     *  'language':
+     *    defaultPreset: 'all'
+     *    label: 'Language'
+     *    icon: 'icon-language'
+     *    presets:
+     *      'all':
+     *        label: 'All languages'
+     *        values: ['mul_ZZ']
+     *        uriSegment: 'intl'
+     *      'de_DE':
+     *        label: 'Deutsch (Deutschland)'
+     *        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
+     *        uriSegment: 'deutsch'
+     *
+     * @return array Presets configuration, indexed by dimension identifier
+     */
+    public function getAllPresets();
 
-	/**
-	 * Get the full presets configuration as an array
-	 *
-	 * Example:
-	 *
-	 *  'language':
-	 *    defaultPreset: 'all'
-	 *    label: 'Language'
-	 *    icon: 'icon-language'
-	 *    presets:
-	 *      'all':
-	 *        label: 'All languages'
-	 *        values: ['mul_ZZ']
-	 *        uriSegment: 'intl'
-	 *      'de_DE':
-	 *        label: 'Deutsch (Deutschland)'
-	 *        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
-	 *        uriSegment: 'deutsch'
-	 *
-	 * @return array Presets configuration, indexed by dimension identifier
-	 */
-	public function getAllPresets();
+    /**
+     * Get the default preset of a dimension
+     *
+     * @param string $dimensionName The dimension name where the default preset should be returned
+     * @return array The preset configuration, including the identifier as key "identifier"
+     */
+    public function getDefaultPreset($dimensionName);
 
-	/**
-	 * Get the default preset of a dimension
-	 *
-	 * @param string $dimensionName The dimension name where the default preset should be returned
-	 * @return array The preset configuration, including the identifier as key "identifier"
-	 */
-	public function getDefaultPreset($dimensionName);
+    /**
+     * Find a dimension preset by dimension values
+     *
+     * @param string $dimensionName
+     * @param array $dimensionValues
+     * @return array The preset configuration, including the identifier as key "identifier" or NULL if none was found
+     */
+    public function findPresetByDimensionValues($dimensionName, array $dimensionValues);
 
-	/**
-	 * Find a dimension preset by dimension values
-	 *
-	 * @param string $dimensionName
-	 * @param array $dimensionValues
-	 * @return array The preset configuration, including the identifier as key "identifier" or NULL if none was found
-	 */
-	public function findPresetByDimensionValues($dimensionName, array $dimensionValues);
-
-	/**
-	 * Returns an array with all possible combinations of configured dimension presets. This should result in a full description of all node contexts (in terms of dimensions)
-	 * that could appear in this system.
-	 *
-	 * The resulting array will be numerically indexed with every entry being an array of "dimension name" => "configured fallbacks" for each dimension
-	 *
-	 * @return array
-	 */
-	public function getAllDimensionCombinations();
-
+    /**
+     * Returns an array with all possible combinations of configured dimension presets. This should result in a full description of all node contexts (in terms of dimensions)
+     * that could appear in this system.
+     *
+     * The resulting array will be numerically indexed with every entry being an array of "dimension name" => "configured fallbacks" for each dimension
+     *
+     * @return array
+     */
+    public function getAllDimensionCombinations();
 }

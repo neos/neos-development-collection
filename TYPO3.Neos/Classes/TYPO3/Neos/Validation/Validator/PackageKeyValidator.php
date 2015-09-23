@@ -16,13 +16,12 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Validator for package keys
  */
-class PackageKeyValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator {
-
-	/**
-	 * @var array
-	 */
-	protected $supportedOptions = array(
-		'regularExpression' => array(\TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string')
-	);
-
+class PackageKeyValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator
+{
+    /**
+     * @var array
+     */
+    protected $supportedOptions = array(
+        'regularExpression' => array(\TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string')
+    );
 }

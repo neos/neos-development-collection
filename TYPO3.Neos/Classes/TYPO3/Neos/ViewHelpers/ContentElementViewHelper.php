@@ -23,30 +23,31 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @deprecated since 1.0
  */
-class ContentElementViewHelper extends AbstractTagBasedViewHelper {
+class ContentElementViewHelper extends AbstractTagBasedViewHelper
+{
+    /**
+     * Initialize arguments
+     *
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerUniversalTagAttributes();
+    }
 
-	/**
-	 * Initialize arguments
-	 *
-	 * @return void
-	 */
-	public function initializeArguments() {
-		$this->registerUniversalTagAttributes();
-	}
-
-	/**
-	 * This ViewHelper is no longer used
-	 *
-	 * @param NodeInterface $node
-	 * @param boolean $page
-	 * @param string $tag
-	 * @return string The wrapped output
-	 * @deprecated
-	 */
-	public function render(NodeInterface $node, $page = FALSE, $tag = 'div') {
-		$this->tag->setTagName($tag);
-		$this->tag->setContent($this->renderChildren());
-		return $this->tag->render();
-	}
-
+    /**
+     * This ViewHelper is no longer used
+     *
+     * @param NodeInterface $node
+     * @param boolean $page
+     * @param string $tag
+     * @return string The wrapped output
+     * @deprecated
+     */
+    public function render(NodeInterface $node, $page = false, $tag = 'div')
+    {
+        $this->tag->setTagName($tag);
+        $this->tag->setContent($this->renderChildren());
+        return $this->tag->render();
+    }
 }

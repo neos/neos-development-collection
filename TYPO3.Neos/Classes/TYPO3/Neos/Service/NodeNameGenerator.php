@@ -19,43 +19,45 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @Flow\Scope("singleton")
  */
-class NodeNameGenerator {
+class NodeNameGenerator
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Service\NodeService
+     */
+    protected $nodeService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeService
-	 */
-	protected $nodeService;
+    /**
+     * Generate a node name, optionally based on a suggested "ideal" name
+     *
+     * @param NodeInterface $parentNode
+     * @param string $idealNodeName Can be any string, doesn't need to be a valid node name.
+     * @return string
+     */
+    public function generateUniqueNodeName(NodeInterface $parentNode, $idealNodeName = null)
+    {
+        $possibleNodeName = $this->generatePossibleNodeName($idealNodeName);
+        $parentPath = rtrim($parentNode->getPath(), '/') . '/';
 
-	/**
-	 * Generate a node name, optionally based on a suggested "ideal" name
-	 *
-	 * @param NodeInterface $parentNode
-	 * @param string $idealNodeName Can be any string, doesn't need to be a valid node name.
-	 * @return string
-	 */
-	public function generateUniqueNodeName(NodeInterface $parentNode, $idealNodeName = NULL) {
-		$possibleNodeName = $this->generatePossibleNodeName($idealNodeName);
-		$parentPath = rtrim($parentNode->getPath(), '/') . '/';
+        while ($this->nodeService->nodePathExistsInAnyContext($parentPath . $possibleNodeName)) {
+            $possibleNodeName = $this->generatePossibleNodeName();
+        }
 
-		while ($this->nodeService->nodePathExistsInAnyContext($parentPath . $possibleNodeName)) {
-			$possibleNodeName = $this->generatePossibleNodeName();
-		}
+        return $possibleNodeName;
+    }
 
-		return $possibleNodeName;
-	}
+    /**
+     * @param string $idealNodeName
+     * @return string
+     */
+    protected function generatePossibleNodeName($idealNodeName = null)
+    {
+        if ($idealNodeName !== null) {
+            $possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
+        } else {
+            $possibleNodeName = uniqid('node-');
+        }
 
-	/**
-	 * @param string $idealNodeName
-	 * @return string
-	 */
-	protected function generatePossibleNodeName($idealNodeName = NULL) {
-		if ($idealNodeName !== NULL) {
-			$possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
-		} else {
-			$possibleNodeName = uniqid('node-');
-		}
-
-		return $possibleNodeName;
-	}
+        return $possibleNodeName;
+    }
 }

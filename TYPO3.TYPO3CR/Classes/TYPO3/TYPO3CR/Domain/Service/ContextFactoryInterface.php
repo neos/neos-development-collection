@@ -15,28 +15,27 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * ContextFactory Interface
  *
  */
-interface ContextFactoryInterface {
-
-	/**
-	 * Create the context from the given properties. If a context with those properties was already
-	 * created before then the existing one is returned.
-	 *
-	 * The context properties to give depend on the implementation of the context object, for the
-	 * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
-	 *
-	 * array(
-	 *        'workspaceName' => 'live',
-	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
-	 *        'dimensions' => array(),
-	 *        'invisibleContentShown' => FALSE,
-	 *        'removedContentShown' => FALSE,
-	 *        'inaccessibleContentShown' => FALSE
-	 * )
-	 *
-	 * @param array $contextConfiguration
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @api
-	 */
-	public function create(array $contextConfiguration = array());
-
+interface ContextFactoryInterface
+{
+    /**
+     * Create the context from the given properties. If a context with those properties was already
+     * created before then the existing one is returned.
+     *
+     * The context properties to give depend on the implementation of the context object, for the
+     * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
+     *
+     * array(
+     *        'workspaceName' => 'live',
+     *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+     *        'dimensions' => array(),
+     *        'invisibleContentShown' => FALSE,
+     *        'removedContentShown' => FALSE,
+     *        'inaccessibleContentShown' => FALSE
+     * )
+     *
+     * @param array $contextConfiguration
+     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @api
+     */
+    public function create(array $contextConfiguration = array());
 }

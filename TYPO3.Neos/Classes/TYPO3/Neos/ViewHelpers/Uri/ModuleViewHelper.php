@@ -30,61 +30,62 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @Flow\Scope("prototype")
  */
-class ModuleViewHelper extends AbstractViewHelper {
+class ModuleViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var UriBuilder
+     */
+    protected $uriBuilder;
 
-	/**
-	 * @Flow\Inject
-	 * @var UriBuilder
-	 */
-	protected $uriBuilder;
+    /**
+     * Render a link to a specific module
+     *
+     * @param string $path Target module path
+     * @param string $action Target module action
+     * @param array $arguments Arguments
+     * @param string $section The anchor to be added to the URI
+     * @param string $format The requested format, e.g. ".html"
+     * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+     * @return string The rendered link
+     * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+     */
+    public function render($path, $action = null, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array())
+    {
+        $this->setMainRequestToUriBuilder();
+        $modifiedArguments = array('module' => $path);
+        if ($arguments !== array()) {
+            $modifiedArguments['moduleArguments'] = $arguments;
+        }
+        if ($action !== null) {
+            $modifiedArguments['moduleArguments']['@action'] = $action;
+        }
 
-	/**
-	 * Render a link to a specific module
-	 *
-	 * @param string $path Target module path
-	 * @param string $action Target module action
-	 * @param array $arguments Arguments
-	 * @param string $section The anchor to be added to the URI
-	 * @param string $format The requested format, e.g. ".html"
-	 * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-	 * @return string The rendered link
-	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
-	 */
-	public function render($path, $action = NULL, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		$this->setMainRequestToUriBuilder();
-		$modifiedArguments = array('module' => $path);
-		if ($arguments !== array()) {
-			$modifiedArguments['moduleArguments'] = $arguments;
-		}
-		if ($action !== NULL) {
-			$modifiedArguments['moduleArguments']['@action'] = $action;
-		}
+        try {
+            return $this->uriBuilder
+                ->reset()
+                ->setSection($section)
+                ->setCreateAbsoluteUri(true)
+                ->setArguments($additionalParams)
+                ->setAddQueryString($addQueryString)
+                ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+                ->setFormat($format)
+                ->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
+        } catch (\TYPO3\Flow\Exception $exception) {
+            throw new \TYPO3\Fluid\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
+        }
+    }
 
-		try {
-			return $this->uriBuilder
-				->reset()
-				->setSection($section)
-				->setCreateAbsoluteUri(TRUE)
-				->setArguments($additionalParams)
-				->setAddQueryString($addQueryString)
-				->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-				->setFormat($format)
-				->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
-		} catch (\TYPO3\Flow\Exception $exception) {
-			throw new \TYPO3\Fluid\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
-		}
-	}
-
-	/**
-	 * Extracted out to this method in order to be better unit-testable.
-	 *
-	 * @return void
-	 */
-	protected function setMainRequestToUriBuilder() {
-		$mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-		$this->uriBuilder->setRequest($mainRequest);
-	}
-
+    /**
+     * Extracted out to this method in order to be better unit-testable.
+     *
+     * @return void
+     */
+    protected function setMainRequestToUriBuilder()
+    {
+        $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
+        $this->uriBuilder->setRequest($mainRequest);
+    }
 }

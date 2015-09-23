@@ -34,74 +34,74 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *     forceConversion = true
  *   }
  */
-class ConvertUrisImplementation extends AbstractTypoScriptObject {
+class ConvertUrisImplementation extends AbstractTypoScriptObject
+{
+    /**
+     * @Flow\Inject
+     * @var LinkingService
+     */
+    protected $linkingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var LinkingService
-	 */
-	protected $linkingService;
+    /**
+     * Convert URIs matching a supported scheme with generated URIs
+     *
+     * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
+     * set. This is needed to show the editable links with metadata in the content module.
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function evaluate()
+    {
+        $text = $this->tsValue('value');
 
-	/**
-	 * Convert URIs matching a supported scheme with generated URIs
-	 *
-	 * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
-	 * set. This is needed to show the editable links with metadata in the content module.
-	 *
-	 * @return string
-	 * @throws Exception
-	 */
-	public function evaluate() {
-		$text = $this->tsValue('value');
+        if ($text === '' || $text === null) {
+            return '';
+        }
 
-		if ($text === '' || $text === NULL) {
-			return '';
-		}
+        if (!is_string($text)) {
+            throw new Exception(sprintf('Only strings can be processed by this TypoScript object, given: "%s".', gettype($text)), 1382624080);
+        }
 
-		if (!is_string($text)) {
-			throw new Exception(sprintf('Only strings can be processed by this TypoScript object, given: "%s".', gettype($text)), 1382624080);
-		}
+        $node = $this->tsValue('node');
 
-		$node = $this->tsValue('node');
+        if (!$node instanceof NodeInterface) {
+            throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
+        }
 
-		if (!$node instanceof NodeInterface) {
-			throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
-		}
+        if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->tsValue('forceConversion'))) {
+            return $text;
+        }
 
-		if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->tsValue('forceConversion'))) {
-			return $text;
-		}
+        $unresolvedUris = array();
+        $linkingService = $this->linkingService;
+        $controllerContext = $this->tsRuntime->getControllerContext();
 
-		$unresolvedUris = array();
-		$linkingService = $this->linkingService;
-		$controllerContext = $this->tsRuntime->getControllerContext();
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
+            switch ($matches[1]) {
+                case 'node':
+                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
+                    break;
+                case 'asset':
+                    $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+                    break;
+                default:
+                    $resolvedUri = null;
+            }
 
-		$processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function(array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
-			switch ($matches[1]) {
-				case 'node':
-					$resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
-					break;
-				case 'asset':
-					$resolvedUri = $linkingService->resolveAssetUri($matches[0]);
-					break;
-				default:
-					$resolvedUri = NULL;
-			}
+            if ($resolvedUri === null) {
+                $unresolvedUris[] = $matches[0];
+                return $matches[0];
+            }
 
-			if ($resolvedUri === NULL) {
-				$unresolvedUris[] = $matches[0];
-				return $matches[0];
-			}
+            return $resolvedUri;
+        }, $text);
 
-			return $resolvedUri;
-		}, $text);
+        if ($unresolvedUris !== array()) {
+            $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+            $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
+        }
 
-		if ($unresolvedUris !== array()) {
-			$processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
-			$processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
-		}
-
-		return $processedContent;
-	}
-
+        return $processedContent;
+    }
 }

@@ -15,6 +15,6 @@ use TYPO3\TYPO3CR\Exception;
 /**
  * This exception is thrown if something goes wrong on the import
  */
-class ImportException extends Exception {
-
+class ImportException extends Exception
+{
 }

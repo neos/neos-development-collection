@@ -17,18 +17,19 @@ use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
 /**
  * Functional test case which tests FlowQuery ParentsOperation
  */
-class ParentsOperationTest extends AbstractNodeTest {
+class ParentsOperationTest extends AbstractNodeTest
+{
+    /**
+     * @test
+     */
+    public function parentsFollowedByFirstMatchesInnermostNodeOnRootline()
+    {
+        $teaserText = $this->node->getNode('teaser/dummy42');
 
-	/**
-	 * @test
-	 */
-	public function parentsFollowedByFirstMatchesInnermostNodeOnRootline() {
-		$teaserText = $this->node->getNode('teaser/dummy42');
+        $q = new FlowQuery(array($teaserText));
+        $actual = iterator_to_array($q->parents('[someSpecialProperty]')->first());
+        $expected = array($this->node->getNode('teaser'));
 
-		$q = new FlowQuery(array($teaserText));
-		$actual = iterator_to_array($q->parents('[someSpecialProperty]')->first());
-		$expected = array($this->node->getNode('teaser'));
-
-		$this->assertTrue($expected === $actual);
-	}
+        $this->assertTrue($expected === $actual);
+    }
 }

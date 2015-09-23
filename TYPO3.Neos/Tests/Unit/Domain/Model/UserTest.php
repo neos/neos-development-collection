@@ -15,14 +15,14 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * Testcase for the "User" domain model
  *
  */
-class UserTest extends \TYPO3\Flow\Tests\UnitTestCase {
-
-	/**
-	 * @test
-	 */
-	public function constructorInitializesPreferences() {
-		$user = new \TYPO3\Neos\Domain\Model\User();
-		$this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
-	}
-
+class UserTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function constructorInitializesPreferences()
+    {
+        $user = new \TYPO3\Neos\Domain\Model\User();
+        $this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
+    }
 }

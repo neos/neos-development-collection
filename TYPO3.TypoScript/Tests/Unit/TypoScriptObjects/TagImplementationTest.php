@@ -19,52 +19,54 @@ use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
 /**
  * Testcase for the TypoScript Tag object
  */
-class TagImplementationTest extends UnitTestCase {
+class TagImplementationTest extends UnitTestCase
+{
+    /**
+     * @var Runtime
+     */
+    protected $mockTsRuntime;
 
-	/**
-	 * @var Runtime
-	 */
-	protected $mockTsRuntime;
+    public function setUp()
+    {
+        parent::setUp();
+        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+    }
 
-	public function setUp() {
-		parent::setUp();
-		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
-	}
+    public function tagExamples()
+    {
+        return array(
+            'default properties' => array(array(), null, null, '<div></div>'),
+            'omit closing tag' => array(array('omitClosingTag' => true), null, null, '<div>'),
+            'force self closing tag' => array(array('selfClosingTag' => true), null, null, '<div />'),
+            'auto self closing tag' => array(array('tagName' => 'input'), ' type="text"', null, '<input type="text" />'),
+            'tag name with content' => array(array('tagName' => 'h1'), null, 'Foo', '<h1>Foo</h1>'),
+            'tag with attribute' => array(array('tagName' => 'link'), ' type="text/css" rel="stylesheet"', null, '<link type="text/css" rel="stylesheet" />'),
+            'tag with array of classes' => array(array('tagName' => 'div'), ' class="icon icon-neos"', null, '<div class="icon icon-neos"></div>')
+        );
+    }
 
-	public function tagExamples() {
-		return array(
-			'default properties' => array(array(), NULL, NULL, '<div></div>'),
-			'omit closing tag' => array(array('omitClosingTag' => TRUE), NULL, NULL, '<div>'),
-			'force self closing tag' => array(array('selfClosingTag' => TRUE), NULL, NULL, '<div />'),
-			'auto self closing tag' => array(array('tagName' => 'input'), ' type="text"', NULL, '<input type="text" />'),
-			'tag name with content' => array(array('tagName' => 'h1'), NULL, 'Foo', '<h1>Foo</h1>'),
-			'tag with attribute' => array(array('tagName' => 'link'), ' type="text/css" rel="stylesheet"', NULL, '<link type="text/css" rel="stylesheet" />'),
-			'tag with array of classes' => array(array('tagName' => 'div'), ' class="icon icon-neos"', NULL, '<div class="icon icon-neos"></div>')
-		);
-	}
+    /**
+     * @test
+     * @dataProvider tagExamples
+     */
+    public function evaluateTests($properties, $attributes, $content, $expectedOutput)
+    {
+        $path = 'tag/test';
+        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
+            $relativePath = str_replace($path . '/', '', $evaluatePath);
+            switch ($relativePath) {
+                case 'attributes':
+                    return $attributes;
+                case 'content':
+                    return $content;
+            }
+            return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
+        }));
 
-	/**
-	 * @test
-	 * @dataProvider tagExamples
-	 */
-	public function evaluateTests($properties, $attributes, $content, $expectedOutput) {
-		$path = 'tag/test';
-		$this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
-			$relativePath = str_replace($path . '/', '', $evaluatePath);
-			switch ($relativePath) {
-				case 'attributes':
-					return $attributes;
-				case 'content':
-					return $content;
-			}
-			return isset($properties[$relativePath]) ? $properties[$relativePath] : NULL;
-		}));
+        $typoScriptObjectName = 'TYPO3.TypoScript:Tag';
+        $renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
 
-		$typoScriptObjectName = 'TYPO3.TypoScript:Tag';
-		$renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
-
-		$result = $renderer->evaluate();
-		$this->assertEquals($expectedOutput, $result);
-	}
-
+        $result = $renderer->evaluate();
+        $this->assertEquals($expectedOutput, $result);
+    }
 }
