@@ -15,6 +15,6 @@ namespace TYPO3\Neos\Controller\Exception;
  * A "No TypoScript" exception
  *
  */
-class NoTypoScriptConfigurationException extends \TYPO3\Neos\Controller\Exception {
-
+class NoTypoScriptConfigurationException extends \TYPO3\Neos\Controller\Exception
+{
 }

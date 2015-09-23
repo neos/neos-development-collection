@@ -16,14 +16,14 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *
  * @api
  */
-interface NodeLabelGeneratorInterface {
-
-	/**
-	 * Render a node label
-	 *
-	 * @param NodeInterface $node
-	 * @return string
-	 * @api
-	 */
-	public function getLabel(NodeInterface $node);
+interface NodeLabelGeneratorInterface
+{
+    /**
+     * Render a node label
+     *
+     * @param NodeInterface $node
+     * @return string
+     * @api
+     */
+    public function getLabel(NodeInterface $node);
 }

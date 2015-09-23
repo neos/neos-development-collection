@@ -19,54 +19,56 @@ use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
-class HistoryController extends AbstractModuleController {
+class HistoryController extends AbstractModuleController
+{
+    /**
+     * @Flow\Inject
+     * @var EventRepository
+     */
+    protected $eventRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var EventRepository
-	 */
-	protected $eventRepository;
+    /**
+     * @var string
+     */
+    protected $defaultViewObjectName = 'TYPO3\TypoScript\View\TypoScriptView';
 
-	/**
-	 * @var string
-	 */
-	protected $defaultViewObjectName = 'TYPO3\TypoScript\View\TypoScriptView';
+    /**
+     * Show event overview.
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        $events = $this->eventRepository->findRelevantEvents()->toArray();
 
-	/**
-	 * Show event overview.
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-		$events = $this->eventRepository->findRelevantEvents()->toArray();
+        $eventsByDate = array();
+        foreach ($events as $event) {
+            if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
+                continue;
+            }
+            /* @var $event Event */
+            $day = $event->getTimestamp()->format('Y-m-d');
+            if (!isset($eventsByDate[$day])) {
+                $eventsByDate[$day] = new EventsOnDate($event->getTimestamp());
+            }
 
-		$eventsByDate = array();
-		foreach ($events as $event) {
-			if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
-				continue;
-			}
-			/* @var $event Event */
-			$day = $event->getTimestamp()->format('Y-m-d');
-			if (!isset($eventsByDate[$day])) {
-				$eventsByDate[$day] = new EventsOnDate($event->getTimestamp());
-			}
+            /* @var $eventsOnThisDay EventsOnDate */
+            $eventsOnThisDay = $eventsByDate[$day];
+            $eventsOnThisDay->add($event);
+        }
 
-			/* @var $eventsOnThisDay EventsOnDate */
-			$eventsOnThisDay = $eventsByDate[$day];
-			$eventsOnThisDay->add($event);
-		}
+        $this->view->assign('eventsByDate', $eventsByDate);
+    }
 
-		$this->view->assign('eventsByDate', $eventsByDate);
-	}
-
-	/**
-	 * Simply sets the TypoScript path pattern on the view.
-	 *
-	 * @param ViewInterface $view
-	 * @return void
-	 */
-	protected function initializeView(ViewInterface $view) {
-		parent::initializeView($view);
-		$view->setTypoScriptPathPattern('resource://TYPO3.Neos/Private/TypoScript/Backend');
-	}
+    /**
+     * Simply sets the TypoScript path pattern on the view.
+     *
+     * @param ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        $view->setTypoScriptPathPattern('resource://TYPO3.Neos/Private/TypoScript/Backend');
+    }
 }

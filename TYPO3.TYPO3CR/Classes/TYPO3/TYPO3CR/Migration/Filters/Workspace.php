@@ -16,33 +16,34 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Filter nodes by node name.
  */
-class Workspace implements FilterInterface {
+class Workspace implements FilterInterface
+{
+    /**
+     * The workspace name to match on.
+     *
+     * @var string
+     */
+    protected $workspaceName;
 
-	/**
-	 * The workspace name to match on.
-	 *
-	 * @var string
-	 */
-	protected $workspaceName;
+    /**
+     * Sets the workspace name to match on.
+     *
+     * @param string $nodeName
+     * @return void
+     */
+    public function setWorkspaceName($nodeName)
+    {
+        $this->workspaceName = $nodeName;
+    }
 
-	/**
-	 * Sets the workspace name to match on.
-	 *
-	 * @param string $nodeName
-	 * @return void
-	 */
-	public function setWorkspaceName($nodeName) {
-		$this->workspaceName = $nodeName;
-	}
-
-	/**
-	 * Returns TRUE if the given node is in the workspace this filter expects.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return $node->getWorkspace() !== NULL && $node->getWorkspace()->getName() === $this->workspaceName;
-	}
-
+    /**
+     * Returns TRUE if the given node is in the workspace this filter expects.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return $node->getWorkspace() !== null && $node->getWorkspace()->getName() === $this->workspaceName;
+    }
 }

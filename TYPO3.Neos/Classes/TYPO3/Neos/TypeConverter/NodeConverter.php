@@ -19,41 +19,42 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
+class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     */
+    protected $domainRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
-	 */
-	protected $domainRepository;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     */
+    protected $siteRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
-	 */
-	protected $siteRepository;
+    /**
+     * @var integer
+     */
+    protected $priority = 3;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 3;
+    /**
+     * Additionally add the current site and domain to the Context properties.
+     *
+     * {@inheritdoc}
+     */
+    protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
+    {
+        $contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
 
-	/**
-	 * Additionally add the current site and domain to the Context properties.
-	 *
-	 * {@inheritdoc}
-	 */
-	protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL, array $dimensions = NULL) {
-		$contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
+        $currentDomain = $this->domainRepository->findOneByActiveRequest();
+        if ($currentDomain !== null) {
+            $contextProperties['currentSite'] = $currentDomain->getSite();
+            $contextProperties['currentDomain'] = $currentDomain;
+        } else {
+            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+        }
 
-		$currentDomain = $this->domainRepository->findOneByActiveRequest();
-		if ($currentDomain !== NULL) {
-			$contextProperties['currentSite'] = $currentDomain->getSite();
-			$contextProperties['currentDomain'] = $currentDomain;
-		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-		}
-
-		return $contextProperties;
-	}
+        return $contextProperties;
+    }
 }

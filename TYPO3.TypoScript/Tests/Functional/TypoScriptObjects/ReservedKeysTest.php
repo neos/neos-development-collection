@@ -15,25 +15,26 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * Testcase for reserved TypoScript keys
  *
  */
-class ReservedKeysTest extends AbstractTypoScriptObjectTest {
+class ReservedKeysTest extends AbstractTypoScriptObjectTest
+{
+    /**
+     * @test
+     * @expectedException \TYPO3\TypoScript\Exception
+     */
+    public function usingReservedKeysThrowsException()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/ReservedKeysTypoScript');
+        $view->render();
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\TypoScript\Exception
-	 */
-	public function usingReservedKeysThrowsException() {
-		$view = $this->buildView();
-		$view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/ReservedKeysTypoScript');
-		$view->render();
-	}
-
-	/**
-	 * @test
-	 */
-	public function nonReservedKeysWorks() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('reservedKeys');
-		$this->assertEquals($view->render(), array('__custom' => 1));
-	}
-
+    /**
+     * @test
+     */
+    public function nonReservedKeysWorks()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('reservedKeys');
+        $this->assertEquals($view->render(), array('__custom' => 1));
+    }
 }

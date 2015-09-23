@@ -18,5 +18,6 @@ use TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface;
  * Marker interface which can be used to replace the currently used FrontendNodeRoutePartHandler,
  * to e.g. use the one with localization support.
  */
-interface FrontendNodeRoutePartHandlerInterface extends DynamicRoutePartInterface {
+interface FrontendNodeRoutePartHandlerInterface extends DynamicRoutePartInterface
+{
 }

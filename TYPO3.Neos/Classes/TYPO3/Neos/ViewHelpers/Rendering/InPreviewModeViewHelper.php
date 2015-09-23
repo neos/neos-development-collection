@@ -53,23 +53,24 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * Shown in all other cases.
  * </output>
  */
-class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper {
+class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
+{
+    /**
+     * @param NodeInterface $node Optional Node to use context from
+     * @param string $mode Optional rendering mode name to check if this specific mode is active
+     * @return boolean
+     * @throws \TYPO3\Neos\Exception
+     */
+    public function render(NodeInterface $node = null, $mode = null)
+    {
+        $context = $this->getNodeContext($node);
+        $renderingMode = $context->getCurrentRenderingMode();
+        if ($mode !== null) {
+            $result = ($renderingMode->getName() === $mode) && $renderingMode->isPreview();
+        } else {
+            $result = $renderingMode->isPreview();
+        }
 
-	/**
-	 * @param NodeInterface $node Optional Node to use context from
-	 * @param string $mode Optional rendering mode name to check if this specific mode is active
-	 * @return boolean
-	 * @throws \TYPO3\Neos\Exception
-	 */
-	public function render(NodeInterface $node = NULL, $mode = NULL) {
-		$context = $this->getNodeContext($node);
-		$renderingMode = $context->getCurrentRenderingMode();
-		if ($mode !== NULL) {
-			$result = ($renderingMode->getName() === $mode) && $renderingMode->isPreview();
-		} else {
-			$result = $renderingMode->isPreview();
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 }

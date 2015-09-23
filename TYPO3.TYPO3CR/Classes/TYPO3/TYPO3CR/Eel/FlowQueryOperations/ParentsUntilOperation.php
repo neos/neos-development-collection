@@ -22,21 +22,21 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * If an optional filter expression is provided as a second argument,
  * it only returns the nodes matching the given expression.
  */
-class ParentsUntilOperation extends AbstractOperation {
-
+class ParentsUntilOperation extends AbstractOperation
+{
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    static protected $shortName = 'parentsUntil';
+    protected static $shortName = 'parentsUntil';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    static protected $priority = 0;
+    protected static $priority = 0;
 
     /**
      * {@inheritdoc}
@@ -44,7 +44,8 @@ class ParentsUntilOperation extends AbstractOperation {
      * @param array (or array-like object) $context onto which this operation should be applied
      * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
      */
-    public function canEvaluate($context) {
+    public function canEvaluate($context)
+    {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
@@ -55,7 +56,8 @@ class ParentsUntilOperation extends AbstractOperation {
      * @param array $arguments the arguments for this operation
      * @return void
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments) {
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
@@ -71,13 +73,13 @@ class ParentsUntilOperation extends AbstractOperation {
 
             if (isset($until) && !empty($until)) {
                 $until = end($until);
-                $parentNodes = $this->getNodesUntil($parentNodes,$until);
+                $parentNodes = $this->getNodesUntil($parentNodes, $until);
             }
 
             if (is_array($parentNodes)) {
                 foreach ($parentNodes as $parentNode) {
-                    if ($parentNode !== NULL && !isset($outputNodePaths[$parentNode->getPath()])) {
-                        $outputNodePaths[$parentNode->getPath()] = TRUE;
+                    if ($parentNode !== null && !isset($outputNodePaths[$parentNode->getPath()])) {
+                        $outputNodePaths[$parentNode->getPath()] = true;
                         $output[] = $parentNode;
                     }
                 }
@@ -91,9 +93,10 @@ class ParentsUntilOperation extends AbstractOperation {
         }
     }
 
-    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode) {
+    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
+    {
         $parents = array();
-        while ($contextNode !== $siteNode && $contextNode->getParent() !== NULL) {
+        while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;
         }
@@ -105,7 +108,8 @@ class ParentsUntilOperation extends AbstractOperation {
      * @param NodeInterface $until
      * @return array
      */
-    protected function getNodesUntil($parentNodes, NodeInterface $until) {
+    protected function getNodesUntil($parentNodes, NodeInterface $until)
+    {
         $count = count($parentNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {

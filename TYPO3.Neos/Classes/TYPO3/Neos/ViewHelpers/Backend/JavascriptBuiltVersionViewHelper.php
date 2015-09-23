@@ -16,19 +16,19 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Returns a shortened md5 of the built JavaScript file
  */
-class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     */
+    protected $backendAssetsUtility;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Utility\BackendAssetsUtility
-	 */
-	protected $backendAssetsUtility;
-
-	/**
-	 * @return string
-	 */
-	public function render() {
-		return $this->backendAssetsUtility->getJavascriptBuiltVersion();
-	}
-
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        return $this->backendAssetsUtility->getJavascriptBuiltVersion();
+    }
 }

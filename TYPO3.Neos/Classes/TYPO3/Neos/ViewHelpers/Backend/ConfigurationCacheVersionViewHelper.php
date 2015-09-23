@@ -19,23 +19,23 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * ViewHelper for rendering the current version identifier for the
  * configuration cache.
  */
-class ConfigurationCacheVersionViewHelper extends AbstractViewHelper {
+class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var StringFrontend
+     */
+    protected $configurationCache;
 
-	/**
-	 * @var StringFrontend
-	 */
-	protected $configurationCache;
-
-	/**
-	 * @return string The current cache version identifier
-	 */
-	public function render() {
-		$version = $this->configurationCache->get('ConfigurationVersion');
-		if ($version === FALSE) {
-			$version = time();
-			$this->configurationCache->set('ConfigurationVersion', (string)$version);
-		}
-		return $version;
-	}
-
+    /**
+     * @return string The current cache version identifier
+     */
+    public function render()
+    {
+        $version = $this->configurationCache->get('ConfigurationVersion');
+        if ($version === false) {
+            $version = time();
+            $this->configurationCache->set('ConfigurationVersion', (string)$version);
+        }
+        return $version;
+    }
 }

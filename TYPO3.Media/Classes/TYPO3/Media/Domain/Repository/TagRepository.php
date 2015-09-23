@@ -19,33 +19,35 @@ use TYPO3\Flow\Persistence\QueryResultInterface;
  *
  * @Flow\Scope("singleton")
  */
-class TagRepository extends \TYPO3\Flow\Persistence\Repository {
+class TagRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+    /**
+     * @param string $searchTerm
+     * @return QueryResultInterface
+     */
+    public function findBySearchTerm($searchTerm)
+    {
+        $query = $this->createQuery();
+        return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
+    }
 
-	/**
-	 * @param string $searchTerm
-	 * @return QueryResultInterface
-	 */
-	public function findBySearchTerm($searchTerm) {
-		$query = $this->createQuery();
-		return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
-	}
-
-	/**
-	 * @param array<AssetCollection> $assetCollection
-	 * @return QueryResultInterface
-	 */
-	public function findByAssetCollections(array $assetCollections) {
-		$query = $this->createQuery();
-		$constraints = [];
-		foreach ($assetCollections as $assetCollection) {
-			$constraints[] = $query->contains('assetCollections', $assetCollection);
-		}
-		$query->matching($query->logicalOr($constraints));
-		return $query->execute();
-	}
+    /**
+     * @param array<AssetCollection> $assetCollection
+     * @return QueryResultInterface
+     */
+    public function findByAssetCollections(array $assetCollections)
+    {
+        $query = $this->createQuery();
+        $constraints = [];
+        foreach ($assetCollections as $assetCollection) {
+            $constraints[] = $query->contains('assetCollections', $assetCollection);
+        }
+        $query->matching($query->logicalOr($constraints));
+        return $query->execute();
+    }
 }

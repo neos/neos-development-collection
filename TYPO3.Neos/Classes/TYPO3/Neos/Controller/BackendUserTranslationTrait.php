@@ -16,26 +16,27 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A trait to add backend translation based on the backend users settings
  */
-trait BackendUserTranslationTrait {
+trait BackendUserTranslationTrait
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\I18n\Service
+     */
+    protected $_localizationService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\I18n\Service
-	 */
-	protected $_localizationService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\UserService
+     */
+    protected $_userService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\UserService
-	 */
-	protected $_userService;
-
-	/**
-	 * Set the locale according to the user settings
-	 *
-	 * @return void
-	 */
-	protected function initializeObject() {
-		$this->_localizationService->getConfiguration()->setCurrentLocale(new \TYPO3\Flow\I18n\Locale($this->_userService->getInterfaceLanguage()));
-	}
+    /**
+     * Set the locale according to the user settings
+     *
+     * @return void
+     */
+    protected function initializeObject()
+    {
+        $this->_localizationService->getConfiguration()->setCurrentLocale(new \TYPO3\Flow\I18n\Locale($this->_userService->getInterfaceLanguage()));
+    }
 }

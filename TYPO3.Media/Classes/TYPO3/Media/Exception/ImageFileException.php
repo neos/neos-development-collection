@@ -16,6 +16,6 @@ namespace TYPO3\Media\Exception;
  *
  * @api
  */
-class ImageFileException extends \TYPO3\Media\Exception {
-
+class ImageFileException extends \TYPO3\Media\Exception
+{
 }

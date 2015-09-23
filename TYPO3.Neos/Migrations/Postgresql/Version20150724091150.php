@@ -1,33 +1,35 @@
 <?php
 namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
-	Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 
 /**
  * Adds indices to the event log to improve performance
  */
-class Version20150724091150 extends AbstractMigration {
+class Version20150724091150 extends AbstractMigration
+{
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function up(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function up(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->addSql("CREATE INDEX neos_eventlog_documentnodeidentifier ON typo3_neos_eventlog_domain_model_event (documentnodeidentifier)");
+        $this->addSql("CREATE INDEX neos_eventlog_eventtype ON typo3_neos_eventlog_domain_model_event (eventtype)");
+    }
 
-		$this->addSql("CREATE INDEX neos_eventlog_documentnodeidentifier ON typo3_neos_eventlog_domain_model_event (documentnodeidentifier)");
-		$this->addSql("CREATE INDEX neos_eventlog_eventtype ON typo3_neos_eventlog_domain_model_event (eventtype)");
-	}
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function down(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function down(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
-
-		$this->addSql("DROP INDEX neos_eventlog_documentnodeidentifier");
-		$this->addSql("DROP INDEX neos_eventlog_eventtype");
-	}
+        $this->addSql("DROP INDEX neos_eventlog_documentnodeidentifier");
+        $this->addSql("DROP INDEX neos_eventlog_eventtype");
+    }
 }

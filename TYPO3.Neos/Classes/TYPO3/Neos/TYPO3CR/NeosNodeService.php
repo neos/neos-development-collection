@@ -18,21 +18,22 @@ use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 /**
  * @Flow\Scope("singleton")
  */
-class NeosNodeService extends NodeService implements NeosNodeServiceInterface {
-
-	/**
-	 * Normalizes the given node path to a reference path and returns an absolute path.
-	 *
-	 * @param string $path The non-normalized path
-	 * @param string $referencePath a reference path in case the given path is relative.
-	 * @param string $siteNodePath Reference path to a site node. Relative paths starting with "~" will be based on the siteNodePath.
-	 * @return string The normalized absolute path
-	 * @throws \InvalidArgumentException if the node path was invalid.
-	 */
-	public function normalizePath($path, $referencePath = NULL, $siteNodePath = NULL) {
-		if (strpos($path, '~') === 0) {
-			$path = NodePaths::addNodePathSegment($siteNodePath, substr($path, 1));
-		}
-		return parent::normalizePath($path, $referencePath);
-	}
+class NeosNodeService extends NodeService implements NeosNodeServiceInterface
+{
+    /**
+     * Normalizes the given node path to a reference path and returns an absolute path.
+     *
+     * @param string $path The non-normalized path
+     * @param string $referencePath a reference path in case the given path is relative.
+     * @param string $siteNodePath Reference path to a site node. Relative paths starting with "~" will be based on the siteNodePath.
+     * @return string The normalized absolute path
+     * @throws \InvalidArgumentException if the node path was invalid.
+     */
+    public function normalizePath($path, $referencePath = null, $siteNodePath = null)
+    {
+        if (strpos($path, '~') === 0) {
+            $path = NodePaths::addNodePathSegment($siteNodePath, substr($path, 1));
+        }
+        return parent::normalizePath($path, $referencePath);
+    }
 }

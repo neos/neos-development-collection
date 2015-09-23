@@ -65,69 +65,71 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  * </output>
  *
  */
-class ImageViewHelper extends AbstractTagBasedViewHelper {
+class ImageViewHelper extends AbstractTagBasedViewHelper
+{
+    /**
+     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @Flow\Inject
+     */
+    protected $resourceManager;
 
-	/**
-	 * @var \TYPO3\Flow\Resource\ResourceManager
-	 * @Flow\Inject
-	 */
-	protected $resourceManager;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Service\ThumbnailService
+     */
+    protected $thumbnailService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Service\ThumbnailService
-	 */
-	protected $thumbnailService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Service\AssetService
+     */
+    protected $assetService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Service\AssetService
-	 */
-	protected $assetService;
+    /**
+     * name of the tag to be created by this view helper
+     *
+     * @var string
+     */
+    protected $tagName = 'img';
 
-	/**
-	 * name of the tag to be created by this view helper
-	 *
-	 * @var string
-	 */
-	protected $tagName = 'img';
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
+        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
+        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
+        // @deprecated since 2.0 use the "image" argument instead
+        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', TRUE);
-		$this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', FALSE);
-		$this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', FALSE);
-		// @deprecated since 2.0 use the "image" argument instead
-		$this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', FALSE);
-	}
+    /**
+     * Renders an HTML img tag with a thumbnail image, created from a given asset.
+     *
+     * @param ImageInterface $image The image to be rendered as an image
+     * @param integer $maximumWidth Desired maximum height of the image
+     * @param integer $maximumHeight Desired maximum width of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     *
+     * @return string an <img...> html tag
+     */
+    public function render(ImageInterface $image = null, $maximumWidth = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    {
+        if ($image === null && $this->hasArgument('asset')) {
+            $image = $this->arguments['asset'];
+        }
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
 
-	/**
-	 * Renders an HTML img tag with a thumbnail image, created from a given asset.
-	 *
-	 * @param ImageInterface $image The image to be rendered as an image
-	 * @param integer $maximumWidth Desired maximum height of the image
-	 * @param integer $maximumHeight Desired maximum width of the image
-	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
-	 * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-	 *
-	 * @return string an <img...> html tag
-	 */
-	public function render(ImageInterface $image = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		if ($image === NULL && $this->hasArgument('asset')) {
-			$image = $this->arguments['asset'];
-		}
-		$thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+        $this->tag->addAttributes(array(
+            'width' => $thumbnailData['width'],
+            'height' => $thumbnailData['height'],
+            'src' => $thumbnailData['src']
+        ));
 
-		$this->tag->addAttributes(array(
-			'width' => $thumbnailData['width'],
-			'height' => $thumbnailData['height'],
-			'src' => $thumbnailData['src']
-		));
-
-		return $this->tag->render();
-	}
+        return $this->tag->render();
+    }
 }

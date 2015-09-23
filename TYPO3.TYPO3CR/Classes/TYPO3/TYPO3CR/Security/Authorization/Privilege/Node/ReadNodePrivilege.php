@@ -22,20 +22,22 @@ use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine\ConditionGenera
  * Currently only doctrine persistence is supported as we use
  * the doctrine filter api, to rewrite SQL queries.
  */
-class ReadNodePrivilege extends EntityPrivilege {
+class ReadNodePrivilege extends EntityPrivilege
+{
+    /**
+     * @param string $entityType
+     * @return boolean
+     */
+    public function matchesEntityType($entityType)
+    {
+        return $entityType === NodeData::class;
+    }
 
-	/**
-	 * @param string $entityType
-	 * @return boolean
-	 */
-	public function matchesEntityType($entityType) {
-		return $entityType === NodeData::class;
-	}
-
-	/**
-	 * @return ConditionGenerator
-	 */
-	protected function getConditionGenerator() {
-		return new ConditionGenerator();
-	}
+    /**
+     * @return ConditionGenerator
+     */
+    protected function getConditionGenerator()
+    {
+        return new ConditionGenerator();
+    }
 }

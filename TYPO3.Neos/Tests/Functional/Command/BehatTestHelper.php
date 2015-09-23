@@ -34,36 +34,38 @@ use TYPO3\Flow\Security\Context;
  *
  * @Flow\Scope("singleton")
  */
-class BehatTestHelper {
+class BehatTestHelper
+{
+    use IsolatedBehatStepsTrait;
+    use SecurityOperationsTrait;
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
 
-	use IsolatedBehatStepsTrait;
-	use SecurityOperationsTrait;
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
+    /**
+     * @var Bootstrap
+     */
+    protected static $bootstrap;
 
-	/**
-	 * @var Bootstrap
-	 */
-	protected static $bootstrap;
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $objectManager;
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        $this->isolated = false;
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
-		$this->isolated = FALSE;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return mixed
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }

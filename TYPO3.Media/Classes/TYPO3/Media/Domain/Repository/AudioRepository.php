@@ -18,6 +18,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class AudioRepository extends AssetRepository {
-
+class AudioRepository extends AssetRepository
+{
 }

@@ -17,6 +17,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Interface for an Asset Adjustment
  */
-interface AdjustmentInterface {
-
+interface AdjustmentInterface
+{
 }

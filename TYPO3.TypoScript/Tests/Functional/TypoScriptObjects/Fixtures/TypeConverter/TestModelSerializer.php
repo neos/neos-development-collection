@@ -14,34 +14,35 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\TypeConve
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 
-class TestModelSerializer extends AbstractTypeConverter {
+class TestModelSerializer extends AbstractTypeConverter
+{
+    /**
+     * @var array<string>
+     */
+    protected $sourceTypes = array('TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel');
 
-	/**
-	 * @var array<string>
-	 */
-	protected $sourceTypes = array('TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel');
+    /**
+     * @var string
+     */
+    protected $targetType = 'string';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'string';
+    /**
+     * @var integer
+     */
+    protected $priority = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * Actually convert from $source to $targetType
-	 *
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return boolean
-	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-			// This would use the identifier of the source in reality
-		return serialize($source);
-	}
+    /**
+     * Actually convert from $source to $targetType
+     *
+     * @param mixed $source
+     * @param string $targetType
+     * @param array $convertedChildProperties
+     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @return boolean
+     */
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    {
+        // This would use the identifier of the source in reality
+        return serialize($source);
+    }
 }

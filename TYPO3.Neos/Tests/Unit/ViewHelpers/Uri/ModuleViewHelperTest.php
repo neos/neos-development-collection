@@ -17,56 +17,57 @@ use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper;
 
 /**
  */
-class ModuleViewHelperTest extends UnitTestCase {
+class ModuleViewHelperTest extends UnitTestCase
+{
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ModuleViewHelper
+     */
+    protected $viewHelper;
 
-	/**
-	 * @var \PHPUnit_Framework_MockObject_MockObject|ModuleViewHelper
-	 */
-	protected $viewHelper;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UriBuilder
+     */
+    protected $uriBuilder;
 
-	/**
-	 * @var \PHPUnit_Framework_MockObject_MockObject|UriBuilder
-	 */
-	protected $uriBuilder;
+    /**
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->viewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper', array('setMainRequestToUriBuilder'));
+        $this->uriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+        $this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
+    }
 
-	/**
-	 */
-	protected function setUp() {
-		parent::setUp();
-		$this->viewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper', array('setMainRequestToUriBuilder'));
-		$this->uriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
-		$this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
-	}
+    /**
+     * @test
+     */
+    public function callingRenderAssignsVariablesCorrectlyToUriBuilder()
+    {
+        $this->uriBuilder->expects($this->once())->method('setSection')->with('section')->will($this->returnSelf());
+        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additionalParams'))->will($this->returnSelf());
+        $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(array('argumentsToBeExcludedFromQueryString'))->will($this->returnSelf());
+        $this->uriBuilder->expects($this->once())->method('setFormat')->with('format')->will($this->returnSelf());
 
-	/**
-	 * @test
-	 */
-	public function callingRenderAssignsVariablesCorrectlyToUriBuilder() {
-		$this->uriBuilder->expects($this->once())->method('setSection')->with('section')->will($this->returnSelf());
-		$this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additionalParams'))->will($this->returnSelf());
-		$this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(array('argumentsToBeExcludedFromQueryString'))->will($this->returnSelf());
-		$this->uriBuilder->expects($this->once())->method('setFormat')->with('format')->will($this->returnSelf());
+        $expectedModifiedArguments = array(
+            'module' => 'the/path',
+            'moduleArguments' => array('arguments', '@action' => 'action')
+        );
 
-		$expectedModifiedArguments = array(
-			'module' => 'the/path',
-			'moduleArguments' => array('arguments', '@action' => 'action')
-		);
+        $this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments);
 
-		$this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments);
+        // fallback for the method chaining of the URI builder
+        $this->uriBuilder->expects($this->any())->method($this->anything())->will($this->returnValue($this->uriBuilder));
 
-		// fallback for the method chaining of the URI builder
-		$this->uriBuilder->expects($this->any())->method($this->anything())->will($this->returnValue($this->uriBuilder));
-
-		$this->viewHelper->render(
-			'the/path',
-			'action',
-			array('arguments'),
-			'section',
-			'format',
-			array('additionalParams'),
-			TRUE, // `addQueryString`,
-			array('argumentsToBeExcludedFromQueryString')
-		);
-	}
-
+        $this->viewHelper->render(
+            'the/path',
+            'action',
+            array('arguments'),
+            'section',
+            'format',
+            array('additionalParams'),
+            true, // `addQueryString`,
+            array('argumentsToBeExcludedFromQueryString')
+        );
+    }
 }

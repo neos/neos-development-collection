@@ -15,4 +15,6 @@ namespace TYPO3\TYPO3CR\Migration\Exception;
  * An exception thrown when something goes wrong during content
  * migration.
  */
-class MigrationException extends \TYPO3\TYPO3CR\Exception {}
+class MigrationException extends \TYPO3\TYPO3CR\Exception
+{
+}

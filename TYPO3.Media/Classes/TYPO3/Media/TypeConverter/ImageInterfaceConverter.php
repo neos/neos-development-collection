@@ -23,96 +23,98 @@ use TYPO3\Media\Domain\Model\ImageVariant;
  * @api
  * @Flow\Scope("singleton")
  */
-class ImageInterfaceConverter extends AssetInterfaceConverter {
+class ImageInterfaceConverter extends AssetInterfaceConverter
+{
+    /**
+     * @Flow\Inject
+     * @var ProcessingInstructionsConverter
+     */
+    protected $processingInstructionsConverter;
 
-	/**
-	 * @Flow\Inject
-	 * @var ProcessingInstructionsConverter
-	 */
-	protected $processingInstructionsConverter;
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
-	/**
-	 * @Flow\Inject
-	 * @var PropertyMapper
-	 */
-	protected $propertyMapper;
+    /**
+     * @var string
+     */
+    protected $targetType = 'TYPO3\Media\Domain\Model\ImageInterface';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\ImageInterface';
+    /**
+     * @var integer
+     */
+    protected $priority = 2;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 2;
+    /**
+     * If creating a new asset from this converter this defines the default type as fallback.
+     *
+     * @var string
+     */
+    protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\Image';
 
-	/**
-	 * If creating a new asset from this converter this defines the default type as fallback.
-	 *
-	 * @var string
-	 */
-	protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\Image';
+    /**
+     * All properties in the source array except __identity are sub-properties.
+     *
+     * @param mixed $source
+     * @return array
+     */
+    public function getSourceChildPropertiesToBeConverted($source)
+    {
+        if (is_string($source)) {
+            return array();
+        }
+        if (isset($source['adjustments'])) {
+            unset($source['adjustments']);
+        }
+        if (isset($source['processingInstructions'])) {
+            unset($source['processingInstructions']);
+        }
+        return parent::getSourceChildPropertiesToBeConverted($source);
+    }
 
-	/**
-	 * All properties in the source array except __identity are sub-properties.
-	 *
-	 * @param mixed $source
-	 * @return array
-	 */
-	public function getSourceChildPropertiesToBeConverted($source) {
-		if (is_string($source)) {
-			return array();
-		}
-		if (isset($source['adjustments'])) {
-			unset($source['adjustments']);
-		}
-		if (isset($source['processingInstructions'])) {
-			unset($source['processingInstructions']);
-		}
-		return parent::getSourceChildPropertiesToBeConverted($source);
-	}
+    /**
+     * Converts and adds ImageAdjustments to the ImageVariant
+     *
+     * @param ImageInterface $asset
+     * @param mixed $source
+     * @param array $convertedChildProperties
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return ImageInterface|NULL
+     */
+    protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration)
+    {
+        if ($asset instanceof ImageVariant) {
+            $adjustments = [];
+            if (isset($source['adjustments'])) {
+                foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {
+                    if (isset($adjustmentOptions['__type'])) {
+                        $adjustmentType = $adjustmentOptions['__type'];
+                        unset($adjustmentOptions['__type']);
+                    }
+                    $identity = null;
+                    if (isset($adjustmentOptions['__identity'])) {
+                        $identity = $adjustmentOptions['__identity'];
+                        unset($adjustmentOptions['__identity']);
+                    }
 
-	/**
-	 * Converts and adds ImageAdjustments to the ImageVariant
-	 *
-	 * @param ImageInterface $asset
-	 * @param mixed $source
-	 * @param array $convertedChildProperties
-	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return ImageInterface|NULL
-	 */
-	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {
-		if ($asset instanceof ImageVariant) {
-			$adjustments = [];
-			if (isset($source['adjustments'])) {
-				foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {
-					if (isset($adjustmentOptions['__type'])) {
-						$adjustmentType = $adjustmentOptions['__type'];
-						unset ($adjustmentOptions['__type']);
-					}
-					$identity = NULL;
-					if (isset($adjustmentOptions['__identity'])) {
-						$identity = $adjustmentOptions['__identity'];
-						unset($adjustmentOptions['__identity']);
-					}
+                    $adjustment = $this->propertyMapper->convert($adjustmentOptions, $adjustmentType, $configuration);
+                    if ($identity !== null) {
+                        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identifier', $identity, true);
+                    }
 
-					$adjustment = $this->propertyMapper->convert($adjustmentOptions, $adjustmentType, $configuration);
-					if ($identity !== NULL) {
-						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identifier', $identity, TRUE);
-					}
+                    $adjustments[] = $adjustment;
+                }
+            } elseif (isset($source['processingInstructions'])) {
+                $adjustments = $this->processingInstructionsConverter->convertFrom($source['processingInstructions'], 'array');
+            }
 
-					$adjustments[] = $adjustment;
-				}
-			} elseif (isset($source['processingInstructions'])) {
-				$adjustments = $this->processingInstructionsConverter->convertFrom($source['processingInstructions'], 'array');
-			}
+            if (count($adjustments) > 0) {
+                $asset->addAdjustments($adjustments);
+            }
+        }
 
-			if (count($adjustments) > 0) {
-				$asset->addAdjustments($adjustments);
-			}
-		}
-
-		return $asset;
-	}
+        return $asset;
+    }
 }
