@@ -15,11 +15,10 @@ namespace TYPO3\TYPO3CR\Exception;
  * An paginator exception saying "Page not Found"
  *
  */
-class PageNotFoundException extends \TYPO3\Flow\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class PageNotFoundException extends \TYPO3\Flow\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

@@ -14,11 +14,10 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * An "invalid request path" exception
  */
-class InvalidRequestPathException extends \TYPO3\Neos\Routing\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class InvalidRequestPathException extends \TYPO3\Neos\Routing\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

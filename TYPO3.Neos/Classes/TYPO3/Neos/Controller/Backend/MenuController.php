@@ -17,31 +17,31 @@ use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 /**
  * @Flow\Scope("singleton")
  */
-class MenuController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class MenuController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    use BackendUserTranslationTrait;
 
-	use BackendUserTranslationTrait;
+    /**
+     * @var \TYPO3\Neos\Controller\Backend\MenuHelper
+     * @Flow\Inject
+     */
+    protected $menuHelper;
 
-	/**
-	 * @var \TYPO3\Neos\Controller\Backend\MenuHelper
-	 * @Flow\Inject
-	 */
-	protected $menuHelper;
+    /**
+     * @return string
+     */
+    public function indexAction()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
 
-	/**
-	 * @return string
-	 */
-	public function indexAction() {
-		$this->response->setHeader('Content-Type', 'application/json');
-
-		$contentModuleUri = $this->getControllerContext()->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-		return json_encode(array(
-			'contentModuleUri' => $contentModuleUri,
-			'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
-			'modules' => $this->menuHelper->buildModuleList($this->controllerContext)
-		));
-	}
-
+        $contentModuleUri = $this->getControllerContext()->getUriBuilder()
+            ->reset()
+            ->setCreateAbsoluteUri(true)
+            ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+        return json_encode(array(
+            'contentModuleUri' => $contentModuleUri,
+            'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
+            'modules' => $this->menuHelper->buildModuleList($this->controllerContext)
+        ));
+    }
 }

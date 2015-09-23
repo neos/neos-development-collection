@@ -21,27 +21,27 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  *
  * @Flow\Scope("singleton")
  */
-class ImageEventListener {
+class ImageEventListener
+{
+    /**
+     * @var \TYPO3\Flow\Cache\CacheManager
+     * @Flow\Inject
+     */
+    protected $cacheManager;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
-	 * @Flow\Inject
-	 */
-	protected $cacheManager;
-
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function postRemove(LifecycleEventArgs $eventArgs) {
-		$entity = $eventArgs->getEntity();
-		if ($entity instanceof ImageInterface) {
-			/** @var \TYPO3\Flow\Resource\Resource $resource */
-			$resource = $eventArgs->getEntity()->getResource();
-			if ($resource !== NULL) {
-				$this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getCacheEntryIdentifier());
-			}
-		}
-	}
-
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function postRemove(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        if ($entity instanceof ImageInterface) {
+            /** @var \TYPO3\Flow\Resource\Resource $resource */
+            $resource = $eventArgs->getEntity()->getResource();
+            if ($resource !== null) {
+                $this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getCacheEntryIdentifier());
+            }
+        }
+    }
 }

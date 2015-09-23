@@ -14,5 +14,6 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * A "no site" exception
  */
-class NoSiteException extends \TYPO3\Neos\Routing\Exception {
+class NoSiteException extends \TYPO3\Neos\Routing\Exception
+{
 }

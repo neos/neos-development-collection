@@ -16,39 +16,41 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A content dimension for nodes
  */
-class ContentDimension {
+class ContentDimension
+{
+    /**
+     * @var string
+     */
+    protected $identifier;
 
-	/**
-	 * @var string
-	 */
-	protected $identifier;
+    /**
+     * @var string
+     */
+    protected $default;
 
-	/**
-	 * @var string
-	 */
-	protected $default;
+    /**
+     * @param string $identifier
+     * @param string $default
+     */
+    public function __construct($identifier, $default)
+    {
+        $this->identifier = $identifier;
+        $this->default = $default;
+    }
 
-	/**
-	 * @param string $identifier
-	 * @param string $default
-	 */
-	public function __construct($identifier, $default) {
-		$this->identifier = $identifier;
-		$this->default = $default;
-	}
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return $this->identifier;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDefault() {
-		return $this->default;
-	}
-
+    /**
+     * @return string
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
 }

@@ -15,6 +15,6 @@ use TYPO3\TYPO3CR\Exception;
 /**
  * This exception is thrown if sub-node constraints are violated
  */
-class NodeConstraintException extends Exception {
-
+class NodeConstraintException extends Exception
+{
 }

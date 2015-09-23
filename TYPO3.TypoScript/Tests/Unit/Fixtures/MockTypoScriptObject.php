@@ -15,25 +15,27 @@ namespace TYPO3\TypoScript;
  * A mock for a TypoScript object
  *
  */
-class MockTypoScriptObject {
+class MockTypoScriptObject
+{
+    protected $value;
 
-	protected $value;
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $value
-	 */
-	public function setValue($value) {
-		$this->value = $value;
-	}
-
-	/**
-	 * Enter description here...
-	 *
-	 * @return unknown
-	 */
-	public function __toString() {
-		return (string)$this->value;
-	}
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     */
+    public function __toString()
+    {
+        return (string)$this->value;
+    }
 }

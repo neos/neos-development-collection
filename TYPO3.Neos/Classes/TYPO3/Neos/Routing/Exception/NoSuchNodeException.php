@@ -14,11 +14,10 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * A "no such node" exception
  */
-class NoSuchNodeException extends \TYPO3\Neos\Routing\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class NoSuchNodeException extends \TYPO3\Neos\Routing\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

@@ -14,45 +14,49 @@ namespace TYPO3\Neos\EventLog\Domain\Model;
 /**
  * Helper Model which groups a number of events on a given day. Used especially in the view.
  */
-class EventsOnDate {
+class EventsOnDate
+{
+    /**
+     * @var \DateTime
+     */
+    protected $day;
 
-	/**
-	 * @var \DateTime
-	 */
-	protected $day;
+    /**
+     * @var array<Event>
+     */
+    protected $events = array();
 
-	/**
-	 * @var array<Event>
-	 */
-	protected $events = array();
+    /**
+     * @param \DateTime $day
+     */
+    public function __construct(\DateTime $day)
+    {
+        $this->day = $day;
+    }
 
-	/**
-	 * @param \DateTime $day
-	 */
-	public function __construct(\DateTime $day) {
-		$this->day = $day;
-	}
+    /**
+     * add another event to this group
+     *
+     * @param Event $event
+     */
+    public function add(Event $event)
+    {
+        $this->events[] = $event;
+    }
 
-	/**
-	 * add another event to this group
-	 *
-	 * @param Event $event
-	 */
-	public function add(Event $event) {
-		$this->events[] = $event;
-	}
+    /**
+     * @return array
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getEvents() {
-		return $this->events;
-	}
-
-	/**
-	 * @return \DateTime
-	 */
-	public function getDay() {
-		return $this->day;
-	}
+    /**
+     * @return \DateTime
+     */
+    public function getDay()
+    {
+        return $this->day;
+    }
 }

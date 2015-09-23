@@ -14,11 +14,10 @@ namespace TYPO3\Neos\Routing;
 /**
  * A TYPO3 routing exception
  */
-class Exception extends \TYPO3\Neos\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 500;
-
+class Exception extends \TYPO3\Neos\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 500;
 }

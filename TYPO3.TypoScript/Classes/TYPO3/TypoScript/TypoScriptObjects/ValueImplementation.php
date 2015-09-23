@@ -19,21 +19,23 @@ use TYPO3\Flow\Annotations as Flow;
  * //tsPath value The value this object should be evaluated to
  * @api
  */
-class ValueImplementation extends AbstractTypoScriptObject {
+class ValueImplementation extends AbstractTypoScriptObject
+{
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->tsValue('value');
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getValue() {
-		return $this->tsValue('value');
-	}
-
-	/**
-	 * Just return the processed value
-	 *
-	 * @return mixed
-	 */
-	public function evaluate() {
-		return $this->getValue();
-	}
+    /**
+     * Just return the processed value
+     *
+     * @return mixed
+     */
+    public function evaluate()
+    {
+        return $this->getValue();
+    }
 }

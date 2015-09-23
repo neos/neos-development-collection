@@ -15,6 +15,6 @@ namespace TYPO3\TYPO3CR\Exception;
  * A workspace exception
  *
  */
-class WorkspaceException extends \TYPO3\TYPO3CR\Exception {
-
+class WorkspaceException extends \TYPO3\TYPO3CR\Exception
+{
 }

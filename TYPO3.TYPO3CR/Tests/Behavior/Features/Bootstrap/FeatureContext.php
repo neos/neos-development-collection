@@ -28,38 +28,40 @@ use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 /**
  * Features context
  */
-class FeatureContext extends \Behat\Behat\Context\BehatContext {
+class FeatureContext extends \Behat\Behat\Context\BehatContext
+{
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
+    use SecurityOperationsTrait;
+    use IsolatedBehatStepsTrait;
 
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
-	use SecurityOperationsTrait;
-	use IsolatedBehatStepsTrait;
+    /**
+     * @var string
+     */
+    protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
 
-	/**
-	 * @var string
-	 */
-	protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
+    /**
+     * Initializes the context
+     *
+     * @param array $parameters Context parameters (configured through behat.yml)
+     */
+    public function __construct(array $parameters)
+    {
+        $this->useContext('flow', new FlowContext($parameters));
+        /** @var FlowContext $flowContext */
+        $flowContext = $this->getSubcontext('flow');
+        $this->objectManager = $flowContext->getObjectManager();
+        $this->environment = $this->objectManager->get(Environment::class);
+        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $this->setupSecurity();
+    }
 
-	/**
-	 * Initializes the context
-	 *
-	 * @param array $parameters Context parameters (configured through behat.yml)
-	 */
-	public function __construct(array $parameters) {
-		$this->useContext('flow', new FlowContext($parameters));
-		/** @var FlowContext $flowContext */
-		$flowContext = $this->getSubcontext('flow');
-		$this->objectManager = $flowContext->getObjectManager();
-		$this->environment = $this->objectManager->get(Environment::class);
-		$this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
-		$this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-		$this->setupSecurity();
-	}
-
-	/**
-	 * @return ObjectManagerInterface
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return ObjectManagerInterface
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }

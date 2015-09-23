@@ -20,60 +20,64 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  * Response Head generate a standard HTTP response head
  * @api
  */
-class ResponseHeadImplementation extends AbstractTypoScriptObject {
+class ResponseHeadImplementation extends AbstractTypoScriptObject
+{
+    /**
+     * Get HTTP protocol version
+     *
+     * @return string
+     */
+    public function getHttpVersion()
+    {
+        $httpVersion = $this->tsValue('httpVersion');
+        if ($httpVersion === null) {
+            $httpVersion = 'HTTP/1.1';
+        }
+        return trim($httpVersion);
+    }
 
-	/**
-	 * Get HTTP protocol version
-	 *
-	 * @return string
-	 */
-	public function getHttpVersion() {
-		$httpVersion = $this->tsValue('httpVersion');
-		if ($httpVersion === NULL) {
-			$httpVersion = 'HTTP/1.1';
-		}
-		return trim($httpVersion);
-	}
+    /**
+     * @return integer
+     */
+    public function getStatusCode()
+    {
+        $statusCode = $this->tsValue('statusCode');
+        if ($statusCode === null) {
+            $statusCode = 200;
+        }
+        if (Response::getStatusMessageByCode($statusCode) === 'Unknown Status') {
+            throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
+        }
+        return (integer)$statusCode;
+    }
 
-	/**
-	 * @return integer
-	 */
-	public function getStatusCode() {
-		$statusCode = $this->tsValue('statusCode');
-		if ($statusCode === NULL) {
-			$statusCode = 200;
-		}
-		if (Response::getStatusMessageByCode($statusCode) === 'Unknown Status') {
-			throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
-		}
-		return (integer)$statusCode;
-	}
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        $headers = $this->tsValue('headers');
+        if (!is_array($headers)) {
+            $headers = array();
+        }
+        return $headers;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getHeaders() {
-		$headers = $this->tsValue('headers');
-		if (!is_array($headers)) {
-			$headers = array();
-		}
-		return $headers;
-	}
+    /**
+     * Just return the processed value
+     *
+     * @return mixed
+     */
+    public function evaluate()
+    {
+        $httpResponse = new Response();
+        $httpResponse->setStatus($this->getStatusCode());
+        $httpResponse->setHeaders(new Headers());
 
-	/**
-	 * Just return the processed value
-	 *
-	 * @return mixed
-	 */
-	public function evaluate() {
-		$httpResponse = new Response();
-		$httpResponse->setStatus($this->getStatusCode());
-		$httpResponse->setHeaders(new Headers());
+        foreach ($this->getHeaders() as $name => $value) {
+            $httpResponse->setHeader($name, $value);
+        }
 
-		foreach ($this->getHeaders() as $name => $value) {
-			$httpResponse->setHeader($name, $value);
-		}
-
-		return implode("\r\n", $httpResponse->renderHeaders()) . "\r\n\r\n";
-	}
+        return implode("\r\n", $httpResponse->renderHeaders()) . "\r\n\r\n";
+    }
 }

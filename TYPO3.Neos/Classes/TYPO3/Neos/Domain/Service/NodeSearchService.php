@@ -23,52 +23,52 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
  *
  * @Flow\Scope("singleton")
  */
-class NodeSearchService implements NodeSearchServiceInterface {
+class NodeSearchService implements NodeSearchServiceInterface
+{
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
+    /**
+     * @Flow\Inject
+     * @var NodeFactory
+     */
+    protected $nodeFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
+    /**
+     * Search all properties for given $term
+     *
+     * TODO: Implement a better search when Flow offer the possibility
+     *
+     * @param string $term
+     * @param array $searchNodeTypes
+     * @param Context $context
+     * @param NodeInterface $startingPoint
+     * @return array <\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     */
+    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
+    {
+        if (strlen($term) === 0) {
+            throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
+        }
+        $searchResult = array();
+        $nodeTypeFilter = implode(',', $searchNodeTypes);
+        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
+        foreach ($nodeDataRecords as $nodeData) {
+            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+            if ($node !== null) {
+                $searchResult[$node->getPath()] = $node;
+            }
+        }
 
-	/**
-	 * Search all properties for given $term
-	 *
-	 * TODO: Implement a better search when Flow offer the possibility
-	 *
-	 * @param string $term
-	 * @param array $searchNodeTypes
-	 * @param Context $context
-	 * @param NodeInterface $startingPoint
-	 * @return array <\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
-	 */
-	public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = NULL) {
-		if (strlen($term) === 0) {
-			throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
-		}
-		$searchResult = array();
-		$nodeTypeFilter = implode(',', $searchNodeTypes);
-		$nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : NULL);
-		foreach ($nodeDataRecords as $nodeData) {
-			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-			if ($node !== NULL) {
-				$searchResult[$node->getPath()] = $node;
-			}
-		}
-
-		return $searchResult;
-	}
-
+        return $searchResult;
+    }
 }

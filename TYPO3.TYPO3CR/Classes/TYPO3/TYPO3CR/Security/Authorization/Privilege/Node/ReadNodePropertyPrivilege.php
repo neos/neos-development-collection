@@ -17,24 +17,25 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * This is needed, as the technical implementation is not based on the entity privilege type, that
  * the read node privilege (retrieving the node at all) ist based on.
  */
-class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege {
+class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
+{
+    /**
+     * @var array
+     */
+    protected $methodNameToPropertyMapping = array(
+        'getName' => 'name',
+        'isHidden' => 'hidden',
+        'isHiddenInIndex' => 'hiddenInIndex',
+        'getHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
+        'getHiddenAfterDateTime' => 'hiddenAfterDateTime',
+        'getAccessRoles' => 'accessRoles',
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $methodNameToPropertyMapping = array(
-		'getName' => 'name',
-		'isHidden' => 'hidden',
-		'isHiddenInIndex' => 'hiddenInIndex',
-		'getHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
-		'getHiddenAfterDateTime' => 'hiddenAfterDateTime',
-		'getAccessRoles' => 'accessRoles',
-	);
-
-	/**
-	 * @return string
-	 */
-	protected function buildMethodPrivilegeMatcher() {
-		return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(getProperty|getName|isHidden|getHiddenBeforeDateTime|getHiddenAfterDateTime|isHiddenInIndex|getAccessRoles)())';
-	}
+    /**
+     * @return string
+     */
+    protected function buildMethodPrivilegeMatcher()
+    {
+        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(getProperty|getName|isHidden|getHiddenBeforeDateTime|getHiddenAfterDateTime|isHiddenInIndex|getAccessRoles)())';
+    }
 }

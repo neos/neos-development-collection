@@ -20,49 +20,52 @@ use TYPO3\Flow\Security\Account;
  *
  * @Flow\Scope("singleton")
  */
-class AccountPostEventListener {
+class AccountPostEventListener
+{
+    /**
+     * @var \TYPO3\Flow\Cache\CacheManager
+     * @Flow\Inject
+     */
+    protected $cacheManager;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
-	 * @Flow\Inject
-	 */
-	protected $cacheManager;
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function postPersist(LifecycleEventArgs $eventArgs)
+    {
+        if ($eventArgs->getEntity() instanceof Account) {
+            $this->flushConfigurationCache($eventArgs->getEntity());
+        }
+    }
 
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function postPersist(LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof Account) {
-			$this->flushConfigurationCache($eventArgs->getEntity());
-		}
-	}
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function postUpdate(LifecycleEventArgs $eventArgs)
+    {
+        if ($eventArgs->getEntity() instanceof Account) {
+            $this->flushConfigurationCache($eventArgs->getEntity());
+        }
+    }
 
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function postUpdate(LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof Account) {
-			$this->flushConfigurationCache($eventArgs->getEntity());
-		}
-	}
+    /**
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function postRemove(LifecycleEventArgs $eventArgs)
+    {
+        if ($eventArgs->getEntity() instanceof Account) {
+            $this->flushConfigurationCache($eventArgs->getEntity());
+        }
+    }
 
-	/**
-	 * @param LifecycleEventArgs $eventArgs
-	 * @return void
-	 */
-	public function postRemove(LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof Account) {
-			$this->flushConfigurationCache($eventArgs->getEntity());
-		}
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function flushConfigurationCache() {
-		$this->cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
-	}
-
+    /**
+     * @return void
+     */
+    protected function flushConfigurationCache()
+    {
+        $this->cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
+    }
 }

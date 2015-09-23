@@ -21,58 +21,60 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * get the first node that matches the selector by testing the node itself and
  * traversing up through its ancestors.
  */
-class ClosestOperation extends AbstractOperation {
+class ClosestOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'closest';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'closest';
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var integer
-	 */
-	static protected $priority = 100;
+    /**
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param array (or array-like object) $context onto which this operation should be applied
-	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
-	 */
-	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the arguments for this operation
+     * @return void
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        if (!isset($arguments[0]) || empty($arguments[0])) {
+            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('closest() requires a filter argument', 1332492263);
+        }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return void
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		if (!isset($arguments[0]) || empty($arguments[0])) {
-			throw new \TYPO3\Eel\FlowQuery\FlowQueryException('closest() requires a filter argument', 1332492263);
-		}
+        $output = array();
+        foreach ($flowQuery->getContext() as $contextNode) {
+            $contextNodeQuery = new FlowQuery(array($contextNode));
+            $contextNodeQuery->pushOperation('first', array());
+            $contextNodeQuery->pushOperation('filter', $arguments);
 
-		$output = array();
-		foreach ($flowQuery->getContext() as $contextNode) {
-			$contextNodeQuery = new FlowQuery(array($contextNode));
-			$contextNodeQuery->pushOperation('first', array());
-			$contextNodeQuery->pushOperation('filter', $arguments);
+            $parentsQuery = new FlowQuery(array($contextNode));
+            $contextNodeQuery->pushOperation('add', array($parentsQuery->parents($arguments[0])->get()));
 
-			$parentsQuery = new FlowQuery(array($contextNode));
-			$contextNodeQuery->pushOperation('add', array($parentsQuery->parents($arguments[0])->get()));
+            foreach ($contextNodeQuery as $result) {
+                $output[$result->getPath()] = $result;
+            }
+        }
 
-			foreach ($contextNodeQuery as $result) {
-				$output[$result->getPath()] = $result;
-			}
-		}
-
-		$flowQuery->setContext(array_values($output));
-	}
+        $flowQuery->setContext(array_values($output));
+    }
 }

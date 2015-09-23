@@ -20,28 +20,28 @@ use TYPO3\Media\Domain\Model\ImageVariant;
  * @api
  * @Flow\Scope("singleton")
  */
-class ImageVariantConverter extends ImageInterfaceConverter {
+class ImageVariantConverter extends ImageInterfaceConverter
+{
+    /**
+     * @var string
+     */
+    protected $targetType = 'TYPO3\Media\Domain\Model\ImageVariant';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\ImageVariant';
+    /**
+     * @var integer
+     */
+    protected $priority = 2;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 2;
+    /**
+     * @Flow\Inject
+     * @var ProcessingInstructionsConverter
+     */
+    protected $processingInstructionsConverter;
 
-	/**
-	 * @Flow\Inject
-	 * @var ProcessingInstructionsConverter
-	 */
-	protected $processingInstructionsConverter;
-
-	/**
-	 * If creating a new asset from this converter this defines the default type as fallback.
-	 *
-	 * @var string
-	 */
-	protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\ImageVariant';
+    /**
+     * If creating a new asset from this converter this defines the default type as fallback.
+     *
+     * @var string
+     */
+    protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\ImageVariant';
 }

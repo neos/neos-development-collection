@@ -19,32 +19,35 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
  *
  * Needed for more complex prototype inheritance chain testing.
  */
-class WrappedNestedObjectRenderer extends AbstractArrayTypoScriptObject {
+class WrappedNestedObjectRenderer extends AbstractArrayTypoScriptObject
+{
+    /**
+     * The string the current value should be prepended with
+     *
+     * @return string
+     */
+    public function getPrepend()
+    {
+        return $this->tsValue('prepend');
+    }
 
-	/**
-	 * The string the current value should be prepended with
-	 *
-	 * @return string
-	 */
-	public function getPrepend() {
-		return $this->tsValue('prepend');
-	}
+    /**
+     * The string the current value should be suffixed with
+     *
+     * @return string
+     */
+    public function getAppend()
+    {
+        return $this->tsValue('append');
+    }
 
-	/**
-	 * The string the current value should be suffixed with
-	 *
-	 * @return string
-	 */
-	public function getAppend() {
-		return $this->tsValue('append');
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function evaluate()
+    {
+        return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
+    }
 }

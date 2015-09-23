@@ -17,43 +17,46 @@ use TYPO3\Media\Validator\ImageTypeValidator;
 /**
  * Test case for the ImageTypeValidator
  */
-class ImageTypeValidatorTest extends UnitTestCase {
+class ImageTypeValidatorTest extends UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function validatorReturnsErrorsIfGivenValueIsNoImage()
+    {
+        $validator = new ImageTypeValidator(array('allowedTypes' => array('png')));
+        $value = new \stdClass();
+        $this->assertTrue($validator->validate($value)->hasErrors());
+    }
 
-	/**
-	 * @test
-	 */
-	public function validatorReturnsErrorsIfGivenValueIsNoImage() {
-		$validator = new ImageTypeValidator(array('allowedTypes' => array('png')));
-		$value = new \stdClass();
-		$this->assertTrue($validator->validate($value)->hasErrors());
-	}
+    /**
+     * @return array
+     */
+    public function validatorTestsDataProvider()
+    {
+        return array(
+            array(array('allowedTypes' => array('png')), null, false),
+            array(array('allowedTypes' => array('png')), 'image/bmp', false),
+            array(array('allowedTypes' => array('png')), 'image/png', true),
+            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/ico', false),
+            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/gif', true),
+        );
+    }
 
-	/**
-	 * @return array
-	 */
-	public function validatorTestsDataProvider() {
-		return array(
-			array(array('allowedTypes' => array('png')), NULL, FALSE),
-			array(array('allowedTypes' => array('png')), 'image/bmp', FALSE),
-			array(array('allowedTypes' => array('png')), 'image/png', TRUE),
-			array(array('allowedTypes' => array('jpeg', 'gif')), 'image/ico', FALSE),
-			array(array('allowedTypes' => array('jpeg', 'gif')), 'image/gif', TRUE),
-		);
-	}
+    /**
+     * @test
+     * @dataProvider validatorTestsDataProvider
+     * @param array $options
+     * @param string $actualMediaType
+     * @param boolean $supposedToBeValid
+     */
+    public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
+    {
+        $image = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
+        $image->expects($this->any())->method('getMediaType')->will($this->returnValue($actualMediaType));
 
-	/**
-	 * @test
-	 * @dataProvider validatorTestsDataProvider
-	 * @param array $options
-	 * @param string $actualMediaType
-	 * @param boolean $supposedToBeValid
-	 */
-	public function validatorTests(array $options, $actualMediaType, $supposedToBeValid) {
-		$image = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
-		$image->expects($this->any())->method('getMediaType')->will($this->returnValue($actualMediaType));
-
-		$validator = new ImageTypeValidator($options);
-		$validationResult = $validator->validate($image);
-		$this->assertEquals($supposedToBeValid, !$validationResult->hasErrors());
-	}
+        $validator = new ImageTypeValidator($options);
+        $validationResult = $validator->validate($image);
+        $this->assertEquals($supposedToBeValid, !$validationResult->hasErrors());
+    }
 }

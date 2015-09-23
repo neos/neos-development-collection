@@ -23,55 +23,58 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @api
  */
-class User extends Person {
+class User extends Person
+{
+    /**
+     * Preferences of this user
+     *
+     * @var UserPreferences
+     * @ORM\OneToOne
+     */
+    protected $preferences;
 
-	/**
-	 * Preferences of this user
-	 *
-	 * @var UserPreferences
-	 * @ORM\OneToOne
-	 */
-	protected $preferences;
+    /**
+     * Constructs this User object
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->preferences = new UserPreferences();
+    }
 
-	/**
-	 * Constructs this User object
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->preferences = new UserPreferences();
-	}
+    /**
+     * @return UserPreferences
+     * @api
+     */
+    public function getPreferences()
+    {
+        return $this->preferences;
+    }
 
-	/**
-	 * @return UserPreferences
-	 * @api
-	 */
-	public function getPreferences() {
-		return $this->preferences;
-	}
+    /**
+     * @param UserPreferences $preferences
+     * @return void
+     * @api
+     */
+    public function setPreferences(UserPreferences $preferences)
+    {
+        $this->preferences = $preferences;
+    }
 
-	/**
-	 * @param UserPreferences $preferences
-	 * @return void
-	 * @api
-	 */
-	public function setPreferences(UserPreferences $preferences) {
-		$this->preferences = $preferences;
-	}
-
-	/**
-	 * Checks if at least one account of this user ist active
-	 *
-	 * @return boolean
-	 * @api
-	 */
-	public function isActive() {
-		foreach ($this->accounts as $account) {
-			/** @var Account $account */
-			if ($account->isActive()) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
+    /**
+     * Checks if at least one account of this user ist active
+     *
+     * @return boolean
+     * @api
+     */
+    public function isActive()
+    {
+        foreach ($this->accounts as $account) {
+            /** @var Account $account */
+            if ($account->isActive()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

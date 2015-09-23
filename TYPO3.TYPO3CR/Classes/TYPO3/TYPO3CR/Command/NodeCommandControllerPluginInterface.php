@@ -19,35 +19,34 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 /**
  * An interface for plugins for the NodeCommandController
  */
-interface NodeCommandControllerPluginInterface {
+interface NodeCommandControllerPluginInterface
+{
+    /**
+     * Returns a short description for the specific task the plugin solves for the specified command
+     *
+     * @param string $controllerCommandName Name of the command in question, for example "repair"
+     * @return string A brief description / summary for the task this plugin is going to do
+     */
+    public static function getSubCommandShortDescription($controllerCommandName);
 
-	/**
-	 * Returns a short description for the specific task the plugin solves for the specified command
-	 *
-	 * @param string $controllerCommandName Name of the command in question, for example "repair"
-	 * @return string A brief description / summary for the task this plugin is going to do
-	 */
-	static public function getSubCommandShortDescription($controllerCommandName);
+    /**
+     * Returns a piece of description for the specific task the plugin solves for the specified command
+     *
+     * @param string $controllerCommandName Name of the command in question, for example "repair"
+     * @return string A piece of text to be included in the overall description of the node:xy command
+     */
+    public static function getSubCommandDescription($controllerCommandName);
 
-	/**
-	 * Returns a piece of description for the specific task the plugin solves for the specified command
-	 *
-	 * @param string $controllerCommandName Name of the command in question, for example "repair"
-	 * @return string A piece of text to be included in the overall description of the node:xy command
-	 */
-	static public function getSubCommandDescription($controllerCommandName);
-
-	/**
-	 * A method which runs the task implemented by the plugin for the given command
-	 *
-	 * @param string $controllerCommandName Name of the command in question, for example "repair"
-	 * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
-	 * @param NodeType $nodeType Only handle this node type (if specified)
-	 * @param string $workspaceName Only handle this workspace (if specified)
-	 * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
-	 * @param boolean $cleanup If FALSE, cleanup tasks are skipped
-	 * @return void
-	 */
-	public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = NULL, $workspaceName = 'live', $dryRun = FALSE, $cleanup = TRUE);
-
+    /**
+     * A method which runs the task implemented by the plugin for the given command
+     *
+     * @param string $controllerCommandName Name of the command in question, for example "repair"
+     * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
+     * @param NodeType $nodeType Only handle this node type (if specified)
+     * @param string $workspaceName Only handle this workspace (if specified)
+     * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
+     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @return void
+     */
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);
 }

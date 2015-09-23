@@ -22,95 +22,98 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class PluginUriAspect {
+class PluginUriAspect
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * The pluginService
+     *
+     * @var \TYPO3\Neos\Service\PluginService
+     * @Flow\Inject
+     */
+    protected $pluginService;
 
-	/**
-	 * The pluginService
-	 *
-	 * @var \TYPO3\Neos\Service\PluginService
-	 * @Flow\Inject
-	 */
-	protected $pluginService;
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\UriBuilder->uriFor())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @return string The result of the target method if it has not been intercepted
+     */
+    public function rewritePluginViewUris(JoinPointInterface $joinPoint)
+    {
+        /** @var \TYPO3\Flow\Mvc\ActionRequest $request */
+        $request = $joinPoint->getProxy()->getRequest();
+        $arguments = $joinPoint->getMethodArguments();
 
-	/**
-	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\UriBuilder->uriFor())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return string The result of the target method if it has not been intercepted
-	 */
-	public function rewritePluginViewUris(JoinPointInterface $joinPoint) {
-		/** @var \TYPO3\Flow\Mvc\ActionRequest $request */
-		$request = $joinPoint->getProxy()->getRequest();
-		$arguments = $joinPoint->getMethodArguments();
+        $currentNode = $request->getInternalArgument('__node');
+        if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof Node) {
+            return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        }
 
-		$currentNode = $request->getInternalArgument('__node');
-		if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof Node) {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		}
+        $currentNode = $request->getInternalArgument('__node');
+        $controllerObjectName = $this->getControllerObjectName($request, $arguments);
+        $actionName = $arguments['actionName'] !== null ? $arguments['actionName'] : $request->getControllerActionName();
 
-		$currentNode = $request->getInternalArgument('__node');
-		$controllerObjectName = $this->getControllerObjectName($request, $arguments);
-		$actionName = $arguments['actionName'] !== NULL ? $arguments['actionName'] : $request->getControllerActionName();
+        $targetNode = $this->pluginService->getPluginNodeByAction($currentNode, $controllerObjectName, $actionName);
 
-		$targetNode = $this->pluginService->getPluginNodeByAction($currentNode, $controllerObjectName, $actionName);
+        // TODO override namespace
 
-		// TODO override namespace
+        $q = new FlowQuery(array($targetNode));
+        $pageNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $result = $this->generateUriForNode($request, $joinPoint, $pageNode);
 
-		$q = new FlowQuery(array($targetNode));
-		$pageNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-		$result = $this->generateUriForNode($request, $joinPoint, $pageNode);
+        return $result;
+    }
 
-		return $result;
-	}
+    /**
+     * Merge the default plugin arguments of the Plugin with the arguments in the request
+     * and generate a controllerObjectName
+     *
+     * @param object $request
+     * @param array $arguments
+     * @return string $controllerObjectName
+     */
+    public function getControllerObjectName($request, array $arguments)
+    {
+        $controllerName = $arguments['controllerName'] !== null ? $arguments['controllerName'] : $request->getControllerName();
+        $subPackageKey = $arguments['subPackageKey'] !== null ? $arguments['subPackageKey'] : $request->getControllerSubpackageKey();
+        $packageKey = $arguments['packageKey'] !== null ? $arguments['packageKey'] : $request->getControllerPackageKey();
 
-	/**
-	 * Merge the default plugin arguments of the Plugin with the arguments in the request
-	 * and generate a controllerObjectName
-	 *
-	 * @param object $request
-	 * @param array $arguments
-	 * @return string $controllerObjectName
-	 */
-	public function getControllerObjectName($request, array $arguments) {
-		$controllerName = $arguments['controllerName'] !== NULL ? $arguments['controllerName'] : $request->getControllerName();
-		$subPackageKey = $arguments['subPackageKey'] !== NULL ? $arguments['subPackageKey'] : $request->getControllerSubpackageKey();
-		$packageKey = $arguments['packageKey'] !== NULL ? $arguments['packageKey'] : $request->getControllerPackageKey();
+        $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
+        $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
+        $possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
+        $possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
+        $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 
-		$possibleObjectName = '@package\@subpackage\Controller\@controllerController';
-		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
-		$possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
-		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
-		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
+        $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
+        return ($controllerObjectName !== false) ? $controllerObjectName : '';
+    }
 
-		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-		return ($controllerObjectName !== FALSE) ? $controllerObjectName : '';
-	}
+    /**
+     * This method generates the Uri through the joinPoint with
+     * temporary overriding the used node
+     *
+     * @param ActionRequest $request
+     * @param JoinPointInterface $joinPoint The current join point
+     * @param NodeInterface $node
+     * @return string $uri
+     */
+    public function generateUriForNode(ActionRequest $request, JoinPointInterface $joinPoint, NodeInterface $node)
+    {
+        // store original node path to restore it after generating the uri
+        $originalNodePath = $request->getMainRequest()->getArgument('node');
 
-	/**
-	 * This method generates the Uri through the joinPoint with
-	 * temporary overriding the used node
-	 *
-	 * @param ActionRequest $request
-	 * @param JoinPointInterface $joinPoint The current join point
-	 * @param NodeInterface $node
-	 * @return string $uri
-	 */
-	public function generateUriForNode(ActionRequest $request, JoinPointInterface $joinPoint, NodeInterface $node) {
-		// store original node path to restore it after generating the uri
-		$originalNodePath = $request->getMainRequest()->getArgument('node');
+        // generate the uri for the given node
+        $request->getMainRequest()->setArgument('node', $node->getContextPath());
+        $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		// generate the uri for the given node
-		$request->getMainRequest()->setArgument('node', $node->getContextPath());
-		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        // restore the original node path
+        $request->getMainRequest()->setArgument('node', $originalNodePath);
 
-		// restore the original node path
-		$request->getMainRequest()->setArgument('node', $originalNodePath);
-
-		return $result;
-	}
+        return $result;
+    }
 }

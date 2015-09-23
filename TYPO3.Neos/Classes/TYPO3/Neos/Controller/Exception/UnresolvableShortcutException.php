@@ -16,6 +16,6 @@ use TYPO3\Neos\Controller\Exception;
 /**
  * A "Unresolvable shortcut" exception
  */
-class UnresolvableShortcutException extends Exception {
-
+class UnresolvableShortcutException extends Exception
+{
 }

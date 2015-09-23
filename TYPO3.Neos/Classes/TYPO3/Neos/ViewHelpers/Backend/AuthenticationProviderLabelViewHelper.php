@@ -17,22 +17,23 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * Renders a label for the given authentication provider identifier
  */
-class AuthenticationProviderLabelViewHelper extends AbstractViewHelper {
+class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="security.authentication.providers")
+     * @var array
+     */
+    protected $authenticationProviderSettings;
 
-	/**
-	 * @Flow\InjectConfiguration(package="TYPO3.Flow", path="security.authentication.providers")
-	 * @var array
-	 */
-	protected $authenticationProviderSettings;
-
-	/**
-	 * Outputs a human friendly label for the authentication provider specified by $identifier
-	 *
-	 * @param string $identifier
-	 * @return string
-	 * @throws \Exception
-	 */
-	public function render($identifier) {
-		return (isset($this->authenticationProviderSettings[$identifier]['label']) ? $this->authenticationProviderSettings[$identifier]['label'] : $identifier);
-	}
+    /**
+     * Outputs a human friendly label for the authentication provider specified by $identifier
+     *
+     * @param string $identifier
+     * @return string
+     * @throws \Exception
+     */
+    public function render($identifier)
+    {
+        return (isset($this->authenticationProviderSettings[$identifier]['label']) ? $this->authenticationProviderSettings[$identifier]['label'] : $identifier);
+    }
 }

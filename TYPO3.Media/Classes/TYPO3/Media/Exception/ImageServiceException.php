@@ -18,6 +18,6 @@ use TYPO3\Media\Exception;
  *
  * @api
  */
-class ImageServiceException extends Exception {
-
+class ImageServiceException extends Exception
+{
 }

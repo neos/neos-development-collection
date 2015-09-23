@@ -17,20 +17,20 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 /**
  * An example NodePostprocessor used by the NodesTests
  */
-class TestNodePostprocessor implements NodeTypePostprocessorInterface {
-
-	/**
-	 * @param NodeType $nodeType The (uninitialized) node type to process
-	 * @param array $configuration The configuration of the node type
-	 * @param array $options The processor options
-	 * @return void
-	 */
-	public function process(NodeType $nodeType, array &$configuration, array $options) {
-		if ($nodeType->isOfType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor')) {
-			$someOption = isset($options['someOption']) ? $options['someOption'] : '';
-			$someOtherOption = isset($options['someOtherOption']) ? $options['someOtherOption'] : '';
-			$configuration['properties']['test1']['defaultValue'] = sprintf('The value of "someOption" is "%s", the value of "someOtherOption" is "%s"', $someOption, $someOtherOption);
-		}
-	}
-
+class TestNodePostprocessor implements NodeTypePostprocessorInterface
+{
+    /**
+     * @param NodeType $nodeType The (uninitialized) node type to process
+     * @param array $configuration The configuration of the node type
+     * @param array $options The processor options
+     * @return void
+     */
+    public function process(NodeType $nodeType, array &$configuration, array $options)
+    {
+        if ($nodeType->isOfType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor')) {
+            $someOption = isset($options['someOption']) ? $options['someOption'] : '';
+            $someOtherOption = isset($options['someOtherOption']) ? $options['someOtherOption'] : '';
+            $configuration['properties']['test1']['defaultValue'] = sprintf('The value of "someOption" is "%s", the value of "someOtherOption" is "%s"', $someOption, $someOtherOption);
+        }
+    }
 }

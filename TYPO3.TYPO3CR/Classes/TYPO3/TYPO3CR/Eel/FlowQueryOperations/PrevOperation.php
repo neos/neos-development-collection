@@ -22,67 +22,70 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * If an optional filter expression is provided, it only returns the node
  * if it matches the given expression.
  */
-class PrevOperation extends AbstractOperation {
+class PrevOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'prev';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'prev';
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var integer
-	 */
-	static protected $priority = 100;
+    /**
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param array (or array-like object) $context onto which this operation should be applied
-	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
-	 */
-	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the arguments for this operation
+     * @return void
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        $output = array();
+        $outputNodePaths = array();
+        foreach ($flowQuery->getContext() as $contextNode) {
+            $prevNode = $this->getPrevForNode($contextNode);
+            if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {
+                $outputNodePaths[$prevNode->getPath()] = true;
+                $output[] = $prevNode;
+            }
+        }
+        $flowQuery->setContext($output);
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return void
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		$output = array();
-		$outputNodePaths = array();
-		foreach ($flowQuery->getContext() as $contextNode) {
-			$prevNode = $this->getPrevForNode($contextNode);
-			if ($prevNode !== NULL && !isset($outputNodePaths[$prevNode->getPath()])) {
-				$outputNodePaths[$prevNode->getPath()] = TRUE;
-				$output[] = $prevNode;
-			}
-		}
-		$flowQuery->setContext($output);
+        if (isset($arguments[0]) && !empty($arguments[0])) {
+            $flowQuery->pushOperation('filter', $arguments);
+        }
+    }
 
-		if (isset($arguments[0]) && !empty($arguments[0])) {
-			$flowQuery->pushOperation('filter', $arguments);
-		}
-	}
-
-	/**
-	 * @param NodeInterface $contextNode The node for which the preceding node should be found
-	 * @return NodeInterface The preceding node of $contextNode or NULL
-	 */
-	protected function getPrevForNode($contextNode) {
-		$nodesInContext = $contextNode->getParent()->getChildNodes();
-		for ($i = 0; $i < count($nodesInContext) - 1; $i++) {
-			if ($nodesInContext[$i + 1] === $contextNode) {
-				return $nodesInContext[$i];
-			}
-		}
-		return NULL;
-	}
+    /**
+     * @param NodeInterface $contextNode The node for which the preceding node should be found
+     * @return NodeInterface The preceding node of $contextNode or NULL
+     */
+    protected function getPrevForNode($contextNode)
+    {
+        $nodesInContext = $contextNode->getParent()->getChildNodes();
+        for ($i = 0; $i < count($nodesInContext) - 1; $i++) {
+            if ($nodesInContext[$i + 1] === $contextNode) {
+                return $nodesInContext[$i];
+            }
+        }
+        return null;
+    }
 }

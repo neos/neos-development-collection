@@ -26,108 +26,113 @@ use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
  * An abstract node privilege acting as a base class for other
  * node privileges restricting operations and data on nodes.
  */
-abstract class AbstractNodePrivilege extends AbstractPrivilege implements MethodPrivilegeInterface {
+abstract class AbstractNodePrivilege extends AbstractPrivilege implements MethodPrivilegeInterface
+{
+    /**
+     * @var CompilingEvaluator
+     */
+    protected $eelCompilingEvaluator;
 
-	/**
-	 * @var CompilingEvaluator
-	 */
-	protected $eelCompilingEvaluator;
+    /**
+     * @var string
+     */
+    protected $nodeContextClassName = NodePrivilegeContext::class;
 
-	/**
-	 * @var string
-	 */
-	protected $nodeContextClassName = NodePrivilegeContext::class;
+    /**
+     * @var NodePrivilegeContext
+     */
+    protected $nodeContext;
 
-	/**
-	 * @var NodePrivilegeContext
-	 */
-	protected $nodeContext;
+    /**
+     * @var MethodPrivilegeInterface
+     */
+    protected $methodPrivilege;
 
-	/**
-	 * @var MethodPrivilegeInterface
-	 */
-	protected $methodPrivilege;
+    /**
+     * @var boolean
+     */
+    protected $initialized = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $initialized = FALSE;
+    /**
+     * @return void
+     */
+    public function initialize()
+    {
+        if ($this->initialized) {
+            return;
+        }
+        $this->initialized = true;
 
-	/**
-	 * @return void
-	 */
-	public function initialize() {
-		if ($this->initialized) {
-			return;
-		}
-		$this->initialized = TRUE;
+        $this->nodeContext = new $this->nodeContextClassName();
+        $eelContext = new Context($this->nodeContext);
 
-		$this->nodeContext = new $this->nodeContextClassName();
-		$eelContext = new Context($this->nodeContext);
+        $this->eelCompilingEvaluator = new CompilingEvaluator();
 
-		$this->eelCompilingEvaluator = new CompilingEvaluator();
+        $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
 
-		$this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
+        $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
 
-		$methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
+        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', '\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $methodPrivilegeMatcher);
+        $methodPrivilegeTarget->injectObjectManager($this->objectManager);
+        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+    }
 
-		$methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', '\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $methodPrivilegeMatcher);
-		$methodPrivilegeTarget->injectObjectManager($this->objectManager);
-		$this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
-	}
+    /**
+     * Unique identifier of this privilege
+     *
+     * @return string
+     */
+    public function getCacheEntryIdentifier()
+    {
+        $this->initialize();
+        return $this->methodPrivilege->getCacheEntryIdentifier();
+    }
 
-	/**
-	 * Unique identifier of this privilege
-	 *
-	 * @return string
-	 */
-	public function getCacheEntryIdentifier() {
-		$this->initialize();
-		return $this->methodPrivilege->getCacheEntryIdentifier();
-	}
+    /**
+     * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject (one of NodePrivilegeSubject or MethodPrivilegeSubject)
+     * @return boolean
+     * @throws InvalidPrivilegeTypeException
+     */
+    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    {
+        if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\AbstractNodePrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417014368);
+        }
 
-	/**
-	 * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject (one of NodePrivilegeSubject or MethodPrivilegeSubject)
-	 * @return boolean
-	 * @throws InvalidPrivilegeTypeException
-	 */
-	public function matchesSubject(PrivilegeSubjectInterface $subject) {
-		if ($subject instanceof NodePrivilegeSubject === FALSE && $subject instanceof MethodPrivilegeSubject === FALSE) {
-			throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\AbstractNodePrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417014368);
-		}
+        $this->initialize();
 
-		$this->initialize();
+        if ($subject instanceof MethodPrivilegeSubject) {
+            return $this->methodPrivilege->matchesSubject($subject);
+        }
 
-		if ($subject instanceof MethodPrivilegeSubject) {
-			return $this->methodPrivilege->matchesSubject($subject);
-		}
+        $nodeContext = new $this->nodeContextClassName($subject->getNode());
+        $eelContext = new Context($nodeContext);
 
-		$nodeContext = new $this->nodeContextClassName($subject->getNode());
-		$eelContext = new Context($nodeContext);
+        return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
+    }
 
-		return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
-	}
+    /**
+     * @param string $className
+     * @param string $methodName
+     * @return boolean
+     */
+    public function matchesMethod($className, $methodName)
+    {
+        $this->initialize();
+        return $this->methodPrivilege->matchesMethod($className, $methodName);
+    }
 
-	/**
-	 * @param string $className
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function matchesMethod($className, $methodName) {
-		$this->initialize();
-		return $this->methodPrivilege->matchesMethod($className, $methodName);
-	}
+    /**
+     * @return PointcutFilterInterface
+     */
+    public function getPointcutFilterComposite()
+    {
+        $this->initialize();
+        return $this->methodPrivilege->getPointcutFilterComposite();
+    }
 
-	/**
-	 * @return PointcutFilterInterface
-	 */
-	public function getPointcutFilterComposite() {
-		$this->initialize();
-		return $this->methodPrivilege->getPointcutFilterComposite();
-	}
-
-	/**
-	 * @return string
-	 */
-	abstract protected function buildMethodPrivilegeMatcher();
+    /**
+     * @return string
+     */
+    abstract protected function buildMethodPrivilegeMatcher();
 }

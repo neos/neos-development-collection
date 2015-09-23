@@ -14,31 +14,32 @@ namespace TYPO3\Neos\EventLog\Integrations;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
-abstract class AbstractIntegrationService {
+abstract class AbstractIntegrationService
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Security\Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
-	 */
-	protected $securityContext;
+    /**
+     * @Flow\Inject
+     * @var EventEmittingService
+     */
+    protected $eventEmittingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var EventEmittingService
-	 */
-	protected $eventEmittingService;
-
-	/**
-	 * Try to set the current account identifier emitting the events, if possible
-	 *
-	 * @return void
-	 */
-	protected function initializeAccountIdentifier() {
-		if ($this->securityContext->canBeInitialized()) {
-			$account = $this->securityContext->getAccount();
-			if ($account !== NULL) {
-				$this->eventEmittingService->setCurrentAccountIdentifier($account->getAccountIdentifier());
-			}
-		}
-	}
+    /**
+     * Try to set the current account identifier emitting the events, if possible
+     *
+     * @return void
+     */
+    protected function initializeAccountIdentifier()
+    {
+        if ($this->securityContext->canBeInitialized()) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                $this->eventEmittingService->setCurrentAccountIdentifier($account->getAccountIdentifier());
+            }
+        }
+    }
 }

@@ -16,30 +16,31 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Creates text representations of the given exceptions.
  */
-class PlainTextHandler extends AbstractRenderingExceptionHandler {
-
-	/**
-	 * Handles an Exception thrown while rendering TypoScript
-	 *
-	 * @param string $typoScriptPath path causing the exception
-	 * @param \Exception $exception exception to handle
-	 * @param integer $referenceCode
-	 * @return string
-	 */
-	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		if (isset($referenceCode)) {
-			return sprintf(
-				'Exception while rendering %s: %s (%s)',
-				$this->formatScriptPath($typoScriptPath, "\n\t", FALSE),
-				$exception->getMessage(),
-				$referenceCode
-			);
-		} else {
-			return sprintf(
-				'Exception while rendering %s: %s',
-				$this->formatScriptPath($typoScriptPath, "\n\t", FALSE),
-				$exception->getMessage()
-			);
-		}
-	}
+class PlainTextHandler extends AbstractRenderingExceptionHandler
+{
+    /**
+     * Handles an Exception thrown while rendering TypoScript
+     *
+     * @param string $typoScriptPath path causing the exception
+     * @param \Exception $exception exception to handle
+     * @param integer $referenceCode
+     * @return string
+     */
+    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    {
+        if (isset($referenceCode)) {
+            return sprintf(
+                'Exception while rendering %s: %s (%s)',
+                $this->formatScriptPath($typoScriptPath, "\n\t", false),
+                $exception->getMessage(),
+                $referenceCode
+            );
+        } else {
+            return sprintf(
+                'Exception while rendering %s: %s',
+                $this->formatScriptPath($typoScriptPath, "\n\t", false),
+                $exception->getMessage()
+            );
+        }
+    }
 }
