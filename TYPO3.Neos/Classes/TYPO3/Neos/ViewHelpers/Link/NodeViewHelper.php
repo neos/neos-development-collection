@@ -13,40 +13,33 @@ namespace TYPO3\Neos\ViewHelpers\Link;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
- *
  * The target node can be provided as string or as a Node object; if not specified
  * at all, the generated URI will refer to the current document node inside the TypoScript context.
- *
  * When specifying the ``node`` argument as string, the following conventions apply:
- *
  * *``node`` starts with ``/``:*
  * The given path is an absolute node path and is treated as such.
  * Example: ``/sites/acmecom/home/about/us``
- *
  * *``node`` does not start with ``/``:*
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
  * ``../about`` results in ``/sites/acmecom/about/``,
  * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
- *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
  * Example: given that the current node is ``/sites/acmecom/products/``,
  * ``~/about/us`` results in ``/sites/acmecom/about/us``,
  * ``~`` results in ``/sites/acmecom``.
- *
  * = Examples =
- *
  * <code title="Defaults">
  * <neos:link.node>some link</neos:link.node>
  * </code>
@@ -54,7 +47,6 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * <a href="sites/mysite.com/homepage/about.html">some link</a>
  * (depending on current node, format etc.)
  * </output>
- *
  * <code title="Generating a link with an absolute URI">
  * <neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
  * </code>
@@ -62,7 +54,6 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * <a href="http://www.example.org/homepage/about.html">bookmark this page</a>
  * (depending on current workspace, current node, format, host etc.)
  * </output>
- *
  * <code title="Target node given as absolute node path">
  * <neos:link.node node="/sites/exampleorg/contact/imprint">Corporate imprint</neos:link.node>
  * </code>
@@ -70,7 +61,13 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * <a href="contact/imprint.html">Corporate imprint</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
- *
+ * <code title="Target node given as node uri">
+ * <neos:link.node node="node://<node identifier>">Corporate imprint</neos:link.node>
+ * </code>
+ * <output>
+ * <a href="contact/imprint.html">Corporate imprint</a>
+ * (depending on current workspace, current node, format etc.)
+ * </output>
  * <code title="Target node given as relative node path">
  * <neos:link.node node="~/about/us">About us</neos:link.node>
  * </code>
@@ -78,7 +75,6 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * <a href="about/us.html">About us</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
- *
  * <code title="Node label as tag content">
  * <neos:link.node node="/sites/exampleorg/contact/imprint" />
  * </code>
@@ -86,7 +82,6 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * <a href="contact/imprint.html">Imprint</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
- *
  * <code title="Dynamic tag content involving the linked node's properties">
  * <neos:link.node node="about-us">see our <span>{linkedNode.label}</span> page</neos:link.node>
  * </code>
@@ -99,6 +94,7 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  */
 class NodeViewHelper extends AbstractTagBasedViewHelper
 {
+
     /**
      * @var string
      */
@@ -119,8 +115,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     {
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
+        $this->registerTagAttribute('rel', 'string',
+            'Specifies the relationship between the current document and the linked document');
+        $this->registerTagAttribute('rev', 'string',
+            'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
     }
 
@@ -140,16 +138,31 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @return string The rendered link
      * @throws ViewHelperException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
-    {
+    public function render(
+        $node = null,
+        $format = null,
+        $absolute = false,
+        array $arguments = array(),
+        $section = '',
+        $addQueryString = false,
+        array $argumentsToBeExcludedFromQueryString = array(),
+        $baseNodeName = 'documentNode',
+        $nodeVariableName = 'linkedNode',
+        $resolveShortcuts = true
+    ) {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
             $view = $this->viewHelperVariableContainer->getView();
             if ($view instanceof TypoScriptAwareViewInterface) {
                 $typoScriptObject = $view->getTypoScriptObject();
+                /** @var ContentContext $currentContext */
                 $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
                 if (isset($currentContext[$baseNodeName])) {
                     $baseNode = $currentContext[$baseNodeName];
+                }
+
+                if (is_string($node) && substr($node, 0, 7) === 'node://') {
+                    $node = $this->linkingService->convertUriToObject($node, $baseNode);
                 }
             }
         }
@@ -185,4 +198,5 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->tag->forceClosingTag(true);
         return $this->tag->render();
     }
+
 }
