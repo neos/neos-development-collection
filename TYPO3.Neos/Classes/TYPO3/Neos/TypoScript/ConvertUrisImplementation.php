@@ -41,6 +41,12 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *     externalLinkTarget = '_blank'
  *     resourceLinkTarget = '_blank'
  *   }
+ *
+ * The optional property ``absolute`` can be used to convert node uris to absolute links::
+ *
+ *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
+ *     absolute = true
+ *   }
  */
 class ConvertUrisImplementation extends AbstractTypoScriptObject
 {
@@ -85,10 +91,12 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject
         $linkingService = $this->linkingService;
         $controllerContext = $this->tsRuntime->getControllerContext();
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
+        $absolute = $this->tsValue('absolute');
+
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris, $absolute) {
             switch ($matches[1]) {
                 case 'node':
-                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
+                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
