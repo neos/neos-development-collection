@@ -11,14 +11,14 @@ matrix:
       env: DB=sqlite
 before_install:
   - cd ..
-  - git clone https://github.com/neos/neos-base-distribution.git
+  - git clone https://github.com/neos/neos-base-distribution.git -b 1.2
   - cd neos-base-distribution
 install:
-  - composer require "neos/neos-development-collection dev-master" "neos/flow-development-collection dev-master"
+  - composer require "neos/neos-development-collection 1.2.x-dev" "neos/flow-development-collection 2.3.x-dev"
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
-  - echo 'date.timezone = "Europe/Berlin"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
