@@ -3,7 +3,7 @@
     "description": "Neos packages in a joined repository for pull requests.",
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "2.3.x-dev@dev",
+        "neos/flow-development-collection": "2.3.x-dev",
         "typo3/flow": "*",
         "typo3/imagine": "*",
         "typo3/kickstart": "*",
