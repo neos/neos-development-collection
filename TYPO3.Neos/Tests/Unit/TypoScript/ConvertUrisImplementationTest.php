@@ -104,7 +104,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
     }
 
-    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null)
+    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false)
     {
         $this->convertUrisImplementation
             ->expects($this->atLeastOnce())
@@ -114,7 +114,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
                 array('node', $node ?: $this->mockNode),
                 array('forceConversion', $forceConversion),
                 array('externalLinkTarget', $externalLinkTarget),
-                array('resourceLinkTarget', $resourceLinkTarget)
+                array('resourceLinkTarget', $resourceLinkTarget),
+                array('absolute', $absolute)
             )));
     }
 

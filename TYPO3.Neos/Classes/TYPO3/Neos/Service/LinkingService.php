@@ -138,16 +138,17 @@ class LinkingService
      * @param string|Uri $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
+     * @param bool $absolute
      * @return string
      */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
+    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
             return null;
         }
-        return $this->createNodeUri($controllerContext, $targetObject);
+        return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
     /**
