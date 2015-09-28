@@ -14,6 +14,7 @@ namespace TYPO3\Media\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Exception;
 
@@ -21,6 +22,11 @@ use TYPO3\Media\Exception;
  * A system-generated preview version of an Asset
  *
  * @Flow\Entity
+ * @ORM\Table(
+ *    indexes={
+ * 		@ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
+ *    }
+ * )
  */
 class Thumbnail implements ImageInterface
 {
@@ -40,18 +46,6 @@ class Thumbnail implements ImageInterface
     protected $originalAsset;
 
     /**
-     * @var integer
-     * @ORM\Column(nullable = true)
-     */
-    protected $maximumWidth;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable = true)
-     */
-    protected $maximumHeight;
-
-    /**
      * @var \TYPO3\Flow\Resource\Resource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
      * @Flow\Validate(type = "NotEmpty")
@@ -60,36 +54,31 @@ class Thumbnail implements ImageInterface
     protected $resource;
 
     /**
-     * @var string
+     * @var array<string>
+     * @ORM\Column(type="flow_json_array")
      */
-    protected $ratioMode;
+    protected $configuration;
 
     /**
-     * @var boolean
-     * @ORM\Column(nullable = true)
+     * @var string
+     * @ORM\Column(length=32)
      */
-    protected $allowUpScaling;
+    protected $configurationHash;
 
     /**
      * Constructs a new Thumbnail
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
-     * @param integer $maximumWidth Maximum width of the generated thumbnail
-     * @param integer $maximumHeight Maximum height of the generated thumbnail
-     * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
-     * @param boolean $allowUpScaling Whether the resulting image should be upscaled
+     * @param ThumbnailConfiguration $configuration
      * @throws \TYPO3\Media\Exception
      */
-    public function __construct(AssetInterface $originalAsset, $maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
+    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
     {
         if (!$originalAsset instanceof ImageInterface) {
             throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
         }
         $this->originalAsset = $originalAsset;
-        $this->maximumWidth = $maximumWidth;
-        $this->maximumHeight = $maximumHeight;
-        $this->ratioMode = $ratioMode;
-        $this->allowUpScaling = $allowUpScaling;
+        $this->setConfiguration($configuration);
     }
 
     /**
@@ -125,6 +114,24 @@ class Thumbnail implements ImageInterface
     }
 
     /**
+     * @param ThumbnailConfiguration $configuration
+     */
+    protected function setConfiguration(ThumbnailConfiguration $configuration)
+    {
+        $this->configuration = $configuration->toArray();
+        $this->configurationHash = $configuration->getHash();
+    }
+
+    /**
+     * @param string $value
+     * @return mixed
+     */
+    protected function getConfigurationValue($value)
+    {
+        return Arrays::getValueByPath($this->configuration, $value);
+    }
+
+    /**
      * Refreshes this asset after the Resource has been modified
      *
      * @return void
@@ -134,10 +141,12 @@ class Thumbnail implements ImageInterface
         $adjustments = array(
             new ResizeImageAdjustment(
                 array(
-                    'maximumWidth' => $this->maximumWidth,
-                    'maximumHeight' => $this->maximumHeight,
-                    'ratioMode' => $this->ratioMode,
-                    'allowUpScaling' => $this->allowUpScaling,
+                    'width' => $this->getConfigurationValue('width'),
+                    'maximumWidth' => $this->getConfigurationValue('maximumWidth'),
+                    'height' => $this->getConfigurationValue('height'),
+                    'maximumHeight' => $this->getConfigurationValue('maximumHeight'),
+                    'ratioMode' => $this->getConfigurationValue('ratioMode'),
+                    'allowUpScaling' => $this->getConfigurationValue('allowUpScaling')
                 )
             )
         );

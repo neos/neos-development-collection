@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use \TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 class AssetService
 {
@@ -35,44 +36,23 @@ class AssetService
      * In case of Images this is a thumbnail of the image, in case of other assets an icon representation.
      *
      * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
+     * @param ThumbnailConfiguration $configuration
      * @return array with keys "width", "height" and "src"
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight, $allowCropping = false, $allowUpScaling = null)
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         if ($asset instanceof ImageInterface) {
-            $thumbnailImage = $this->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+            $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
             $thumbnailData = array(
                 'width' => $thumbnailImage->getWidth(),
                 'height' => $thumbnailImage->getHeight(),
                 'src' => $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource())
             );
         } else {
-            $thumbnailData = $this->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+            $thumbnailData = $this->getAssetThumbnailImage($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
         }
 
         return $thumbnailData;
-    }
-
-    /**
-     * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
-     * differ from the specified image dimensions, otherwise the original image is returned.
-     *
-     * @param ImageInterface $image
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
-     * @return ImageInterface
-     */
-    protected function getImageThumbnailImage(ImageInterface $image, $maximumWidth = null, $maximumHeight = null, $allowCropping = null, $allowUpScaling = null)
-    {
-        $ratioMode = ($allowCropping ? ImageInterface::RATIOMODE_OUTBOUND : ImageInterface::RATIOMODE_INSET);
-
-        return $this->thumbnailService->getThumbnail($image, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
     }
 
     /**
