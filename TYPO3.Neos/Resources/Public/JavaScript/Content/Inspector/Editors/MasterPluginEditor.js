@@ -14,7 +14,7 @@ function(
 			var that = this,
 				url = $('link[rel="neos-masterplugins"]').attr('href');
 
-			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...'));
+			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...'));
 			this._loadValuesFromController(url, function(results) {
 				var values = {}, placeholder, i = 0;
 				values[''] = {};
