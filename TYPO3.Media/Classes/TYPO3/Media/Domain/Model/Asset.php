@@ -309,7 +309,8 @@ class Asset implements AssetInterface
      */
     public function getThumbnail($maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
     {
-        return $this->thumbnailService->getThumbnail($this, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
+        $thumbnailConfiguration = new ThumbnailConfiguration(null, $maximumWidth, null, $maximumHeight, $ratioMode === ImageInterface::RATIOMODE_OUTBOUND, $allowUpScaling);
+        return $this->thumbnailService->getThumbnail($this, $thumbnailConfiguration);
     }
 
     /**

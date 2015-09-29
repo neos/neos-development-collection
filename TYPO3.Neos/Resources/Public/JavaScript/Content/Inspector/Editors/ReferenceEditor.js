@@ -125,7 +125,7 @@ define(
 					var item = Ember.Object.extend({
 						id: value,
 						text: function() {
-							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...');
+							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
 						}.property()
 					}).create();
 					that.set('content', item);

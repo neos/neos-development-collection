@@ -9,7 +9,7 @@ define(
 	],
 	function (Ember, $, SelectBoxEditor, Configuration, NodeTypeService, I18n) {
 		return SelectBoxEditor.extend({
-			placeholder:  I18n.translate('TYPO3.Neos:Main:loading', 'Loading...'),
+			placeholder: I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...',
 			baseNodeType: 'TYPO3.Neos:Content',
 
 			values: function () {
