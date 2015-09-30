@@ -21,90 +21,95 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  *
  * These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
  */
-class RenderingHelper implements ProtectedContextAwareInterface {
+class RenderingHelper implements ProtectedContextAwareInterface
+{
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var NodeTypeManager
-	 */
-	protected $nodeTypeManager;
+    /**
+     * @var array
+     */
+    protected $contentDimensionsConfiguration;
 
-	/**
-	 * @var array
-	 */
-	protected $contentDimensionsConfiguration;
+    /**
+     * @param ConfigurationManager $configurationManager
+     * @return void
+     */
+    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    {
+        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.TYPO3CR.contentDimensions');
+    }
 
-	/**
-	 * @param ConfigurationManager $configurationManager
-	 * @return void
-	 */
-	public function injectConfigurationManager(ConfigurationManager $configurationManager) {
-		$this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.TYPO3CR.contentDimensions');
-	}
+    /**
+     * Render a human-readable description for the passed $dimensions
+     *
+     * @param array $dimensions
+     * @return string
+     */
+    public function renderDimensions(array $dimensions)
+    {
+        $rendered = array();
+        foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
+            $dimensionConfiguration = $this->contentDimensionsConfiguration[$dimensionIdentifier];
+            $preset = $this->findPresetInDimension($dimensionConfiguration, $dimensionValue);
+            $rendered[] = $dimensionConfiguration['label'] . ' ' . $preset['label'];
+        }
 
-	/**
-	 * Render a human-readable description for the passed $dimensions
-	 *
-	 * @param array $dimensions
-	 * @return string
-	 */
-	public function renderDimensions(array $dimensions) {
-		$rendered = array();
-		foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
-			$dimensionConfiguration = $this->contentDimensionsConfiguration[$dimensionIdentifier];
-			$preset = $this->findPresetInDimension($dimensionConfiguration, $dimensionValue);
-			$rendered[] = $dimensionConfiguration['label'] . ' ' . $preset['label'];
-		}
+        return implode(', ', $rendered);
+    }
 
-		return implode(', ', $rendered);
-	}
+    /**
+     * @param array $dimensionConfiguration
+     * @param string $dimensionValue
+     * @return array the preset matching $dimensionValue
+     */
+    protected function findPresetInDimension(array $dimensionConfiguration, $dimensionValue)
+    {
+        foreach ($dimensionConfiguration['presets'] as $preset) {
+            if (!isset($preset['values'])) {
+                continue;
+            }
+            foreach ($preset['values'] as $value) {
+                if ($value === $dimensionValue) {
+                    return $preset;
+                }
+            }
+        }
 
-	/**
-	 * @param array $dimensionConfiguration
-	 * @param string $dimensionValue
-	 * @return array the preset matching $dimensionValue
-	 */
-	protected function findPresetInDimension(array $dimensionConfiguration, $dimensionValue) {
-		foreach ($dimensionConfiguration['presets'] as $preset) {
-			if (!isset($preset['values'])) {
-				continue;
-			}
-			foreach ($preset['values'] as $value) {
-				if ($value === $dimensionValue) {
-					return $preset;
-				}
-			}
-		}
+        return null;
+    }
 
-		return NULL;
-	}
+    /**
+     * Render the label for the given $nodeTypeName
+     *
+     * @param string $nodeTypeName
+     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     * @return string
+     */
+    public function labelForNodeType($nodeTypeName)
+    {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            $explodedNodeTypeName = explode(':', $nodeTypeName);
 
-	/**
-	 * Render the label for the given $nodeTypeName
-	 *
-	 * @param string $nodeTypeName
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
-	 * @return string
-	 */
-	public function labelForNodeType($nodeTypeName) {
-		if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-			$explodedNodeTypeName = explode(':', $nodeTypeName);
+            return end($explodedNodeTypeName);
+        }
 
-			return end($explodedNodeTypeName);
-		}
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
-		$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        return $nodeType->getLabel();
+    }
 
-		return $nodeType->getLabel();
-	}
-
-	/**
-	 * All methods are considered safe
-	 *
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return TRUE;
-	}
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
 }

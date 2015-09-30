@@ -24,21 +24,22 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class NodeIdentityConverterAspect {
-
-	/**
-	 * Convert the object to its context path, if we deal with TYPO3CR nodes.
-	 *
-	 * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
-	 * @return string|array the context path to be used for routing
-	 */
-	public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		$objectArgument = $joinPoint->getMethodArgument('object');
-		if ($objectArgument instanceof NodeInterface) {
-			return $objectArgument->getContextPath();
-		} else {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		}
-	}
+class NodeIdentityConverterAspect
+{
+    /**
+     * Convert the object to its context path, if we deal with TYPO3CR nodes.
+     *
+     * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
+     * @return string|array the context path to be used for routing
+     */
+    public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $objectArgument = $joinPoint->getMethodArgument('object');
+        if ($objectArgument instanceof NodeInterface) {
+            return $objectArgument->getContextPath();
+        } else {
+            return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        }
+    }
 }

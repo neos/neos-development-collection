@@ -20,13 +20,12 @@ use TYPO3\Flow\Persistence\Repository;
  *
  * @Flow\Scope("singleton")
  */
-class MigrationStatusRepository extends Repository {
-
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array(
-		'version' => QueryInterface::ORDER_ASCENDING
-	);
-
+class MigrationStatusRepository extends Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array(
+        'version' => QueryInterface::ORDER_ASCENDING
+    );
 }

@@ -19,48 +19,50 @@ use TYPO3\Flow\I18n\Locale;
  *
  * @Flow\Scope("singleton")
  */
-class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\BackendRedirectionService
+     */
+    protected $backendRedirectionService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\BackendRedirectionService
-	 */
-	protected $backendRedirectionService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\XliffService
+     */
+    protected $xliffService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\XliffService
-	 */
-	protected $xliffService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\UserService
+     */
+    protected $userService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\UserService
-	 */
-	protected $userService;
+    /**
+     * Default action of the backend controller.
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
+        if ($redirectionUri === null) {
+            $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
+        }
+        $this->redirectToUri($redirectionUri);
+    }
 
-	/**
-	 * Default action of the backend controller.
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-		$redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
-		if ($redirectionUri === NULL) {
-			$redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
-		}
-		$this->redirectToUri($redirectionUri);
-	}
+    /**
+     * Returns the cached json array with the xliff labels
+     *
+     * @return string
+     */
+    public function getXliffAsJsonAction()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+        $locale = new Locale($this->userService->getInterfaceLanguage());
 
-	/**
-	 * Returns the cached json array with the xliff labels
-	 *
-	 * @return string
-	 */
-	public function getXliffAsJsonAction() {
-		$this->response->setHeader('Content-Type', 'application/json');
-		$locale = new Locale($this->userService->getInterfaceLanguage());
-
-		return $this->xliffService->getCachedJson($locale);
-	}
+        return $this->xliffService->getCachedJson($locale);
+    }
 }

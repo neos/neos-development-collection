@@ -16,28 +16,28 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Interface for Migration Configurations to allow different configuration sources.
  */
-interface ConfigurationInterface {
+interface ConfigurationInterface
+{
+    /**
+     * Returns all available versions.
+     *
+     * @return array
+     */
+    public function getAvailableVersions();
 
-	/**
-	 * Returns all available versions.
-	 *
-	 * @return array
-	 */
-	public function getAvailableVersions();
+    /**
+     * Is the given version available?
+     *
+     * @param string $version
+     * @return boolean
+     */
+    public function isVersionAvailable($version);
 
-	/**
-	 * Is the given version available?
-	 *
-	 * @param string $version
-	 * @return boolean
-	 */
-	public function isVersionAvailable($version);
-
-	/**
-	 * Returns the migration configuration with the given version.
-	 *
-	 * @param string $version
-	 * @return array
-	 */
-	public function getMigrationVersion($version);
+    /**
+     * Returns the migration configuration with the given version.
+     *
+     * @param string $version
+     * @return array
+     */
+    public function getMigrationVersion($version);
 }

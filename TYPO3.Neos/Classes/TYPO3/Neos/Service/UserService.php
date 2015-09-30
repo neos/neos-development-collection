@@ -23,79 +23,84 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  *
  * @Flow\Scope("singleton")
  */
-class UserService {
+class UserService
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var WorkspaceRepository
-	 */
-	protected $workspaceRepository;
+    /**
+     * @Flow\InjectConfiguration("userInterface.defaultLanguage")
+     * @var string
+     */
+    protected $defaultLanguageIdentifier;
 
-	/**
-	 * @Flow\InjectConfiguration("userInterface.defaultLanguage")
-	 * @var string
-	 */
-	protected $defaultLanguageIdentifier;
+    /**
+     * @return User
+     */
+    public function getBackendUser()
+    {
+        if ($this->securityContext->canBeInitialized() === true) {
+            return $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+        }
+        return null;
+    }
 
-	/**
-	 * @return User
-	 */
-	public function getBackendUser() {
-		if ($this->securityContext->canBeInitialized() === TRUE) {
-			return $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-		}
-		return NULL;
-	}
+    /**
+     * Returns the Workspace of the currently logged in user or NULL if no matching workspace was found.
+     * If no user is logged in this returns the live workspace
+     *
+     * @return Workspace
+     */
+    public function getUserWorkspace()
+    {
+        return $this->workspaceRepository->findOneByName($this->getUserWorkspaceName());
+    }
 
-	/**
-	 * Returns the Workspace of the currently logged in user or NULL if no matching workspace was found.
-	 * If no user is logged in this returns the live workspace
-	 *
-	 * @return Workspace
-	 */
-	public function getUserWorkspace() {
-		return $this->workspaceRepository->findOneByName($this->getUserWorkspaceName());
-	}
+    /**
+     * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
+     * If no user is logged in this method returns "live".
+     *
+     * @return string
+     */
+    public function getUserWorkspaceName()
+    {
+        $account = $this->securityContext->getAccount();
+        if ($account === null) {
+            return 'live';
+        }
+        return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
+    }
 
-	/**
-	 * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
-	 * If no user is logged in this method returns "live".
-	 *
-	 * @return string
-	 */
-	public function getUserWorkspaceName() {
-		$account = $this->securityContext->getAccount();
-		if ($account === NULL) {
-			return 'live';
-		}
-		return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
-	}
+    /**
+     * Returns the preference of a user
+     *
+     * @param string $preference
+     * @return mixed
+     */
+    public function getUserPreference($preference)
+    {
+        $user = $this->getBackendUser();
+        if ($user && $user->getPreferences()) {
+            return $user->getPreferences()->get($preference) ?: null;
+        }
+    }
 
-	/**
-	 * Returns the preference of a user
-	 *
-	 * @param string $preference
-	 * @return mixed
-	 */
-	public function getUserPreference($preference) {
-		$user = $this->getBackendUser();
-		if ($user && $user->getPreferences()) {
-			return $user->getPreferences()->get($preference) ?: NULL;
-		}
-	}
-
-	/**
-	 * Returns the interface language the user selected. Will fall back to the default language defined in settings
-	 *
-	 * @return string
-	 */
-	public function getInterfaceLanguage() {
-		return $this->getUserPreference('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
-	}
+    /**
+     * Returns the interface language the user selected. Will fall back to the default language defined in settings
+     *
+     * @return string
+     */
+    public function getInterfaceLanguage()
+    {
+        return $this->getUserPreference('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
+    }
 }

@@ -16,30 +16,30 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Evaluate sub objects to an array (instead of a string as ArrayImplementation does)
  */
-class RawArrayImplementation extends ArrayImplementation {
+class RawArrayImplementation extends ArrayImplementation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @return array
+     */
+    public function evaluate()
+    {
+        $sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return array
-	 */
-	public function evaluate() {
-		$sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
+        if (count($sortedChildTypoScriptKeys) === 0) {
+            return array();
+        }
 
-		if (count($sortedChildTypoScriptKeys) === 0) {
-			return array();
-		}
+        $output = array();
+        foreach ($sortedChildTypoScriptKeys as $key) {
+            $value = $this->tsValue($key);
+            if ($value === null && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
+                continue;
+            }
+            $output[$key] = $value;
+        }
 
-		$output = array();
-		foreach ($sortedChildTypoScriptKeys as $key) {
-			$value = $this->tsValue($key);
-			if ($value === NULL && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
-				continue;
-			}
-			$output[$key] = $value;
-		}
-
-		return $output;
-	}
-
+        return $output;
+    }
 }

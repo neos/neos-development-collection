@@ -18,34 +18,37 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 /**
  * A create node privilege subject
  */
-class CreateNodePrivilegeSubject extends NodePrivilegeSubject {
+class CreateNodePrivilegeSubject extends NodePrivilegeSubject
+{
+    /**
+     * @var NodeType
+     */
+    protected $creationNodeType;
 
-	/**
-	 * @var NodeType
-	 */
-	protected $creationNodeType;
+    /**
+     * @param NodeInterface $node The parent node under which a new child shall be created
+     * @param NodeType $creationNodeType The node type of the new child node, to check if this is type is allowed as new child node under the given parent node
+     * @param JoinPointInterface $joinPoint Set, if created by a method interception. Usually the interception of the createNode() method, where the creation of new child nodes takes place
+     */
+    public function __construct(NodeInterface $node, NodeType $creationNodeType = null, JoinPointInterface $joinPoint = null)
+    {
+        $this->creationNodeType = $creationNodeType;
+        parent::__construct($node, $joinPoint);
+    }
 
-	/**
-	 * @param NodeInterface $node The parent node under which a new child shall be created
-	 * @param NodeType $creationNodeType The node type of the new child node, to check if this is type is allowed as new child node under the given parent node
-	 * @param JoinPointInterface $joinPoint Set, if created by a method interception. Usually the interception of the createNode() method, where the creation of new child nodes takes place
-	 */
-	public function __construct(NodeInterface $node, NodeType $creationNodeType = NULL, JoinPointInterface $joinPoint = NULL) {
-		$this->creationNodeType = $creationNodeType;
-		parent::__construct($node, $joinPoint);
-	}
+    /**
+     * @return boolean
+     */
+    public function hasCreationNodeType()
+    {
+        return ($this->creationNodeType !== null);
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function hasCreationNodeType() {
-		return ($this->creationNodeType !== NULL);
-	}
-
-	/**
-	 * @return NodeType
-	 */
-	public function getCreationNodeType() {
-		return $this->creationNodeType;
-	}
+    /**
+     * @return NodeType
+     */
+    public function getCreationNodeType()
+    {
+        return $this->creationNodeType;
+    }
 }

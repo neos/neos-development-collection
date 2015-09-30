@@ -16,6 +16,6 @@ namespace TYPO3\Neos\Domain;
  *
  * @api
  */
-class Exception extends \TYPO3\Neos\Exception {
-
+class Exception extends \TYPO3\Neos\Exception
+{
 }

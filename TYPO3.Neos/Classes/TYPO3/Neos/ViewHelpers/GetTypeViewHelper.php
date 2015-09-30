@@ -34,14 +34,14 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * (if myValue is a string)
  * </output>
  */
-class GetTypeViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param mixed $value The value to determine the type of
-	 * @return string
-	 */
-	public function render($value = NULL) {
-		return gettype($value ?: $this->renderChildren());
-	}
-
+class GetTypeViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param mixed $value The value to determine the type of
+     * @return string
+     */
+    public function render($value = null)
+    {
+        return gettype($value ?: $this->renderChildren());
+    }
 }

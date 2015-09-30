@@ -18,33 +18,35 @@ use TYPO3\Neos\Domain\Model\User;
  *
  * @group large
  */
-class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected $testableSecurityEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
+    /**
+     * @test
+     */
+    public function indexActionIsGrantedForAdministrator()
+    {
+        $user = new User();
 
-	/**
-	 * @test
-	 */
-	public function indexActionIsGrantedForAdministrator() {
-		$user = new User();
+        $account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
+        $account->setAccountIdentifier('admin');
+        $account->setParty($user);
+        $this->browser->request('http://localhost/neos/login');
 
-		$account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
-		$account->setAccountIdentifier('admin');
-		$account->setParty($user);
-		$this->browser->request('http://localhost/neos/login');
+            // dummy assertion to avoid PHPUnit warning
+        $this->assertTrue(true);
+    }
 
-			// dummy assertion to avoid PHPUnit warning
-		$this->assertTrue(TRUE);
-	}
-
-	/**
-	 * @test
-	 */
-	public function indexActionIsDeniedForEverybody() {
-		$this->browser->request('http://localhost/neos/');
-		$this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
-	}
+    /**
+     * @test
+     */
+    public function indexActionIsDeniedForEverybody()
+    {
+        $this->browser->request('http://localhost/neos/');
+        $this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
+    }
 }

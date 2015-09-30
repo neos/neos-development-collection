@@ -14,32 +14,34 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures;
 /**
  * A test class that has a property to wrap some value for serialization in Node properties
  */
-class TestObjectForSerialization {
+class TestObjectForSerialization
+{
+    /**
+     * @var object
+     */
+    protected $value;
 
-	/**
-	 * @var object
-	 */
-	protected $value;
+    /**
+     * @param object $value
+     */
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
 
-	/**
-	 * @param object $value
-	 */
-	public function __construct($value) {
-		$this->value = $value;
-	}
+    /**
+     * @return object
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-	/**
-	 * @return object
-	 */
-	public function getValue() {
-		return $this->value;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function __sleep() {
-		return array('value');
-	}
-
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        return array('value');
+    }
 }

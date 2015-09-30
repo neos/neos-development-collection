@@ -21,5 +21,6 @@ use TYPO3\Flow\Annotations as Flow;
  *   someTextProperty.@process.1 = TYPO3.Neos:ConvertNodeUris
  * @deprecated use ConvertUrisImplementation instead
  */
-class ConvertNodeUrisImplementation extends ConvertUrisImplementation {
+class ConvertNodeUrisImplementation extends ConvertUrisImplementation
+{
 }

@@ -14,25 +14,26 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
 /**
  * Testcase for the UriBuilder object
  */
-class UriBuilderTest extends AbstractTypoScriptObjectTest {
+class UriBuilderTest extends AbstractTypoScriptObjectTest
+{
+    /**
+     * @test
+     */
+    public function buildRelativeUriToAction()
+    {
+        $this->registerRoute(
+            'TypoScript functional test',
+            'typo3/flow/test/http/foo',
+            array(
+                '@package' => 'TYPO3.Flow',
+                '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html'
+            ));
 
-	/**
-	 * @test
-	 */
-	public function buildRelativeUriToAction() {
-		$this->registerRoute(
-			'TypoScript functional test',
-			'typo3/flow/test/http/foo',
-			array(
-				'@package' => 'TYPO3.Flow',
-				'@subpackage' => 'Tests\Functional\Http\Fixtures',
-				'@controller' => 'Foo',
-				'@action' => 'index',
-				'@format' => 'html'
-			));
-
-		$view = $this->buildView();
-		$view->setTypoScriptPath('uriBuilder/foo');
-		$this->assertContains('/typo3/flow/test/http/foo', $view->render());
-	}
+        $view = $this->buildView();
+        $view->setTypoScriptPath('uriBuilder/foo');
+        $this->assertContains('/typo3/flow/test/http/foo', $view->render());
+    }
 }

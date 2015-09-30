@@ -19,15 +19,15 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 /**
  * ViewHelper to find the closest document node to a given node
  */
-class ClosestDocumentViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param NodeInterface $node
-	 * @return NodeInterface
-	 */
-	public function render(NodeInterface $node) {
-		$flowQuery = new FlowQuery(array($node));
-		return $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-	}
-
+class ClosestDocumentViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param NodeInterface $node
+     * @return NodeInterface
+     */
+    public function render(NodeInterface $node)
+    {
+        $flowQuery = new FlowQuery(array($node));
+        return $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+    }
 }

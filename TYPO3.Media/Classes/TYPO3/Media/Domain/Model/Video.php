@@ -19,48 +19,50 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class Video extends Asset {
+class Video extends Asset
+{
+    /**
+     * @var integer
+     * @Flow\Validate(type="NotEmpty")
+     */
+    protected $width;
 
-	/**
-	 * @var integer
-	 * @Flow\Validate(type="NotEmpty")
-	 */
-	protected $width;
+    /**
+     * @var integer
+     * @Flow\Validate(type="NotEmpty")
+     */
+    protected $height;
 
-	/**
-	 * @var integer
-	 * @Flow\Validate(type="NotEmpty")
-	 */
-	protected $height;
+    /**
+     * Constructs the object and sets default values for width and height
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-	/**
-	 * Constructs the object and sets default values for width and height
-	 */
-	public function __construct() {
-		parent::__construct();
+        $this->width = -1;
+        $this->height = -1;
+    }
 
-		$this->width = -1;
-		$this->height = -1;
-	}
+    /**
+     * Width of the video in pixels. If the width cannot be determined,
+     * -1 is returned.
+     *
+     * @return integer
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
 
-	/**
-	 * Width of the video in pixels. If the width cannot be determined,
-	 * -1 is returned.
-	 *
-	 * @return integer
-	 */
-	public function getWidth() {
-		return $this->width;
-	}
-
-	/**
-	 * Height of the video in pixels. If the height cannot be determined,
-	 * -1 is returned.
-	 *
-	 * @return integer
-	 */
-	public function getHeight() {
-		return $this->height;
-	}
-
+    /**
+     * Height of the video in pixels. If the height cannot be determined,
+     * -1 is returned.
+     *
+     * @return integer
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
 }

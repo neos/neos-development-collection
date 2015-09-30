@@ -22,11 +22,10 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *
  * @api
  */
-interface TypoScriptAwareViewInterface {
-
-	/**
-	 * @return AbstractTypoScriptObject
-	 */
-	public function getTypoScriptObject();
-
+interface TypoScriptAwareViewInterface
+{
+    /**
+     * @return AbstractTypoScriptObject
+     */
+    public function getTypoScriptObject();
 }

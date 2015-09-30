@@ -14,14 +14,13 @@ namespace TYPO3\Media\Domain\Model;
 /**
  * An interface of an asset which was derived from an original asset
  */
-interface AssetVariantInterface extends AssetInterface {
-
-	/**
-	 * Returns the Asset this derived asset is based on
-	 *
-	 * @return AssetInterface
-	 * @api
-	 */
-	public function getOriginalAsset();
-
+interface AssetVariantInterface extends AssetInterface
+{
+    /**
+     * Returns the Asset this derived asset is based on
+     *
+     * @return AssetInterface
+     * @api
+     */
+    public function getOriginalAsset();
 }

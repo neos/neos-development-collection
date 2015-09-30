@@ -27,15 +27,14 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * The default implementation ConfigurationContentDimensionPresetSource will read the available presets from settings.
  */
-interface ContentDimensionPresetSourceInterface extends \TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface {
-
-	/**
-	 * Find a dimension preset by URI identifier
-	 *
-	 * @param string $dimensionName The dimension name where the preset should be searched
-	 * @param string $uriSegment The URI segment for a Content Dimension Preset
-	 * @return array The preset configuration, including the identifier as key "identifier" or NULL if none was found
-	 */
-	public function findPresetByUriSegment($dimensionName, $uriSegment);
-
+interface ContentDimensionPresetSourceInterface extends \TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface
+{
+    /**
+     * Find a dimension preset by URI identifier
+     *
+     * @param string $dimensionName The dimension name where the preset should be searched
+     * @param string $uriSegment The URI segment for a Content Dimension Preset
+     * @return array The preset configuration, including the identifier as key "identifier" or NULL if none was found
+     */
+    public function findPresetByUriSegment($dimensionName, $uriSegment);
 }

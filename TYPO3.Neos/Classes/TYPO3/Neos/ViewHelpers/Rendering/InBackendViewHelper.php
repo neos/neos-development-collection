@@ -35,15 +35,16 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * Shown in the backend.
  * </output>
  */
-class InBackendViewHelper extends AbstractRenderingStateViewHelper {
+class InBackendViewHelper extends AbstractRenderingStateViewHelper
+{
+    /**
+     * @param NodeInterface $node
+     * @return boolean
+     */
+    public function render(NodeInterface $node = null)
+    {
+        $context = $this->getNodeContext($node);
 
-	/**
-	 * @param NodeInterface $node
-	 * @return boolean
-	 */
-	public function render(NodeInterface $node = NULL) {
-		$context = $this->getNodeContext($node);
-
-		return $context->isInBackend();
-	}
+        return $context->isInBackend();
+    }
 }

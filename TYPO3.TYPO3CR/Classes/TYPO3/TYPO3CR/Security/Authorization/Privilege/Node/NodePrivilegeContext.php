@@ -21,150 +21,157 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 /**
  * An Eel context matching expression for the node privileges
  */
-class NodePrivilegeContext {
+class NodePrivilegeContext
+{
+    /**
+     * @Flow\Inject
+     * @var ContextFactory
+     */
+    protected $contextFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContextFactory
-	 */
-	protected $contextFactory;
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var SecurityContext
-	 */
-	protected $securityContext;
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContentDimensionPresetSourceInterface
-	 */
-	protected $contentDimensionPresetSource;
+    /**
+     * @var NodeInterface
+     */
+    protected $node;
 
-	/**
-	 * @var NodeInterface
-	 */
-	protected $node;
+    /**
+     * @param NodeInterface $node
+     */
+    public function __construct(NodeInterface $node = null)
+    {
+        $this->node = $node;
+    }
 
-	/**
-	 * @param NodeInterface $node
-	 */
-	function __construct(NodeInterface $node = NULL) {
-		$this->node = $node;
-	}
+    /**
+     * @param NodeInterface $node
+     * @return void
+     */
+    public function setNode(NodeInterface $node)
+    {
+        $this->node = $node;
+    }
 
-	/**
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function setNode(NodeInterface $node) {
-		$this->node = $node;
-	}
+    /**
+     * @param string $nodePathOrIdentifier
+     * @return boolean
+     */
+    public function isDescendantNodeOf($nodePathOrIdentifier)
+    {
+        if ($this->node === null) {
+            return true;
+        }
+        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
+            if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
+                return true;
+            }
+            $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
+            if ($node === null) {
+                return false;
+            }
+            $nodePath = $node->getPath() . '/';
+        } else {
+            $nodePath = rtrim($nodePathOrIdentifier, '/') . '/';
+        }
+        return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
+    }
 
-	/**
-	 * @param string $nodePathOrIdentifier
-	 * @return boolean
-	 */
-	public function isDescendantNodeOf($nodePathOrIdentifier) {
-		if ($this->node === NULL) {
-			return TRUE;
-		}
-		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
-			if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
-				return TRUE;
-			}
-			$node = $this->getNodeByIdentifier($nodePathOrIdentifier);
-			if ($node === NULL) {
-				return FALSE;
-			}
-			$nodePath = $node->getPath() . '/';
-		} else {
-			$nodePath = rtrim($nodePathOrIdentifier, '/') . '/';
-		}
-		return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
-	}
+    /**
+     * @param string|array $nodeTypes
+     * @return boolean
+     */
+    public function nodeIsOfType($nodeTypes)
+    {
+        if ($this->node === null) {
+            return true;
+        }
+        if (!is_array($nodeTypes)) {
+            $nodeTypes = array($nodeTypes);
+        }
 
-	/**
-	 * @param string|array $nodeTypes
-	 * @return boolean
-	 */
-	public function nodeIsOfType($nodeTypes) {
-		if ($this->node === NULL) {
-			return TRUE;
-		}
-		if (!is_array($nodeTypes)) {
-			$nodeTypes = array($nodeTypes);
-		}
+        foreach ($nodeTypes as $nodeType) {
+            if ($this->node->getNodeType()->isOfType($nodeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		foreach ($nodeTypes as $nodeType) {
-			if ($this->node->getNodeType()->isOfType($nodeType)) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
+    /**
+     * @param string|array $workspaceNames
+     * @return boolean
+     */
+    public function isInWorkspace($workspaceNames)
+    {
+        if ($this->node === null) {
+            return true;
+        }
 
-	/**
-	 * @param string|array $workspaceNames
-	 * @return boolean
-	 */
-	public function isInWorkspace($workspaceNames) {
-		if ($this->node === NULL) {
-			return TRUE;
-		}
+        return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
+    }
 
-		return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
-	}
+    /**
+     * Matches if the currently-selected preset in the passed $dimensionName is one of $presets.
+     *
+     * Example: isInDimensionPreset('language', 'de') checks whether the currently-selected language
+     * preset (in the Neos backend) is "de".
+     *
+     * Implementation Note: We deliberately work on the Dimension Preset Name, and not on the
+     * dimension values itself; as the preset is user-visible and the actual dimension-values
+     * for a preset are just implementation details.
+     *
+     * @param string $dimensionName
+     * @param string|array $presets
+     * @return boolean
+     */
+    public function isInDimensionPreset($dimensionName, $presets)
+    {
+        if ($this->node === null) {
+            return true;
+        }
 
-	/**
-	 * Matches if the currently-selected preset in the passed $dimensionName is one of $presets.
-	 *
-	 * Example: isInDimensionPreset('language', 'de') checks whether the currently-selected language
-	 * preset (in the Neos backend) is "de".
-	 *
-	 * Implementation Note: We deliberately work on the Dimension Preset Name, and not on the
-	 * dimension values itself; as the preset is user-visible and the actual dimension-values
-	 * for a preset are just implementation details.
-	 *
-	 * @param string $dimensionName
-	 * @param string|array $presets
-	 * @return boolean
-	 */
-	public function isInDimensionPreset($dimensionName, $presets) {
-		if ($this->node === NULL) {
-			return TRUE;
-		}
+        $dimensionValues = $this->node->getContext()->getDimensions();
+        if (!isset($dimensionValues[$dimensionName])) {
+            return false;
+        }
 
-		$dimensionValues = $this->node->getContext()->getDimensions();
-		if (!isset($dimensionValues[$dimensionName])) {
-			return FALSE;
-		}
+        $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
 
-		$preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
+        if ($preset === null) {
+            return false;
+        }
+        $presetIdentifier = $preset['identifier'];
 
-		if ($preset === NULL) {
-			return FALSE;
-		}
-		$presetIdentifier = $preset['identifier'];
+        if (!is_array($presets)) {
+            $presets = array($presets);
+        }
 
-		if (!is_array($presets)) {
-			$presets = array($presets);
-		}
+        return in_array($presetIdentifier, $presets);
+    }
 
-		return in_array($presetIdentifier, $presets);
-	}
-
-	/**
-	 * @param string $nodeIdentifier
-	 * @return NodeInterface
-	 */
-	protected function getNodeByIdentifier($nodeIdentifier) {
-		$context = $this->contextFactory->create();
-		$node = NULL;
-		$this->securityContext->withoutAuthorizationChecks(function() use ($nodeIdentifier, $context, &$node) {
-			$node = $context->getNodeByIdentifier($nodeIdentifier);
-		});
-		$context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, NULL);
-		return $node;
-	}
+    /**
+     * @param string $nodeIdentifier
+     * @return NodeInterface
+     */
+    protected function getNodeByIdentifier($nodeIdentifier)
+    {
+        $context = $this->contextFactory->create();
+        $node = null;
+        $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
+            $node = $context->getNodeByIdentifier($nodeIdentifier);
+        });
+        $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
+        return $node;
+    }
 }

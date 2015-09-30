@@ -19,31 +19,31 @@ use TYPO3\Neos\Domain\Service\UserService;
 /**
  * Validator for Neos users
  */
-class UserDoesNotExistValidator extends AbstractValidator {
+class UserDoesNotExistValidator extends AbstractValidator
+{
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
 
-	/**
-	 * @Flow\Inject
-	 * @var UserService
-	 */
-	protected $userService;
+    /**
+     * Returns TRUE, if the specified user ($value) does not exist yet.
+     *
+     * If at least one error occurred, the result is FALSE.
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @throws InvalidSubjectException
+     */
+    protected function isValid($value)
+    {
+        if (!is_string($value)) {
+            throw new InvalidSubjectException('The given username was not a string.', 1325155784);
+        }
 
-	/**
-	 * Returns TRUE, if the specified user ($value) does not exist yet.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @throws InvalidSubjectException
-	 */
-	protected function isValid($value) {
-		if (!is_string($value)) {
-			throw new InvalidSubjectException('The given username was not a string.', 1325155784);
-		}
-
-		if ($this->userService->getUser($value) !== NULL) {
-			$this->addError('The username is already in use.', 1325156008);
-		}
-	}
-
+        if ($this->userService->getUser($value) !== null) {
+            $this->addError('The username is already in use.', 1325156008);
+        }
+    }
 }

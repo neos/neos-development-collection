@@ -14,24 +14,25 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Adjust namespaces for TYPO3CR related FlowQuery operations that were moved from TYPO3.Neos to TYPO3.TYPO3CR
  */
-class Version20141101082142 extends AbstractMigration {
+class Version20141101082142 extends AbstractMigration
+{
+    /**
+     * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+     * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+     * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return 'TYPO3.TYPO3CR-141101082142';
+    }
 
-	/**
-	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
-	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
-	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
-	 *
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return 'TYPO3.TYPO3CR-141101082142';
-	}
-
-	/**
-	 * @return void
-	 */
-	public function up() {
-		$this->searchAndReplace('TYPO3\Neos\TypoScript\FlowQueryOperations', 'TYPO3\TYPO3CR\Eel\FlowQueryOperations', array('php', 'yaml'));
-	}
-
+    /**
+     * @return void
+     */
+    public function up()
+    {
+        $this->searchAndReplace('TYPO3\Neos\TypoScript\FlowQueryOperations', 'TYPO3\TYPO3CR\Eel\FlowQueryOperations', array('php', 'yaml'));
+    }
 }

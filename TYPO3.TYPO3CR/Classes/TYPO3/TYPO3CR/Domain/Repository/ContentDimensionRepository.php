@@ -19,34 +19,35 @@ use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
  *
  * @Flow\Scope("singleton")
  */
-class ContentDimensionRepository {
+class ContentDimensionRepository
+{
+    /**
+     * @var array
+     */
+    protected $dimensionsConfiguration = array();
 
-	/**
-	 * @var array
-	 */
-	protected $dimensionsConfiguration = array();
+    /**
+     * Returns an array of content dimensions that are available in the system.
+     *
+     * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentDimension>
+     */
+    public function findAll()
+    {
+        $dimensions = array();
+        foreach ($this->dimensionsConfiguration as $dimensionIdentifier => $dimensionConfiguration) {
+            $dimensions[] = new ContentDimension($dimensionIdentifier, $dimensionConfiguration['default']);
+        }
+        return $dimensions;
+    }
 
-	/**
-	 * Returns an array of content dimensions that are available in the system.
-	 *
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentDimension>
-	 */
-	public function findAll() {
-		$dimensions = array();
-		foreach ($this->dimensionsConfiguration as $dimensionIdentifier => $dimensionConfiguration) {
-			$dimensions[] = new ContentDimension($dimensionIdentifier, $dimensionConfiguration['default']);
-		}
-		return $dimensions;
-	}
-
-	/**
-	 * Set the content dimensions available in the system.
-	 *
-	 * @param array $dimensionsConfiguration
-	 * @return void
-	 */
-	public function setDimensionsConfiguration(array $dimensionsConfiguration) {
-		$this->dimensionsConfiguration = $dimensionsConfiguration;
-	}
-
+    /**
+     * Set the content dimensions available in the system.
+     *
+     * @param array $dimensionsConfiguration
+     * @return void
+     */
+    public function setDimensionsConfiguration(array $dimensionsConfiguration)
+    {
+        $this->dimensionsConfiguration = $dimensionsConfiguration;
+    }
 }
