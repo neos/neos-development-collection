@@ -1,13 +1,10 @@
-|Code Climate| |Travis Build Status| |Latest Stable Version| |Total Downloads| |Latest Unstable Version|
-|License|
+|Travis Build Status| |Code Climate| |Latest Stable Version| |Latest Unstable Version| |License|
 
-.. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
-   :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg
    :target: https://travis-ci.org/neos/neos-development-collection
+.. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
+   :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
-   :target: https://packagist.org/packages/neos/neos-development-collection
-.. |Total Downloads| image:: https://poser.pugx.org/neos/neos-development-collection/downloads
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |Latest Unstable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/unstable
    :target: https://packagist.org/packages/neos/neos-development-collection
