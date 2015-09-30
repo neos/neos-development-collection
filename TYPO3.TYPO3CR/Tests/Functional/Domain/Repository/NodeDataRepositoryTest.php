@@ -21,127 +21,133 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 /**
  * Functional test case.
  */
-class NodeDataRepositoryTest extends FunctionalTestCase {
+class NodeDataRepositoryTest extends FunctionalTestCase
+{
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     */
+    protected $context;
 
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected $context;
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
-	/**
-	 * @var NodeTypeManager
-	 */
-	protected $nodeTypeManager;
+    /**
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
-	/**
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
+    /**
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
 
-	/**
-	 * @var WorkspaceRepository
-	 */
-	protected $workspaceRepository;
+    /**
+     * @var Workspace
+     */
+    protected $liveWorkspace;
 
-	/**
-	 * @var Workspace
-	 */
-	protected $liveWorkspace;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->liveWorkspace = new Workspace('live');
+        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository->add($this->liveWorkspace);
+        $this->persistenceManager->persistAll();
+        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$this->liveWorkspace = new Workspace('live');
-		$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
-		$this->workspaceRepository->add($this->liveWorkspace);
-		$this->persistenceManager->persistAll();
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-	}
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->inject($this->contextFactory, 'contextInstances', array());
+    }
 
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		parent::tearDown();
-		$this->inject($this->contextFactory, 'contextInstances', array());
-	}
+    /**
+     * @test
+     */
+    public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingEntityProperty()
+    {
+        $rootNode = $this->context->getRootNode();
+        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
-	/**
-	 * @test
-	 */
-	public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingEntityProperty() {
-		$rootNode = $this->context->getRootNode();
-		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
+        $testImage = new Image();
+        $this->persistenceManager->add($testImage);
 
-		$testImage = new Image();
-		$this->persistenceManager->add($testImage);
+        $newNode->setProperty('image', $testImage);
 
-		$newNode->setProperty('image', $testImage);
+        $this->persistenceManager->persistAll();
 
-		$this->persistenceManager->persistAll();
+        $relationMap = array(
+            'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image' => array($this->persistenceManager->getIdentifierByObject($testImage))
+        );
 
-		$relationMap = array(
-			'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image' => array($this->persistenceManager->getIdentifierByObject($testImage))
-		);
+        $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 
-		$result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
+        $this->assertCount(1, $result);
+    }
 
-		$this->assertCount(1, $result);
-	}
+    /**
+     * @test
+     */
+    public function findNodeByPropertySearch()
+    {
+        $this->createNodesForNodeSearchTest();
 
-	/**
-	 * @test
-	 */
-	public function findNodeByPropertySearch() {
-		$this->createNodesForNodeSearchTest();
+        $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(2, $result);
+        $this->assertEquals('test-node-1', array_shift($result)->getName());
+        $this->assertEquals('test-node-2', array_shift($result)->getName());
+    }
 
-		$result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
-		$this->assertCount(2, $result);
-		$this->assertEquals('test-node-1', array_shift($result)->getName());
-		$this->assertEquals('test-node-2', array_shift($result)->getName());
-	}
+    /**
+     * @test
+     */
+    public function findNodesByPropertyKeyAndValue()
+    {
+        $this->createNodesForNodeSearchTest();
 
-	/**
-	 * @test
-	 */
-	public function findNodesByPropertyKeyAndValue() {
-		$this->createNodesForNodeSearchTest();
+        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(1, $result);
+        $this->assertEquals('test-node-2', array_shift($result)->getName());
+    }
 
-		$result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
-		$this->assertCount(1, $result);
-		$this->assertEquals('test-node-2', array_shift($result)->getName());
-	}
+    /**
+     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     */
+    protected function createNodesForNodeSearchTest()
+    {
+        $rootNode = $this->context->getRootNode();
 
-	/**
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
-	 */
-	protected function createNodesForNodeSearchTest() {
-		$rootNode = $this->context->getRootNode();
+        $newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode1->setProperty('test1', 'simpleTestValue');
 
-		$newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
-		$newNode1->setProperty('test1', 'simpleTestValue');
+        $newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test2', 'simpleTestValue');
 
-		$newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
-		$newNode2->setProperty('test2', 'simpleTestValue');
+        $newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test1', 'otherValue');
 
-		$newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
-		$newNode2->setProperty('test1', 'otherValue');
-
-		$this->persistenceManager->persistAll();
-	}
+        $this->persistenceManager->persistAll();
+    }
 }
