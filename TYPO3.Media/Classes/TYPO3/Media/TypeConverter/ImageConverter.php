@@ -19,16 +19,15 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class ImageConverter extends ImageInterfaceConverter {
+class ImageConverter extends ImageInterfaceConverter
+{
+    /**
+     * @var string
+     */
+    protected $targetType = 'TYPO3\Media\Domain\Model\Image';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
-
-	/**
-	 * @var integer
-	 */
-	protected $priority = 2;
-
+    /**
+     * @var integer
+     */
+    protected $priority = 2;
 }

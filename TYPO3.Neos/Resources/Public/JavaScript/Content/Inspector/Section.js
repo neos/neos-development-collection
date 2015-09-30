@@ -1,5 +1,5 @@
 /**
- * Property Editor
+ * A section within a group within a tab in the inspector.
  */
 define(
 [
@@ -25,10 +25,13 @@ define(
 			var that = this,
 				selectedNode = NodeSelection.get('selectedNode'),
 				nodeType = (selectedNode.$element ? selectedNode.$element.attr('typeof').replace(/\./g,'_') : 'ALOHA'),
-				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('group')),
+				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('groupName')),
 				properties = this.get('properties') || [];
 
 			this.set('_nodeType', nodeType);
+			if (collapsed === undefined) {
+				collapsed = this.get('group.collapsed');
+			}
 			if (collapsed) {
 				this.$().find('.neos-inspector-field,.neos-inspector-view').hide();
 				this.set('_collapsed', true);
@@ -44,7 +47,7 @@ define(
 			if (!this.get('inspector.configuration.' + this.get('_nodeType'))) {
 				this.set('inspector.configuration.' + this.get('_nodeType'), {});
 			}
-			this.set('inspector.configuration.' + this.get('_nodeType') + '.' + this.get('group'), this.get('_collapsed'));
+			this.set('inspector.configuration.' + this.get('_nodeType') + '.' + this.get('groupName'), this.get('_collapsed'));
 			Ember.propertyDidChange(this.get('inspector'), 'configuration');
 		},
 

@@ -21,44 +21,47 @@ use TYPO3\Media\Domain\Model\ImageVariant;
  * @Flow\Entity
  * @ORM\InheritanceType("SINGLE_TABLE")
  */
-abstract class AbstractImageAdjustment extends AbstractAdjustment implements ImageAdjustmentInterface {
+abstract class AbstractImageAdjustment extends AbstractAdjustment implements ImageAdjustmentInterface
+{
+    /**
+     * Order in which the adjustment is applied to the ImageVariant
+     *
+     * @var integer
+     * @ORM\Column(nullable = FALSE)
+     */
+    protected $position;
 
-	/**
-	 * Order in which the adjustment is applied to the ImageVariant
-	 *
-	 * @var integer
-	 * @ORM\Column(nullable = FALSE)
-	 */
-	protected $position;
+    /**
+     * @var \TYPO3\Media\Domain\Model\ImageVariant
+     * @ORM\ManyToOne(inversedBy="adjustments", cascade={"all"})
+     */
+    protected $imageVariant;
 
-	/**
-	 * @var \TYPO3\Media\Domain\Model\ImageVariant
-	 * @ORM\ManyToOne(inversedBy="adjustments", cascade={"all"})
-	 */
-	protected $imageVariant;
+    /**
+     * Sets the image variant this adjustment belongs to
+     *
+     * @param ImageVariant $imageVariant
+     * @return void
+     * @api
+     */
+    public function setImageVariant(ImageVariant $imageVariant)
+    {
+        $this->imageVariant = $imageVariant;
+    }
 
-	/**
-	 * Sets the image variant this adjustment belongs to
-	 *
-	 * @param ImageVariant $imageVariant
-	 * @return void
-	 * @api
-	 */
-	public function setImageVariant(ImageVariant $imageVariant) {
-		$this->imageVariant = $imageVariant;
-	}
+    /**
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
 
-	/**
-	 * @return integer
-	 */
-	public function getPosition() {
-		return $this->position;
-	}
-
-	/**
-	 * @param integer $position
-	 */
-	public function setPosition($position) {
-		$this->position = $position;
-	}
+    /**
+     * @param integer $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
 }

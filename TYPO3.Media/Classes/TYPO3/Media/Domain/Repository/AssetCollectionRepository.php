@@ -19,11 +19,10 @@ use TYPO3\Flow\Persistence\Repository;
  *
  * @Flow\Scope("singleton")
  */
-class AssetCollectionRepository extends Repository {
-
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
-
+class AssetCollectionRepository extends Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 }

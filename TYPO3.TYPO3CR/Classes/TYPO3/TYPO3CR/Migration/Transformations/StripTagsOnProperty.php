@@ -16,42 +16,45 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Strip all tags on a given property
  */
-class StripTagsOnProperty extends AbstractTransformation {
+class StripTagsOnProperty extends AbstractTransformation
+{
+    /**
+     * Property name to change
+     *
+     * @var string
+     */
+    protected $propertyName;
 
-	/**
-	 * Property name to change
-	 *
-	 * @var string
-	 */
-	protected $propertyName;
+    /**
+     * Sets the name of the property to work on.
+     *
+     * @param string $propertyName
+     * @return void
+     */
+    public function setProperty($propertyName)
+    {
+        $this->propertyName = $propertyName;
+    }
 
-	/**
-	 * Sets the name of the property to work on.
-	 *
-	 * @param string $propertyName
-	 * @return void
-	 */
-	public function setProperty($propertyName) {
-		$this->propertyName = $propertyName;
-	}
+    /**
+     * Returns TRUE if the given node has the property to work on.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return ($node->hasProperty($this->propertyName));
+    }
 
-	/**
-	 * Returns TRUE if the given node has the property to work on.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return ($node->hasProperty($this->propertyName));
-	}
-
-	/**
-	 * Strips tags on the value of the property to work on.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return void
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		$node->setProperty($this->propertyName, strip_tags($node->getProperty($this->propertyName)));
-	}
+    /**
+     * Strips tags on the value of the property to work on.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return void
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        $node->setProperty($this->propertyName, strip_tags($node->getProperty($this->propertyName)));
+    }
 }

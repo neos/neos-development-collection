@@ -13,8 +13,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Command;
 
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
@@ -37,73 +37,75 @@ use TYPO3\Flow\Utility\Environment;
  *
  * @Flow\Scope("singleton")
  */
-class BehatTestHelper {
+class BehatTestHelper
+{
+    use IsolatedBehatStepsTrait;
+    use SecurityOperationsTrait;
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
 
-	use IsolatedBehatStepsTrait;
-	use SecurityOperationsTrait;
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
+    /**
+     * @var Bootstrap
+     */
+    protected static $bootstrap;
 
-	/**
-	 * @var Bootstrap
-	 */
-	protected static $bootstrap;
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $objectManager;
+    /**
+     * @var Environment
+     * @Flow\Inject
+     */
+    protected $environment;
 
-	/**
-	 * @var Environment
-	 * @Flow\Inject
-	 */
-	protected $environment;
+    /**
+     * @var ActionRequest
+     */
+    protected $mockActionRequest;
 
-	/**
-	 * @var ActionRequest
-	 */
-	protected $mockActionRequest;
+    /**
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
+    /**
+     * @var PolicyService
+     * @Flow\Inject
+     */
+    protected $policyService;
 
-	/**
-	 * @var PolicyService
-	 * @Flow\Inject
-	 */
-	protected $policyService;
+    /**
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
-	/**
-	 * @var AuthenticationManagerInterface
-	 */
-	protected $authenticationManager;
+    /**
+     * @var TestingProvider
+     */
+    protected $testingProvider;
 
-	/**
-	 * @var TestingProvider
-	 */
-	protected $testingProvider;
+    /**
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        $this->isolated = false;
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
-		$this->isolated = FALSE;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return mixed
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }

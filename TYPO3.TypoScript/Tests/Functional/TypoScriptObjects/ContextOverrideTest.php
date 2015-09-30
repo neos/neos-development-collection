@@ -15,15 +15,16 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * Testcase for the TypoScript View
  *
  */
-class ContextOverrideTest extends AbstractTypoScriptObjectTest {
-
-	/**
-	 * @test
-	 */
-	public function basicContextOverrides() {
-		$view = $this->buildView();
-		$view->assignMultiple(array('var1' => 'var1', 'var2' => 'var2'));
-		$view->setTypoScriptPath('contextOverride/test');
-		$this->assertEquals('Xvar1var2Xvar1var2Xvar1var2XfooofooofoooboooboooboooXvar2Xvar2Y', $view->render());
-	}
+class ContextOverrideTest extends AbstractTypoScriptObjectTest
+{
+    /**
+     * @test
+     */
+    public function basicContextOverrides()
+    {
+        $view = $this->buildView();
+        $view->assignMultiple(array('var1' => 'var1', 'var2' => 'var2'));
+        $view->setTypoScriptPath('contextOverride/test');
+        $this->assertEquals('Xvar1var2Xvar1var2Xvar1var2XfooofooofoooboooboooboooXvar2Xvar2Y', $view->render());
+    }
 }

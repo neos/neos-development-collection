@@ -16,61 +16,65 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Rename a given property.
  */
-class RenameProperty extends AbstractTransformation {
+class RenameProperty extends AbstractTransformation
+{
+    /**
+     * Property name to change
+     *
+     * @var string
+     */
+    protected $oldPropertyName;
 
-	/**
-	 * Property name to change
-	 *
-	 * @var string
-	 */
-	protected $oldPropertyName;
+    /**
+     * New name of property
+     *
+     * @var string
+     */
+    protected $newPropertyName;
 
-	/**
-	 * New name of property
-	 *
-	 * @var string
-	 */
-	protected $newPropertyName;
+    /**
+     * Sets the name of the property to change.
+     *
+     * @param string $oldPropertyName
+     * @return void
+     */
+    public function setFrom($oldPropertyName)
+    {
+        $this->oldPropertyName = $oldPropertyName;
+    }
 
-	/**
-	 * Sets the name of the property to change.
-	 *
-	 * @param string $oldPropertyName
-	 * @return void
-	 */
-	public function setFrom($oldPropertyName) {
-		$this->oldPropertyName = $oldPropertyName;
-	}
+    /**
+     * Sets the new name for the property to change.
+     *
+     * @param string $newPropertyName
+     * @return void
+     */
+    public function setTo($newPropertyName)
+    {
+        $this->newPropertyName = $newPropertyName;
+    }
 
-	/**
-	 * Sets the new name for the property to change.
-	 *
-	 * @param string $newPropertyName
-	 * @return void
-	 */
-	public function setTo($newPropertyName) {
-		$this->newPropertyName = $newPropertyName;
-	}
+    /**
+     * Returns TRUE if the given node has a property with the name to work on
+     * and does not yet have a property with the name to rename that property to.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
+    }
 
-	/**
-	 * Returns TRUE if the given node has a property with the name to work on
-	 * and does not yet have a property with the name to rename that property to.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
-	}
-
-	/**
-	 * Renames the configured property to the new name.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return void
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		$node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
-		$node->removeProperty($this->oldPropertyName);
-	}
+    /**
+     * Renames the configured property to the new name.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return void
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        $node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
+        $node->removeProperty($this->oldPropertyName);
+    }
 }

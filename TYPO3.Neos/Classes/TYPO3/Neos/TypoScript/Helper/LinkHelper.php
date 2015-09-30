@@ -22,63 +22,68 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * Eel helper for the linking service
  */
-class LinkHelper implements ProtectedContextAwareInterface {
+class LinkHelper implements ProtectedContextAwareInterface
+{
+    /**
+     * @Flow\Inject
+     * @var LinkingService
+     */
+    protected $linkingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var LinkingService
-	 */
-	protected $linkingService;
+    /**
+     * @param string|Uri $uri
+     * @return boolean
+     */
+    public function hasSupportedScheme($uri)
+    {
+        return $this->linkingService->hasSupportedScheme($uri);
+    }
 
-	/**
-	 * @param string|Uri $uri
-	 * @return boolean
-	 */
-	public function hasSupportedScheme($uri) {
-		return $this->linkingService->hasSupportedScheme($uri);
-	}
+    /**
+     * @param string|Uri $uri
+     * @return string
+     */
+    public function getScheme($uri)
+    {
+        return $this->linkingService->getScheme($uri);
+    }
 
-	/**
-	 * @param string|Uri $uri
-	 * @return string
-	 */
-	public function getScheme($uri) {
-		return $this->linkingService->getScheme($uri);
-	}
+    /**
+     * @param string|Uri $uri
+     * @param NodeInterface $contextNode
+     * @param ControllerContext $controllerContext
+     * @return string
+     */
+    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
+    {
+        return $this->linkingService->resolveNodeUri($uri, $contextNode, $controllerContext);
+    }
 
-	/**
-	 * @param string|Uri $uri
-	 * @param NodeInterface $contextNode
-	 * @param ControllerContext $controllerContext
-	 * @return string
-	 */
-	public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext) {
-		return $this->linkingService->resolveNodeUri($uri, $contextNode, $controllerContext);
-	}
+    /**
+     * @param string|Uri $uri
+     * @return string
+     */
+    public function resolveAssetUri($uri)
+    {
+        return $this->linkingService->resolveAssetUri($uri);
+    }
 
-	/**
-	 * @param string|Uri $uri
-	 * @return string
-	 */
-	public function resolveAssetUri($uri) {
-		return $this->linkingService->resolveAssetUri($uri);
-	}
+    /**
+     * @param string|Uri $uri
+     * @param NodeInterface $contextNode
+     * @return NodeInterface|AssetInterface|NULL
+     */
+    public function convertUriToObject($uri, NodeInterface $contextNode = null)
+    {
+        return $this->linkingService->convertUriToObject($uri, $contextNode);
+    }
 
-	/**
-	 * @param string|Uri $uri
-	 * @param NodeInterface $contextNode
-	 * @return NodeInterface|AssetInterface|NULL
-	 */
-	public function convertUriToObject($uri, NodeInterface $contextNode = NULL) {
-		return $this->linkingService->convertUriToObject($uri, $contextNode);
-	}
-
-	/**
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return TRUE;
-	}
-
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
 }

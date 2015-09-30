@@ -14,11 +14,10 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * A "no workspace" exception
  */
-class NoWorkspaceException extends \TYPO3\Neos\Routing\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class NoWorkspaceException extends \TYPO3\Neos\Routing\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

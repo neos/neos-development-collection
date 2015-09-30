@@ -19,24 +19,23 @@ use TYPO3\Media\Domain\Repository\ImageRepository;
 /**
  * Controller for browsing images in the ImageEditor
  */
-class ImageBrowserController extends MediaBrowserController {
+class ImageBrowserController extends MediaBrowserController
+{
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ImageRepository
-	 */
-	protected $assetRepository;
-
-	/**
-	 * @param Asset $asset
-	 * @return void
-	 */
-	public function editAction(Asset $asset) {
-		if ($asset instanceof ImageVariant) {
-			$asset = $asset->getOriginalAsset();
-		}
-		parent::editAction($asset);
-	}
-
-
+    /**
+     * @param Asset $asset
+     * @return void
+     */
+    public function editAction(Asset $asset)
+    {
+        if ($asset instanceof ImageVariant) {
+            $asset = $asset->getOriginalAsset();
+        }
+        parent::editAction($asset);
+    }
 }

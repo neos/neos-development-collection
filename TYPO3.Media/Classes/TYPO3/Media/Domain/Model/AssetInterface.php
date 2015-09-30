@@ -18,54 +18,53 @@ use TYPO3\Flow\Resource\Resource;
  *
  * @api
  */
-interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterface {
+interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterface
+{
+    /**
+     * The title of this asset
+     *
+     * @return string Title of the asset
+     * @api
+     */
+    public function getTitle();
 
-	/**
-	 * The title of this asset
-	 *
-	 * @return string Title of the asset
-	 * @api
-	 */
-	public function getTitle();
+    /**
+     * Sets the title of this asset
+     *
+     * @param string $title
+     * @return void
+     * @api
+     */
+    public function setTitle($title);
 
-	/**
-	 * Sets the title of this asset
-	 *
-	 * @param string $title
-	 * @return void
-	 * @api
-	 */
-	public function setTitle($title);
+    /**
+     * Sets the resource and possibly triggers a refresh of dependent behavior
+     *
+     * @param Resource $resource
+     * @return void
+     * @api
+     */
+    public function setResource(Resource $resource);
 
-	/**
-	 * Sets the resource and possibly triggers a refresh of dependent behavior
-	 *
-	 * @param Resource $resource
-	 * @return void
-	 * @api
-	 */
-	public function setResource(Resource $resource);
+    /**
+     * Returns the resource of this asset
+     *
+     * @return \TYPO3\Flow\Resource\Resource
+     * @api
+     */
+    public function getResource();
 
-	/**
-	 * Returns the resource of this asset
-	 *
-	 * @return \TYPO3\Flow\Resource\Resource
-	 * @api
-	 */
-	public function getResource();
+    /**
+     * Returns the IANA media type of this asset
+     *
+     * @return string
+     */
+    public function getMediaType();
 
-	/**
-	 * Returns the IANA media type of this asset
-	 *
-	 * @return string
-	 */
-	public function getMediaType();
-
-	/**
-	 * Returns a file extension fitting to the media type of this asset
-	 *
-	 * @return string
-	 */
-	public function getFileExtension();
-
+    /**
+     * Returns a file extension fitting to the media type of this asset
+     *
+     * @return string
+     */
+    public function getFileExtension();
 }

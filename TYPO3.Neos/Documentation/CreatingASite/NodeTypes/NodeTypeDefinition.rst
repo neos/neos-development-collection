@@ -123,6 +123,9 @@ The following options are allowed:
       ``tab``
         The tab the group belongs to. If left empty the group is added to the ``default`` tab.
 
+      ``collapsed``
+        If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
+
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 

@@ -18,29 +18,30 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @deprecated Since 1.2 You should implement the NodeLabelGeneratorInterface now.
  */
-class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface {
+class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface
+{
+    /**
+     * Render a node label
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
+     * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
+     * @return string
+     */
+    public function getLabel(AbstractNodeData $nodeData, $crop = true)
+    {
+        if ($nodeData->hasProperty('title') === true && $nodeData->getProperty('title') !== '') {
+            $label = strip_tags($nodeData->getProperty('title'));
+        } elseif ($nodeData->hasProperty('text') === true && $nodeData->getProperty('text') !== '') {
+            $label = strip_tags($nodeData->getProperty('text'));
+        } else {
+            $label = ($nodeData->getNodeType()->getLabel() ?: $nodeData->getNodeType()->getName()) . ' (' . $nodeData->getName() . ')';
+        }
 
-	/**
-	 * Render a node label
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
-	 * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
-	 * @return string
-	 */
-	public function getLabel(AbstractNodeData $nodeData, $crop = TRUE) {
-		if ($nodeData->hasProperty('title') === TRUE && $nodeData->getProperty('title') !== '') {
-			$label = strip_tags($nodeData->getProperty('title'));
-		} elseif ($nodeData->hasProperty('text') === TRUE && $nodeData->getProperty('text') !== '') {
-			$label = strip_tags($nodeData->getProperty('text'));
-		} else {
-			$label = ($nodeData->getNodeType()->getLabel() ?: $nodeData->getNodeType()->getName()) . ' (' . $nodeData->getName() . ')';
-		}
+        if ($crop === false) {
+            return $label;
+        }
 
-		if ($crop === FALSE) {
-			return $label;
-		}
-
-		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30);
-		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
-	}
+        $croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30);
+        return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
+    }
 }

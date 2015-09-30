@@ -16,6 +16,6 @@ use TYPO3\Neos\Controller\Exception;
 /**
  * A "Disabled Module" exception
  */
-class DisabledModuleException extends Exception {
-
+class DisabledModuleException extends Exception
+{
 }

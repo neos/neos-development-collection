@@ -21,47 +21,49 @@ use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 /**
  * Abstract ViewHelper for all Neos rendering state helpers.
  */
-abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper {
+abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
+{
+    /**
+     * Get a node from the current TypoScript context if available.
+     *
+     * @return NodeInterface|NULL
+     *
+     * @TODO Refactor to a TypoScript Context trait (in TYPO3.TypoScript) that can be used inside ViewHelpers to get variables from the TypoScript context.
+     */
+    protected function getContextNode()
+    {
+        $baseNode = null;
+        $view = $this->viewHelperVariableContainer->getView();
+        if ($view instanceof TypoScriptAwareViewInterface) {
+            $typoScriptObject = $view->getTypoScriptObject();
+            $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+            if (isset($currentContext['node'])) {
+                $baseNode = $currentContext['node'];
+            }
+        }
 
-	/**
-	 * Get a node from the current TypoScript context if available.
-	 *
-	 * @return NodeInterface|NULL
-	 *
-	 * @TODO Refactor to a TypoScript Context trait (in TYPO3.TypoScript) that can be used inside ViewHelpers to get variables from the TypoScript context.
-	 */
-	protected function getContextNode() {
-		$baseNode = NULL;
-		$view = $this->viewHelperVariableContainer->getView();
-		if ($view instanceof TypoScriptAwareViewInterface) {
-			$typoScriptObject = $view->getTypoScriptObject();
-			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-			if (isset($currentContext['node'])) {
-				$baseNode = $currentContext['node'];
-			}
-		}
+        return $baseNode;
+    }
 
-		return $baseNode;
-	}
+    /**
+     * @param NodeInterface $node
+     * @return ContentContext
+     * @throws ViewHelperException
+     */
+    protected function getNodeContext(NodeInterface $node = null)
+    {
+        if ($node === null) {
+            $node = $this->getContextNode();
+            if ($node === null) {
+                throw new ViewHelperException('The ' . get_class($this) . ' needs a Node to determine the state. We could not find one in your context so please provide it as "node" argument to the ViewHelper.', 1427267133);
+            }
+        }
 
-	/**
-	 * @param NodeInterface $node
-	 * @return ContentContext
-	 * @throws ViewHelperException
-	 */
-	protected function getNodeContext(NodeInterface $node = NULL) {
-		if ($node === NULL) {
-			$node = $this->getContextNode();
-			if ($node === NULL) {
-				throw new ViewHelperException('The ' . get_class($this) . ' needs a Node to determine the state. We could not find one in your context so please provide it as "node" argument to the ViewHelper.', 1427267133);
-			}
-		}
+        $context = $node->getContext();
+        if (!$context instanceof ContentContext) {
+            throw new ViewHelperException('Rendering state can only be obtained with Nodes that are in a Neos ContentContext. Please provide a Node with such a context.', 1427720037);
+        }
 
-		$context = $node->getContext();
-		if (!$context instanceof ContentContext) {
-			throw new ViewHelperException('Rendering state can only be obtained with Nodes that are in a Neos ContentContext. Please provide a Node with such a context.', 1427720037);
-		}
-
-		return $context;
-	}
+        return $context;
+    }
 }

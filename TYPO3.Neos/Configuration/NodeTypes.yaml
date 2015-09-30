@@ -13,14 +13,15 @@
           position: 20
           icon: 'icon-cog'
       groups:
-        nodeInfo:
-          label: i18n
-          tab: 'meta'
-          position: 990
         type:
           label: i18n
           tab: 'meta'
+          position: 990
+        nodeInfo:
+          label: i18n
+          tab: 'meta'
           position: 1000
+          collapsed: true
       views:
         nodeInfo:
           label: i18n

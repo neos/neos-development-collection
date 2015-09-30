@@ -18,6 +18,6 @@ use TYPO3\Media\Exception;
  *
  * @api
  */
-class NoThumbnailAvailableException extends Exception {
-
+class NoThumbnailAvailableException extends Exception
+{
 }

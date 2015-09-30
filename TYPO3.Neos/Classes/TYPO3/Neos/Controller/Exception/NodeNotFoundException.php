@@ -16,11 +16,10 @@ use TYPO3\Neos\Controller\Exception;
 /**
  * A "Node not found" exception
  */
-class NodeNotFoundException extends Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class NodeNotFoundException extends Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

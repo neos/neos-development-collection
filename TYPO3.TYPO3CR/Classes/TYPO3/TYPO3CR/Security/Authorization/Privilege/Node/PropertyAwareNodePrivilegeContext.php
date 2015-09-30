@@ -17,38 +17,41 @@ use TYPO3\Flow\Annotations as Flow;
  * An Eel context matching expression for the node privileges including
  * node properties.
  */
-class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext {
+class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
+{
+    /**
+     * @var array
+     */
+    protected $propertyNames = array();
 
-	/**
-	 * @var array
-	 */
-	protected $propertyNames = array();
+    /**
+     * @param array $propertyNames
+     * @return boolean
+     */
+    public function nodePropertyIsIn($propertyNames)
+    {
+        if (!is_array($propertyNames)) {
+            $propertyNames = array($propertyNames);
+        }
+        $this->propertyNames = $propertyNames;
+        return true;
+    }
 
-	/**
-	 * @param array $propertyNames
-	 * @return boolean
-	 */
-	public function nodePropertyIsIn($propertyNames) {
-		if (!is_array($propertyNames)) {
-			$propertyNames = array($propertyNames);
-		}
-		$this->propertyNames = $propertyNames;
-		return TRUE;
-	}
+    /**
+     * @return array
+     */
+    public function getNodePropertyNames()
+    {
+        return $this->propertyNames;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getNodePropertyNames() {
-		return $this->propertyNames;
-	}
-
-	/**
-	 * Whether or not this context is bound to specific properties
-	 *
-	 * @return boolean
-	 */
-	public function hasProperties() {
-		return $this->propertyNames !== array();
-	}
+    /**
+     * Whether or not this context is bound to specific properties
+     *
+     * @return boolean
+     */
+    public function hasProperties()
+    {
+        return $this->propertyNames !== array();
+    }
 }

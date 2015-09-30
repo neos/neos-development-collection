@@ -15,32 +15,35 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * Testcase for basic TypoScript rendering
  *
  */
-class NestedOverwritesAndProcessorsTest extends AbstractTypoScriptObjectTest {
+class NestedOverwritesAndProcessorsTest extends AbstractTypoScriptObjectTest
+{
+    /**
+     * @test
+     */
+    public function overwritingSimpleValueWithProcessorWorks()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesToSimpleValue');
+        $this->assertEquals('<div class="Xclass processed" tea="green"></div>', $view->render());
+    }
 
-	/**
-	 * @test
-	 */
-	public function overwritingSimpleValueWithProcessorWorks() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesToSimpleValue');
-		$this->assertEquals('<div class="Xclass processed" tea="green"></div>', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function applyingProcessorToExpressionWorks()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesToEel');
+        $this->assertEquals('<div class="Xclass" tea="green infused"></div>', $view->render());
+    }
 
-	/**
-	 * @test
-	 */
-	public function applyingProcessorToExpressionWorks() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesToEel');
-		$this->assertEquals('<div class="Xclass" tea="green infused"></div>', $view->render());
-	}
-
-	/**
-	 * @test
-	 */
-	public function applyingProcessorToNonExistingValueWorks() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesWithNoBaseValue');
-		$this->assertEquals('<div class="Xclass" tea="green" coffee="harvey"></div>', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function applyingProcessorToNonExistingValueWorks()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('nestedOverwritesAndProcessors/deepProcessorAppliesWithNoBaseValue');
+        $this->assertEquals('<div class="Xclass" tea="green" coffee="harvey"></div>', $view->render());
+    }
 }

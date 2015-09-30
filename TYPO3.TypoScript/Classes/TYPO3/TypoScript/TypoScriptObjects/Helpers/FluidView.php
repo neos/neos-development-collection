@@ -20,68 +20,72 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 /**
  * Extended Fluid Template View for use in TypoScript.
  */
-class FluidView extends StandaloneView implements TypoScriptAwareViewInterface {
+class FluidView extends StandaloneView implements TypoScriptAwareViewInterface
+{
+    /**
+     * @var string
+     */
+    protected $resourcePackage;
 
-	/**
-	 * @var string
-	 */
-	protected $resourcePackage;
+    /**
+     * @var AbstractTypoScriptObject
+     */
+    protected $typoScriptObject;
 
-	/**
-	 * @var AbstractTypoScriptObject
-	 */
-	protected $typoScriptObject;
+    /**
+     * @param AbstractTypoScriptObject $typoScriptObject
+     * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     */
+    public function __construct(AbstractTypoScriptObject $typoScriptObject, ActionRequest $request = null)
+    {
+        parent::__construct($request);
+        $this->typoScriptObject = $typoScriptObject;
+    }
 
-	/**
-	 * @param AbstractTypoScriptObject $typoScriptObject
-	 * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
-	 */
-	public function __construct(AbstractTypoScriptObject $typoScriptObject, ActionRequest $request = NULL) {
-		parent::__construct($request);
-		$this->typoScriptObject = $typoScriptObject;
-	}
+    /**
+     * @param string $resourcePackage
+     */
+    public function setResourcePackage($resourcePackage)
+    {
+        $this->resourcePackage = $resourcePackage;
+    }
 
-	/**
-	 * @param string $resourcePackage
-	 */
-	public function setResourcePackage($resourcePackage) {
-		$this->resourcePackage = $resourcePackage;
-	}
+    /**
+     * @return string
+     */
+    public function getResourcePackage()
+    {
+        return $this->resourcePackage;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getResourcePackage() {
-		return $this->resourcePackage;
-	}
+    /**
+     * @return AbstractTypoScriptObject
+     */
+    public function getTypoScriptObject()
+    {
+        return $this->typoScriptObject;
+    }
 
-	/**
-	 * @return AbstractTypoScriptObject
-	 */
-	public function getTypoScriptObject() {
-		return $this->typoScriptObject;
-	}
-
-	/**
-	 * Build parser configuration
-	 *
-	 * @return Configuration
-	 */
-	protected function buildParserConfiguration() {
-		/** @var Configuration $parserConfiguration */
-		$parserConfiguration = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Configuration');
-		/** @var Escape $escapeInterceptor */
-		$escapeInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Escape');
-		$parserConfiguration->addEscapingInterceptor($escapeInterceptor);
-		if (in_array($this->controllerContext->getRequest()->getFormat(), array('html', NULL))) {
-			/** @var \TYPO3\Fluid\Core\Parser\Interceptor\Resource $resourceInterceptor */
-			$resourceInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Resource');
-			if ($this->resourcePackage !== NULL) {
-				$resourceInterceptor->setDefaultPackageKey($this->resourcePackage);
-			}
-			$parserConfiguration->addInterceptor($resourceInterceptor);
-		}
-		return $parserConfiguration;
-	}
-
+    /**
+     * Build parser configuration
+     *
+     * @return Configuration
+     */
+    protected function buildParserConfiguration()
+    {
+        /** @var Configuration $parserConfiguration */
+        $parserConfiguration = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Configuration');
+        /** @var Escape $escapeInterceptor */
+        $escapeInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Escape');
+        $parserConfiguration->addEscapingInterceptor($escapeInterceptor);
+        if (in_array($this->controllerContext->getRequest()->getFormat(), array('html', null))) {
+            /** @var \TYPO3\Fluid\Core\Parser\Interceptor\Resource $resourceInterceptor */
+            $resourceInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Resource');
+            if ($this->resourcePackage !== null) {
+                $resourceInterceptor->setDefaultPackageKey($this->resourcePackage);
+            }
+            $parserConfiguration->addInterceptor($resourceInterceptor);
+        }
+        return $parserConfiguration;
+    }
 }

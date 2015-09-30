@@ -1169,6 +1169,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {

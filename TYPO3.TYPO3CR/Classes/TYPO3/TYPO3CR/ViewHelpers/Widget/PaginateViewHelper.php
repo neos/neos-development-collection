@@ -40,26 +40,27 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @api
  */
-class PaginateViewHelper extends AbstractWidgetViewHelper {
+class PaginateViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController
-	 */
-	protected $controller;
-
-	/**
-	 * Render this view helper
-	 *
-	 * @param string $as Variable name for the result set
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
-	 * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
-	 * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
-	 * @param array $configuration Additional configuration
-	 * @return string
-	 */
-	public function render($as, NodeInterface $parentNode = NULL, array $nodes = array(), $nodeTypeFilter = NULL, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0)) {
-		$response = $this->initiateSubRequest();
-		return $response->getContent();
-	}
+    /**
+     * Render this view helper
+     *
+     * @param string $as Variable name for the result set
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
+     * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
+     * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
+     * @param array $configuration Additional configuration
+     * @return string
+     */
+    public function render($as, NodeInterface $parentNode = null, array $nodes = array(), $nodeTypeFilter = null, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0))
+    {
+        $response = $this->initiateSubRequest();
+        return $response->getContent();
+    }
 }

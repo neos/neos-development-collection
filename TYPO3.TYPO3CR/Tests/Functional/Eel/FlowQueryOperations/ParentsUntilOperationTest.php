@@ -17,12 +17,13 @@ use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
 /**
  * Functional test case which tests FlowQuery ParentsUntilOperation
  */
-class ParentsUntilOperationTest extends AbstractNodeTest {
-
+class ParentsUntilOperationTest extends AbstractNodeTest
+{
     /**
      * @return array
      */
-    public function parentsUntilOperationDataProvider() {
+    public function parentsUntilOperationDataProvider()
+    {
         return array(
             array(
                 'currentNodePaths' => array('/b/b3'),
@@ -79,7 +80,8 @@ class ParentsUntilOperationTest extends AbstractNodeTest {
      * @test
      * @dataProvider parentsUntilOperationDataProvider()
      */
-    public function parentsUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths) {
+    public function parentsUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
+    {
         $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
 

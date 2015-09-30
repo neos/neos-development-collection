@@ -19,29 +19,29 @@ use TYPO3\Media\Domain\Model\ImageVariant;
 /**
  * Interface for an Image Adjustment
  */
-interface ImageAdjustmentInterface extends AdjustmentInterface {
+interface ImageAdjustmentInterface extends AdjustmentInterface
+{
+    /**
+     * Applies this adjustment to the given Imagine Image object
+     *
+     * @param ImageInterface $image
+     * @return ImageInterface
+     */
+    public function applyToImage(ImageInterface $image);
 
-	/**
-	 * Applies this adjustment to the given Imagine Image object
-	 *
-	 * @param ImageInterface $image
-	 * @return ImageInterface
-	 */
-	public function applyToImage(ImageInterface $image);
+    /**
+     * Sets the image variant this adjustment belongs to
+     *
+     * @param ImageVariant $imageVariant
+     * @return void
+     */
+    public function setImageVariant(ImageVariant $imageVariant);
 
-	/**
-	 * Sets the image variant this adjustment belongs to
-	 *
-	 * @param ImageVariant $imageVariant
-	 * @return void
-	 */
-	public function setImageVariant(ImageVariant $imageVariant);
-
-	/**
-	 * Check if this Adjustment can or should be applied to its ImageVariant.
-	 *
-	 * @param ImageInterface $image
-	 * @return boolean
-	 */
-	public function canBeApplied(ImageInterface $image);
+    /**
+     * Check if this Adjustment can or should be applied to its ImageVariant.
+     *
+     * @param ImageInterface $image
+     * @return boolean
+     */
+    public function canBeApplied(ImageInterface $image);
 }

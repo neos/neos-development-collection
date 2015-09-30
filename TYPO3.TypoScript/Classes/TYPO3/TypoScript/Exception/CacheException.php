@@ -14,6 +14,6 @@ namespace TYPO3\TypoScript\Exception;
 /**
  * This exception is thrown for errors related to the Content Cache
  */
-class CacheException extends \TYPO3\TypoScript\Exception {
-
+class CacheException extends \TYPO3\TypoScript\Exception
+{
 }

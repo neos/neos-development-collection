@@ -16,37 +16,38 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Creates xml comments from exceptions
  */
-class XmlCommentHandler extends AbstractRenderingExceptionHandler {
+class XmlCommentHandler extends AbstractRenderingExceptionHandler
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     */
+    protected $systemLogger;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * Provides an XML comment containing the exception
-	 *
-	 * @param string $typoScriptPath path causing the exception
-	 * @param \Exception $exception exception to handle
-	 * @param integer $referenceCode
-	 * @return string
-	 */
-	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		$this->systemLogger->logException($exception);
-		if (isset($referenceCode)) {
-			return sprintf(
-				'<!-- Exception while rendering %s: %s (%s) -->',
-				$this->formatScriptPath($typoScriptPath, ''),
-				$exception->getMessage(),
-				$referenceCode
-			);
-		} else {
-			return sprintf(
-				'<!-- Exception while rendering %s: %s -->',
-				$this->formatScriptPath($typoScriptPath, ''),
-				$exception->getMessage()
-			);
-		}
-	}
+    /**
+     * Provides an XML comment containing the exception
+     *
+     * @param string $typoScriptPath path causing the exception
+     * @param \Exception $exception exception to handle
+     * @param integer $referenceCode
+     * @return string
+     */
+    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    {
+        $this->systemLogger->logException($exception);
+        if (isset($referenceCode)) {
+            return sprintf(
+                '<!-- Exception while rendering %s: %s (%s) -->',
+                $this->formatScriptPath($typoScriptPath, ''),
+                $exception->getMessage(),
+                $referenceCode
+            );
+        } else {
+            return sprintf(
+                '<!-- Exception while rendering %s: %s -->',
+                $this->formatScriptPath($typoScriptPath, ''),
+                $exception->getMessage()
+            );
+        }
+    }
 }

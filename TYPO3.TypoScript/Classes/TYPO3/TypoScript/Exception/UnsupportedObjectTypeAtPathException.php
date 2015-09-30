@@ -16,6 +16,6 @@ namespace TYPO3\TypoScript\Exception;
  * object type; f.e. a "Case" TypoScript object expects all their children being
  * TypoScript objects and does not support Eel Expressions or simple objects.
  */
-class UnsupportedObjectTypeAtPathException extends \TYPO3\TypoScript\Exception {
-
+class UnsupportedObjectTypeAtPathException extends \TYPO3\TypoScript\Exception
+{
 }
