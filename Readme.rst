@@ -1,8 +1,13 @@
-.. image:: https://travis-ci.org/neos/neos-development-collection.svg
-    :target: https://travis-ci.org/neos/neos-development-collection
-.. image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
+|Travis Build Status| |Code Climate| |Latest Stable Version| |License|
+
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg
+   :target: https://travis-ci.org/neos/neos-development-collection
+.. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
-   :alt: Code Climate
+.. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
+   :target: https://packagist.org/packages/neos/neos-development-collection
+.. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
+   :target: https://packagist.org/packages/neos/neos-development-collection
 
 ---------------------------
 Neos development collection
