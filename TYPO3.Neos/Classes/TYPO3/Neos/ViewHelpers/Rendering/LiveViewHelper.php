@@ -35,15 +35,16 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * Shown in the backend.
  * </output>
  */
-class LiveViewHelper extends AbstractRenderingStateViewHelper {
+class LiveViewHelper extends AbstractRenderingStateViewHelper
+{
+    /**
+     * @param NodeInterface $node
+     * @return boolean
+     */
+    public function render(NodeInterface $node = null)
+    {
+        $context = $this->getNodeContext($node);
 
-	/**
-	 * @param NodeInterface $node
-	 * @return boolean
-	 */
-	public function render(NodeInterface $node = NULL) {
-		$context = $this->getNodeContext($node);
-
-		return $context->isLive();
-	}
+        return $context->isLive();
+    }
 }

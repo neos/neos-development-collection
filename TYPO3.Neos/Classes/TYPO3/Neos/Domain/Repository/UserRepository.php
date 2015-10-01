@@ -20,6 +20,6 @@ use TYPO3\Flow\Persistence\Repository;
  * @Flow\Scope("singleton")
  * @api
  */
-class UserRepository extends Repository {
-
+class UserRepository extends Repository
+{
 }

@@ -1,31 +1,33 @@
 <?php
 namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
-	Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 
 /**
  * Add state field to the "Domain" domain model schema
  */
-class Version20121031190214 extends AbstractMigration {
+class Version20121031190214 extends AbstractMigration
+{
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function up(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function up(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD active BOOLEAN NOT NULL");
+    }
 
-		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD active BOOLEAN NOT NULL");
-	}
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function down(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function down(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
-
-		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP active");
-	}
+        $this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP active");
+    }
 }

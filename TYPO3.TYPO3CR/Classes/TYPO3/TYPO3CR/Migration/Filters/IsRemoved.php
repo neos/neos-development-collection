@@ -16,16 +16,16 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Filter removed nodes
  */
-class IsRemoved implements FilterInterface {
-
-	/**
-	 * Returns TRUE if the given node is removed
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return $node->isRemoved();
-	}
-
+class IsRemoved implements FilterInterface
+{
+    /**
+     * Returns TRUE if the given node is removed
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return $node->isRemoved();
+    }
 }

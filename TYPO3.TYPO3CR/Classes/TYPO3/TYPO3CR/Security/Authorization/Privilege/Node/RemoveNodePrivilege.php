@@ -19,35 +19,37 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * A privilege to remove nodes
  */
-class RemoveNodePrivilege extends AbstractNodePrivilege {
+class RemoveNodePrivilege extends AbstractNodePrivilege
+{
+    /**
+     * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject
+     * @return boolean
+     * @throws InvalidPrivilegeTypeException
+     */
+    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    {
+        if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417017296);
+        }
 
-	/**
-	 * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject
-	 * @return boolean
-	 * @throws InvalidPrivilegeTypeException
-	 */
-	public function matchesSubject(PrivilegeSubjectInterface $subject) {
-		if ($subject instanceof NodePrivilegeSubject === FALSE && $subject instanceof MethodPrivilegeSubject === FALSE) {
-			throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417017296);
-		}
+        $this->initialize();
+        if ($subject instanceof MethodPrivilegeSubject) {
+            if ($this->methodPrivilege->matchesSubject($subject) === false) {
+                return false;
+            }
+            /** @var NodeInterface $node */
+            $node = $subject->getJoinPoint()->getProxy();
+            $nodePrivilegeSubject = new NodePrivilegeSubject($node);
+            return parent::matchesSubject($nodePrivilegeSubject);
+        }
+        return parent::matchesSubject($subject);
+    }
 
-		$this->initialize();
-		if ($subject instanceof MethodPrivilegeSubject) {
-			if ($this->methodPrivilege->matchesSubject($subject) === FALSE) {
-				return FALSE;
-			}
-			/** @var NodeInterface $node */
-			$node = $subject->getJoinPoint()->getProxy();
-			$nodePrivilegeSubject = new NodePrivilegeSubject($node);
-			return parent::matchesSubject($nodePrivilegeSubject);
-		}
-		return parent::matchesSubject($subject);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function buildMethodPrivilegeMatcher() {
-		return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(remove|setRemoved)())';
-	}
+    /**
+     * @return string
+     */
+    protected function buildMethodPrivilegeMatcher()
+    {
+        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(remove|setRemoved)())';
+    }
 }

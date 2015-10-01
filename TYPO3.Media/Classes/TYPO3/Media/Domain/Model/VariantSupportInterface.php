@@ -14,14 +14,13 @@ namespace TYPO3\Media\Domain\Model;
 /**
  * An interface which defines that an asset has support for variants
  */
-interface VariantSupportInterface {
-
-	/**
-	 * Returns all variants (if any) derived from this asset
-	 *
-	 * @return array
-	 * @api
-	 */
-	public function getVariants();
-
+interface VariantSupportInterface
+{
+    /**
+     * Returns all variants (if any) derived from this asset
+     *
+     * @return array
+     * @api
+     */
+    public function getVariants();
 }

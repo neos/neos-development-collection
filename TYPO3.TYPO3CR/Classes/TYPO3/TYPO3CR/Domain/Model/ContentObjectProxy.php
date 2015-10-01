@@ -21,75 +21,78 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class ContentObjectProxy {
+class ContentObjectProxy
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
+    /**
+     * Type of the target model
+     *
+     * @var string
+     */
+    protected $targetType;
 
-	/**
-	 * Type of the target model
-	 *
-	 * @var string
-	 */
-	protected $targetType;
+    /**
+     * Technical identifier of the target object
+     *
+     * @var string
+     */
+    protected $targetId;
 
-	/**
-	 * Technical identifier of the target object
-	 *
-	 * @var string
-	 */
-	protected $targetId;
+    /**
+     * @var object
+     * @Flow\Transient
+     */
+    protected $contentObject = null;
 
-	/**
-	 * @var object
-	 * @Flow\Transient
-	 */
-	protected $contentObject = NULL;
+    /**
+     * Constructs this content type
+     *
+     * @param object $contentObject The content object that should be represented by this proxy
+     */
+    public function __construct($contentObject)
+    {
+        $this->contentObject = $contentObject;
+    }
 
-	/**
-	 * Constructs this content type
-	 *
-	 * @param object $contentObject The content object that should be represented by this proxy
-	 */
-	public function __construct($contentObject) {
-		$this->contentObject = $contentObject;
-	}
+    /**
+     * Fetches the identifier from the set content object. If that
+     * is not using automatically introduced UUIDs by Flow it tries
+     * to call persistAll() and fetch the identifier again. If it still
+     * fails, an exception is thrown.
+     *
+     * @return void
+     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    protected function initializeObject()
+    {
+        if ($this->contentObject !== null) {
+            $this->targetType = get_class($this->contentObject);
+            $this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
+            if ($this->targetId === null) {
+                $this->persistenceManager->persistAll();
+                $this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
+                if ($this->targetId === null) {
+                    throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Fetches the identifier from the set content object. If that
-	 * is not using automatically introduced UUIDs by Flow it tries
-	 * to call persistAll() and fetch the identifier again. If it still
-	 * fails, an exception is thrown.
-	 *
-	 * @return void
-	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
-	 */
-	protected function initializeObject() {
-		if ($this->contentObject !== NULL) {
-			$this->targetType = get_class($this->contentObject);
-			$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
-			if ($this->targetId === NULL) {
-				$this->persistenceManager->persistAll();
-				$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
-				if ($this->targetId === NULL) {
-					throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns the real object this proxy stands for
-	 *
-	 * @return object The "content object" as it was originally passed to the constructor
-	 */
-	public function getObject() {
-		if ($this->contentObject === NULL) {
-			$this->contentObject = $this->persistenceManager->getObjectByIdentifier($this->targetId, $this->targetType);
-		}
-		return $this->contentObject;
-	}
+    /**
+     * Returns the real object this proxy stands for
+     *
+     * @return object The "content object" as it was originally passed to the constructor
+     */
+    public function getObject()
+    {
+        if ($this->contentObject === null) {
+            $this->contentObject = $this->persistenceManager->getObjectByIdentifier($this->targetId, $this->targetType);
+        }
+        return $this->contentObject;
+    }
 }

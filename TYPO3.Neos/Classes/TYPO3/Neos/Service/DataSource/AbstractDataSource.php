@@ -18,39 +18,40 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
  *
  * @api
  */
-abstract class AbstractDataSource implements DataSourceInterface {
+abstract class AbstractDataSource implements DataSourceInterface
+{
+    /**
+     * The identifier of the operation
+     *
+     * @var string
+     * @api
+     */
+    protected static $identifier = null;
 
-	/**
-	 * The identifier of the operation
-	 *
-	 * @var string
-	 * @api
-	 */
-	static protected $identifier = NULL;
+    /**
+     * @return string the short name of the operation
+     * @api
+     * @throws \TYPO3\Neos\Exception
+     */
+    public static function getIdentifier()
+    {
+        if (!is_string(static::$identifier)) {
+            throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
+        }
+        return static::$identifier;
+    }
 
-	/**
-	 * @return string the short name of the operation
-	 * @api
-	 * @throws \TYPO3\Neos\Exception
-	 */
-	static public function getIdentifier() {
-		if (!is_string(static::$identifier)) {
-			throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
-		}
-		return static::$identifier;
-	}
+    /**
+     * @var ControllerContext
+     */
+    protected $controllerContext;
 
-	/**
-	 * @var ControllerContext
-	 */
-	protected $controllerContext;
-
-	/**
-	 * @param ControllerContext $controllerContext
-	 * @return void
-	 */
-	public function setControllerContext(ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
-	}
-
+    /**
+     * @param ControllerContext $controllerContext
+     * @return void
+     */
+    public function setControllerContext(ControllerContext $controllerContext)
+    {
+        $this->controllerContext = $controllerContext;
+    }
 }

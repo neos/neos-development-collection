@@ -30,71 +30,73 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * 	q(node).context({'invisibleContentShown': true}).children().cacheLifetime()
  *
  */
-class CacheLifetimeOperation extends AbstractOperation {
+class CacheLifetimeOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'cacheLifetime';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'cacheLifetime';
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 1;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var integer
-	 */
-	static protected $priority = 1;
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var \TYPO3\Flow\Utility\Now
+     */
+    protected $now;
 
-	/**
-	 * @Flow\Inject(lazy=false)
-	 * @var \TYPO3\Flow\Utility\Now
-	 */
-	protected $now;
+    /**
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param array (or array-like object) $context onto which this operation should be applied
-	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
-	 */
-	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery The FlowQuery object
+     * @param array $arguments None
+     * @return integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        $minimumDateTime = null;
+        foreach ($flowQuery->getContext() as $contextNode) {
+            $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
+            if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
+                $minimumDateTime = $hiddenBeforeDateTime;
+            }
+            $hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
+            if ($hiddenAfterDateTime !== null && $hiddenAfterDateTime > $this->now && ($minimumDateTime === null || $hiddenAfterDateTime < $minimumDateTime)) {
+                $minimumDateTime = $hiddenAfterDateTime;
+            }
+        }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery The FlowQuery object
-	 * @param array $arguments None
-	 * @return integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		$minimumDateTime = NULL;
-		foreach ($flowQuery->getContext() as $contextNode) {
-			$hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
-			if ($hiddenBeforeDateTime !== NULL && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === NULL || $hiddenBeforeDateTime < $minimumDateTime)) {
-				$minimumDateTime = $hiddenBeforeDateTime;
-			}
-			$hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
-			if ($hiddenAfterDateTime !== NULL && $hiddenAfterDateTime > $this->now && ($minimumDateTime === NULL || $hiddenAfterDateTime < $minimumDateTime)) {
-				$minimumDateTime = $hiddenAfterDateTime;
-			}
-		}
-
-		if ($minimumDateTime !== NULL) {
-			$maximumLifetime = $minimumDateTime->getTimestamp() - $this->now->getTimestamp();
-			if ($maximumLifetime > 0) {
-				return $maximumLifetime;
-			}
-		}
-		return NULL;
-	}
+        if ($minimumDateTime !== null) {
+            $maximumLifetime = $minimumDateTime->getTimestamp() - $this->now->getTimestamp();
+            if ($maximumLifetime > 0) {
+                return $maximumLifetime;
+            }
+        }
+        return null;
+    }
 }

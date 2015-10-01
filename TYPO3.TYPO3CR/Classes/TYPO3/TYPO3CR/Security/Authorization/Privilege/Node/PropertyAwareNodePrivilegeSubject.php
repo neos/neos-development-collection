@@ -17,44 +17,47 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * A node privilege subject which can restricted to a single node property
  */
-class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject {
+class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
+{
+    /**
+     * @var NodeInterface
+     */
+    protected $node;
 
-	/**
-	 * @var NodeInterface
-	 */
-	protected $node;
+    /**
+     * @var string
+     */
+    protected $propertyName = null;
 
-	/**
-	 * @var string
-	 */
-	protected $propertyName = NULL;
+    /**
+     * @var JoinPointInterface
+     */
+    protected $joinPoint = null;
 
-	/**
-	 * @var JoinPointInterface
-	 */
-	protected $joinPoint = NULL;
+    /**
+     * @param NodeInterface $node
+     * @param JoinPointInterface $joinPoint
+     * @param string $propertyName
+     */
+    public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = null, $propertyName = null)
+    {
+        $this->propertyName = $propertyName;
+        parent::__construct($node, $joinPoint);
+    }
 
-	/**
-	 * @param NodeInterface $node
-	 * @param JoinPointInterface $joinPoint
-	 * @param string $propertyName
-	 */
-	public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = NULL, $propertyName = NULL) {
-		$this->propertyName = $propertyName;
-		parent::__construct($node, $joinPoint);
-	}
+    /**
+     * @return string
+     */
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getPropertyName() {
-		return $this->propertyName;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasPropertyName() {
-		return $this->propertyName !== NULL;
-	}
+    /**
+     * @return boolean
+     */
+    public function hasPropertyName()
+    {
+        return $this->propertyName !== null;
+    }
 }

@@ -20,37 +20,39 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class FileMonitorListener {
+class FileMonitorListener
+{
+    /**
+     * @var \TYPO3\Flow\Cache\CacheManager
+     */
+    protected $flowCacheManager;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
-	 */
-	protected $flowCacheManager;
+    /**
+     * @param \TYPO3\Flow\Cache\CacheManager $flowCacheManager
+     */
+    public function __construct(\TYPO3\Flow\Cache\CacheManager $flowCacheManager)
+    {
+        $this->flowCacheManager = $flowCacheManager;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Cache\CacheManager $flowCacheManager
-	 */
-	public function __construct(\TYPO3\Flow\Cache\CacheManager $flowCacheManager) {
-		$this->flowCacheManager = $flowCacheManager;
-	}
+    /**
+     * @param $fileMonitorIdentifier
+     * @param array $changedFiles
+     * @return void
+     */
+    public function flushContentCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)
+    {
+        $fileMonitorsThatTriggerContentCacheFlush = array(
+            'TYPO3CR_NodeTypesConfiguration',
+            'TypoScript_Files',
+            'Fluid_TemplateFiles',
+            'Flow_ClassFiles',
+            'Flow_ConfigurationFiles',
+            'Flow_TranslationFiles'
+        );
 
-	/**
-	 * @param $fileMonitorIdentifier
-	 * @param array $changedFiles
-	 * @return void
-	 */
-	public function flushContentCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles) {
-		$fileMonitorsThatTriggerContentCacheFlush = array(
-			'TYPO3CR_NodeTypesConfiguration',
-			'TypoScript_Files',
-			'Fluid_TemplateFiles',
-			'Flow_ClassFiles',
-			'Flow_ConfigurationFiles',
-			'Flow_TranslationFiles'
-		);
-
-		if (in_array($fileMonitorIdentifier, $fileMonitorsThatTriggerContentCacheFlush)) {
-			$this->flowCacheManager->getCache('TYPO3_TypoScript_Content')->flush();
-		}
-	}
+        if (in_array($fileMonitorIdentifier, $fileMonitorsThatTriggerContentCacheFlush)) {
+            $this->flowCacheManager->getCache('TYPO3_TypoScript_Content')->flush();
+        }
+    }
 }

@@ -15,56 +15,60 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * Testcase for the TypoScript Array
  *
  */
-class TypoScriptArrayTest extends AbstractTypoScriptObjectTest {
+class TypoScriptArrayTest extends AbstractTypoScriptObjectTest
+{
+    /**
+     * @test
+     */
+    public function basicOrderingWorks()
+    {
+        $view = $this->buildView();
 
-	/**
-	 * @test
-	 */
-	public function basicOrderingWorks() {
-		$view = $this->buildView();
+        $view->setTypoScriptPath('array/basicOrdering');
+        $this->assertEquals('Xtest10Xtest100', $view->render());
+    }
 
-		$view->setTypoScriptPath('array/basicOrdering');
-		$this->assertEquals('Xtest10Xtest100', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function positionalOrderingWorks()
+    {
+        $view = $this->buildView();
 
-	/**
-	 * @test
-	 */
-	public function positionalOrderingWorks() {
-		$view = $this->buildView();
+        $view->setTypoScriptPath('array/positionalOrdering');
+        $this->assertEquals('XbeforeXmiddleXafter', $view->render());
+    }
 
-		$view->setTypoScriptPath('array/positionalOrdering');
-		$this->assertEquals('XbeforeXmiddleXafter', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function startEndOrderingWorks()
+    {
+        $view = $this->buildView();
 
-	/**
-	 * @test
-	 */
-	public function startEndOrderingWorks() {
-		$view = $this->buildView();
+        $view->setTypoScriptPath('array/startEndOrdering');
+        $this->assertEquals('XbeforeXmiddleXafter', $view->render());
+    }
 
-		$view->setTypoScriptPath('array/startEndOrdering');
-		$this->assertEquals('XbeforeXmiddleXafter', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function advancedStartEndOrderingWorks()
+    {
+        $view = $this->buildView();
 
-	/**
-	 * @test
-	 */
-	public function advancedStartEndOrderingWorks() {
-		$view = $this->buildView();
+        $view->setTypoScriptPath('array/advancedStartEndOrdering');
+        $this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
+    }
 
-		$view->setTypoScriptPath('array/advancedStartEndOrdering');
-		$this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
-	}
+    /**
+     * @test
+     */
+    public function ignoredPropertiesWork()
+    {
+        $view = $this->buildView();
 
-	/**
-	 * @test
-	 */
-	public function ignoredPropertiesWork() {
-		$view = $this->buildView();
-
-		$view->setTypoScriptPath('array/ignoreProperties');
-		$this->assertEquals('XbeforeXafter', $view->render());
-	}
-
+        $view->setTypoScriptPath('array/ignoreProperties');
+        $this->assertEquals('XbeforeXafter', $view->render());
+    }
 }

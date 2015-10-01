@@ -14,5 +14,6 @@ namespace TYPO3\Neos\Routing\Exception;
 /**
  * A "no homepage" exception
  */
-class NoHomepageException extends \TYPO3\Neos\Routing\Exception {
+class NoHomepageException extends \TYPO3\Neos\Routing\Exception
+{
 }

@@ -14,25 +14,25 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 /**
  * A privilege to restrict editing of node properties.
  */
-class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege {
+class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
+{
+    /**
+     * @var array
+     */
+    protected $methodNameToPropertyMapping = array(
+        'setName' => 'name',
+        'setHidden' => 'hidden',
+        'setHiddenInIndex' => 'hiddenInIndex',
+        'setHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
+        'setHiddenAfterDateTime' => 'hiddenAfterDateTime',
+        'setAccessRoles' => 'accessRoles',
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $methodNameToPropertyMapping = array(
-		'setName' => 'name',
-		'setHidden' => 'hidden',
-		'setHiddenInIndex' => 'hiddenInIndex',
-		'setHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
-		'setHiddenAfterDateTime' => 'hiddenAfterDateTime',
-		'setAccessRoles' => 'accessRoles',
-	);
-
-	/**
-	 * @return string
-	 */
-	protected function buildMethodPrivilegeMatcher() {
-		return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
-	}
-
+    /**
+     * @return string
+     */
+    protected function buildMethodPrivilegeMatcher()
+    {
+        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
+    }
 }

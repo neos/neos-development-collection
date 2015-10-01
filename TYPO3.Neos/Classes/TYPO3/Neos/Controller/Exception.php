@@ -15,6 +15,6 @@ namespace TYPO3\Neos\Controller;
  * A generic TYPO3 Controller exception
  *
  */
-class Exception extends \TYPO3\Neos\Exception {
-
+class Exception extends \TYPO3\Neos\Exception
+{
 }

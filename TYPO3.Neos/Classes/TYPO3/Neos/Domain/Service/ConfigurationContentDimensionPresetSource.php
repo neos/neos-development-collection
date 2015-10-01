@@ -19,21 +19,21 @@ use TYPO3\Flow\Annotations as Flow;
  * Everything is configured in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".
  * @Flow\Scope("singleton")
  */
-class ConfigurationContentDimensionPresetSource extends \TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface {
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function findPresetByUriSegment($dimensionName, $uriSegment) {
-		if (isset($this->configuration[$dimensionName])) {
-			foreach ($this->configuration[$dimensionName]['presets'] as $presetIdentifier => $presetConfiguration) {
-				if (isset($presetConfiguration['uriSegment']) && $presetConfiguration['uriSegment'] === $uriSegment) {
-					$presetConfiguration['identifier'] = $presetIdentifier;
-					return $presetConfiguration;
-				}
-			}
-		}
-		return NULL;
-	}
-
+class ConfigurationContentDimensionPresetSource extends \TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function findPresetByUriSegment($dimensionName, $uriSegment)
+    {
+        if (isset($this->configuration[$dimensionName])) {
+            foreach ($this->configuration[$dimensionName]['presets'] as $presetIdentifier => $presetConfiguration) {
+                if (isset($presetConfiguration['uriSegment']) && $presetConfiguration['uriSegment'] === $uriSegment) {
+                    $presetConfiguration['identifier'] = $presetIdentifier;
+                    return $presetConfiguration;
+                }
+            }
+        }
+        return null;
+    }
 }

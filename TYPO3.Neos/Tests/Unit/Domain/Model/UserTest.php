@@ -18,13 +18,14 @@ use TYPO3\Neos\Domain\Model\User;
  * Test case for the "User" domain model
  *
  */
-class UserTest extends UnitTestCase {
-
-	/**
-	 * @test
-	 */
-	public function constructorInitializesPreferences() {
-		$user = new User();
-		$this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
-	}
+class UserTest extends UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function constructorInitializesPreferences()
+    {
+        $user = new User();
+        $this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
+    }
 }

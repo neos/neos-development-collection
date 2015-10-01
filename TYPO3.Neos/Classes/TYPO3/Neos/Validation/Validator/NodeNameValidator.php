@@ -16,13 +16,12 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Validator for node names
  */
-class NodeNameValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator {
-
-	/**
-	 * @var array
-	 */
-	protected $supportedOptions = array(
-		'regularExpression' => array(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
-	);
-
+class NodeNameValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator
+{
+    /**
+     * @var array
+     */
+    protected $supportedOptions = array(
+        'regularExpression' => array(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
+    );
 }

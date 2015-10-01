@@ -20,29 +20,30 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  * @api
  * @Flow\Scope("singleton")
  */
-class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter {
+class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter
+{
+    /**
+     * @var string
+     */
+    protected $targetType = 'string';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'string';
+    /**
+     * @var integer
+     */
+    protected $priority = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * Convert an object from \TYPO3\Media\Domain\Model\ImageInterface to a json representation.
-	 *
-	 * @param ImageInterface $source
-	 * @param string $targetType must be 'string'
-	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return string The converted ImageInterface
-	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		$data = parent::convertFrom($source, 'array', $convertedChildProperties, $configuration);
-		return json_encode($data);
-	}
+    /**
+     * Convert an object from \TYPO3\Media\Domain\Model\ImageInterface to a json representation.
+     *
+     * @param ImageInterface $source
+     * @param string $targetType must be 'string'
+     * @param array $convertedChildProperties
+     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @return string The converted ImageInterface
+     */
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    {
+        $data = parent::convertFrom($source, 'array', $convertedChildProperties, $configuration);
+        return json_encode($data);
+    }
 }

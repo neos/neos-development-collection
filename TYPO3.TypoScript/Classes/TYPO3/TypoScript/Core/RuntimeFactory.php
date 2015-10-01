@@ -27,39 +27,40 @@ use TYPO3\Flow\Utility\Arrays;
  * @Flow\Scope("singleton")
  * @api
  */
-class RuntimeFactory {
+class RuntimeFactory
+{
+    /**
+     * @param array $typoScriptConfiguration
+     * @param ControllerContext $controllerContext
+     * @return Runtime
+     */
+    public function create($typoScriptConfiguration, ControllerContext $controllerContext = null)
+    {
+        if ($controllerContext === null) {
+            $controllerContext = $this->createControllerContextFromEnvironment();
+        }
 
-	/**
-	 * @param array $typoScriptConfiguration
-	 * @param ControllerContext $controllerContext
-	 * @return Runtime
-	 */
-	public function create($typoScriptConfiguration, ControllerContext $controllerContext = NULL) {
-		if ($controllerContext === NULL) {
-			$controllerContext = $this->createControllerContextFromEnvironment();
-		}
+        return new Runtime($typoScriptConfiguration, $controllerContext);
+    }
 
-		return new Runtime($typoScriptConfiguration, $controllerContext);
-	}
+    /**
+     * @return ControllerContext
+     */
+    protected function createControllerContextFromEnvironment()
+    {
+        $httpRequest = Request::createFromEnvironment();
 
-	/**
-	 * @return ControllerContext
-	 */
-	protected function createControllerContextFromEnvironment() {
-		$httpRequest = Request::createFromEnvironment();
+        /** @var ActionRequest $request */
+        $request = $httpRequest->createActionRequest();
 
-		/** @var ActionRequest $request */
-		$request = $httpRequest->createActionRequest();
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($request);
 
-		$uriBuilder = new UriBuilder();
-		$uriBuilder->setRequest($request);
-
-		return new \TYPO3\Flow\Mvc\Controller\ControllerContext(
-			$request,
-			new Response(),
-			new Arguments(array()),
-			$uriBuilder
-		);
-	}
-
+        return new \TYPO3\Flow\Mvc\Controller\ControllerContext(
+            $request,
+            new Response(),
+            new Arguments(array()),
+            $uriBuilder
+        );
+    }
 }

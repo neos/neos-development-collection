@@ -9,25 +9,27 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class RelatedEntity {
+class RelatedEntity
+{
+    /**
+     * @var string
+     */
+    protected $favoritePlace;
 
-	/**
-	 * @var string
-	 */
-	protected $favoritePlace;
+    /**
+     * @return string
+     */
+    public function getFavoritePlace()
+    {
+        return $this->favoritePlace;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getFavoritePlace() {
-		return $this->favoritePlace;
-	}
-
-	/**
-	 * @param string $favoritePlace
-	 * @return void
-	 */
-	public function setFavoritePlace($favoritePlace) {
-		$this->favoritePlace = $favoritePlace;
-	}
+    /**
+     * @param string $favoritePlace
+     * @return void
+     */
+    public function setFavoritePlace($favoritePlace)
+    {
+        $this->favoritePlace = $favoritePlace;
+    }
 }

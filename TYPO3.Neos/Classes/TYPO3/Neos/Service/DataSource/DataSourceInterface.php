@@ -20,22 +20,21 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @api
  */
-interface DataSourceInterface {
+interface DataSourceInterface
+{
+    /**
+     * @return string The identifier of the data source
+     * @api
+     */
+    public static function getIdentifier();
 
-	/**
-	 * @return string The identifier of the data source
-	 * @api
-	 */
-	static public function getIdentifier();
-
-	/**
-	 * Get data
-	 *
-	 * @param NodeInterface $node The node that is currently edited (optional)
-	 * @param array $arguments Additional arguments (key / value)
-	 * @return mixed JSON serializable data
-	 * @api
-	 */
-	public function getData(NodeInterface $node = NULL, array $arguments);
-
+    /**
+     * Get data
+     *
+     * @param NodeInterface $node The node that is currently edited (optional)
+     * @param array $arguments Additional arguments (key / value)
+     * @return mixed JSON serializable data
+     * @api
+     */
+    public function getData(NodeInterface $node = null, array $arguments);
 }

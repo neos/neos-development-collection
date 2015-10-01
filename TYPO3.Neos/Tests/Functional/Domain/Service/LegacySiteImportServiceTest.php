@@ -13,20 +13,20 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
 
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
 
-
 /**
  * Make sure legacy sites.xml structures (1.0 or 1.1) can be imported
  */
-class LegacySiteImportServiceTest extends AbstractNodeTest {
+class LegacySiteImportServiceTest extends AbstractNodeTest
+{
+    protected $nodeContextPath = null;
 
-	protected $nodeContextPath = NULL;
+    protected $fixtureFileName = 'Domain/Service/Fixtures/LegacySite.xml';
 
-	protected $fixtureFileName = 'Domain/Service/Fixtures/LegacySite.xml';
-
-	/**
-	 * @test
-	 */
-	public function legacySiteImportYieldsExpectedResult() {
-		$this->assertSame('<h1>Planned for change.</h1>', $this->getNodeWithContextPath('/sites/neosdemotypo3org/teaser/node52697bdfee199')->getProperty('title'));
-	}
+    /**
+     * @test
+     */
+    public function legacySiteImportYieldsExpectedResult()
+    {
+        $this->assertSame('<h1>Planned for change.</h1>', $this->getNodeWithContextPath('/sites/neosdemotypo3org/teaser/node52697bdfee199')->getProperty('title'));
+    }
 }

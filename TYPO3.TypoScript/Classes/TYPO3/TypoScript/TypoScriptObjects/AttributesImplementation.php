@@ -26,52 +26,56 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * will result in the string: class="class1 class2" id="my-id"
  */
-class AttributesImplementation extends AbstractArrayTypoScriptObject {
+class AttributesImplementation extends AbstractArrayTypoScriptObject
+{
+    /**
+     * @return string
+     */
+    public function evaluate()
+    {
+        $allowEmpty = $this->getAllowEmpty();
 
-	/**
-	 * @return string
-	 */
-	public function evaluate() {
-		$allowEmpty = $this->getAllowEmpty();
+        $renderedAttributes = '';
+        foreach (array_keys($this->properties) as $attributeName) {
+            if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) {
+                continue;
+            }
 
-		$renderedAttributes = '';
-		foreach (array_keys($this->properties) as $attributeName) {
-			if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) continue;
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            $attributeValue = $this->tsValue($attributeName);
+            if ($attributeValue === null || $attributeValue === false) {
+                // No op
+            } elseif ($attributeValue === true || $attributeValue === '') {
+                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
+            } else {
+                if (is_array($attributeValue)) {
+                    $joinedAttributeValue = '';
+                    foreach ($attributeValue as $attributeValuePart) {
+                        if ((string)$attributeValuePart !== '') {
+                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
+                        }
+                    }
+                    $attributeValue = trim($joinedAttributeValue);
+                }
+                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+            }
+        }
+        return $renderedAttributes;
+    }
 
-			$encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', FALSE);
-			$attributeValue = $this->tsValue($attributeName);
-			if ($attributeValue === NULL || $attributeValue === FALSE) {
-				// No op
-			} elseif ($attributeValue === TRUE || $attributeValue === '') {
-				$renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
-			} else {
-				if (is_array($attributeValue)) {
-					$joinedAttributeValue = '';
-					foreach ($attributeValue as $attributeValuePart) {
-						if ((string)$attributeValuePart !== '') {
-							$joinedAttributeValue .= ' ' . trim($attributeValuePart);
-						}
-					}
-					$attributeValue = trim($joinedAttributeValue);
-				}
-				$encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', FALSE);
-				$renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
-			}
-		}
-		return $renderedAttributes;
-	}
-
-	/**
-	 * Whether empty attributes (HTML5 syntax) should be allowed
-	 *
-	 * @return boolean
-	 */
-	protected function getAllowEmpty() {
-		$allowEmpty = $this->tsValue('__meta/allowEmpty');
-		if ($allowEmpty === NULL) {
-			return TRUE;
-		} else {
-			return (boolean)$allowEmpty;
-		}
-	}
+    /**
+     * Whether empty attributes (HTML5 syntax) should be allowed
+     *
+     * @return boolean
+     */
+    protected function getAllowEmpty()
+    {
+        $allowEmpty = $this->tsValue('__meta/allowEmpty');
+        if ($allowEmpty === null) {
+            return true;
+        } else {
+            return (boolean)$allowEmpty;
+        }
+    }
 }

@@ -37,73 +37,75 @@ use TYPO3\Flow\Utility\Environment;
  *
  * @Flow\Scope("singleton")
  */
-class BehatTestHelper {
+class BehatTestHelper
+{
+    use IsolatedBehatStepsTrait;
+    use SecurityOperationsTrait;
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
 
-	use IsolatedBehatStepsTrait;
-	use SecurityOperationsTrait;
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
+    /**
+     * @var Bootstrap
+     */
+    protected static $bootstrap;
 
-	/**
-	 * @var Bootstrap
-	 */
-	protected static $bootstrap;
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $objectManager;
+    /**
+     * @var Environment
+     * @Flow\Inject
+     */
+    protected $environment;
 
-	/**
-	 * @var Environment
-	 * @Flow\Inject
-	 */
-	protected $environment;
+    /**
+     * @var ActionRequest
+     */
+    protected $mockActionRequest;
 
-	/**
-	 * @var ActionRequest
-	 */
-	protected $mockActionRequest;
+    /**
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
+    /**
+     * @var PolicyService
+     * @Flow\Inject
+     */
+    protected $policyService;
 
-	/**
-	 * @var PolicyService
-	 * @Flow\Inject
-	 */
-	protected $policyService;
+    /**
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
-	/**
-	 * @var AuthenticationManagerInterface
-	 */
-	protected $authenticationManager;
+    /**
+     * @var TestingProvider
+     */
+    protected $testingProvider;
 
-	/**
-	 * @var TestingProvider
-	 */
-	protected $testingProvider;
+    /**
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        $this->isolated = false;
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
-		$this->isolated = FALSE;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return mixed
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }

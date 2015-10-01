@@ -53,23 +53,24 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * Shown in all other cases.
  * </output>
  */
-class InEditModeViewHelper extends AbstractRenderingStateViewHelper {
+class InEditModeViewHelper extends AbstractRenderingStateViewHelper
+{
+    /**
+     * @param NodeInterface $node Optional Node to use context from
+     * @param string $mode Optional rendering mode name to check if this specific mode is active
+     * @return boolean
+     * @throws \TYPO3\Neos\Exception
+     */
+    public function render(NodeInterface $node = null, $mode = null)
+    {
+        $context = $this->getNodeContext($node);
+        $renderingMode = $context->getCurrentRenderingMode();
+        if ($mode !== null) {
+            $result = ($renderingMode->getName() === $mode) && $renderingMode->isEdit();
+        } else {
+            $result = $renderingMode->isEdit();
+        }
 
-	/**
-	 * @param NodeInterface $node Optional Node to use context from
-	 * @param string $mode Optional rendering mode name to check if this specific mode is active
-	 * @return boolean
-	 * @throws \TYPO3\Neos\Exception
-	 */
-	public function render(NodeInterface $node = NULL, $mode = NULL) {
-		$context = $this->getNodeContext($node);
-		$renderingMode = $context->getCurrentRenderingMode();
-		if ($mode !== NULL) {
-			$result = ($renderingMode->getName() === $mode) && $renderingMode->isEdit();
-		} else {
-			$result = $renderingMode->isEdit();
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 }

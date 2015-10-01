@@ -21,65 +21,67 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * prefixed with _, internal node properties like start time, end time,
  * hidden are accessed.
  */
-class PropertyOperation extends AbstractOperation {
+class PropertyOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'property';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'property';
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var integer
-	 */
-	static protected $priority = 100;
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
+    /**
+     * {@inheritdoc}
+     *
+     * We can only handle TYPO3CR Nodes.
+     *
+     * @param mixed $context
+     * @return boolean
+     */
+    public function canEvaluate($context)
+    {
+        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * We can only handle TYPO3CR Nodes.
-	 *
-	 * @param mixed $context
-	 * @return boolean
-	 */
-	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof NodeInterface));
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the arguments for this operation
+     * @return mixed
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        if (!isset($arguments[0]) || empty($arguments[0])) {
+            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('property() does not support returning all attributes yet', 1332492263);
+        } else {
+            $context = $flowQuery->getContext();
+            $propertyPath = $arguments[0];
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		if (!isset($arguments[0]) || empty($arguments[0])) {
-			throw new \TYPO3\Eel\FlowQuery\FlowQueryException('property() does not support returning all attributes yet', 1332492263);
-		} else {
-			$context = $flowQuery->getContext();
-			$propertyPath = $arguments[0];
+            if (!isset($context[0])) {
+                return null;
+            }
 
-			if (!isset($context[0])) {
-				return NULL;
-			}
-
-			$element = $context[0];
-			if ($propertyPath[0] === '_') {
-				return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
-			} else {
-				return $element->getProperty($propertyPath);
-			}
-		}
-	}
+            $element = $context[0];
+            if ($propertyPath[0] === '_') {
+                return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
+            } else {
+                return $element->getProperty($propertyPath);
+            }
+        }
+    }
 }

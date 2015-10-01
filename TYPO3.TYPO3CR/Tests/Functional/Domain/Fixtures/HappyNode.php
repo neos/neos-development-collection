@@ -16,12 +16,13 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 /**
  * A happier node than the default node that can clap hands to show it!
  */
-class HappyNode extends Node {
-
-	/**
-	 * @return string
-	 */
-	public function clapsHands() {
-		return $this->getName() . ' claps hands!';
-	}
+class HappyNode extends Node
+{
+    /**
+     * @return string
+     */
+    public function clapsHands()
+    {
+        return $this->getName() . ' claps hands!';
+    }
 }

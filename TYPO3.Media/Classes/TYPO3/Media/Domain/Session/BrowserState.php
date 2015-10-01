@@ -18,37 +18,39 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("session")
  */
-class BrowserState {
+class BrowserState
+{
+    /**
+     * @var array
+     */
+    protected $data = array(
+        'activeTag' => null,
+        'view' => 'Thumbnail',
+        'sort' => 'Modified',
+        'filter' => 'All'
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $data = array(
-		'activeTag' => NULL,
-		'view' => 'Thumbnail',
-		'sort' => 'Modified',
-		'filter' => 'All'
-	);
+    /**
+     * Set a $value for $key
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     * @Flow\Session(autoStart = TRUE)
+     */
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
 
-	/**
-	 * Set a $value for $key
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 * @Flow\Session(autoStart = TRUE)
-	 */
-	public function set($key, $value) {
-		$this->data[$key] = $value;
-	}
-
-	/**
-	 * Return a value for $key.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
-	}
+    /**
+     * Return a value for $key.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : null;
+    }
 }

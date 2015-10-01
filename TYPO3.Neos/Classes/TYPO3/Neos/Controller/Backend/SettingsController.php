@@ -18,15 +18,15 @@ use TYPO3\Flow\Utility\PositionalArraySorter;
 /**
  * @Flow\Scope("singleton")
  */
-class SettingsController extends \TYPO3\Flow\Mvc\Controller\ActionController {
-
-	/**
-	 * @return string
-	 */
-	public function editPreviewAction() {
-		$this->response->setHeader('Content-Type', 'application/json');
-		$configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
-		return json_encode($configuration->toArray());
-	}
-
+class SettingsController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @return string
+     */
+    public function editPreviewAction()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+        $configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
+        return json_encode($configuration->toArray());
+    }
 }

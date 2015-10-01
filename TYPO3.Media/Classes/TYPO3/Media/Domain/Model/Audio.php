@@ -19,6 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class Audio extends Asset {
-
+class Audio extends Asset
+{
 }

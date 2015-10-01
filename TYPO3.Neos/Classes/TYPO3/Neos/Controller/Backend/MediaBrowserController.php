@@ -18,17 +18,16 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 /**
  * Controller for asset handling
  */
-class MediaBrowserController extends \TYPO3\Neos\Controller\Module\Management\AssetController {
+class MediaBrowserController extends \TYPO3\Neos\Controller\Module\Management\AssetController
+{
+    /**
+     * @var array
+     */
+    protected $settings;
 
-	/**
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
-	 * @Flow\Inject
-	 * @var AssetRepository
-	 */
-	protected $assetRepository;
-
+    /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
 }

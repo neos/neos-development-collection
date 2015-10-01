@@ -18,38 +18,41 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * A node privilege subject
  */
-class NodePrivilegeSubject implements PrivilegeSubjectInterface {
+class NodePrivilegeSubject implements PrivilegeSubjectInterface
+{
+    /**
+     * @var NodeInterface
+     */
+    protected $node;
 
-	/**
-	 * @var NodeInterface
-	 */
-	protected $node;
+    /**
+     * @var JoinPointInterface
+     */
+    protected $joinPoint;
 
-	/**
-	 * @var JoinPointInterface
-	 */
-	protected $joinPoint;
+    /**
+     * @param NodeInterface $node The node we will check privileges for
+     * @param JoinPointInterface $joinPoint If we intercept node operations, this joinpoint represents the method called on the node and holds a reference to the node we will check privileges for
+     */
+    public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = null)
+    {
+        $this->node = $node;
+        $this->joinPoint = $joinPoint;
+    }
 
-	/**
-	 * @param NodeInterface $node The node we will check privileges for
-	 * @param JoinPointInterface $joinPoint If we intercept node operations, this joinpoint represents the method called on the node and holds a reference to the node we will check privileges for
-	 */
-	public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = NULL) {
-		$this->node = $node;
-		$this->joinPoint = $joinPoint;
-	}
+    /**
+     * @return NodeInterface
+     */
+    public function getNode()
+    {
+        return $this->node;
+    }
 
-	/**
-	 * @return NodeInterface
-	 */
-	public function getNode() {
-		return $this->node;
-	}
-
-	/**
-	 * @return JoinPointInterface
-	 */
-	public function getJoinPoint() {
-		return $this->joinPoint;
-	}
+    /**
+     * @return JoinPointInterface
+     */
+    public function getJoinPoint()
+    {
+        return $this->joinPoint;
+    }
 }

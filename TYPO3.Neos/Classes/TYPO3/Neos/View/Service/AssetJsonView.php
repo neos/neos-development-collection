@@ -22,38 +22,38 @@ use TYPO3\Media\Domain\Model\AssetInterface;
  *
  * @Flow\Scope("prototype")
  */
-class AssetJsonView extends JsonView {
+class AssetJsonView extends JsonView
+{
+    /**
+     * Configures rendering according to the set variable(s) and calls
+     * render on the parent.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if (isset($this->variables['assets'])) {
+            $this->setConfiguration(
+                array(
+                    'assets' => array(
+                        '_descendAll' => array(
+                            '_only' => array('label', 'tags', 'identifier')
+                        )
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('assets'));
+        } else {
+            $this->setConfiguration(
+                array(
+                    'asset' => array(
+                        '_only' => array('label', 'tags', 'identifier')
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('asset'));
+        }
 
-	/**
-	 * Configures rendering according to the set variable(s) and calls
-	 * render on the parent.
-	 *
-	 * @return string
-	 */
-	public function render() {
-		if (isset($this->variables['assets'])) {
-			$this->setConfiguration(
-				array(
-					'assets' => array(
-						'_descendAll' => array(
-							'_only' => array('label', 'tags', 'identifier')
-						)
-					)
-				)
-			);
-			$this->setVariablesToRender(array('assets'));
-		} else {
-			$this->setConfiguration(
-				array(
-					'asset' => array(
-						'_only' => array('label', 'tags', 'identifier')
-					)
-				)
-			);
-			$this->setVariablesToRender(array('asset'));
-		}
-
-		return parent::render();
-	}
-
+        return parent::render();
+    }
 }
