@@ -5,29 +5,6 @@
 	visibility: hidden;
 }
 
-.neos-change {
-	box-sizing: border-box;
-	white-space: nowrap;
-	letter-spacing: 1px;
-	font-size: 16px;
-}
-
-.neos-change-new {
-	color: $green;
-}
-
-.neos-change-changed {
-	color: $orange;
-}
-
-.neos-change-removed {
-	color: $warning;
-}
-
-.neos-change-unchanged {
-	color: $grayLight;
-}
-
 &.neos-module-management-workspaces {
 	.neos-footer p {
 		font-size: $fontSizeSmall;
@@ -59,11 +36,13 @@
 		}
 	}
 
-	th,
-	td.actions {
+	th {
 		white-space: nowrap;
 	}
 
+	td.neos-workspace-type {
+	  width: 46px;
+	}
 	td.neos-action {
 		width: 90px;
 	}
@@ -118,4 +97,28 @@
 			padding-right: $tightMargin;
 		}
 	}
+
+	.neos-change {
+		box-sizing: border-box;
+		white-space: nowrap;
+		letter-spacing: 1px;
+		font-size: 16px;
+	}
+
+	.neos-change-new {
+		color: $green;
+	}
+
+	.neos-change-changed {
+		color: $orange;
+	}
+
+	.neos-change-removed {
+		color: $warning;
+  	}
+
+	.neos-change-unchanged {
+		color: $grayLight;
+	}
+
 }
