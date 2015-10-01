@@ -44,7 +44,7 @@ define(
 		 */
 		return Ember.Controller.extend({
 			classNames: 'neos-target-workspace-selector',
-			targetWorkspaceLabel: null,
+			targetWorkspaceLabel: '',
 
 
 			/**
@@ -134,13 +134,14 @@ define(
 			/**
 			 * Switches user's target workspace to the specified workspace
 			 */
-			setTargetWorkspace: function(newTargetWorkspaceName) {
+			setTargetWorkspace: function(newTargetWorkspaceName, thelabel) {
+				console.log('thelabel', thelabel);
 				if (this.get('workspaceRebasePending')) {
 					return;
 				}
 
 				this.set('workspaceRebasePending', true);
-				this.set('targetWorkspaceLabel', newTargetWorkspaceName);
+				this.set('targetWorkspaceLabel', '');
 
 				var that = this,
 					options = {

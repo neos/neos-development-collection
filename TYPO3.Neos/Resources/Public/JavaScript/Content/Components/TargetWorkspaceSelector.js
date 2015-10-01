@@ -43,7 +43,7 @@ define(
 			_initialize: function() {
 				var that = this;
 				Ember.run.next(this, function() {
-					that.set('controller.targetWorkspaceLabel', this.get('controller.targetWorkspace.name'));
+					that.set('controller.targetWorkspaceLabel', this.get('controller.targetWorkspace.title'));
 					that.$('select').select2('destroy').select2({
 						maximumSelectionSize: 1,
 						minimumResultsForSearch: 10,
@@ -60,7 +60,7 @@ define(
 							$('#neos-publish-menu').removeClass('neos-open open');
 							that.get('controller').setTargetWorkspace(event.val);
 						}
-					}).select2('data', {id: that.get('controller.targetWorkspace.name'), text: that.get('controller.targetWorkspace.name')})
+					}).select2('data', {id: that.get('controller.targetWorkspace.name'), text: that.get('controller.targetWorkspace.title')})
 				});
 			}.observes('controller.workspaces')
 
