@@ -8,35 +8,26 @@
 <f:section name="content">
 	<f:form action="create" objectName="workspace">
 
-		<div class="neos-control-group{f:validation.ifHasErrors(for: 'name', then: ' neos-error')}">
-			<label class="neos-control-label" for="name">{neos:backend.translate(id: 'workspaces.new.name', source: 'Modules', package: 'TYPO3.Neos')}</label>
+		<div class="neos-control-group{f:validation.ifHasErrors(for: 'title', then: ' neos-error')}">
+			<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'TYPO3.Neos')}</label>
 			<div class="neos-controls">
-				<f:form.textfield name="name" id="name" class="neos-span8" autofocus="true" required="true" />
-				<br><small>{neos:backend.translate(id: 'workspaces.help.name', source: 'Modules', package: 'TYPO3.Neos')}</small>
-				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'name'}"/>
+				<f:form.textfield name="title" id="title" class="neos-span3"/>
+				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'title'}"/>
 			</div>
 		</div>
 
-		<div class="neos-control-group">
-			<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.new.title', source: 'Modules', package: 'TYPO3.Neos')}</label>
-			<div class="neos-controls">
-				<f:form.textfield name="title" id="title" class="neos-span8"/>
-				<br><small>{neos:backend.translate(id: 'workspaces.help.title', source: 'Modules', package: 'TYPO3.Neos')}</small>
-			</div>
-		</div>
-
-		<div class="neos-control-group">
-			<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.new.description', source: 'Modules', package: 'TYPO3.Neos')}</label>
+		<div class="neos-control-group{f:validation.ifHasErrors(for: 'description', then: ' neos-error')}">
+			<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Modules', package: 'TYPO3.Neos')}</label>
 			<div class="neos-controls">
 				<f:form.textfield name="description" id="description" class="neos-span10"/>
-				<br><small>{neos:backend.translate(id: 'workspaces.help.description', source: 'Modules', package: 'TYPO3.Neos')}</small>
+				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'description'}"/>
 			</div>
 		</div>
 
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'TYPO3.Neos')}
 			</f:link.action>
-			<f:form.submit value="{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-primary"/>
+			<f:form.submit value="{neos:backend.translate(id: 'workspaces.createWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-primary"/>
 		</div>
 	</f:form>
 </f:section>
