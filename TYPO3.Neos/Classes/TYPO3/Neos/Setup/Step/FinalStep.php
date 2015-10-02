@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Setup\Step;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * @Flow\Scope("singleton")
@@ -38,8 +39,21 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep
 
         $docs = $congratulations->createElement('docsLink', 'TYPO3.Setup:LinkElement');
         $docs->setLabel('Read the documentation');
-        $docs->setProperty('href', 'http://docs.typo3.org/neos/');
+        $docs->setProperty('href', 'http://neos.readthedocs.org/en/stable/');
         $docs->setProperty('target', '_blank');
+
+        $contextEnv = \TYPO3\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
+        $applicationContext = new ApplicationContext($contextEnv);
+        if (!$applicationContext->isProduction()) {
+            $context = $page1->createElement('contextSection', 'TYPO3.Form:Section');
+            $context->setLabel('Define application context');
+            $contextInfo = $context->createElement('contextInfo', 'TYPO3.Form:StaticText');
+            $contextInfo->setProperty('text', 'Your Neos installation is currently not running in "Production" context. If you want to experience Neos with its full speed, you should now change your FLOW_CONTEXT environment variable to "Production".');
+            $contextDocs = $context->createElement('contextDocsLink', 'TYPO3.Setup:LinkElement');
+            $contextDocs->setLabel('Read about application contexts');
+            $contextDocs->setProperty('href', 'http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartIII/Bootstrapping.html#the-typo3-flow-application-context');
+            $contextDocs->setProperty('target', '_blank');
+        }
 
         $frontend = $page1->createElement('frontendSection', 'TYPO3.Form:Section');
         $frontend->setLabel('View the site');
