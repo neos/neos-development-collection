@@ -16,7 +16,7 @@ use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Flow\Error\Message;
 
 /**
- * The TYPO3 Neos Configuration module controller
+ * The Neos Configuration module controller
  */
 class ConfigurationController extends AbstractModuleController
 {

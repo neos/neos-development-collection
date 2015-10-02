@@ -29,7 +29,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
- * The TYPO3 Neos Sites Management module controller
+ * The Neos Sites Management module controller
  */
 class SitesController extends AbstractModuleController
 {

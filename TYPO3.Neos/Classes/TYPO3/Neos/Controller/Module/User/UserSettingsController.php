@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Module\User;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The TYPO3 Neos User Settings module controller
+ * The Neos User Settings module controller
  *
  * @Flow\Scope("singleton")
  */

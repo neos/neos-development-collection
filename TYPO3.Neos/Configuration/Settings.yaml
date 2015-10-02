@@ -185,7 +185,7 @@ TYPO3:
           label: 'Plugins'
 
     userInterface:
-      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 

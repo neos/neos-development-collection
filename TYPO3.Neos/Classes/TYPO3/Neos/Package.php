@@ -18,7 +18,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * The TYPO3 Neos Package
+ * The Neos Package
  */
 class Package extends BasePackage
 {
