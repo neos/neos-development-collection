@@ -38,7 +38,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep
 
         $docs = $congratulations->createElement('docsLink', 'TYPO3.Setup:LinkElement');
         $docs->setLabel('Read the documentation');
-        $docs->setProperty('href', 'http://docs.typo3.org/neos/');
+        $docs->setProperty('href', 'https://neos.readthedocs.org/');
         $docs->setProperty('target', '_blank');
 
         $frontend = $page1->createElement('frontendSection', 'TYPO3.Form:Section');
