@@ -74,7 +74,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
                 $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
             }
 
-            return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptPath, $output);
+            return $this->contentElementWrappingService->wrapContentObject($node, $output, $typoScriptPath);
         }
 
         return $output;
