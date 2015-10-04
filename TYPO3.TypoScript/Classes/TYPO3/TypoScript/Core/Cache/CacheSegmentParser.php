@@ -78,7 +78,7 @@ class CacheSegmentParser
                 $identifier = $currentLevelPart['identifier'];
                 $this->output .= $part;
 
-                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_CACHED) {
+                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_CACHED || $currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_SEMICACHED) {
                     $this->cacheEntries[$identifier] = $parts[$level];
                 }
 
@@ -88,6 +88,8 @@ class CacheSegmentParser
 
                 if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_UNCACHED) {
                     $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN;
+                } elseif ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_SEMICACHED) {
+                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . 'evalCached=' . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN;
                 } else {
                     $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_END_TOKEN;
                 }
@@ -128,6 +130,12 @@ class CacheSegmentParser
                 if (strpos($identifier, 'eval=') === 0) {
                     $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
                     $parts[$level]['context'] = $contextOrMetadata;
+                } elseif (strpos($identifier, 'evalCached=') === 0) {
+                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_SEMICACHED;
+                    $parts[$level]['identifier'] = substr($identifier, 11);
+                    $additionalData = json_decode($contextOrMetadata, true);
+                    $parts[$level]['context'] = $contextOrMetadata;
+                    $parts[$level]['metadata'] = $additionalData['metadata'];
                 } else {
                     $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_CACHED;
                     $parts[$level]['metadata'] = $contextOrMetadata;

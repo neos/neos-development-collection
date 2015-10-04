@@ -57,6 +57,12 @@ class RuntimeContentCache
     protected $contentCache;
 
     /**
+     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @Flow\Inject
+     */
+    protected $propertyMapper;
+
+    /**
      * @param Runtime $runtime
      */
     public function __construct(Runtime $runtime)
@@ -77,8 +83,8 @@ class RuntimeContentCache
      */
     public function enter(array $configuration, $typoScriptPath)
     {
-        $cacheForPathEnabled = isset($configuration['mode']) && $configuration['mode'] === 'cached';
-        $cacheForPathDisabled = isset($configuration['mode']) && $configuration['mode'] === 'uncached';
+        $cacheForPathEnabled = isset($configuration['mode']) && ($configuration['mode'] === 'cached' || $configuration['mode'] === 'runtimeCache');
+        $cacheForPathDisabled = isset($configuration['mode']) && ($configuration['mode'] === 'uncached' || $configuration['mode'] === 'runtimeCache');
 
         if ($cacheForPathDisabled && (!isset($configuration['context']) || $configuration['context'] === array())) {
             throw new Exception(sprintf('Missing @cache.context configuration for path "%s". An uncached segment must have one or more context variable names configured.', $typoScriptPath), 1395922119);
@@ -117,12 +123,24 @@ class RuntimeContentCache
         if ($this->enableContentCache) {
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
-
                 $self = $this;
-                $segment = $this->contentCache->getCachedSegment(function ($command, $unserializedContext) use ($self) {
+                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self) {
                     if (strpos($command, 'eval=') === 0) {
+                        $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
                         $result = $self->evaluateUncached($path, $unserializedContext);
+                        return $result;
+                    } elseif (strpos($command, 'evalCached=') === 0) {
+                        $identifier = substr($command, 11);
+                        $cacheDiscriminator = $this->runtime->evaluate($additionalData['path'] . '/__meta/cache/entryDiscriminator');
+                        $cacheIdentifier = substr($identifier, 0, strpos($identifier, '_')) . '_' . md5($cacheDiscriminator);
+                        $result = $cache->get($cacheIdentifier);
+                        if ($result === false) {
+                            $unserializedContext = $self->unserializeContext($additionalData['context']);
+                            $result = $self->evaluateUncached($additionalData['path'], $unserializedContext);
+                            $cache->set($cacheIdentifier, $result);
+                        }
+
                         return $result;
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
@@ -137,6 +155,10 @@ class RuntimeContentCache
                 $this->cacheMetadata[] = array(
                     'lifetime' => null
                 );
+            }
+
+            if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
+                $evaluateContext['cacheDiscriminator'] = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/entryDiscriminator');
             }
 
             if (isset($evaluateContext['configuration']['maximumLifetime'])) {
@@ -165,7 +187,20 @@ class RuntimeContentCache
      */
     public function postProcess(array $evaluateContext, $tsObject, $output)
     {
-        if ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
+        if ($this->enableContentCache && $evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
+            $contextArray = $this->runtime->getCurrentContext();
+            if (isset($evaluateContext['configuration']['context'])) {
+                $contextVariables = array();
+                foreach ($evaluateContext['configuration']['context'] as $contextVariableName) {
+                    $contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
+                }
+            } else {
+                $contextVariables = $contextArray;
+            }
+            $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
+            $cacheMetadata = array_pop($this->cacheMetadata);
+            $output = $this->contentCache->createSemiCachedSegment($output, $evaluateContext['typoScriptPath'], $contextVariables, $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
+        } elseif ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
             $output = $this->contentCache->createCacheSegment($output, $evaluateContext['typoScriptPath'], $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime']);
@@ -284,6 +319,21 @@ class RuntimeContentCache
             $cacheTags = array(ContentCache::TAG_EVERYTHING);
         }
         return $cacheTags;
+    }
+
+    /**
+     * @param array $contextArray
+     * @return array
+     */
+    public function unserializeContext($contextArray)
+    {
+        $unserializedContext = array();
+        foreach ($contextArray as $variableName => $typeAndValue) {
+            $value = $this->propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
+            $unserializedContext[$variableName] = $value;
+        }
+
+        return $unserializedContext;
     }
 
     /**
