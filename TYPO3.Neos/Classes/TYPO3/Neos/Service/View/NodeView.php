@@ -230,7 +230,7 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
 
         $treeNodes = array();
         $self = $this;
-        $collectTreeNodeData = function (&$treeNodes, $node) use (&$collectTreeNodeData,$self) {
+        $collectTreeNodeData = function (&$treeNodes, $node) use (&$collectTreeNodeData, $self) {
             $children = array();
             if (isset($node['children'])) {
                 foreach ($node['children'] as $childNode) {

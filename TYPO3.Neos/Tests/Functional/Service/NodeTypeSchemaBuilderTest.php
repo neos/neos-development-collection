@@ -102,7 +102,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
 
         $this->assertArrayNotHasKey('h3', $alohaConfiguration['sampleCase']);
         $this->assertArrayNotHasKey('sup', $alohaConfiguration['sampleCase']);
-        $this->assertArrayNotHasKey('shouldBeExcluded',  $alohaConfiguration['sampleCase']);
+        $this->assertArrayNotHasKey('shouldBeExcluded', $alohaConfiguration['sampleCase']);
 
         $this->assertEquals(array('defined', 'as', 'plain', 'array'), $alohaConfiguration['fallbackCase']);
         $this->assertEquals(array('h3', 'sup'), $alohaConfiguration['sampleCase']);

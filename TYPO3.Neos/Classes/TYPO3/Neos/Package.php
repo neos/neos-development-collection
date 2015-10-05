@@ -57,13 +57,13 @@ class Package extends BasePackage
             }
         };
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', $uriPathSegmentGenerator);
-        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($uriPathSegmentGenerator,$bootstrap) {
+        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($uriPathSegmentGenerator, $bootstrap) {
             if ($propertyName === 'uriPathSegment') {
                 $uriPathSegmentGenerator($node);
                 $bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
             }
         });
-        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', function (NodeData $nodeData) use ($bootstrap,$uriPathSegmentGenerator) {
+        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', function (NodeData $nodeData) use ($bootstrap, $uriPathSegmentGenerator) {
             if ($nodeData->getNodeType()->isOfType('TYPO3.Neos:Document')) {
                 $contextFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
                 $nodeFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
