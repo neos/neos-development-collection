@@ -25,7 +25,6 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  */
 class PluginViewImplementation extends PluginImplementation
 {
-
     /**
      * @var \TYPO3\Flow\Property\PropertyMapper
      * @Flow\Inject
@@ -134,5 +133,4 @@ class PluginViewImplementation extends PluginImplementation
             return ($this->objectManager->getContext()->isDevelopment()) ? ('<p><strong>' . $message . '</strong></p>') : ('<!--' . $message . '-->');
         }
     }
-
 }
