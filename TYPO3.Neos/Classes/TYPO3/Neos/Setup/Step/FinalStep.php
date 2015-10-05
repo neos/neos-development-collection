@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Setup\Step;
 
-/*                                                                        *
- * This script belongs to the Flow package "TYPO3.Neos".                  *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\ApplicationContext;
@@ -39,7 +39,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep
 
         $docs = $congratulations->createElement('docsLink', 'TYPO3.Setup:LinkElement');
         $docs->setLabel('Read the documentation');
-        $docs->setProperty('href', 'http://neos.readthedocs.org/en/stable/');
+        $docs->setProperty('href', 'https://neos.readthedocs.org/');
         $docs->setProperty('target', '_blank');
 
         $contextEnv = \TYPO3\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
