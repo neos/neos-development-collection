@@ -1,7 +1,7 @@
 <?php
 namespace TYPO3\Neos\Routing\Exception;
 
- /*    /*
+/*
  * This file is part of the TYPO3.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io

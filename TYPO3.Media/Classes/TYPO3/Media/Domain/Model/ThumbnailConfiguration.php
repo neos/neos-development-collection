@@ -65,7 +65,7 @@ class ThumbnailConfiguration
     /**
      * @var boolean
      */
-    static protected $loggedDeprecation = false;
+    protected static $loggedDeprecation = false;
 
     /**
      * @param integer $width
