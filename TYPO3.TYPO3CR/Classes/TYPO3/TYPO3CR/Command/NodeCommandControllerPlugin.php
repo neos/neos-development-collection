@@ -462,7 +462,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $nodes = array();
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount,$queryBuilder) {
+        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
             try {
                 foreach ($node->getChildNodes() as $childNode) {
                     /** @var $childNode NodeInterface */
