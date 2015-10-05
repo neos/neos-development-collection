@@ -1393,7 +1393,7 @@ class NodeDataRepository extends Repository
     {
         $path = strtolower($path);
         $query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
-        $query->setParameter('path',  $path . '/%');
+        $query->setParameter('path', $path . '/%');
         $query->execute();
     }
 

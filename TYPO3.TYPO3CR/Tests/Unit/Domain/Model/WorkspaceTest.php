@@ -64,7 +64,7 @@ class WorkspaceTest extends UnitTestCase
         $mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
         $this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
 
-        $mockNodeService = $this->getMockBuilder(NodeService::CLASS)->disableOriginalConstructor()->getMock();
+        $mockNodeService = $this->getMockBuilder(NodeService::class)->disableOriginalConstructor()->getMock();
         $this->inject($currentWorkspace, 'nodeService', $mockNodeService);
 
         $existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();

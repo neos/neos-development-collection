@@ -87,15 +87,15 @@ class ParentsUntilOperationTest extends AbstractNodeTest
 
 
         $rootNode = $this->node->getNode('/');
-        $nodeA = $rootNode->createNode('a',  $testNodeType);
-        $nodeA->createNode('a1',  $testNodeType);
+        $nodeA = $rootNode->createNode('a', $testNodeType);
+        $nodeA->createNode('a1', $testNodeType);
         $nodeA->createNode('a2');
-        $nodeA->createNode('a3',  $testNodeType);
+        $nodeA->createNode('a3', $testNodeType);
         $nodeA->createNode('a4');
         $nodeA->createNode('a5');
-        $nodeB = $rootNode->createNode('b',  $testNodeType);
+        $nodeB = $rootNode->createNode('b', $testNodeType);
         $nodeB->createNode('b1');
-        $nodeB->createNode('b2',  $testNodeType);
+        $nodeB->createNode('b2', $testNodeType);
         $nodeB3 = $nodeB->createNode('b3');
         $nodeB3->createNode('b3a');
         $nodeB3->createNode('b3b');
