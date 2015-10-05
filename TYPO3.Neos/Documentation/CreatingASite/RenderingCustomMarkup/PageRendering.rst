@@ -51,9 +51,9 @@ markup::
 	    This website is powered by Neos, the next generation CMS, a free Open
 	    Source Enterprise Content Management System licensed under the GNU/GPL.
 
-	    Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.
+	    Neos is based on Flow, a powerful PHP application framework licensed under the MIT license.
 
-	    More information and contribution opportunities at http://neos.typo3.org and http://flow.typo3.org
+	    More information and contribution opportunities at https://www.neos.io
 	  -->
 	  <head>
 	    <meta charset="UTF-8" />
