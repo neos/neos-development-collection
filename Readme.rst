@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |Latest Stable Version| |License|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
