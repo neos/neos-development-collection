@@ -19,6 +19,11 @@ function(Ember, Button) {
 	 * Singleton.
 	 */
 	var SecondaryInspectorController = Ember.Object.extend({
+		actions: {
+			hide: function() {
+				return this.hide();
+			}
+		},
 
 		/**
 		 * Internal. The view class which is displayed in SecondaryInspectorView

@@ -11,6 +11,8 @@ function(
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
+			this._super();
+
 			var that = this,
 				url = $('link[rel="neos-masterplugins"]').attr('href');
 
@@ -40,8 +42,6 @@ function(
 					values: values
 				});
 			});
-
-			this._super();
 		}
 	});
 });

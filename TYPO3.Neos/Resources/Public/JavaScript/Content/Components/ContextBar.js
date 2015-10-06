@@ -7,7 +7,7 @@ define(
 	], function(Ember) {
 		return Ember.View.extend({
 			tagName: 'div',
-			elementId: ['neos-context-bar'],
+			elementId: 'neos-context-bar',
 			template: Ember.required()
 		});
 	}

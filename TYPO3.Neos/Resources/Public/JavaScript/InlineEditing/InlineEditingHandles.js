@@ -32,6 +32,29 @@ function (
 	InsertNodePanel
 ) {
 	return Ember.View.extend({
+		actions: {
+			toggleHidden: function() {
+				var entity = this.get('_node._vieEntity'),
+					value = !entity.get('typo3:_hidden');
+				this.set('_hidden', value);
+				entity.set('typo3:_hidden', value);
+				InspectorController.set('nodeProperties._hidden', value);
+				InspectorController.apply();
+			},
+
+			cut: function() {
+				ContentCommands.cut();
+			},
+
+			copy: function() {
+				ContentCommands.copy();
+			},
+
+			/** Content element actions **/
+			remove: function() {
+				DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
+			}
+		},
 		classNames: ['neos-handle-container'],
 		template: Ember.Handlebars.compile(template),
 
@@ -154,11 +177,6 @@ function (
 			this.set('_hidden', this.get('_node._vieEntity').get('typo3:_hidden'));
 		},
 
-		/** Content element actions **/
-		remove: function() {
-			DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
-		},
-
 		_hideToggleTitle: function() {
 			return this.get('_hidden') === true ? 'Unhide' : 'Hide';
 		}.property('_hidden'),
@@ -179,23 +197,6 @@ function (
 			}
 
 			return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_node.nodePath'));
-		}.property('nodeActions.clipboard', '_node'),
-
-		toggleHidden: function() {
-			var entity = this.get('_node._vieEntity'),
-				value = !entity.get('typo3:_hidden');
-			this.set('_hidden', value);
-			entity.set('typo3:_hidden', value);
-			InspectorController.set('nodeProperties._hidden', value);
-			InspectorController.apply();
-		},
-
-		cut: function() {
-			ContentCommands.cut();
-		},
-
-		copy: function() {
-			ContentCommands.copy();
-		}
+		}.property('nodeActions.clipboard', '_node')
 	});
 });

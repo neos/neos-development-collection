@@ -19,6 +19,32 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 	 * error messages otherwise.
 	 */
 	return FileUpload.extend({
+		actions: {
+			exchangeAspectRatio: function() {
+				var aspectRatioWidth = this.get('aspectRatioWidth'),
+					aspectRatioHeight = this.get('aspectRatioHeight');
+				this.setProperties({'aspectRatioWidth': aspectRatioHeight, 'aspectRatioHeight': aspectRatioWidth});
+			},
+
+			/****************************************
+			 * IMAGE REMOVE
+			 ***************************************/
+			remove: function() {
+				if (this.get('_mediaBrowserEditView')) {
+					SecondaryInspectorController.hide(this.get('_mediaBrowserEditView'));
+					this.set('_mediaBrowserEditView', null);
+				}
+				if (this.get('_mediaBrowserView')) {
+					SecondaryInspectorController.hide(this.get('_mediaBrowserView'));
+				}
+				this.set('_object', null);
+				this.set('_originalImageUri', null);
+				this.set('_previewImageUri', null);
+				this.set('_finalImageDimensions.width', null);
+				this.set('_finalImageDimensions.height', null);
+				this.set('value', '');
+			}
+		},
 
 		/****************************************
 		 * GENERAL SETUP
@@ -136,8 +162,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		loadingIndicator: null,
 
 		init: function () {
-			var that = this;
 			this._super();
+
+			var that = this;
 
 			// Create new instance per image editor to avoid side effects
 			this._initializeMediaView();
@@ -459,6 +486,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 				init: function () {
 					this._super();
+
 					var that = this,
 						configuration = parent.get('crop');
 					if (configuration.aspectRatio) {
@@ -606,17 +634,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					this.set('aspectRatioReducedNumerator', reducedRatio ? reducedRatio[0] : null);
 					this.set('aspectRatioReducedDenominator', reducedRatio ? reducedRatio[1] : null);
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
-
-				actions: {
-					exchangeAspectRatio: function () {
-						var aspectRatioWidth = this.get('aspectRatioWidth'),
-							aspectRatioHeight = this.get('aspectRatioHeight');
-						this.setProperties({
-							'aspectRatioWidth': aspectRatioHeight,
-							'aspectRatioHeight': aspectRatioWidth
-						});
-					}
-				},
 
 				/**
 				 * Reduce a numerator and denominator to it's smallest, integer ratio using Euclid's Algorithm

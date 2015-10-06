@@ -21,6 +21,10 @@ define(
 		classNameBindings: ['isModified:neos-modified', 'hasValidationErrors:neos-error', 'editorClassName'],
 		editorClassName: '',
 
+		// a reference to the InspectorController (set from the outside in the Handlebars template)
+		inspector: null,
+
+
 		_valueDidChange: function() {
 			if (this.get('inspector').isPropertyModified(this.get('propertyDefinition.key')) === true) {
 				this.set('isModified', true);
@@ -68,7 +72,8 @@ define(
 					elementId: propertyDefinition.elementId,
 					property: propertyDefinition.key,
 					propertyType: propertyDefinition.type,
-					inspectorBinding: this.inspectorBinding,
+					inspector: Ember.computed.alias('_propertyEditor.inspector'),
+					_propertyEditor: this,
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},
 				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
@@ -110,8 +115,11 @@ define(
 			});
 		},
 
-		didInsertElement: function() {
+		_addValidationObserver: function() {
+			if (!this.get('inspector.validationErrors')) {
+				return;
+			}
 			this.get('inspector.validationErrors').addObserver(this.get('propertyDefinition.key'), this, '_validationErrorsDidChange');
-		}
+		}.observes('inspector.validationErrors')
 	});
 });

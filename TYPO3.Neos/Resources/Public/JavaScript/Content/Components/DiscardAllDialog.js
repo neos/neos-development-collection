@@ -8,12 +8,13 @@ define(
 	],
 	function(Ember, $, PublishableNodes, AbstractModal, template) {
 		return AbstractModal.extend({
-			template: Ember.Handlebars.compile(template),
-
-			discard: function() {
-				PublishableNodes.discardAll();
-				this.destroy();
-			}
+			actions: {
+				discard: function() {
+					PublishableNodes.discardAll();
+					this.destroy();
+				}
+			},
+			template: Ember.Handlebars.compile(template)
 		});
 	}
 );

@@ -23,7 +23,7 @@ function(Ember, SecondaryInspectorController, template) {
 		// of the *view*, it is part of the normal view lifecycle and is created and destructed
 		// automatically.
 		contentView: function() {
-			return this.get('controller._viewClass').create();
+			return SecondaryInspectorController.get('_viewClass').create();
 		}.property('controller._viewClass')
 	});
 

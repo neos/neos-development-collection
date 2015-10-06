@@ -12,6 +12,15 @@ define(
 	'Shared/Configuration'
 ], function(Ember, $, LocalStorage, ResourceCache, Configuration) {
 	return Ember.Object.extend({
+		actions: {
+			toggleCollapsed: function(menuGroup) {
+				return this.toggleCollapsed(menuGroup);
+			},
+			toggleMenuPanelStickyMode: function() {
+				this.set('menuPanelStickyMode', !this.get('menuPanelStickyMode'));
+				this.set('isMenuPanelStickyModeShown', this.get('menuPanelStickyMode'));
+			}
+		},
 		configuration: null,
 		menuPanelMode: false,
 		menuPanelStickyMode: false,
@@ -41,20 +50,6 @@ define(
 				this.toggleCollapsed();
 				this.toggleMenuPanelStickyMode();
 			}
-		},
-
-		toggleCollapsed: function(menuGroup) {
-			if (!this.get('configuration.' + menuGroup)) {
-				this.set('configuration.' + menuGroup, false);
-			}
-			var newCollapsedState = this.toggleProperty('configuration.' + menuGroup);
-			this.propertyDidChange('configuration');
-			return newCollapsedState;
-		},
-
-		toggleMenuPanelStickyMode: function() {
-			this.set('menuPanelStickyMode', !this.get('menuPanelStickyMode'));
-			this.set('isMenuPanelStickyModeShown', this.get('menuPanelStickyMode'));
 		},
 
 		menuPanelStickyModeChanged: function() {
@@ -99,6 +94,15 @@ define(
 					});
 				}
 			}
-		}.observes('items').on('init')
+		}.observes('items').on('init'),
+
+		toggleCollapsed: function(menuGroup) {
+			if (!this.get('configuration.' + menuGroup)) {
+				this.set('configuration.' + menuGroup, false);
+			}
+			var newCollapsedState = this.toggleProperty('configuration.' + menuGroup);
+			this.propertyDidChange('configuration');
+			return newCollapsedState;
+		}
 	}).create();
 });

@@ -18,6 +18,7 @@ define([
 		 */
 		init: function() {
 			var that = this;
+
 			window.addEventListener('beforeunload', function(e) {
 				if (that.get('requestInProgress')) {
 					e.preventDefault();

@@ -42,6 +42,7 @@ define(
 
 			init: function() {
 				this._super();
+
 				this.appendTo('#neos-application');
 			},
 

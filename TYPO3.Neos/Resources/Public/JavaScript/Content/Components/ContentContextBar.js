@@ -26,8 +26,12 @@ define(
 		fullScreenController: FullScreenController,
 		Configuration: Configuration,
 		init: function() {
-			this.updateCurrentUri();
+			this._super();
+
 			var that = this;
+
+			this.updateCurrentUri();
+
 			ContentModule.on('pageLoaded', function() {
 				that.updateCurrentUri();
 			});

@@ -17,7 +17,6 @@ function(
 	template,
 	I18n
 ) {
-
 	/**
 	 * Ember view which displays the content dimensions selector
 	 *
@@ -39,6 +38,7 @@ function(
 		 */
 		didInsertElement: function() {
 			var that = this;
+			this._initialize();
 			this.$('.neos-content-dimension-selector-summary').on('click', function() {
 				that.toggleProperty('isActive');
 			});
@@ -49,22 +49,22 @@ function(
 		 */
 		init: function() {
 			this._super();
-			this._initialize();
-			this.get('controller')._loadConfiguration();
+
+			ContentDimensionController._loadConfiguration();
 		},
 
 		/**
 		 * Hide the dimensions selector if no dimensions can be selected anyway
 		 */
 		isVisible: function() {
-			return this.get('controller.dimensions').length > 0;
+			return ContentDimensionController.get('dimensions').length > 0;
 		}.property('controller.dimensions'),
 
 		/**
 		 * The "Cancel" and "Apply" buttons only need to be shown and used when more than one dimension is available
 		 */
 		isMultiDimensionSelection: function() {
-			return this.get('controller.dimensions').length > 1;
+			return ContentDimensionController.get('dimensions').length > 1;
 		}.property('controller.dimensions'),
 
 		/**
@@ -76,17 +76,26 @@ function(
 		 */
 		_initialize: function() {
 			var that = this;
+			var dimensions = ContentDimensionController.get('dimensions');
+
+			if (!this.$()) {
+				return;
+			}
+
 			Ember.run.next(this, function() {
-				that.$('select').chosen({disable_search_threshold: 10}).change(function(event) {
-					that._updateValue();
-					if (that.get('isMultiDimensionSelection')) {
-						that.get('controller')._updateAvailableDimensionPresetsAfterChoosingPreset(that.get('controller.dimensions').findBy('identifier', event.target.name));
-					} else {
-						that.get('controller').applySelection();
-					}
-				});
+				if (that.$()) {
+					that.$('select').chosen({disable_search_threshold: 10}).change(function(event) {
+						that._updateValue();
+						if (that.get('isMultiDimensionSelection')) {
+							ContentDimensionController._updateAvailableDimensionPresetsAfterChoosingPreset(dimensions.findBy('identifier', event.target.name));
+						} else {
+							ContentDimensionController.applySelection();
+						}
+					});
+				}
 			});
-			this.get('controller.dimensions').forEach(function(dimension) {
+
+			dimensions.forEach(function(dimension) {
 				dimension.get('presets').forEach(function(preset) {
 					preset.addObserver('disabled', function() {
 						Ember.run.next(this, function() {
@@ -101,16 +110,19 @@ function(
 		 * Update the currently selected dimension(s) in the selector box(es)
 		 */
 		_updateValue: function() {
-			var controller = this.get('controller');
-			this.$('select').each(function() {
-				var dimensionIdentifier = $(this).attr('name');
-				var dimensionPresetIdentifier = $(this).val();
-				var dimension = controller.get('dimensions').findBy('identifier', dimensionIdentifier);
-				var dimensionPreset = dimension.get('presets').findBy('identifier', dimensionPresetIdentifier);
+			var dimensions = ContentDimensionController.get('dimensions');
+			var presets = ContentDimensionController.get('presets');
 
-				dimension.set('selected', dimensionPreset);
-				dimensionPreset.set('selected', true);
-				controller.set('selectedDimensions.' + dimensionIdentifier, dimensionPreset.values);
+			if(dimensions && presets) {
+				$('select').each(function() {
+					var dimensionIdentifier = $(this).attr('name');
+					var dimensionPresetIdentifier = $(this).val();
+					var dimension = dimensions.findBy('identifier', dimensionIdentifier);
+					var dimensionPreset = presets.findBy('identifier', dimensionPresetIdentifier);
+
+                    dimension.set('selected', dimensionPreset);
+                    dimensionPreset.set('selected', true);
+					ContentDimensionController.set('selectedDimensions.' + dimensionIdentifier, dimensionPreset.values);
 			});
 		},
 

@@ -239,6 +239,7 @@ define(
 				localXhr = this._prepareXhr();
 
 			LoadingIndicator.start();
+
 			NodeEndpoint.createAndRender(
 				referenceNode.get('nodePath'),
 				typoScriptPath,

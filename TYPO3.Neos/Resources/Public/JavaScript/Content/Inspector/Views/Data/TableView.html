@@ -1,10 +1,10 @@
 <table class="neos-tableview-table">
-	{{#each row in view._rowsValues}}
+	{{#each view._rowsValues as |row|}}
 		<tr>
-			{{#each column in row}}
+			{{#each row as |column|}}
 				<td>
 					{{#if column.icon}}
-						<i {{bindAttr class=":neos-icon column.icon"}}></i>
+						<i class="neos-icon {{column.icon}}"></i>
 					{{/if}}
 					{{column.value}}{{column.suffix}}
 				</td>

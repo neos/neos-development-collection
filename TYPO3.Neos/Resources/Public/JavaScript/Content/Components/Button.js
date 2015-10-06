@@ -29,22 +29,6 @@ define(
 				return icon !== '' ? 'icon-' + icon : '';
 			}.property('icon'),
 
-			/**
-			 * @private
-			 * Overrides `TargetActionSupport`'s `targetObject` computed
-			 * property to use Handlebars-specific path resolution.
-			 * @property targetObject
-			 */
-			targetObject: Ember.computed(function() {
-				var target = this.get('target'),
-					root = this.get('context'),
-					data = this.get('templateData');
-
-				if (typeof target !== 'string') { return target; }
-
-				return Ember.Handlebars.get(root, target, { data: data });
-			}).property('target'),
-
 			mouseDown: function() {
 				if (!this.get('disabled')) {
 					this.set('isActive', true);

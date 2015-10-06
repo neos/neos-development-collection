@@ -42,7 +42,187 @@ define(
 		var documentMetadata = $('#neos-document-metadata');
 
 		return AbstractNodeTree.extend({
-			elementId: ['neos-node-tree'],
+			actions: {
+				refresh: function() {
+					return this.refresh();
+				},
+
+				editNode: function(node) {
+					if (typeof node === 'undefined') {
+						if (this.get('editNodeTitleMode') === true) {
+							this.$().find('input#editNode').blur();
+							return;
+						}
+						node = this.get('activeNode');
+					}
+
+					if (!node) {
+						Notification.info('You have to select a node');
+					}
+
+					// Skip editing site nodes
+					if (node.getLevel() < 2) {
+						Notification.info('The Root node cannot be deleted.');
+						return;
+					}
+
+					var croppedTitle = node.data.title,
+						prevTitle = node.data.fullTitle,
+						tree = node.tree,
+						that = this;
+
+					that.set('editNodeTitleMode', true);
+					tree.$widget.unbind();
+
+					var input = $('<input />').attr({id: 'editNode', value: prevTitle});
+					$('.neos-dynatree-title', node.span).html(input);
+
+					// Focus <input> and bind keyboard handler
+					input.focus().keydown(function(event) {
+						switch (event.which) {
+							case 27: // [esc]
+								// discard changes on [esc]
+								$('input#editNode').val(prevTitle);
+								$(this).blur();
+								break;
+							case 13: // [enter]
+								// simulate blur to accept new value
+								$(this).blur();
+								break;
+						}
+					}).blur(function() {
+						//TODO please don't touch this part it is really fragile so this works in FF and chrome
+						// Accept new value, when user leaves <input>
+						var newTitle = input.val(),
+							title;
+						// Re-enable mouse and keyboard handling
+						tree.$widget.bind();
+						node.activate();
+
+						if (prevTitle === newTitle || newTitle === '') {
+							title = croppedTitle;
+						} else {
+							title = newTitle;
+							node.setLazyNodeStatus(that.statusCodes.loading);
+							NodeEndpoint.update(
+								{
+									__contextNodePath: node.data.key,
+									title: title
+								}
+							).then(
+								function(result) {
+									if (result !== null && result.success === true) {
+										var selectedNode = NodeSelection.get('selectedNode'),
+											entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
+										if (entity) {
+											entity.set('typo3:title', title);
+										}
+										if (node.data.key === selectedNode.$element.attr('about')) {
+											InspectorController.set('cleanProperties.title', title);
+											InspectorController.set('nodeProperties.title', title);
+										}
+										var isCurrentNode = node.data.key === that.get('pageNodePath');
+										node.data.href = result.data.nextUri;
+										node.data.title = title;
+										node.data.fullTitle = title;
+										node.setLazyNodeStatus(that.statusCodes.ok);
+										node.render();
+										if (isCurrentNode) {
+											ContentModule.loadPage(node.data.href);
+										}
+									} else {
+										Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
+										node.setLazyNodeStatus(that.statusCodes.error);
+									}
+								}
+							);
+						}
+
+						node.activate();
+						input.parent().text(title);
+						input.remove();
+						setTimeout(function() {
+							that.set('editNodeTitleMode', false);
+						}, 50);
+					});
+				},
+
+				createNode: function(activeNode, title, nodeType, iconClass, position) {
+					var that = this,
+						data = {
+							title: title,
+							nodeType: nodeType,
+							addClass: 'typo3_neos-page neos-matched',
+							iconClass: iconClass,
+							expand: false
+						},
+						newNode;
+
+					switch (position) {
+						case 'before':
+							newNode = activeNode.getParent().addChild(data, activeNode);
+							break;
+						case 'after':
+							newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
+							break;
+						case 'into':
+							newNode = activeNode.addChild(data);
+					}
+					var prevTitle = newNode.data.tooltip,
+						tree = newNode.tree;
+
+					if (position === 'into') {
+						activeNode.expand(true);
+					}
+
+					that.set('editNodeTitleMode', true);
+					tree.$widget.unbind();
+
+					$('> .neos-dynatree-title', newNode.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
+					// Focus <input> and bind keyboard handler
+					$('input#editCreatedNode').focus().select().keydown(function(event) {
+						switch (event.which) {
+							case 27: // [esc]
+								// discard changes on [esc]
+								$('input#editNode').val(prevTitle);
+								$(this).blur();
+								break;
+							case 13: // [enter]
+								// simulate blur to accept new value
+								$(this).blur();
+								break;
+						}
+					}).blur(function(event) {
+						//TODO please don't touch this part it is really fragile so this works in FF and chrome
+						var newTitle = $('input#editCreatedNode').val(),
+							title;
+
+						// Accept new value, when user leaves <input>
+						if (prevTitle === newTitle || newTitle === '') {
+							title = prevTitle;
+						} else {
+							title = newTitle;
+						}
+						title = title || 'unnamed';
+						// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
+						if (that.get('editNodeTitleMode') === true) {
+							that.set('editNodeTitleMode', false);
+							newNode.activate();
+							newNode.setTitle(title);
+							that.persistNode(activeNode, newNode, nodeType, title, position);
+						}
+					});
+				},
+
+				clearSearchTerm: function() {
+					var searchIsEmpty = this.get('searchTermIsEmpty');
+					this.set('searchTerm', '');
+					if (!searchIsEmpty) {
+						this.filterTree();
+					}
+				}
+			},
+			elementId: 'neos-node-tree',
 			classNameBindings: ['filtering:neos-node-tree-filtering'],
 			template: Ember.Handlebars.compile(template),
 			treeSelector: '#neos-node-tree-tree',
@@ -73,14 +253,6 @@ define(
 				return this.get('searchTerm') === '';
 			}.property('searchTerm'),
 
-			clearSearchTerm: function() {
-				var searchIsEmpty = this.get('searchTermIsEmpty');
-				this.set('searchTerm', '');
-				if (!searchIsEmpty) {
-					this.filterTree();
-				}
-			},
-
 			searchField: Ember.TextField.extend({
 				_delay: 300,
 				_value: '',
@@ -106,6 +278,7 @@ define(
 
 			init: function() {
 				this._super();
+
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
 				this.set('baseNodeType', Configuration.get('UserInterface.navigateComponent.nodeTree.presets.default.baseNodeType'));
 
@@ -258,6 +431,11 @@ define(
 				}
 			}.observes('pageNodePath'),
 
+			refresh: function() {
+				this._updateMetaInformation();
+				this.filterTree();
+			},
+
 			getPageTreeNode: function() {
 				if (this.$nodeTree && this.$nodeTree.children().length > 0) {
 					return this.$nodeTree.dynatree('getTree').getNodeByKey(this.get('pageNodePath'));
@@ -281,173 +459,6 @@ define(
 				EventDispatcher.trigger('nodeMoved', node);
 			},
 
-			editNode: function(node) {
-				if (typeof node === 'undefined') {
-					if (this.get('editNodeTitleMode') === true) {
-						this.$().find('input#editNode').blur();
-						return;
-					}
-					node = this.get('activeNode');
-				}
-
-				if (!node) {
-					Notification.info('You have to select a node');
-				}
-
-				// Skip editing site nodes
-				if (node.getLevel() < 2) {
-					Notification.info('The Root node cannot be deleted.');
-					return;
-				}
-
-				var croppedTitle = node.data.title,
-					prevTitle = node.data.fullTitle,
-					tree = node.tree,
-					that = this;
-
-				that.set('editNodeTitleMode', true);
-				tree.$widget.unbind();
-
-				var input = $('<input />').attr({id: 'editNode', value: prevTitle});
-				$('.neos-dynatree-title', node.span).html(input);
-
-				// Focus <input> and bind keyboard handler
-				input.focus().keydown(function(event) {
-					switch (event.which) {
-						case 27: // [esc]
-							// discard changes on [esc]
-							$('input#editNode').val(prevTitle);
-							$(this).blur();
-							break;
-						case 13: // [enter]
-							// simulate blur to accept new value
-							$(this).blur();
-							break;
-					}
-				}).blur(function() {
-					//TODO please don't touch this part it is really fragile so this works in FF and chrome
-					// Accept new value, when user leaves <input>
-					var newTitle = input.val(),
-						title;
-					// Re-enable mouse and keyboard handling
-					tree.$widget.bind();
-					node.activate();
-
-					if (prevTitle === newTitle || newTitle === '') {
-						title = croppedTitle;
-					} else {
-						title = newTitle;
-						node.setLazyNodeStatus(that.statusCodes.loading);
-						NodeEndpoint.update(
-							{
-								__contextNodePath: node.data.key,
-								title: title
-							}
-						).then(
-							function(result) {
-								if (result !== null && result.success === true) {
-									var selectedNode = NodeSelection.get('selectedNode'),
-										entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-									if (entity) {
-										entity.set('typo3:title', title);
-									}
-									if (node.data.key === selectedNode.$element.attr('about')) {
-										InspectorController.set('cleanProperties.title', title);
-										InspectorController.set('nodeProperties.title', title);
-									}
-									var isCurrentNode = node.data.key === that.get('pageNodePath');
-									node.data.href = result.data.nextUri;
-									node.data.title = title;
-									node.data.fullTitle = title;
-									node.setLazyNodeStatus(that.statusCodes.ok);
-									node.render();
-									if (isCurrentNode) {
-										ContentModule.loadPage(node.data.href);
-									}
-								} else {
-									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
-									node.setLazyNodeStatus(that.statusCodes.error);
-								}
-							}
-						);
-					}
-
-					node.activate();
-					input.parent().text(title);
-					input.remove();
-					setTimeout(function() {
-						that.set('editNodeTitleMode', false);
-					}, 50);
-				});
-			},
-
-			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var that = this,
-					data = {
-						title: title,
-						nodeType: nodeType,
-						addClass: 'typo3_neos-page neos-matched',
-						iconClass: iconClass,
-						expand: false
-					},
-					newNode;
-
-				switch (position) {
-					case 'before':
-						newNode = activeNode.getParent().addChild(data, activeNode);
-						break;
-					case 'after':
-						newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
-						break;
-					case 'into':
-						newNode = activeNode.addChild(data);
-				}
-				var prevTitle = newNode.data.tooltip,
-					tree = newNode.tree;
-
-				if (position === 'into') {
-					activeNode.expand(true);
-				}
-
-				that.set('editNodeTitleMode', true);
-				tree.$widget.unbind();
-
-				$('> .neos-dynatree-title', newNode.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
-				// Focus <input> and bind keyboard handler
-				$('input#editCreatedNode').focus().select().keydown(function(event) {
-					switch (event.which) {
-						case 27: // [esc]
-							// discard changes on [esc]
-							$('input#editNode').val(prevTitle);
-							$(this).blur();
-							break;
-						case 13: // [enter]
-							// simulate blur to accept new value
-							$(this).blur();
-							break;
-					}
-				}).blur(function(event) {
-					//TODO please don't touch this part it is really fragile so this works in FF and chrome
-					var newTitle = $('input#editCreatedNode').val(),
-						title;
-
-					// Accept new value, when user leaves <input>
-					if (prevTitle === newTitle || newTitle === '') {
-						title = prevTitle;
-					} else {
-						title = newTitle;
-					}
-					title = title || 'unnamed';
-					// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
-					if (that.get('editNodeTitleMode') === true) {
-						that.set('editNodeTitleMode', false);
-						newNode.activate();
-						newNode.setTitle(title);
-						that.persistNode(activeNode, newNode, nodeType, title, position);
-					}
-				});
-			},
-
 			afterPersistNode: function(node) {
 				EventDispatcher.trigger('nodeCreated');
 
@@ -457,11 +468,6 @@ define(
 				}
 
 				ContentModule.loadPage(node.data.href);
-			},
-
-			refresh: function() {
-				this._updateMetaInformation();
-				this.filterTree();
 			},
 
 			/**

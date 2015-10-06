@@ -93,15 +93,16 @@ define([
 		 * @private
 		 */
 		_request: function(url, requestMethod, optionsOverride) {
-			var that = this,
-				isSafeRequest = (requestMethod === 'GET' || requestMethod === 'HEAD'),
-				options = {
-					type: requestMethod,
-					url: url,
-					data: {}
-				};
+			var that = this;
+			var isSafeRequest = (requestMethod === 'GET' || requestMethod === 'HEAD');
+			var options = {
+				type: requestMethod,
+				url: url,
+				data: {}
+			};
+			var request;
 
-			if (optionsOverride) {
+				if (optionsOverride) {
 				$.extend(options, optionsOverride);
 			}
 
@@ -113,15 +114,15 @@ define([
 				console.log('HttpClient', requestMethod, url, options);
 			}
 
-			var request,
-				promise = Ember.RSVP.Promise(function(resolve, reject) {
+			var promise = new Ember.RSVP.Promise(function(resolve, reject) {
 					options = $.extend(options, {
 						success: function(data, textStatus, xhr) {
-							if (!isSafeRequest) {
-								RequestManager.remove(xhr);
-							} else {
+							if (isSafeRequest) {
 								that.set('_lastSuccessfulTransfer', new Date());
+							} else {
+								RequestManager.remove(xhr);
 							}
+
 							that.set('_failedRequest', false);
 							that._success(resolve, data, textStatus, xhr);
 						},
@@ -129,6 +130,7 @@ define([
 							if (!isSafeRequest) {
 								RequestManager.remove(xhr);
 							}
+
 							if (xhr.status === 401) {
 								LoginDialog.show(function() {
 									if (isSafeRequest) {
@@ -144,7 +146,9 @@ define([
 							}
 						}
 					});
+
 					request = $.ajax(options);
+
 					if (!isSafeRequest) {
 						RequestManager.add(request);
 					}

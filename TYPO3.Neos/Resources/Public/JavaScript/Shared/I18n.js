@@ -17,8 +17,8 @@
  *
  * Data binding::
  *
- *   {{translate idBinding="view.label" fallback="Default label"}}
- *   {{translate idBinding="view.label" fallbackBinding="view.fallbackLabel"}}
+ *   {{translate id=view.label fallback="Default label"}}
+ *   {{translate id=view.label fallback=view.fallbackLabel}}
  *
  * All arguments are allowed to data bind.
  * Allowed identifier combinations::

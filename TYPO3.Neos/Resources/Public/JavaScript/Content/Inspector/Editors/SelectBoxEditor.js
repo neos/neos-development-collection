@@ -53,6 +53,7 @@ define([
 						content: this
 					}));
 				}
+
 				this._super();
 			}
 		})
@@ -91,6 +92,7 @@ define([
 
 		init: function() {
 			this._super();
+
 			this.off('didInsertElement', this, this._triggerChange);
 			this.on('change', function() {
 				this._change();

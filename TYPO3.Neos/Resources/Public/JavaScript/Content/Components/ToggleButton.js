@@ -8,12 +8,13 @@ define(
 	],
 	function (Ember, Button) {
 		return Button.extend({
+			actions: {
+				toggle: function() {
+					this.set('pressed', !this.get('pressed'));
+				}
+			},
 			classNameBindings: ['pressed:neos-pressed'],
 			pressed: false,
-
-			toggle: function() {
-				this.set('pressed', !this.get('pressed'));
-			},
 
 			mouseUp: function(event) {
 				if (this.get('isActive')) {

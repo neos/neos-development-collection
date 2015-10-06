@@ -5,7 +5,7 @@
 	{{view view.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group="content"}}
 	{{#collection tagName="div" classNames="neos-menu-list" contentBinding="items.sites"}}
 		{{#if uri}}
-			<a href="{{unbound uri}}" title="{{unbound nodeName}}" {{bindAttr class="active:neos-active"}}>
+			<a href="{{unbound uri}}" title="{{unbound nodeName}}" class="{{if active 'neos-active'}}">
 				<i class="icon-globe"></i> {{unbound name}}
 			</a>
 		{{else}}
@@ -33,4 +33,4 @@
 	{{/unless}}
 {{/collection}}
 
-<button id="neos-menu-sticky-button" {{bindAttr class=":neos-button controller.menuPanelStickyMode:neos-pressed"}} {{action "toggleMenuPanelStickyMode" target="controller"}}></button>
+<button id="neos-menu-sticky-button" class="neos-button {{if controller.menuPanelStickyMode 'neos-pressed'}}" {{action "toggleMenuPanelStickyMode" target=controller}}></button>

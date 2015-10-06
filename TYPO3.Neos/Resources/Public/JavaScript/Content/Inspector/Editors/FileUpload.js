@@ -10,6 +10,12 @@ define(
 ],
 function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 	return Ember.View.extend({
+		actions: {
+			upload: function() {
+				this.set('_uploadInProgress', true);
+				this._uploader.start();
+			}
+		},
 		value: '',
 
 		/**
@@ -38,11 +44,12 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		template: Ember.Handlebars.compile(template),
 
 		init: function() {
+			this._super();
+
 			var id = this.get('elementId');
 			this.set('_containerId', 'typo3-fileupload-' + id);
 			this.set('_browseButtonId', 'typo3-fileupload-browsebutton-' + id);
 			this.set('_fileDropZoneId', 'typo3-fileupload-dropzone-' + id);
-			return this._super();
 		},
 
 		didInsertElement: function() {
@@ -124,12 +131,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		fileUploaded: function() {
 			this.set('_uploadInProgress', false);
 			this.set('_uploadButtonShown', false);
-		},
-
-		upload: function() {
-			this.set('_uploadInProgress', true);
-			this._uploader.start();
 		}
-
 	});
 });

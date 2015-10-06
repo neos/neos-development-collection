@@ -46,6 +46,7 @@ function(
 		SecondaryInspectorView: SecondaryInspectorView,
 		InlineEditingHandles: InlineEditingHandles,
 
+
 		didInsertElement: function() {
 			// Make sure to create the top bar *after* the DOM is loaded completely,
 			// and the #neos-top-bar is transmitted from the server.

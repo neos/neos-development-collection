@@ -14,6 +14,16 @@ define(
 	NodeSelection
 ) {
 	return Ember.View.extend({
+		actions: {
+			toggleCollapsed: function() {
+				this.set('_collapsed', !this.get('_collapsed'));
+				if (!this.get('inspector.configuration.' + this.get('_nodeType'))) {
+					this.set('inspector.configuration.' + this.get('_nodeType'), {});
+				}
+				this.set('inspector.configuration.' + this.get('_nodeType') + '.' + this.get('group'), this.get('_collapsed'));
+				Ember.propertyDidChange(this.get('inspector'), 'configuration');
+			}
+		},
 		PropertyEditor: PropertyEditor,
 		ViewView: ViewView,
 		_hasValidationErrors: false,
@@ -42,14 +52,6 @@ define(
 			});
 		},
 
-		toggleCollapsed: function() {
-			this.set('_collapsed', !this.get('_collapsed'));
-			if (!this.get('inspector.configuration.' + this.get('_nodeType'))) {
-				this.set('inspector.configuration.' + this.get('_nodeType'), {});
-			}
-			this.set('inspector.configuration.' + this.get('_nodeType') + '.' + this.get('groupName'), this.get('_collapsed'));
-			Ember.propertyDidChange(this.get('inspector'), 'configuration');
-		},
 
 		_onCollapsedChange: function() {
 			var $content = this.$().find('.neos-inspector-field,.neos-inspector-view');

@@ -15,7 +15,7 @@ function (
 
 		// Private API: set when extending
 		desiredPosition: 'after',
-		allowedPositions: null,
+		allowedPositions: '',
 		title: null,
 		iconClass: null,
 		mouseUp: function(event) {},

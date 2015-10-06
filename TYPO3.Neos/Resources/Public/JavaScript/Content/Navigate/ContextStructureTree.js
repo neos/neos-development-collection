@@ -38,7 +38,7 @@ define(
 	var documentMetadata = $('#neos-document-metadata');
 
 	return AbstractNodeTree.extend({
-		elementId: ['neos-context-structure'],
+		elementId: 'neos-context-structure',
 		template: Ember.Handlebars.compile(template),
 		controller: NavigatePanelController,
 		nodeSelection: NodeSelection,
@@ -71,7 +71,9 @@ define(
 
 		init: function() {
 			this._super();
+
 			var that = this;
+
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});

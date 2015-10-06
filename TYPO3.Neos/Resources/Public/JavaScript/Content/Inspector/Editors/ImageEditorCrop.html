@@ -2,7 +2,7 @@
 	<span>
 		<i class="icon-crop"></i>
 		{{#if view.aspectRatioReduced}}
-			<span {{bindAttr title="view.aspectRatioReduced"}}>{{view.aspectRatioReduced}}</span>
+			<span title={{view.aspectRatioReduced}}>{{view.aspectRatioReduced}}</span>
 			{{#if view.aspectRatioLocked}}
 				<i class="icon-lock"></i>
 			{{/if}}
@@ -12,11 +12,11 @@
 		{{view Ember.Select contentBinding="view.aspectRatioOptions" optionLabelPath="content.label" optionValuePath="content.key" valueBinding="view.selection"}}
 		{{#if view.aspectRatioAllowCustom}}
 			{{input valueBinding="view.aspectRatioWidth" type="number"}}
-			<button {{action "exchangeAspectRatio" target="view"}}><i class="icon-exchange"></i></button>
+			<button {{action "exchangeAspectRatio" target=view}}><i class="icon-exchange"></i></button>
 			{{input valueBinding="view.aspectRatioHeight" type="number"}}
 		{{else}}
-			<input {{bindAttr value="view.aspectRatioWidth"}} type="number" readonly="readonly" />
-			<input {{bindAttr value="view.aspectRatioHeight"}} type="number" readonly="readonly" />
+			<input value={{view.aspectRatioWidth}} type="number" readonly="readonly" />
+			<input value={{view.aspectRatioHeight}} type="number" readonly="readonly" />
 		{{/if}}
 	{{/unless}}
 </div>

@@ -18,6 +18,7 @@ function(Ember, $) {
 
 		init: function() {
 			this.setProperties(window.T3Configuration);
+
 			delete window.T3Configuration;
 		},
 

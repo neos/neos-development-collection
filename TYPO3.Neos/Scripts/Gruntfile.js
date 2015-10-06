@@ -232,7 +232,8 @@ module.exports = function (grunt) {
 			// This file needs jQueryWithDependencies first
 			ember: {
 				src: [
-					libraryPath + 'emberjs/ember-1.0.0.js',
+					libraryPath + 'emberjs/ember-template-compiler.js',
+					libraryPath + 'emberjs/ember-2.0.0-beta.2.js',
 					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',

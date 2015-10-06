@@ -28,6 +28,14 @@ define(
 	UserPreferenceEndpoint
 ) {
 	return Ember.Controller.extend({
+		actions: {
+			activateMode: function(mode) {
+				this.set('currentlyActiveMode', mode);
+			},
+			toggleEditPreviewPanelMode: function() {
+				return this.toggleEditPreviewPanelMode();
+			}
+		},
 		editPreviewPanelMode: false,
 		currentlyActiveMode: null,
 		previousActiveMode: null,
@@ -82,6 +90,7 @@ define(
 
 		init: function() {
 			var that = this;
+
 			ResourceCache.getItem(Configuration.get('EditPreviewDataUri')).then(
 				function(data) {
 					that.set('configuration', data);
@@ -142,12 +151,6 @@ define(
 
 		_editPreviewPanelModeChanged: function() {
 			LocalStorage.setItem('editPreviewPanelMode', this.get('editPreviewPanelMode'));
-		}.observes('editPreviewPanelMode'),
-
-		actions: {
-			activateMode: function(mode) {
-				this.set('currentlyActiveMode', mode);
-			}
-		}
+		}.observes('editPreviewPanelMode')
 	}).create();
 });

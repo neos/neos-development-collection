@@ -18,6 +18,11 @@ define(
 	Mousetrap
 ) {
 	return Ember.Controller.extend({
+		actions: {
+			toggleFullScreen: function() {
+				return this.toggleFullScreen();
+			}
+		},
 		fullScreenMode: false,
 
 		init: function() {
@@ -34,9 +39,9 @@ define(
 				var that = this;
 				$('body')
 					.append($('<div class="neos" />').addClass(fullScreenCloseClass).append($('<button class="neos-button neos-pressed"><i class="icon-resize-small"></i></button>'))
-					.on('click', function() {
-						that.toggleFullScreen();
-					}));
+						.on('click', function() {
+							that.toggleFullScreen();
+						}));
 				Mousetrap.bind('esc', function() {
 					that.toggleFullScreen();
 				});

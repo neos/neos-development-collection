@@ -6,6 +6,11 @@ define(
 	],
 	function (Ember, $, Mousetrap) {
 		return Ember.View.extend({
+			actions: {
+				cancel: function() {
+					this.destroy();
+				}
+			},
 			classNames: ['neos-overlay-component'],
 
 			init: function() {
@@ -31,9 +36,6 @@ define(
 				Mousetrap.unbind('esc');
 			},
 
-			cancel: function() {
-				this.destroy();
-			}
 		});
 	}
 );

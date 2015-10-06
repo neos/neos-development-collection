@@ -10,6 +10,7 @@ function(Ember, $) {
 
 		init: function() {
 			var that = this;
+
 			window.addEventListener('beforeunload', function(e) {
 				if (that.get('savePending')) {
 					e.preventDefault();

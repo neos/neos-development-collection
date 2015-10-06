@@ -15,11 +15,11 @@ function(
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
+			this._super();
+
 			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			this._loadOptionsOnChange();
 			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
-
-			this._super();
 		},
 
 		_loadOptionsOnChange: function() {

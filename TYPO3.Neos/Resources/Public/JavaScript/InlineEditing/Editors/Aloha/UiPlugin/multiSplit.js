@@ -33,6 +33,7 @@ define([
 		 */
 		init: function () {
 			this._super();
+
 			var that = this,
 				element = this.element = $('<span>'),
 				select = this.select;

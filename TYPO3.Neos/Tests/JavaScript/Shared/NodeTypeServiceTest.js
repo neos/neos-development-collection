@@ -10,28 +10,28 @@
 			return {
 				getItem: function(resourceUri) {
 					if (resourceUri === 'NodeTypeSchemaUri') {
-						var result = Ember.Deferred.create();
-						result.resolve({
-							inheritanceMap: {
-								subTypes: {
-									'TYPO3.Neos:Document': [
-										'TYPO3.Neos:Shortcut',
-										'TYPO3.Neos.NodeTypes:Page',
-										'TYPO3.Neos:Page',
-										'TYPO3.NeosDemoTypo3Org:Chapter',
-										'TYPO3.NonExisting:NodeType'
-									]
+						return new Ember.RSVP.Promise(function(resolve, reject) {
+							resolve({
+								inheritanceMap: {
+									subTypes: {
+										'TYPO3.Neos:Document': [
+											'TYPO3.Neos:Shortcut',
+											'TYPO3.Neos.NodeTypes:Page',
+											'TYPO3.Neos:Page',
+											'TYPO3.NeosDemoTypo3Org:Chapter',
+											'TYPO3.NonExisting:NodeType'
+										]
+									}
+								},
+								nodeTypes: {
+									'TYPO3.Neos:Document': {},
+									'TYPO3.Neos:Shortcut': {},
+									'TYPO3.Neos.NodeTypes:Page': {},
+									'TYPO3.Neos:Page': {},
+									'TYPO3.NeosDemoTypo3Org:Chapter': {}
 								}
-							},
-							nodeTypes: {
-								'TYPO3.Neos:Document': {},
-								'TYPO3.Neos:Shortcut': {},
-								'TYPO3.Neos.NodeTypes:Page': {},
-								'TYPO3.Neos:Page': {},
-								'TYPO3.NeosDemoTypo3Org:Chapter': {}
-							}
+							});
 						});
-						return result;
 					}
 				}
 			};

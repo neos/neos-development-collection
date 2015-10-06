@@ -7,6 +7,35 @@ define(
 ],
 function (Ember, $, I18n, template) {
 	return Ember.View.extend({
+		actions: {
+			/**
+			 * @return {void}
+			 */
+			open: function() {
+				if (this.get('isOpen') === false) {
+					this.toggle();
+					this._registerEventHandler();
+				}
+			},
+
+			close: function() {
+				return this.close();
+			},
+
+			/**
+			 * @return {void}
+			 */
+			reset: function() {
+				this.close();
+				this.set('hrValue', '');
+				this.$('.neos-editor-datetimepicker').datetimepicker('update', null);
+				this.set('value', '');
+			},
+
+			toggle: function() {
+				return this.toggle();
+			}
+		},
 		attributeBindings: ['name', 'value'],
 		value: '',
 		hrValue: '',
@@ -74,7 +103,7 @@ function (Ember, $, I18n, template) {
 			readonly: true,
 			action: 'open',
 			focusIn: function() {
-				this.get('parentView').open();
+				this.get('parentView').send('open');
 			}
 		}),
 
@@ -172,16 +201,6 @@ function (Ember, $, I18n, template) {
 		/**
 		 * @return {void}
 		 */
-		open: function() {
-			if (this.get('isOpen') === false) {
-				this.toggle();
-				this._registerEventHandler();
-			}
-		},
-
-		/**
-		 * @return {void}
-		 */
 		close: function() {
 			if (this.get('isOpen') === true) {
 				this.toggle();
@@ -267,7 +286,7 @@ function (Ember, $, I18n, template) {
 			$(document).on('mousedown.neos-datetimepicker', function(e) {
 				// Clicked outside the datetimepicker, hide it
 				if ($(e.target).parents('.neos-editor-datetimepicker').length === 0) {
-					that.close();
+					that.send('close');
 					// Remove event handler if the datepicker is not open
 					$(document).off('mousedown.neos-datetimepicker')
 				}
