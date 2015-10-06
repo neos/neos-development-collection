@@ -1,0 +1,13 @@
+exclude_paths:
+  - 'TYPO3.Media/Resources/Public/Libraries/*'
+  - 'TYPO3.Neos/Resources/Public/Library/*'
+  - 'TYPO3.Neos/Tests/*'
+  - 'TYPO3.Media/Tests/*'
+  - 'TYPO3.Neos.Kickstarter/Tests/*'
+  - 'TYPO3.Neos.NodeTypes/Tests/*'
+  - 'TYPO3.TYPO3CR/Tests/*'
+  - 'TYPO3.TypoScript/Tests/*'
+  - 'TYPO3.Neos/Migrations/*'
+  - 'TYPO3.TYPO3CR/Migrations/*'
+  - 'TYPO3.Media/Migrations/*'
+  
