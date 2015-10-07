@@ -123,8 +123,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
         $baseContext = $this->createContext($workspaceName, []);
-        $baseContextSiteNodes = $baseContext->getNode('/sites')->getChildNodes();
+        $baseContextSitesNode = $baseContext->getNode('/sites');
+        if (!$baseContextSitesNode) {
+            $this->output->outputLine('<error>Could not find "/sites" root node</error>');
+            return;
+        }
+        $baseContextSiteNodes = $baseContextSitesNode->getChildNodes();
         if ($baseContextSiteNodes === []) {
+            $this->output->outputLine('<error>Could not find any site nodes in "/sites" root node</error>');
             return;
         }
 
