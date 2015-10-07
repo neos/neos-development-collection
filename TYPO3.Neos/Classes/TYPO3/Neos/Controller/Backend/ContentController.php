@@ -228,7 +228,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController
                     ->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
                 $pageTitle = $page->getProperty('title');
                 $views[$pluginViewDefinition->getName()] = array(
-                    'label' => sprintf('"%s"', $label, $pageTitle),
+                    'label' => $label,
                     'pageNode' => array(
                         'title' => $pageTitle,
                         'path' => $page->getPath(),
