@@ -64,7 +64,11 @@ function(
 					}
 				);
 			} else {
-				this.set('placeholder', 'No Plugin selected');
+				that.setProperties({
+					placeholder: 'No plugin selected',
+					values: {},
+					value: ''
+				});
 			}
 		}
 	});
