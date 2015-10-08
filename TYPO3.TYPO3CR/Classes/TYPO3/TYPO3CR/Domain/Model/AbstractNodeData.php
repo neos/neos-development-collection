@@ -97,7 +97,7 @@ abstract class AbstractNodeData
     /**
      * List of role names which are required to access this node at all
      *
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="flow_json_array")
      * @var array<string>
      */
     protected $accessRoles = array();
