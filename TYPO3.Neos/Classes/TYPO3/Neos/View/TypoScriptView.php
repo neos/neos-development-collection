@@ -87,7 +87,7 @@ class TypoScriptView extends AbstractView
 
         $typoScriptRuntime->pushContextArray(array(
             'node' => $currentNode,
-            'documentNode' => $this->getClosestDocumentNode($currentNode),
+            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
         ));

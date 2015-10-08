@@ -364,7 +364,7 @@ class ContentController extends ActionController
                     ->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
                 $pageTitle = $page->getLabel();
                 $views[$pluginViewDefinition->getName()] = array(
-                    'label' => sprintf('"%s"', $label, $pageTitle),
+                    'label' => $label,
                     'pageNode' => array(
                         'title' => $pageTitle,
                         'path' => $page->getPath(),
