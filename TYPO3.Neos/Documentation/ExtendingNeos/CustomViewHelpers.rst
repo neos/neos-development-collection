@@ -14,13 +14,13 @@ Create A ViewHelper Class
 
 If you want to create a ViewHelper that you can call from your template (as a
 tag), you write a php class which has to inherit from
-``TYPO3\Fluid\Core\AbstractViewHelper`` (or its subclasses). You need to implement
+``\TYPO3\Fluid\Core\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
 
 	namespace Vendor\Site\ViewHelpers;
-	class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+	class TitleViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 		public function render() {
 			return 'Hello World';
 		}
@@ -50,7 +50,7 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+		class TitleViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 			/**
 			 * Render the title and apply some magic
 			 *
@@ -75,7 +75,7 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+		class TitleViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 
 			/**
 			 * Initialize arguments
