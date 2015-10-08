@@ -2801,7 +2801,7 @@ body {
 }
 .neos .neos-ellipsis::after {
   display: inline-block;
-  width: 12px;
+  width: 11px;
   content: '...';
   overflow: hidden;
   vertical-align: top;
