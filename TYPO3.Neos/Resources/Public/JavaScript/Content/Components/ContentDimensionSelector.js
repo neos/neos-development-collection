@@ -110,21 +110,22 @@ function(
 		 * Update the currently selected dimension(s) in the selector box(es)
 		 */
 		_updateValue: function() {
-			var dimensions = ContentDimensionController.get('dimensions');
-			var presets = ContentDimensionController.get('presets');
+            var dimensions = ContentDimensionController.get('dimensions');
+            var presets = ContentDimensionController.get('presets');
 
-			if(dimensions && presets) {
-				$('select').each(function() {
-					var dimensionIdentifier = $(this).attr('name');
-					var dimensionPresetIdentifier = $(this).val();
-					var dimension = dimensions.findBy('identifier', dimensionIdentifier);
-					var dimensionPreset = presets.findBy('identifier', dimensionPresetIdentifier);
+            if (dimensions && presets) {
+                $('select').each(function () {
+                    var dimensionIdentifier = $(this).attr('name');
+                    var dimensionPresetIdentifier = $(this).val();
+                    var dimension = dimensions.findBy('identifier', dimensionIdentifier);
+                    var dimensionPreset = presets.findBy('identifier', dimensionPresetIdentifier);
 
                     dimension.set('selected', dimensionPreset);
                     dimensionPreset.set('selected', true);
-					ContentDimensionController.set('selectedDimensions.' + dimensionIdentifier, dimensionPreset.values);
-			});
-		},
+                    ContentDimensionController.set('selectedDimensions.' + dimensionIdentifier, dimensionPreset.values);
+                });
+            }
+        },
 
 		_nodeTypeLabel: function() {
 			return I18n.translate(this.get('nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label'));
