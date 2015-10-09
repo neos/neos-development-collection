@@ -1,5 +1,6 @@
 language: php
 matrix:
+  fast_finish: true
   include:
     - php: 5.6
       env: DB=sqlite
