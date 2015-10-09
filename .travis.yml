@@ -11,10 +11,10 @@ matrix:
       env: DB=sqlite
 before_install:
   - cd ..
-  - git clone https://github.com/neos/neos-base-distribution.git -b 1.2
-  - cd neos-base-distribution
+  - git clone https://github.com/neos/neos-development-distribution.git -b 1.2
+  - cd neos-development-distribution
 install:
-  - composer require "neos/neos-development-collection 1.2.x-dev" "neos/flow-development-collection 2.3.x-dev"
+  - composer install
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
