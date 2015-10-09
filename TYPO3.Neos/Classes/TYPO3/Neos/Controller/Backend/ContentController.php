@@ -362,12 +362,10 @@ class ContentController extends ActionController
                 $uri = $this->uriBuilder
                     ->reset()
                     ->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
-                $pageTitle = $page->getLabel();
                 $views[$pluginViewDefinition->getName()] = array(
                     'label' => $label,
                     'pageNode' => array(
-                        'title' => $pageTitle,
-                        'path' => $page->getPath(),
+                        'title' => $page->getLabel(),
                         'uri' => $uri
                     )
                 );
