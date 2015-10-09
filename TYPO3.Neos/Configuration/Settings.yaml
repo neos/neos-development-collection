@@ -100,11 +100,11 @@ TYPO3:
         title: 'Neos Command Reference'
         packageKeys:
           - 'TYPO3.Neos'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/CommandReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/CommandReference.rst'
     references:
       MediaViewHelpers:
         title: 'Media ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/MediaViewHelperReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/MediaViewHelperReference.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
@@ -115,7 +115,7 @@ TYPO3:
               'typo3.media': 'TYPO3\Media\ViewHelpers'
       NeosViewHelpers:
         title: 'Neos ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/ViewHelperReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/ViewHelperReference.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
@@ -127,7 +127,7 @@ TYPO3:
               neos: 'TYPO3\Neos\ViewHelpers'
       NeosSignals:
         title: 'Neos Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/SignalsReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/SignalsReference.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\(Neos|TYPO3CR)\\.*$/i'
@@ -136,14 +136,14 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
       FlowQueryOperations:
         title: 'FlowQuery Operation Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/FlowQueryOperationReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/FlowQueryOperationReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\FlowQuery\OperationInterface'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowQueryOperationClassParser'
       EelHelpers:
         title: 'Eel Helpers Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/Appendixes/EelHelpersReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/Appendixes/EelHelpersReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\ProtectedContextAwareInterface'
           classNamePattern: '/^.*Helper$/i'
