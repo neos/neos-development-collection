@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-08-17
+This reference was automatically generated from code on 2015-10-09
 
 
 .. _`Fluid ViewHelper Reference: f:alias`:
@@ -65,7 +65,6 @@ f:base
 
 View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
-In TYPO3 Flow, this ViewHelper is no longer required to make the links work.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\BaseViewHelper
 
@@ -1309,7 +1308,7 @@ Expected result::
 
 **Dummy content for template preview**::
 
-	<f:submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
+	<f:form.submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:form.submit>
 
 
 Expected result::
@@ -2542,13 +2541,24 @@ Expected result::
 
 **inline notation**::
 
-	{f:if(condition: someCondition, then: 'condition is met', else: 'condition is not met')}
+	{f:if(condition: someVariable, then: 'condition is met', else: 'condition is not met')}
 
 
 Expected result::
 
-	The value of the "then" attribute is displayed if the condition evaluates to TRUE.
+	The value of the "then" attribute is displayed if the variable evaluates to TRUE.
 	Otherwise, everything the value of the "else"-attribute is displayed.
+
+
+**inline notation with comparison**::
+
+	{f:if(condition: '{workspace} == {userWorkspace}', then: 'this is a user workspace', else: 'no user workspace')}
+
+
+Expected result::
+
+	If the condition is not just a single variable, the whole expression must be enclosed in quotes and variables need
+	to be enclosed in curly braces.
 
 
 
