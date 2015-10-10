@@ -44,6 +44,7 @@ trait HistoryDefinitionsTrait
      */
     public function iShouldHaveTheFollowingHistoryEntries($ignoringOrder, TableNode $table)
     {
+        $this->getSubcontext('flow')->persistAll();
         $allEvents = $this->getEventRepository()->findAll()->toArray();
         $eventsByInternalId = array();
         $unmatchedParentEvents = array();
