@@ -13,7 +13,6 @@ Feature: Accounts / User Entity Monitoring
         accountIdentifier: '${entity.accountIdentifier}'
         authenticationProviderName: '${entity.authenticationProviderName}'
         expirationDate: '${entity.expirationDate}'
-        roles: '${entity.roles}'
         party: '${entity.party.name.fullName}'
     'TYPO3\Neos\Domain\Model\User':
       events:
