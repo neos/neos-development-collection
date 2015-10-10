@@ -1,3 +1,4 @@
+@browser
 Feature: Site management / List sites
   In order to manage sites
   As an administrator

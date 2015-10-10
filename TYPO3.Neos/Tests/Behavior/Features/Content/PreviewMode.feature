@@ -1,3 +1,4 @@
+@browser
 Feature: Content module / Preview mode
   In order to preview changes
   As an editor
