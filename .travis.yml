@@ -30,4 +30,5 @@ before_script:
 script:
   - bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
-  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -v -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
