@@ -1,20 +1,26 @@
 language: php
 matrix:
+  fast_finish: true
   include:
     - php: 5.6
       env: DB=sqlite
     - php: 5.6
       env: DB=mysql
+    - php: 5.6
+      env: DB=mysql BEHAT=true
 #    - php: 5.6
 #      env: DB=pgsql
     - php: 5.5
       env: DB=sqlite
+cache:
+  directories:
+    - $HOME/.composer/cache
 before_install:
   - cd ..
-  - git clone https://github.com/neos/neos-base-distribution.git -b 2.0
-  - cd neos-base-distribution
+  - git clone https://github.com/neos/neos-development-distribution.git -b 2.0
+  - cd neos-development-distribution
 install:
-  - composer require "neos/neos-development-collection 2.0.x-dev" "neos/flow-development-collection 3.0.x-dev"
+  - composer install
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
@@ -22,7 +28,9 @@ before_script:
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
-  - FLOW_CONTEXT=Testing ./flow configuration:show --type Settings --path TYPO3.Flow.persistence.backendOptions
+  - if [ "$BEHAT" = "true" ]; then composer install -d Build/Behat; fi
 script:
-  - bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml
-  - bin/phpunit --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
+  - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml; fi
+  - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
