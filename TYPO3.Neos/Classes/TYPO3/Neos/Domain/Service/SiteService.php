@@ -17,6 +17,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A service for manipulating sites
@@ -25,6 +26,11 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class SiteService
 {
+    /**
+     * This is the node path of the root for all sites in neos.
+     */
+    const SITES_ROOT_PATH = '/sites';
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
@@ -57,7 +63,7 @@ class SiteService
      */
     public function pruneSite(Site $site)
     {
-        $siteNodePath = '/sites/' . $site->getNodeName();
+        $siteNodePath = NodePaths::addNodePathSegment(static::SITES_ROOT_PATH, $site->getNodeName());
         $this->nodeDataRepository->removeAllInPath($siteNodePath);
         $siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
         foreach ($siteNodes as $siteNode) {
