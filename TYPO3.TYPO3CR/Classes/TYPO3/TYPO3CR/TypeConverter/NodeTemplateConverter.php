@@ -81,7 +81,7 @@ class NodeTemplateConverter extends NodeConverter
 
         // we don't need a context or workspace for creating NodeTemplate objects, but in order to satisfy the method
         // signature of setNodeProperties(), we do need one:
-        $context = $this->contextFactory->create($this->prepareContextProperties('live'));
+        $context = $this->contextFactory->create($this->prepareContextProperties('', 'live'));
 
         $this->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context);
         return $nodeTemplate;
