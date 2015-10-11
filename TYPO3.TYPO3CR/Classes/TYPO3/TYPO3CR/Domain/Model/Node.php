@@ -151,24 +151,36 @@ class Node implements NodeInterface, CacheAwareInterface
      * @throws NodeException
      * @internal This method is purely internal and Node objects can call this on other Node objects
      */
-    public function setPath($path, $checkForExistence = true)
+    public function setPath($path)
+    {
+        if ($this->getPath() === $path) {
+            return;
+        }
+        $existingNodeDataArray = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
+        /** @var NodeData $existingNodeData */
+        foreach ($existingNodeDataArray as $existingNodeData) {
+            if ($existingNodeData->getIdentifier() !== $this->getIdentifier()) {
+                throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
+            }
+        }
+
+        $this->setPathInternal($path);
+    }
+
+    /**
+     * Internal setPath method, will not check for existence of node at path
+     *
+     * @param string $path
+     * @return void
+     */
+    protected function setPathInternal($path)
     {
         $originalPath = $this->nodeData->getPath();
         if ($originalPath === $path) {
             return;
         }
 
-        if ($checkForExistence) {
-            $existingNodeDataArray = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
-            /** @var NodeData $existingNodeData */
-            foreach ($existingNodeDataArray as $existingNodeData) {
-                if ($existingNodeData->getIdentifier() !== $this->getIdentifier()) {
-                    throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
-                }
-            }
-        }
-
-        $changedNodePathsCollection = array();
+        $changedNodePathsCollection = [];
 
         if ($this->getNodeType()->isAggregate()) {
             $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
@@ -179,25 +191,165 @@ class Node implements NodeInterface, CacheAwareInterface
                 if ($nodeVariant !== null) {
                     $relativePathSegment = NodePaths::getRelativePathBetween($originalPath, $nodeVariant->getPath());
                     $newNodeVariantPath = NodePaths::addNodePathSegment($path, $relativePathSegment);
-                    $possibleShadowedNodeData = $nodeData->move($newNodeVariantPath, $this->context->getWorkspace());
-                    $nodeVariant->setNodeData($possibleShadowedNodeData);
-                    $changedNodePathsCollection[] = array($nodeVariant, $originalPath, $nodeVariant->getNodeData()->getPath(), !$checkForExistence);
+                    $nodeVariant->moveNodeData($newNodeVariantPath);
                 }
             }
         } else {
             /** @var Node $childNode */
             foreach ($this->getChildNodes() as $childNode) {
-                $childNode->setPath(NodePaths::addNodePathSegment($path, $childNode->getName()), false);
+                $childNode->setPathInternal(NodePaths::addNodePathSegment($path, $childNode->getName()), false);
             }
-            $possibleShadowedNodeData = $this->nodeData->move($path, $this->context->getWorkspace());
-            $this->setNodeData($possibleShadowedNodeData);
-            $changedNodePathsCollection[] = array($this, $originalPath, $this->getNodeData()->getPath(), $checkForExistence);
+            $this->moveNodeData($path);
+        }
+    }
+
+    /**
+     * Move the NodeData of this node
+     *
+     * Basically 4 scenarios have to be covered here, depending on:
+     *
+     * - Does the NodeData have to be materialized (adapted to the workspace or target dimension)?
+     * - Does a shadow node exist on the target path?
+     *
+     * Because unique key constraints and Doctrine ORM don't support arbitrary removal and update combinations,
+     * existing NodeData instances are re-used and the metadata and content is swapped around.
+     *
+     * @param string $path
+     * @return void
+     */
+    protected function moveNodeData($path)
+    {
+        $nodeDataWasMaterialized = false;
+        $nodeData = $this->nodeData;
+        $originalPath = $this->nodeData->getPath();
+
+        if ($nodeData->getWorkspace()->getName() !== $this->context->getWorkspace()->getName()) {
+            $nodeData = $this->materializeNodeDataToWorkspace($nodeData);
+            $nodeDataWasMaterialized = true;
+            $targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
+            $nodeData->setPath($path, false);
+
+            $this->nodeData = $nodeData;
+        } else {
+            $targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
         }
 
-        $this->nodeDataRepository->persistEntities();
-        foreach ($changedNodePathsCollection as $nodePathChangedArguments) {
-            call_user_func_array(array($this, 'emitNodePathChanged'), $nodePathChangedArguments);
+        if ($nodeDataWasMaterialized) {
+            if ($targetPathShadowNodeData !== null) {
+                // The existing shadow node on the target path will be used as the moved node and the current node data will be removed
+                $movedNodeData = $targetPathShadowNodeData;
+                $movedNodeData->setMovedTo(null);
+                $movedNodeData->setRemoved(false);
+                $movedNodeData->similarize($nodeData);
+                $movedNodeData->setPath($path, false);
+                $this->nodeDataRepository->remove($nodeData);
+
+                // A new shadow node will be created for the node data that references the recycled, existing shadow node
+                $shadowNode = $this->createShadowNodeData($originalPath, $nodeData);
+                $shadowNode->setMovedTo($movedNodeData);
+            } else {
+                // If a node data was materialized before moving, we need to create a shadow node
+                $this->createShadowNodeData($originalPath, $nodeData);
+            }
+        } else {
+            $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($nodeData);
+            if ($targetPathShadowNodeData !== null) {
+                if ($referencedShadowNode === null) {
+                    // Turn the target path shadow node into the moved node (and adjust the identifier!)
+                    // Do not reset the movedTo property to keep tracing the original move operation
+                    $movedNodeData = $targetPathShadowNodeData;
+                    // Since the shadow node at the target path does not belong to the current node, we have to adjust the identifier
+                    $movedNodeData->setIdentifier($nodeData->getIdentifier());
+                    $movedNodeData->setRemoved(false);
+                    $movedNodeData->similarize($nodeData);
+                    $movedNodeData->setPath($path, false);
+
+                    // Create a shadow node from the current node that shadows the recycled node
+                    $shadowNodeData = $nodeData;
+                    $shadowNodeData->shadowMovedNodeData($movedNodeData);
+                } else {
+                    // If there is already shadow node on the target path, we need to make that shadow node the actual moved node and remove the current node data (which cannot be live).
+                    // We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts.
+                    $movedNodeData = $targetPathShadowNodeData;
+                    $movedNodeData->setMovedTo(null);
+                    $movedNodeData->setRemoved(false);
+                    $movedNodeData->similarize($nodeData);
+                    $movedNodeData->setPath($path, false);
+                    $this->nodeDataRepository->remove($nodeData);
+                }
+            } else {
+                if ($referencedShadowNode === null) {
+                    // There is no shadow node on the original or target path, so the current node data will be turned to a shadow node and a new node data will be created for the moved node.
+                    // We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
+                    $movedNodeData = new NodeData($originalPath, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+                    $movedNodeData->similarize($nodeData);
+                    $movedNodeData->setPath($path, false);
+
+                    $shadowNodeData = $nodeData;
+                    $shadowNodeData->shadowMovedNodeData($movedNodeData);
+                } else {
+                    // A shadow node that references this node data already exists, so we just move the current node data
+                    $movedNodeData = $nodeData;
+                    $movedNodeData->setPath($path, false);
+                }
+            }
+
+            $this->nodeData = $movedNodeData;
         }
+    }
+
+    /**
+     * Materializes the original node data (of a different workspace) into the current
+     * workspace, excluding content dimensions
+     *
+     * This is only used in setPath for now
+     *
+     * @param NodeData $nodeData
+     * @return NodeData
+     */
+    protected function materializeNodeDataToWorkspace(NodeData $nodeData)
+    {
+        $newNodeData = new NodeData($nodeData->getPath(), $this->context->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+        $this->nodeDataRepository->add($newNodeData);
+
+        $newNodeData->similarize($nodeData);
+
+        return $newNodeData;
+    }
+
+    /**
+     * Find an existing shadow node data on the given path for the current node data of the node (used by setPath)
+     *
+     * @param string $path The (new) path of the node data
+     * @param NodeData $nodeData
+     * @return NodeData
+     */
+    protected function getExistingShadowNodeData($path, NodeData $nodeData)
+    {
+        $existingShadowNode = $this->nodeDataRepository->findOneByPath($path, $nodeData->getWorkspace(), $nodeData->getDimensionValues(), true);
+        if ($existingShadowNode !== null && $existingShadowNode->getMovedTo() !== null) {
+            return $existingShadowNode;
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a shadow node data with the same workspace and dimensions as the materialized current node data (used by setPath)
+     *
+     * Note: The constructor will already add the new object to the repository
+     *
+     * @param string $path The (original) path for the node data
+     * @param NodeData $nodeData
+     * @return NodeData
+     */
+    protected function createShadowNodeData($path, NodeData $nodeData)
+    {
+        $shadowNode = new NodeData($path, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+        $shadowNode->similarize($nodeData);
+        $shadowNode->shadowMovedNodeData($nodeData);
+
+        return $shadowNode;
     }
 
     /**
@@ -205,13 +357,14 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getOtherNodeVariants()
     {
-        $otherNodeVariants = array();
+        $otherNodeVariants = [];
         $allNodeVariants = $this->context->getNodeVariantsByIdentifier($this->getIdentifier());
         foreach ($allNodeVariants as $index => $node) {
             if ($node->getNodeData() !== $this->nodeData) {
                 $otherNodeVariants[] = $node;
             }
         }
+
         return $otherNodeVariants;
     }
 
@@ -400,6 +553,7 @@ class Node implements NodeInterface, CacheAwareInterface
         }
         $node = $this->nodeDataRepository->findOneByPathInContext($parentPath, $this->context);
         $this->context->getFirstLevelNodeCache()->setByPath($parentPath, $node);
+
         return $node;
     }
 
@@ -418,34 +572,20 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node before the given node
      *
      * @param NodeInterface $referenceNode
-     * @return void
-     * @throws NodeException if you try to move the root node
-     * @throws NodeExistsException
-     * @throws NodeConstraintException if a node constraint prevents moving the node
+     * @param string $newName
+     * @throws NodeConstraintException
      * @api
      */
-    public function moveBefore(NodeInterface $referenceNode)
+    public function moveBefore(NodeInterface $referenceNode, $newName = null)
     {
-        if ($referenceNode === $this) {
-            return;
-        }
-
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be moved.', 1285005924);
-        }
-
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
-        }
-
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        try {
+            $nodeShouldBeMoved = $this->moveIsPossible($referenceNode->getParent(), $newName);
+        } catch (NodeConstraintException $nodeConstraintException) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
         }
-
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
-        if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
-            $this->nodeDataRepository->persistEntities();
+        if ($nodeShouldBeMoved) {
+            $this->moveIntoInternal($referenceNode->getParent(), $newName);
         } else {
             if (!$this->isNodeDataMatchingContext()) {
                 $this->materializeNodeData();
@@ -462,34 +602,22 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node after the given node
      *
      * @param NodeInterface $referenceNode
+     * @param string $newName
      * @return void
-     * @throws NodeExistsException
-     * @throws NodeException
      * @throws NodeConstraintException if a node constraint prevents moving the node
      * @api
      */
-    public function moveAfter(NodeInterface $referenceNode)
+    public function moveAfter(NodeInterface $referenceNode, $newName = null)
     {
-        if ($referenceNode === $this) {
-            return;
-        }
-
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be moved.', 1316361483);
-        }
-
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
-        }
-
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        try {
+            $nodeShouldBeMoved = $this->moveIsPossible($referenceNode->getParent(), $newName);
+        } catch (NodeConstraintException $nodeConstraintException) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
         }
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
-        if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
-            $this->nodeDataRepository->persistEntities();
+        if ($nodeShouldBeMoved) {
+            $this->moveIntoInternal($referenceNode->getParent(), $newName);
         } else {
             if (!$this->isNodeDataMatchingContext()) {
                 $this->materializeNodeData();
@@ -506,38 +634,71 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node into the given node
      *
      * @param NodeInterface $referenceNode
+     * @param string $newName
      * @return void
-     * @throws NodeExistsException
-     * @throws NodeException
-     * @throws NodeConstraintException
      * @api
      */
-    public function moveInto(NodeInterface $referenceNode)
+    public function moveInto(NodeInterface $referenceNode, $newName = null)
     {
-        if ($referenceNode === $this || $referenceNode === $this->getParent()) {
-            return;
+        if ($this->moveIsPossible($referenceNode, $newName)) {
+            $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
+            $this->moveIntoInternal($referenceNode, $newName);
+            $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
+            $this->context->getFirstLevelNodeCache()->flush();
+            $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
+            $this->emitNodeUpdated($this);
+        }
+    }
+
+    /**
+     * Checks if this Node can be moved into the given reference Node.
+     * In case the move is not possible due to exceptional circumstances and Exception is thrown.
+     *
+     * @param NodeInterface $referenceNode
+     * @param string $newName
+     * @return boolean
+     * @throws NodeConstraintException
+     * @throws NodeException
+     * @throws NodeExistsException
+     */
+    protected function moveIsPossible(NodeInterface $referenceNode, $newName = null)
+    {
+        if ($referenceNode === $this) {
+            return false;
+        }
+
+        $nameAtNewPosition = $newName ?: $this->getName();
+
+        if ($referenceNode->getPath() === $this->getParentPath() && $nameAtNewPosition === $this->getName()) {
+            return false;
         }
 
         if ($this->getPath() === '/') {
             throw new NodeException('The root node cannot be moved.', 1346769001);
         }
 
-        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
+        if (($referenceNode !== $this->getParent() || $newName !== null) && $referenceNode->getNode($nameAtNewPosition) !== null) {
+            throw new NodeExistsException('Node with path "' . $nameAtNewPosition . '" already exists.', 1292503470);
         }
 
-        if (!$referenceNode->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        if (!$referenceNode->willChildNodeBeAutoCreated($nameAtNewPosition) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
         }
 
-        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $this->getName()));
-        $this->nodeDataRepository->persistEntities();
+        return true;
+    }
 
-        $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
-        $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-        $this->emitNodeUpdated($this);
+    /**
+     * Moves this node into the given referenceNode and changes the names if given.
+     *
+     * @param NodeInterface $referenceNode
+     * @param string $newName
+     */
+    protected function moveIntoInternal(NodeInterface $referenceNode, $newName = null)
+    {
+        $parentPath = $referenceNode->getPath();
+        $this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . ($newName ?: $this->getName()));
+        $this->nodeDataRepository->persistEntities();
     }
 
     /**
@@ -759,7 +920,7 @@ class Node implements NodeInterface, CacheAwareInterface
                 switch ($expectedPropertyType) {
                     case 'references' :
                         if ($returnNodesAsIdentifiers === false) {
-                            $nodes = array();
+                            $nodes = [];
                             foreach ($value as $nodeIdentifier) {
                                 $node = $this->context->getNodeByIdentifier($nodeIdentifier);
                                 // $node can be NULL if the node is not visible according to the current content context:
@@ -781,6 +942,7 @@ class Node implements NodeInterface, CacheAwareInterface
                 }
             }
         }
+
         return $value;
     }
 
@@ -820,10 +982,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getProperties($returnNodesAsIdentifiers = false)
     {
-        $properties = array();
+        $properties = [];
         foreach ($this->getPropertyNames() as $propertyName) {
             $properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
         }
+
         return $properties;
     }
 
@@ -971,6 +1134,7 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function buildAutoCreatedChildNodeIdentifier($childNodeName, $identifier)
     {
         $hex = md5($identifier . '-' . $childNodeName);
+
         return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12);
     }
 
@@ -1013,6 +1177,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function willChildNodeBeAutoCreated($name)
     {
         $autoCreatedChildNodes = $this->getNodeType()->getAutoCreatedChildNodes();
+
         return isset($autoCreatedChildNodes[$name]);
     }
 
@@ -1051,6 +1216,7 @@ class Node implements NodeInterface, CacheAwareInterface
         }
         $node = $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
         $this->context->getFirstLevelNodeCache()->setByPath($absolutePath, $node);
+
         return $node;
     }
 
@@ -1088,6 +1254,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         if ($offset !== null || $limit !== null) {
             $offset = ($offset === null) ? 0 : $offset;
+
             return array_slice($nodes, $offset, $limit);
         }
 
@@ -1127,6 +1294,17 @@ class Node implements NodeInterface, CacheAwareInterface
     public function remove()
     {
         $this->setRemoved(true);
+        foreach ($this->getChildNodes() as $childNode) {
+            $childNode->remove();
+        }
+
+        if (!$this->isNodeDataMatchingContext()) {
+            $this->materializeNodeData();
+        }
+        $this->nodeData->remove();
+
+        $this->context->getFirstLevelNodeCache()->flush();
+        $this->emitNodeRemoved($this);
     }
 
     /**
@@ -1362,6 +1540,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if ($this->getHiddenAfterDateTime() !== null && $this->getHiddenAfterDateTime() < $currentDateTime) {
             return false;
         }
+
         return true;
     }
 
@@ -1473,6 +1652,7 @@ class Node implements NodeInterface, CacheAwareInterface
             $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
             $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
         }
+
         return $this->nodeDataIsMatchingContext;
     }
 
@@ -1536,7 +1716,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createVariantForContext($context)
     {
-        $autoCreatedChildNodes = array();
+        $autoCreatedChildNodes = [];
         $nodeType = $this->getNodeType();
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeConfiguration) {
             $childNode = $this->getNode($childNodeName);
@@ -1593,6 +1773,7 @@ class Node implements NodeInterface, CacheAwareInterface
                 }
             }
         }
+
         return true;
     }
 
@@ -1670,6 +1851,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $contextProperties['dimensions'] = $nodeData->getDimensionValues();
         unset($contextProperties['targetDimensions']);
         $adjustedContext = $this->contextFactory->create($contextProperties);
+
         return $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
     }
 

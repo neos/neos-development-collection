@@ -793,6 +793,29 @@ class NodesTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function moveAndRenameAtTheSameTime()
+    {
+        $rootNode = $this->context->getRootNode();
+
+        $parentNode = $rootNode->createNode('parentNode');
+        $childNodeA = $parentNode->createNode('childNodeA');
+        $childNodeB = $parentNode->createNode('childNodeB');
+        $childNodeB1 = $childNodeB->createNode('childNodeB1');
+
+        $this->persistenceManager->persistAll();
+
+        $childNodeB->moveInto($childNodeA, 'renamedChildNodeB');
+
+        $this->persistenceManager->persistAll();
+
+        $this->assertNull($parentNode->getNode('childNodeB'));
+        $this->assertSame($childNodeB, $childNodeA->getNode('renamedChildNodeB'));
+        $this->assertSame($childNodeB1, $childNodeA->getNode('renamedChildNodeB')->getNode('childNodeB1'));
+    }
+
+    /**
      * Testcase for bug #34291 (TYPO3CR reordering does not take unpersisted
      * node order changes into account)
      *
