@@ -9,7 +9,7 @@ define(
 		 *
 		 * Code taken from the Ember Charts project, 0.3.0 (BSD license)
 		 */
-		return Ember.View.extend({
+		return Ember.Component.extend({
 			classNames: ['chart-time-series'],
 
 			template: Ember.Handlebars.compile('<svg {{bind-attr width="view.outerWidth" height="view.outerHeight"}}><g class="chart-viewport" {{ bind-attr transform="view.transformViewport" }}></g></svg>'),
@@ -294,7 +294,7 @@ define(
 					values: lineData
 				}];
 				return _results;
-			}).property('lineData.@each', 'ungroupedSeriesName'),
+			}).property('lineData.[]', 'ungroupedSeriesName'),
 
 			lineSeriesNames: Ember.computed(function() {
 				var data;
@@ -325,7 +325,7 @@ define(
 						return e[1];
 					})
 				];
-			}).property('_groupedLineData.@each.values'),
+			}).property('_groupedLineData.[].values'),
 
 			_advanceMiddle: function(time, interval, count) {
 				return new Date((time = time.getTime() / 2 + d3.time[interval].offset(time, count) / 2));

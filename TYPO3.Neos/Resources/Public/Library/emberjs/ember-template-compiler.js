@@ -5,7 +5,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   2.0.0-beta.2
+ * @version   2.0.2
  */
 
 (function() {
@@ -13,7 +13,8 @@
     var mainContext = this;
 
     (function() {
-        var isNode = typeof process !== 'undefined' && {}.toString.call(process) === '[object process]';
+        var isNode = typeof window === 'undefined' &&
+            typeof process !== 'undefined' && {}.toString.call(process) === '[object process]';
 
         if (!isNode) {
             Ember = this.Ember = this.Ember || {};
@@ -115,6 +116,8 @@
     })();
 
     enifed('backburner', ['exports', './backburner/utils', './backburner/platform', './backburner/binary-search', './backburner/deferred-action-queues'], function (exports, _backburnerUtils, _backburnerPlatform, _backburnerBinarySearch, _backburnerDeferredActionQueues) {
+        'use strict';
+
         exports.default = Backburner;
 
         function Backburner(queueNames, options) {
@@ -127,6 +130,10 @@
             this._debouncees = [];
             this._throttlers = [];
             this._timers = [];
+            this._eventCallbacks = {
+                end: [],
+                begin: []
+            };
         }
 
         Backburner.prototype = {
@@ -140,6 +147,7 @@
                 }
 
                 this.currentInstance = new _backburnerDeferredActionQueues.default(this.queueNames, options);
+                this._trigger('begin', this.currentInstance, previousInstance);
                 if (onBegin) {
                     onBegin(this.currentInstance, previousInstance);
                 }
@@ -166,7 +174,7 @@
                             nextInstance = this.instanceStack.pop();
                             this.currentInstance = nextInstance;
                         }
-
+                        this._trigger('end', currentInstance, nextInstance);
                         if (onEnd) {
                             onEnd(currentInstance, nextInstance);
                         }
@@ -174,7 +182,61 @@
                 }
             },
 
-            run: function () {
+            /**
+             Trigger an event. Supports up to two arguments. Designed around
+             triggering transition events from one run loop instance to the
+             next, which requires an argument for the first instance and then
+             an argument for the next instance.
+             @private
+             @method _trigger
+             @param {String} eventName
+             @param {any} arg1
+             @param {any} arg2
+             */
+            _trigger: function (eventName, arg1, arg2) {
+                var callbacks = this._eventCallbacks[eventName];
+                if (callbacks) {
+                    for (var i = 0; i < callbacks.length; i++) {
+                        callbacks[i](arg1, arg2);
+                    }
+                }
+            },
+
+            on: function (eventName, callback) {
+                if (typeof callback !== 'function') {
+                    throw new TypeError('Callback must be a function');
+                }
+                var callbacks = this._eventCallbacks[eventName];
+                if (callbacks) {
+                    callbacks.push(callback);
+                } else {
+                    throw new TypeError('Cannot on() event "' + eventName + '" because it does not exist');
+                }
+            },
+
+            off: function (eventName, callback) {
+                if (eventName) {
+                    var callbacks = this._eventCallbacks[eventName];
+                    var callbackFound = false;
+                    if (!callbacks) return;
+                    if (callback) {
+                        for (var i = 0; i < callbacks.length; i++) {
+                            if (callbacks[i] === callback) {
+                                callbackFound = true;
+                                callbacks.splice(i, 1);
+                                i--;
+                            }
+                        }
+                    }
+                    if (!callbackFound) {
+                        throw new TypeError('Cannot off() callback that does not exist');
+                    }
+                } else {
+                    throw new TypeError('Cannot off() event "' + eventName + '" because it does not exist');
+                }
+            },
+
+            run: function () /* target, method, args */{
                 var length = arguments.length;
                 var method, target, args;
 
@@ -229,7 +291,7 @@
                 }
             },
 
-            join: function () {
+            join: function () /* target, method, args */{
                 if (this.currentInstance) {
                     var length = arguments.length;
                     var method, target;
@@ -683,8 +745,9 @@
             return index;
         }
     });
-    /* target, method, args */ /* target, method, args */
     enifed("backburner/binary-search", ["exports"], function (exports) {
+        "use strict";
+
         exports.default = binarySearch;
 
         function binarySearch(time, timers) {
@@ -712,6 +775,8 @@
         }
     });
     enifed('backburner/deferred-action-queues', ['exports', './utils', './queue'], function (exports, _utils, _queue) {
+        'use strict';
+
         exports.default = DeferredActionQueues;
 
         function DeferredActionQueues(queueNames, options) {
@@ -729,6 +794,10 @@
             throw new Error('You attempted to schedule an action in a queue (' + name + ') that doesn\'t exist');
         }
 
+        function noSuchMethod(name) {
+            throw new Error('You attempted to schedule an action in a queue (' + name + ') for a method that doesn\'t exist');
+        }
+
         DeferredActionQueues.prototype = {
             schedule: function (name, target, method, args, onceFlag, stack) {
                 var queues = this.queues;
@@ -736,6 +805,10 @@
 
                 if (!queue) {
                     noSuchQueue(name);
+                }
+
+                if (!method) {
+                    noSuchMethod(name);
                 }
 
                 if (onceFlag) {
@@ -773,6 +846,8 @@
         // In IE 6-8, try/finally doesn't work without a catch.
         // Unfortunately, this is impossible to test for since wrapping it in a parent try/catch doesn't trigger the bug.
         // This tests for another broken try/catch behavior that only exhibits in the same versions of IE.
+        'use strict';
+
         var needsIETryCatchFix = (function (e, x) {
             try {
                 x();
@@ -797,6 +872,8 @@
         exports.default = platform;
     });
     enifed('backburner/queue', ['exports', './utils'], function (exports, _utils) {
+        'use strict';
+
         exports.default = Queue;
 
         function Queue(name, options, globalOptions) {
@@ -1033,6 +1110,8 @@
         };
     });
     enifed('backburner/utils', ['exports'], function (exports) {
+        'use strict';
+
         exports.each = each;
         exports.isString = isString;
         exports.isFunction = isFunction;
@@ -1082,6 +1161,10 @@
         }
     });
     enifed('ember-debug', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/error', 'ember-metal/logger', 'ember-debug/deprecation-manager', 'ember-metal/environment'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalError, _emberMetalLogger, _emberDebugDeprecationManager, _emberMetalEnvironment) {
+        /*global __fail__*/
+
+        'use strict';
+
         exports._warnIfUsingStrippedFeatureFlags = _warnIfUsingStrippedFeatureFlags;
 
         /**
@@ -1403,8 +1486,9 @@
             _emberMetalCore.default.warn('Please use `ember.debug.js` instead of `ember.js` for development and debugging.');
         }
     });
-    /*global __fail__*/
     enifed('ember-debug/deprecation-manager', ['exports', 'ember-metal/dictionary', 'ember-metal/utils'], function (exports, _emberMetalDictionary, _emberMetalUtils) {
+        'use strict';
+
         var deprecationLevels = {
             RAISE: _emberMetalUtils.symbol('RAISE'),
             LOG: _emberMetalUtils.symbol('LOG'),
@@ -1431,6 +1515,13 @@
         };
     });
     enifed('ember-metal', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/merge', 'ember-metal/instrumentation', 'ember-metal/utils', 'ember-metal/error', 'ember-metal/cache', 'ember-metal/logger', 'ember-metal/property_get', 'ember-metal/events', 'ember-metal/observer_set', 'ember-metal/property_events', 'ember-metal/properties', 'ember-metal/property_set', 'ember-metal/map', 'ember-metal/get_properties', 'ember-metal/set_properties', 'ember-metal/watch_key', 'ember-metal/chains', 'ember-metal/watch_path', 'ember-metal/watching', 'ember-metal/expand_properties', 'ember-metal/computed', 'ember-metal/alias', 'ember-metal/computed_macros', 'ember-metal/observer', 'ember-metal/mixin', 'ember-metal/binding', 'ember-metal/run_loop', 'ember-metal/libraries', 'ember-metal/is_none', 'ember-metal/is_empty', 'ember-metal/is_blank', 'ember-metal/is_present', 'backburner', 'ember-metal/streams/utils', 'ember-metal/streams/stream'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalMerge, _emberMetalInstrumentation, _emberMetalUtils, _emberMetalError, _emberMetalCache, _emberMetalLogger, _emberMetalProperty_get, _emberMetalEvents, _emberMetalObserver_set, _emberMetalProperty_events, _emberMetalProperties, _emberMetalProperty_set, _emberMetalMap, _emberMetalGet_properties, _emberMetalSet_properties, _emberMetalWatch_key, _emberMetalChains, _emberMetalWatch_path, _emberMetalWatching, _emberMetalExpand_properties, _emberMetalComputed, _emberMetalAlias, _emberMetalComputed_macros, _emberMetalObserver, _emberMetalMixin, _emberMetalBinding, _emberMetalRun_loop, _emberMetalLibraries, _emberMetalIs_none, _emberMetalIs_empty, _emberMetalIs_blank, _emberMetalIs_present, _backburner, _emberMetalStreamsUtils, _emberMetalStreamsStream) {
+        /**
+         @module ember
+         @submodule ember-metal
+         */
+
+            // BEGIN IMPORTS
+        'use strict';
 
         _emberMetalComputed.computed.empty = _emberMetalComputed_macros.empty;
         _emberMetalComputed.computed.notEmpty = _emberMetalComputed_macros.notEmpty;
@@ -1480,9 +1571,6 @@
         _emberMetalCore.default.META_DESC = _emberMetalUtils.META_DESC;
         _emberMetalCore.default.EMPTY_META = _emberMetalUtils.EMPTY_META;
         _emberMetalCore.default.meta = _emberMetalUtils.meta;
-        _emberMetalCore.default.getMeta = _emberMetalUtils.getMeta;
-        _emberMetalCore.default.setMeta = _emberMetalUtils.setMeta;
-        _emberMetalCore.default.metaPath = _emberMetalUtils.metaPath;
         _emberMetalCore.default.inspect = _emberMetalUtils.inspect;
         _emberMetalCore.default.tryCatchFinally = _emberMetalUtils.deprecatedTryCatchFinally;
         _emberMetalCore.default.makeArray = _emberMetalUtils.makeArray;
@@ -1558,24 +1646,17 @@
         _emberMetalCore.default.addObserver = _emberMetalObserver.addObserver;
         _emberMetalCore.default.observersFor = _emberMetalObserver.observersFor;
         _emberMetalCore.default.removeObserver = _emberMetalObserver.removeObserver;
-        _emberMetalCore.default.addBeforeObserver = _emberMetalCore.default.deprecateFunc('Ember.addBeforeObserver is deprecated and will be removed in the near future.', { url: 'http://emberjs.com/deprecations/v1.x/#toc_beforeobserver' }, _emberMetalObserver._addBeforeObserver);
-        _emberMetalCore.default._suspendBeforeObserver = _emberMetalObserver._suspendBeforeObserver;
-        _emberMetalCore.default._suspendBeforeObservers = _emberMetalObserver._suspendBeforeObservers;
         _emberMetalCore.default._suspendObserver = _emberMetalObserver._suspendObserver;
         _emberMetalCore.default._suspendObservers = _emberMetalObserver._suspendObservers;
-        _emberMetalCore.default.beforeObserversFor = _emberMetalCore.default.deprecateFunc('Ember.beforeObserversFor is deprecated and will be removed in the near future.', { url: 'http://emberjs.com/deprecations/v1.x/#toc_beforeobserver' }, _emberMetalObserver._beforeObserversFor);
-        _emberMetalCore.default.removeBeforeObserver = _emberMetalCore.default.deprecateFunc('Ember.removeBeforeObserver is deprecated and will be removed in the near future.', { url: 'http://emberjs.com/deprecations/v1.x/#toc_beforeobserver' }, _emberMetalObserver._removeBeforeObserver);
 
         _emberMetalCore.default.IS_BINDING = _emberMetalMixin.IS_BINDING;
         _emberMetalCore.default.required = _emberMetalMixin.required;
         _emberMetalCore.default.aliasMethod = _emberMetalMixin.aliasMethod;
         _emberMetalCore.default.observer = _emberMetalMixin.observer;
         _emberMetalCore.default.immediateObserver = _emberMetalMixin._immediateObserver;
-        _emberMetalCore.default.beforeObserver = _emberMetalCore.default.deprecateFunc('Ember.beforeObserver is deprecated and will be removed in the near future.', { url: 'http://emberjs.com/deprecations/v1.x/#toc_beforeobserver' }, _emberMetalMixin._beforeObserver);
         _emberMetalCore.default.mixin = _emberMetalMixin.mixin;
         _emberMetalCore.default.Mixin = _emberMetalMixin.Mixin;
 
-        _emberMetalCore.default.oneWay = _emberMetalBinding.oneWay;
         _emberMetalCore.default.bind = _emberMetalBinding.bind;
         _emberMetalCore.default.Binding = _emberMetalBinding.Binding;
         _emberMetalCore.default.isGlobalPath = _emberMetalBinding.isGlobalPath;
@@ -1631,22 +1712,19 @@
 
         // do this for side-effects of updating Ember.assert, warn, etc when
         // ember-debug is present
+        // This needs to be called before any deprecateFunc
         if (_emberMetalCore.default.__loader.registry['ember-debug']) {
             requireModule('ember-debug');
         }
 
-        _emberMetalCore.default.create = _emberMetalCore.default.deprecateFunc('Ember.create is deprecated in favor of Object.create', Object.create);
-        _emberMetalCore.default.keys = _emberMetalCore.default.deprecateFunc('Ember.keys is deprecated in favor of Object.keys', Object.keys);
+        _emberMetalCore.default.create = _emberMetalCore.default.deprecateFunc('Ember.create is deprecated in favor of Object.create', { id: 'ember-metal.ember-create', until: '3.0.0' }, Object.create);
+        _emberMetalCore.default.keys = _emberMetalCore.default.deprecateFunc('Ember.keys is deprecated in favor of Object.keys', { id: 'ember-metal.ember.keys', until: '3.0.0' }, Object.keys);
 
         exports.default = _emberMetalCore.default;
     });
-    /**
-     @module ember
-     @submodule ember-metal
-     */
-
-// BEGIN IMPORTS
     enifed('ember-metal/alias', ['exports', 'ember-metal/property_get', 'ember-metal/property_set', 'ember-metal/core', 'ember-metal/error', 'ember-metal/properties', 'ember-metal/computed', 'ember-metal/utils', 'ember-metal/dependent_keys'], function (exports, _emberMetalProperty_get, _emberMetalProperty_set, _emberMetalCore, _emberMetalError, _emberMetalProperties, _emberMetalComputed, _emberMetalUtils, _emberMetalDependent_keys) {
+        'use strict';
+
         exports.default = alias;
         exports.AliasedProperty = AliasedProperty;
 
@@ -1718,8 +1796,9 @@
     });
 // Ember.assert
     enifed('ember-metal/binding', ['exports', 'ember-metal/core', 'ember-metal/property_get', 'ember-metal/property_set', 'ember-metal/utils', 'ember-metal/observer', 'ember-metal/run_loop', 'ember-metal/path_cache'], function (exports, _emberMetalCore, _emberMetalProperty_get, _emberMetalProperty_set, _emberMetalUtils, _emberMetalObserver, _emberMetalRun_loop, _emberMetalPath_cache) {
+        'use strict';
+
         exports.bind = bind;
-        exports.oneWay = oneWay;
 
         // ES6TODO: where is Ember.lookup defined?
         /**
@@ -2015,29 +2094,7 @@
             to: function (to) {
                 var C = this;
                 return new C(to, undefined);
-            },
-
-            /**
-             Creates a new Binding instance and makes it apply in a single direction.
-             A one-way binding will relay changes on the `from` side object (supplied
-             as the `from` argument) the `to` side, but not the other way around.
-             This means that if you change the "to" side directly, the "from" side may have
-             a different value.
-             See `Binding.oneWay`.
-             @method oneWay
-             @param {String} from from path.
-             @param {Boolean} [flag] (Optional) passing nothing here will make the
-             binding `oneWay`. You can instead pass `false` to disable `oneWay`, making the
-             binding two way again.
-             @return {Ember.Binding} `this`
-             @public
-             */
-            oneWay: function (from, flag) {
-                _emberMetalCore.default.deprecate('Ember.oneWay has been deprecated. Please use Ember.computed.oneWay instead.', false);
-                var C = this;
-                return new C(undefined, from).oneWay(flag);
             }
-
         });
         /**
          An `Ember.Binding` connects the properties of two objects so that whenever
@@ -2155,7 +2212,7 @@
          ```javascript
          MyApp.anotherObject = Ember.Object.create({
       valueBinding: "MyApp.someController.value",
-  
+
       // OTHER CODE FOR THIS OBJECT...
     });
          ```
@@ -2190,27 +2247,13 @@
             return new Binding(to, from).connect(obj);
         }
 
-        /**
-         @method oneWay
-         @for Ember
-         @param {Object} obj The root object of the transform.
-         @param {String} to The path to the 'to' side of the binding.
-         Must be relative to obj.
-         @param {String} from The path to the 'from' side of the binding.
-         Must be relative to obj or a global path.
-         @return {Ember.Binding} binding instance
-         @public
-         */
-
-        function oneWay(obj, to, from) {
-            return new Binding(to, from).oneWay().connect(obj);
-        }
-
         exports.Binding = Binding;
         exports.isGlobalPath = _emberMetalPath_cache.isGlobal;
     });
 // Ember.Logger, Ember.LOG_BINDINGS, assert
     enifed('ember-metal/cache', ['exports', 'ember-metal/dictionary'], function (exports, _emberMetalDictionary) {
+        'use strict';
+
         exports.default = Cache;
 
         function Cache(limit, func) {
@@ -2264,10 +2307,11 @@
         };
     });
     enifed('ember-metal/chains', ['exports', 'ember-metal/core', 'ember-metal/property_get', 'ember-metal/utils', 'ember-metal/watch_key'], function (exports, _emberMetalCore, _emberMetalProperty_get, _emberMetalUtils, _emberMetalWatch_key) {
+        'use strict';
+
         exports.flushPendingChains = flushPendingChains;
         exports.finishChains = finishChains;
 
-        var warn = _emberMetalCore.default.warn;
         var FIRST_KEY = /^([^\.]+)/;
 
         function firstKey(path) {
@@ -2279,12 +2323,99 @@
         }
 
         function isVolatile(obj) {
-            return !(isObject(obj) && obj.isDescriptor && obj._cacheable);
+            return !(isObject(obj) && obj.isDescriptor && obj._volatile === false);
         }
 
         function Chains() {}
 
         Chains.prototype = Object.create(null);
+
+        function ChainWatchers(obj) {
+            // this obj would be the referencing chain node's parent node's value
+            this.obj = obj;
+            // chain nodes that reference a key in this obj by key
+            // we only create ChainWatchers when we are going to add them
+            // so create this upfront
+            this.chains = new Chains();
+        }
+
+        ChainWatchers.prototype = {
+            add: function (key, node) {
+                var nodes = this.chains[key];
+                if (nodes === undefined) {
+                    this.chains[key] = [node];
+                } else {
+                    nodes.push(node);
+                }
+            },
+
+            remove: function (key, node) {
+                var nodes = this.chains[key];
+                if (nodes) {
+                    for (var i = 0, l = nodes.length; i < l; i++) {
+                        if (nodes[i] === node) {
+                            nodes.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            },
+
+            has: function (key, node) {
+                var nodes = this.chains[key];
+                if (nodes) {
+                    for (var i = 0, l = nodes.length; i < l; i++) {
+                        if (nodes[i] === node) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+
+            revalidateAll: function () {
+                for (var key in this.chains) {
+                    this.notify(key, true, undefined);
+                }
+            },
+
+            revalidate: function (key) {
+                this.notify(key, true, undefined);
+            },
+
+            // key: the string key that is part of a path changed
+            // revalidate: boolean the chains that are watching this value should revalidate
+            // callback: function that will be called with the the object and path that
+            //           will be/are invalidated by this key change depending on the
+            //           whether the revalidate flag is passed
+            notify: function (key, revalidate, callback) {
+                var nodes = this.chains[key];
+                if (nodes === undefined || nodes.length === 0) {
+                    return;
+                }
+
+                var affected = undefined;
+
+                if (callback) {
+                    affected = [];
+                }
+
+                for (var i = 0, l = nodes.length; i < l; i++) {
+                    nodes[i].notify(revalidate, affected);
+                }
+
+                if (callback === undefined) {
+                    return;
+                }
+
+                // we gather callbacks so we don't notify them during revalidation
+                for (var i = 0, l = affected.length; i < l; i += 2) {
+                    var obj = affected[i];
+                    var path = affected[i + 1];
+                    callback(obj, path);
+                }
+            }
+        };
 
         var pendingQueue = [];
 
@@ -2304,7 +2435,7 @@
                 return q[0].add(q[1]);
             });
 
-            warn('Watching an undefined global, Ember expects watched globals to be' + ' setup by the time the run loop is flushed, check for typos', pendingQueue.length === 0);
+            _emberMetalCore.default.warn('Watching an undefined global, Ember expects watched globals to be ' + 'setup by the time the run loop is flushed, check for typos', pendingQueue.length === 0, { id: 'ember-metal.chains-flush-pending-chains' });
         }
 
         function addChainWatcher(obj, keyName, node) {
@@ -2313,18 +2444,12 @@
             }
 
             var m = _emberMetalUtils.meta(obj);
-            var nodes = m.chainWatchers;
 
-            if (!m.hasOwnProperty('chainWatchers')) {
-                // FIXME?!
-                nodes = m.chainWatchers = new Chains();
+            if (m.chainWatchers === undefined || m.chainWatchers.obj !== obj) {
+                m.chainWatchers = new ChainWatchers(obj);
             }
 
-            if (!nodes[keyName]) {
-                nodes[keyName] = [node];
-            } else {
-                nodes[keyName].push(node);
-            }
+            m.chainWatchers.add(keyName, node);
 
             _emberMetalWatch_key.watchKey(obj, keyName, m);
         }
@@ -2334,22 +2459,17 @@
                 return;
             }
 
-            var m = obj['__ember_meta__'];
-            if (m && !m.hasOwnProperty('chainWatchers')) {
+            var m = obj.__ember_meta__;
+
+            if (!m || m.chainWatchers === undefined || m.chainWatchers.obj !== obj) {
                 return;
-            } // nothing to do
-
-            var nodes = m && m.chainWatchers;
-
-            if (nodes && nodes[keyName]) {
-                nodes = nodes[keyName];
-                for (var i = 0, l = nodes.length; i < l; i++) {
-                    if (nodes[i] === node) {
-                        nodes.splice(i, 1);
-                        break;
-                    }
-                }
             }
+
+            // make meta writable
+            m = _emberMetalUtils.meta(obj);
+
+            m.chainWatchers.remove(keyName, node);
+
             _emberMetalWatch_key.unwatchKey(obj, keyName, m);
         }
 
@@ -2380,15 +2500,6 @@
                     addChainWatcher(this._object, this._key, this);
                 }
             }
-
-            // Special-case: the EachProxy relies on immediate evaluation to
-            // establish its observers.
-            //
-            // TODO: Replace this with an efficient callback that the EachProxy
-            // can implement.
-            if (this._parent && this._parent._key === '@each') {
-                this.value();
-            }
         }
 
         function lazyGet(obj, key) {
@@ -2404,7 +2515,7 @@
             }
 
             // Use `get` if the return value is an EachProxy or an uncacheable value.
-            if (key === '@each' || isVolatile(obj[key])) {
+            if (isVolatile(obj[key])) {
                 return _emberMetalProperty_get.get(obj, key);
                 // Otherwise attempt to get the cached value of the computed property
             } else {
@@ -2552,62 +2663,8 @@
                 }
             },
 
-            willChange: function (events) {
-                var chains = this._chains;
-                var node;
-                if (chains) {
-                    for (var key in chains) {
-                        node = chains[key];
-                        if (node !== undefined) {
-                            node.willChange(events);
-                        }
-                    }
-                }
-
-                if (this._parent) {
-                    this._parent.chainWillChange(this, this._key, 1, events);
-                }
-            },
-
-            chainWillChange: function (chain, path, depth, events) {
-                if (this._key) {
-                    path = this._key + '.' + path;
-                }
-
-                if (this._parent) {
-                    this._parent.chainWillChange(this, path, depth + 1, events);
-                } else {
-                    if (depth > 1) {
-                        events.push(this.value(), path);
-                    }
-                    path = 'this.' + path;
-                    if (this._paths[path] > 0) {
-                        events.push(this.value(), path);
-                    }
-                }
-            },
-
-            chainDidChange: function (chain, path, depth, events) {
-                if (this._key) {
-                    path = this._key + '.' + path;
-                }
-
-                if (this._parent) {
-                    this._parent.chainDidChange(this, path, depth + 1, events);
-                } else {
-                    if (depth > 1) {
-                        events.push(this.value(), path);
-                    }
-                    path = 'this.' + path;
-                    if (this._paths[path] > 0) {
-                        events.push(this.value(), path);
-                    }
-                }
-            },
-
-            didChange: function (events) {
-                // invalidate my own value first.
-                if (this._watching) {
+            notify: function (revalidate, affected) {
+                if (revalidate && this._watching) {
                     var obj = this._parent.value();
                     if (obj !== this._object) {
                         removeChainWatcher(this._object, this._key, this);
@@ -2615,12 +2672,6 @@
                         addChainWatcher(obj, this._key, this);
                     }
                     this._value = undefined;
-
-                    // Special-case: the EachProxy relies on immediate evaluation to
-                    // establish its observers.
-                    if (this._parent && this._parent._key === '@each') {
-                        this.value();
-                    }
                 }
 
                 // then notify chains...
@@ -2630,48 +2681,49 @@
                     for (var key in chains) {
                         node = chains[key];
                         if (node !== undefined) {
-                            node.didChange(events);
+                            node.notify(revalidate, affected);
                         }
                     }
                 }
 
-                // if no events are passed in then we only care about the above wiring update
-                if (events === null) {
-                    return;
+                if (affected && this._parent) {
+                    this._parent.populateAffected(this, this._key, 1, affected);
+                }
+            },
+
+            populateAffected: function (chain, path, depth, affected) {
+                if (this._key) {
+                    path = this._key + '.' + path;
                 }
 
-                // and finally tell parent about my path changing...
                 if (this._parent) {
-                    this._parent.chainDidChange(this, this._key, 1, events);
+                    this._parent.populateAffected(this, path, depth + 1, affected);
+                } else {
+                    if (depth > 1) {
+                        affected.push(this.value(), path);
+                    }
+                    path = 'this.' + path;
+                    if (this._paths[path] > 0) {
+                        affected.push(this.value(), path);
+                    }
                 }
             }
         };
 
         function finishChains(obj) {
             // We only create meta if we really have to
-            var m = obj['__ember_meta__'];
-            var chains, chainWatchers, chainNodes;
-
+            var m = obj.__ember_meta__;
             if (m) {
                 // finish any current chains node watchers that reference obj
-                chainWatchers = m.chainWatchers;
+                var chainWatchers = m.chainWatchers;
                 if (chainWatchers) {
-                    for (var key in chainWatchers) {
-                        chainNodes = chainWatchers[key];
-                        if (chainNodes) {
-                            for (var i = 0, l = chainNodes.length; i < l; i++) {
-                                var node = chainNodes[i];
-                                if (node) {
-                                    node.didChange(null);
-                                }
-                            }
-                        }
-                    }
+                    chainWatchers.revalidateAll();
                 }
                 // copy chains from prototype
-                chains = m.chains;
+                var chains = m.chains;
                 if (chains && chains.value() !== obj) {
-                    _emberMetalUtils.meta(obj).chains = chains = chains.copy(obj);
+                    // need to check if meta is writable
+                    _emberMetalUtils.meta(obj).chains = chains.copy(obj);
                 }
             }
         }
@@ -2681,6 +2733,8 @@
     });
 // warn, assert, etc;
     enifed('ember-metal/computed', ['exports', 'ember-metal/core', 'ember-metal/property_set', 'ember-metal/utils', 'ember-metal/expand_properties', 'ember-metal/error', 'ember-metal/properties', 'ember-metal/property_events', 'ember-metal/dependent_keys'], function (exports, _emberMetalCore, _emberMetalProperty_set, _emberMetalUtils, _emberMetalExpand_properties, _emberMetalError, _emberMetalProperties, _emberMetalProperty_events, _emberMetalDependent_keys) {
+        'use strict';
+
         exports.default = computed;
 
         /**
@@ -2717,11 +2771,11 @@
       // these will be supplied by `create`
       firstName: null,
       lastName: null,
-  
+
       fullName: function() {
         var firstName = this.get('firstName');
         var lastName = this.get('lastName');
-  
+
        return firstName + ' ' + lastName;
       }.property('firstName', 'lastName')
     });
@@ -2744,22 +2798,22 @@
       // these will be supplied by `create`
       firstName: null,
       lastName: null,
-  
+
       fullName: function(key, value, oldValue) {
         // getter
         if (arguments.length === 1) {
           var firstName = this.get('firstName');
           var lastName = this.get('lastName');
-  
+
           return firstName + ' ' + lastName;
-  
+
         // setter
         } else {
           var name = value.split(' ');
-  
+
           this.set('firstName', name[0]);
           this.set('lastName', name[1]);
-  
+
           return value;
         }
       }.property('firstName', 'lastName')
@@ -2788,7 +2842,7 @@
             this._dependentKeys = undefined;
             this._suspended = undefined;
             this._meta = undefined;
-            this._cacheable = true;
+            this._volatile = false;
             this._dependentKeys = opts && opts.dependentKeys;
             this._readOnly = false;
         }
@@ -2800,6 +2854,12 @@
         /**
          Call on a computed property to set it into non-cached mode. When in this
          mode the computed property will not automatically cache the return value.
+
+         It also does not automatically fire any change events. You must manually notify
+         any changes if you want to observe this property.
+
+         Dependency keys have no effect on volatile properties as they are for cache
+         invalidation and notification when cached value is invalidated.
 
          ```javascript
          var outsideService = Ember.Object.extend({
@@ -2815,7 +2875,7 @@
          @public
          */
         ComputedPropertyPrototype.volatile = function () {
-            this._cacheable = false;
+            this._volatile = true;
             return this;
         };
 
@@ -2854,7 +2914,7 @@
          var President = Ember.Object.extend({
       fullName: computed(function() {
         return this.get('firstName') + ' ' + this.get('lastName');
-  
+
         // Tell Ember that this computed property depends on firstName
         // and lastName
       }).property('firstName', 'lastName')
@@ -2878,6 +2938,7 @@
             var args;
 
             var addArg = function (property) {
+                _emberMetalCore.default.assert('Depending on arrays using a dependent key ending with `@each` is no longer supported. ' + ('Please refactor from `Ember.computed(\'' + property + '\', function() {});` to `Ember.computed(\'' + property.slice(0, -6) + '.[]\', function() {})`.'), property.slice(-5) !== '@each');
                 args.push(property);
             };
 
@@ -2925,24 +2986,26 @@
             }
         };
 
-        /* impl descriptor API */
+        // invalidate cache when CP key changes
         ComputedPropertyPrototype.didChange = function (obj, keyName) {
             // _suspended is set via a CP.set to ensure we don't clear
             // the cached value set by the setter
-            if (this._cacheable && this._suspended !== obj) {
-                var meta = metaFor(obj);
-                if (meta.cache && meta.cache[keyName] !== undefined) {
-                    meta.cache[keyName] = undefined;
-                    _emberMetalDependent_keys.removeDependentKeys(this, obj, keyName, meta);
-                }
+            if (this._volatile || this._suspended === obj) {
+                return;
+            }
+
+            // don't create objects just to invalidate
+            var meta = obj.__ember_meta__;
+            if (!meta || meta.source !== obj) {
+                return;
+            }
+
+            var cache = meta.cache;
+            if (cache && cache[keyName] !== undefined) {
+                cache[keyName] = undefined;
+                _emberMetalDependent_keys.removeDependentKeys(this, obj, keyName, meta);
             }
         };
-
-        function finishChains(chainNodes) {
-            for (var i = 0, l = chainNodes.length; i < l; i++) {
-                chainNodes[i].didChange(null);
-            }
-        }
 
         /**
          Access the value of the function backing the computed property.
@@ -2972,38 +3035,36 @@
          @public
          */
         ComputedPropertyPrototype.get = function (obj, keyName) {
-            var ret, cache, meta, chainNodes;
-            if (this._cacheable) {
-                meta = metaFor(obj);
-                cache = meta.cache;
-
-                var result = cache && cache[keyName];
-
-                if (result === UNDEFINED) {
-                    return undefined;
-                } else if (result !== undefined) {
-                    return result;
-                }
-
-                ret = this._getter.call(obj, keyName);
-                cache = meta.cache;
-                if (!cache) {
-                    cache = meta.cache = {};
-                }
-                if (ret === undefined) {
-                    cache[keyName] = UNDEFINED;
-                } else {
-                    cache[keyName] = ret;
-                }
-
-                chainNodes = meta.chainWatchers && meta.chainWatchers[keyName];
-                if (chainNodes) {
-                    finishChains(chainNodes);
-                }
-                _emberMetalDependent_keys.addDependentKeys(this, obj, keyName, meta);
-            } else {
-                ret = this._getter.call(obj, keyName);
+            if (this._volatile) {
+                return this._getter.call(obj, keyName);
             }
+
+            var meta = metaFor(obj);
+            var cache = meta.cache;
+            if (!cache) {
+                cache = meta.cache = {};
+            }
+
+            var result = cache[keyName];
+            if (result === UNDEFINED) {
+                return undefined;
+            } else if (result !== undefined) {
+                return result;
+            }
+
+            var ret = this._getter.call(obj, keyName);
+            if (ret === undefined) {
+                cache[keyName] = UNDEFINED;
+            } else {
+                cache[keyName] = ret;
+            }
+
+            var chainWatchers = meta.chainWatchers;
+            if (chainWatchers) {
+                chainWatchers.revalidate(keyName);
+            }
+            _emberMetalDependent_keys.addDependentKeys(this, obj, keyName, meta);
+
             return ret;
         };
 
@@ -3021,22 +3082,22 @@
       // these will be supplied by `create`
       firstName: null,
       lastName: null,
-  
+
       fullName: function(key, value, oldValue) {
         // getter
         if (arguments.length === 1) {
           var firstName = this.get('firstName');
           var lastName = this.get('lastName');
-  
+
           return firstName + ' ' + lastName;
-  
+
         // setter
         } else {
           var name = value.split(' ');
-  
+
           this.set('firstName', name[0]);
           this.set('lastName', name[1]);
-  
+
           return value;
         }
       }.property('firstName', 'lastName')
@@ -3056,51 +3117,72 @@
          @return {Object} The return value of the function backing the CP.
          @public
          */
-        ComputedPropertyPrototype.set = function computedPropertySetWithSuspend(obj, keyName, value) {
+        ComputedPropertyPrototype.set = function computedPropertySetEntry(obj, keyName, value) {
+            if (this._readOnly) {
+                this._throwReadOnlyError(obj, keyName);
+            }
+
+            if (!this._setter) {
+                return this.clobberSet(obj, keyName, value);
+            }
+
+            if (this._volatile) {
+                return this.volatileSet(obj, keyName, value);
+            }
+
+            return this.setWithSuspend(obj, keyName, value);
+        };
+
+        ComputedPropertyPrototype._throwReadOnlyError = function computedPropertyThrowReadOnlyError(obj, keyName) {
+            throw new _emberMetalError.default('Cannot set read-only property "' + keyName + '" on object: ' + _emberMetalUtils.inspect(obj));
+        };
+
+        ComputedPropertyPrototype.clobberSet = function computedPropertyClobberSet(obj, keyName, value) {
+            var cachedValue = cacheFor(obj, keyName);
+            _emberMetalProperties.defineProperty(obj, keyName, null, cachedValue);
+            _emberMetalProperty_set.set(obj, keyName, value);
+            return value;
+        };
+
+        ComputedPropertyPrototype.volatileSet = function computedPropertyVolatileSet(obj, keyName, value) {
+            return this._setter.call(obj, keyName, value);
+        };
+
+        ComputedPropertyPrototype.setWithSuspend = function computedPropertySetWithSuspend(obj, keyName, value) {
             var oldSuspended = this._suspended;
-
             this._suspended = obj;
-
             try {
-                this._set(obj, keyName, value);
+                return this._set(obj, keyName, value);
             } finally {
                 this._suspended = oldSuspended;
             }
         };
 
         ComputedPropertyPrototype._set = function computedPropertySet(obj, keyName, value) {
-            var cacheable = this._cacheable;
-            var setter = this._setter;
-            var meta = metaFor(obj, cacheable);
+            // cache requires own meta
+            var meta = metaFor(obj);
+            // either there is a writable cache or we need one to update
             var cache = meta.cache;
-            var hadCachedValue = false;
-
-            var cachedValue, ret;
-
-            if (this._readOnly) {
-                throw new _emberMetalError.default('Cannot set read-only property "' + keyName + '" on object: ' + _emberMetalUtils.inspect(obj));
+            if (!cache) {
+                cache = meta.cache = {};
             }
-
-            if (cacheable && cache && cache[keyName] !== undefined) {
+            var hadCachedValue = false;
+            var cachedValue = undefined;
+            if (cache[keyName] !== undefined) {
                 if (cache[keyName] !== UNDEFINED) {
                     cachedValue = cache[keyName];
                 }
-
                 hadCachedValue = true;
             }
 
-            if (!setter) {
-                _emberMetalProperties.defineProperty(obj, keyName, null, cachedValue);
-                return _emberMetalProperty_set.set(obj, keyName, value);
-            } else {
-                ret = setter.call(obj, keyName, value, cachedValue);
-            }
+            var ret = this._setter.call(obj, keyName, value, cachedValue);
 
+            // allows setter to return the same value that is cached already
             if (hadCachedValue && cachedValue === ret) {
-                return;
+                return ret;
             }
 
-            var watched = meta.watching[keyName];
+            var watched = meta.watching && meta.watching[keyName];
             if (watched) {
                 _emberMetalProperty_events.propertyWillChange(obj, keyName);
             }
@@ -3109,18 +3191,14 @@
                 cache[keyName] = undefined;
             }
 
-            if (cacheable) {
-                if (!hadCachedValue) {
-                    _emberMetalDependent_keys.addDependentKeys(this, obj, keyName, meta);
-                }
-                if (!cache) {
-                    cache = meta.cache = {};
-                }
-                if (ret === undefined) {
-                    cache[keyName] = UNDEFINED;
-                } else {
-                    cache[keyName] = ret;
-                }
+            if (!hadCachedValue) {
+                _emberMetalDependent_keys.addDependentKeys(this, obj, keyName, meta);
+            }
+
+            if (ret === undefined) {
+                cache[keyName] = UNDEFINED;
+            } else {
+                cache[keyName] = ret;
             }
 
             if (watched) {
@@ -3132,19 +3210,15 @@
 
         /* called before property is overridden */
         ComputedPropertyPrototype.teardown = function (obj, keyName) {
-            var meta = metaFor(obj);
-
-            if (meta.cache) {
-                if (keyName in meta.cache) {
-                    _emberMetalDependent_keys.removeDependentKeys(this, obj, keyName, meta);
-                }
-
-                if (this._cacheable) {
-                    delete meta.cache[keyName];
-                }
+            if (this._volatile) {
+                return;
             }
-
-            return null; // no value to restore
+            var meta = metaFor(obj);
+            var cache = meta.cache;
+            if (cache && cache[keyName] !== undefined) {
+                _emberMetalDependent_keys.removeDependentKeys(this, obj, keyName, meta);
+                cache[keyName] = undefined;
+            }
         };
 
         /**
@@ -3163,7 +3237,7 @@
          var Person = Ember.Object.extend({
       firstName: 'Betty',
       lastName: 'Jones',
-  
+
       fullName: Ember.computed('firstName', 'lastName', function(key, value) {
         return this.get('firstName') + ' ' + this.get('lastName');
       })
@@ -3234,8 +3308,8 @@
          @public
          */
         function cacheFor(obj, key) {
-            var meta = obj['__ember_meta__'];
-            var cache = meta && meta.cache;
+            var meta = obj.__ember_meta__;
+            var cache = meta && meta.source === obj && meta.cache;
             var ret = cache && cache[key];
 
             if (ret === UNDEFINED) {
@@ -3269,6 +3343,8 @@
         exports.cacheFor = cacheFor;
     });
     enifed('ember-metal/computed_macros', ['exports', 'ember-metal/core', 'ember-metal/property_get', 'ember-metal/property_set', 'ember-metal/computed', 'ember-metal/is_empty', 'ember-metal/is_none', 'ember-metal/alias'], function (exports, _emberMetalCore, _emberMetalProperty_get, _emberMetalProperty_set, _emberMetalComputed, _emberMetalIs_empty, _emberMetalIs_none, _emberMetalAlias) {
+        'use strict';
+
         exports.empty = empty;
         exports.notEmpty = notEmpty;
         exports.none = none;
@@ -3761,12 +3837,14 @@
          @public
          */
         var or = generateComputedWithProperties(function (properties) {
+            var value;
             for (var key in properties) {
-                if (properties.hasOwnProperty(key) && properties[key]) {
-                    return properties[key];
+                value = properties[key];
+                if (properties.hasOwnProperty(key) && value) {
+                    return value;
                 }
             }
-            return false;
+            return value;
         });
 
         exports.or = or;
@@ -3944,14 +4022,14 @@
          @public
          */
 
-        function deprecatingAlias(dependentKey) {
+        function deprecatingAlias(dependentKey, options) {
             return _emberMetalComputed.computed(dependentKey, {
                 get: function (key) {
-                    _emberMetalCore.default.deprecate('Usage of `' + key + '` is deprecated, use `' + dependentKey + '` instead.');
+                    _emberMetalCore.default.deprecate('Usage of `' + key + '` is deprecated, use `' + dependentKey + '` instead.', false, options);
                     return _emberMetalProperty_get.get(this, dependentKey);
                 },
                 set: function (key, value) {
-                    _emberMetalCore.default.deprecate('Usage of `' + key + '` is deprecated, use `' + dependentKey + '` instead.');
+                    _emberMetalCore.default.deprecate('Usage of `' + key + '` is deprecated, use `' + dependentKey + '` instead.', false, options);
                     _emberMetalProperty_set.set(this, dependentKey, value);
                     return value;
                 }
@@ -3981,9 +4059,11 @@
 
          @class Ember
          @static
-         @version 2.0.0-beta.2
+         @version 2.0.2
          @public
          */
+
+        'use strict';
 
         if ('undefined' === typeof Ember) {
             // Create core object. Make it act like an instance of Ember.Namespace so that
@@ -4013,11 +4093,11 @@
 
          @property VERSION
          @type String
-         @default '2.0.0-beta.2'
+         @default '2.0.2'
          @static
          @public
          */
-        Ember.VERSION = '2.0.0-beta.2';
+        Ember.VERSION = '2.0.2';
 
         /**
          The hash of environment variables used to control various configuration
@@ -4115,7 +4195,6 @@
          An empty function useful for some operations. Always returns `this`.
 
          @method K
-         @private
          @return {Object}
          @public
          */
@@ -4145,19 +4224,24 @@
             Ember.deprecate = K;
         }
         if ('undefined' === typeof Ember.deprecateFunc) {
-            Ember.deprecateFunc = function (_, func) {
-                return func;
+            Ember.deprecateFunc = function () {
+                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                    args[_key] = arguments[_key];
+                }
+
+                return args[args.length - 1];
             };
         }
 
         exports.default = Ember;
     });
     enifed('ember-metal/dependent_keys', ['exports', 'ember-metal/watching'], function (exports, _emberMetalWatching) {
-        exports.addDependentKeys = addDependentKeys;
-        exports.removeDependentKeys = removeDependentKeys;
         // Remove "use strict"; from transpiled module until
         // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
         //
+
+        exports.addDependentKeys = addDependentKeys;
+        exports.removeDependentKeys = removeDependentKeys;
         'REMOVE_USE_STRICT: true';
 
         /**
@@ -4243,6 +4327,13 @@
         }
     });
     enifed('ember-metal/deprecate_property', ['exports', 'ember-metal/core', 'ember-metal/property_get', 'ember-metal/property_set'], function (exports, _emberMetalCore, _emberMetalProperty_get, _emberMetalProperty_set) {
+        /**
+         @module ember
+         @submodule ember-metal
+         */
+
+        'use strict';
+
         exports.deprecateProperty = deprecateProperty;
 
         /**
@@ -4257,9 +4348,9 @@
          @since 1.7.0
          */
 
-        function deprecateProperty(object, deprecatedKey, newKey) {
+        function deprecateProperty(object, deprecatedKey, newKey, options) {
             function deprecate() {
-                _emberMetalCore.default.deprecate('Usage of `' + deprecatedKey + '` is deprecated, use `' + newKey + '` instead.');
+                _emberMetalCore.default.deprecate('Usage of `' + deprecatedKey + '` is deprecated, use `' + newKey + '` instead.', false, options);
             }
 
             Object.defineProperty(object, deprecatedKey, {
@@ -4276,18 +4367,15 @@
             });
         }
     });
-    /**
-     @module ember
-     @submodule ember-metal
-     */
     enifed('ember-metal/dictionary', ['exports'], function (exports) {
-        exports.default = makeDictionary;
-
         // the delete is meant to hint at runtimes that this object should remain in
         // dictionary mode. This is clearly a runtime specific hack, but currently it
         // appears worthwhile in some usecases. Please note, these deletes do increase
         // the cost of creation dramatically over a plain Object.create. And as this
         // only makes sense for long-lived dictionaries that aren't instantiated often.
+        'use strict';
+
+        exports.default = makeDictionary;
 
         function makeDictionary(parent) {
             var dict = Object.create(parent);
@@ -4296,7 +4384,31 @@
             return dict;
         }
     });
+    enifed("ember-metal/empty_object", ["exports"], function (exports) {
+        // This exists because `Object.create(null)` is absurdly slow compared
+        // to `new EmptyObject()`. In either case, you want a null prototype
+        // when you're treating the object instances as arbitrary dictionaries
+        // and don't want your keys colliding with build-in methods on the
+        // default object prototype.
+
+        "use strict";
+
+        var proto = Object.create(null, {
+            // without this, we will always still end up with (new
+            // EmptyObject()).constructor === Object
+            constructor: {
+                value: undefined,
+                enumerable: false,
+                writable: true
+            }
+        });
+
+        function EmptyObject() {}
+        EmptyObject.prototype = proto;
+        exports.default = EmptyObject;
+    });
     enifed('ember-metal/environment', ['exports', 'ember-metal/core'], function (exports, _emberMetalCore) {
+        'use strict';
 
         /*
          Ember can run in many different environments, including environments like
@@ -4341,6 +4453,8 @@
         exports.default = environment;
     });
     enifed('ember-metal/error', ['exports', 'ember-metal/core'], function (exports, _emberMetalCore) {
+        'use strict';
+
         exports.default = EmberError;
 
         var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -4377,6 +4491,10 @@
         EmberError.prototype = Object.create(Error.prototype);
     });
     enifed('ember-metal/events', ['exports', 'ember-metal/core', 'ember-metal/utils'], function (exports, _emberMetalCore, _emberMetalUtils) {
+        // Remove "use strict"; from transpiled module until
+        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
+        //
+
         exports.accumulateListeners = accumulateListeners;
         exports.addListener = addListener;
         exports.suspendListener = suspendListener;
@@ -4386,10 +4504,12 @@
         exports.hasListeners = hasListeners;
         exports.listenersFor = listenersFor;
         exports.on = on;
-        // Remove "use strict"; from transpiled module until
-        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
-        //
         'REMOVE_USE_STRICT: true';
+
+        /**
+         @module ember
+         @submodule ember-metal
+         */
 
         /* listener flags */
         var ONCE = 1;
@@ -4698,11 +4818,6 @@
          */
 
         function sendEvent(obj, eventName, params, actions) {
-            // first give object a chance to handle it
-            if (obj !== _emberMetalCore.default && 'function' === typeof obj.sendEvent) {
-                obj.sendEvent(eventName, params);
-            }
-
             if (!actions) {
                 var meta = obj['__ember_meta__'];
                 actions = meta && meta.listeners && meta.listeners[eventName];
@@ -4826,11 +4941,9 @@
 
         exports.removeListener = removeListener;
     });
-    /**
-     @module ember
-     @submodule ember-metal
-     */
     enifed('ember-metal/expand_properties', ['exports', 'ember-metal/error'], function (exports, _emberMetalError) {
+        'use strict';
+
         exports.default = expandProperties;
 
         /**
@@ -4855,12 +4968,13 @@
          Ember.expandProperties('{foo,bar}', echo);            //=> 'foo', 'bar'
          Ember.expandProperties('foo.{bar,baz}', echo);        //=> 'foo.bar', 'foo.baz'
          Ember.expandProperties('{foo,bar}.baz', echo);        //=> 'foo.baz', 'bar.baz'
-         Ember.expandProperties('foo.{bar,baz}.@each', echo)   //=> 'foo.bar.@each', 'foo.baz.@each'
+         Ember.expandProperties('foo.{bar,baz}.[]', echo)   //=> 'foo.bar.[]', 'foo.baz.[]'
          Ember.expandProperties('{foo,bar}.{spam,eggs}', echo) //=> 'foo.spam', 'foo.eggs', 'bar.spam', 'bar.eggs'
          Ember.expandProperties('{foo}.bar.{baz}')             //=> 'foo.bar.baz'
          ```
 
-         @method
+         @method expandProperties
+         @for Ember
          @private
          @param {String} pattern The property pattern to expand.
          @param {Function} callback The callback to invoke.  It is invoked once per
@@ -4905,6 +5019,8 @@
         }
     });
     enifed('ember-metal/features', ['exports', 'ember-metal/core'], function (exports, _emberMetalCore) {
+        'use strict';
+
         exports.default = isEnabled;
 
         /**
@@ -4956,6 +5072,8 @@
         }
     });
     enifed('ember-metal/get_properties', ['exports', 'ember-metal/property_get'], function (exports, _emberMetalProperty_get) {
+        'use strict';
+
         exports.default = getProperties;
 
         /**
@@ -4979,7 +5097,7 @@
          @param {Object} obj
          @param {String...|Array} list of keys to get
          @return {Object}
-         @private
+         @public
          */
 
         function getProperties(obj) {
@@ -4998,6 +5116,7 @@
         }
     });
     enifed('ember-metal/injected_property', ['exports', 'ember-metal/core', 'ember-metal/computed', 'ember-metal/alias', 'ember-metal/properties'], function (exports, _emberMetalCore, _emberMetalComputed, _emberMetalAlias, _emberMetalProperties) {
+        'use strict';
 
         /**
          Read-only property that returns the result of a container lookup.
@@ -5019,9 +5138,9 @@
         }
 
         function injectedPropertyGet(keyName) {
-            var possibleDesc = this[keyName];
-            var desc = possibleDesc !== null && typeof possibleDesc === 'object' && possibleDesc.isDescriptor ? possibleDesc : undefined;
+            var desc = this[keyName];
 
+            _emberMetalCore.default.assert('InjectedProperties should be defined with the Ember.inject computed property macros.', desc && desc.isDescriptor && desc.type);
             _emberMetalCore.default.assert('Attempting to lookup an injected property on an object without a container, ensure that the object was instantiated via a container.', this.container);
 
             return this.container.lookup(desc.type + ':' + (desc.name || keyName));
@@ -5044,6 +5163,8 @@
     });
 // Ember.assert
     enifed('ember-metal/instrumentation', ['exports', 'ember-metal/core'], function (exports, _emberMetalCore) {
+        'use strict';
+
         exports.instrument = instrument;
         exports._instrumentStart = _instrumentStart;
         exports.subscribe = subscribe;
@@ -5060,11 +5181,11 @@
          ```javascript
          Ember.subscribe("render", {
       before: function(name, timestamp, payload) {
-  
+
       },
-  
+
       after: function(name, timestamp, payload) {
-  
+
       }
     });
          ```
@@ -5294,6 +5415,8 @@
         }
     });
     enifed('ember-metal/is_blank', ['exports', 'ember-metal/is_empty'], function (exports, _emberMetalIs_empty) {
+        'use strict';
+
         exports.default = isBlank;
 
         /**
@@ -5326,6 +5449,7 @@
         }
     });
     enifed('ember-metal/is_empty', ['exports', 'ember-metal/property_get', 'ember-metal/is_none'], function (exports, _emberMetalProperty_get, _emberMetalIs_none) {
+        'use strict';
 
         /**
          Verifies that a value is `null` or an empty string, empty array,
@@ -5387,7 +5511,6 @@
         exports.default = isEmpty;
     });
     enifed("ember-metal/is_none", ["exports"], function (exports) {
-        exports.default = isNone;
         /**
          Returns true if the passed value is null or undefined. This avoids errors
          from JSLint complaining about use of ==, which can be technically
@@ -5408,12 +5531,17 @@
          @return {Boolean}
          @public
          */
+        "use strict";
+
+        exports.default = isNone;
 
         function isNone(obj) {
             return obj === null || obj === undefined;
         }
     });
     enifed('ember-metal/is_present', ['exports', 'ember-metal/is_blank'], function (exports, _emberMetalIs_blank) {
+        'use strict';
+
         exports.default = isPresent;
 
         /**
@@ -5458,6 +5586,8 @@
          @return {Array} Array containing keys of obj
          @private
          */
+        'use strict';
+
         var keys = Object.keys;
 
         if (!keys) {
@@ -5498,6 +5628,7 @@
         exports.default = keys;
     });
     enifed('ember-metal/libraries', ['exports', 'ember-metal/core', 'ember-metal/features'], function (exports, _emberMetalCore, _emberMetalFeatures) {
+        'use strict';
 
         /**
          Helper class that allows you to register your library with Ember.
@@ -5536,7 +5667,7 @@
                     }
                     this._registry.splice(index, 0, { name: name, version: version });
                 } else {
-                    _emberMetalCore.default.warn('Library "' + name + '" is already registered with Ember.');
+                    _emberMetalCore.default.warn('Library "' + name + '" is already registered with Ember.', false, { id: 'ember-metal.libraries-register' });
                 }
             },
 
@@ -5552,19 +5683,13 @@
                     index = this._registry.indexOf(lib);
                     this._registry.splice(index, 1);
                 }
-            },
-
-            each: function (callback) {
-                _emberMetalCore.default.deprecate('Using Ember.libraries.each() is deprecated. Access to a list of registered libraries is currently a private API. If you are not knowingly accessing this method, your out-of-date Ember Inspector may be doing so.');
-                this._registry.forEach(function (lib) {
-                    callback(lib.name, lib.version);
-                });
             }
         };
 
         exports.default = Libraries;
     });
     enifed('ember-metal/logger', ['exports', 'ember-metal/core', 'ember-metal/error'], function (exports, _emberMetalCore, _emberMetalError) {
+        'use strict';
 
         function K() {
             return this;
@@ -5620,7 +5745,7 @@
 
          @class Logger
          @namespace Ember
-         @private
+         @public
          */
         exports.default = {
             /**
@@ -5634,7 +5759,7 @@
              @method log
              @for Ember.Logger
              @param {*} arguments
-             @private
+             @public
              */
             log: consoleMethod('log') || K,
 
@@ -5648,7 +5773,7 @@
              @method warn
              @for Ember.Logger
              @param {*} arguments
-             @private
+             @public
              */
             warn: consoleMethod('warn') || K,
 
@@ -5662,7 +5787,7 @@
              @method error
              @for Ember.Logger
              @param {*} arguments
-             @private
+             @public
              */
             error: consoleMethod('error') || K,
 
@@ -5677,7 +5802,7 @@
              @method info
              @for Ember.Logger
              @param {*} arguments
-             @private
+             @public
              */
             info: consoleMethod('info') || K,
 
@@ -5692,7 +5817,7 @@
              @method debug
              @for Ember.Logger
              @param {*} arguments
-             @private
+             @public
              */
             debug: consoleMethod('debug') || consoleMethod('info') || K,
 
@@ -5705,13 +5830,37 @@
              @method assert
              @for Ember.Logger
              @param {Boolean} bool Value to test
-             @private
+             @public
              */
             assert: consoleMethod('assert') || assertPolyfill
         };
     });
 // Ember.imports
-    enifed('ember-metal/map', ['exports', 'ember-metal/core', 'ember-metal/utils', 'ember-metal/deprecate_property'], function (exports, _emberMetalCore, _emberMetalUtils, _emberMetalDeprecate_property) {
+    enifed('ember-metal/map', ['exports', 'ember-metal/core', 'ember-metal/utils'], function (exports, _emberMetalCore, _emberMetalUtils) {
+        /**
+         @module ember
+         @submodule ember-metal
+         */
+
+        /*
+         JavaScript (before ES6) does not have a Map implementation. Objects,
+         which are often used as dictionaries, may only have Strings as keys.
+
+         Because Ember has a way to get a unique identifier for every object
+         via `Ember.guidFor`, we can implement a performant Map with arbitrary
+         keys. Because it is commonly used in low-level bookkeeping, Map is
+         implemented as a pure JavaScript object for performance.
+
+         This implementation follows the current iteration of the ES6 proposal for
+         maps (http://wiki.ecmascript.org/doku.php?id=harmony:simple_maps_and_sets),
+         with one exception:  as we do not have the luxury of in-VM iteration, we implement a
+         forEach method for iteration.
+
+         Map is mocked out to look like an Ember object, so you can do
+         `Ember.Map.create()` for symmetry with other Ember classes.
+         */
+
+        'use strict';
 
         function missingFunction(fn) {
             throw new TypeError(Object.prototype.toString.call(fn) + ' is not a function');
@@ -5805,20 +5954,6 @@
                 }
 
                 return this;
-            },
-
-            /**
-             @deprecated
-             @method remove
-             @param obj
-             @param _guid (optional and for internal use only)
-             @return {Boolean}
-             @private
-             */
-            remove: function (obj, _guid) {
-                _emberMetalCore.default.deprecate('Calling `OrderedSet.prototype.remove` has been deprecated, please use `OrderedSet.prototype.delete` instead.', this._silenceRemoveDeprecation);
-
-                return this.delete(obj, _guid);
             },
 
             /**
@@ -5930,8 +6065,6 @@
             }
         };
 
-        _emberMetalDeprecate_property.deprecateProperty(OrderedSet.prototype, 'length', 'size');
-
         /**
          A Map stores values indexed by keys. Unlike JavaScript's
          default Objects, the keys of a Map can be any JavaScript
@@ -6033,20 +6166,6 @@
             },
 
             /**
-             @deprecated see delete
-             Removes a value from the map for an associated key.
-             @method remove
-             @param {*} key
-             @return {Boolean} true if an item was removed, false otherwise
-             @private
-             */
-            remove: function (key) {
-                _emberMetalCore.default.deprecate('Calling `Map.prototype.remove` has been deprecated, please use `Map.prototype.delete` instead.');
-
-                return this.delete(key);
-            },
-
-            /**
              Removes a value from the map for an associated key.
              @since 1.8.0
              @method delete
@@ -6142,8 +6261,6 @@
             }
         };
 
-        _emberMetalDeprecate_property.deprecateProperty(Map.prototype, 'length', 'size');
-
         /**
          @class MapWithDefault
          @namespace Ember
@@ -6217,31 +6334,7 @@
         exports.Map = Map;
         exports.MapWithDefault = MapWithDefault;
     });
-    /**
-     @module ember
-     @submodule ember-metal
-     */
-
-    /*
-     JavaScript (before ES6) does not have a Map implementation. Objects,
-     which are often used as dictionaries, may only have Strings as keys.
-
-     Because Ember has a way to get a unique identifier for every object
-     via `Ember.guidFor`, we can implement a performant Map with arbitrary
-     keys. Because it is commonly used in low-level bookkeeping, Map is
-     implemented as a pure JavaScript object for performance.
-
-     This implementation follows the current iteration of the ES6 proposal for
-     maps (http://wiki.ecmascript.org/doku.php?id=harmony:simple_maps_and_sets),
-     with one exception:  as we do not have the luxury of in-VM iteration, we implement a
-     forEach method for iteration.
-
-     Map is mocked out to look like an Ember object, so you can do
-     `Ember.Map.create()` for symmetry with other Ember classes.
-     */
     enifed('ember-metal/merge', ['exports'], function (exports) {
-        exports.default = merge;
-        exports.assign = assign;
         /**
          Merge the contents of two objects together into the first object.
 
@@ -6257,8 +6350,12 @@
          @param {Object} original The object to merge into
          @param {Object} updates The object to copy properties from
          @return {Object}
-         @private
+         @public
          */
+        'use strict';
+
+        exports.default = merge;
+        exports.assign = assign;
 
         function merge(original, updates) {
             if (!updates || typeof updates !== 'object') {
@@ -6300,6 +6397,10 @@
         }
     });
     enifed('ember-metal/mixin', ['exports', 'ember-metal/core', 'ember-metal/merge', 'ember-metal/property_get', 'ember-metal/property_set', 'ember-metal/utils', 'ember-metal/expand_properties', 'ember-metal/properties', 'ember-metal/computed', 'ember-metal/binding', 'ember-metal/observer', 'ember-metal/events', 'ember-metal/streams/utils'], function (exports, _emberMetalCore, _emberMetalMerge, _emberMetalProperty_get, _emberMetalProperty_set, _emberMetalUtils, _emberMetalExpand_properties, _emberMetalProperties, _emberMetalComputed, _emberMetalBinding, _emberMetalObserver, _emberMetalEvents, _emberMetalStreamsUtils) {
+        // Remove "use strict"; from transpiled module until
+        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
+        //
+
         exports.mixin = mixin;
         exports.default = Mixin;
         exports.required = required;
@@ -6307,10 +6408,12 @@
         exports.observer = observer;
         exports._immediateObserver = _immediateObserver;
         exports._beforeObserver = _beforeObserver;
-        // Remove "use strict"; from transpiled module until
-        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
-        //
         'REMOVE_USE_STRICT: true';
+
+        /**
+         @module ember
+         @submodule ember-metal
+         */
 
         var REQUIRED;
         var a_slice = [].slice;
@@ -7065,7 +7168,7 @@
          */
 
         function required() {
-            _emberMetalCore.default.deprecate('Ember.required is deprecated as its behavior is inconsistent and unreliable.', false);
+            _emberMetalCore.default.deprecate('Ember.required is deprecated as its behavior is inconsistent and unreliable.', false, { id: 'ember-metal.required', until: '3.0.0' });
             return REQUIRED;
         }
 
@@ -7096,7 +7199,7 @@
          @method aliasMethod
          @for Ember
          @param {String} methodName name of the method to alias
-         @private
+         @public
          */
 
         function aliasMethod(methodName) {
@@ -7138,12 +7241,15 @@
             var paths;
 
             var addWatchedProperty = function (path) {
+                _emberMetalCore.default.assert('Depending on arrays using a dependent key ending with `@each` is no longer supported. ' + ('Please refactor from `Ember.observer(\'' + path + '\', function() {});` to `Ember.observer(\'' + path.slice(0, -6) + '.[]\', function() {})`.'), path.slice(-5) !== '@each');
+
                 paths.push(path);
             };
             var _paths = args.slice(0, -1);
 
             if (typeof func !== 'function') {
                 // revert to old, soft-deprecated argument ordering
+                _emberMetalCore.default.deprecate('Passing the dependentKeys after the callback function in Ember.observer is deprecated. Ensure the callback function is the last argument.', false, { id: 'ember-metal.observer-argument-order', until: '3.0.0' });
 
                 func = args[0];
                 _paths = args.slice(1);
@@ -7190,7 +7296,7 @@
          */
 
         function _immediateObserver() {
-            _emberMetalCore.default.deprecate('Usage of `Ember.immediateObserver` is deprecated, use `Ember.observer` instead.');
+            _emberMetalCore.default.deprecate('Usage of `Ember.immediateObserver` is deprecated, use `Ember.observer` instead.', false, { id: 'ember-metal.immediate-observer', until: '3.0.0' });
 
             for (var i = 0, l = arguments.length; i < l; i++) {
                 var arg = arguments[i];
@@ -7213,11 +7319,7 @@
          ```javascript
          App.PersonView = Ember.View.extend({
       friends: [{ name: 'Tom' }, { name: 'Stefan' }, { name: 'Kris' }],
-  
-      valueWillChange: Ember.beforeObserver('content.value', function(obj, keyName) {
-        this.changingFrom = obj.get(keyName);
-      }),
-  
+
       valueDidChange: Ember.observer('content.value', function(obj, keyName) {
           // only run if updating a value already in the DOM
           if (this.get('state') === 'inDOM') {
@@ -7225,7 +7327,7 @@
             // logic
           }
       }),
-  
+
       friendsDidChange: Ember.observer('friends.@each.name', function(obj, keyName) {
         // some logic
         // obj.get(keyName) returns friends array
@@ -7285,22 +7387,16 @@
         exports.required = required;
         exports.REQUIRED = REQUIRED;
     });
-    /**
-     @module ember
-     @submodule ember-metal
-     */
-
 // warn, assert, wrap, et;
     enifed('ember-metal/observer', ['exports', 'ember-metal/watching', 'ember-metal/events'], function (exports, _emberMetalWatching, _emberMetalEvents) {
+        'use strict';
+
         exports.addObserver = addObserver;
         exports.observersFor = observersFor;
         exports.removeObserver = removeObserver;
         exports._addBeforeObserver = _addBeforeObserver;
-        exports._suspendBeforeObserver = _suspendBeforeObserver;
         exports._suspendObserver = _suspendObserver;
-        exports._suspendBeforeObservers = _suspendBeforeObservers;
         exports._suspendObservers = _suspendObservers;
-        exports._beforeObserversFor = _beforeObserversFor;
         exports._removeBeforeObserver = _removeBeforeObserver;
 
         /**
@@ -7379,26 +7475,13 @@
         // This should only be used by the target of the observer
         // while it is setting the observed path.
 
-        function _suspendBeforeObserver(obj, path, target, method, callback) {
-            return _emberMetalEvents.suspendListener(obj, beforeEvent(path), target, method, callback);
-        }
-
         function _suspendObserver(obj, path, target, method, callback) {
             return _emberMetalEvents.suspendListener(obj, changeEvent(path), target, method, callback);
-        }
-
-        function _suspendBeforeObservers(obj, paths, target, method, callback) {
-            var events = paths.map(beforeEvent);
-            return _emberMetalEvents.suspendListeners(obj, events, target, method, callback);
         }
 
         function _suspendObservers(obj, paths, target, method, callback) {
             var events = paths.map(changeEvent);
             return _emberMetalEvents.suspendListeners(obj, events, target, method, callback);
-        }
-
-        function _beforeObserversFor(obj, path) {
-            return _emberMetalEvents.listenersFor(obj, beforeEvent(path));
         }
 
         /**
@@ -7420,6 +7503,7 @@
         }
     });
     enifed('ember-metal/observer_set', ['exports', 'ember-metal/utils', 'ember-metal/events'], function (exports, _emberMetalUtils, _emberMetalEvents) {
+        'use strict';
 
         /*
          this.observerSet = {
@@ -7488,6 +7572,8 @@
         };
     });
     enifed('ember-metal/path_cache', ['exports', 'ember-metal/cache'], function (exports, _emberMetalCache) {
+        'use strict';
+
         exports.isGlobal = isGlobal;
         exports.isGlobalPath = isGlobalPath;
         exports.hasThis = hasThis;
@@ -7567,6 +7653,12 @@
         }
     });
     enifed('ember-metal/properties', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/utils', 'ember-metal/property_events'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalUtils, _emberMetalProperty_events) {
+        /**
+         @module ember-metal
+         */
+
+        'use strict';
+
         exports.Descriptor = Descriptor;
         exports.MANDATORY_SETTER_FUNCTION = MANDATORY_SETTER_FUNCTION;
         exports.DEFAULT_GETTER_FUNCTION = DEFAULT_GETTER_FUNCTION;
@@ -7722,10 +7814,9 @@
             return this;
         }
     });
-    /**
-     @module ember-metal
-     */
     enifed('ember-metal/property_events', ['exports', 'ember-metal/utils', 'ember-metal/events', 'ember-metal/observer_set'], function (exports, _emberMetalUtils, _emberMetalEvents, _emberMetalObserver_set) {
+        'use strict';
+
         var PROPERTY_DID_CHANGE = _emberMetalUtils.symbol('PROPERTY_DID_CHANGE');
 
         exports.PROPERTY_DID_CHANGE = PROPERTY_DID_CHANGE;
@@ -7901,6 +7992,11 @@
                 keys = keysOf(deps);
                 for (i = 0; i < keys.length; i++) {
                     key = keys[i];
+
+                    if (!deps[key]) {
+                        continue;
+                    }
+
                     possibleDesc = obj[key];
                     desc = possibleDesc !== null && typeof possibleDesc === 'object' && possibleDesc.isDescriptor ? possibleDesc : undefined;
 
@@ -7914,47 +8010,26 @@
         }
 
         function chainsWillChange(obj, keyName, m) {
-            if (!(m.hasOwnProperty('chainWatchers') && m.chainWatchers[keyName])) {
+            if (m.chainWatchers === undefined || m.chainWatchers.obj !== obj) {
                 return;
             }
 
-            var nodes = m.chainWatchers[keyName];
-            var events = [];
-            var i, l;
-
-            for (i = 0, l = nodes.length; i < l; i++) {
-                nodes[i].willChange(events);
-            }
-
-            for (i = 0, l = events.length; i < l; i += 2) {
-                propertyWillChange(events[i], events[i + 1]);
-            }
+            m.chainWatchers.notify(keyName, false, propertyWillChange);
         }
 
-        function chainsDidChange(obj, keyName, m, suppressEvents) {
-            if (!(m && m.hasOwnProperty('chainWatchers') && m.chainWatchers[keyName])) {
+        function chainsDidChange(obj, keyName, m) {
+            if (m.chainWatchers === undefined || m.chainWatchers.obj !== obj) {
                 return;
             }
 
-            var nodes = m.chainWatchers[keyName];
-            var events = suppressEvents ? null : [];
-            var i, l;
-
-            for (i = 0, l = nodes.length; i < l; i++) {
-                nodes[i].didChange(events);
-            }
-
-            if (suppressEvents) {
-                return;
-            }
-
-            for (i = 0, l = events.length; i < l; i += 2) {
-                propertyDidChange(events[i], events[i + 1]);
-            }
+            m.chainWatchers.notify(keyName, true, propertyDidChange);
         }
 
         function overrideChains(obj, keyName, m) {
-            chainsDidChange(obj, keyName, m, true);
+            if (m.chainWatchers === undefined || m.chainWatchers.obj !== obj) {
+                return;
+            }
+            m.chainWatchers.revalidate(keyName);
         }
 
         /**
@@ -8041,7 +8116,13 @@
         exports.endPropertyChanges = endPropertyChanges;
         exports.changeProperties = changeProperties;
     });
-    enifed('ember-metal/property_get', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/error', 'ember-metal/path_cache', 'ember-metal/utils', 'ember-metal/is_none'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalError, _emberMetalPath_cache, _emberMetalUtils, _emberMetalIs_none) {
+    enifed('ember-metal/property_get', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/error', 'ember-metal/path_cache'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalError, _emberMetalPath_cache) {
+        /**
+         @module ember-metal
+         */
+
+        'use strict';
+
         exports.get = get;
         exports.normalizeTuple = normalizeTuple;
         exports._getPath = _getPath;
@@ -8049,11 +8130,6 @@
 
         var FIRST_KEY = /^([^\.]+)/;
 
-        var INTERCEPT_GET = _emberMetalUtils.symbol('INTERCEPT_GET');
-        exports.INTERCEPT_GET = INTERCEPT_GET;
-        var UNHANDLED_GET = _emberMetalUtils.symbol('UNHANDLED_GET');
-
-        exports.UNHANDLED_GET = UNHANDLED_GET;
         // ..........................................................
         // GET AND SET
         //
@@ -8088,28 +8164,14 @@
          */
 
         function get(obj, keyName) {
+            _emberMetalCore.default.assert('Get must be called with two arguments; an object and a property key', arguments.length === 2);
+            _emberMetalCore.default.assert('Cannot call get with \'' + keyName + '\' on an undefined object.', obj !== undefined && obj !== null);
+            _emberMetalCore.default.assert('The key provided to get must be a string, you passed ' + keyName, typeof keyName === 'string');
+            _emberMetalCore.default.assert('\'this\' in paths is not supported', !_emberMetalPath_cache.hasThis(keyName));
+
             // Helpers that operate with 'this' within an #each
             if (keyName === '') {
                 return obj;
-            }
-
-            if (!keyName && 'string' === typeof obj) {
-                keyName = obj;
-                obj = _emberMetalCore.default.lookup;
-            }
-
-            _emberMetalCore.default.assert('Cannot call get with ' + keyName + ' key.', !!keyName);
-            _emberMetalCore.default.assert('Cannot call get with \'' + keyName + '\' on an undefined object.', obj !== undefined);
-
-            if (_emberMetalIs_none.default(obj)) {
-                return _getPath(obj, keyName);
-            }
-
-            if (obj && typeof obj[INTERCEPT_GET] === 'function') {
-                var result = obj[INTERCEPT_GET](obj, keyName);
-                if (result !== UNHANDLED_GET) {
-                    return result;
-                }
             }
 
             var meta = obj['__ember_meta__'];
@@ -8203,7 +8265,7 @@
             parts = path.split('.');
             len = parts.length;
             for (idx = 0; root != null && idx < len; idx++) {
-                root = get(root, parts[idx], true);
+                root = get(root, parts[idx]);
                 if (root && root.isDestroyed) {
                     return undefined;
                 }
@@ -8222,17 +8284,12 @@
 
         exports.default = get;
     });
-    /**
-     @module ember-metal
-     */
-    enifed('ember-metal/property_set', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/property_get', 'ember-metal/property_events', 'ember-metal/properties', 'ember-metal/error', 'ember-metal/path_cache', 'ember-metal/utils'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalProperty_get, _emberMetalProperty_events, _emberMetalProperties, _emberMetalError, _emberMetalPath_cache, _emberMetalUtils) {
+    enifed('ember-metal/property_set', ['exports', 'ember-metal/core', 'ember-metal/features', 'ember-metal/property_get', 'ember-metal/property_events', 'ember-metal/properties', 'ember-metal/error', 'ember-metal/path_cache'], function (exports, _emberMetalCore, _emberMetalFeatures, _emberMetalProperty_get, _emberMetalProperty_events, _emberMetalProperties, _emberMetalError, _emberMetalPath_cache) {
+        'use strict';
+
         exports.set = set;
         exports.trySet = trySet;
-        var INTERCEPT_SET = _emberMetalUtils.symbol('INTERCEPT_SET');
-        exports.INTERCEPT_SET = INTERCEPT_SET;
-        var UNHANDLED_SET = _emberMetalUtils.symbol('UNHANDLED_SET');
 
-        exports.UNHANDLED_SET = UNHANDLED_SET;
         /**
          Sets the value of a property on an object, respecting computed properties
          and notifying observers and other listeners of the change. If the
@@ -8249,28 +8306,10 @@
          */
 
         function set(obj, keyName, value, tolerant) {
-            if (typeof obj === 'string') {
-                _emberMetalCore.default.assert('Path \'' + obj + '\' must be global if no obj is given.', _emberMetalPath_cache.isGlobalPath(obj));
-                value = keyName;
-                keyName = obj;
-                obj = _emberMetalCore.default.lookup;
-            }
-
-            _emberMetalCore.default.assert('Cannot call set with \'' + keyName + '\' key.', !!keyName);
-
-            if (obj === _emberMetalCore.default.lookup) {
-                return setPath(obj, keyName, value, tolerant);
-            }
-
-            // This path exists purely to implement backwards-compatible
-            // effects (specifically, setting a property on a view may
-            // invoke a mutator on `attrs`).
-            if (obj && typeof obj[INTERCEPT_SET] === 'function') {
-                var result = obj[INTERCEPT_SET](obj, keyName, value, tolerant);
-                if (result !== UNHANDLED_SET) {
-                    return result;
-                }
-            }
+            _emberMetalCore.default.assert('Set must be called with three or four arguments; an object, a property key, a value and tolerant true/false', arguments.length === 3 || arguments.length === 4);
+            _emberMetalCore.default.assert('Cannot call set with \'' + keyName + '\' on an undefined object.', obj !== undefined && obj !== null);
+            _emberMetalCore.default.assert('The key provided to set must be a string, you passed ' + keyName, typeof keyName === 'string');
+            _emberMetalCore.default.assert('\'this\' in paths is not supported', !_emberMetalPath_cache.hasThis(keyName));
 
             var meta, possibleDesc, desc;
             if (obj) {
@@ -8280,18 +8319,16 @@
             }
 
             var isUnknown, currentValue;
-            if ((!obj || desc === undefined) && _emberMetalPath_cache.isPath(keyName)) {
+            if (desc === undefined && _emberMetalPath_cache.isPath(keyName)) {
                 return setPath(obj, keyName, value, tolerant);
             }
 
-            _emberMetalCore.default.assert('You need to provide an object and key to `set`.', !!obj && keyName !== undefined);
             _emberMetalCore.default.assert('calling set on destroyed object', !obj.isDestroyed);
 
             if (desc) {
                 desc.set(obj, keyName, value);
             } else {
-
-                if (obj !== null && value !== undefined && typeof obj === 'object' && obj[keyName] === value) {
+                if (value !== undefined && typeof obj === 'object' && obj[keyName] === value) {
                     return value;
                 }
 
@@ -8378,6 +8415,8 @@
         }
     });
     enifed("ember-metal/replace", ["exports"], function (exports) {
+        "use strict";
+
         exports._replace = _replace;
         exports.default = replace;
         var splice = Array.prototype.splice;
@@ -8445,6 +8484,8 @@
         }
     });
     enifed('ember-metal/run_loop', ['exports', 'ember-metal/core', 'ember-metal/utils', 'ember-metal/property_events', 'backburner'], function (exports, _emberMetalCore, _emberMetalUtils, _emberMetalProperty_events, _backburner) {
+        'use strict';
+
         exports.default = run;
 
         function onBegin(current) {
@@ -8572,10 +8613,10 @@
           setup: Ember.run.bind(this, this.setupEditor)
         });
       }),
-  
+
       setupEditor: function(editor) {
         this.set('editor', editor);
-  
+
         editor.on('change', function() {
           console.log('content changed!');
         });
@@ -8704,7 +8745,7 @@
          @return {void}
          @public
          */
-        run.schedule = function () {
+        run.schedule = function () /* queue, target, method */{
             checkAutoRun();
             backburner.schedule.apply(backburner, arguments);
         };
@@ -8768,7 +8809,7 @@
          @return {*} Timer information for use in cancelling, see `run.cancel`.
          @public
          */
-        run.later = function () {
+        run.later = function () /*target, method*/{
             return backburner.later.apply(backburner, arguments);
         };
 
@@ -8848,7 +8889,7 @@
          @return {Object} Timer information for use in cancelling, see `run.cancel`.
          @public
          */
-        run.scheduleOnce = function () {
+        run.scheduleOnce = function () /*queue, target, method*/{
             checkAutoRun();
             return backburner.scheduleOnce.apply(backburner, arguments);
         };
@@ -9113,8 +9154,9 @@
             }
         };
     });
-    /* queue, target, method */ /*target, method*/ /*queue, target, method*/
     enifed('ember-metal/set_properties', ['exports', 'ember-metal/property_events', 'ember-metal/property_set'], function (exports, _emberMetalProperty_events, _emberMetalProperty_set) {
+        'use strict';
+
         exports.default = setProperties;
 
         /**
@@ -9157,6 +9199,8 @@
         }
     });
     enifed('ember-metal/streams/conditional', ['exports', 'ember-metal/streams/stream', 'ember-metal/streams/utils'], function (exports, _emberMetalStreamsStream, _emberMetalStreamsUtils) {
+        'use strict';
+
         exports.default = conditional;
 
         function conditional(test, consequent, alternate) {
@@ -9210,6 +9254,7 @@
         };
     });
     enifed('ember-metal/streams/dependency', ['exports', 'ember-metal/core', 'ember-metal/merge', 'ember-metal/streams/utils'], function (exports, _emberMetalCore, _emberMetalMerge, _emberMetalStreamsUtils) {
+        'use strict';
 
         /**
          @module ember-metal
@@ -9287,6 +9332,7 @@
         exports.default = Dependency;
     });
     enifed('ember-metal/streams/key-stream', ['exports', 'ember-metal/core', 'ember-metal/merge', 'ember-metal/property_get', 'ember-metal/property_set', 'ember-metal/observer', 'ember-metal/streams/stream', 'ember-metal/streams/utils'], function (exports, _emberMetalCore, _emberMetalMerge, _emberMetalProperty_get, _emberMetalProperty_set, _emberMetalObserver, _emberMetalStreamsStream, _emberMetalStreamsUtils) {
+        'use strict';
 
         function KeyStream(source, key) {
             _emberMetalCore.default.assert('KeyStream error: source must be a stream', _emberMetalStreamsUtils.isStream(source)); // TODO: This isn't necessary.
@@ -9363,6 +9409,7 @@
         exports.default = KeyStream;
     });
     enifed('ember-metal/streams/proxy-stream', ['exports', 'ember-metal/merge', 'ember-metal/streams/stream'], function (exports, _emberMetalMerge, _emberMetalStreamsStream) {
+        'use strict';
 
         function ProxyStream(source, label) {
             this.init(label);
@@ -9389,6 +9436,7 @@
         exports.default = ProxyStream;
     });
     enifed('ember-metal/streams/stream', ['exports', 'ember-metal/core', 'ember-metal/path_cache', 'ember-metal/observer', 'ember-metal/streams/utils', 'ember-metal/streams/subscriber', 'ember-metal/streams/dependency'], function (exports, _emberMetalCore, _emberMetalPath_cache, _emberMetalObserver, _emberMetalStreamsUtils, _emberMetalStreamsSubscriber, _emberMetalStreamsDependency) {
+        'use strict';
 
         /**
          @module ember-metal
@@ -9708,6 +9756,7 @@
         exports.default = Stream;
     });
     enifed('ember-metal/streams/subscriber', ['exports', 'ember-metal/merge'], function (exports, _emberMetalMerge) {
+        'use strict';
 
         /**
          @module ember-metal
@@ -9750,6 +9799,8 @@
         exports.default = Subscriber;
     });
     enifed('ember-metal/streams/utils', ['exports', 'ember-metal/core', './stream'], function (exports, _emberMetalCore, _stream) {
+        'use strict';
+
         exports.isStream = isStream;
         exports.subscribe = subscribe;
         exports.unsubscribe = unsubscribe;
@@ -9960,7 +10011,7 @@
                 });
 
                 for (i = 0, l = array.length; i < l; i++) {
-                    subscribe(array[i], stream.notify, stream);
+                    stream.addDependency(array[i]);
                 }
 
                 // used by angle bracket components to detect an attribute was provided
@@ -10121,24 +10172,24 @@
             }
         }
     });
-    enifed("ember-metal/symbol", ["exports"], function (exports) {});
-    enifed('ember-metal/utils', ['exports', 'ember-metal/core', 'ember-metal/features'], function (exports, _emberMetalCore, _emberMetalFeatures) {
+    enifed("ember-metal/symbol", ["exports"], function (exports) {
+        "use strict";
+    });
+    enifed('ember-metal/utils', ['exports', 'ember-metal/features'], function (exports, _emberMetalFeatures) {
+        // Remove "use strict"; from transpiled module until
+        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
+        //
+
         exports.uuid = uuid;
         exports.symbol = symbol;
         exports.generateGuid = generateGuid;
         exports.guidFor = guidFor;
-        exports.getMeta = getMeta;
-        exports.setMeta = setMeta;
-        exports.metaPath = metaPath;
         exports.wrap = wrap;
         exports.tryInvoke = tryInvoke;
         exports.makeArray = makeArray;
         exports.inspect = inspect;
         exports.apply = apply;
         exports.applyStr = applyStr;
-        // Remove "use strict"; from transpiled module until
-        // https://bugs.webkit.org/show_bug.cgi?id=138038 is fixed
-        //
         'REMOVE_USE_STRICT: true';
 
         /**
@@ -10357,6 +10408,9 @@
          */
 
         function guidFor(obj) {
+            if (obj && obj[GUID_KEY]) {
+                return obj[GUID_KEY];
+            }
 
             // special cases where we don't want to add a key to object
             if (obj === undefined) {
@@ -10394,10 +10448,6 @@
                     return obj ? '(true)' : '(false)';
 
                 default:
-                    if (obj[GUID_KEY]) {
-                        return obj[GUID_KEY];
-                    }
-
                     if (obj === Object) {
                         return '(Object)';
                     }
@@ -10429,20 +10479,16 @@
         function Meta(obj) {
             this.watching = {};
             this.cache = undefined;
-            this.cacheMeta = undefined;
             this.source = obj;
             this.deps = undefined;
             this.listeners = undefined;
             this.mixins = undefined;
             this.bindings = undefined;
             this.chains = undefined;
+            this.chainWatchers = undefined;
             this.values = undefined;
             this.proto = undefined;
         }
-
-        Meta.prototype = {
-            chainWatchers: null // FIXME
-        };
 
         // Placeholder for non-writable metas.
         var EMPTY_META = new Meta(null);
@@ -10495,7 +10541,6 @@
                 ret = Object.create(ret);
                 ret.watching = Object.create(ret.watching);
                 ret.cache = undefined;
-                ret.cacheMeta = undefined;
                 ret.source = obj;
 
                 ret.values = Object.create(ret.values);
@@ -10503,79 +10548,6 @@
                 obj['__ember_meta__'] = ret;
             }
             return ret;
-        }
-
-        function getMeta(obj, property) {
-            var _meta = meta(obj, false);
-            return _meta[property];
-        }
-
-        function setMeta(obj, property, value) {
-            var _meta = meta(obj, true);
-            _meta[property] = value;
-            return value;
-        }
-
-        /**
-         @deprecated
-         @private
-
-         In order to store defaults for a class, a prototype may need to create
-         a default meta object, which will be inherited by any objects instantiated
-         from the class's constructor.
-
-         However, the properties of that meta object are only shallow-cloned,
-         so if a property is a hash (like the event system's `listeners` hash),
-         it will by default be shared across all instances of that class.
-
-         This method allows extensions to deeply clone a series of nested hashes or
-         other complex objects. For instance, the event system might pass
-         `['listeners', 'foo:change', 'ember157']` to `prepareMetaPath`, which will
-         walk down the keys provided.
-
-         For each key, if the key does not exist, it is created. If it already
-         exists and it was inherited from its constructor, the constructor's
-         key is cloned.
-
-         You can also pass false for `writable`, which will simply return
-         undefined if `prepareMetaPath` discovers any part of the path that
-         shared or undefined.
-
-         @method metaPath
-         @for Ember
-         @param {Object} obj The object whose meta we are examining
-         @param {Array} path An array of keys to walk down
-         @param {Boolean} writable whether or not to create a new meta
-         (or meta property) if one does not already exist or if it's
-         shared with its constructor
-         */
-
-        function metaPath(obj, path, writable) {
-            _emberMetalCore.default.deprecate('Ember.metaPath is deprecated and will be removed from future releases.');
-            var _meta = meta(obj, writable);
-            var keyName, value;
-
-            for (var i = 0, l = path.length; i < l; i++) {
-                keyName = path[i];
-                value = _meta[keyName];
-
-                if (!value) {
-                    if (!writable) {
-                        return undefined;
-                    }
-                    value = _meta[keyName] = { __ember_source__: obj };
-                } else if (value.__ember_source__ !== obj) {
-                    if (!writable) {
-                        return undefined;
-                    }
-                    value = _meta[keyName] = Object.create(value);
-                    value.__ember_source__ = obj;
-                }
-
-                _meta = value;
-            }
-
-            return value;
         }
 
         /**
@@ -10840,6 +10812,8 @@
         exports.canInvoke = canInvoke;
     });
     enifed('ember-metal/watch_key', ['exports', 'ember-metal/features', 'ember-metal/utils', 'ember-metal/properties'], function (exports, _emberMetalFeatures, _emberMetalUtils, _emberMetalProperties) {
+        'use strict';
+
         exports.watchKey = watchKey;
         exports.unwatchKey = unwatchKey;
 
@@ -10940,6 +10914,8 @@
         }
     });
     enifed('ember-metal/watch_path', ['exports', 'ember-metal/utils', 'ember-metal/chains'], function (exports, _emberMetalUtils, _emberMetalChains) {
+        'use strict';
+
         exports.watchPath = watchPath;
         exports.unwatchPath = unwatchPath;
 
@@ -10988,6 +10964,12 @@
         }
     });
     enifed('ember-metal/watching', ['exports', 'ember-metal/chains', 'ember-metal/watch_key', 'ember-metal/watch_path', 'ember-metal/path_cache'], function (exports, _emberMetalChains, _emberMetalWatch_key, _emberMetalWatch_path, _emberMetalPath_cache) {
+        /**
+         @module ember-metal
+         */
+
+        'use strict';
+
         exports.isWatching = isWatching;
         exports.unwatch = unwatch;
         exports.destroy = destroy;
@@ -11087,15 +11069,9 @@
             }
         }
     });
-    /**
-     @module ember-metal
-     */
-    enifed('ember-template-compiler', ['exports', 'ember-metal', 'ember-template-compiler/system/precompile', 'ember-template-compiler/system/compile', 'ember-template-compiler/system/template', 'ember-template-compiler/plugins', 'ember-template-compiler/plugins/transform-each-in-to-block-params', 'ember-template-compiler/plugins/transform-with-as-to-hash', 'ember-template-compiler/plugins/transform-each-into-collection', 'ember-template-compiler/plugins/transform-single-arg-each', 'ember-template-compiler/plugins/transform-old-binding-syntax', 'ember-template-compiler/plugins/transform-old-class-binding-syntax', 'ember-template-compiler/plugins/transform-item-class', 'ember-template-compiler/plugins/transform-component-attrs-into-mut', 'ember-template-compiler/plugins/transform-component-curly-to-readonly', 'ember-template-compiler/plugins/transform-angle-bracket-components', 'ember-template-compiler/plugins/transform-input-on-to-onEvent', 'ember-template-compiler/plugins/deprecate-view-and-controller-paths', 'ember-template-compiler/plugins/deprecate-view-helper', 'ember-template-compiler/compat'], function (exports, _emberMetal, _emberTemplateCompilerSystemPrecompile, _emberTemplateCompilerSystemCompile, _emberTemplateCompilerSystemTemplate, _emberTemplateCompilerPlugins, _emberTemplateCompilerPluginsTransformEachInToBlockParams, _emberTemplateCompilerPluginsTransformWithAsToHash, _emberTemplateCompilerPluginsTransformEachIntoCollection, _emberTemplateCompilerPluginsTransformSingleArgEach, _emberTemplateCompilerPluginsTransformOldBindingSyntax, _emberTemplateCompilerPluginsTransformOldClassBindingSyntax, _emberTemplateCompilerPluginsTransformItemClass, _emberTemplateCompilerPluginsTransformComponentAttrsIntoMut, _emberTemplateCompilerPluginsTransformComponentCurlyToReadonly, _emberTemplateCompilerPluginsTransformAngleBracketComponents, _emberTemplateCompilerPluginsTransformInputOnToOnEvent, _emberTemplateCompilerPluginsDeprecateViewAndControllerPaths, _emberTemplateCompilerPluginsDeprecateViewHelper, _emberTemplateCompilerCompat) {
+    enifed('ember-template-compiler', ['exports', 'ember-metal', 'ember-template-compiler/system/precompile', 'ember-template-compiler/system/compile', 'ember-template-compiler/system/template', 'ember-template-compiler/plugins', 'ember-template-compiler/plugins/transform-old-binding-syntax', 'ember-template-compiler/plugins/transform-old-class-binding-syntax', 'ember-template-compiler/plugins/transform-item-class', 'ember-template-compiler/plugins/transform-component-attrs-into-mut', 'ember-template-compiler/plugins/transform-component-curly-to-readonly', 'ember-template-compiler/plugins/transform-angle-bracket-components', 'ember-template-compiler/plugins/transform-input-on-to-onEvent', 'ember-template-compiler/plugins/transform-each-into-collection', 'ember-template-compiler/plugins/assert-no-view-and-controller-paths', 'ember-template-compiler/plugins/assert-no-view-helper', 'ember-template-compiler/compat'], function (exports, _emberMetal, _emberTemplateCompilerSystemPrecompile, _emberTemplateCompilerSystemCompile, _emberTemplateCompilerSystemTemplate, _emberTemplateCompilerPlugins, _emberTemplateCompilerPluginsTransformOldBindingSyntax, _emberTemplateCompilerPluginsTransformOldClassBindingSyntax, _emberTemplateCompilerPluginsTransformItemClass, _emberTemplateCompilerPluginsTransformComponentAttrsIntoMut, _emberTemplateCompilerPluginsTransformComponentCurlyToReadonly, _emberTemplateCompilerPluginsTransformAngleBracketComponents, _emberTemplateCompilerPluginsTransformInputOnToOnEvent, _emberTemplateCompilerPluginsTransformEachIntoCollection, _emberTemplateCompilerPluginsAssertNoViewAndControllerPaths, _emberTemplateCompilerPluginsAssertNoViewHelper, _emberTemplateCompilerCompat) {
+        'use strict';
 
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformWithAsToHash.default);
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformEachInToBlockParams.default);
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformSingleArgEach.default);
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformEachIntoCollection.default);
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformOldBindingSyntax.default);
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformOldClassBindingSyntax.default);
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformItemClass.default);
@@ -11103,8 +11079,13 @@
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformComponentCurlyToReadonly.default);
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformAngleBracketComponents.default);
         _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformInputOnToOnEvent.default);
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsDeprecateViewAndControllerPaths.default);
-        _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsDeprecateViewHelper.default);
+
+        if (_emberMetal.default.ENV._ENABLE_LEGACY_VIEW_SUPPORT) {
+            _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsTransformEachIntoCollection.default);
+        } else {
+            _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsAssertNoViewAndControllerPaths.default);
+            _emberTemplateCompilerPlugins.registerPlugin('ast', _emberTemplateCompilerPluginsAssertNoViewHelper.default);
+        }
 
         exports._Ember = _emberMetal.default;
         exports.precompile = _emberTemplateCompilerSystemPrecompile.default;
@@ -11115,6 +11096,7 @@
 
 // used for adding Ember.Handlebars.compile for backwards compat
     enifed('ember-template-compiler/compat', ['exports', 'ember-metal/core', 'ember-template-compiler/compat/precompile', 'ember-template-compiler/system/compile', 'ember-template-compiler/system/template'], function (exports, _emberMetalCore, _emberTemplateCompilerCompatPrecompile, _emberTemplateCompilerSystemCompile, _emberTemplateCompilerSystemTemplate) {
+        'use strict';
 
         var EmberHandlebars = _emberMetalCore.default.Handlebars = _emberMetalCore.default.Handlebars || {};
 
@@ -11123,6 +11105,11 @@
         EmberHandlebars.template = _emberTemplateCompilerSystemTemplate.default;
     });
     enifed('ember-template-compiler/compat/precompile', ['exports', 'ember-metal/core', 'ember-template-compiler/system/compile_options'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCompile_options) {
+        /**
+         @module ember
+         @submodule ember-template-compiler
+         */
+        'use strict';
 
         var compile, compileSpec;
 
@@ -11144,12 +11131,7 @@
             return compileFunc(string, _emberTemplateCompilerSystemCompile_options.default());
         };
     });
-    /**
-     @module ember
-     @submodule ember-template-compiler
-     */
     enifed('ember-template-compiler/plugins', ['exports'], function (exports) {
-        exports.registerPlugin = registerPlugin;
         /**
          @module ember
          @submodule ember-template-compiler
@@ -11159,6 +11141,9 @@
          @private
          @property helpers
          */
+        'use strict';
+
+        exports.registerPlugin = registerPlugin;
         var plugins = {
             ast: []
         };
@@ -11180,9 +11165,10 @@
 
         exports.default = plugins;
     });
-    enifed('ember-template-compiler/plugins/deprecate-view-and-controller-paths', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+    enifed('ember-template-compiler/plugins/assert-no-view-and-controller-paths', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+        'use strict';
 
-        function DeprecateViewAndControllerPaths(options) {
+        function AssertNoViewAndControllerPaths(options) {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
             this.options = options || {};
@@ -11193,7 +11179,7 @@
          @method transform
          @param {AST} ast The AST to be transformed.
          */
-        DeprecateViewAndControllerPaths.prototype.transform = function DeprecateViewAndControllerPaths_transform(ast) {
+        AssertNoViewAndControllerPaths.prototype.transform = function AssertNoViewAndControllerPaths_transform(ast) {
             var walker = new this.syntax.Walker();
             var moduleName = this.options && this.options.moduleName;
 
@@ -11202,15 +11188,15 @@
                     return;
                 }
 
-                deprecatePath(moduleName, node, node.path);
-                deprecatePaths(moduleName, node, node.params);
-                deprecateHash(moduleName, node, node.hash);
+                assertPath(moduleName, node, node.path);
+                assertPaths(moduleName, node, node.params);
+                assertHash(moduleName, node, node.hash);
             });
 
             return ast;
         };
 
-        function deprecateHash(moduleName, node, hash) {
+        function assertHash(moduleName, node, hash) {
             if (!hash || !hash.pairs) {
                 return;
             }
@@ -11218,45 +11204,49 @@
             for (i = 0, l = hash.pairs.length; i < l; i++) {
                 pair = hash.pairs[i];
                 paths = pair.value.params;
-                deprecatePaths(moduleName, pair, paths);
+                assertPaths(moduleName, pair, paths);
             }
         }
 
-        function deprecatePaths(moduleName, node, paths) {
+        function assertPaths(moduleName, node, paths) {
             if (!paths) {
                 return;
             }
             var i, l, path;
             for (i = 0, l = paths.length; i < l; i++) {
                 path = paths[i];
-                deprecatePath(moduleName, node, path);
+                assertPath(moduleName, node, path);
             }
         }
 
-        function deprecatePath(moduleName, node, path) {
-            _emberMetalCore.default.deprecate('Using `{{' + (path && path.type === 'PathExpression' && path.parts[0]) + '}}` or any path based on it ' + _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc) + 'has been deprecated.', function deprecatePath_test() {
-                var noDeprecate = true;
+        function assertPath(moduleName, node, path) {
+            _emberMetalCore.default.assert('Using `{{' + (path && path.type === 'PathExpression' && path.parts[0]) + '}}` or any path based on it ' + _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc) + 'has been removed in Ember 2.0', function assertPath_test() {
+                var noAssertion = true;
 
                 var viewKeyword = path && path.type === 'PathExpression' && path.parts && path.parts[0];
                 if (viewKeyword === 'view') {
-                    noDeprecate = _emberMetalCore.default.ENV._ENABLE_LEGACY_VIEW_SUPPORT;
+                    noAssertion = _emberMetalCore.default.ENV._ENABLE_LEGACY_VIEW_SUPPORT;
                 } else if (viewKeyword === 'controller') {
-                    noDeprecate = false;
+                    noAssertion = _emberMetalCore.default.ENV._ENABLE_LEGACY_CONTROLLER_SUPPORT;
                 }
 
-                return noDeprecate;
-            }, { url: 'http://emberjs.com/deprecations/v1.x#toc_view-and-controller-template-keywords', id: path.parts && path.parts[0] === 'view' ? 'view.keyword.view' : 'view.keyword.controller' });
+                return noAssertion;
+            }, {
+                id: path.parts && path.parts[0] === 'view' ? 'view.keyword.view' : 'view.keyword.controller',
+                until: '2.0.0'
+            });
         }
 
         function validate(node) {
             return node.type === 'MustacheStatement' || node.type === 'BlockStatement';
         }
 
-        exports.default = DeprecateViewAndControllerPaths;
+        exports.default = AssertNoViewAndControllerPaths;
     });
-    enifed('ember-template-compiler/plugins/deprecate-view-helper', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+    enifed('ember-template-compiler/plugins/assert-no-view-helper', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+        'use strict';
 
-        function DeprecateViewHelper(options) {
+        function AssertNoViewHelper(options) {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
             this.options = options || {};
@@ -11267,7 +11257,7 @@
          @method transform
          @param {AST} ast The AST to be transformed.
          */
-        DeprecateViewHelper.prototype.transform = function DeprecateViewHelper_transform(ast) {
+        AssertNoViewHelper.prototype.transform = function AssertNoViewHelper_transform(ast) {
             if (!!_emberMetalCore.default.ENV._ENABLE_LEGACY_VIEW_SUPPORT) {
                 return ast;
             }
@@ -11279,35 +11269,31 @@
                     return;
                 }
 
-                deprecateHelper(moduleName, node);
+                assertHelper(moduleName, node);
             });
 
             return ast;
         };
 
-        function deprecateHelper(moduleName, node) {
+        function assertHelper(moduleName, node) {
             var paramValue = node.params.length && node.params[0].value;
 
             if (!paramValue) {
                 return;
-            } else if (paramValue === 'select') {
-                deprecateSelect(moduleName, node);
             } else {
-                _emberMetalCore.default.deprecate('Using the `{{view "string"}}` helper is deprecated. ' + _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc), false, { url: 'http://emberjs.com/deprecations/v1.x#toc_ember-view', id: 'view.helper' });
+                _emberMetalCore.default.assert('Using the `{{view "string"}}` helper is removed in 2.0. ' + _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc), _emberMetalCore.default.ENV._ENABLE_LEGACY_VIEW_SUPPORT, { id: 'view.helper', until: '2.0.0' });
             }
-        }
-
-        function deprecateSelect(moduleName, node) {
-            _emberMetalCore.default.deprecate('Using `{{view "select"}}` is deprecated. ' + _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc), false, { url: 'http://emberjs.com/deprecations/v1.x#toc_ember-select', id: 'view.helper.select' });
         }
 
         function validate(node) {
             return (node.type === 'MustacheStatement' || node.type === 'BlockStatement') && node.path.parts[0] === 'view';
         }
 
-        exports.default = DeprecateViewHelper;
+        exports.default = AssertNoViewHelper;
     });
     enifed('ember-template-compiler/plugins/transform-angle-bracket-components', ['exports'], function (exports) {
+        'use strict';
+
         function TransformAngleBracketComponents() {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
@@ -11339,6 +11325,8 @@
         exports.default = TransformAngleBracketComponents;
     });
     enifed('ember-template-compiler/plugins/transform-component-attrs-into-mut', ['exports'], function (exports) {
+        'use strict';
+
         function TransformComponentAttrsIntoMut() {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
@@ -11383,6 +11371,8 @@
         exports.default = TransformComponentAttrsIntoMut;
     });
     enifed('ember-template-compiler/plugins/transform-component-curly-to-readonly', ['exports'], function (exports) {
+        'use strict';
+
         function TransformComponentCurlyToReadonly() {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
@@ -11429,80 +11419,6 @@
 
         exports.default = TransformComponentCurlyToReadonly;
     });
-    enifed('ember-template-compiler/plugins/transform-each-in-to-block-params', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
-        /**
-         @module ember
-         @submodule ember-htmlbars
-         */
-
-        /**
-         An HTMLBars AST transformation that replaces all instances of
-
-         ```handlebars
-         {{#each item in items}}
-         {{/each}}
-         ```
-
-         with
-
-         ```handlebars
-         {{#each items as |item|}}
-         {{/each}}
-         ```
-
-         @class TransformEachInToBlockParams
-         @private
-         */
-        function TransformEachInToBlockParams(options) {
-            // set later within HTMLBars to the syntax package
-            this.syntax = null;
-            this.options = options;
-        }
-
-        /**
-         @private
-         @method transform
-         @param {AST} ast The AST to be transformed.
-         */
-        TransformEachInToBlockParams.prototype.transform = function TransformEachInToBlockParams_transform(ast) {
-            var b = this.syntax.builders;
-            var walker = new this.syntax.Walker();
-            var moduleName = this.options.moduleName;
-
-            walker.visit(ast, function (node) {
-                if (validate(node)) {
-
-                    var removedParams = node.params.splice(0, 2);
-                    var keyword = removedParams[0].original;
-                    var moduleInfo = undefined;
-
-                    if (node.type === 'BlockStatement') {
-                        moduleInfo = _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.program.loc);
-
-                        if (node.program.blockParams.length) {
-                            throw new Error('You cannot use keyword (`{{#each foo in bar}}`) and block params (`{{#each bar as |foo|}}`) at the same time ' + moduleInfo + '.');
-                        }
-
-                        node.program.blockParams = [keyword];
-                    } else {
-                        moduleInfo = _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.loc);
-
-                        node.hash.pairs.push(b.pair('keyword', b.string(keyword)));
-                    }
-
-                    _emberMetalCore.default.deprecate('Using the \'{{#each item in model}}\' form of the {{#each}} helper ' + moduleInfo + 'is deprecated. ' + 'Please use the block param form instead (\'{{#each model as |item|}}\').', false, { url: 'http://emberjs.com/guides/deprecations/#toc_code-in-code-syntax-for-code-each-code' });
-                }
-            });
-
-            return ast;
-        };
-
-        function validate(node) {
-            return (node.type === 'BlockStatement' || node.type === 'MustacheStatement') && node.path.original === 'each' && node.params.length === 3 && node.params[1].type === 'PathExpression' && node.params[1].original === 'in';
-        }
-
-        exports.default = TransformEachInToBlockParams;
-    });
     enifed('ember-template-compiler/plugins/transform-each-in-to-hash', ['exports'], function (exports) {
         /**
          @module ember
@@ -11527,6 +11443,8 @@
          @class TransformEachInToHash
          @private
          */
+        'use strict';
+
         function TransformEachInToHash(options) {
             // set later within HTMLBars to the syntax package
             this.syntax = null;
@@ -11572,6 +11490,8 @@
         exports.default = TransformEachInToHash;
     });
     enifed('ember-template-compiler/plugins/transform-each-into-collection', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+        'use strict';
+
         exports.default = TransformEachIntoCollection;
 
         function TransformEachIntoCollection(options) {
@@ -11634,6 +11554,7 @@
         }
     });
     enifed('ember-template-compiler/plugins/transform-input-on-to-onEvent', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+        'use strict';
 
         /**
          @module ember
@@ -11751,6 +11672,8 @@
         exports.default = TransformInputOnToOnEvent;
     });
     enifed('ember-template-compiler/plugins/transform-item-class', ['exports'], function (exports) {
+        'use strict';
+
         exports.default = TransformItemClass;
 
         function TransformItemClass() {
@@ -11802,6 +11725,8 @@
         }
     });
     enifed('ember-template-compiler/plugins/transform-old-binding-syntax', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
+        'use strict';
+
         exports.default = TransformOldBindingSyntax;
 
         function TransformOldBindingSyntax(options) {
@@ -11867,6 +11792,8 @@
         }
     });
     enifed('ember-template-compiler/plugins/transform-old-class-binding-syntax', ['exports'], function (exports) {
+        'use strict';
+
         exports.default = TransformOldClassBindingSyntax;
 
         function TransformOldClassBindingSyntax(options) {
@@ -12004,99 +11931,9 @@
             return segments;
         }
     });
-    enifed('ember-template-compiler/plugins/transform-single-arg-each', ['exports'], function (exports) {
-        exports.default = TransformSingleArgEach;
-
-        function TransformSingleArgEach() {
-            this.syntax = null;
-        }
-
-        TransformSingleArgEach.prototype.transform = function TransformSingleArgEach_transform(ast) {
-            var b = this.syntax.builders;
-            var walker = new this.syntax.Walker();
-
-            walker.visit(ast, function (node) {
-                if (!validate(node)) {
-                    return;
-                }
-
-                node.params.push(b.path('this'));
-            });
-
-            return ast;
-        };
-
-        function validate(node) {
-            return (node.type === 'BlockStatement' || node.type === 'MustacheStatement') && node.path.original === 'each' && node.params.length === 0;
-        }
-    });
-    enifed('ember-template-compiler/plugins/transform-with-as-to-hash', ['exports', 'ember-metal/core', 'ember-template-compiler/system/calculate-location-display'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCalculateLocationDisplay) {
-
-        /**
-         An HTMLBars AST transformation that replaces all instances of
-
-         ```handlebars
-         {{#with foo.bar as bar}}
-         {{/with}}
-         ```
-
-         with
-
-         ```handlebars
-         {{#with foo.bar as |bar|}}
-         {{/with}}
-         ```
-
-         @private
-         @class TransformWithAsToHash
-         */
-        function TransformWithAsToHash(options) {
-            // set later within HTMLBars to the syntax package
-            this.syntax = null;
-            this.options = options || {};
-        }
-
-        /**
-         @private
-         @method transform
-         @param {AST} ast The AST to be transformed.
-         */
-        TransformWithAsToHash.prototype.transform = function TransformWithAsToHash_transform(ast) {
-            var pluginContext = this;
-            var walker = new pluginContext.syntax.Walker();
-            var moduleName = this.options.moduleName;
-
-            walker.visit(ast, function (node) {
-                if (pluginContext.validate(node)) {
-
-                    if (node.program && node.program.blockParams.length) {
-                        throw new Error('You cannot use keyword (`{{with foo as bar}}`) and block params (`{{with foo as |bar|}}`) at the same time.');
-                    }
-
-                    var moduleInfo = _emberTemplateCompilerSystemCalculateLocationDisplay.default(moduleName, node.program.loc);
-
-                    _emberMetalCore.default.deprecate('Using {{with}} without block syntax ' + moduleInfo + 'is deprecated. ' + 'Please use standard block form (`{{#with foo as |bar|}}`) ' + 'instead.', false, { url: 'http://emberjs.com/deprecations/v1.x/#toc_code-as-code-sytnax-for-code-with-code' });
-
-                    var removedParams = node.params.splice(1, 2);
-                    var keyword = removedParams[1].original;
-                    node.program.blockParams = [keyword];
-                }
-            });
-
-            return ast;
-        };
-
-        TransformWithAsToHash.prototype.validate = function TransformWithAsToHash_validate(node) {
-            return node.type === 'BlockStatement' && node.path.original === 'with' && node.params.length === 3 && node.params[1].type === 'PathExpression' && node.params[1].original === 'as';
-        };
-
-        exports.default = TransformWithAsToHash;
-    });
-    /**
-     @module ember
-     @submodule ember-htmlbars
-     */
     enifed('ember-template-compiler/system/calculate-location-display', ['exports'], function (exports) {
+        'use strict';
+
         exports.default = calculateLocationDisplay;
 
         function calculateLocationDisplay(moduleName, _loc) {
@@ -12128,6 +11965,12 @@
         }
     });
     enifed('ember-template-compiler/system/compile', ['exports', 'ember-metal/core', 'ember-template-compiler/system/compile_options', 'ember-template-compiler/system/template'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCompile_options, _emberTemplateCompilerSystemTemplate) {
+        /**
+         @module ember
+         @submodule ember-template-compiler
+         */
+
+        'use strict';
 
         var compile;
 
@@ -12156,11 +11999,13 @@
             return _emberTemplateCompilerSystemTemplate.default(templateSpec);
         };
     });
-    /**
-     @module ember
-     @submodule ember-template-compiler
-     */
     enifed('ember-template-compiler/system/compile_options', ['exports', 'ember-metal/features', 'ember-metal/merge', 'ember-template-compiler/plugins'], function (exports, _emberMetalFeatures, _emberMetalMerge, _emberTemplateCompilerPlugins) {
+        /**
+         @module ember
+         @submodule ember-template-compiler
+         */
+
+        'use strict';
 
         /**
          @private
@@ -12193,7 +12038,7 @@
 
             options.buildMeta = function buildMeta(program) {
                 return {
-                    revision: 'Ember@2.0.0-beta.2',
+                    revision: 'Ember@2.0.2',
                     loc: program.loc,
                     moduleName: options.moduleName
                 };
@@ -12202,11 +12047,12 @@
             return options;
         };
     });
-    /**
-     @module ember
-     @submodule ember-template-compiler
-     */
     enifed('ember-template-compiler/system/precompile', ['exports', 'ember-metal/core', 'ember-template-compiler/system/compile_options'], function (exports, _emberMetalCore, _emberTemplateCompilerSystemCompile_options) {
+        /**
+         @module ember
+         @submodule ember-template-compiler
+         */
+        'use strict';
 
         var compileSpec;
 
@@ -12233,11 +12079,8 @@
             return compileSpec(templateString, _emberTemplateCompilerSystemCompile_options.default(options));
         };
     });
-    /**
-     @module ember
-     @submodule ember-template-compiler
-     */
     enifed('ember-template-compiler/system/template', ['exports', 'htmlbars-runtime/hooks'], function (exports, _htmlbarsRuntimeHooks) {
+        'use strict';
 
         /**
          @module ember
@@ -12265,11 +12108,16 @@
         };
     });
     enifed("htmlbars-compiler", ["exports", "./htmlbars-compiler/compiler"], function (exports, _htmlbarsCompilerCompiler) {
+        "use strict";
+
         exports.compile = _htmlbarsCompilerCompiler.compile;
         exports.compileSpec = _htmlbarsCompilerCompiler.compileSpec;
         exports.template = _htmlbarsCompilerCompiler.template;
     });
     enifed("htmlbars-compiler/compiler", ["exports", "../htmlbars-syntax/parser", "./template-compiler", "../htmlbars-runtime/hooks", "../htmlbars-runtime/render"], function (exports, _htmlbarsSyntaxParser, _templateCompiler, _htmlbarsRuntimeHooks, _htmlbarsRuntimeRender) {
+        /*jshint evil:true*/
+        "use strict";
+
         exports.compileSpec = compileSpec;
         exports.template = template;
         exports.compile = compile;
@@ -12343,13 +12191,13 @@
             return _htmlbarsRuntimeHooks.wrap(template(compileSpec(string, options)), _htmlbarsRuntimeRender.default);
         }
     });
-    /*jshint evil:true*/
     enifed("htmlbars-compiler/fragment-javascript-compiler", ["exports", "./utils", "../htmlbars-util/quoting"], function (exports, _utils, _htmlbarsUtilQuoting) {
+        "use strict";
 
         var svgNamespace = "http://www.w3.org/2000/svg",
 
         // http://www.w3.org/html/wg/drafts/html/master/syntax.html#html-integration-point
-            svgHTMLIntegrationPoints = { "foreignObject": true, "desc": true, "title": true };
+            svgHTMLIntegrationPoints = { 'foreignObject': true, 'desc': true, 'title': true };
 
         function FragmentJavaScriptCompiler() {
             this.source = [];
@@ -12365,51 +12213,51 @@
             this.namespaceFrameStack = [{ namespace: null, depth: null }];
             this.domNamespace = null;
 
-            this.source.push("function buildFragment(dom) {\n");
+            this.source.push('function buildFragment(dom) {\n');
             _utils.processOpcodes(this, opcodes);
-            this.source.push(this.indent + "}");
+            this.source.push(this.indent + '}');
 
-            return this.source.join("");
+            return this.source.join('');
         };
 
         FragmentJavaScriptCompiler.prototype.createFragment = function () {
-            var el = "el" + ++this.depth;
-            this.source.push(this.indent + "  var " + el + " = dom.createDocumentFragment();\n");
+            var el = 'el' + ++this.depth;
+            this.source.push(this.indent + '  var ' + el + ' = dom.createDocumentFragment();\n');
         };
 
         FragmentJavaScriptCompiler.prototype.createElement = function (tagName) {
-            var el = "el" + ++this.depth;
-            if (tagName === "svg") {
+            var el = 'el' + ++this.depth;
+            if (tagName === 'svg') {
                 this.pushNamespaceFrame({ namespace: svgNamespace, depth: this.depth });
             }
             this.ensureNamespace();
-            this.source.push(this.indent + "  var " + el + " = dom.createElement(" + _htmlbarsUtilQuoting.string(tagName) + ");\n");
+            this.source.push(this.indent + '  var ' + el + ' = dom.createElement(' + _htmlbarsUtilQuoting.string(tagName) + ');\n');
             if (svgHTMLIntegrationPoints[tagName]) {
                 this.pushNamespaceFrame({ namespace: null, depth: this.depth });
             }
         };
 
         FragmentJavaScriptCompiler.prototype.createText = function (str) {
-            var el = "el" + ++this.depth;
-            this.source.push(this.indent + "  var " + el + " = dom.createTextNode(" + _htmlbarsUtilQuoting.string(str) + ");\n");
+            var el = 'el' + ++this.depth;
+            this.source.push(this.indent + '  var ' + el + ' = dom.createTextNode(' + _htmlbarsUtilQuoting.string(str) + ');\n');
         };
 
         FragmentJavaScriptCompiler.prototype.createComment = function (str) {
-            var el = "el" + ++this.depth;
-            this.source.push(this.indent + "  var " + el + " = dom.createComment(" + _htmlbarsUtilQuoting.string(str) + ");\n");
+            var el = 'el' + ++this.depth;
+            this.source.push(this.indent + '  var ' + el + ' = dom.createComment(' + _htmlbarsUtilQuoting.string(str) + ');\n');
         };
 
         FragmentJavaScriptCompiler.prototype.returnNode = function () {
-            var el = "el" + this.depth;
-            this.source.push(this.indent + "  return " + el + ";\n");
+            var el = 'el' + this.depth;
+            this.source.push(this.indent + '  return ' + el + ';\n');
         };
 
         FragmentJavaScriptCompiler.prototype.setAttribute = function (name, value, namespace) {
-            var el = "el" + this.depth;
+            var el = 'el' + this.depth;
             if (namespace) {
-                this.source.push(this.indent + "  dom.setAttributeNS(" + el + "," + _htmlbarsUtilQuoting.string(namespace) + "," + _htmlbarsUtilQuoting.string(name) + "," + _htmlbarsUtilQuoting.string(value) + ");\n");
+                this.source.push(this.indent + '  dom.setAttributeNS(' + el + ',' + _htmlbarsUtilQuoting.string(namespace) + ',' + _htmlbarsUtilQuoting.string(name) + ',' + _htmlbarsUtilQuoting.string(value) + ');\n');
             } else {
-                this.source.push(this.indent + "  dom.setAttribute(" + el + "," + _htmlbarsUtilQuoting.string(name) + "," + _htmlbarsUtilQuoting.string(value) + ");\n");
+                this.source.push(this.indent + '  dom.setAttribute(' + el + ',' + _htmlbarsUtilQuoting.string(name) + ',' + _htmlbarsUtilQuoting.string(value) + ');\n');
             }
         };
 
@@ -12417,9 +12265,9 @@
             if (this.depth === this.getCurrentNamespaceFrame().depth) {
                 this.popNamespaceFrame();
             }
-            var child = "el" + this.depth--;
-            var el = "el" + this.depth;
-            this.source.push(this.indent + "  dom.appendChild(" + el + ", " + child + ");\n");
+            var child = 'el' + this.depth--;
+            var el = 'el' + this.depth;
+            this.source.push(this.indent + '  dom.appendChild(' + el + ', ' + child + ');\n');
         };
 
         FragmentJavaScriptCompiler.prototype.getCurrentNamespaceFrame = function () {
@@ -12437,12 +12285,13 @@
         FragmentJavaScriptCompiler.prototype.ensureNamespace = function () {
             var correctNamespace = this.getCurrentNamespaceFrame().namespace;
             if (this.domNamespace !== correctNamespace) {
-                this.source.push(this.indent + "  dom.setNamespace(" + (correctNamespace ? _htmlbarsUtilQuoting.string(correctNamespace) : "null") + ");\n");
+                this.source.push(this.indent + '  dom.setNamespace(' + (correctNamespace ? _htmlbarsUtilQuoting.string(correctNamespace) : 'null') + ');\n');
                 this.domNamespace = correctNamespace;
             }
         };
     });
     enifed("htmlbars-compiler/fragment-opcode-compiler", ["exports", "./template-visitor", "./utils", "../htmlbars-util", "../htmlbars-util/array-utils"], function (exports, _templateVisitor, _utils, _htmlbarsUtil, _htmlbarsUtilArrayUtils) {
+        "use strict";
 
         function FragmentOpcodeCompiler() {
             this.opcodes = [];
@@ -12464,31 +12313,31 @@
         };
 
         FragmentOpcodeCompiler.prototype.text = function (text) {
-            this.opcode("createText", [text.chars]);
-            this.opcode("appendChild");
+            this.opcode('createText', [text.chars]);
+            this.opcode('appendChild');
         };
 
         FragmentOpcodeCompiler.prototype.comment = function (comment) {
-            this.opcode("createComment", [comment.value]);
-            this.opcode("appendChild");
+            this.opcode('createComment', [comment.value]);
+            this.opcode('appendChild');
         };
 
         FragmentOpcodeCompiler.prototype.openElement = function (element) {
-            this.opcode("createElement", [element.tag]);
+            this.opcode('createElement', [element.tag]);
             _htmlbarsUtilArrayUtils.forEach(element.attributes, this.attribute, this);
         };
 
         FragmentOpcodeCompiler.prototype.closeElement = function () {
-            this.opcode("appendChild");
+            this.opcode('appendChild');
         };
 
         FragmentOpcodeCompiler.prototype.startProgram = function () {
             this.opcodes.length = 0;
-            this.opcode("createFragment");
+            this.opcode('createFragment');
         };
 
         FragmentOpcodeCompiler.prototype.endProgram = function () {
-            this.opcode("returnNode");
+            this.opcode('returnNode');
         };
 
         FragmentOpcodeCompiler.prototype.mustache = function () {
@@ -12504,28 +12353,29 @@
         };
 
         FragmentOpcodeCompiler.prototype.pushMorphPlaceholderNode = function () {
-            this.opcode("createComment", [""]);
-            this.opcode("appendChild");
+            this.opcode('createComment', [""]);
+            this.opcode('appendChild');
         };
 
         FragmentOpcodeCompiler.prototype.attribute = function (attr) {
-            if (attr.value.type === "TextNode") {
+            if (attr.value.type === 'TextNode') {
                 var namespace = _htmlbarsUtil.getAttrNamespace(attr.name);
-                this.opcode("setAttribute", [attr.name, attr.value.chars, namespace]);
+                this.opcode('setAttribute', [attr.name, attr.value.chars, namespace]);
             }
         };
 
         FragmentOpcodeCompiler.prototype.setNamespace = function (namespace) {
-            this.opcode("setNamespace", [namespace]);
+            this.opcode('setNamespace', [namespace]);
         };
     });
     enifed("htmlbars-compiler/hydration-javascript-compiler", ["exports", "./utils", "../htmlbars-util/quoting"], function (exports, _utils, _htmlbarsUtilQuoting) {
+        "use strict";
 
         function HydrationJavaScriptCompiler() {
             this.stack = [];
             this.source = [];
             this.mustaches = [];
-            this.parents = [["fragment"]];
+            this.parents = [['fragment']];
             this.parentCount = 0;
             this.morphs = [];
             this.fragmentProcessing = [];
@@ -12541,7 +12391,7 @@
             this.mustaches.length = 0;
             this.source.length = 0;
             this.parents.length = 1;
-            this.parents[0] = ["fragment"];
+            this.parents[0] = ['fragment'];
             this.morphs.length = 0;
             this.fragmentProcessing.length = 0;
             this.parentCount = 0;
@@ -12572,37 +12422,37 @@
             var morphs;
 
             var result = {
-                createMorphsProgram: "",
-                hydrateMorphsProgram: "",
-                fragmentProcessingProgram: "",
+                createMorphsProgram: '',
+                hydrateMorphsProgram: '',
+                fragmentProcessingProgram: '',
                 statements: this.statements,
                 locals: this.locals,
                 hasMorphs: false
             };
 
-            result.hydrateMorphsProgram = this.source.join("");
+            result.hydrateMorphsProgram = this.source.join('');
 
             if (this.morphs.length) {
                 result.hasMorphs = true;
-                morphs = indent + "  var morphs = new Array(" + this.morphs.length + ");\n";
+                morphs = indent + '  var morphs = new Array(' + this.morphs.length + ');\n';
 
                 for (i = 0, l = this.morphs.length; i < l; ++i) {
                     var morph = this.morphs[i];
-                    morphs += indent + "  morphs[" + i + "] = " + morph + ";\n";
+                    morphs += indent + '  morphs[' + i + '] = ' + morph + ';\n';
                 }
             }
 
             if (this.fragmentProcessing.length) {
                 var processing = "";
                 for (i = 0, l = this.fragmentProcessing.length; i < l; ++i) {
-                    processing += this.indent + "  " + this.fragmentProcessing[i] + "\n";
+                    processing += this.indent + '  ' + this.fragmentProcessing[i] + '\n';
                 }
                 result.fragmentProcessingProgram = processing;
             }
 
             var createMorphsProgram;
             if (result.hasMorphs) {
-                createMorphsProgram = "function buildRenderNodes(dom, fragment, contextualElement) {\n" + result.fragmentProcessingProgram + morphs;
+                createMorphsProgram = 'function buildRenderNodes(dom, fragment, contextualElement) {\n' + result.fragmentProcessingProgram + morphs;
 
                 if (this.hasOpenBoundary) {
                     createMorphsProgram += indent + "  dom.insertBoundary(fragment, 0);\n";
@@ -12612,9 +12462,9 @@
                     createMorphsProgram += indent + "  dom.insertBoundary(fragment, null);\n";
                 }
 
-                createMorphsProgram += indent + "  return morphs;\n" + indent + "}";
+                createMorphsProgram += indent + '  return morphs;\n' + indent + '}';
             } else {
-                createMorphsProgram = "function buildRenderNodes() { return []; }";
+                createMorphsProgram = 'function buildRenderNodes() { return []; }';
             }
 
             result.createMorphsProgram = createMorphsProgram;
@@ -12655,15 +12505,15 @@
         };
 
         prototype.pushGetHook = function (path, meta) {
-            this.expressionStack.push(["get", path, meta]);
+            this.expressionStack.push(['get', path, meta]);
         };
 
         prototype.pushSexprHook = function (meta) {
-            this.expressionStack.push(["subexpr", this.expressionStack.pop(), this.expressionStack.pop(), this.expressionStack.pop(), meta]);
+            this.expressionStack.push(['subexpr', this.expressionStack.pop(), this.expressionStack.pop(), this.expressionStack.pop(), meta]);
         };
 
         prototype.pushConcatHook = function () {
-            this.expressionStack.push(["concat", this.expressionStack.pop()]);
+            this.expressionStack.push(['concat', this.expressionStack.pop()]);
         };
 
         prototype.printSetHook = function (name) {
@@ -12671,7 +12521,7 @@
         };
 
         prototype.printBlockHook = function (templateId, inverseId, meta) {
-            this.statements.push(["block", this.expressionStack.pop(), // path
+            this.statements.push(['block', this.expressionStack.pop(), // path
                 this.expressionStack.pop(), // params
                 this.expressionStack.pop(), // hash
                 templateId, inverseId, meta]);
@@ -12682,27 +12532,27 @@
             var params = this.expressionStack.pop();
             var hash = this.expressionStack.pop();
 
-            this.statements.push(["inline", path, params, hash, meta]);
+            this.statements.push(['inline', path, params, hash, meta]);
         };
 
         prototype.printContentHook = function (meta) {
-            this.statements.push(["content", this.expressionStack.pop(), meta]);
+            this.statements.push(['content', this.expressionStack.pop(), meta]);
         };
 
         prototype.printComponentHook = function (templateId) {
-            this.statements.push(["component", this.expressionStack.pop(), // path
+            this.statements.push(['component', this.expressionStack.pop(), // path
                 this.expressionStack.pop(), // attrs
                 templateId]);
         };
 
         prototype.printAttributeHook = function () {
-            this.statements.push(["attribute", this.expressionStack.pop(), // name
+            this.statements.push(['attribute', this.expressionStack.pop(), // name
                 this.expressionStack.pop() // value;
             ]);
         };
 
         prototype.printElementHook = function (meta) {
-            this.statements.push(["element", this.expressionStack.pop(), // path
+            this.statements.push(['element', this.expressionStack.pop(), // path
                 this.expressionStack.pop(), // params
                 this.expressionStack.pop(), // hash
                 meta]);
@@ -12712,33 +12562,33 @@
             var isRoot = parentPath.length === 0;
             var parent = this.getParent();
 
-            var morphMethod = escaped ? "createMorphAt" : "createUnsafeMorphAt";
+            var morphMethod = escaped ? 'createMorphAt' : 'createUnsafeMorphAt';
             var morph = "dom." + morphMethod + "(" + parent + "," + (startIndex === null ? "-1" : startIndex) + "," + (endIndex === null ? "-1" : endIndex) + (isRoot ? ",contextualElement)" : ")");
 
             this.morphs[morphNum] = morph;
         };
 
         prototype.createAttrMorph = function (attrMorphNum, elementNum, name, escaped, namespace) {
-            var morphMethod = escaped ? "createAttrMorph" : "createUnsafeAttrMorph";
-            var morph = "dom." + morphMethod + "(element" + elementNum + ", '" + name + (namespace ? "', '" + namespace : "") + "')";
+            var morphMethod = escaped ? 'createAttrMorph' : 'createUnsafeAttrMorph';
+            var morph = "dom." + morphMethod + "(element" + elementNum + ", '" + name + (namespace ? "', '" + namespace : '') + "')";
             this.morphs[attrMorphNum] = morph;
         };
 
         prototype.createElementMorph = function (morphNum, elementNum) {
-            var morphMethod = "createElementMorph";
+            var morphMethod = 'createElementMorph';
             var morph = "dom." + morphMethod + "(element" + elementNum + ")";
             this.morphs[morphNum] = morph;
         };
 
         prototype.repairClonedNode = function (blankChildTextNodes, isElementChecked) {
             var parent = this.getParent(),
-                processing = "if (this.cachedFragment) { dom.repairClonedNode(" + parent + "," + _htmlbarsUtilQuoting.array(blankChildTextNodes) + (isElementChecked ? ",true" : "") + "); }";
+                processing = 'if (this.cachedFragment) { dom.repairClonedNode(' + parent + ',' + _htmlbarsUtilQuoting.array(blankChildTextNodes) + (isElementChecked ? ',true' : '') + '); }';
             this.fragmentProcessing.push(processing);
         };
 
         prototype.shareElement = function (elementNum) {
             var elementNodesName = "element" + elementNum;
-            this.fragmentProcessing.push("var " + elementNodesName + " = " + this.getParent() + ";");
+            this.fragmentProcessing.push('var ' + elementNodesName + ' = ' + this.getParent() + ';');
             this.parents[this.parents.length - 1] = [elementNodesName];
         };
 
@@ -12761,7 +12611,7 @@
                 return frag;
             }
 
-            return "dom.childAt(" + frag + ", [" + last.join(", ") + "])";
+            return 'dom.childAt(' + frag + ', [' + last.join(', ') + '])';
         };
 
         prototype.lastParent = function () {
@@ -12769,10 +12619,11 @@
         };
     });
     enifed("htmlbars-compiler/hydration-opcode-compiler", ["exports", "./template-visitor", "./utils", "../htmlbars-util", "../htmlbars-util/array-utils", "../htmlbars-syntax/utils"], function (exports, _templateVisitor, _utils, _htmlbarsUtil, _htmlbarsUtilArrayUtils, _htmlbarsSyntaxUtils) {
+        "use strict";
 
         function detectIsElementChecked(element) {
             for (var i = 0, len = element.attributes.length; i < len; i++) {
-                if (element.attributes[i].name === "checked") {
+                if (element.attributes[i].name === 'checked') {
                     return true;
                 }
             }
@@ -12821,16 +12672,16 @@
             var blockParams = program.blockParams || [];
 
             for (var i = 0; i < blockParams.length; i++) {
-                this.opcode("printSetHook", blockParams[i], i);
+                this.opcode('printSetHook', blockParams[i], i);
             }
 
             if (blankChildTextNodes.length > 0) {
-                this.opcode("repairClonedNode", blankChildTextNodes);
+                this.opcode('repairClonedNode', blankChildTextNodes);
             }
         };
 
         HydrationOpcodeCompiler.prototype.insertBoundary = function (first) {
-            this.opcode(first ? "openBoundary" : "closeBoundary");
+            this.opcode(first ? 'openBoundary' : 'closeBoundary');
         };
 
         HydrationOpcodeCompiler.prototype.endProgram = function () {
@@ -12851,7 +12702,7 @@
 
             this.element = this.currentDOMChildIndex;
 
-            this.opcode("consumeParent", this.currentDOMChildIndex);
+            this.opcode('consumeParent', this.currentDOMChildIndex);
 
             // If our parent reference will be used more than once, cache its reference.
             if (mustacheCount > 1) {
@@ -12860,7 +12711,7 @@
 
             var isElementChecked = detectIsElementChecked(element);
             if (blankChildTextNodes.length > 0 || isElementChecked) {
-                this.opcode("repairClonedNode", blankChildTextNodes, isElementChecked);
+                this.opcode('repairClonedNode', blankChildTextNodes, isElementChecked);
             }
 
             this.paths.push(this.currentDOMChildIndex);
@@ -12872,7 +12723,7 @@
 
         HydrationOpcodeCompiler.prototype.closeElement = function () {
             distributeMorphs(this.morphs, this.opcodes);
-            this.opcode("popParent");
+            this.opcode('popParent');
             this.currentDOMChildIndex = this.paths.pop();
         };
 
@@ -12885,10 +12736,10 @@
                 prepareHash(this, mustache.hash);
                 prepareParams(this, mustache.params);
                 preparePath(this, mustache.path);
-                opcode = "printInlineHook";
+                opcode = 'printInlineHook';
             } else {
                 preparePath(this, mustache.path);
-                opcode = "printContentHook";
+                opcode = 'printContentHook';
             }
 
             var morphNum = this.morphNum++;
@@ -12909,7 +12760,7 @@
             var start = loc.start;
             var end = loc.end;
 
-            return ["loc", [source || null, [start.line, start.column], [end.line, end.column]]];
+            return ['loc', [source || null, [start.line, start.column], [end.line, end.column]]];
         }
 
         HydrationOpcodeCompiler.prototype.block = function (block, childIndex, childCount) {
@@ -12927,7 +12778,7 @@
             var templateId = this.templateId++;
             var inverseId = block.inverse === null ? null : this.templateId++;
 
-            this.opcode("printBlockHook", templateId, inverseId, meta(block));
+            this.opcode('printBlockHook', templateId, inverseId, meta(block));
         };
 
         HydrationOpcodeCompiler.prototype.component = function (component, childIndex, childCount) {
@@ -12942,16 +12793,16 @@
                 var value = attrs[i].value;
 
                 // TODO: Introduce context specific AST nodes to avoid switching here.
-                if (value.type === "TextNode") {
-                    this.opcode("pushLiteral", value.chars);
-                } else if (value.type === "MustacheStatement") {
+                if (value.type === 'TextNode') {
+                    this.opcode('pushLiteral', value.chars);
+                } else if (value.type === 'MustacheStatement') {
                     this.accept(_htmlbarsSyntaxUtils.unwrapMustache(value));
-                } else if (value.type === "ConcatStatement") {
+                } else if (value.type === 'ConcatStatement') {
                     prepareParams(this, value.parts);
-                    this.opcode("pushConcatHook", this.morphNum);
+                    this.opcode('pushConcatHook', this.morphNum);
                 }
 
-                this.opcode("pushLiteral", name);
+                this.opcode('pushLiteral', name);
             }
 
             var morphNum = this.morphNum++;
@@ -12959,9 +12810,9 @@
             var end = this.currentDOMChildIndex;
             this.morphs.push([morphNum, this.paths.slice(), start, end, true]);
 
-            this.opcode("prepareObject", attrs.length);
-            this.opcode("pushLiteral", component.tag);
-            this.opcode("printComponentHook", this.templateId++, blockParams.length, meta(component));
+            this.opcode('prepareObject', attrs.length);
+            this.opcode('pushLiteral', component.tag);
+            this.opcode('printComponentHook', this.templateId++, blockParams.length, meta(component));
         };
 
         HydrationOpcodeCompiler.prototype.attribute = function (attr) {
@@ -12970,17 +12821,17 @@
             var namespace = _htmlbarsUtil.getAttrNamespace(attr.name);
 
             // TODO: Introduce context specific AST nodes to avoid switching here.
-            if (value.type === "TextNode") {
+            if (value.type === 'TextNode') {
                 return;
-            } else if (value.type === "MustacheStatement") {
+            } else if (value.type === 'MustacheStatement') {
                 escaped = value.escaped;
                 this.accept(_htmlbarsSyntaxUtils.unwrapMustache(value));
-            } else if (value.type === "ConcatStatement") {
+            } else if (value.type === 'ConcatStatement') {
                 prepareParams(this, value.parts);
-                this.opcode("pushConcatHook", this.morphNum);
+                this.opcode('pushConcatHook', this.morphNum);
             }
 
-            this.opcode("pushLiteral", attr.name);
+            this.opcode('pushLiteral', attr.name);
 
             var attrMorphNum = this.morphNum++;
 
@@ -12988,8 +12839,8 @@
                 shareElement(this);
             }
 
-            this.opcode("createAttrMorph", attrMorphNum, this.elementNum, attr.name, escaped, namespace);
-            this.opcode("printAttributeHook");
+            this.opcode('createAttrMorph', attrMorphNum, this.elementNum, attr.name, escaped, namespace);
+            this.opcode('printAttributeHook');
         };
 
         HydrationOpcodeCompiler.prototype.elementModifier = function (modifier) {
@@ -13003,16 +12854,16 @@
             }
 
             publishElementMorph(this);
-            this.opcode("printElementHook", meta(modifier));
+            this.opcode('printElementHook', meta(modifier));
         };
 
         HydrationOpcodeCompiler.prototype.pushMorphPlaceholderNode = function (childIndex, childCount) {
             if (this.paths.length === 0) {
                 if (childIndex === 0) {
-                    this.opcode("openBoundary");
+                    this.opcode('openBoundary');
                 }
                 if (childIndex === childCount - 1) {
-                    this.opcode("closeBoundary");
+                    this.opcode('closeBoundary');
                 }
             }
             this.comment();
@@ -13022,42 +12873,42 @@
             prepareHash(this, mustache.hash);
             prepareParams(this, mustache.params);
             preparePath(this, mustache.path);
-            this.opcode("pushSexprHook", meta(mustache));
+            this.opcode('pushSexprHook', meta(mustache));
         };
 
         HydrationOpcodeCompiler.prototype.SubExpression = function (sexpr) {
             prepareHash(this, sexpr.hash);
             prepareParams(this, sexpr.params);
             preparePath(this, sexpr.path);
-            this.opcode("pushSexprHook", meta(sexpr));
+            this.opcode('pushSexprHook', meta(sexpr));
         };
 
         HydrationOpcodeCompiler.prototype.PathExpression = function (path) {
-            this.opcode("pushGetHook", path.original, meta(path));
+            this.opcode('pushGetHook', path.original, meta(path));
         };
 
         HydrationOpcodeCompiler.prototype.StringLiteral = function (node) {
-            this.opcode("pushLiteral", node.value);
+            this.opcode('pushLiteral', node.value);
         };
 
         HydrationOpcodeCompiler.prototype.BooleanLiteral = function (node) {
-            this.opcode("pushLiteral", node.value);
+            this.opcode('pushLiteral', node.value);
         };
 
         HydrationOpcodeCompiler.prototype.NumberLiteral = function (node) {
-            this.opcode("pushLiteral", node.value);
+            this.opcode('pushLiteral', node.value);
         };
 
         HydrationOpcodeCompiler.prototype.UndefinedLiteral = function (node) {
-            this.opcode("pushLiteral", node.value);
+            this.opcode('pushLiteral', node.value);
         };
 
         HydrationOpcodeCompiler.prototype.NullLiteral = function (node) {
-            this.opcode("pushLiteral", node.value);
+            this.opcode('pushLiteral', node.value);
         };
 
         function preparePath(compiler, path) {
-            compiler.opcode("pushLiteral", path.original);
+            compiler.opcode('pushLiteral', path.original);
         }
 
         function prepareParams(compiler, params) {
@@ -13066,7 +12917,7 @@
                 compiler[param.type](param);
             }
 
-            compiler.opcode("prepareArray", params.length);
+            compiler.opcode('prepareArray', params.length);
         }
 
         function prepareHash(compiler, hash) {
@@ -13077,20 +12928,20 @@
                 var value = pairs[i].value;
 
                 compiler[value.type](value);
-                compiler.opcode("pushLiteral", key);
+                compiler.opcode('pushLiteral', key);
             }
 
-            compiler.opcode("prepareObject", pairs.length);
+            compiler.opcode('prepareObject', pairs.length);
         }
 
         function shareElement(compiler) {
-            compiler.opcode("shareElement", ++compiler.elementNum);
+            compiler.opcode('shareElement', ++compiler.elementNum);
             compiler.element = null; // Set element to null so we don't cache it twice
         }
 
         function publishElementMorph(compiler) {
             var morphNum = compiler.morphNum++;
-            compiler.opcode("createElementMorph", morphNum, compiler.elementNum);
+            compiler.opcode('createElementMorph', morphNum, compiler.elementNum);
         }
 
         function distributeMorphs(morphs, opcodes) {
@@ -13102,20 +12953,21 @@
             var o;
             for (o = opcodes.length - 1; o >= 0; --o) {
                 var opcode = opcodes[o][0];
-                if (opcode === "shareElement" || opcode === "consumeParent" || opcode === "popParent") {
+                if (opcode === 'shareElement' || opcode === 'consumeParent' || opcode === 'popParent') {
                     break;
                 }
             }
 
             var spliceArgs = [o + 1, 0];
             for (var i = 0; i < morphs.length; ++i) {
-                spliceArgs.push(["createMorph", morphs[i].slice()]);
+                spliceArgs.push(['createMorph', morphs[i].slice()]);
             }
             opcodes.splice.apply(opcodes, spliceArgs);
             morphs.length = 0;
         }
     });
     enifed('htmlbars-compiler/template-compiler', ['exports', './fragment-opcode-compiler', './fragment-javascript-compiler', './hydration-opcode-compiler', './hydration-javascript-compiler', './template-visitor', './utils', '../htmlbars-util/quoting', '../htmlbars-util/array-utils'], function (exports, _fragmentOpcodeCompiler, _fragmentJavascriptCompiler, _hydrationOpcodeCompiler, _hydrationJavascriptCompiler, _templateVisitor, _utils, _htmlbarsUtilQuoting, _htmlbarsUtilArrayUtils) {
+        'use strict';
 
         function TemplateCompiler(options) {
             this.options = options || {};
@@ -13149,11 +13001,11 @@
 
                 normalizedActions.push(action);
 
-                if (action[0] === 'startProgram' && nextAction[0] in dynamicNodes) {
+                if (action[0] === "startProgram" && nextAction[0] in dynamicNodes) {
                     normalizedActions.push(['insertBoundary', [true]]);
                 }
 
-                if (nextAction[0] === 'endProgram' && action[0] in dynamicNodes) {
+                if (nextAction[0] === "endProgram" && action[0] in dynamicNodes) {
                     normalizedActions.push(['insertBoundary', [false]]);
                 }
             }
@@ -13206,9 +13058,9 @@
             this.fragmentOpcodeCompiler.endProgram(program);
             this.hydrationOpcodeCompiler.endProgram(program);
 
-            var indent = _htmlbarsUtilQuoting.repeat('  ', programDepth);
+            var indent = _htmlbarsUtilQuoting.repeat("  ", programDepth);
             var options = {
-                indent: indent + '    '
+                indent: indent + "    "
             };
 
             // function build(dom) { return fragment; }
@@ -13226,7 +13078,7 @@
 
             var statements = _htmlbarsUtilArrayUtils.map(hydrationPrograms.statements, function (s) {
                 return indent + '      ' + JSON.stringify(s);
-            }).join(',\n');
+            }).join(",\n");
 
             var locals = JSON.stringify(hydrationPrograms.locals);
 
@@ -13289,6 +13141,8 @@
         };
     });
     enifed('htmlbars-compiler/template-visitor', ['exports'], function (exports) {
+        'use strict';
+
         var push = Array.prototype.push;
 
         function Frame() {
@@ -13523,6 +13377,8 @@
         }
     });
     enifed("htmlbars-compiler/utils", ["exports"], function (exports) {
+        "use strict";
+
         exports.processOpcodes = processOpcodes;
 
         function processOpcodes(compiler, opcodes) {
@@ -13538,6 +13394,7 @@
         }
     });
     enifed('htmlbars-runtime', ['exports', './htmlbars-runtime/hooks', './htmlbars-runtime/render', '../htmlbars-util/morph-utils', '../htmlbars-util/template-utils', './htmlbars-runtime/expression-visitor', 'htmlbars-runtime/hooks'], function (exports, _htmlbarsRuntimeHooks, _htmlbarsRuntimeRender, _htmlbarsUtilMorphUtils, _htmlbarsUtilTemplateUtils, _htmlbarsRuntimeExpressionVisitor, _htmlbarsRuntimeHooks2) {
+        'use strict';
 
         var internal = {
             blockFor: _htmlbarsUtilTemplateUtils.blockFor,
@@ -13555,6 +13412,7 @@
         exports.internal = internal;
     });
     enifed("htmlbars-runtime/expression-visitor", ["exports", "../htmlbars-util/object-utils", "../htmlbars-util/morph-utils"], function (exports, _htmlbarsUtilObjectUtils, _htmlbarsUtilMorphUtils) {
+        "use strict";
 
         /**
          Node classification:
@@ -13591,20 +13449,20 @@
 
                 // Primitive literals are unambiguously non-array representations of
                 // themselves.
-                if (typeof node !== "object" || node === null) {
+                if (typeof node !== 'object' || node === null) {
                     ret.value = node;
                     return ret;
                 }
 
                 switch (node[0]) {
                     // can be used by manualElement
-                    case "value":
+                    case 'value':
                         ret.value = node[1];break;
-                    case "get":
+                    case 'get':
                         ret.value = this.get(node, env, scope);break;
-                    case "subexpr":
+                    case 'subexpr':
                         ret.value = this.subexpr(node, env, scope);break;
-                    case "concat":
+                    case 'concat':
                         ret.value = this.concat(node, env, scope);break;
                 }
 
@@ -13697,7 +13555,7 @@
                 if (isHelper(env, scope, path)) {
                     env.hooks.inline(morph, env, scope, path, [], {}, visitor);
                     if (morph.linkedResult) {
-                        _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, "@content-helper", [morph.linkedResult], null);
+                        _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, '@content-helper', [morph.linkedResult], null);
                     }
                     return;
                 }
@@ -13709,7 +13567,7 @@
                     params = [env.hooks.get(env, scope, path)];
                 }
 
-                _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, "@range", params, null);
+                _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, '@range', params, null);
                 env.hooks.range(morph, env, scope, path, params[0], visitor);
             },
 
@@ -13728,7 +13586,7 @@
             attribute: function (node, morph, env, scope) {
                 var name = node[1],
                     value = node[2];
-                var paramsAndHash = this.linkParamsAndHash(env, scope, morph, "@attribute", [value], null);
+                var paramsAndHash = this.linkParamsAndHash(env, scope, morph, '@attribute', [value], null);
 
                 morph.isDirty = morph.isSubtreeDirty = false;
                 env.hooks.attribute(morph, env, scope, name, paramsAndHash[0][0]);
@@ -13831,6 +13689,8 @@
         }
     });
     enifed("htmlbars-runtime/hooks", ["exports", "./render", "../morph-range/morph-list", "../htmlbars-util/object-utils", "../htmlbars-util/morph-utils", "../htmlbars-util/template-utils"], function (exports, _render, _morphRangeMorphList, _htmlbarsUtilObjectUtils, _htmlbarsUtilMorphUtils, _htmlbarsUtilTemplateUtils) {
+        "use strict";
+
         exports.wrap = wrap;
         exports.wrapForHelper = wrapForHelper;
         exports.hostYieldWithShadowTemplate = hostYieldWithShadowTemplate;
@@ -14065,9 +13925,9 @@
                 return seek;
             }
 
-            return function (key, blockArguments, self) {
-                if (typeof key !== "string") {
-                    throw new Error("You must provide a string key when calling `yieldItem`; you provided " + key);
+            return function (_key, blockArguments, self) {
+                if (typeof _key !== 'string') {
+                    throw new Error("You must provide a string key when calling `yieldItem`; you provided " + _key);
                 }
 
                 // At least one item has been yielded, so we do not wholesale
@@ -14091,6 +13951,25 @@
                 // this list will be pruned from the MorphList during the cleanup
                 // process.
                 var handledMorphs = renderState.handledMorphs;
+                var key = undefined;
+
+                if (_key in handledMorphs) {
+                    // In this branch we are dealing with a duplicate key. The strategy
+                    // is to take the original key and append a counter to it that is
+                    // incremented every time the key is reused. In order to greatly
+                    // reduce the chance of colliding with another valid key we also add
+                    // an extra string "--z8mS2hvDW0A--" to the new key.
+                    var collisions = renderState.collisions;
+                    if (collisions === undefined) {
+                        collisions = renderState.collisions = {};
+                    }
+                    var count = collisions[_key] | 0;
+                    collisions[_key] = ++count;
+
+                    key = _key + '--z8mS2hvDW0A--' + count;
+                } else {
+                    key = _key;
+                }
 
                 if (currentMorph && currentMorph.key === key) {
                     yieldTemplate(template, env, parentScope, currentMorph, renderState, visitor)(blockArguments, self);
@@ -14367,7 +14246,7 @@
          */
 
         function bindBlock(env, scope, block) {
-            var name = arguments.length <= 3 || arguments[3] === undefined ? "default" : arguments[3];
+            var name = arguments.length <= 3 || arguments[3] === undefined ? 'default' : arguments[3];
 
             scope.blocks[name] = block;
         }
@@ -14449,11 +14328,11 @@
             var redirect = env.hooks.classify(env, scope, path);
             if (redirect) {
                 switch (redirect) {
-                    case "component":
+                    case 'component':
                         env.hooks.component(morph, env, scope, path, params, hash, { default: template, inverse: inverse }, visitor);break;
-                    case "inline":
+                    case 'inline':
                         env.hooks.inline(morph, env, scope, path, params, hash, visitor);break;
-                    case "block":
+                    case 'block':
                         env.hooks.block(morph, env, scope, path, params, hash, template, inverse, visitor);break;
                     default:
                         throw new Error("Internal HTMLBars redirection to " + redirect + " not supported");
@@ -14474,7 +14353,7 @@
                 return false;
             }
 
-            if (typeof keyword === "function") {
+            if (typeof keyword === 'function') {
                 return keyword(morph, env, scope, params, hash, template, inverse, visitor);
             }
 
@@ -14560,7 +14439,7 @@
             return true;
         }
 
-        function linkRenderNode() {
+        function linkRenderNode() /* morph, env, scope, params, hash */{
             return;
         }
 
@@ -14621,10 +14500,10 @@
 
                 if (result && result.link) {
                     morph.linkedResult = result.value;
-                    _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, "@content-helper", [morph.linkedResult], null);
+                    _htmlbarsUtilMorphUtils.linkParams(env, scope, morph, '@content-helper', [morph.linkedResult], null);
                 }
 
-                if (result && "value" in result) {
+                if (result && 'value' in result) {
                     value = env.hooks.getValue(result.value);
                     hasValue = true;
                 }
@@ -14668,7 +14547,7 @@
             return out;
         }
 
-        function classify() {
+        function classify() /* env, scope, path */{
             return null;
         }
 
@@ -14683,7 +14562,7 @@
                 // the current scope is provided purely for the creation of shadow
                 // scopes; it should not be provided to user code.
 
-                var to = env.hooks.getValue(hash.to) || "default";
+                var to = env.hooks.getValue(hash.to) || 'default';
                 if (scope.blocks[to]) {
                     scope.blocks[to](env, params, hash.self, morph, scope, visitor);
                 }
@@ -14691,12 +14570,12 @@
             },
 
             hasBlock: function (morph, env, scope, params) {
-                var name = env.hooks.getValue(params[0]) || "default";
+                var name = env.hooks.getValue(params[0]) || 'default';
                 return !!scope.blocks[name];
             },
 
             hasBlockParams: function (morph, env, scope, params) {
-                var name = env.hooks.getValue(params[0]) || "default";
+                var name = env.hooks.getValue(params[0]) || 'default';
                 return !!(scope.blocks[name] && scope.blocks[name].arity);
             }
 
@@ -14842,7 +14721,7 @@
         function subexpr(env, scope, helperName, params, hash) {
             var helper = env.hooks.lookupHelper(env, scope, helperName);
             var result = env.hooks.invokeHelper(null, env, scope, null, params, hash, helper, {});
-            if (result && "value" in result) {
+            if (result && 'value' in result) {
                 return env.hooks.getValue(result.value);
             }
         }
@@ -14869,11 +14748,11 @@
          */
 
         function get(env, scope, path) {
-            if (path === "") {
+            if (path === '') {
                 return scope.self;
             }
 
-            var keys = path.split(".");
+            var keys = path.split('.');
             var value = env.hooks.getRoot(scope, keys[0])[0];
 
             for (var i = 1; i < keys.length; i++) {
@@ -14943,7 +14822,10 @@
             return env.helpers[helperName];
         }
 
-        function bindScope() {}
+        function bindScope() /* env, scope */{
+            // this function is used to handle host-specified extensions to scope
+            // other than `self`, `locals` and `block`.
+        }
 
         function updateScope(env, scope) {
             env.hooks.bindScope(env, scope);
@@ -14995,10 +14877,8 @@
             keyword: keyword
         };
     });
-    /* morph, env, scope, params, hash */ /* env, scope, path */ /* env, scope */
-// this function is used to handle host-specified extensions to scope
-// other than `self`, `locals` and `block`.
     enifed("htmlbars-runtime/morph", ["exports", "../morph-range"], function (exports, _morphRange) {
+        "use strict";
 
         var guid = 1;
 
@@ -15048,6 +14928,8 @@
         exports.default = HTMLBarsMorph;
     });
     enifed("htmlbars-runtime/render", ["exports", "../htmlbars-util/array-utils", "../htmlbars-util/morph-utils", "./expression-visitor", "./morph", "../htmlbars-util/template-utils", "../htmlbars-util/void-tag-names"], function (exports, _htmlbarsUtilArrayUtils, _htmlbarsUtilMorphUtils, _expressionVisitor, _morph, _htmlbarsUtilTemplateUtils, _htmlbarsUtilVoidTagNames) {
+        "use strict";
+
         exports.default = render;
         exports.manualElement = manualElement;
         exports.attachAttributes = attachAttributes;
@@ -15091,7 +14973,7 @@
 
             if (options.attributes !== undefined) {
                 nodes.push({ state: {} });
-                this.statements.push(["attributes", attachAttributes(options.attributes)]);
+                this.statements.push(['attributes', attachAttributes(options.attributes)]);
             }
 
             if (options.self !== undefined) {
@@ -15136,13 +15018,13 @@
             var statements = [];
 
             for (var key in attributes) {
-                if (typeof attributes[key] === "string") {
+                if (typeof attributes[key] === 'string') {
                     continue;
                 }
                 statements.push(["attribute", key, attributes[key]]);
             }
 
-            statements.push(["content", "yield"]);
+            statements.push(['content', 'yield']);
 
             var template = {
                 arity: 0,
@@ -15150,13 +15032,13 @@
                 hasRendered: false,
                 buildFragment: function buildFragment(dom) {
                     var el0 = dom.createDocumentFragment();
-                    if (tagName === "svg") {
+                    if (tagName === 'svg') {
                         dom.setNamespace(svgNamespace);
                     }
                     var el1 = dom.createElement(tagName);
 
                     for (var key in attributes) {
-                        if (typeof attributes[key] !== "string") {
+                        if (typeof attributes[key] !== 'string') {
                             continue;
                         }
                         dom.setAttribute(el1, key, attributes[key]);
@@ -15176,7 +15058,7 @@
                     var morphs = [];
 
                     for (var key in attributes) {
-                        if (typeof attributes[key] === "string") {
+                        if (typeof attributes[key] === 'string') {
                             continue;
                         }
                         morphs.push(dom.createAttrMorph(element, key));
@@ -15197,7 +15079,7 @@
             var statements = [];
 
             for (var key in attributes) {
-                if (typeof attributes[key] === "string") {
+                if (typeof attributes[key] === 'string') {
                     continue;
                 }
                 statements.push(["attribute", key, attributes[key]]);
@@ -15213,7 +15095,7 @@
                         dom.setNamespace(svgNamespace);
                     }
                     for (var key in attributes) {
-                        if (typeof attributes[key] !== "string") {
+                        if (typeof attributes[key] !== 'string') {
                             continue;
                         }
                         dom.setAttribute(el0, key, attributes[key]);
@@ -15226,7 +15108,7 @@
                     var morphs = [];
 
                     for (var key in attributes) {
-                        if (typeof attributes[key] === "string") {
+                        if (typeof attributes[key] === 'string') {
                             continue;
                         }
                         morphs.push(dom.createAttrMorph(element, key));
@@ -15314,19 +15196,19 @@
                 }
 
                 switch (statement[0]) {
-                    case "block":
+                    case 'block':
                         visitor.block(statement, morph, env, scope, template, visitor);break;
-                    case "inline":
+                    case 'inline':
                         visitor.inline(statement, morph, env, scope, visitor);break;
-                    case "content":
+                    case 'content':
                         visitor.content(statement, morph, env, scope, visitor);break;
-                    case "element":
+                    case 'element':
                         visitor.element(statement, morph, env, scope, template, visitor);break;
-                    case "attribute":
+                    case 'attribute':
                         visitor.attribute(statement, morph, env, scope);break;
-                    case "component":
+                    case 'component':
                         visitor.component(statement, morph, env, scope, template, visitor);break;
-                    case "attributes":
+                    case 'attributes':
                         visitor.attributes(statement, morph, env, scope, this.fragment, visitor);break;
                 }
 
@@ -15400,12 +15282,20 @@
             return fragment;
         }
     });
-    enifed("htmlbars-syntax", ["exports", "./htmlbars-syntax/walker", "./htmlbars-syntax/builders", "./htmlbars-syntax/parser"], function (exports, _htmlbarsSyntaxWalker, _htmlbarsSyntaxBuilders, _htmlbarsSyntaxParser) {
-        exports.Walker = _htmlbarsSyntaxWalker.default;
+    enifed("htmlbars-syntax", ["exports", "./htmlbars-syntax/builders", "./htmlbars-syntax/parser", "./htmlbars-syntax/generation/print", "./htmlbars-syntax/traversal/traverse", "./htmlbars-syntax/traversal/walker"], function (exports, _htmlbarsSyntaxBuilders, _htmlbarsSyntaxParser, _htmlbarsSyntaxGenerationPrint, _htmlbarsSyntaxTraversalTraverse, _htmlbarsSyntaxTraversalWalker) {
+        "use strict";
+
         exports.builders = _htmlbarsSyntaxBuilders.default;
         exports.parse = _htmlbarsSyntaxParser.default;
+        exports.print = _htmlbarsSyntaxGenerationPrint.default;
+        exports.traverse = _htmlbarsSyntaxTraversalTraverse.default;
+        exports.Walker = _htmlbarsSyntaxTraversalWalker.default;
     });
     enifed("htmlbars-syntax/builders", ["exports"], function (exports) {
+        // Statements
+
+        "use strict";
+
         exports.buildMustache = buildMustache;
         exports.buildBlock = buildBlock;
         exports.buildElementModifier = buildElementModifier;
@@ -15426,12 +15316,11 @@
         exports.buildHash = buildHash;
         exports.buildPair = buildPair;
         exports.buildProgram = buildProgram;
-        // Statements
 
         function buildMustache(path, params, hash, raw, loc) {
             return {
                 type: "MustacheStatement",
-                path: path,
+                path: buildPath(path),
                 params: params || [],
                 hash: hash || buildHash([]),
                 escaped: !raw,
@@ -15442,7 +15331,7 @@
         function buildBlock(path, params, hash, program, inverse, loc) {
             return {
                 type: "BlockStatement",
-                path: path,
+                path: buildPath(path),
                 params: params || [],
                 hash: hash || buildHash([]),
                 program: program || null,
@@ -15454,7 +15343,7 @@
         function buildElementModifier(path, params, hash, loc) {
             return {
                 type: "ElementModifierStatement",
-                path: path,
+                path: buildPath(path),
                 params: params || [],
                 hash: hash || buildHash([]),
                 loc: buildLoc(loc)
@@ -15529,18 +15418,22 @@
         function buildSexpr(path, params, hash) {
             return {
                 type: "SubExpression",
-                path: path,
+                path: buildPath(path),
                 params: params || [],
                 hash: hash || buildHash([])
             };
         }
 
         function buildPath(original) {
-            return {
-                type: "PathExpression",
-                original: original,
-                parts: original.split(".")
-            };
+            if (typeof original === 'string') {
+                return {
+                    type: "PathExpression",
+                    original: original,
+                    parts: original.split('.')
+                };
+            } else {
+                return original;
+            }
         }
 
         function buildString(value) {
@@ -15615,8 +15508,8 @@
 
         function buildPosition(line, column) {
             return {
-                line: typeof line === "number" ? line : null,
-                column: typeof column === "number" ? column : null
+                line: typeof line === 'number' ? line : null,
+                column: typeof column === 'number' ? column : null
             };
         }
 
@@ -15624,7 +15517,7 @@
             if (arguments.length === 1) {
                 var loc = startLine;
 
-                if (typeof loc === "object") {
+                if (typeof loc === 'object') {
                     return {
                         source: buildSource(loc.source),
                         start: buildPosition(loc.start.line, loc.start.column),
@@ -15667,7 +15560,204 @@
             pos: buildPosition
         };
     });
+    enifed('htmlbars-syntax/generation/print', ['exports'], function (exports) {
+        'use strict';
+
+        exports.default = build;
+
+        function build(ast) {
+            if (!ast) {
+                return '';
+            }
+            var output = [];
+
+            switch (ast.type) {
+                case 'Program':
+                {
+                    var chainBlock = ast.chained && ast.body[0];
+                    if (chainBlock) {
+                        chainBlock.chained = true;
+                    }
+                    var body = buildEach(ast.body).join('');
+                    output.push(body);
+                }
+                    break;
+                case 'ElementNode':
+                    output.push('<', ast.tag);
+                    if (ast.attributes.length) {
+                        output.push(' ', buildEach(ast.attributes).join(' '));
+                    }
+                    if (ast.modifiers.length) {
+                        output.push(' ', buildEach(ast.modifiers).join(' '));
+                    }
+                    output.push('>');
+                    output.push.apply(output, buildEach(ast.children));
+                    output.push('</', ast.tag, '>');
+                    break;
+                case 'AttrNode':
+                    output.push(ast.name, '=');
+                    var value = build(ast.value);
+                    if (ast.value.type === 'TextNode') {
+                        output.push('"', value, '"');
+                    } else {
+                        output.push(value);
+                    }
+                    break;
+                case 'ConcatStatement':
+                    output.push('"');
+                    ast.parts.forEach(function (node) {
+                        if (node.type === 'StringLiteral') {
+                            output.push(node.original);
+                        } else {
+                            output.push(build(node));
+                        }
+                    });
+                    output.push('"');
+                    break;
+                case 'TextNode':
+                    output.push(ast.chars);
+                    break;
+                case 'MustacheStatement':
+                {
+                    output.push(compactJoin(['{{', pathParams(ast), '}}']));
+                }
+                    break;
+                case 'ElementModifierStatement':
+                {
+                    output.push(compactJoin(['{{', pathParams(ast), '}}']));
+                }
+                    break;
+                case 'PathExpression':
+                    output.push(ast.original);
+                    break;
+                case 'SubExpression':
+                {
+                    output.push('(', pathParams(ast), ')');
+                }
+                    break;
+                case 'BooleanLiteral':
+                    output.push(ast.value ? 'true' : false);
+                    break;
+                case 'BlockStatement':
+                {
+                    var lines = [];
+
+                    if (ast.chained) {
+                        lines.push(['{{else ', pathParams(ast), '}}'].join(''));
+                    } else {
+                        lines.push(openBlock(ast));
+                    }
+
+                    lines.push(build(ast.program));
+
+                    if (ast.inverse) {
+                        if (!ast.inverse.chained) {
+                            lines.push('{{else}}');
+                        }
+                        lines.push(build(ast.inverse));
+                    }
+
+                    if (!ast.chained) {
+                        lines.push(closeBlock(ast));
+                    }
+
+                    output.push(lines.join(''));
+                }
+                    break;
+                case 'PartialStatement':
+                {
+                    output.push(compactJoin(['{{>', pathParams(ast), '}}']));
+                }
+                    break;
+                case 'CommentStatement':
+                {
+                    output.push(compactJoin(['<!--', ast.value, '-->']));
+                }
+                    break;
+                case 'StringLiteral':
+                {
+                    output.push('"' + ast.value + '"');
+                }
+                    break;
+                case 'NumberLiteral':
+                {
+                    output.push(ast.value);
+                }
+                    break;
+                case 'UndefinedLiteral':
+                {
+                    output.push('undefined');
+                }
+                    break;
+                case 'NullLiteral':
+                {
+                    output.push('null');
+                }
+                    break;
+                case 'Hash':
+                {
+                    output.push(ast.pairs.map(function (pair) {
+                        return build(pair);
+                    }).join(' '));
+                }
+                    break;
+                case 'HashPair':
+                {
+                    output.push(ast.key + '=' + build(ast.value));
+                }
+                    break;
+            }
+            return output.join('');
+        }
+
+        function compact(array) {
+            var newArray = [];
+            array.forEach(function (a) {
+                if (typeof a !== 'undefined' && a !== null && a !== '') {
+                    newArray.push(a);
+                }
+            });
+            return newArray;
+        }
+
+        function buildEach(asts) {
+            var output = [];
+            asts.forEach(function (node) {
+                output.push(build(node));
+            });
+            return output;
+        }
+
+        function pathParams(ast) {
+            var name = build(ast.name);
+            var path = build(ast.path);
+            var params = buildEach(ast.params).join(' ');
+            var hash = build(ast.hash);
+            return compactJoin([name, path, params, hash], ' ');
+        }
+
+        function compactJoin(array, delimiter) {
+            return compact(array).join(delimiter || '');
+        }
+
+        function blockParams(block) {
+            var params = block.program.blockParams;
+            if (params.length) {
+                return ' as |' + params.join(',') + '|';
+            }
+        }
+
+        function openBlock(block) {
+            return ['{{#', pathParams(block), blockParams(block), '}}'].join('');
+        }
+
+        function closeBlock(block) {
+            return ['{{/', build(block.path), '}}'].join('');
+        }
+    });
     enifed('htmlbars-syntax/handlebars/compiler/ast', ['exports'], function (exports) {
+        'use strict';
+
         var AST = {
             Program: function (statements, blockParams, strip, locInfo) {
                 this.loc = locInfo;
@@ -15802,7 +15892,8 @@
                 },
 
                 scopedId: function (path) {
-                    return /^\.|this\b/.test(path.original);
+                    return (/^\.|this\b/.test(path.original)
+                    );
                 },
 
                 // an ID is simple if it only has one part, and that part is not
@@ -15818,6 +15909,8 @@
         exports.default = AST;
     });
     enifed('htmlbars-syntax/handlebars/compiler/base', ['exports', './parser', './ast', './whitespace-control', './helpers', '../utils'], function (exports, _parser, _ast, _whitespaceControl, _helpers, _utils) {
+        'use strict';
+
         exports.parse = parse;
         exports.parser = _parser.default;
 
@@ -15842,6 +15935,8 @@
         }
     });
     enifed('htmlbars-syntax/handlebars/compiler/helpers', ['exports', '../exception'], function (exports, _exception) {
+        'use strict';
+
         exports.SourceLocation = SourceLocation;
         exports.id = id;
         exports.stripFlags = stripFlags;
@@ -15925,7 +16020,7 @@
             if (openRawBlock.path.original !== close) {
                 var errorNode = { loc: openRawBlock.path.loc };
 
-                throw new _exception.default(openRawBlock.path.original + ' doesn\'t match ' + close, errorNode);
+                throw new _exception.default(openRawBlock.path.original + " doesn't match " + close, errorNode);
             }
 
             locInfo = this.locInfo(locInfo);
@@ -15968,6 +16063,8 @@
     enifed("htmlbars-syntax/handlebars/compiler/parser", ["exports"], function (exports) {
         /* istanbul ignore next */
         /* Jison generated parser */
+        "use strict";
+
         var handlebars = (function () {
             var parser = { trace: function trace() {},
                 yy: {},
@@ -16316,8 +16413,8 @@
                         this._input = input;
                         this._more = this._less = this.done = false;
                         this.yylineno = this.yyleng = 0;
-                        this.yytext = this.matched = this.match = "";
-                        this.conditionStack = ["INITIAL"];
+                        this.yytext = this.matched = this.match = '';
+                        this.conditionStack = ['INITIAL'];
                         this.yylloc = { first_line: 1, first_column: 0, last_line: 1, last_column: 0 };
                         if (this.options.ranges) this.yylloc.range = [0, 0];
                         this.offset = 0;
@@ -16377,14 +16474,14 @@
                     },
                     pastInput: function () {
                         var past = this.matched.substr(0, this.matched.length - this.match.length);
-                        return (past.length > 20 ? "..." : "") + past.substr(-20).replace(/\n/g, "");
+                        return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
                     },
                     upcomingInput: function () {
                         var next = this.match;
                         if (next.length < 20) {
                             next += this._input.substr(0, 20 - next.length);
                         }
-                        return (next.substr(0, 20) + (next.length > 20 ? "..." : "")).replace(/\n/g, "");
+                        return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
                     },
                     showPosition: function () {
                         var pre = this.pastInput();
@@ -16399,8 +16496,8 @@
 
                         var token, match, tempMatch, index, col, lines;
                         if (!this._more) {
-                            this.yytext = "";
-                            this.match = "";
+                            this.yytext = '';
+                            this.match = '';
                         }
                         var rules = this._currentRules();
                         for (var i = 0; i < rules.length; i++) {
@@ -16435,12 +16532,12 @@
                         if (this._input === "") {
                             return this.EOF;
                         } else {
-                            return this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), { text: "", token: null, line: this.yylineno });
+                            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), { text: "", token: null, line: this.yylineno });
                         }
                     },
                     lex: function lex() {
                         var r = this.next();
-                        if (typeof r !== "undefined") {
+                        if (typeof r !== 'undefined') {
                             return r;
                         } else {
                             return this.lex();
@@ -16516,7 +16613,7 @@
                             break;
                         case 9:
                             this.popState();
-                            this.begin("raw");
+                            this.begin('raw');
                             return 21;
 
                             break;
@@ -16550,7 +16647,7 @@
                         case 19:
                             this.unput(yy_.yytext);
                             this.popState();
-                            this.begin("com");
+                            this.begin('com');
 
                             break;
                         case 20:
@@ -16583,7 +16680,7 @@
                             this.popState();return 31;
                             break;
                         case 29:
-                            yy_.yytext = strip(1, 2).replace(/\\"/g, "\"");return 74;
+                            yy_.yytext = strip(1, 2).replace(/\\"/g, '"');return 74;
                             break;
                         case 30:
                             yy_.yytext = strip(1, 2).replace(/\\'/g, "'");return 74;
@@ -16619,7 +16716,7 @@
                             return 66;
                             break;
                         case 41:
-                            return "INVALID";
+                            return 'INVALID';
                             break;
                         case 42:
                             return 5;
@@ -16638,6 +16735,7 @@
         })();exports.default = handlebars;
     });
     enifed('htmlbars-syntax/handlebars/compiler/visitor', ['exports', '../exception', './ast'], function (exports, _exception, _ast) {
+        'use strict';
 
         function Visitor() {
             this.parents = [];
@@ -16729,8 +16827,8 @@
                 this.acceptKey(partial, 'hash');
             },
 
-            ContentStatement: function () {},
-            CommentStatement: function () {},
+            ContentStatement: function () /* content */{},
+            CommentStatement: function () /* comment */{},
 
             SubExpression: function (sexpr) {
                 this.acceptRequired(sexpr, 'path');
@@ -16738,13 +16836,13 @@
                 this.acceptKey(sexpr, 'hash');
             },
 
-            PathExpression: function () {},
+            PathExpression: function () /* path */{},
 
-            StringLiteral: function () {},
-            NumberLiteral: function () {},
-            BooleanLiteral: function () {},
-            UndefinedLiteral: function () {},
-            NullLiteral: function () {},
+            StringLiteral: function () /* string */{},
+            NumberLiteral: function () /* number */{},
+            BooleanLiteral: function () /* bool */{},
+            UndefinedLiteral: function () /* literal */{},
+            NullLiteral: function () /* literal */{},
 
             Hash: function (hash) {
                 this.acceptArray(hash.pairs);
@@ -16756,8 +16854,8 @@
 
         exports.default = Visitor;
     });
-    /* content */ /* comment */ /* path */ /* string */ /* number */ /* bool */ /* literal */ /* literal */
     enifed('htmlbars-syntax/handlebars/compiler/whitespace-control', ['exports', './visitor'], function (exports, _visitor) {
+        'use strict';
 
         function WhitespaceControl() {}
         WhitespaceControl.prototype = new _visitor.default();
@@ -16962,6 +17060,8 @@
         exports.default = WhitespaceControl;
     });
     enifed('htmlbars-syntax/handlebars/exception', ['exports'], function (exports) {
+        'use strict';
+
         var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
 
         function Exception(message, node) {
@@ -16998,6 +17098,8 @@
     });
     enifed('htmlbars-syntax/handlebars/safe-string', ['exports'], function (exports) {
         // Build out our basic SafeString type
+        'use strict';
+
         function SafeString(string) {
             this.string = string;
         }
@@ -17009,6 +17111,8 @@
         exports.default = SafeString;
     });
     enifed('htmlbars-syntax/handlebars/utils', ['exports'], function (exports) {
+        'use strict';
+
         exports.extend = extend;
         exports.indexOf = indexOf;
         exports.escapeExpression = escapeExpression;
@@ -17020,7 +17124,7 @@
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
-            '\'': '&#x27;',
+            "'": '&#x27;',
             '`': '&#x60;'
         };
 
@@ -17123,11 +17227,13 @@
         }
     });
     enifed("htmlbars-syntax/parser", ["exports", "./handlebars/compiler/base", "../htmlbars-syntax", "../simple-html-tokenizer/evented-tokenizer", "../simple-html-tokenizer/entity-parser", "../simple-html-tokenizer/char-refs/full", "./parser/handlebars-node-visitors", "./parser/tokenizer-event-handlers"], function (exports, _handlebarsCompilerBase, _htmlbarsSyntax, _simpleHtmlTokenizerEventedTokenizer, _simpleHtmlTokenizerEntityParser, _simpleHtmlTokenizerCharRefsFull, _parserHandlebarsNodeVisitors, _parserTokenizerEventHandlers) {
+        "use strict";
+
         exports.preprocess = preprocess;
         exports.Parser = Parser;
 
         function preprocess(html, options) {
-            var ast = typeof html === "object" ? html : _handlebarsCompilerBase.parse(html);
+            var ast = typeof html === 'object' ? html : _handlebarsCompilerBase.parse(html);
             var combined = new Parser(html, options).acceptNode(ast);
 
             if (options && options.plugins && options.plugins.ast) {
@@ -17155,7 +17261,7 @@
             this.currentNode = null;
             this.currentAttribute = null;
 
-            if (typeof source === "string") {
+            if (typeof source === 'string') {
                 this.source = source.split(/(?:\r\n?|\n)/g);
             }
         }
@@ -17186,7 +17292,7 @@
             var line;
 
             if (!this.source) {
-                return "{{" + mustache.path.id.original + "}}";
+                return '{{' + mustache.path.id.original + '}}';
             }
 
             while (currentLine < lastLine) {
@@ -17206,10 +17312,12 @@
                 }
             }
 
-            return string.join("\n");
+            return string.join('\n');
         };
     });
     enifed("htmlbars-syntax/parser/handlebars-node-visitors", ["exports", "../builders", "../utils"], function (exports, _builders, _utils) {
+        "use strict";
+
         exports.default = {
 
             Program: function (program) {
@@ -17242,12 +17350,12 @@
                 delete block.openString;
                 delete block.closeStrip;
 
-                if (this.tokenizer.state === "comment") {
-                    this.appendToCommentData("{{" + this.sourceForMustache(block) + "}}");
+                if (this.tokenizer.state === 'comment') {
+                    this.appendToCommentData('{{' + this.sourceForMustache(block) + '}}');
                     return;
                 }
 
-                if (this.tokenizer.state !== "comment" && this.tokenizer.state !== "data" && this.tokenizer.state !== "beforeData") {
+                if (this.tokenizer.state !== 'comment' && this.tokenizer.state !== 'data' && this.tokenizer.state !== 'beforeData') {
                     throw new Error("A block may only be used inside an HTML element or another block.");
                 }
 
@@ -17270,8 +17378,8 @@
 
                 var mustache = _builders.default.mustache(path, params, hash, !escaped, loc);
 
-                if (tokenizer.state === "comment") {
-                    this.appendToCommentData("{{" + this.sourceForMustache(mustache) + "}}");
+                if (tokenizer.state === 'comment') {
+                    this.appendToCommentData('{{' + this.sourceForMustache(mustache) + '}}');
                     return;
                 }
 
@@ -17301,7 +17409,7 @@
                     // Attribute values
                     case "beforeAttributeValue":
                         appendDynamicAttributeValuePart(this.currentAttribute, mustache);
-                        tokenizer.state = "attributeValueUnquoted";
+                        tokenizer.state = 'attributeValueUnquoted';
                         break;
                     case "attributeValueDoubleQuoted":
                     case "attributeValueSingleQuoted":
@@ -17365,7 +17473,7 @@
         };
 
         function leadingNewlineDifference(original, value) {
-            if (value === "") {
+            if (value === '') {
                 // if it is empty, just return the count of newlines
                 // in original
                 return original.split("\n").length - 1;
@@ -17415,6 +17523,8 @@
         }
     });
     enifed("htmlbars-syntax/parser/tokenizer-event-handlers", ["exports", "../../htmlbars-util/void-tag-names", "../builders", "../utils"], function (exports, _htmlbarsUtilVoidTagNames, _builders, _utils) {
+        "use strict";
+
         exports.default = {
             reset: function () {
                 this.currentNode = null;
@@ -17452,7 +17562,7 @@
 
             beginStartTag: function () {
                 this.currentNode = {
-                    type: "StartTag",
+                    type: 'StartTag',
                     name: "",
                     attributes: [],
                     modifiers: [],
@@ -17463,7 +17573,7 @@
 
             beginEndTag: function () {
                 this.currentNode = {
-                    type: "EndTag",
+                    type: 'EndTag',
                     name: "",
                     attributes: [],
                     modifiers: [],
@@ -17482,13 +17592,13 @@
                 var tag = this.currentNode;
                 tag.loc = _builders.default.loc(tagLine, tagColumn, line, column);
 
-                if (tag.type === "StartTag") {
+                if (tag.type === 'StartTag') {
                     this.finishStartTag();
 
                     if (_htmlbarsUtilVoidTagNames.default.hasOwnProperty(tag.name) || tag.selfClosing) {
                         this.finishEndTag(true);
                     }
-                } else if (tag.type === "EndTag") {
+                } else if (tag.type === 'EndTag') {
                     this.finishEndTag(false);
                 }
             },
@@ -17540,7 +17650,7 @@
 
             beginAttribute: function () {
                 var tag = this.currentNode;
-                if (tag.type === "EndTag") {
+                if (tag.type === 'EndTag') {
                     throw new Error("Invalid end tag: closing tag must not have attributes, " + ("in `" + tag.name + "` (on line " + this.tokenizer.line + ")."));
                 }
 
@@ -17563,7 +17673,7 @@
             appendToAttributeValue: function (char) {
                 var parts = this.currentAttribute.parts;
 
-                if (typeof parts[parts.length - 1] === "string") {
+                if (typeof parts[parts.length - 1] === 'string') {
                     parts[parts.length - 1] += char;
                 } else {
                     parts.push(char);
@@ -17603,10 +17713,10 @@
             for (var i = 0; i < parts.length; i++) {
                 var part = parts[i];
 
-                if (typeof part === "string") {
+                if (typeof part === 'string') {
                     parts[i] = _builders.default.string(parts[i]);
                 } else {
-                    if (part.type === "MustacheStatement") {
+                    if (part.type === 'MustacheStatement') {
                         parts[i] = _utils.unwrapMustache(part);
                     } else {
                         throw new Error("Unsupported node in quoted attribute value: " + part.type);
@@ -17640,7 +17750,277 @@
             return "`" + tag.name + "` (on line " + tag.loc.end.line + ")";
         }
     });
+    enifed("htmlbars-syntax/traversal/errors", ["exports"], function (exports) {
+        "use strict";
+
+        exports.cannotRemoveNode = cannotRemoveNode;
+        exports.cannotReplaceNode = cannotReplaceNode;
+        exports.cannotReplaceOrRemoveInKeyHandlerYet = cannotReplaceOrRemoveInKeyHandlerYet;
+        function TraversalError(message, node, parent, key) {
+            this.name = "TraversalError";
+            this.message = message;
+            this.node = node;
+            this.parent = parent;
+            this.key = key;
+        }
+
+        TraversalError.prototype = Object.create(Error.prototype);
+        TraversalError.prototype.constructor = TraversalError;
+
+        exports.default = TraversalError;
+
+        function cannotRemoveNode(node, parent, key) {
+            return new TraversalError("Cannot remove a node unless it is part of an array", node, parent, key);
+        }
+
+        function cannotReplaceNode(node, parent, key) {
+            return new TraversalError("Cannot replace a node with multiple nodes unless it is part of an array", node, parent, key);
+        }
+
+        function cannotReplaceOrRemoveInKeyHandlerYet(node, key) {
+            return new TraversalError("Replacing and removing in key handlers is not yet supported.", node, null, key);
+        }
+    });
+    enifed('htmlbars-syntax/traversal/traverse', ['exports', '../types/visitor-keys', './errors'], function (exports, _typesVisitorKeys, _errors) {
+        'use strict';
+
+        exports.default = traverse;
+        exports.normalizeVisitor = normalizeVisitor;
+
+        function visitNode(visitor, node) {
+            var handler = visitor[node.type] || visitor.All;
+            var result = undefined;
+
+            if (handler && handler.enter) {
+                result = handler.enter.call(null, node);
+            }
+
+            if (result === undefined) {
+                var keys = _typesVisitorKeys.default[node.type];
+
+                for (var i = 0; i < keys.length; i++) {
+                    visitKey(visitor, handler, node, keys[i]);
+                }
+
+                if (handler && handler.exit) {
+                    result = handler.exit.call(null, node);
+                }
+            }
+
+            return result;
+        }
+
+        function visitKey(visitor, handler, node, key) {
+            var value = node[key];
+            if (!value) {
+                return;
+            }
+
+            var keyHandler = handler && (handler.keys[key] || handler.keys.All);
+            var result = undefined;
+
+            if (keyHandler && keyHandler.enter) {
+                result = keyHandler.enter.call(null, node, key);
+                if (result !== undefined) {
+                    throw _errors.cannotReplaceOrRemoveInKeyHandlerYet(node, key);
+                }
+            }
+
+            if (Array.isArray(value)) {
+                visitArray(visitor, value);
+            } else {
+                var _result = visitNode(visitor, value);
+                if (_result !== undefined) {
+                    assignKey(node, key, _result);
+                }
+            }
+
+            if (keyHandler && keyHandler.exit) {
+                result = keyHandler.exit.call(null, node, key);
+                if (result !== undefined) {
+                    throw _errors.cannotReplaceOrRemoveInKeyHandlerYet(node, key);
+                }
+            }
+        }
+
+        function visitArray(visitor, array) {
+            for (var i = 0; i < array.length; i++) {
+                var result = visitNode(visitor, array[i]);
+                if (result !== undefined) {
+                    i += spliceArray(array, i, result) - 1;
+                }
+            }
+        }
+
+        function assignKey(node, key, result) {
+            if (result === null) {
+                throw _errors.cannotRemoveNode(node[key], node, key);
+            } else if (Array.isArray(result)) {
+                if (result.length === 1) {
+                    node[key] = result[0];
+                } else {
+                    if (result.length === 0) {
+                        throw _errors.cannotRemoveNode(node[key], node, key);
+                    } else {
+                        throw _errors.cannotReplaceNode(node[key], node, key);
+                    }
+                }
+            } else {
+                node[key] = result;
+            }
+        }
+
+        function spliceArray(array, index, result) {
+            if (result === null) {
+                array.splice(index, 1);
+                return 0;
+            } else if (Array.isArray(result)) {
+                array.splice.apply(array, [index, 1].concat(result));
+                return result.length;
+            } else {
+                array.splice(index, 1, result);
+                return 1;
+            }
+        }
+
+        function traverse(node, visitor) {
+            visitNode(normalizeVisitor(visitor), node);
+        }
+
+        function normalizeVisitor(visitor) {
+            var normalizedVisitor = {};
+
+            for (var type in visitor) {
+                var handler = visitor[type] || visitor.All;
+                var normalizedKeys = {};
+
+                if (typeof handler === 'object') {
+                    var keys = handler.keys;
+                    if (keys) {
+                        for (var key in keys) {
+                            var keyHandler = keys[key];
+                            if (typeof keyHandler === 'object') {
+                                normalizedKeys[key] = {
+                                    enter: typeof keyHandler.enter === 'function' ? keyHandler.enter : null,
+                                    exit: typeof keyHandler.exit === 'function' ? keyHandler.exit : null
+                                };
+                            } else if (typeof keyHandler === 'function') {
+                                normalizedKeys[key] = {
+                                    enter: keyHandler,
+                                    exit: null
+                                };
+                            }
+                        }
+                    }
+
+                    normalizedVisitor[type] = {
+                        enter: typeof handler.enter === 'function' ? handler.enter : null,
+                        exit: typeof handler.exit === 'function' ? handler.exit : null,
+                        keys: normalizedKeys
+                    };
+                } else if (typeof handler === 'function') {
+                    normalizedVisitor[type] = {
+                        enter: handler,
+                        exit: null,
+                        keys: normalizedKeys
+                    };
+                }
+            }
+
+            return normalizedVisitor;
+        }
+    });
+    enifed('htmlbars-syntax/traversal/walker', ['exports'], function (exports) {
+        'use strict';
+
+        function Walker(order) {
+            this.order = order;
+            this.stack = [];
+        }
+
+        exports.default = Walker;
+
+        Walker.prototype.visit = function (node, callback) {
+            if (!node) {
+                return;
+            }
+
+            this.stack.push(node);
+
+            if (this.order === 'post') {
+                this.children(node, callback);
+                callback(node, this);
+            } else {
+                callback(node, this);
+                this.children(node, callback);
+            }
+
+            this.stack.pop();
+        };
+
+        var visitors = {
+            Program: function (walker, node, callback) {
+                for (var i = 0; i < node.body.length; i++) {
+                    walker.visit(node.body[i], callback);
+                }
+            },
+
+            ElementNode: function (walker, node, callback) {
+                for (var i = 0; i < node.children.length; i++) {
+                    walker.visit(node.children[i], callback);
+                }
+            },
+
+            BlockStatement: function (walker, node, callback) {
+                walker.visit(node.program, callback);
+                walker.visit(node.inverse, callback);
+            },
+
+            ComponentNode: function (walker, node, callback) {
+                walker.visit(node.program, callback);
+            }
+        };
+
+        Walker.prototype.children = function (node, callback) {
+            var visitor = visitors[node.type];
+            if (visitor) {
+                visitor(this, node, callback);
+            }
+        };
+    });
+    enifed('htmlbars-syntax/types/visitor-keys', ['exports'], function (exports) {
+        'use strict';
+
+        exports.default = {
+            Program: ['body'],
+
+            MustacheStatement: ['path', 'params', 'hash'],
+            BlockStatement: ['path', 'params', 'hash', 'program', 'inverse'],
+            ElementModifierStatement: ['path', 'params', 'hash'],
+            PartialStatement: ['name', 'params', 'hash'],
+            CommentStatement: [],
+            ElementNode: ['attributes', 'modifiers', 'children'],
+            ComponentNode: ['attributes', 'program'],
+            AttrNode: ['value'],
+            TextNode: [],
+
+            ConcatStatement: ['parts'],
+            SubExpression: ['path', 'params', 'hash'],
+            PathExpression: [],
+
+            StringLiteral: [],
+            BooleanLiteral: [],
+            NumberLiteral: [],
+            NullLiteral: [],
+            UndefinedLiteral: [],
+
+            Hash: ['pairs'],
+            HashPair: ['value']
+        };
+    });
     enifed('htmlbars-syntax/utils', ['exports', '../htmlbars-util/array-utils'], function (exports, _htmlbarsUtilArrayUtils) {
+        'use strict';
+
         exports.parseComponentBlockParams = parseComponentBlockParams;
         exports.childrenFor = childrenFor;
         exports.appendChild = appendChild;
@@ -17718,63 +18098,9 @@
             }
         }
     });
-    enifed('htmlbars-syntax/walker', ['exports'], function (exports) {
-        function Walker(order) {
-            this.order = order;
-            this.stack = [];
-        }
-
-        exports.default = Walker;
-
-        Walker.prototype.visit = function (node, callback) {
-            if (!node) {
-                return;
-            }
-
-            this.stack.push(node);
-
-            if (this.order === 'post') {
-                this.children(node, callback);
-                callback(node, this);
-            } else {
-                callback(node, this);
-                this.children(node, callback);
-            }
-
-            this.stack.pop();
-        };
-
-        var visitors = {
-            Program: function (walker, node, callback) {
-                for (var i = 0; i < node.body.length; i++) {
-                    walker.visit(node.body[i], callback);
-                }
-            },
-
-            ElementNode: function (walker, node, callback) {
-                for (var i = 0; i < node.children.length; i++) {
-                    walker.visit(node.children[i], callback);
-                }
-            },
-
-            BlockStatement: function (walker, node, callback) {
-                walker.visit(node.program, callback);
-                walker.visit(node.inverse, callback);
-            },
-
-            ComponentNode: function (walker, node, callback) {
-                walker.visit(node.program, callback);
-            }
-        };
-
-        Walker.prototype.children = function (node, callback) {
-            var visitor = visitors[node.type];
-            if (visitor) {
-                visitor(this, node, callback);
-            }
-        };
-    });
     enifed("htmlbars-test-helpers", ["exports", "../simple-html-tokenizer", "../htmlbars-util/array-utils"], function (exports, _simpleHtmlTokenizer, _htmlbarsUtilArrayUtils) {
+        "use strict";
+
         exports.equalInnerHTML = equalInnerHTML;
         exports.equalHTML = equalHTML;
         exports.equalTokens = equalTokens;
@@ -17806,7 +18132,7 @@
 
         function generateTokens(fragmentOrHtml) {
             var div = document.createElement("div");
-            if (typeof fragmentOrHtml === "string") {
+            if (typeof fragmentOrHtml === 'string') {
                 div.innerHTML = fragmentOrHtml;
             } else {
                 div.appendChild(fragmentOrHtml.cloneNode(true));
@@ -17827,7 +18153,7 @@
             var htmlTokens = generateTokens(html);
 
             function normalizeTokens(token) {
-                if (token.type === "StartTag") {
+                if (token.type === 'StartTag') {
                     token.attributes = token.attributes.sort(function (a, b) {
                         if (a[0] > b[0]) {
                             return 1;
@@ -17857,21 +18183,21 @@
             if (!document.createElementNS) {
                 return false;
             }
-            var div = document.createElement("div");
-            var node = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            var div = document.createElement('div');
+            var node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             div.appendChild(node);
             var clone = div.cloneNode(true);
-            return clone.innerHTML === "<svg xmlns=\"http://www.w3.org/2000/svg\" />";
+            return clone.innerHTML === '<svg xmlns="http://www.w3.org/2000/svg" />';
         })();
 
         function normalizeInnerHTML(actualHTML) {
             if (ieSVGInnerHTML) {
                 // Replace `<svg xmlns="http://www.w3.org/2000/svg" height="50%" />` with `<svg height="50%"></svg>`, etc.
                 // drop namespace attribute
-                actualHTML = actualHTML.replace(/ xmlns="[^"]+"/, "");
+                actualHTML = actualHTML.replace(/ xmlns="[^"]+"/, '');
                 // replace self-closing elements
                 actualHTML = actualHTML.replace(/<([^ >]+) [^\/>]*\/>/gi, function (tag, tagName) {
-                    return tag.slice(0, tag.length - 3) + "></" + tagName + ">";
+                    return tag.slice(0, tag.length - 3) + '></' + tagName + '>';
                 });
             }
 
@@ -17879,8 +18205,8 @@
         }
 
         // detect weird IE8 checked element string
-        var checkedInput = document.createElement("input");
-        checkedInput.setAttribute("checked", "checked");
+        var checkedInput = document.createElement('input');
+        checkedInput.setAttribute('checked', 'checked');
         var checkedInputString = checkedInput.outerHTML;
 
         function isCheckedInputHTML(element) {
@@ -17888,7 +18214,7 @@
         }
 
         // check which property has the node's text content
-        var textProperty = document.createElement("div").textContent === undefined ? "innerText" : "textContent";
+        var textProperty = document.createElement('div').textContent === undefined ? 'innerText' : 'textContent';
 
         function getTextContent(el) {
             // textNode
@@ -17900,6 +18226,8 @@
         }
     });
     enifed('htmlbars-util', ['exports', './htmlbars-util/safe-string', './htmlbars-util/handlebars/utils', './htmlbars-util/namespaces', './htmlbars-util/morph-utils'], function (exports, _htmlbarsUtilSafeString, _htmlbarsUtilHandlebarsUtils, _htmlbarsUtilNamespaces, _htmlbarsUtilMorphUtils) {
+        'use strict';
+
         exports.SafeString = _htmlbarsUtilSafeString.default;
         exports.escapeExpression = _htmlbarsUtilHandlebarsUtils.escapeExpression;
         exports.getAttrNamespace = _htmlbarsUtilNamespaces.getAttrNamespace;
@@ -17908,6 +18236,8 @@
         exports.dump = _htmlbarsUtilMorphUtils.dump;
     });
     enifed('htmlbars-util/array-utils', ['exports'], function (exports) {
+        'use strict';
+
         exports.forEach = forEach;
         exports.map = map;
 
@@ -17966,6 +18296,8 @@
     });
     enifed('htmlbars-util/handlebars/safe-string', ['exports'], function (exports) {
         // Build out our basic SafeString type
+        'use strict';
+
         function SafeString(string) {
             this.string = string;
         }
@@ -17977,6 +18309,8 @@
         exports.default = SafeString;
     });
     enifed('htmlbars-util/handlebars/utils', ['exports'], function (exports) {
+        'use strict';
+
         exports.extend = extend;
         exports.indexOf = indexOf;
         exports.escapeExpression = escapeExpression;
@@ -17988,7 +18322,7 @@
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
-            '\'': '&#x27;',
+            "'": '&#x27;',
             '`': '&#x60;'
         };
 
@@ -18091,11 +18425,14 @@
         }
     });
     enifed("htmlbars-util/morph-utils", ["exports"], function (exports) {
+        /*globals console*/
+
+        "use strict";
+
         exports.visitChildren = visitChildren;
         exports.validateChildMorphs = validateChildMorphs;
         exports.linkParams = linkParams;
         exports.dump = dump;
-        /*globals console*/
 
         function visitChildren(nodes, callback) {
             if (!nodes || nodes.length === 0) {
@@ -18118,7 +18455,12 @@
                         current = current.nextMorph;
                     }
                 } else if (node.morphList) {
-                    nodes.push(node.morphList);
+                    var current = node.morphList.firstChildMorph;
+
+                    while (current) {
+                        nodes.push(current);
+                        current = current.nextMorph;
+                    }
                 }
             }
         }
@@ -18179,8 +18521,10 @@
         }
     });
     enifed('htmlbars-util/namespaces', ['exports'], function (exports) {
-        exports.getAttrNamespace = getAttrNamespace;
         // ref http://dev.w3.org/html5/spec-LC/namespaces.html
+        'use strict';
+
+        exports.getAttrNamespace = getAttrNamespace;
         var defaultNamespaces = {
             html: 'http://www.w3.org/1999/xhtml',
             mathml: 'http://www.w3.org/1998/Math/MathML',
@@ -18202,6 +18546,8 @@
         }
     });
     enifed("htmlbars-util/object-utils", ["exports"], function (exports) {
+        "use strict";
+
         exports.merge = merge;
         exports.shallowCopy = shallowCopy;
         exports.keySet = keySet;
@@ -18246,11 +18592,13 @@
         }
     });
     enifed("htmlbars-util/quoting", ["exports"], function (exports) {
+        "use strict";
+
         exports.hash = hash;
         exports.repeat = repeat;
         function escapeString(str) {
             str = str.replace(/\\/g, "\\\\");
-            str = str.replace(/"/g, "\\\"");
+            str = str.replace(/"/g, '\\"');
             str = str.replace(/\n/g, "\\n");
             return str;
         }
@@ -18258,7 +18606,7 @@
         exports.escapeString = escapeString;
 
         function string(str) {
-            return "\"" + escapeString(str) + "\"";
+            return '"' + escapeString(str) + '"';
         }
 
         exports.string = string;
@@ -18282,9 +18630,13 @@
         }
     });
     enifed('htmlbars-util/safe-string', ['exports', './handlebars/safe-string'], function (exports, _handlebarsSafeString) {
+        'use strict';
+
         exports.default = _handlebarsSafeString.default;
     });
     enifed("htmlbars-util/template-utils", ["exports", "../htmlbars-util/morph-utils"], function (exports, _htmlbarsUtilMorphUtils) {
+        "use strict";
+
         exports.RenderState = RenderState;
         exports.blockFor = blockFor;
         exports.renderAndCleanup = renderAndCleanup;
@@ -18304,6 +18656,7 @@
             // rendering pass. Any morphs in the DOM but not in this map
             // will be pruned during cleanup.
             this.handledMorphs = {};
+            this.collisions = undefined;
 
             // The morph to clear once rendering is complete. By
             // default, we set this to the previous morph (to catch
@@ -18352,7 +18705,7 @@
             if (!blocks) {
                 return;
             }
-            if (typeof blocks === "function") {
+            if (typeof blocks === 'function') {
                 env.hooks.bindBlock(env, shadowScope, blocks);
             } else {
                 for (var name in blocks) {
@@ -18370,6 +18723,7 @@
             // yieldTemplate), we detect what was rendered and how it differs from
             // the previous render, cleaning up old state in DOM as appropriate.
             var renderState = options.renderState;
+            renderState.collisions = undefined;
             renderState.shadowOptions = shadowOptions;
 
             // Invoke the callback, instructing it to save information about what it
@@ -18472,6 +18826,7 @@
         }
     });
     enifed("htmlbars-util/void-tag-names", ["exports", "./array-utils"], function (exports, _arrayUtils) {
+        "use strict";
 
         // The HTML elements in this list are speced by
         // http://www.w3.org/TR/html-markup/syntax.html#syntax-elements,
@@ -18487,6 +18842,7 @@
         exports.default = voidMap;
     });
     enifed('morph-range', ['exports', './morph-range/utils'], function (exports, _morphRangeUtils) {
+        'use strict';
 
         // constructor just initializes the fields
         // use one of the static initializers to create a valid morph.
@@ -18750,6 +19106,7 @@
         exports.default = Morph;
     });
     enifed('morph-range/morph-list', ['exports', './utils'], function (exports, _utils) {
+        'use strict';
 
         function MorphList() {
             // morph graph
@@ -18827,7 +19184,7 @@
 
         prototype.removeChildMorph = function MorphList$removeChildMorph(morph) {
             if (morph.parentMorphList !== this) {
-                throw new Error('Cannot remove a morph from a parent it is not inside of');
+                throw new Error("Cannot remove a morph from a parent it is not inside of");
             }
 
             morph.destroy();
@@ -18836,6 +19193,7 @@
         exports.default = MorphList;
     });
     enifed('morph-range/morph-list.umd', ['exports', './morph-list'], function (exports, _morphList) {
+        'use strict';
 
         (function (root, factory) {
             if (typeof enifed === 'function' && enifed.amd) {
@@ -18845,14 +19203,16 @@
             } else {
                 root.MorphList = factory();
             }
-        })(this, function () {
+        })(undefined, function () {
             return _morphList.default;
         });
     });
     enifed("morph-range/utils", ["exports"], function (exports) {
+        // inclusive of both nodes
+        "use strict";
+
         exports.clear = clear;
         exports.insertBefore = insertBefore;
-        // inclusive of both nodes
 
         function clear(parentNode, firstNode, lastNode) {
             if (!parentNode) {
@@ -18885,6 +19245,9 @@
         }
     });
     enifed('simple-html-tokenizer', ['exports', './simple-html-tokenizer/evented-tokenizer', './simple-html-tokenizer/tokenizer', './simple-html-tokenizer/tokenize', './simple-html-tokenizer/generator', './simple-html-tokenizer/generate', './simple-html-tokenizer/tokens'], function (exports, _simpleHtmlTokenizerEventedTokenizer, _simpleHtmlTokenizerTokenizer, _simpleHtmlTokenizerTokenize, _simpleHtmlTokenizerGenerator, _simpleHtmlTokenizerGenerate, _simpleHtmlTokenizerTokens) {
+        /*jshint boss:true*/
+        'use strict';
+
         exports.EventedTokenizer = _simpleHtmlTokenizerEventedTokenizer.default;
         exports.Tokenizer = _simpleHtmlTokenizerTokenizer.default;
         exports.tokenize = _simpleHtmlTokenizerTokenize.default;
@@ -18895,8 +19258,9 @@
         exports.Chars = _simpleHtmlTokenizerTokens.Chars;
         exports.Comment = _simpleHtmlTokenizerTokens.Comment;
     });
-    /*jshint boss:true*/
     enifed("simple-html-tokenizer/char-refs/full", ["exports"], function (exports) {
+        "use strict";
+
         exports.default = {
             AElig: [198],
             AMP: [38],
@@ -21026,6 +21390,8 @@
         };
     });
     enifed("simple-html-tokenizer/char-refs/min", ["exports"], function (exports) {
+        "use strict";
+
         exports.default = {
             quot: [34],
             amp: [38],
@@ -21035,6 +21401,8 @@
         };
     });
     enifed('simple-html-tokenizer/entity-parser', ['exports'], function (exports) {
+        'use strict';
+
         function EntityParser(namedCodepoints) {
             this.namedCodepoints = namedCodepoints;
         }
@@ -21067,6 +21435,7 @@
         exports.default = EntityParser;
     });
     enifed('simple-html-tokenizer/evented-tokenizer', ['exports', './utils'], function (exports, _utils) {
+        'use strict';
 
         function EventedTokenizer(delegate, entityParser) {
             this.delegate = delegate;
@@ -21133,7 +21502,7 @@
 
                 this.index++;
 
-                if (char === '\n') {
+                if (char === "\n") {
                     this.line++;
                     this.column = 0;
                 } else {
@@ -21156,7 +21525,7 @@
                 beforeData: function () {
                     var char = this.peek();
 
-                    if (char === '<') {
+                    if (char === "<") {
                         this.state = 'tagOpen';
                         this.markTagStart();
                         this.consume();
@@ -21169,14 +21538,14 @@
                 data: function () {
                     var char = this.peek();
 
-                    if (char === '<') {
+                    if (char === "<") {
                         this.delegate.finishData();
                         this.state = 'tagOpen';
                         this.markTagStart();
                         this.consume();
-                    } else if (char === '&') {
+                    } else if (char === "&") {
                         this.consume();
-                        this.delegate.appendToData(this.consumeCharRef() || '&');
+                        this.delegate.appendToData(this.consumeCharRef() || "&");
                     } else {
                         this.consume();
                         this.delegate.appendToData(char);
@@ -21186,9 +21555,9 @@
                 tagOpen: function () {
                     var char = this.consume();
 
-                    if (char === '!') {
+                    if (char === "!") {
                         this.state = 'markupDeclaration';
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.state = 'endTagOpen';
                     } else if (_utils.isAlpha(char)) {
                         this.state = 'tagName';
@@ -21200,7 +21569,7 @@
                 markupDeclaration: function () {
                     var char = this.consume();
 
-                    if (char === '-' && this.input.charAt(this.index) === '-') {
+                    if (char === "-" && this.input.charAt(this.index) === "-") {
                         this.index++;
                         this.state = 'commentStart';
                         this.delegate.beginComment();
@@ -21210,9 +21579,9 @@
                 commentStart: function () {
                     var char = this.consume();
 
-                    if (char === '-') {
+                    if (char === "-") {
                         this.state = 'commentStartDash';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.finishComment();
                         this.state = 'beforeData';
                     } else {
@@ -21224,13 +21593,13 @@
                 commentStartDash: function () {
                     var char = this.consume();
 
-                    if (char === '-') {
+                    if (char === "-") {
                         this.state = 'commentEnd';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.finishComment();
                         this.state = 'beforeData';
                     } else {
-                        this.delegate.appendToCommentData('-');
+                        this.delegate.appendToCommentData("-");
                         this.state = 'comment';
                     }
                 },
@@ -21238,7 +21607,7 @@
                 comment: function () {
                     var char = this.consume();
 
-                    if (char === '-') {
+                    if (char === "-") {
                         this.state = 'commentEndDash';
                     } else {
                         this.delegate.appendToCommentData(char);
@@ -21248,10 +21617,10 @@
                 commentEndDash: function () {
                     var char = this.consume();
 
-                    if (char === '-') {
+                    if (char === "-") {
                         this.state = 'commentEnd';
                     } else {
-                        this.delegate.appendToCommentData('-' + char);
+                        this.delegate.appendToCommentData("-" + char);
                         this.state = 'comment';
                     }
                 },
@@ -21259,11 +21628,11 @@
                 commentEnd: function () {
                     var char = this.consume();
 
-                    if (char === '>') {
+                    if (char === ">") {
                         this.delegate.finishComment();
                         this.state = 'beforeData';
                     } else {
-                        this.delegate.appendToCommentData('--' + char);
+                        this.delegate.appendToCommentData("--" + char);
                         this.state = 'comment';
                     }
                 },
@@ -21273,9 +21642,9 @@
 
                     if (_utils.isSpace(char)) {
                         this.state = 'beforeAttributeName';
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.state = 'selfClosingStartTag';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.finishTag();
                         this.state = 'beforeData';
                     } else {
@@ -21288,9 +21657,9 @@
 
                     if (_utils.isSpace(char)) {
                         return;
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.state = 'selfClosingStartTag';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.finishTag();
                         this.state = 'beforeData';
                     } else {
@@ -21305,11 +21674,11 @@
 
                     if (_utils.isSpace(char)) {
                         this.state = 'afterAttributeName';
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.state = 'selfClosingStartTag';
-                    } else if (char === '=') {
+                    } else if (char === "=") {
                         this.state = 'beforeAttributeValue';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.beginAttributeValue(false);
                         this.delegate.finishAttributeValue();
                         this.delegate.finishTag();
@@ -21324,11 +21693,11 @@
 
                     if (_utils.isSpace(char)) {
                         return;
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.state = 'selfClosingStartTag';
-                    } else if (char === '=') {
+                    } else if (char === "=") {
                         this.state = 'beforeAttributeValue';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.beginAttributeValue(false);
                         this.delegate.finishAttributeValue();
                         this.delegate.finishTag();
@@ -21348,10 +21717,10 @@
                     if (_utils.isSpace(char)) {} else if (char === '"') {
                         this.state = 'attributeValueDoubleQuoted';
                         this.delegate.beginAttributeValue(true);
-                    } else if (char === '\'') {
+                    } else if (char === "'") {
                         this.state = 'attributeValueSingleQuoted';
                         this.delegate.beginAttributeValue(true);
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.delegate.beginAttributeValue(false);
                         this.delegate.finishAttributeValue();
                         this.delegate.finishTag();
@@ -21369,8 +21738,8 @@
                     if (char === '"') {
                         this.delegate.finishAttributeValue();
                         this.state = 'afterAttributeValueQuoted';
-                    } else if (char === '&') {
-                        this.delegate.appendToAttributeValue(this.consumeCharRef('"') || '&');
+                    } else if (char === "&") {
+                        this.delegate.appendToAttributeValue(this.consumeCharRef('"') || "&");
                     } else {
                         this.delegate.appendToAttributeValue(char);
                     }
@@ -21379,11 +21748,11 @@
                 attributeValueSingleQuoted: function () {
                     var char = this.consume();
 
-                    if (char === '\'') {
+                    if (char === "'") {
                         this.delegate.finishAttributeValue();
                         this.state = 'afterAttributeValueQuoted';
-                    } else if (char === '&') {
-                        this.delegate.appendToAttributeValue(this.consumeCharRef('\'') || '&');
+                    } else if (char === "&") {
+                        this.delegate.appendToAttributeValue(this.consumeCharRef("'") || "&");
                     } else {
                         this.delegate.appendToAttributeValue(char);
                     }
@@ -21395,9 +21764,9 @@
                     if (_utils.isSpace(char)) {
                         this.delegate.finishAttributeValue();
                         this.state = 'beforeAttributeName';
-                    } else if (char === '&') {
-                        this.delegate.appendToAttributeValue(this.consumeCharRef('>') || '&');
-                    } else if (char === '>') {
+                    } else if (char === "&") {
+                        this.delegate.appendToAttributeValue(this.consumeCharRef(">") || "&");
+                    } else if (char === ">") {
                         this.delegate.finishAttributeValue();
                         this.delegate.finishTag();
                         this.state = 'beforeData';
@@ -21412,10 +21781,10 @@
                     if (_utils.isSpace(char)) {
                         this.consume();
                         this.state = 'beforeAttributeName';
-                    } else if (char === '/') {
+                    } else if (char === "/") {
                         this.consume();
                         this.state = 'selfClosingStartTag';
-                    } else if (char === '>') {
+                    } else if (char === ">") {
                         this.consume();
                         this.delegate.finishTag();
                         this.state = 'beforeData';
@@ -21427,7 +21796,7 @@
                 selfClosingStartTag: function () {
                     var char = this.peek();
 
-                    if (char === '>') {
+                    if (char === ">") {
                         this.consume();
                         this.delegate.markTagAsSelfClosing();
                         this.delegate.finishTag();
@@ -21452,6 +21821,8 @@
         exports.default = EventedTokenizer;
     });
     enifed('simple-html-tokenizer/generate', ['exports', './generator'], function (exports, _generator) {
+        'use strict';
+
         exports.default = generate;
 
         function generate(tokens) {
@@ -21460,6 +21831,8 @@
         }
     });
     enifed("simple-html-tokenizer/generator", ["exports"], function (exports) {
+        "use strict";
+
         var escape = (function () {
             var test = /[&<>"'`]/;
             var replace = /[&<>"'`]/g;
@@ -21467,7 +21840,7 @@
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
-                "\"": "&quot;",
+                '"': "&quot;",
                 "'": "&#x27;",
                 "`": "&#x60;"
             };
@@ -21488,7 +21861,7 @@
 
         Generator.prototype = {
             generate: function (tokens) {
-                var buffer = "";
+                var buffer = '';
                 var token;
                 for (var i = 0; i < tokens.length; i++) {
                     token = tokens[i];
@@ -21557,6 +21930,8 @@
         exports.default = Generator;
     });
     enifed('simple-html-tokenizer/tokenize', ['exports', './tokenizer', './entity-parser', './char-refs/full'], function (exports, _tokenizer, _entityParser, _charRefsFull) {
+        'use strict';
+
         exports.default = tokenize;
 
         function tokenize(input) {
@@ -21565,6 +21940,7 @@
         }
     });
     enifed('simple-html-tokenizer/tokenizer', ['exports', './evented-tokenizer', './tokens'], function (exports, _eventedTokenizer, _tokens) {
+        'use strict';
 
         function Tokenizer(entityParser) {
             this.tokenizer = new _eventedTokenizer.default(this, entityParser);
@@ -21676,7 +22052,7 @@
             // Tags - attributes
 
             beginAttribute: function () {
-                this._currentAttribute = ['', '', null];
+                this._currentAttribute = ["", "", null];
                 this.token.attributes.push(this._currentAttribute);
             },
 
@@ -21689,7 +22065,7 @@
             },
 
             appendToAttributeValue: function (char) {
-                this._currentAttribute[1] = this._currentAttribute[1] || '';
+                this._currentAttribute[1] = this._currentAttribute[1] || "";
                 this._currentAttribute[1] += char;
             },
 
@@ -21699,6 +22075,8 @@
         exports.default = Tokenizer;
     });
     enifed('simple-html-tokenizer/tokens', ['exports'], function (exports) {
+        'use strict';
+
         exports.StartTag = StartTag;
         exports.EndTag = EndTag;
         exports.Chars = Chars;
@@ -21718,7 +22096,7 @@
 
         function Chars(chars) {
             this.type = 'Chars';
-            this.chars = chars || '';
+            this.chars = chars || "";
         }
 
         function Comment(chars) {
@@ -21727,16 +22105,20 @@
         }
     });
     enifed("simple-html-tokenizer/utils", ["exports"], function (exports) {
+        "use strict";
+
         exports.isSpace = isSpace;
         exports.isAlpha = isAlpha;
         exports.preprocessInput = preprocessInput;
 
         function isSpace(char) {
-            return /[\t\n\f ]/.test(char);
+            return (/[\t\n\f ]/.test(char)
+            );
         }
 
         function isAlpha(char) {
-            return /[A-Za-z]/.test(char);
+            return (/[A-Za-z]/.test(char)
+            );
         }
 
         function preprocessInput(input) {
@@ -21747,3 +22129,7 @@
     requireModule("ember-template-compiler");
 
 })();
+;
+if (typeof exports === "object") {
+    module.exports = Ember.__loader.require("ember-template-compiler");
+}//# sourceMappingURL=ember-template-compiler.map

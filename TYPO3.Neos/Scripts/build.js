@@ -12,7 +12,11 @@ requirejs({
 		'i18n': '../Library/requirejs/i18n'
 	},
 	locale: 'en',
-
+	shim: {
+		'handlebars': {
+			exports: 'Handlebars'
+		}
+	},
 	name: 'ContentModuleBootstrap',
 	include: [
 		// The editors below are lazily loaded through Require.js, so we need to include them in the build manually.
@@ -50,13 +54,12 @@ requirejs({
 		'Shared/Validation/TextValidator',
 		'Shared/Validation/UuidValidator'
 	],
-	out: '../Resources/Public/JavaScript/ContentModule-built.js'
+	out: '../Resources/Public/JavaScript/ContentModule-built.js',
 
 	/**
 	 * To generate a source map in development context, uncomment the lines below
 	 */
-//	,
-//	generateSourceMaps: true,
-//	preserveLicenseComments: false,
-//	optimize: 'uglify2'
+	generateSourceMaps: true,
+	preserveLicenseComments: false,
+	optimize: 'uglify2'
 })

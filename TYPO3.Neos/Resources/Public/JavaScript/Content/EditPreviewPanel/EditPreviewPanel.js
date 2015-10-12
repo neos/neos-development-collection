@@ -14,7 +14,7 @@ define(
 	EventDispatcher,
 	template
 ) {
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		elementId: 'neos-edit-preview-panel',
 		template: Ember.Handlebars.compile(template),
 		isVisibleBinding: 'controller.visible',

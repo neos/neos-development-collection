@@ -15,7 +15,7 @@ define(
 		NodeTypeService,
 		I18n
 	) {
-		return Ember.View.extend({
+		return Ember.Component.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',

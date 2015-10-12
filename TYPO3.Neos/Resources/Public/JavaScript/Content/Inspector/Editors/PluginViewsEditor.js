@@ -39,11 +39,11 @@ function(
 			return this._super();
 		},
 
-		emptyView: Ember.View.extend({
+		emptyView: Ember.Component.extend({
 			template: Ember.Handlebars.compile(I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...')
 		}),
 
-		itemViewClass: Ember.View.extend({
+		itemViewClass: Ember.Component.extend({
 			template: Ember.Handlebars.compile(template)
 		})
 	});

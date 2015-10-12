@@ -45,6 +45,6 @@ define([
 
 		_requestsDidChange: function() {
 			this.set('requestInProgress', this.get('requests').length > 0);
-		}.observes('requests.@each')
+		}.observes('requests.[]')
 	}).create();
 });

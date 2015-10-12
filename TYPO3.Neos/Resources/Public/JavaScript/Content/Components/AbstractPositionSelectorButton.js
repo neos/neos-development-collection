@@ -10,7 +10,7 @@ function (
 	Ember,
 	template
 ) {
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		template: Ember.Handlebars.compile(template),
 
 		// Private API: set when extending
@@ -71,7 +71,7 @@ function (
 			this.set('isExpanded', false);
 		},
 
-		PositionSelectorOption: Ember.View.extend({
+		PositionSelectorOption: Ember.Component.extend({
 			// Set position to either `into`, `before` or `after` when using
 			position: Ember.required(),
 
@@ -111,7 +111,7 @@ function (
 				} else {
 					return false;
 				}
-			}.property('allowedPositions.@each'),
+			}.property('allowedPositions.[]'),
 
 			mouseDown: function(event) {
 				if (!this.get('isDisabled')) {

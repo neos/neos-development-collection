@@ -19,7 +19,7 @@ define(
 		view: null,
 		callbacks: [],
 
-		dialog: Ember.View.extend({
+		dialog: Ember.Component.extend({
 			classNames: ['neos-login-dialog'],
 			template: Ember.Handlebars.compile(template),
 			failed: false,

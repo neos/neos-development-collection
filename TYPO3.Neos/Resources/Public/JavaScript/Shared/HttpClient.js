@@ -17,7 +17,10 @@ define([
 	RequestManager,
 	LoginDialog
 ) {
-	return Ember.Object.createWithMixins(Ember.Evented, {
+
+	var HttpClient = Ember.Object.extend(Ember.Evented);
+
+	return HttpClient.create({
 		_failedRequest: null,
 		_lastSuccessfulTransfer: null,
 		_endpoints: {},
@@ -102,7 +105,7 @@ define([
 			};
 			var request;
 
-				if (optionsOverride) {
+			if (optionsOverride) {
 				$.extend(options, optionsOverride);
 			}
 
@@ -115,48 +118,48 @@ define([
 			}
 
 			var promise = new Ember.RSVP.Promise(function(resolve, reject) {
-					options = $.extend(options, {
-						success: function(data, textStatus, xhr) {
-							if (isSafeRequest) {
-								that.set('_lastSuccessfulTransfer', new Date());
-							} else {
-								RequestManager.remove(xhr);
-							}
-
-							that.set('_failedRequest', false);
-							that._success(resolve, data, textStatus, xhr);
-						},
-						error: function(xhr, textStatus, errorThrown) {
-							if (!isSafeRequest) {
-								RequestManager.remove(xhr);
-							}
-
-							if (xhr.status === 401) {
-								LoginDialog.show(function() {
-									if (isSafeRequest) {
-										options.data.__csrfToken = Configuration.get('CsrfToken');
-									} else {
-										RequestManager.add($.ajax(options));
-									}
-								});
-							} else {
-								that.set('_failedRequest', true);
-								that.trigger('failure', xhr, textStatus, errorThrown);
-								that._fail(reject, xhr, textStatus, errorThrown);
-							}
+				options = $.extend(options, {
+					success: function(data, textStatus, xhr) {
+						if (isSafeRequest) {
+							that.set('_lastSuccessfulTransfer', new Date());
+						} else {
+							RequestManager.remove(xhr);
 						}
-					});
 
-					request = $.ajax(options);
+						that.set('_failedRequest', false);
+						that._success(resolve, data, textStatus, xhr);
+					},
+					error: function(xhr, textStatus, errorThrown) {
+						if (!isSafeRequest) {
+							RequestManager.remove(xhr);
+						}
 
-					if (!isSafeRequest) {
-						RequestManager.add(request);
-					}
-
-					if (window.localStorage.showDevelopmentFeatures) {
-						window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
+						if (xhr.status === 401) {
+							LoginDialog.show(function() {
+								if (isSafeRequest) {
+									options.data.__csrfToken = Configuration.get('CsrfToken');
+								} else {
+									RequestManager.add($.ajax(options));
+								}
+							});
+						} else {
+							that.set('_failedRequest', true);
+							that.trigger('failure', xhr, textStatus, errorThrown);
+							that._fail(reject, xhr, textStatus, errorThrown);
+						}
 					}
 				});
+
+				request = $.ajax(options);
+
+				if (!isSafeRequest) {
+					RequestManager.add(request);
+				}
+
+				if (window.localStorage.showDevelopmentFeatures) {
+					window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
+				}
+			});
 
 			promise.abort = function() {
 				request.abort();

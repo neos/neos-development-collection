@@ -275,7 +275,7 @@ function(
 				dimensions[dimension.get('identifier')] = dimension.get('selected.values');
 			});
 			return dimensions;
-		}.property('dimensions.@each.selected'),
+		}.property('dimensions.[].selected'),
 
 		currentDimensionChoiceText: function() {
 			var dimensionText = [];
@@ -283,7 +283,7 @@ function(
 				dimensionText.push(dimension.get('label') + ' ' + dimension.get('selected.label'));
 			});
 			return dimensionText.join(', ');
-		}.property('dimensions.@each.selected'),
+		}.property('dimensions.[].selected'),
 
 		currentDocumentDimensionChoiceText: '',
 

@@ -52,7 +52,7 @@ function(
 		 *
 		 * You can use it in the UI as following:
 		 *
-		 * Ember.View.extend({
+		 * Ember.Component.extend({
 		 *    template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
 		 *    isVisibleBinding: 'ContentModule.showDevelopmentFeatures'
 		 * })

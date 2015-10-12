@@ -346,7 +346,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_mediaBrowserEditView: null,
 
 		_initializeMediaBrowserEditView: function () {
-			this.set('_mediaBrowserEditView', Ember.View.extend({
+			this.set('_mediaBrowserEditView', Ember.Component.extend({
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
 			}));
 		},
@@ -428,7 +428,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 			if (SecondaryInspectorController.get('_viewClass') === this.get('_cropView')) {
 				// Set empty view for secondary inspector to re-initialize crop view
-				SecondaryInspectorController.toggle(Ember.View.extend());
+				SecondaryInspectorController.toggle(Ember.Component.extend());
 				SecondaryInspectorController.hide();
 			}
 		},
@@ -469,7 +469,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_cropView: function () {
 			var parent = this;
 
-			return Ember.View.extend({
+			return Ember.Component.extend({
 				classNames: ['neos-secondary-inspector-image-crop'],
 				template: Ember.Handlebars.compile(cropTemplate),
 				aspectRatioWidth: null,
@@ -1042,7 +1042,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		},
 
 		_initializeMediaView: function () {
-			this.set('_mediaBrowserView', Ember.View.extend({
+			this.set('_mediaBrowserView', Ember.Component.extend({
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
 			}));
 		},

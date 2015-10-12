@@ -32,9 +32,9 @@ define([
 			});
 
 			return groupedContent;
-		}).property('optionGroupPath', 'content.@each'),
+		}).property('optionGroupPath', 'content.[]'),
 
-		groupView: Ember.ContainerView.extend({
+		groupView: Ember.Component.extend(Ember.MutableArray, {
 			childViews: ['view'],
 			init: function() {
 				if (this.get('content')) {
@@ -136,7 +136,7 @@ define([
 			});
 
 			return options;
-		}.property('values.@each'),
+		}.property('values.[]'),
 
 		valueDidChange: function() {
 			var that = this,

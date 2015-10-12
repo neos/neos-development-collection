@@ -11,7 +11,7 @@ define(
 	$,
     I18n
 ) {
-	return Ember.ContainerView.extend({
+	return Ember.Component.extend(Ember.MutableArray, {
 		viewDefinition: null,
 		classNameBindings: ['viewClassName'],
 		viewClassName: '',

@@ -17,7 +17,7 @@ define(
 	EditPreviewPanelController,
 	template
 ) {
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		template: Ember.Handlebars.compile(template),
 		MenuPanel: MenuPanel,
 		MenuButton: MenuButton,

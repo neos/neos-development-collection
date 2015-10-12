@@ -219,21 +219,15 @@ module.exports = function (grunt) {
 
 			handlebars: {
 				src: [
-					libraryPath + 'handlebars/handlebars-1.0.0.js'
+					libraryPath + 'handlebars/handlebars-4.0.2.js'
 				],
-				dest: libraryPath + 'handlebars.js',
-				options: {
-					banner: 'define(function() {',
-					footer: '  return Handlebars;' +
-					'});'
-				}
+				dest: libraryPath + 'handlebars.js'
 			},
-
 			// This file needs jQueryWithDependencies first
 			ember: {
 				src: [
 					libraryPath + 'emberjs/ember-template-compiler.js',
-					libraryPath + 'emberjs/ember-2.0.0-beta.2.js',
+					libraryPath + 'emberjs/ember-2.1.0.js',
 					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',

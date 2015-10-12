@@ -50,7 +50,7 @@ define(
 				this.set('currentlyActiveMode.active', false);
 				this.set('previousActiveMode', this.get('currentlyActiveMode'));
 			}
-		}.observesBefore('currentlyActiveMode'),
+		}.observes('currentlyActiveMode'),
 
 		_activateCurrentlyActiveMode: function() {
 			this.set('currentlyActiveMode.active', true);

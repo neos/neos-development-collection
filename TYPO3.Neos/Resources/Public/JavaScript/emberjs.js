@@ -32,5 +32,8 @@ define(['Library/ember'], function(Ember) {
 		// Ember.LOG_BINDINGS = true;
 	}
 
+	// export Ember.Component - https://github.com/emberjs/ember.js/issues/11775
+	Ember.ENV._ENABLE_LEGACY_VIEW_SUPPORT = true;
+
 	return Ember;
 });

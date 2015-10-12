@@ -12,7 +12,7 @@ function(
 	/**
 	 * A widget base class
 	 */
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		template: null,
 		layout: Ember.Handlebars.compile(template),
 

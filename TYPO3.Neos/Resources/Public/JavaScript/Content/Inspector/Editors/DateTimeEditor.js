@@ -6,7 +6,7 @@ define(
 	'text!./DateTimeEditor.html'
 ],
 function (Ember, $, I18n, template) {
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		actions: {
 			/**
 			 * @return {void}

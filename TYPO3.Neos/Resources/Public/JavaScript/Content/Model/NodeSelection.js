@@ -117,7 +117,7 @@ define(
 			} else {
 				return this.get('_nodes');
 			}
-		}.property('_nodes.@each', 'currentlyShownSecondaryAlohaTabs.@each'),
+		}.property('_nodes.[]', 'currentlyShownSecondaryAlohaTabs.[]'),
 
 		/**
 		 *

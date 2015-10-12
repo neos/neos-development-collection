@@ -38,7 +38,7 @@ define(
 		I18n
 	) {
 
-		return Ember.View.extend({
+		return Ember.Component.extend({
 			// TODO: the tree is redrawn too often (and we need to check why!)
 			actions: {
 				refresh: function() {

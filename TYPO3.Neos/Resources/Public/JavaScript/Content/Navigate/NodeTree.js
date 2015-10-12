@@ -247,7 +247,7 @@ define(
 						$(treeNode.span).addClass('neos-dynatree-dirty');
 					}
 				});
-			}.observes('publishableNodes.workspaceWidePublishableEntitySubjects.@each'),
+			}.observes('publishableNodes.workspaceWidePublishableEntitySubjects.[]'),
 
 			searchTermIsEmpty: function() {
 				return this.get('searchTerm') === '';

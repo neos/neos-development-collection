@@ -30,7 +30,7 @@ function(
 	InlineEditingHandles,
 	EventDispatcher
 ) {
-	return Ember.View.extend({
+	return Ember.Component.extend({
 		template: Ember.Handlebars.compile(template),
 		_isContentModule: window.T3.isContentModule,
 		ContentContextBar: ContentContextBar,
