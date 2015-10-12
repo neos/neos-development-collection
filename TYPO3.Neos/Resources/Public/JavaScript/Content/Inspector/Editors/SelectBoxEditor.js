@@ -88,6 +88,7 @@ define([
 		attributeBindings: ['size', 'disabled', 'multiple'],
 		optionLabelPath: 'content.label',
 		optionValuePath: 'content.value',
+		minimumResultsForSearch: 5,
 
 		init: function() {
 			this._super();
@@ -187,7 +188,7 @@ define([
 		_initializeSelect2: function() {
 			this.$().select2('destroy').select2({
 				maximumSelectionSize: this.get('multiple') ? 0 : 1,
-				minimumResultsForSearch: 5,
+				minimumResultsForSearch: this.get('minimumResultsForSearch'),
 				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
 				placeholder: this.get('_placeholder'),
 				relative: true,
