@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Link;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\LinkingService;
@@ -169,6 +170,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             );
             $this->tag->addAttribute('href', $uri);
         } catch (NeosException $exception) {
+            $this->systemLogger->logException($exception);
+        } catch (NoMatchingRouteException $exception) {
             $this->systemLogger->logException($exception);
         }
 
