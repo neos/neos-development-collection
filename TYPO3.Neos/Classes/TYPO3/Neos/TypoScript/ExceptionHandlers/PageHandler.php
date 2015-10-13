@@ -93,8 +93,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
         // FIXME find a better way than using templates as partials
         $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
-        $fluidView->setFormat('html');
         $fluidView->setControllerContext($this->runtime->getControllerContext());
+        $fluidView->setFormat('html');
         return $fluidView;
     }
 }
