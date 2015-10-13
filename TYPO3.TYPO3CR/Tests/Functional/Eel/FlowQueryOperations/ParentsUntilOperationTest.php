@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".          *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
@@ -87,15 +87,15 @@ class ParentsUntilOperationTest extends AbstractNodeTest
 
 
         $rootNode = $this->node->getNode('/');
-        $nodeA = $rootNode->createNode('a',  $testNodeType);
-        $nodeA->createNode('a1',  $testNodeType);
+        $nodeA = $rootNode->createNode('a', $testNodeType);
+        $nodeA->createNode('a1', $testNodeType);
         $nodeA->createNode('a2');
-        $nodeA->createNode('a3',  $testNodeType);
+        $nodeA->createNode('a3', $testNodeType);
         $nodeA->createNode('a4');
         $nodeA->createNode('a5');
-        $nodeB = $rootNode->createNode('b',  $testNodeType);
+        $nodeB = $rootNode->createNode('b', $testNodeType);
         $nodeB->createNode('b1');
-        $nodeB->createNode('b2',  $testNodeType);
+        $nodeB->createNode('b2', $testNodeType);
         $nodeB3 = $nodeB->createNode('b3');
         $nodeB3->createNode('b3a');
         $nodeB3->createNode('b3b');

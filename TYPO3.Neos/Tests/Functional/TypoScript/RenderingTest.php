@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Functional\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
 
 /**
@@ -198,7 +198,7 @@ class RenderingTest extends AbstractNodeTest
      */
     protected function assertTeaserConformsToBasicRendering($output)
     {
-        $this->assertContains('Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
+        $this->assertContains('This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.', $output);
         $this->assertSelectEquals('h1', 'Home', true, $output);
 
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Welcome to this example', true, $output);

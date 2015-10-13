@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional\Migration\Domain\Repository;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
@@ -43,9 +43,9 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
      */
     public function findAllReturnsResultsInAscendingVersionOrder()
     {
-        $this->repository->add(new MigrationStatus('zyx', 'direction', new \DateTime()));
-        $this->repository->add(new MigrationStatus('abc', 'direction', new \DateTime()));
-        $this->repository->add(new MigrationStatus('mnk', 'direction', new \DateTime()));
+        $this->repository->add(new MigrationStatus('zyx', MigrationStatus::DIRECTION_DOWN, new \DateTime()));
+        $this->repository->add(new MigrationStatus('abc', MigrationStatus::DIRECTION_UP, new \DateTime()));
+        $this->repository->add(new MigrationStatus('mnk', MigrationStatus::DIRECTION_DOWN, new \DateTime()));
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
