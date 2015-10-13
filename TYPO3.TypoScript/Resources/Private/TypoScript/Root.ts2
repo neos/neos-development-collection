@@ -94,3 +94,16 @@ prototype(TYPO3.TypoScript:ResourceUri) {
 
 	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
+
+# These are globally applied cache identifiers.
+# If you don't make @cache.entryIdentifiers another prototype (like a TYPO3.TypoScript:RawArray)
+# they will be rendered as this prototype, which means everything in here is added to ALL cached
+# TypoScript parts.
+# The baseUri contains the protocol (http/https), domain and port.
+#
+# WARNING: Do not delete this prototype, it is used inside of \TYPO3\TypoScript\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
+#
+prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) < prototype(TYPO3.TypoScript:RawArray) {
+	format = ${request.format}
+	baseUri = ${String.toString(request.httpRequest.baseUri)}
+}

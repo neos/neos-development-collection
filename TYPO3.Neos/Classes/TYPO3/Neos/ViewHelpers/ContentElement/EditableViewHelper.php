@@ -12,11 +12,12 @@ namespace TYPO3\Neos\ViewHelpers\ContentElement;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
@@ -35,9 +36,15 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 {
     /**
      * @Flow\Inject
-     * @var AccessDecisionManagerInterface
+     * @var PrivilegeManagerInterface
      */
-    protected $accessDecisionManager;
+    protected $privilegeManager;
+
+    /**
+     * @Flow\Inject
+     * @var AuthorizationService
+     */
+    protected $nodeAuthorizationService;
 
     /**
      * @return void
@@ -82,7 +89,11 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
+            return $this->tag->render();
+        }
+
+        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
             return $this->tag->render();
         }
 

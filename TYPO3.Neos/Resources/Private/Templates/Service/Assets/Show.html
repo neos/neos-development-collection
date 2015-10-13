@@ -1,15 +1,15 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}{namespace media=TYPO3\Media\ViewHelpers}<html>
 	<head>
-		<title>Asset: {asset.label}</title>
+		<title>{neos:backend.translate(id: 'asset', value: 'Asset')}: {asset.label}</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
 		<div>
-			<h1>Asset</h1>
+			<h1>{neos:backend.translate(id: 'asset', value: 'Asset')}: {asset.label}</h1>
 			<div class="asset">
 				<label class="asset-label">{asset.label}</label>
 				(<span class="asset-identifier">{asset.identifier}</span>)
-				<a rel="preview" href="{media:uri.image(asset: asset, maximumWidth: 250, maximumHeight: 250, allowCropping: 1, allowUpScaling: 1)}">preview</a>
+				<a rel="preview" href="{media:uri.image(asset: asset, maximumWidth: 250, maximumHeight: 250, allowCropping: 1, allowUpScaling: 1)}">{neos:backend.translate(id: 'preview', value: 'Preview')}</a>
 			</div>
 		</div>
 	</body>

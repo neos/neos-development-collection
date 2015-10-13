@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * Testcase for the FlowQuery PrevOperation
+ * Testcase for the FlowQuery NextOperation
  */
 class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 {

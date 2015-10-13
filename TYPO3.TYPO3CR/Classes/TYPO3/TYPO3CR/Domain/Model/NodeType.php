@@ -37,11 +37,18 @@ class NodeType
     protected $name;
 
     /**
-     * Configuration for this node type, can be an arbitrarily nested array.
+     * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
      *
      * @var array
      */
-    protected $configuration;
+    protected $localConfiguration;
+
+    /**
+     * Full configuration for this node type, can be an arbitrarily nested array. Includes any inherited configuration.
+     *
+     * @var array
+     */
+    protected $fullConfiguration;
 
     /**
      * Is this node type marked abstract
@@ -101,7 +108,7 @@ class NodeType
         $this->name = $name;
 
         foreach ($declaredSuperTypes as $type) {
-            if (!$type instanceof NodeType) {
+            if ($type !== null && !$type instanceof NodeType) {
                 throw new \InvalidArgumentException('$declaredSuperTypes must be an array of NodeType objects', 1291300950);
             }
         }
@@ -117,7 +124,7 @@ class NodeType
             unset($configuration['final']);
         }
 
-        $this->configuration = $configuration;
+        $this->localConfiguration = $configuration;
     }
 
     /**
@@ -131,7 +138,67 @@ class NodeType
             return;
         }
         $this->initialized = true;
+        $this->buildFullConfiguration();
         $this->applyPostprocessing();
+    }
+
+    /**
+     * Builds the full configuration by merging configuration from the supertypes into the local configuration.
+     *
+     * @return void
+     */
+    protected function buildFullConfiguration()
+    {
+        $mergedConfiguration = array();
+        $applicableSuperTypes = $this->buildInheritanceChain();
+        foreach ($applicableSuperTypes as $key => $superType) {
+            $mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
+        }
+        $this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
+
+        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
+            $sorter = new \TYPO3\Flow\Utility\PositionalArraySorter($this->fullConfiguration['childNodes']);
+            $this->fullConfiguration['childNodes'] = $sorter->toArray();
+        }
+    }
+
+    /**
+     * Returns a flat list of super types to inherit from.
+     *
+     * @return array
+     */
+    protected function buildInheritanceChain()
+    {
+        $superTypes = array();
+        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+            if ($superType !== null) {
+                $this->addInheritedSuperTypes($superTypes, $superType);
+                $superTypes[$superTypeName] = $superType;
+            }
+        }
+
+        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+            if ($superType === null) {
+                unset($superTypes[$superTypeName]);
+            }
+        }
+
+        return array_unique($superTypes);
+    }
+
+    /**
+     * Recursively add super types
+     *
+     * @param array $superTypes
+     * @param NodeType $superType
+     * @return void
+     */
+    protected function addInheritedSuperTypes(array &$superTypes, NodeType $superType)
+    {
+        foreach ($superType->getDeclaredSuperTypes() as $inheritedSuperTypeName => $inheritedSuperType) {
+            $this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
+            $superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
+        }
     }
 
     /**
@@ -142,10 +209,10 @@ class NodeType
      */
     protected function applyPostprocessing()
     {
-        if (!isset($this->configuration['postprocessors'])) {
+        if (!isset($this->fullConfiguration['postprocessors'])) {
             return;
         }
-        foreach ($this->configuration['postprocessors'] as $postprocessorConfiguration) {
+        foreach ($this->fullConfiguration['postprocessors'] as $postprocessorConfiguration) {
             $postprocessor = new $postprocessorConfiguration['postprocessor']();
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
@@ -154,7 +221,7 @@ class NodeType
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
                 $postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
             }
-            $postprocessor->process($this, $this->configuration, $postprocessorOptions);
+            $postprocessor->process($this, $this->fullConfiguration, $postprocessorOptions);
         }
     }
 
@@ -193,12 +260,35 @@ class NodeType
      * Returns the direct, explicitly declared super types
      * of this node type.
      *
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
+     * Note: NULL values are skipped since they are used only internally.
+     *
+     * @return array<NodeType>
      * @api
      */
     public function getDeclaredSuperTypes()
     {
-        return $this->declaredSuperTypes;
+        return array_filter($this->declaredSuperTypes, function ($value) {
+            return $value !== null;
+        });
+    }
+
+    /**
+     * Returns whether this node type (or any parent type) is an *aggregate*.
+     *
+     * The most prominent *aggregate* is a Document and everything which inherits from it, like a Page.
+     *
+     * If a node type is marked as aggregate, it means that:
+     *
+     * - the node type can "live on its own", i.e. can be part of an external URL
+     * - when moving this node, all node variants are also moved (across all dimensions)
+     * - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
+     *
+     * @return boolean TRUE if the node type is an aggregate
+     * @api
+     */
+    public function isAggregate()
+    {
+        return $this->getConfiguration('aggregate') === true;
     }
 
     /**
@@ -215,11 +305,23 @@ class NodeType
             return true;
         }
         foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType->isOfType($nodeType) === true) {
+            if ($superType !== null && $superType->isOfType($nodeType) === true) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Get the local configuration of the node type. Should only be used internally.
+     *
+     * Note: post processing is not applied to this.
+     *
+     * @return array
+     */
+    public function getLocalConfiguration()
+    {
+        return $this->localConfiguration;
     }
 
     /**
@@ -232,7 +334,7 @@ class NodeType
     public function getFullConfiguration()
     {
         $this->initialize();
-        return $this->configuration;
+        return $this->fullConfiguration;
     }
 
     /**
@@ -257,7 +359,7 @@ class NodeType
     public function getConfiguration($configurationPath)
     {
         $this->initialize();
-        return ObjectAccess::getPropertyPath($this->configuration, $configurationPath);
+        return ObjectAccess::getPropertyPath($this->fullConfiguration, $configurationPath);
     }
 
     /**
@@ -269,7 +371,7 @@ class NodeType
     public function getLabel()
     {
         $this->initialize();
-        return isset($this->configuration['ui']) && isset($this->configuration['ui']['label']) ? $this->configuration['ui']['label'] : '';
+        return isset($this->fullConfiguration['ui']['label']) ? $this->fullConfiguration['ui']['label'] : '';
     }
 
     /**
@@ -281,7 +383,7 @@ class NodeType
     public function getOptions()
     {
         $this->initialize();
-        return (isset($this->configuration['options']) ? $this->configuration['options'] : array());
+        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
     }
 
     /**
@@ -327,7 +429,7 @@ class NodeType
     public function getProperties()
     {
         $this->initialize();
-        return (isset($this->configuration['properties']) ? $this->configuration['properties'] : array());
+        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
     }
 
     /**
@@ -338,10 +440,10 @@ class NodeType
      */
     public function getPropertyType($propertyName)
     {
-        if (!isset($this->configuration['properties']) || !isset($this->configuration['properties'][$propertyName]) || !isset($this->configuration['properties'][$propertyName]['type'])) {
+        if (!isset($this->fullConfiguration['properties']) || !isset($this->fullConfiguration['properties'][$propertyName]) || !isset($this->fullConfiguration['properties'][$propertyName]['type'])) {
             return 'string';
         }
-        return $this->configuration['properties'][$propertyName]['type'];
+        return $this->fullConfiguration['properties'][$propertyName]['type'];
     }
 
     /**
@@ -355,16 +457,16 @@ class NodeType
     public function getDefaultValuesForProperties()
     {
         $this->initialize();
-        if (!isset($this->configuration['properties'])) {
+        if (!isset($this->fullConfiguration['properties'])) {
             return array();
         }
 
         $defaultValues = array();
-        foreach ($this->configuration['properties'] as $propertyName => $propertyConfiguration) {
+        foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (isset($propertyConfiguration['defaultValue'])) {
                 $type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
                 switch ($type) {
-                    case 'date':
+                    case 'DateTime':
                         $defaultValues[$propertyName] = new \DateTime($propertyConfiguration['defaultValue']);
                     break;
                     default:
@@ -385,12 +487,12 @@ class NodeType
     public function getAutoCreatedChildNodes()
     {
         $this->initialize();
-        if (!isset($this->configuration['childNodes'])) {
+        if (!isset($this->fullConfiguration['childNodes'])) {
             return array();
         }
 
         $autoCreatedChildNodes = array();
-        foreach ($this->configuration['childNodes'] as $childNodeName => $childNodeConfiguration) {
+        foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
                 $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
             }
@@ -434,7 +536,7 @@ class NodeType
         }
         $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
 
-        $childNodeConfiguration = array();
+        $childNodeConfiguration = [];
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
             $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
         }

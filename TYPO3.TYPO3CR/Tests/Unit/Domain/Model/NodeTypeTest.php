@@ -20,6 +20,81 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
+     * example node types
+     *
+     * @var array
+     */
+    protected $nodeTypesFixture = array(
+        'TYPO3.TYPO3CR.Testing:ContentObject' => array(
+            'ui' => array(
+                'label' => 'Abstract content object'
+            ),
+            'abstract' => true,
+            'properties' => array(
+                '_hidden' => array(
+                    'type' => 'boolean',
+                    'label' => 'Hidden',
+                    'category' => 'visibility',
+                    'priority' => 1
+                )
+            ),
+            'propertyGroups' => array(
+                'visibility' => array(
+                    'label' => 'Visibility',
+                    'priority' => 1
+                )
+            )
+        ),
+        'TYPO3.TYPO3CR.Testing:Text' => array(
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
+            'ui' => array(
+                'label' => 'Text'
+            ),
+            'properties' => array(
+                'headline' => array(
+                    'type' => 'string',
+                    'placeholder' => 'Enter headline here'
+                ),
+                'text' => array(
+                    'type' => 'string',
+                    'placeholder' => '<p>Enter text here</p>'
+                )
+            ),
+            'inlineEditableProperties' => array('headline', 'text')
+        ),
+        'TYPO3.TYPO3CR.Testing:Document' => array(
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:SomeMixin' => true),
+            'abstract' => true,
+            'aggregate' => true
+        ),
+        'TYPO3.TYPO3CR.Testing:SomeMixin' => array(
+            'ui' => array(
+                'label' => 'could contain an inspector tab'
+            ),
+            'properties' => array(
+                'someMixinProperty' => array(
+                    'type' => 'string',
+                    'label' => 'Important hint'
+                )
+            )
+        ),
+        'TYPO3.TYPO3CR.Testing:Shortcut' => array(
+            'superTypes' => array(
+                'TYPO3.TYPO3CR.Testing:Document' => true,
+                'TYPO3.TYPO3CR.Testing:SomeMixin' => false
+            ),
+            'ui' => array(
+                'label' => 'Shortcut'
+            ),
+            'properties' => array(
+                'target' => array(
+                    'type' => 'string'
+                )
+            )
+        )
+    );
+
+    /**
      * @test
      */
     public function aNodeTypeHasAName()
@@ -32,7 +107,16 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypes()
+    public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
+    {
+        $folderType = new NodeType('TYPO3CR:Folder', array('foo' => true), array());
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
         $folderType = new NodeType('TYPO3CR:Folder', array('foo'), array());
     }
@@ -55,6 +139,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR.Testing:HideableContent'));
         $this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR.Testing:Document'));
         $this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Base'));
+
         $this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));
     }
 
@@ -81,7 +166,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
+        $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->hasConfiguration('foo');
     }
@@ -113,7 +198,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
+        $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->getConfiguration('foo');
     }
@@ -162,8 +247,8 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function accessingConfigurationOptionsInitializesTheNodeType($getter)
     {
-        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
         $nodeType->_set('objectManager', $mockObjectManager);
         $nodeType->expects($this->atLeastOnce())->method('initialize');
         $nodeType->$getter();
@@ -213,13 +298,79 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
             'properties' => array(
                 'date' => array(
-                    'type' => 'date',
+                    'type' => 'DateTime',
                     'defaultValue' => '2014-09-23'
                 )
             )
         ));
 
         $this->assertEquals($nodeType->getDefaultValuesForProperties(), array('date' => new \DateTime('2014-09-23')));
+    }
+
+    /**
+     * @test
+     */
+    public function nodeTypeConfigurationIsMergedTogether()
+    {
+        $nodeType = $this->getNodeType('TYPO3.TYPO3CR.Testing:Text');
+        $this->assertSame('Text', $nodeType->getLabel());
+
+        $expectedProperties = array(
+            '_hidden' => array(
+                'type' => 'boolean',
+                'label' => 'Hidden',
+                'category' => 'visibility',
+                'priority' => 1
+            ),
+            'headline' => array(
+                'type' => 'string',
+                'placeholder' => 'Enter headline here'
+            ),
+            'text' => array(
+                'type' => 'string',
+                'placeholder' => '<p>Enter text here</p>'
+            )
+        );
+        $this->assertSame($expectedProperties, $nodeType->getProperties());
+    }
+
+    /**
+     * This test asserts that a supertype that has been inherited can be removed on a specific type again.
+     * @test
+     */
+    public function inheritedSuperTypesCanBeRemoved()
+    {
+        $nodeType = $this->getNodeType('TYPO3.TYPO3CR.Testing:Shortcut');
+        $this->assertSame('Shortcut', $nodeType->getLabel());
+
+        $expectedProperties = array(
+            'target' => array(
+                'type' => 'string'
+            )
+        );
+        $this->assertSame($expectedProperties, $nodeType->getProperties());
+    }
+    /**
+     * Return a nodetype built from the nodeTypesFixture
+     *
+     * @param string $nodeTypeName
+     * @return null|NodeType
+     */
+    protected function getNodeType($nodeTypeName)
+    {
+        if (!isset($this->nodeTypesFixture[$nodeTypeName])) {
+            return null;
+        }
+
+        $configuration = $this->nodeTypesFixture[$nodeTypeName];
+        $declaredSuperTypes = array();
+        if (isset($configuration['superTypes']) && is_array($configuration['superTypes'])) {
+            foreach ($configuration['superTypes'] as $superTypeName => $enabled) {
+                $declaredSuperTypes[$superTypeName] = $enabled === true ? $this->getNodeType($superTypeName) : null;
+            }
+        }
+
+        return new NodeType($nodeTypeName, $declaredSuperTypes, $configuration);
     }
 
     /**
@@ -234,6 +385,5 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
-        $this->assertSame(array('nodename' => $baseType), $baseType->getAutoCreatedChildNodes());
     }
 }

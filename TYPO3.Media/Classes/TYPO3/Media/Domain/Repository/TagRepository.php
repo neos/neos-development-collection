@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryResultInterface;
 
 /**
  * A repository for Tags
@@ -27,11 +28,26 @@ class TagRepository extends \TYPO3\Flow\Persistence\Repository
 
     /**
      * @param string $searchTerm
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findBySearchTerm($searchTerm)
     {
         $query = $this->createQuery();
         return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
+    }
+
+    /**
+     * @param array<AssetCollection> $assetCollection
+     * @return QueryResultInterface
+     */
+    public function findByAssetCollections(array $assetCollections)
+    {
+        $query = $this->createQuery();
+        $constraints = [];
+        foreach ($assetCollections as $assetCollection) {
+            $constraints[] = $query->contains('assetCollections', $assetCollection);
+        }
+        $query->matching($query->logicalOr($constraints));
+        return $query->execute();
     }
 }

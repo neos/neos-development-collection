@@ -111,15 +111,16 @@ class ChildrenOperation extends AbstractOperation
             }
 
             // Only apply optimization if there's a property name filter or a instanceof filter or another filter already did optimization
-            if (isset($filter['PropertyNameFilter']) || count($instanceOfFilters) > 0 || $optimized === true) {
+            if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) || count($instanceOfFilters) > 0 || $optimized === true) {
                 $optimized = true;
                 $filteredOutput = array();
                 $filteredOutputNodePaths = array();
                 // Optimize property name filter if present
-                if (isset($filter['PropertyNameFilter'])) {
+                if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
+                    $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     /** @var NodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $childNode = $contextNode->getNode($filter['PropertyNameFilter']);
+                        $childNode = $contextNode->getNode($nodePath);
                         if ($childNode !== null && !isset($filteredOutputNodePaths[$childNode->getPath()])) {
                             $filteredOutput[] = $childNode;
                             $filteredOutputNodePaths[$childNode->getPath()] = true;

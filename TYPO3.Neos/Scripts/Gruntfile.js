@@ -126,6 +126,7 @@ module.exports = function (grunt) {
 					libraryPath + 'twitter-bootstrap/js/bootstrap-alert.js',
 					libraryPath + 'twitter-bootstrap/js/bootstrap-dropdown.js',
 					libraryPath + 'twitter-bootstrap/js/bootstrap-tooltip.js',
+					libraryPath + 'twitter-bootstrap/js/bootstrap-popover.js',
 					libraryPath + 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.js'
 				],
 				dest: libraryPath + 'bootstrap-components.js',
@@ -146,10 +147,14 @@ module.exports = function (grunt) {
 						// Dropdown
 						src = src.replace(/' dropdown-menu'/g, "' neos-dropdown-menu'");
 						src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
+						src = src.replace('data-toggle', 'data-neos-toggle');
 
 						// Tooltip
 						src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 						src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
+
+						// Popover
+						src = src.replace(/fade top bottom left right in/g, 'neos-fade neos-top neos-bottom neos-left neos-right neos-in');
 
 						// Datetimepicker
 						src = src.replace(/case '(switch|prev|next|today)'/g, "case 'neos-$1'");
@@ -227,11 +232,13 @@ module.exports = function (grunt) {
 			// This file needs jQueryWithDependencies first
 			ember: {
 				src: [
-					libraryPath + 'emberjs/ember-1.0.0.js'
+					libraryPath + 'emberjs/ember-1.0.0.js',
+					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',
 				options: {
-					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQuery, Handlebars) {' +
+					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
+					'  CLDR.defaultLocale = window.T3Configuration.locale;' + // TODO: make configurable, as this is only used for plurals this is not highest prio (same behavior in cldr for most languages)
 					'  var Ember = {exports: {}};' +
 					'  var ENV = {LOG_VERSION: false};' +
 					'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
@@ -239,7 +246,14 @@ module.exports = function (grunt) {
 					'  Ember.lookup = { Ember: Ember, T3: window.T3};' +
 					'  window.Ember = Ember;',
 					footer: '  return Ember;' +
-					'});'
+					'});',
+					process: function(src) {
+						src = src.replace('I18n.t(', 'I18n.translate(');
+						src = src.replace("Handlebars.registerHelper('t'", "Handlebars.registerHelper('translate'");
+						src = src.replace('t: function(key, context)', 'translate: function(key, context)');
+
+						return src;
+					}
 				}
 			},
 
@@ -285,7 +299,11 @@ module.exports = function (grunt) {
 					'  (function() {',
 					footer: '  }).apply(root);' +
 					'  return root.VIE;' +
-					'});'
+					'});',
+					process: function(src) {
+						// Set "overrideAttributes" option when updating existing entities to prevent it from converting values into an array with old values
+						return src.replace('entityInstance = this.vie.entities.addOrUpdate(entityInstance, {', 'entityInstance = this.vie.entities.addOrUpdate(entityInstance, {overrideAttributes: true,');
+					}
 				}
 			},
 
@@ -475,6 +493,21 @@ module.exports = function (grunt) {
 						return src;
 					}
 				}
+			}
+		},
+
+		cldr: {
+			src: [
+				libraryPath + 'ember-i18n/vendor/cldr-1.0.0.js'
+			],
+			dest: libraryPath + 'cldr.js',
+			options: {
+				banner: 'define(function() {' +
+				'  var root = {};' +
+				'  (function() {',
+				footer: '  }).apply(root);' +
+				'  return root.CLDR;' +
+				'});'
 			}
 		}
 	});

@@ -4,20 +4,25 @@ define(
 		'emberjs',
 		'Shared/HttpRestClient',
 		'Shared/Utility',
-		'Shared/NodeTypeService'
+		'Shared/NodeTypeService',
+		'Shared/I18n'
 	],
 	function(
 		$,
 		Ember,
 		HttpRestClient,
 		Utility,
-		NodeTypeService
+		NodeTypeService,
+		I18n
 	) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: 'Paste a link, or type to search',
+			placeholder: null,
+			_placeholder: function() {
+				return I18n.translate(this.get('placeholder'), 'Paste a link, or type to search');
+			}.property('placeholder'),
 
 			content: null,
 			searchRequest: null,
@@ -34,7 +39,7 @@ define(
 					minimumInputLength: 2,
 					maximumSelectionSize: 1,
 					multiple: true,
-					placeholder: this.get('placeholder'),
+					placeholder: this.get('_placeholder'),
 					escapeMarkup: function(markup) {
 						return markup;
 					},
@@ -47,6 +52,7 @@ define(
 						$itemContent = $('<span>' + markup.join('') + '</span>');
 
 						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
@@ -115,7 +121,7 @@ define(
 												nodes.push({
 													id: 'node://' + $('.node-identifier', value).text(),
 													text: $('.node-label', value).text().trim(),
-													data: {icon: iconClass, path: $('.node-path', value).text()},
+													data: {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim())},
 													'type': 'node'
 												});
 											} else {
@@ -152,7 +158,7 @@ define(
 						}
 					};
 				$input
-					.attr('placeholder', this.get('placeholder'))
+					.attr('placeholder', this.get('_placeholder'))
 					.css({'display': this.get('content') ? 'none' : 'inline-block'})
 					.on('keyup', function(e) {
 						if (e.keyCode === 13) {
@@ -183,7 +189,9 @@ define(
 					that = this;
 					item = Ember.Object.extend({
 						id: value,
-						text: 'Loading ...',
+						text: function() {
+							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
+						}.property(),
 						data: {}
 					}).create();
 					that.set('content', item);
@@ -201,7 +209,7 @@ define(
 								function(result) {
 									var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
 									item.set('text', $('.node-label', result.resource).text().trim());
-									item.set('data', {icon: iconClass, path: $('.node-path', result.resource).text()});
+									item.set('data', {icon: iconClass, path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim())});
 									that._updateSelect2();
 								},
 								function() {

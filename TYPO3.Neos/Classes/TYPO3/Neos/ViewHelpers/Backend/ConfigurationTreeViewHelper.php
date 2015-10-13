@@ -22,6 +22,11 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 class ConfigurationTreeViewHelper extends AbstractViewHelper
 {
     /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
      * @var string
      */
     protected $output = '';

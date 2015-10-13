@@ -5,7 +5,6 @@ window.T3 = {
 requirePaths = window.T3Configuration.requirejs.paths || {};
 requirePaths['Library'] = '../Library';
 requirePaths['text'] = '../Library/requirejs/text';
-requirePaths['i18n'] = '../Library/requirejs/i18n';
 
 /**
  * WARNING: if changing any of the require() statements below, make sure to also
@@ -16,10 +15,10 @@ require(
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.T3Configuration.neosJavascriptVersion ? 'bust=' +  window.T3Configuration.neosJavascriptVersion : '',
 		paths: requirePaths,
-		context: 'neos',
-		locale: 'en'
+		context: 'neos'
 	},
 	[
+		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Content/ContentModule',
 		'Content/ApplicationView',
@@ -28,12 +27,15 @@ require(
 		'Shared/Notification',
 		'Shared/Configuration',
 		'ExternalApi',
-		'Shared/NodeTypeService',
+		'Library/underscore',
 		'Shared/HttpClient',
+		'Shared/I18n',
+		'Shared/NodeTypeService',
 		'InlineEditing/PositioningHelper',
 		'storage'
 	],
 	function(
+		$,
 		Ember,
 		ContentModule,
 		ApplicationView,
@@ -41,22 +43,44 @@ require(
 		ResourceCache,
 		Notification,
 		Configuration,
-		ExternalApi
-	) {
+		ExternalApi,
+		_,
+		HttpClient
+		) {
+
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
-		Ember.$(document).ready(function() {
-			ContentModule.bootstrap();
-
-			ContentModule.advanceReadiness();
-
-			// Wait until the NodeTypeService is usable by resolving the promise
-			ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
-				ApplicationView.create().appendTo('#neos-application');
-				if (window.T3.isContentModule) {
-					PublishMenu.create().appendTo('#neos-top-bar-right');
+		/**
+		 * Load all translations, and then bootstrap the Neos interface
+		 */
+		Ember.RSVP.Promise(function (resolve, reject) {
+			// Get all translations and merge them
+			HttpClient.getResource(Configuration.get('localeInclude')).then(function(labels) {
+				try {
+					$.extend(Ember.I18n.translations, labels);
+				} catch (exception) {
+					if ('localStorage' in window && 'showDevelopmentFeatures' in window.localStorage) {
+						console.error('Could not parse JSON for locale file ' + labels[iterator].substr(5));
+					}
 				}
+				resolve();
 			});
+		}).then(function () {
+			// Bootstrap the content module
+			Ember.$(document).ready(function () {
+				ContentModule.bootstrap();
+				ContentModule.advanceReadiness();
+
+				// Wait until the NodeTypeService is usable by resolving the promise
+				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function () {
+					ApplicationView.create().appendTo('#neos-application');
+					if (window.T3.isContentModule) {
+						PublishMenu.create().appendTo('#neos-top-bar-right');
+					}
+				});
+			});
+		}, function (reason) {
+			console.log('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API

@@ -5,3 +5,7 @@ TYPO3_Neos_Configuration_Version:
 TYPO3_Neos_TypoScript:
   frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
   backend: TYPO3\Flow\Cache\Backend\FileBackend
+
+TYPO3_Neos_XliffToJsonTranslations:
+  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend

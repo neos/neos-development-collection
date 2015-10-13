@@ -2,12 +2,14 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'Shared/Configuration',
-	'Content/Model/NodeSelection'
+	'Content/Model/NodeSelection',
+	'Shared/I18n'
 ],
 function(
 	$,
 	Configuration,
-	NodeSelection
+	NodeSelection,
+	I18n
 ) {
 	if (!window.T3.isContentModule) {
 		return;
@@ -43,7 +45,7 @@ function(
 					}
 
 					if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha.placeholder) {
-						placeholderSettings[selector] = propertyConfiguration.ui.aloha.placeholder;
+						placeholderSettings[selector] = I18n.translate(propertyConfiguration.ui.aloha.placeholder);
 					}
 
 					// This is a workaround for broken configuration behavior in the Aloha align plugin
@@ -106,18 +108,7 @@ function(
 					sidebarAttributeEditor: false
 				},
 				table: { config: [], editables: nodeSettings.table },
-				link: {
-					config: [],
-					editables: nodeSettings.link,
-
-					// all links that match the targetregex will get set the target
-					// e.g. ^(?!.*aloha-editor.com).* matches all href except aloha-editor.com
-					targetregex: /^([a-z]){3,10}:\/\/.+/i,
-
-					// this target is set when either targetregex matches or not set
-					// e.g. _blank opens all links in new window
-					target: '_blank'
-				},
+				link: { config: [], editables: nodeSettings.link },
 				list: {
 					config: [],
 					editables: nodeSettings.list,
@@ -157,7 +148,7 @@ function(
 					},
 					// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
 					{
-						label: "tab.insert.label",
+						label: 'tab.insert.label',
 						showOn: function() {
 							return false;
 						}

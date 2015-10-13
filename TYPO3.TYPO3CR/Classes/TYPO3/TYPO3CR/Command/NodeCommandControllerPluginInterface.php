@@ -45,7 +45,8 @@ interface NodeCommandControllerPluginInterface
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
+     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false);
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);
 }

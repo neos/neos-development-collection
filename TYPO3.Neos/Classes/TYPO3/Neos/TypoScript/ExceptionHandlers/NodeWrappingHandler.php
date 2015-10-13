@@ -12,8 +12,13 @@ namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Neos\Service\ContentElementWrappingService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
  * Provides a nicely formatted html error message
@@ -24,27 +29,27 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\ContentElementWrappingService
+     * @var ContentElementWrappingService
      */
     protected $contentElementWrappingService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * @Flow\Inject
-     * @var AccessDecisionManagerInterface
+     * @var PrivilegeManagerInterface
      */
-    protected $accessDecisionManager;
+    protected $privilegeManager;
 
     /**
      * renders the exception to nice html content element to display, edit, remove, ...
@@ -62,11 +67,13 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
+            /** @var NodeInterface $node */
             $node = $currentContext['node'];
             $applicationContext = $this->environment->getContext();
-            if ($applicationContext->isProduction() && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
+            if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
                 $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
             }
+
             return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptPath, $output);
         }
 

@@ -32,8 +32,8 @@ class NodeRenamingTest extends AbstractNodeTest
     public function setUp()
     {
         parent::setUp();
-        $accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
-        $accessDecisionManager->setOverrideDecision(true);
+        $privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+        $privilegeManager->setOverrideDecision(true);
 
         $liveWorkspace = $this->node->getWorkspace();
         $personalWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('user-test', $liveWorkspace);

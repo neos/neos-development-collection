@@ -26,7 +26,7 @@ define(
 	/**
 	 * The Inspector is displayed on the right side of the page.
 	 *
-	 * Furthermore, it contains *Editors*
+	 * Furthermore, it contains *Editors* and *Views*
 	 */
 	return Ember.View.extend({
 		elementId: 'neos-inspector',
@@ -37,6 +37,8 @@ define(
 		Breadcrumb: Breadcrumb,
 
 		controller: InspectorController,
+
+		classNameBindings: ['controller.selectedNode.attributes.__readOnly:neos-node-is-read-only'],
 
 		/**
 		 * When we are in edit mode, the click protection layer is intercepting

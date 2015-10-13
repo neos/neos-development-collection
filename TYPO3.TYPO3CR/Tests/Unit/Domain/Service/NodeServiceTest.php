@@ -25,11 +25,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected $subNodeTypesFixture = array(
         'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
             'final' => true
         ),
         'TYPO3.TYPO3CR.Testing:Text' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
             'ui' => array(
                 'label' => 'Text',
             ),
@@ -63,7 +63,6 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
                 return new \TYPO3\TYPO3CR\Domain\Model\NodeType($nodeTypeName, array(), array());
             }));
 
-        $this->inject($nodeService, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', false));
         $this->inject($nodeService, 'nodeTypeManager', $mockNodeTypeManager);
 
         return $nodeService;
@@ -227,8 +226,13 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeService = $this->createNodeService();
 
         $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
-
+        $mockNodeData = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
+
+        $mockNodeData->expects($this->once())
+            ->method('removeProperty')
+            ->with('invalidProperty');
+
         $mockNodeType->expects($this->once())
             ->method('getProperties')
             ->will($this->returnValue(array(
@@ -237,12 +241,16 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
             )));
 
         $mockNode->expects($this->once())
-            ->method('getNodeType')
-            ->will($this->returnValue($mockNodeType));
+            ->method('isRemoved')
+            ->will($this->returnValue(false));
 
         $mockNode->expects($this->once())
-            ->method('removeProperty')
-            ->with('invalidProperty');
+            ->method('getNodeData')
+            ->will($this->returnValue($mockNodeData));
+
+        $mockNode->expects($this->once())
+            ->method('getNodeType')
+            ->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->once())
             ->method('getProperties')
@@ -408,5 +416,52 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
             ->will($this->returnValue($mockNodeType));
 
         $this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
+    }
+
+
+    /**
+     * @return array
+     */
+    public function abnormalPaths()
+    {
+        return array(
+            array('/', '/', '/'),
+            array('/', '/.', '/'),
+            array('/', '.', '/'),
+            array('/', 'foo/bar', '/foo/bar'),
+            array('/foo', '.', '/foo'),
+            array('/foo', '/foo/.', '/foo'),
+            array('/foo', '../', '/'),
+            array('/foo/bar', '../baz', '/foo/baz'),
+            array('/foo/bar', '../baz/../bar', '/foo/bar'),
+            array('/foo/bar', '.././..', '/'),
+            array('/foo/bar', '../../.', '/'),
+            array('/foo/bar/baz', '../..', '/foo'),
+            array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
+            array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
+        );
+    }
+
+    /**
+     * @param string $currentPath
+     * @param string $relativePath
+     * @param string $normalizedPath
+     * @test
+     * @dataProvider abnormalPaths
+     */
+    public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath)
+    {
+        $nodeService = $this->createNodeService();
+        $this->assertSame($normalizedPath, $nodeService->normalizePath($relativePath, $currentPath));
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash()
+    {
+        $nodeService = $this->createNodeService();
+        $nodeService->normalizePath('foo//bar', '/');
     }
 }

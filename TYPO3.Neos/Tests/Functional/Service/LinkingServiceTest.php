@@ -105,7 +105,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->linkingService = $this->objectManager->get('TYPO3\Neos\Service\LinkingService');
         /** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
+        $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
     }
 
     /**
@@ -115,6 +115,7 @@ class LinkingServiceTest extends FunctionalTestCase
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
     }
 
     /**
@@ -217,7 +218,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanResolveAssetUri()
     {
-        $this->assertSame('http://baseuri/_Resources/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3-Neos-logo-sRGB-color.pdf', $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
+        $this->assertSame('http://localhost/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3_Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
     }
 
     /**

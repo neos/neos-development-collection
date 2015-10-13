@@ -24,6 +24,10 @@ define(
 			return NodeSelection.get('nodes').toArray().reverse();
 		}.property('nodeSelection.nodes'),
 
+		currentNode: function() {
+			return this.get('nodes')[0];
+		}.property('nodes'),
+
 		click: function() {
 			this.set('open', !this.get('open'));
 		}

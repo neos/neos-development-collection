@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  */
 
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
@@ -86,7 +87,12 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
         } catch (MigrationException $e) {
+            $this->outputLine();
             $this->outputLine('Error: ' . $e->getMessage());
+            $this->quit(1);
+        } catch (DatabaseException $exception) {
+            $this->outputLine();
+            $this->outputLine('An exception occurred during the migration, run a ./flow doctrine:migrate and run the migration again.');
             $this->quit(1);
         }
     }
@@ -99,43 +105,43 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController
      */
     public function migrationStatusCommand()
     {
-        /** @var $appliedMigration MigrationStatus */
         $this->outputLine();
 
-        $appliedMigrations = $this->migrationStatusRepository->findAll();
+        $availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
+        if (count($availableMigrations) === 0) {
+            $this->outputLine('No migrations available.');
+            $this->quit();
+        }
 
+        $appliedMigrations = $this->migrationStatusRepository->findAll();
         $appliedMigrationsDictionary = array();
+        /** @var $appliedMigration MigrationStatus */
         foreach ($appliedMigrations as $appliedMigration) {
             $appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
         }
 
-        $availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
-        if (count($availableMigrations) > 0) {
-            $this->outputLine('<b>Available migrations</b>');
-            $this->outputLine();
-            foreach ($availableMigrations as $version => $migration) {
-                $this->outputLine($version . '   ' . $migration['formattedVersionNumber'] . '   ' . $migration['package']->getPackageKey());
+        $tableRows = array();
+        foreach ($availableMigrations as $version => $migration) {
+            $migrationUpConfigurationComments = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration()->getComments();
 
-                if (isset($appliedMigrationsDictionary[$version])) {
-                    $migrationsInVersion = $appliedMigrationsDictionary[$version];
-                    usort($migrationsInVersion, function (MigrationStatus $migrationA, MigrationStatus $migrationB) {
-                        return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
-                    });
-                    foreach ($migrationsInVersion as $appliedMigration) {
-                        $this->outputFormatted('%s applied on %s to workspace "%s"',
-                            array(
-                                str_pad(strtoupper($appliedMigration->getDirection()), 4, ' ', STR_PAD_LEFT),
-                                $appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s')
-                            ),
-                            2
-                        );
-                        $this->outputLine();
-                    }
+            if (isset($appliedMigrationsDictionary[$version])) {
+                $applicationInformation = $this->phraseMigrationApplicationInformation($appliedMigrationsDictionary[$version]);
+                if ($applicationInformation !== '') {
+                    $migrationUpConfigurationComments .= PHP_EOL . '<b>Applied:</b>' . PHP_EOL . $applicationInformation;
                 }
             }
-        } else {
-            $this->outputLine('No migrations available.');
+
+            $tableRows[] = array(
+                $version,
+                $migration['formattedVersionNumber'],
+                $migration['package']->getPackageKey(),
+                wordwrap($migrationUpConfigurationComments, 60)
+            );
         }
+
+        $this->outputLine('<b>Available migrations</b>');
+        $this->outputLine();
+        $this->output->outputTable($tableRows, array('Version', 'Date', 'Package', 'Comments'));
     }
 
     /**
@@ -157,5 +163,27 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController
             $this->outputLine('<b><u>Warnings</u></b>');
             $this->outputFormatted($migrationConfiguration->getWarnings(), array(), 2);
         }
+    }
+
+    /**
+     * @param array $migrationsInVersion
+     * @return string
+     */
+    protected function phraseMigrationApplicationInformation($migrationsInVersion)
+    {
+        usort($migrationsInVersion, function (MigrationStatus $migrationA, MigrationStatus $migrationB) {
+            return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
+        });
+
+        $applied = array();
+        /** @var MigrationStatus $migrationStatus */
+        foreach ($migrationsInVersion as $migrationStatus) {
+            $applied[] = sprintf(
+                '%s applied on %s',
+                str_pad(strtoupper($migrationStatus->getDirection()), 5, ' ', STR_PAD_LEFT),
+                $migrationStatus->getApplicationTimeStamp()->format('Y-m-d H:i:s')
+            );
+        }
+        return implode(PHP_EOL, $applied);
     }
 }

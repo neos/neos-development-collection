@@ -25,6 +25,11 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class ContainerViewHelper extends AbstractViewHelper
 {
     /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
      * @var array
      */
     protected $settings;
@@ -42,10 +47,10 @@ class ContainerViewHelper extends AbstractViewHelper
     protected $menuHelper;
 
     /**
-     * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+     * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
      * @Flow\Inject
      */
-    protected $accessDecisionManager;
+    protected $privilegeManager;
 
     /**
      * @param array $settings
@@ -63,7 +68,7 @@ class ContainerViewHelper extends AbstractViewHelper
      */
     public function render(NodeInterface $node)
     {
-        if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === false) {
+        if ($this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') === false) {
             return '';
         }
 

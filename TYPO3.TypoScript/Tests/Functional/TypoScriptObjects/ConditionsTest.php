@@ -30,7 +30,11 @@ class ConditionsTest extends AbstractTypoScriptObjectTest
             array('conditions/objectAtLeastOneFalse', null),
             array('conditions/objectThis', null),
             array('conditions/rawArray', array('key' => 'foo', 'nullValue' => null)),
-            array('conditions/attributes', ' key="foo"')
+            array('conditions/attributes', ' key="foo"'),
+            array('conditions/supportForConditionInProcess', 'wrappedValue'),
+            array('conditions/supportForConditionInProcessFalse', 'originalValue'),
+            array('conditions/supportForConditionInProcessWithAdvancedProcess', 'wrappedValue'),
+            array('conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue')
         );
     }
 
@@ -68,5 +72,15 @@ class ConditionsTest extends AbstractTypoScriptObjectTest
         $view->setTypoScriptPath('conditions/variableCondition');
         $view->assign('condition', $conditionValue);
         $this->assertSame($expected, $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function conditionsInTypoScriptObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
+        $this->assertEquals('basic appended', $view->render());
     }
 }

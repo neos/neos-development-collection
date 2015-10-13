@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
@@ -19,6 +20,25 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  */
 class NodeTypeManagerTest extends UnitTestCase
 {
+    /**
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockConfigurationManager;
+
+    public function setUp()
+    {
+        $this->nodeTypeManager = new NodeTypeManager();
+
+        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
+        $this->inject($this->nodeTypeManager, 'configurationManager', $this->mockConfigurationManager);
+    }
+
     /**
      * example node types
      *
@@ -46,18 +66,18 @@ class NodeTypeManagerTest extends UnitTestCase
             )
         ),
         'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
             'final' => true
         ),
         'TYPO3.TYPO3CR.Testing:AbstractType' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
             'ui' => array(
                 'label' => 'Abstract type',
             ),
             'abstract' => true
         ),
         'TYPO3.TYPO3CR.Testing:Text' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject' => true),
             'ui' => array(
                 'label' => 'Text',
             ),
@@ -74,7 +94,7 @@ class NodeTypeManagerTest extends UnitTestCase
             'inlineEditableProperties' => array('headline', 'text')
         ),
         'TYPO3.TYPO3CR.Testing:TextWithImage' => array(
-            'superTypes' => array('TYPO3.TYPO3CR.Testing:Text'),
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:Text' => true),
             'ui' => array(
                 'label' => 'Text with image',
             ),
@@ -84,40 +104,37 @@ class NodeTypeManagerTest extends UnitTestCase
                     'label' => 'Image'
                 )
             )
-        )
+        ),
+        'TYPO3.TYPO3CR.Testing:Document' => array(
+            'abstract' => true,
+            'aggregate' => true
+        ),
+        'TYPO3.TYPO3CR.Testing:Page' => array(
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => true),
+        ),
+        'TYPO3.TYPO3CR.Testing:Page2' => array(
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => true),
+        ),
+        'TYPO3.TYPO3CR.Testing:Page3' => array(
+            'superTypes' => array('TYPO3.TYPO3CR.Testing:Document' => true),
+        ),
+        'TYPO3.TYPO3CR.Testing:DocumentWithSupertypes' => array(
+            'superTypes' => array(
+                0 => 'TYPO3.TYPO3CR.Testing:Document',
+                'TYPO3.TYPO3CR.Testing:Page' => true,
+                'TYPO3.TYPO3CR.Testing:Page2' => false,
+                'TYPO3.TYPO3CR.Testing:Page3' => null
+            )
+        ),
+        'TYPO3.TYPO3CR:FallbackNode' => array()
     );
-
-    /**
-     * A mock configuration manager
-     *
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
-     */
-    protected $configurationManager;
-
-    public function setUp($nodeTypesFixture = null)
-    {
-        if ($nodeTypesFixture === null) {
-            $nodeTypesFixture = $this->nodeTypesFixture;
-        }
-        $this->configurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configurationManager
-            ->expects($this->any())
-            ->method('getConfiguration')
-            ->with('NodeTypes')
-            ->will($this->returnValue($nodeTypesFixture));
-    }
 
     /**
      * @test
      */
     public function nodeTypeConfigurationIsMergedTogether()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text');
+        $nodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text');
         $this->assertSame('Text', $nodeType->getLabel());
 
         $expectedProperties = array(
@@ -145,10 +162,38 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeThrowsExceptionForUnknownNodeType()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+        $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
+    }
 
-        $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
+    /**
+     * @test
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     */
+    public function getNodeTypeThrowsExceptionIfNoFallbackNodeTypeIsConfigured()
+    {
+        $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     */
+    public function getNodeTypeThrowsExceptionIfConfiguredFallbackNodeTypeCantBeFound()
+    {
+        $this->inject($this->nodeTypeManager, 'fallbackNodeTypeName', 'TYPO3.TYPO3CR:NonExistingFallbackNode');
+        $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
+    }
+
+    /**
+     * @test
+     */
+    public function getNodeTypeReturnsFallbackNodeTypeIfConfigured()
+    {
+        $this->inject($this->nodeTypeManager, 'fallbackNodeTypeName', 'TYPO3.TYPO3CR:FallbackNode');
+
+        $expectedNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:FallbackNode');
+        $fallbackNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
+        $this->assertSame($expectedNodeType, $fallbackNodeType);
     }
 
     /**
@@ -157,10 +202,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function createNodeTypeAlwaysThrowsAnException()
     {
-        $nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypeManager->createNodeType('TYPO3.TYPO3CR.Testing:ContentObject');
+        $this->nodeTypeManager->createNodeType('TYPO3.TYPO3CR.Testing:ContentObject');
     }
 
     /**
@@ -168,10 +210,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsTrueIfTheGivenNodeTypeIsFound()
     {
-        $nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextWithImage'));
+        $this->assertTrue($this->nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextWithImage'));
     }
 
     /**
@@ -179,10 +218,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsFalseIfTheGivenNodeTypeIsNotFound()
     {
-        $nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $this->assertFalse($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere'));
+        $this->assertFalse($this->nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere'));
     }
 
     /**
@@ -190,10 +226,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsTrueForAbstractNodeTypes()
     {
-        $nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:ContentObject'));
+        $this->assertTrue($this->nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:ContentObject'));
     }
 
     /**
@@ -201,17 +234,20 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypesReturnsRegisteredNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
         $expectedNodeTypes = array(
             'TYPO3.TYPO3CR.Testing:ContentObject',
             'TYPO3.TYPO3CR.Testing:MyFinalType',
             'TYPO3.TYPO3CR.Testing:AbstractType',
             'TYPO3.TYPO3CR.Testing:Text',
-            'TYPO3.TYPO3CR.Testing:TextWithImage'
+            'TYPO3.TYPO3CR.Testing:TextWithImage',
+            'TYPO3.TYPO3CR.Testing:Document',
+            'TYPO3.TYPO3CR.Testing:Page',
+            'TYPO3.TYPO3CR.Testing:Page2',
+            'TYPO3.TYPO3CR.Testing:Page3',
+            'TYPO3.TYPO3CR.Testing:DocumentWithSupertypes',
+            'TYPO3.TYPO3CR:FallbackNode'
         );
-        $this->assertEquals($expectedNodeTypes, array_keys($nodeTypeManager->getNodeTypes()));
+        $this->assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
     }
 
     /**
@@ -219,10 +255,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypesContainsAbstractNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypes = $nodeTypeManager->getNodeTypes();
+        $nodeTypes = $this->nodeTypeManager->getNodeTypes();
         $this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:ContentObject', $nodeTypes);
     }
 
@@ -231,10 +264,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypes = $nodeTypeManager->getNodeTypes(false);
+        $nodeTypes = $this->nodeTypeManager->getNodeTypes(false);
         $this->assertArrayNotHasKey('TYPO3.TYPO3CR.Testing:ContentObject', $nodeTypes);
     }
 
@@ -243,10 +273,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getSubNodeTypesReturnsInheritedNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
+        $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
         $this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:TextWithImage', $nodeTypes);
     }
 
@@ -255,10 +282,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getSubNodeTypesContainsAbstractNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
+        $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
         $this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:AbstractType', $nodeTypes);
     }
 
@@ -267,10 +291,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getSubNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-
-        $nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject', false);
+        $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject', false);
         $this->assertArrayNotHasKey('TYPO3.TYPO3CR.Testing:AbstractType', $nodeTypes);
     }
 
@@ -279,9 +300,24 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeAllowsToRetrieveFinalNodeTypes()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-        $this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:MyFinalType')->isFinal());
+        $this->assertTrue($this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:MyFinalType')->isFinal());
+    }
+
+    /**
+     * @test
+     */
+    public function aggregateNodeTypeFlagIsFalseByDefault()
+    {
+        $this->assertFalse($this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text')->isAggregate());
+    }
+
+    /**
+     * @test
+     */
+    public function aggregateNodeTypeFlagIsInherited()
+    {
+        $this->assertTrue($this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document')->isAggregate());
+        $this->assertTrue($this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Page')->isAggregate());
     }
 
     /**
@@ -290,17 +326,19 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
-        $nodeTypeManager = new NodeTypeManager();
-        $this->setUp(array(
+        $this->nodeTypeManager = new NodeTypeManager();
+        $nodeTypesFixture = array(
             'TYPO3.TYPO3CR.Testing:Base' => array(
                 'final' => true
             ),
             'TYPO3.TYPO3CR.Testing:Sub' => array(
-                'superTypes' => array('TYPO3.TYPO3CR.Testing:Base')
+                'superTypes' => array('TYPO3.TYPO3CR.Testing:Base' => true)
             )
-        ));
-        $this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+        );
+        $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($nodeTypesFixture));
+        $this->inject($this->nodeTypeManager, 'configurationManager', $mockConfigurationManager);
 
-        $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Sub');
+        $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Sub');
     }
 }

@@ -39,6 +39,11 @@ use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 class WrapViewHelper extends AbstractViewHelper
 {
     /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
      * @Flow\Inject
      * @var ContentElementWrappingService
      */

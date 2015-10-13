@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
 use TYPO3\TYPO3CR\Exception\ExportException;
 
 /**
@@ -54,16 +55,6 @@ class NodeExportService
     protected $propertyMapper;
 
     /**
-     * @var \TYPO3\Media\Domain\Repository\ImageRepository
-     */
-    protected $imageRepository;
-
-    /**
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
-     */
-    protected $assetRepository;
-
-    /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
      * interface ...
      *
@@ -71,6 +62,24 @@ class NodeExportService
      * @var \Doctrine\Common\Persistence\ObjectManager
      */
     protected $entityManager;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     */
+    protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * @var ImportExportPropertyMappingConfiguration
@@ -102,9 +111,10 @@ class NodeExportService
      * @param boolean $tidy
      * @param boolean $endDocument
      * @param string $resourceSavePath
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
      * @return \XMLWriter
      */
-    public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null)
+    public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)
     {
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
         $this->exceptionsDuringExport = array();
@@ -122,8 +132,10 @@ class NodeExportService
             $this->xmlWriter->startDocument('1.0', 'UTF-8');
         }
 
-        $nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName);
-        $this->exportNodeDataList($nodeDataList);
+        $this->securityContext->withoutAuthorizationChecks(function () use ($startingPointNodePath, $workspaceName, $nodeTypeFilter) {
+            $nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName, $nodeTypeFilter);
+            $this->exportNodeDataList($nodeDataList);
+        });
 
         if ($endDocument) {
             $this->xmlWriter->endDocument();
@@ -140,9 +152,10 @@ class NodeExportService
      *
      * @param string $pathStartingPoint Absolute path specifying the starting point
      * @param string $workspace The containing workspace
+     * @param string $nodeTypeFilter
      * @return array an array of node-data in array format.
      */
-    protected function findNodeDataListToExport($pathStartingPoint, $workspace = 'live')
+    protected function findNodeDataListToExport($pathStartingPoint, $workspace = 'live', $nodeTypeFilter = null)
     {
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -151,11 +164,14 @@ class NodeExportService
             . ' n.identifier AS identifier,'
             . ' n.index AS sortingIndex,'
             . ' n.properties AS properties, '
-            . ' n.nodeType as nodeType,'
+            . ' n.nodeType AS nodeType,'
             . ' n.removed AS removed,'
             . ' n.hidden,'
             . ' n.hiddenBeforeDateTime AS hiddenBeforeDateTime,'
             . ' n.hiddenAfterDateTime AS hiddenAfterDateTime,'
+            . ' n.creationDateTime AS creationDateTime,'
+            . ' n.lastModificationDateTime AS lastModificationDateTime,'
+            . ' n.lastPublicationDateTime AS lastPublicationDateTime,'
             . ' n.hiddenInIndex AS hiddenInIndex,'
             . ' n.accessRoles AS accessRoles,'
             . ' n.version AS version,'
@@ -175,6 +191,10 @@ class NodeExportService
             ->setParameter('pathPrefixMatch', ($pathStartingPoint === '/' ? '%' : $pathStartingPoint . '/%'))
             ->orderBy('n.identifier', 'ASC')
             ->orderBy('n.path', 'ASC');
+
+        if ($nodeTypeFilter) {
+            $this->nodeDataRepository->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+        }
 
         $nodeDataList = $queryBuilder->getQuery()->getResult();
         // Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
@@ -287,14 +307,28 @@ class NodeExportService
                 'accessRoles',
                 'hiddenBeforeDateTime',
                 'hiddenAfterDateTime',
+                'creationDateTime',
+                'lastModificationDateTime',
+                'lastPublicationDateTime',
                 'contentObjectProxy'
             ) as $propertyName) {
             $this->writeConvertedElement($nodeData, $propertyName);
         }
 
         $this->xmlWriter->startElement('properties');
-        foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
-            $this->writeConvertedElement($nodeData['properties'], $propertyName);
+        if ($this->nodeTypeManager->hasNodeType($nodeData['nodeType'])) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
+
+            foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+                if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
+                    $declaredPropertyType = $nodeType->getPropertyType($propertyName);
+                    $this->writeConvertedElement($nodeData['properties'], $propertyName, null, $declaredPropertyType);
+                }
+            }
+        } else {
+            foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+                $this->writeConvertedElement($nodeData['properties'], $propertyName);
+            }
         }
         $this->xmlWriter->endElement(); // "properties"
 
@@ -309,58 +343,50 @@ class NodeExportService
      * @param string $elementName an optional name to use, defaults to $propertyName
      * @return void
      */
-    protected function writeConvertedElement(array &$data, $propertyName, $elementName = null)
+    protected function writeConvertedElement(array &$data, $propertyName, $elementName = null, $declaredPropertyType = null)
     {
         if (array_key_exists($propertyName, $data) && $data[$propertyName] !== null) {
+            $propertyValue = $data[$propertyName];
             $this->xmlWriter->startElement($elementName ?: $propertyName);
 
-            $this->xmlWriter->writeAttribute('__type', gettype($data[$propertyName]));
+            if (!empty($propertyValue)) {
+                switch ($declaredPropertyType) {
+                    case null:
+                    case 'reference':
+                    case 'references':
+                        break;
+                    default:
+                        $propertyValue = $this->propertyMapper->convert($propertyValue, $declaredPropertyType);
+                        break;
+                }
+            }
+
+            $this->xmlWriter->writeAttribute('__type', gettype($propertyValue));
             try {
-                if (is_object($data[$propertyName]) && !$data[$propertyName] instanceof \DateTime) {
-                    $objectIdentifier = $this->persistenceManager->getIdentifierByObject($data[$propertyName]);
+                if (is_object($propertyValue) && !$propertyValue instanceof \DateTime) {
+                    $objectIdentifier = $this->persistenceManager->getIdentifierByObject($propertyValue);
                     if ($objectIdentifier !== null) {
                         $this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
                     }
-                    $this->xmlWriter->writeAttribute('__classname', get_class($data[$propertyName]));
+                    if ($propertyValue instanceof \Doctrine\ORM\Proxy\Proxy) {
+                        $className = get_parent_class($propertyValue);
+                    } else {
+                        $className = get_class($propertyValue);
+                    }
+                    $this->xmlWriter->writeAttribute('__classname', $className);
                     $this->xmlWriter->writeAttribute('__encoding', 'json');
 
-                    /*
-                     * In the site import command we load images and assets and Doctrine
-                     * serializes them in when we store the node properties as ObjectArray.
-                     *
-                     * This serialize removes the resource property without a clear reason
-                     * and there's no solution for this issue available yet. THIS IS A WORKAROUND!
-                     * @see NEOS-121
-                     */
-                    if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\AssetInterface) {
-                        if ($data[$propertyName]->getResource() === null) {
-                            $this->injectMediaRepositories();
-                            if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\Image) {
-                                $data[$propertyName] = $this->imageRepository->findByIdentifier($data[$propertyName]->getIdentifier());
-                            } else {
-                                $data[$propertyName] = $this->assetRepository->findByIdentifier($data[$propertyName]->getIdentifier());
-                            }
-                        }
-                    }
-                    $convertedObject = $this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration);
-                    if (!is_array($convertedObject)) {
-                        if (is_object($convertedObject) && $convertedObject instanceof \TYPO3\Flow\Validation\Error) {
-                            throw new ExportException($convertedObject->getMessage(), $convertedObject->getCode());
-                        } else {
-                            throw new ExportException(sprintf('Conversion of property "%s" which is a "%s" failed, please check if the data is consistent.', $propertyName, get_class($data[$propertyName])));
-                        }
-                    }
-
-                    $this->xmlWriter->text(json_encode($convertedObject));
-                } elseif (is_array($data[$propertyName])) {
-                    foreach ($data[$propertyName] as $key => $element) {
-                        $this->writeConvertedElement($data[$propertyName], $key, 'entry' . $key);
+                    $converted = json_encode($this->propertyMapper->convert($propertyValue, 'array', $this->propertyMappingConfiguration));
+                    $this->xmlWriter->text($converted);
+                } elseif (is_array($propertyValue)) {
+                    foreach ($propertyValue as $key => $element) {
+                        $this->writeConvertedElement($propertyValue, $key, 'entry' . $key);
                     }
                 } else {
-                    if (is_object($data[$propertyName]) && $data[$propertyName] instanceof \DateTime) {
+                    if ($propertyValue instanceof \DateTime) {
                         $this->xmlWriter->writeAttribute('__classname', 'DateTime');
                     }
-                    $this->xmlWriter->text($this->propertyMapper->convert($data[$propertyName], 'string', $this->propertyMappingConfiguration));
+                    $this->xmlWriter->text($this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration));
                 }
             } catch (\Exception $exception) {
                 $this->xmlWriter->writeComment(sprintf('Could not convert property "%s" to string.', $propertyName));
@@ -370,23 +396,6 @@ class NodeExportService
             }
 
             $this->xmlWriter->endElement();
-        }
-    }
-
-    /**
-     * Fetch AssetRepository and ImageRepository.
-     *
-     * They are not injected because there must not be a hard dependency to TYPO3.Media.
-     *
-     * @return void
-     */
-    protected function injectMediaRepositories()
-    {
-        if ($this->imageRepository === null) {
-            $this->imageRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\ImageRepository');
-        }
-        if ($this->assetRepository === null) {
-            $this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
         }
     }
 
@@ -402,7 +411,7 @@ class NodeExportService
                 $exceptionMessages .= "\n" . $i . ': ' . get_class($exception) . "\n" . $exception->getMessage() . "\n";
             }
 
-            throw new ExportException(sprintf('%s exceptions occured during export. Please see the log for the full exceptions (including stack traces). The exception messages follow below: %s', count($this->exceptionsDuringExport), $exceptionMessages), 1409057360);
+            throw new ExportException(sprintf('%s exceptions occurred during export. Please see the log for the full exceptions (including stack traces). The exception messages follow below: %s', count($this->exceptionsDuringExport), $exceptionMessages), 1409057360);
         }
     }
 }

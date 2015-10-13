@@ -12,11 +12,11 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -25,7 +25,7 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * @Flow\Scope("singleton")
  * @api
  */
-class NodeService
+class NodeService implements NodeServiceInterface
 {
     /**
      * @Flow\Inject
@@ -35,26 +35,25 @@ class NodeService
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
-     * Set default node property base on the target node type configuration
+     * @Flow\Inject
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * Sets default node property values on the given node.
      *
      * @param NodeInterface $node
-     * @param NodeType $targetNodeType
      * @return void
      */
-    public function setDefaultValues(NodeInterface $node, NodeType $targetNodeType = null)
+    public function setDefaultValues(NodeInterface $node)
     {
-        $nodeType = $targetNodeType ?: $node->getNodeType();
+        $nodeType = $node->getNodeType();
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
             if (trim($node->getProperty($propertyName)) === '') {
                 $node->setProperty($propertyName, $defaultValue);
@@ -63,38 +62,72 @@ class NodeService
     }
 
     /**
-     * Create missing child nodes based on target node type configuration
+     * Creates missing child nodes for the given node.
      *
      * @param NodeInterface $node
-     * @param NodeType $targetNodeType
      * @return void
      */
-    public function createChildNodes(NodeInterface $node, NodeType $targetNodeType = null)
+    public function createChildNodes(NodeInterface $node)
     {
-        $nodeType = $targetNodeType ?: $node->getNodeType();
+        $nodeType = $node->getNodeType();
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
             try {
                 $node->createNode($childNodeName, $childNodeType);
             } catch (NodeExistsException $exception) {
+                // If you have a node that has been marked as removed, but is needed again
+                // the old node is recovered
+                $childNodePath = NodePaths::addNodePathSegment($node->getPath(), $childNodeName);
+                $contextProperties = $node->getContext()->getProperties();
+                $contextProperties['removedContentShown'] = true;
+                $context = $this->contextFactory->create($contextProperties);
+                $childNode = $context->getNode($childNodePath);
+                if ($childNode->isRemoved()) {
+                    $childNode->setRemoved(false);
+                }
             }
         }
     }
 
     /**
-     * Remove all property not configured in the current Node Type
+     * Removes all auto created child nodes that existed in the previous nodeType.
+     *
+     * @param NodeInterface $node
+     * @param NodeType $oldNodeType
+     * @return void
+     */
+    public function cleanUpAutoCreatedChildNodes(NodeInterface $node, NodeType $oldNodeType)
+    {
+        $newNodeType = $node->getNodeType();
+        $autoCreatedChildNodesForNewNodeType = $newNodeType->getAutoCreatedChildNodes();
+        $autoCreatedChildNodesForOldNodeType = $oldNodeType->getAutoCreatedChildNodes();
+        $removedChildNodesFromOldNodeType = array_diff(
+            array_keys($autoCreatedChildNodesForOldNodeType),
+            array_keys($autoCreatedChildNodesForNewNodeType)
+        );
+        /** @var NodeInterface $childNode */
+        foreach ($node->getChildNodes() as $childNode) {
+            if (in_array($childNode->getName(), $removedChildNodesFromOldNodeType)) {
+                $childNode->remove();
+            }
+        }
+    }
+
+    /**
+     * Remove all properties not configured in the current Node Type.
+     * This will not do anything on Nodes marked as removed as those could be queued up for deletion
+     * which contradicts updates (that would be necessary to remove the properties).
      *
      * @param NodeInterface $node
      * @return void
      */
     public function cleanUpProperties(NodeInterface $node)
     {
-        $nodeTypeProperties = $node->getNodeType()->getProperties();
-        foreach ($node->getProperties() as $name => $value) {
-            if (!isset($nodeTypeProperties[$name])) {
-                try {
-                    $this->systemLogger->log(sprintf('Remove property "%s" from: %s', $name, (string)$node), LOG_DEBUG, null, 'TYPO3CR');
-                    $node->removeProperty($name);
-                } catch (NodeException $exception) {
+        if ($node->isRemoved() === false) {
+            $nodeData = $node->getNodeData();
+            $nodeTypeProperties = $node->getNodeType()->getProperties();
+            foreach ($node->getProperties() as $name => $value) {
+                if (!isset($nodeTypeProperties[$name])) {
+                    $nodeData->removeProperty($name);
                 }
             }
         }
@@ -142,5 +175,54 @@ class NodeService
             }
         }
         return !$this->nodePathExistsInAnyContext($nodePath);
+    }
+
+    /**
+     * Normalizes the given node path to a reference path and returns an absolute path.
+     *
+     * @param string $path The non-normalized path
+     * @param string $referencePath a reference path in case the given path is relative.
+     * @return string The normalized absolute path
+     * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
+     */
+    public function normalizePath($path, $referencePath = null)
+    {
+        return NodePaths::normalizePath($path, $referencePath);
+    }
+
+    /**
+     * Generate a node name, optionally based on a suggested "ideal" name
+     *
+     * @param string $parentPath
+     * @param string $idealNodeName Can be any string, doesn't need to be a valid node name.
+     * @return string
+     */
+    public function generateUniqueNodeName($parentPath, $idealNodeName = null)
+    {
+        $possibleNodeName = $this->generatePossibleNodeName($idealNodeName);
+
+        while ($this->nodePathExistsInAnyContext(NodePaths::addNodePathSegment($parentPath, $possibleNodeName))) {
+            $possibleNodeName = $this->generatePossibleNodeName();
+        }
+
+        return $possibleNodeName;
+    }
+
+    /**
+     * Generate possible node name. When an idealNodeName is given then this is put into a valid format for a node name,
+     * otherwise a random node name in the form "node-alphanumeric" is generated.
+     *
+     * @param string $idealNodeName
+     * @return string
+     */
+    protected function generatePossibleNodeName($idealNodeName = null)
+    {
+        if ($idealNodeName !== null) {
+            $possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
+        } else {
+            $possibleNodeName = NodePaths::generateRandomNodeName();
+        }
+
+        return $possibleNodeName;
     }
 }

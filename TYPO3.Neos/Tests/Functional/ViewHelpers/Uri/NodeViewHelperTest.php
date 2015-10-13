@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Uri;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\Arguments;
@@ -91,7 +91,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest->setBaseUri('http://neos.test/');
-        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
+        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $typoScriptObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', false);
@@ -113,6 +113,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         parent::tearDown();
 
         $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
     }
 
     /**

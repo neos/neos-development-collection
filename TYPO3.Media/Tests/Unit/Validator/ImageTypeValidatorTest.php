@@ -11,47 +11,22 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Validator\ImageTypeValidator;
+
 /**
- * Testcase for the ImageTypeValidator
- *
+ * Test case for the ImageTypeValidator
  */
-class ImageTypeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ImageTypeValidatorTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new \TYPO3\Media\Validator\ImageTypeValidator(array('allowedTypes' => array('png')));
-
+        $validator = new ImageTypeValidator(array('allowedTypes' => array('png')));
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
-    }
-
-    /**
-     * @return array
-     */
-    public function invalidOptionsTestsDataProvider()
-    {
-        return array(
-            array(array()),
-            array(array('allowedTypes' => 'png')),
-            array(array('allowedTypes' => array())),
-            array(array('allowedTypes' => array('png', 'nonExistingType'))),
-        );
-    }
-
-    /**
-     * @test
-     * @dataProvider invalidOptionsTestsDataProvider
-     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @param array $options
-     */
-    public function invalidOptionsTests(array $options)
-    {
-        $validator = new \TYPO3\Media\Validator\ImageTypeValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
-        $validator->validate($image);
     }
 
     /**
@@ -61,10 +36,10 @@ class ImageTypeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         return array(
             array(array('allowedTypes' => array('png')), null, false),
-            array(array('allowedTypes' => array('png')), IMAGETYPE_BMP, false),
-            array(array('allowedTypes' => array('png')), IMAGETYPE_PNG, true),
-            array(array('allowedTypes' => array('jpeg', 'gif')), IMAGETYPE_ICO, false),
-            array(array('allowedTypes' => array('jpeg', 'gif')), IMAGETYPE_GIF, true),
+            array(array('allowedTypes' => array('png')), 'image/bmp', false),
+            array(array('allowedTypes' => array('png')), 'image/png', true),
+            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/ico', false),
+            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/gif', true),
         );
     }
 
@@ -72,20 +47,16 @@ class ImageTypeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider validatorTestsDataProvider
      * @param array $options
-     * @param integer $imageType (one of the IMAGETYPE_* constants)
-     * @param boolean $isValid
+     * @param string $actualMediaType
+     * @param boolean $supposedToBeValid
      */
-    public function validatorTests(array $options, $imageType, $isValid)
+    public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
-        $validator = new \TYPO3\Media\Validator\ImageTypeValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
-        $image->expects($this->any())->method('getType')->will($this->returnValue($imageType));
+        $image = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
+        $image->expects($this->any())->method('getMediaType')->will($this->returnValue($actualMediaType));
 
+        $validator = new ImageTypeValidator($options);
         $validationResult = $validator->validate($image);
-        if ($isValid) {
-            $this->assertFalse($validationResult->hasErrors());
-        } else {
-            $this->assertTrue($validationResult->hasErrors());
-        }
+        $this->assertEquals($supposedToBeValid, !$validationResult->hasErrors());
     }
 }

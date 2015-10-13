@@ -16,15 +16,13 @@ use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\TypeHandling;
-use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception;
 
 /**
@@ -97,7 +95,7 @@ class NodeDataRepository extends Repository
     /**
      * @var array
      */
-    protected $highestIndexCache = array();
+    protected $highestIndexCache = [];
 
     /**
      * @var array
@@ -149,7 +147,7 @@ class NodeDataRepository extends Repository
      */
     public function remove($object)
     {
-        if ($object instanceof Node) {
+        if ($object instanceof NodeInterface) {
             $object = $object->getNodeData();
         }
         if ($this->addedNodes->contains($object)) {
@@ -174,7 +172,7 @@ class NodeDataRepository extends Repository
     public function findOneByPath($path, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
         $path = strtolower($path);
-        if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
+        if ($path === '' || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
             throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
         }
 
@@ -200,7 +198,6 @@ class NodeDataRepository extends Repository
             $workspaces[] = $workspace;
             $workspace = $workspace->getBaseWorkspace();
         }
-
         $queryBuilder = $this->createQueryBuilder($workspaces);
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
@@ -320,7 +317,7 @@ class NodeDataRepository extends Repository
      */
     public function setNewIndex(NodeData $node, $position, NodeInterface $referenceNode = null)
     {
-        $parentPath = strtolower($node->getParentPath());
+        $parentPath = $node->getParentPath();
 
         switch ($position) {
             case self::POSITION_BEFORE:
@@ -425,39 +422,31 @@ class NodeDataRepository extends Repository
         $parentPath = strtolower($parentPath);
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
-        if ($parentPath === '/') {
-            /** @var $addedNode NodeData */
-            foreach ($this->addedNodes as $addedNode) {
-                if ($addedNode->getDepth() === 1 && $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-                    $foundNodes[$addedNode->getIdentifier()] = $addedNode;
-                }
+        $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        /** @var $addedNode NodeData */
+        foreach ($this->addedNodes as $addedNode) {
+            if (
+                (($recursive && $addedNode->getDepth() >= $childNodeDepth) || $addedNode->getDepth() === $childNodeDepth) &&
+                (($recursive && NodePaths::isSubPathOf($addedNode->getPath(), $parentPath)) || NodePaths::getParentPath($addedNode->getPath()) === $parentPath) &&
+                $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
+            ) {
+                $foundNodes[$addedNode->getIdentifier()] = $addedNode;
             }
-            /** @var $removedNode NodeData */
-            foreach ($this->removedNodes as $removedNode) {
-                if (isset($foundNodes[$removedNode->getIdentifier()]) && $removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
+        }
+        /** @var $removedNode NodeData */
+        foreach ($this->removedNodes as $removedNode) {
+            if (
+                (($recursive && $removedNode->getDepth() >= $childNodeDepth) || $removedNode->getDepth() === $childNodeDepth) &&
+                (($recursive && NodePaths::isSubPathOf($removedNode->getPath(), $parentPath)) || NodePaths::getParentPath($removedNode->getPath()) === $parentPath) &&
+                $removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
+            ) {
+                if (isset($foundNodes[$removedNode->getIdentifier()])) {
                     unset($foundNodes[$removedNode->getIdentifier()]);
-                }
-            }
-        } else {
-            $childNodeDepth = substr_count($parentPath, '/') + 1;
-            /** @var $addedNode NodeData */
-            foreach ($this->addedNodes as $addedNode) {
-                if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/') && $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-                    $foundNodes[$addedNode->getIdentifier()] = $addedNode;
-                }
-            }
-            /** @var $removedNode NodeData */
-            foreach ($this->removedNodes as $removedNode) {
-                if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/') && $removedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-                    if (isset($foundNodes[$removedNode->getIdentifier()])) {
-                        unset($foundNodes[$removedNode->getIdentifier()]);
-                    }
                 }
             }
         }
 
         $foundNodes = $this->sortNodesByIndex($foundNodes);
-
         return $foundNodes;
     }
 
@@ -524,32 +513,45 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
 
-        if ($parentPath === '/') {
-            /** @var $addedNode NodeData */
-            foreach ($this->addedNodes as $addedNode) {
-                if ($addedNode->getDepth() === 1) {
-                    $foundNodes[] = $addedNode;
-                }
-            }
-            /** @var $removedNode NodeData */
-            foreach ($this->removedNodes as $removedNode) {
-                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
-            }
-        } else {
-            $childNodeDepth = substr_count($parentPath, '/') + 1;
-            /** @var $addedNode NodeData */
-            foreach ($this->addedNodes as $addedNode) {
-                if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-                    $foundNodes[] = $addedNode;
-                }
-            }
-            /** @var $removedNode NodeData */
-            foreach ($this->removedNodes as $removedNode) {
-                if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-                    $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
-                }
+        $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        /** @var $addedNode NodeData */
+        foreach ($this->addedNodes as $addedNode) {
+            if ($addedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($addedNode->getPath()) === $parentPath && in_array($addedNode->getWorkspace(), $workspaces)) {
+                $foundNodes[] = $addedNode;
             }
         }
+        /** @var $removedNode NodeData */
+        foreach ($this->removedNodes as $removedNode) {
+            if ($removedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($removedNode->getPath()) === $parentPath && in_array($removedNode->getWorkspace(), $workspaces)) {
+                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
+            }
+        }
+
+        return $foundNodes;
+    }
+
+    /**
+     * Find NodeData by identifier path without any dimension reduction
+     *
+     * Only used internally for finding whether the node exists in another dimension
+     *
+     * @param string $identifier
+     * @param Workspace $workspace
+     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
+     */
+    public function findByIdentifierWithoutReduce($identifier, Workspace $workspace)
+    {
+        $workspaces = array();
+        while ($workspace !== null) {
+            $workspaces[] = $workspace;
+            $workspace = $workspace->getBaseWorkspace();
+        }
+
+        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
+
+        $query = $queryBuilder->getQuery();
+        $foundNodes = $query->getResult();
 
         return $foundNodes;
     }
@@ -610,7 +612,6 @@ class NodeDataRepository extends Repository
      */
     protected function renumberIndexesInLevel($parentPath)
     {
-        $parentPath = strtolower($parentPath);
         $this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
 
         /** @var Query $query */
@@ -673,11 +674,10 @@ class NodeDataRepository extends Repository
      */
     protected function findNextFreeIndexInParentPath($parentPath)
     {
-        $parentPath = strtolower($parentPath);
         if (!isset($this->highestIndexCache[$parentPath])) {
             /** @var \Doctrine\ORM\Query $query */
             $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
-            $query->setParameter('parentPathHash', md5(strtolower($parentPath)));
+            $query->setParameter('parentPathHash', md5($parentPath));
             $this->highestIndexCache[$parentPath] = $query->getSingleScalarResult() ?: 0;
         }
 
@@ -692,7 +692,7 @@ class NodeDataRepository extends Repository
      */
     protected function setHighestIndexInParentPath($parentPath, $highestIndex)
     {
-        $this->highestIndexCache[strtolower($parentPath)] = $highestIndex;
+        $this->highestIndexCache[$parentPath] = $highestIndex;
     }
 
     /**
@@ -711,7 +711,7 @@ class NodeDataRepository extends Repository
         $this->persistEntities();
         /** @var \Doctrine\ORM\Query $query */
         $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
-        $query->setParameter('parentPathHash', md5(strtolower($parentPath)));
+        $query->setParameter('parentPathHash', md5($parentPath));
         $query->setParameter('referenceIndex', $referenceIndex);
         return $query->getSingleScalarResult() ?: 0;
     }
@@ -729,7 +729,6 @@ class NodeDataRepository extends Repository
      */
     protected function findNextHigherIndex($parentPath, $referenceIndex)
     {
-        $parentPath = strtolower($parentPath);
         if (isset($this->highestIndexCache[$parentPath]) && $this->highestIndexCache[$parentPath] === $referenceIndex) {
             NULL;
         }
@@ -844,8 +843,8 @@ class NodeDataRepository extends Repository
     {
         $pathStartingPoint = strtolower($pathStartingPoint);
         $pathEndPoint = strtolower($pathEndPoint);
-        if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
-            throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
+        if (NodePaths::isSubPathOf($pathStartingPoint, $pathEndPoint) === false) {
+            throw new \InvalidArgumentException('Invalid paths: path of starting point must be first part of end point path.', 1284391181);
         }
 
         $workspaces = array();
@@ -868,11 +867,11 @@ class NodeDataRepository extends Repository
 
         $pathConstraints = array();
         $constraintPath = $pathStartingPoint;
-        $pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
+        $pathConstraints[] = md5($constraintPath);
+        $pathSegments = explode('/', NodePaths::getRelativePathBetween($pathStartingPoint, $pathEndPoint));
         foreach ($pathSegments as $pathSegment) {
-            $constraintPath .= $pathSegment;
-            $pathConstraints[] = md5(strtolower($constraintPath));
-            $constraintPath .= '/';
+            $constraintPath = NodePaths::addNodePathSegment($constraintPath, $pathSegment);
+            $pathConstraints[] = md5($constraintPath);
         }
         if (count($pathConstraints) > 0) {
             $queryBuilder->andWhere('n.pathHash IN (:paths)')
@@ -901,7 +900,7 @@ class NodeDataRepository extends Repository
      *
      * This method is internal and will be replaced with better search capabilities.
      *
-     * @param string $term Search term
+     * @param string|array $term Search term
      * @param string $nodeTypeFilter Node type filter
      * @param Workspace $workspace
      * @param array $dimensions
@@ -911,7 +910,7 @@ class NodeDataRepository extends Repository
     public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
     {
         $pathStartingPoint = strtolower($pathStartingPoint);
-        if (strlen($term) === 0) {
+        if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $workspaces = array();
@@ -924,11 +923,15 @@ class NodeDataRepository extends Repository
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 
-        if ($queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform()->getName() === 'postgresql') {
-            // we know that properties is of type objectarray and on PostgreSQL that is encoded with bin2hex.
-            $term = bin2hex($term);
+        if (is_array($term)) {
+            // Build the like parameter as "key": "value" to search by a specific key and value
+            $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
+        } else {
+            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
         }
-        $queryBuilder->andWhere('n.properties LIKE :term')->setParameter('term', '%' . $term . '%');
+
+        $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
             $pathConstraint = $queryBuilder->expr()->orx()
@@ -958,7 +961,7 @@ class NodeDataRepository extends Repository
      */
     public function flushNodeRegistry()
     {
-        $this->highestIndexCache = array();
+        $this->highestIndexCache = [];
         $this->addedNodes = new \SplObjectStorage();
         $this->removedNodes = new \SplObjectStorage();
     }
@@ -970,7 +973,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter
      * @return void
      */
-    protected function addNodeTypeFilterConstraintsToQueryBuilder(QueryBuilder $queryBuilder, $nodeTypeFilter)
+    public function addNodeTypeFilterConstraintsToQueryBuilder(QueryBuilder $queryBuilder, $nodeTypeFilter)
     {
         $constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
         if (count($constraints['includeNodeTypes']) > 0) {
@@ -1166,6 +1169,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
@@ -1271,6 +1275,7 @@ class NodeDataRepository extends Repository
      */
     public function pathExists($nodePath)
     {
+        $nodePath = strtolower($nodePath);
         $result = null;
 
         /** @var QueryBuilder $queryBuilder */
@@ -1280,7 +1285,7 @@ class NodeDataRepository extends Repository
             $queryBuilder->select('n.identifier')
                 ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
                 ->where('n.pathHash = :pathHash')
-                ->setParameter('pathHash', md5(strtolower($nodePath)));
+                ->setParameter('pathHash', md5($nodePath));
             $result = (count($queryBuilder->getQuery()->getResult()) > 0 ? true : false);
         });
 
@@ -1295,9 +1300,10 @@ class NodeDataRepository extends Repository
      * @param string $path
      * @param Workspace $workspace
      * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $recursive
      * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
      */
-    public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = false)
+    public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = false, $recursive = false)
     {
         $path = strtolower($path);
         $workspaces = array();
@@ -1307,13 +1313,13 @@ class NodeDataRepository extends Repository
         }
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
-        $this->addPathConstraintToQueryBuilder($queryBuilder, $path);
+        $this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
 
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
         // Consider materialized, but not yet persisted nodes
         foreach ($this->addedNodes as $addedNode) {
-            if ($addedNode->getPath() === $path) {
+            if (($addedNode->getPath() === $path || ($recursive && NodePaths::isSubPathOf($path, $addedNode->getPath()))) && in_array($addedNode->getWorkspace(), $workspaces)) {
                 $foundNodes[] = $addedNode;
             }
         }
@@ -1327,168 +1333,41 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Searches for possible relations to the given entity identifier in NodeData.
-     * Will return all possible NodeData objects that contain this identifier.
+     * Searches for possible relations to the given entity identifiers in NodeData.
+     * Will return all possible NodeData objects that contain this identifiers.
      *
      * Note: This is an internal method that is likely to be replaced in the future.
      *
      * $objectTypeMap = array(
-     *    'TYPO3\Media\Domain\Model\Asset' => '',
-     *    'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
+     *    'TYPO3\Media\Domain\Model\Asset' => array('some-uuid-here'),
+     *    'TYPO3\Media\Domain\Model\ImageVariant' => array('some-uuid-here', 'another-uuid-here')
      * )
      *
-     * @param string $identifier Persistence object identifier for which to find relations
-     * @param array $objectTypeMap array where keys are object names and value is a possible sub object property path on which the object with the identifier is situated
-     * @return array<NodeData>
+     * @param array $relationMap
+     * @return array
      */
-    public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($identifier, array $objectTypeMap)
+    public function findNodesByRelatedEntities($relationMap)
     {
-        $resultSet = array();
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
 
-        // TODO: This is dirty, but the best way to detect entity relations. When we change the storage type from serialized to something better we need to adapt this.
-        $query = $this->createQuery();
-        /** @var $queryBuilder \Doctrine\ORM\QueryBuilder */
-        $queryBuilder = ObjectAccess::getProperty($query, 'queryBuilder', true);
-        /** @var \TYPO3\Flow\Persistence\Doctrine\Query $query */
-        if ($queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform()->getName() === 'postgresql') {
-            // we know that properties is of type objectarray and on PostgreSQL that is encoded with hex2bin.
-            $constraint = $query->logicalOr(
-                $query->like('properties', '%' . bin2hex('"Persistence_Object_Identifier";s:36:"' . $identifier . '"') . '%', true),
-                $query->like('properties', '%' . bin2hex('"__identifier";s:36:"' . $identifier . '"') . '%', true)
-            );
-        } else {
-            $constraint = $query->logicalOr(
-                $query->like('properties', '%Persistence_Object_Identifier";s:36:"' . $identifier . '%', true),
-                $query->like('properties', '%__identifier";s:36:"' . $identifier . '%', true)
-            );
-        }
-        $possibleNodeData = $query->matching(
-            $constraint
-        )->execute()->toArray();
 
-        /** @var NodeData $nodeData */
-        foreach ($possibleNodeData as $nodeData) {
-            $nodeType = $nodeData->getNodeType();
-            $addToResultSet = false;
+        $queryBuilder->select('n')
+            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n');
 
-            foreach ($this->getPropertiesContainingSpecifiedTypes($nodeType, array_keys($objectTypeMap)) as $propertyName => $propertyType) {
-                if (isset($objectTypeMap[$propertyType['type']])) {
-                    if ($this->matchesSingleObjectProperty($nodeData, $propertyName, $identifier, $propertyType['type'], $objectTypeMap[$propertyType['type']])) {
-                        $addToResultSet = true;
-                    }
-                } elseif (isset($objectTypeMap[$propertyType['elementType']])) {
-                    if ($this->matchesCollectionObjectProperty($nodeData, $propertyName, $identifier, $propertyType['elementType'], $objectTypeMap[$propertyType['elementType']])) {
-                        $addToResultSet = true;
-                    }
-                }
-            }
-            if ($addToResultSet) {
-                $resultSet[] = $nodeData;
+        $constraints = [];
+        $parameters = [];
+        foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
+            foreach ($relatedIdentifiers as $relatedIdentifier) {
+                $constraints[] = '(LOWER(CONCAT(\'\', n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
             }
         }
+        $queryBuilder->where(implode(' OR ', $constraints));
+        $queryBuilder->setParameters($parameters);
+        $possibleNodeData = $queryBuilder->getQuery()->getResult();
 
-        return $resultSet;
-    }
-
-    /**
-     * Returns an array of properties that either directly or in a collection contain one of the given types.
-     *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
-     * @param array $typeNames Allowed types
-     * @return array<array> Array with key being the propertyName and value an array as given by \TYPO3\Flow\Utility\TypeHandling::parseType()
-     */
-    protected function getPropertiesContainingSpecifiedTypes(NodeType $nodeType, array $typeNames)
-    {
-        $propertiesWithTypes = array();
-        foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
-            $rawPropertyType = 'string';
-            if (isset($propertyConfiguration['type'])) {
-                $rawPropertyType = $propertyConfiguration['type'];
-            }
-            try {
-                $parsedPropertyType = TypeHandling::parseType($rawPropertyType);
-            } catch (\Exception $e) {
-                // The property type was not a valid PHP type, we just try the raw property then.
-                $parsedPropertyType = array(
-                    'type' => $rawPropertyType,
-                    'elementType' => null
-                );
-            }
-            if (in_array($parsedPropertyType['type'], $typeNames) || in_array($parsedPropertyType['elementType'], $typeNames)) {
-                $propertiesWithTypes[$propertyName] = $parsedPropertyType;
-            }
-        }
-
-        return $propertiesWithTypes;
-    }
-
-    /**
-     * Checks if for the given NodeData object the property specified by $propertyName contains an object of type
-     * $objectType or, if $subObjectPath tells that, a sub object, with the specified persistence object identifier exists.
-     *
-     * @param NodeData $nodeData Node data object
-     * @param string $propertyName Name of the property
-     * @param string $identifier Persistence object identifier
-     * @param string $objectType Object type
-     * @param string $subObjectPath Optional sub patch
-     * @return boolean
-     */
-    protected function matchesSingleObjectProperty(NodeData $nodeData, $propertyName, $identifier, $objectType, $subObjectPath = '')
-    {
-        $possibleObject = $nodeData->getProperty($propertyName);
-        return $this->isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($possibleObject, $identifier, $objectType, $subObjectPath);
-    }
-
-    /**
-     * Checks if for the given NodeData object the property specified by $propertyName contains a collection which
-     * contains an object of type $objectType or, if $subObjectPath tells that, a sub object, with the specified
-     * persistence object identifier exists.
-     *
-     * @param NodeData $nodeData Node data object
-     * @param string $propertyName Name of the property
-     * @param string $identifier Persistence object identifier
-     * @param string $objectType Object type
-     * @param string $subObjectPath Optional sub patch
-     * @return boolean
-     */
-    protected function matchesCollectionObjectProperty($nodeData, $propertyName, $identifier, $objectType, $subObjectPath = '')
-    {
-        $possibleCollection = $nodeData->getProperty($propertyName);
-
-        if (is_array($possibleCollection) || $possibleCollection instanceof \Traversable) {
-            foreach ($possibleCollection as $possibleObject) {
-                if ($this->isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($possibleObject, $identifier, $objectType, $subObjectPath)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if the given object has the specified persistence object identifier and is of the specified type
-     *
-     * @param object $object The object to check
-     * @param string $identifier The object persistence identifier
-     * @param string $objectType The object type to match
-     * @param string $subObjectPath Optional sub path
-     * @return boolean
-     */
-    protected function isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($object, $identifier, $objectType, $subObjectPath = '')
-    {
-        if (!is_object($object) || !$object instanceof $objectType) {
-            return false;
-        }
-
-        if ($subObjectPath !== '') {
-            $object = ObjectAccess::getPropertyPath($object, $subObjectPath);
-        }
-        if (!$this->persistenceManager->getIdentifierByObject($object) === $identifier) {
-            return false;
-        }
-
-        return true;
+        return $possibleNodeData;
     }
 
     /**
@@ -1499,8 +1378,9 @@ class NodeDataRepository extends Repository
      */
     public function removeAllInPath($path)
     {
+        $path = strtolower($path);
         $query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
-        $query->setParameter('path', strtolower($path) . '/%');
+        $query->setParameter('path', $path . '/%');
         $query->execute();
     }
 
@@ -1541,8 +1421,7 @@ class NodeDataRepository extends Repository
      */
     protected function addParentPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $parentPath, $recursive = false)
     {
-        $parentPath = strtolower($parentPath);
-        if ($recursive !== true) {
+        if (!$recursive) {
             $queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
                 ->setParameter('parentPathHash', md5($parentPath));
         } else {
@@ -1554,12 +1433,18 @@ class NodeDataRepository extends Repository
     /**
      * @param QueryBuilder $queryBuilder
      * @param string $path
+     * @param boolean $recursive
      * @return void
      */
-    protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path)
+    protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path, $recursive = false)
     {
-        $queryBuilder->andWhere('n.pathHash = :pathHash')
-            ->setParameter('pathHash', md5(strtolower($path)));
+        if (!$recursive) {
+            $queryBuilder->andWhere('n.pathHash = :pathHash')
+                ->setParameter('pathHash', md5($path));
+        } else {
+            $queryBuilder->andWhere('n.path LIKE :path')
+                ->setParameter('path', $path . '%');
+        }
     }
 
     /**

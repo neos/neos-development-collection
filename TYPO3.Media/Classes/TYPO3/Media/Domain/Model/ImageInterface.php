@@ -12,9 +12,9 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 /**
- * An image interface
+ * Interface of an Image
  */
-interface ImageInterface extends AssetInterface
+interface ImageInterface extends ResourceBasedInterface
 {
     const ORIENTATION_SQUARE = 'square';
     const ORIENTATION_LANDSCAPE = 'landscape';
@@ -81,26 +81,4 @@ interface ImageInterface extends AssetInterface
      * @return boolean
      */
     public function isOrientationPortrait();
-
-    /**
-     * One of PHPs IMAGETYPE_* constants that reflects the image type
-     *
-     * @see http://php.net/manual/image.constants.php
-     * @return integer
-     */
-    public function getType();
-
-    /**
-     * File extension of the image without leading dot.
-     *
-     * @return string
-     */
-    public function getFileExtension();
-
-    /**
-     * @param integer $maximumWidth maximum width of the thumbnail
-     * @param integer $maximumHeight maximum height of the thumbnail
-     * @return \TYPO3\Media\Domain\Model\ImageVariant
-     */
-    public function getThumbnail($maximumWidth = null, $maximumHeight = null);
 }

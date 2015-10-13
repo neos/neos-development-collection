@@ -4,9 +4,10 @@
 define(
 	[
 		'./AbstractValidator',
-		'Library/underscore'
+		'Library/underscore',
+		'Shared/I18n'
 	],
-	function(AbstractValidator, _) {
+	function(AbstractValidator, _, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * @var {object}
@@ -24,7 +25,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (typeof value !== 'array' || typeof value !== 'object') {
-					this.addError('The given subject was not countable.');
+					this.addError(I18n.translate('content.inspector.validators.countValidator.notCountable'));
 					return;
 				}
 
@@ -32,7 +33,7 @@ define(
 					maximum = parseInt(this.get('options.maximum'), 10),
 					length = _.keys(value).length;
 				if (length < minimum || length > maximum) {
-					this.addError('The count must be between ' + minimum + ' and ' + maximum + '.');
+					this.addError(I18n.translate('content.inspector.validators.countValidator.countBetween', null, null, null, {minimum: minimum, maximum: maximum}));
 				}
 			}
 		});

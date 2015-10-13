@@ -15,10 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
@@ -30,18 +27,6 @@ class NodeCommandController extends CommandController implements DescriptionAwar
 {
     /**
      * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
@@ -51,12 +36,6 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * @Flow\Inject
@@ -87,13 +66,14 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param string $nodeType Node type name, if empty update all declared node types
      * @param string $workspace Workspace name, default is 'live'
      * @param boolean $dryRun Don't do anything, but report actions
+     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
      * @return void
      */
-    public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false)
+    public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true)
     {
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
 
-        if ($this->workspaceRepository->findByName($workspace)->count() === 0) {
+        if ($this->workspaceRepository->countByName($workspace) === 0) {
             $this->outputLine('Workspace "%s" does not exist', array($workspace));
             exit(1);
         }
@@ -115,7 +95,8 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             /** @var NodeCommandControllerPluginInterface $plugin */
             $plugin = $pluginConfiguration['object'];
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
-            $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
+            $this->outputLine();
+            $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup);
             $this->outputLine();
         }
 

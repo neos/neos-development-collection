@@ -4,14 +4,18 @@ define(
 		'emberjs',
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
+		'Shared/I18n',
 		'Shared/Utility'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
-			placeholder: 'Type to search',
+			placeholder: '',
+			_placeholder: function () {
+				return I18n.translate(this.get('placeholder'), 'Type to search');
+			}.property('placeholder'),
 
 			content: null,
 
@@ -29,18 +33,20 @@ define(
 					multiple: true,
 					maximumSelectionSize: 1,
 					minimumInputLength: that.get('threshold'),
-					placeholder: this.get('placeholder'),
+					placeholder: this.get('_placeholder'),
 					formatResult: function(item, container, query, escapeMarkup) {
 						var markup = [];
 						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
 						var $itemContent = $('<span>' + markup.join('') + '</span>');
 
+						var info = item.data.path ? item.data.path : item.data.identifier;
+						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
+
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
 						}
-
-						$itemContent.attr('title', item.data.path);
 
 						return $itemContent.get(0).outerHTML;
 					},
@@ -48,12 +54,13 @@ define(
 						var $itemContent = $('<span>' + item.text + '</span>');
 
 						if (item.data) {
+							var info = item.data.path ? item.data.path : item.data.identifier;
+							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+
 							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 							if (iconClass) {
 								$itemContent.prepend('<i class="' + iconClass + '"></i>');
 							}
-
-							$itemContent.attr('title', item.data.path);
 						}
 
 						return $itemContent.get(0).outerHTML;
@@ -80,7 +87,7 @@ define(
 									data.results.push({
 										id: identifier,
 										text: $('.node-label', value).text().trim(),
-										data: {identifier: identifier, path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()}
+										data: {identifier: identifier, path: Utility.removeContextPath($('.node-frontend-uri', this).text().trim().replace('.html', '')), nodeType: $('.node-type', value).text()}
 									});
 								});
 								query.callback(data);
@@ -89,7 +96,7 @@ define(
 					}
 				});
 
-				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
+				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
 				if (this.get('content')) {
 					this.$().select2('container').find('.neos-select2-input').css({'display': 'none'});
 				} else {
@@ -117,7 +124,9 @@ define(
 				if (value && value !== this.get('content.id')) {
 					var item = Ember.Object.extend({
 						id: value,
-						text: 'Loading ...'
+						text: function() {
+							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
+						}.property()
 					}).create();
 					that.set('content', item);
 
@@ -127,7 +136,7 @@ define(
 					};
 					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text().trim());
-						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: $('.node-path', result.resource).text(), nodeType: $('.node-type', result.resource).text()});
+						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
 						that._updateSelect2();
 					});
 

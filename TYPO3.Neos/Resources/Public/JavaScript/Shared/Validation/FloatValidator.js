@@ -4,9 +4,10 @@
 define(
 	[
 		'./AbstractValidator',
-		'Library/xregexp'
+		'Library/xregexp',
+		'Shared/I18n'
 	],
-	function(AbstractValidator, XRegExp) {
+	function(AbstractValidator, XRegExp, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * The given value is valid if it is of type float or a string matching the regular expression [0-9.e+-]
@@ -20,7 +21,7 @@ define(
 				}
 
 				if (typeof value !== 'string' || value.indexOf('.') === false || XRegExp('^[0-9.e+-]+$').test(value) === false) {
-					this.addError('A valid float number is expected.');
+					this.addError(I18n.translate('content.inspector.validators.floatValidator.validFloatExpected'));
 				}
 			}
 		});

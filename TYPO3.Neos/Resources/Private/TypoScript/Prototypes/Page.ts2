@@ -14,13 +14,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 		attributes {
 			version = 'HTML+RDFa 1.1'
-			version.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			version.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns = 'http://www.w3.org/1999/xhtml'
-			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns:typo3 = 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/'
-			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 			xmlns:xsd = 'http://www.w3.org/2001/XMLSchema#'
-			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 	}
 
@@ -56,38 +56,40 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		neosBackendHeader = TYPO3.TypoScript:Template {
 			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
-			node = ${node}
+			node = ${documentNode}
 
 			@cache {
 				mode = 'uncached'
 				context {
-					1 = 'node'
+					1 = 'documentNode'
 				}
 			}
-			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
 		neosBackendEndpoints = TYPO3.TypoScript:Template {
 			@position = 'end 10001'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
-			node = ${node}
-			account = ${account}
+			node = ${documentNode}
+			account = ${Security.getAccount()}
 
 			@cache {
 				mode = 'uncached'
 				context {
-					1 = 'node'
-					2 = 'account'
+					1 = 'documentNode'
 				}
 			}
-			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
-
-		# Script includes in the head should go here
-		javascripts = TYPO3.TypoScript:Array
 
 		# Link tags for stylesheets in the head should go here
 		stylesheets = TYPO3.TypoScript:Array
+
+		# Script includes in the head should go here
+		javascripts = TYPO3.TypoScript:Array {
+			@position = 'after stylesheets'
+		}
 	}
 
 	closingHeadTag = '</head>'
@@ -98,12 +100,25 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		@position = '20'
 		tagName = 'body'
 		omitClosingTag = TRUE
+		attributes.class.@process.addNeosBackendClass = TYPO3.TypoScript:Case {
+			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+
+			classIsString {
+				condition = ${Type.isString(value)}
+				renderer = ${String.trim(value + ' neos-backend')}
+			}
+
+			classIsArray {
+				condition = ${Type.isArray(value)}
+				renderer = ${Array.push(value, 'neos-backend')}
+			}
+		}
 	}
 
 	# Required for the backend to work.
 	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
 		@position = 'before body'
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	# Content of the body tag. To be defined by the integrator.
@@ -122,15 +137,15 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	neosBackendContainer = TYPO3.TypoScript:Template {
 		@position = 'before closingBodyTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
-		node = ${node}
+		node = ${documentNode}
 
 		@cache {
 			mode = 'uncached'
 			context {
-				1 = 'node'
+				1 = 'documentNode'
 			}
 		}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	# This enables redirecting to the last visited page after login
@@ -139,7 +154,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 		tagName = 'script'
 		attributes {
-			data-neos-node = ${q(node).property('_identifier')}
+			data-neos-node = ${node.contextPath}
 			src = TYPO3.TypoScript:ResourceUri {
 				path = 'resource://TYPO3.Neos/Public/JavaScript/LastVisitedNode.js'
 			}
@@ -150,7 +165,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		@position = 'after lastVisitedNodeScript 10000'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
 		node = ${node}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	closingBodyTag = '</body>'
@@ -164,7 +179,6 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		mode = 'cached'
 		entryIdentifier {
 			documentNode = ${node}
-			baseUri = ${String.toString(request.httpRequest.baseUri)}
 		}
 		entryTags {
 			1 = ${'Node_' + node.identifier}

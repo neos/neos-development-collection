@@ -41,6 +41,9 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = null)
     {
+        $propertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper', array(), array(), '', false);
+        $propertyMapper->expects($this->any())->method('convert')->willReturnArgument(0);
+
         $userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
         $liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
         $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', false);
@@ -68,10 +71,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
 
         $contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($originalNode, $context);
+        $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         $this->assertEquals('originalNodeResult', $contextualizedNode->$methodName($argument1));
 
         $contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($newNode, $context);
+        $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         $this->assertEquals('newNodeResult', $contextualizedNode->$methodName($argument1));
     }
@@ -236,7 +241,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $node = $this->setUpNodeWithNonMatchingContext(array('getChildNodes'));
 
         $node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array()));
-        $node->getNodeData()->expects($this->once())->method('remove');
+        $node->getNodeData()->expects($this->once())->method('setRemoved');
 
         $node->remove();
     }
@@ -251,24 +256,14 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeData = $node->getNodeData();
         $context = $node->getContext();
 
-        $subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
-        $subNode1->expects($this->once())->method('remove');
+        $subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+        $subNode1->expects($this->once())->method('setRemoved');
 
-        $subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
-        $subNode2->expects($this->once())->method('remove');
+        $subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+        $subNode2->expects($this->once())->method('setRemoved');
 
         $node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($subNode1, $subNode2)));
         $node->remove();
-    }
-
-    /**
-     * @test
-     */
-    public function setRemovedCallsRemoveMethodIfArgumentIsTrue()
-    {
-        $node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove', 'addOrUpdate'), array(), '', false);
-        $node->expects($this->once())->method('remove');
-        $node->setRemoved(true);
     }
 
     /**
@@ -318,10 +313,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPathInContext'), array(), '', false);
         $nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo/bar', $context)->will($this->returnValue($expectedContextualizedNode));
 
-        $currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('normalizePath'), array('/foo/baz', $currentNodeWorkspace));
-        $currentNodeData->expects($this->once())->method('normalizePath')->with('../bar')->will($this->returnValue('/foo/bar'));
+        $currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/baz', $currentNodeWorkspace));
+        $nodeService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeService', array(), array(), '', false);
+        $nodeService->expects($this->once())->method('normalizePath')->with('../bar', '/foo/baz')->will($this->returnValue('/foo/bar'));
         $currentContextualizedNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array($currentNodeData, $context));
         $currentContextualizedNode->_set('nodeDataRepository', $nodeDataRepository);
+        $currentContextualizedNode->_set('nodeService', $nodeService);
 
         $actualNode = $currentContextualizedNode->getNode('../bar');
         $this->assertSame($expectedContextualizedNode, $actualNode);

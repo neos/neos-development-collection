@@ -175,6 +175,16 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
+    public function classesAreAppendedAsExpected()
+    {
+        $output = $this->simulateRendering('Test_AppendingClassesToContent.ts2');
+        $this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Welcome to this example', true, $output);
+        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Last Commits', true, $output);
+    }
+
+    /**
+     * @test
+     */
     public function menuWithNegativeEntryLevelIsRenderedAsExpected()
     {
         $output = $this->simulateRendering('Test_MenuNegativeEntryLevel.ts2');
@@ -300,7 +310,7 @@ class RenderingTest extends AbstractNodeTest
     protected function buildMockControllerContext()
     {
         $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
-        $request = $httpRequest->createActionRequest();
+        $request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
         $response = new \TYPO3\Flow\Http\Response();
         $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 

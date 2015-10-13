@@ -11,17 +11,15 @@ namespace TYPO3\Media\Domain\Service;
  * source code.
  */
 
+use Imagine\Image\Box;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Resource\Resource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Resource\ResourcePointer;
-use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use TYPO3\Media\Exception\ImageFileException;
-use TYPO3\Media\Exception\MissingResourceException;
+use TYPO3\Media\Exception\ImageServiceException;
 
 /**
  * An image service that acts as abstraction for the Imagine library
@@ -31,19 +29,31 @@ use TYPO3\Media\Exception\MissingResourceException;
 class ImageService
 {
     /**
-     * @var ObjectManagerInterface
-     * @Flow\Inject
+     * @var \Imagine\Image\ImagineInterface
+     * @Flow\Inject(lazy = false)
      */
-    protected $objectManager;
+    protected $imagineService;
 
     /**
-     * @var ResourceManager
+     * @var \TYPO3\Flow\Resource\ResourceManager
      * @Flow\Inject
      */
     protected $resourceManager;
 
     /**
-     * @var VariableFrontend
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Utility\Environment
+     */
+    protected $environment;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     */
+    protected $assetRepository;
+
+    /**
+     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
      * @Flow\Inject
      */
     protected $imageSizeCache;
@@ -63,47 +73,90 @@ class ImageService
     }
 
     /**
-     * @param ImageInterface $image
-     * @param array $processingInstructions
-     * @return Resource
-     * @throws \Exception
+     * @param FlowResource $originalResource
+     * @param array $adjustments
+     * @return array resource, width, height as keys
+     * @throws ImageFileException
+     * @throws InvalidConfigurationException
+     * @throws \TYPO3\Flow\Resource\Exception
      */
-    public function transformImage(ImageInterface $image, array $processingInstructions)
+    public function processImage(FlowResource $originalResource, array $adjustments)
     {
-        if (!$image->getResource()) {
-            throw new MissingResourceException('Image resource could not be found.', 1403195673);
-        }
-        if (!$image->getResource()->getResourcePointer()) {
-            throw new MissingResourceException('Image resource pointer could not be found.', 1403195674);
-        }
-        $uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
         $additionalOptions = array();
-        if (!file_exists('resource://' . $uniqueHash)) {
-            $originalResourcePath = 'resource://' . $image->getResource()->getResourcePointer()->getHash();
-            if (!file_exists($originalResourcePath)) {
-                throw new MissingResourceException('Image resource file could not be found.', 1418243434);
-            }
+        $adjustmentsApplied = false;
 
-            /** @var \Imagine\Image\ImagineInterface $imagine */
-            $imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
-            $imageContent = file_get_contents($originalResourcePath);
-            $imagineImage = $imagine->load($imageContent);
-            if ($imagine instanceof \Imagine\Imagick\Imagine &&  $image->getFileExtension() === 'gif' && $this->isAnimatedGif($imageContent) === true) {
-                $imagineImage->layers()->coalesce();
-                foreach ($imagineImage->layers() as $imagineFrame) {
-                    $this->applyProcessingInstructions($imagineFrame, $processingInstructions);
-                }
-                $additionalOptions['animated'] = true;
-            } else {
-                $imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
-            }
-            file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->getDefaultOptions($additionalOptions)));
+        // TODO: Special handling for SVG should be refactored at a later point.
+        if ($originalResource->getMediaType() === 'image/svg+xml') {
+            $originalResourceStream = $originalResource->getStream();
+            $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
+            fclose($originalResourceStream);
+            $resource->setFilename($originalResource->getFilename());
+            return [
+                'width' => null,
+                'height' => null,
+                'resource' => $resource
+            ];
         }
-        $resource = new Resource();
-        $resource->setFilename($image->getResource()->getFilename());
-        $resource->setResourcePointer(new ResourcePointer($uniqueHash));
 
-        return $resource;
+        $resourceUri = $originalResource->createTemporaryLocalCopy();
+
+        $resultingFileExtension = $originalResource->getFileExtension();
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $resultingFileExtension;
+
+        if (!file_exists($resourceUri)) {
+            throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
+        }
+
+        $imagineImage = $this->imagineService->open($resourceUri);
+        if ($this->imagineService instanceof \Imagine\Imagick\Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
+            $imagineImage->layers()->coalesce();
+            $layers = $imagineImage->layers();
+            $newLayers = array();
+            foreach ($layers as $index => $imagineFrame) {
+                $imagineFrame = $this->applyAdjustments($imagineFrame, $adjustments, $adjustmentsApplied);
+                $newLayers[] = $imagineFrame;
+            }
+
+            $imagineImage = array_shift($newLayers);
+            $layers = $imagineImage->layers();
+            foreach ($newLayers as $imagineFrame) {
+                $layers->add($imagineFrame);
+            }
+            $additionalOptions['animated'] = true;
+        } else {
+            $imagineImage = $this->applyAdjustments($imagineImage, $adjustments, $adjustmentsApplied);
+        }
+
+        if ($adjustmentsApplied === true) {
+            $imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
+            $imageSize = $imagineImage->getSize();
+
+            // TODO: In the future the collectionName of the new resource should be configurable.
+            $resource = $this->resourceManager->importResource($transformedImageTemporaryPathAndFilename, $originalResource->getCollectionName());
+            if ($resource === false) {
+                throw new ImageFileException('An error occurred while importing a generated image file as a resource.', 1413562208);
+            }
+            unlink($transformedImageTemporaryPathAndFilename);
+
+            $pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
+            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
+        } else {
+            $originalResourceStream = $originalResource->getStream();
+            $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
+            fclose($originalResourceStream);
+            $resource->setFilename($originalResource->getFilename());
+            $imageSize = $this->getImageSize($originalResource);
+            $imageSize = new Box($imageSize['width'], $imageSize['height']);
+        }
+        $this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()));
+
+        $result = array(
+            'width' => $imageSize->getWidth(),
+            'height' => $imageSize->getHeight(),
+            'resource' => $resource
+        );
+
+        return $result;
     }
 
     /**
@@ -111,7 +164,7 @@ class ImageService
      * @return array
      * @throws InvalidConfigurationException
      */
-    protected function getDefaultOptions(array $additionalOptions = array())
+    protected function getOptionsMergedWithDefaults(array $additionalOptions = array())
     {
         $defaultOptions = Arrays::getValueByPath($this->settings, 'image.defaultOptions');
         if (!is_array($defaultOptions)) {
@@ -135,191 +188,58 @@ class ImageService
     }
 
     /**
-     * @param Resource $resource
-     * @return array width, height and image type
+     * Get the size of a Flow Resource object that contains an image file.
+     *
+     * @param FlowResource $resource
+     * @return array width and height as keys
      * @throws ImageFileException
      */
-    public function getImageSize(Resource $resource)
+    public function getImageSize(FlowResource $resource)
     {
-        $cacheIdentifier = $resource->getResourcePointer()->getHash();
-        if ($this->imageSizeCache->has($cacheIdentifier)) {
-            return $this->imageSizeCache->get($cacheIdentifier);
+        $cacheIdentifier = $resource->getCacheEntryIdentifier();
+
+        $imageSize = $this->imageSizeCache->get($cacheIdentifier);
+        if ($imageSize !== false) {
+            return $imageSize;
         }
-        $imageSize = getimagesize($resource->getUri());
-        if ($imageSize === false) {
-            throw new ImageFileException('The given resource was not a valid image file', 1336662898);
+
+        // TODO: Special handling for SVG should be refactored at a later point.
+        if ($resource->getMediaType() === 'image/svg+xml') {
+            $imageSize = ['width' => null, 'height' => null];
+        } else {
+            try {
+                $imagineImage = $this->imagineService->read($resource->getStream());
+                $sizeBox = $imagineImage->getSize();
+                $imageSize = array('width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight());
+            } catch (\Exception $e) {
+                throw new ImageFileException(sprintf('The given resource was not an image file your choosen driver can open. The original error was: %s', $e->getMessage()), 1336662898);
+            }
         }
-        $imageSize = array(
-            (integer)$imageSize[0],
-            (integer)$imageSize[1],
-            (integer)$imageSize[2]
-        );
+
         $this->imageSizeCache->set($cacheIdentifier, $imageSize);
         return $imageSize;
     }
 
     /**
      * @param \Imagine\Image\ImageInterface $image
-     * @param array $processingInstructions
+     * @param array $adjustments Ordered list of adjustments to apply.
+     * @param boolean $adjustmentsApplied Reference to a variable that will hold information if an adjustment was actually applied.
      * @return \Imagine\Image\ImageInterface
-     * @throws \InvalidArgumentException
+     * @throws ImageServiceException
      */
-    protected function applyProcessingInstructions(\Imagine\Image\ImageInterface $image, array $processingInstructions)
+    protected function applyAdjustments(\Imagine\Image\ImageInterface $image, array $adjustments, &$adjustmentsApplied)
     {
-        foreach ($processingInstructions as $processingInstruction) {
-            $commandName = $processingInstruction['command'];
-            $commandMethodName = sprintf('%sCommand', $commandName);
-            if (!is_callable(array($this, $commandMethodName))) {
-                throw new \InvalidArgumentException('Invalid command "' . $commandName . '"', 1316613563);
+        foreach ($adjustments as $adjustment) {
+            if (!$adjustment instanceof ImageAdjustmentInterface) {
+                throw new ImageServiceException(sprintf('Could not apply the %s adjustment to image because it does not implement the ImageAdjustmentInterface.', get_class($adjustment)), 1381400362);
             }
-            $image = call_user_func(array($this, $commandMethodName), $image, $processingInstruction['options']);
-        }
-        return $image;
-    }
-
-    /**
-     * @param \Imagine\Image\ImageInterface $image
-     * @param array $commandOptions array('size' => ('width' => 123, 'height => 456), 'mode' => 'outbound')
-     * @return \Imagine\Image\ImageInterface
-     */
-    protected function thumbnailCommand(\Imagine\Image\ImageInterface $image, array $commandOptions)
-    {
-        if (!isset($commandOptions['size'])) {
-            throw new \InvalidArgumentException('The thumbnailCommand needs a "size" option.', 1393510202);
-        }
-        $dimensions = $this->parseBox($commandOptions['size']);
-        if (isset($commandOptions['mode']) && $commandOptions['mode'] === ImageInterface::RATIOMODE_OUTBOUND) {
-            $mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_OUTBOUND;
-        } else {
-            $mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_INSET;
-        }
-        return $image->thumbnail($dimensions, $mode);
-    }
-
-    /**
-     * @param \Imagine\Image\ImageInterface $image
-     * @param array $commandOptions array('size' => ('width' => 123, 'height => 456))
-     * @return \Imagine\Image\ImageInterface
-     */
-    protected function resizeCommand(\Imagine\Image\ImageInterface $image, array $commandOptions)
-    {
-        if (!isset($commandOptions['size'])) {
-            throw new \InvalidArgumentException('The resizeCommand needs a "size" option.', 1393510215);
-        }
-        $dimensions = $this->parseBox($commandOptions['size']);
-        return $image->resize($dimensions);
-    }
-
-    /**
-     * @param \Imagine\Image\ImageInterface $image
-     * @param array $commandOptions array('start' => array('x' => 123, 'y' => 456), 'size' => array('width' => 123, 'height => 456))
-     * @return \Imagine\Image\ImageInterface
-     */
-    protected function cropCommand(\Imagine\Image\ImageInterface $image, array $commandOptions)
-    {
-        if (!isset($commandOptions['start'])) {
-            throw new \InvalidArgumentException('The cropCommand needs a "start" option.', 1393510229);
-        }
-        if (!isset($commandOptions['size'])) {
-            throw new \InvalidArgumentException('The cropCommand needs a "size" option.', 1393510231);
-        }
-        $startPoint = $this->parsePoint($commandOptions['start']);
-        $dimensions = $this->parseBox($commandOptions['size']);
-        return $image->crop($startPoint, $dimensions);
-    }
-
-    /**
-     * @param \Imagine\Image\ImageInterface $image
-     * @param array $commandOptions
-     * @return \Imagine\Image\ImageInterface
-     */
-    protected function drawCommand(\Imagine\Image\ImageInterface $image, array $commandOptions)
-    {
-        $drawer = $image->draw();
-        foreach ($commandOptions as $drawCommandName => $drawCommandOptions) {
-            if ($drawCommandName === 'ellipse') {
-                $drawer = $this->drawEllipse($drawer, $drawCommandOptions);
-            } elseif ($drawCommandName === 'text') {
-                $drawer = $this->drawText($drawer, $drawCommandOptions);
-            } else {
-                throw new \InvalidArgumentException('Invalid draw command "' . $drawCommandName . '"', 1316613593);
+            if ($adjustment->canBeApplied($image)) {
+                $image = $adjustment->applyToImage($image);
+                $adjustmentsApplied = true;
             }
         }
+
         return $image;
-    }
-
-    /**
-     * @param \Imagine\Draw\DrawerInterface $drawer
-     * @param array $commandOptions
-     * @return \Imagine\Draw\DrawerInterface
-     */
-    protected function drawEllipse(\Imagine\Draw\DrawerInterface $drawer, array $commandOptions)
-    {
-        $center = $this->parsePoint($commandOptions['center']);
-        $size = $this->parseBox($commandOptions['size']);
-        $color = $this->parseColor($commandOptions['color']);
-        $fill = isset($commandOptions['fill']) ? (boolean)$commandOptions['fill'] : false;
-        return $drawer->ellipse($center, $size, $color, $fill);
-    }
-
-    /**
-     * @param \Imagine\Draw\DrawerInterface $drawer
-     * @param array $commandOptions
-     * @return \Imagine\Draw\DrawerInterface
-     */
-    protected function drawText(\Imagine\Draw\DrawerInterface $drawer, array $commandOptions)
-    {
-        $string = $commandOptions['string'];
-        $font = $this->parseFont($commandOptions['font']);
-        $position = $this->parsePoint($commandOptions['position']);
-        $angle = (integer)$commandOptions['angle'];
-        return $drawer->text($string, $font, $position, $angle);
-    }
-
-    /**
-     * @param array $coordinates
-     * @return \Imagine\Image\Point
-     */
-    protected function parsePoint($coordinates)
-    {
-        return $this->objectManager->get('Imagine\Image\Point', $coordinates['x'], $coordinates['y']);
-    }
-
-    /**
-     * @param array $dimensions
-     * @return \Imagine\Image\Box
-     */
-    protected function parseBox($dimensions)
-    {
-        return $this->objectManager->get('Imagine\Image\Box', $dimensions['width'], $dimensions['height']);
-    }
-
-    /**
-     * @param array $color
-     * @return \Imagine\Image\Color
-     */
-    protected function parseColor($color)
-    {
-        $alpha = isset($color['alpha']) ? (integer)$color['alpha'] : null;
-        if ($alpha > 100) {
-            $alpha = 100;
-        }
-        if ($alpha < 0) {
-            $alpha = 0;
-        }
-        return $this->objectManager->get('Imagine\Image\Color', $color['color'], $alpha);
-    }
-
-    /**
-     * @param array $options
-     * @return \Imagine\Image\FontInterface
-     */
-    protected function parseFont($options)
-    {
-        $file = $options['file'];
-        $size = $options['size'];
-        $color = $this->parseColor($options['color']);
-        return $this->objectManager->get('Imagine\Image\FontInterface', $file, $size, $color);
     }
 
     /**

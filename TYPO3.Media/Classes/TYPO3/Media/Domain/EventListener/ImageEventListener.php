@@ -14,6 +14,7 @@ namespace TYPO3\Media\Domain\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * Doctrine event listener for getting image size and type if needed
@@ -32,38 +33,14 @@ class ImageEventListener
      * @param LifecycleEventArgs $eventArgs
      * @return void
      */
-    public function prePersist(LifecycleEventArgs $eventArgs)
-    {
-        $entity = $eventArgs->getEntity();
-        if ($entity instanceof Image) {
-            $entity->initializeImageSizeAndType();
-        }
-    }
-
-    /**
-     * @param LifecycleEventArgs $eventArgs
-     * @return void
-     */
-    public function preUpdate(LifecycleEventArgs $eventArgs)
-    {
-        $entity = $eventArgs->getEntity();
-        if ($entity instanceof Image) {
-            $entity->initializeImageSizeAndType();
-        }
-    }
-
-    /**
-     * @param LifecycleEventArgs $eventArgs
-     * @return void
-     */
     public function postRemove(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof ImageInterface) {
             /** @var \TYPO3\Flow\Resource\Resource $resource */
             $resource = $eventArgs->getEntity()->getResource();
             if ($resource !== null) {
-                $this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getResourcePointer()->getHash());
+                $this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getCacheEntryIdentifier());
             }
         }
     }

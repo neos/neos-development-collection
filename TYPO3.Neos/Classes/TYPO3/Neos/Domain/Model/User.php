@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Security\Account;
 use TYPO3\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -20,20 +21,20 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  * @Flow\Scope("prototype")
+ * @api
  */
 class User extends Person
 {
     /**
      * Preferences of this user
      *
-     * @var \TYPO3\Neos\Domain\Model\UserPreferences
+     * @var UserPreferences
      * @ORM\OneToOne
      */
     protected $preferences;
 
     /**
      * Constructs this User object
-     *
      */
     public function __construct()
     {
@@ -42,10 +43,38 @@ class User extends Person
     }
 
     /**
-     * @return \TYPO3\Neos\Domain\Model\UserPreferences
+     * @return UserPreferences
+     * @api
      */
     public function getPreferences()
     {
         return $this->preferences;
+    }
+
+    /**
+     * @param UserPreferences $preferences
+     * @return void
+     * @api
+     */
+    public function setPreferences(UserPreferences $preferences)
+    {
+        $this->preferences = $preferences;
+    }
+
+    /**
+     * Checks if at least one account of this user ist active
+     *
+     * @return boolean
+     * @api
+     */
+    public function isActive()
+    {
+        foreach ($this->accounts as $account) {
+            /** @var Account $account */
+            if ($account->isActive()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

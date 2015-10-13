@@ -18,12 +18,15 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\ResponseInterface;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * Abstract Service Controller
  */
 abstract class AbstractServiceController extends ActionController
 {
+    use BackendUserTranslationTrait;
+
     /**
      * @var array
      */
@@ -37,7 +40,7 @@ abstract class AbstractServiceController extends ActionController
     public function errorAction()
     {
         if ($this->arguments->getValidationResults()->hasErrors()) {
-            $errors = array();
+            $errors = [];
             foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
                 foreach ($propertyErrors as $propertyError) {
                     /** @var \TYPO3\Flow\Error\Error $propertyError */

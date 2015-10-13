@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Core;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
@@ -98,8 +98,8 @@ class Parser implements ParserInterface
 	/x';
 
     const SPLIT_PATTERN_COMMENTTYPE = '/.*?(#|\/\/|\/\*|\*\/).*/';  // we need to be "non-greedy" here, since we need the first comment type that matches
-    const SPLIT_PATTERN_DECLARATION = '/([a-zA-Z]+[a-zA-Z0-9]*)\s*:(.*)/';
-    const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*([a-zA-Z0-9\.]+)\s*$/';
+    const SPLIT_PATTERN_DECLARATION = '/(?P<declarationType>[a-zA-Z]+[a-zA-Z0-9]*)\s*:\s*(["\']{0,1})(?P<declaration>.*)\\2/';
+    const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*(?P<alias>[a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(?P<packageKey>[a-zA-Z0-9\.]+)\s*$/';
     const SPLIT_PATTERN_OBJECTDEFINITION = '/
 		^\s*                      # beginning of line; with numerous whitespace
 		(?P<ObjectPath>           # begin ObjectPath
@@ -127,15 +127,31 @@ class Parser implements ParserInterface
 		)
 		\s*
 		(?P<OpeningConfinement>
-			\{                    # optionally followed by an opening confinement
+			[^\${]\{              # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';
     const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
     const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
     const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
-    const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/^(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
+    const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/
+		^(
+			(?P<DoubleQuoteChar>")
+			(?P<DoubleQuoteValue>
+				(?:\\\\.
+				|
+				[^\\\\"])*
+			)
+			|
+			(?P<SingleQuoteChar>\')
+			(?P<SingleQuoteValue>
+				(?:\\\\.
+				|
+				[^\\\\\'])*
+			)
+		)$/x';
     const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
+    const SPLIT_PATTERN_VALUENULL = '/^\s*(NULL|null)\s*$/';
 
     const SCAN_PATTERN_VALUEOBJECTTYPE = '/
 		^\s*                      # beginning of line; with numerous whitespace
@@ -150,6 +166,13 @@ class Parser implements ParserInterface
 		)
 		\s*$
 	/x';
+
+    /**
+     * Reserved parse tree keys for internal usage.
+     *
+     * @var array
+     */
+    public static $reservedParseTreeKeys = array('__meta', '__prototypes', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression');
 
     /**
      * @Flow\Inject
@@ -391,16 +414,16 @@ class Parser implements ParserInterface
     protected function parseDeclaration($typoScriptLine)
     {
         $result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
-        if ($result !== 1 || count($matches) != 3) {
+        if ($result !== 1 || !(isset($matches['declarationType']) && isset($matches['declaration']))) {
             throw new Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
         }
 
-        switch ($matches[1]) {
+        switch ($matches['declarationType']) {
             case 'namespace' :
-                $this->parseNamespaceDeclaration($matches[2]);
+                $this->parseNamespaceDeclaration($matches['declaration']);
                 break;
             case 'include' :
-                $this->parseInclude($matches[2]);
+                $this->parseInclude($matches['declaration']);
                 break;
         }
     }
@@ -516,12 +539,12 @@ class Parser implements ParserInterface
     protected function parseNamespaceDeclaration($namespaceDeclaration)
     {
         $result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
-        if ($result !== 1 || count($matches) !== 3) {
+        if ($result !== 1 || !(isset($matches['alias']) && isset($matches['packageKey']))) {
             throw new Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
         }
 
-        $namespaceAlias = $matches[1];
-        $namespacePackageKey = $matches[2];
+        $namespaceAlias = $matches['alias'];
+        $namespacePackageKey = $matches['packageKey'];
         $this->objectTypeNamespaces[$namespaceAlias] = $namespacePackageKey;
     }
 
@@ -596,7 +619,7 @@ class Parser implements ParserInterface
     protected function getParsedObjectPath($objectPath)
     {
         if (preg_match(self::SCAN_PATTERN_OBJECTPATH, $objectPath) === 1) {
-            if ($objectPath[0] == '.') {
+            if ($objectPath[0] === '.') {
                 $objectPath = $this->getCurrentObjectPathPrefix() . substr($objectPath, 1);
             }
 
@@ -604,7 +627,11 @@ class Parser implements ParserInterface
             foreach (preg_split(self::SPLIT_PATTERN_OBJECTPATH, $objectPath) as $objectPathSegment) {
                 if ($objectPathSegment[0] === '@') {
                     $objectPathArray[] = '__meta';
-                    $objectPathArray[] = substr($objectPathSegment, 1);
+                    $metaProperty = substr($objectPathSegment, 1);
+                    if ($metaProperty === 'override') {
+                        $metaProperty = 'context';
+                    }
+                    $objectPathArray[] = $metaProperty;
                 } elseif (preg_match(self::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE, $objectPathSegment)) {
                     $objectPathArray[] = '__prototypes';
 
@@ -619,7 +646,11 @@ class Parser implements ParserInterface
                     }
                     $objectPathArray[] = $fullyQualifiedObjectType;
                 } else {
-                    $objectPathArray[] = $objectPathSegment;
+                    $key = $objectPathSegment;
+                    if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
+                        throw new Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
+                    }
+                    $objectPathArray[] = $key;
                 }
             }
         } else {
@@ -644,6 +675,7 @@ class Parser implements ParserInterface
         } elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {
             $processedValue = floatval($unparsedValue);
         } elseif (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
+            // Single-line Eel Expressions
             $processedValue = array(
                 '__eelExpression' => $matches[1],
                 '__value' => null,
@@ -664,6 +696,8 @@ class Parser implements ParserInterface
             }
         } elseif (preg_match(self::SPLIT_PATTERN_VALUEBOOLEAN, $unparsedValue, $matches) === 1) {
             $processedValue = (strtolower($matches[1]) === 'true');
+        } elseif (preg_match(self::SPLIT_PATTERN_VALUENULL, $unparsedValue, $matches) === 1) {
+            $processedValue = null;
         } elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
             if (empty($matches['namespace'])) {
                 $objectTypeNamespace = $this->objectTypeNamespaces['default'];
@@ -676,7 +710,31 @@ class Parser implements ParserInterface
                 '__eelExpression' => null
             );
         } else {
-            throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+            // Trying to match multiline Eel expressions
+            if (strpos($unparsedValue, '${') === 0) {
+                $eelExpressionSoFar = $unparsedValue;
+                // potential start of multiline Eel Expression; trying to consume next lines...
+                while (($line = $this->getNextTypoScriptLine()) !== false) {
+                    $eelExpressionSoFar .= chr(10) . $line;
+
+                    if (substr($line, -1) === '}') {
+                        // potential end-of-eel-expression marker
+                        $matches = array();
+                        if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
+                            // Single-line Eel Expressions
+                            $processedValue = array('__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => null, '__objectType' => null);
+                            break;
+                        }
+                    }
+                }
+
+                if ($line === false) {
+                    // if the last line we consumed is FALSE, we have consumed the end of the file.
+                    throw new Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
+                }
+            } else {
+                throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+            }
         }
         return $processedValue;
     }

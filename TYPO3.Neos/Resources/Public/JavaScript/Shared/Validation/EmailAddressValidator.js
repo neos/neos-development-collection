@@ -24,7 +24,7 @@ define(
 			 * @return {void}
 			 */
 			addError: function(message) {
-				this._super('Please specify a valid email address.');
+				this._super(I18n.translate('content.inspector.validators.emailAddressValidator.invalidEmail'));
 			}
 		});
 	}

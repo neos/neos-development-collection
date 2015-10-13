@@ -1,3 +1,152 @@
+@mixin neos-media-aside-condensed {
+	.neos-media-aside {
+		margin-top: $wideMargin;
+		@include clearfix;
+
+		.neos-media-aside-group {
+			+ .neos-media-aside-group .neos-media-aside-list.neos-media-aside-list-editing-active {
+				li:first-child + li {
+					a > span {
+						display: inline;
+					}
+				}
+
+				li:first-child + li ~ li {
+					a > span {
+						display: none;
+					}
+				}
+			}
+
+			> h2 {
+				border-bottom: 1px solid $grayLight;
+				margin-bottom: $relatedMargin;
+			}
+
+			.neos-media-aside-list {
+				font-size: 0;
+				background-color: transparent;
+				border-top: none;
+
+				&.neos-media-aside-list-editing-active {
+					li:first-child ~ li {
+						a > span {
+							display: none;
+						}
+					}
+
+					li {
+						a {
+							display: inline-block;
+
+							&.neos-active + .neos-sidelist-edit-actions {
+								> a,
+								button {
+									background-color: #fff;
+									color: $blue;
+
+									&.neos-button-danger:hover {
+										background-color: #fff;
+									}
+								}
+							}
+						}
+
+						.neos-sidelist-edit-actions {
+							display: inline-block;
+							position: static;
+							vertical-align: top;
+
+							form {
+								display: inline-block;
+							}
+
+							> a,
+							button {
+								position: static;
+								padding: 0 $tightMargin 0 0;
+								line-height: 29px;
+								height: 29px;
+								background-color: $blue;
+
+								i {
+									background-color: #fff;
+									color: $blue;
+									padding: 2px;
+									margin-top: 0;
+
+									&:hover {
+										background-color: $blue;
+										color: #fff;
+									}
+								}
+
+								&.neos-button-danger {
+									&:hover {
+										background-color: $blue;
+									}
+
+									i:hover {
+										background-color: $warning;
+										color: #fff;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				li {
+					display: inline-block;
+					margin-right: $relatedMargin;
+					margin-bottom: $relatedMargin;
+
+					> a {
+						border-top: none;
+						background-color: $blue;
+						padding: $tightMargin;
+						font-size: $generalFontSize;
+
+						&.neos-active {
+							background-color: #fff;
+						}
+
+						&:not(.neos-active) {
+							&:hover {
+								background-color: #fff;
+								color: $blue;
+							}
+
+							&.neos-drag-active::after {
+								position: static;
+							}
+						}
+
+						> span {
+							background-color: #fff;
+							color: $blue;
+							position: static;
+							padding: 0 2px;
+							font-size: 13px;
+
+							.neos-ellipsis::after {
+								vertical-align: baseline;
+							}
+						}
+					}
+				}
+			}
+
+			> form {
+				input,
+				button {
+					max-width: $unit * 8;
+				}
+			}
+		}
+	}
+}
+
 &.media-browser {
 	background-color: transparent;
 
@@ -15,20 +164,38 @@
 
 	// Styles for Media view Options
 	.neos-media-options {
-		overflow: hidden;
 		margin-bottom: $wideMargin;
 		border-bottom: 1px solid $grayLight;
+		@include clearfix;
+
+		a {
+			display: block;
+			height: $unit;
+			line-height: $unit;
+			min-width: 24px;
+			text-align: center;
+			padding: 0 $relatedMargin;
+			color: $blue;
+
+			&:hover {
+				color: #fff;
+				text-decoration: none;
+			}
+		}
 
 		.neos-file-options {
 			float: left;
 
 			.count {
-				float: left;
-				display: block;
+				display: inline-block;
 				height: $unit;
 				line-height: $unit;
 				padding: 0 $relatedMargin 0 0;
 				border-right: 1px solid $grayLight;
+			}
+
+			a {
+				display: inline-block;
 			}
 
 			i {
@@ -40,10 +207,22 @@
 
 		.neos-view-options {
 			float: right;
+			white-space: nowrap;
+			font-size: 0;
 
-			> a {
+			> a,
+			> .neos-dropdown {
+				display: inline-block;
 				border-right: 1px solid $grayLight;
+
+				&:first-child {
+					border-left: 1px solid $grayLight;
+				}
+			}
+
+			a {
 				color: #fff;
+				font-size: $generalFontSize;
 
 				&.neos-active {
 					color: $blue;
@@ -54,218 +233,431 @@
 					color: #fff;
 				}
 
-				&:first-child {
-					border-left: 1px solid $grayLight;
-				}
-
 				i {
-					line-height: 21px;
+					line-height: $unit;
+					vertical-align: top;
 				}
 			}
-		}
 
-		a {
-			display: block;
-			float: left;
-			height: $unit;
-			min-width: 24px;
-			line-height: $unit;
-			text-align: center;
-			padding: 0 $relatedMargin;
-			color: $blue;
+			ul {
+				li {
+					a {
+						min-width: 24px;
+						line-height: $unit;
+						text-align: left;
+						padding: 0 $defaultMargin;
 
-			&:hover {
-				text-decoration: none;
+						&.neos-active {
+							color: #fff;
+						}
+					}
+				}
 			}
 		}
 	}
 
-	//Styles for "Sort by tag" sidebar in Media view
-	.neos-sort-tags {
-		margin-bottom: $wideMargin;
+	@media (max-width: 1024px) {
+		.neos-breadcrumb {
+			margin: 0;
+		}
+	}
 
-		> h2 {
-			line-height: $unit;
+	.neos-media-content {
+		&:not(.neos-media-aside-condensed) {
+			@include clearfix;
 
-			#neos-tags-list-edit-toggle {
-				float: right;
-				background-color: $grayDark;
+			.neos-media-assets {
+				@media (min-width: 768px) {
+					float: left;
+					position: relative;
+					left: $unit * 6 + $wideMargin;
+					width: calc(100% - (#{$unit} * 6 + #{$wideMargin}));
+				}
+			}
 
-				&.neos-active {
-					background-color: $blue;
+			.neos-media-aside {
+				@media (max-width: 767px) {
+					margin-top: $wideMargin;
 				}
 
-				&:hover {
-					background-color: $blue;
+				@media (min-width: 768px) {
+					float: left;
+					position: relative;
+					margin-right: $wideMargin;
+					width: $unit * 6;
+					right: calc(100% - (#{$unit} * 6 + #{$wideMargin}));
 				}
 			}
 		}
 
-		.neos-tags-list {
-			&.neos-tags-list-editing-active {
-				li button[type="submit"] {
-					display: block;
+		.neos-search {
+			@include clearfix;
+			width: 100%;
+			max-width: $unit * 8;
+			margin-bottom: $defaultMargin;
+
+			div {
+				overflow: hidden;
+			}
+
+			button[type="submit"] {
+				width: auto;
+				float: right;
+
+				i {
+					vertical-align: baseline;
+				}
+			}
+		}
+
+		&.neos-media-aside-condensed {
+			@include neos-media-aside-condensed;
+		}
+
+		@media (max-width: 767px) {
+			@include neos-media-aside-condensed;
+		}
+	}
+
+	aside.neos-media-aside {
+		.neos-media-aside-group {
+			+ .neos-media-aside-group {
+				margin-top: $defaultMargin;
+			}
+
+			> h2 {
+				line-height: $unit;
+
+				.neos-media-aside-list-edit-toggle {
+					float: right;
+					background-color: $grayDark;
+					@include user-select(none);
+
+					&.neos-active {
+						background-color: $blue;
+					}
+
+					&:hover {
+						background-color: $blue;
+					}
+				}
+
+				.neos-tooltip {
+					font-weight: normal;
 				}
 			}
 
-			li {
-				position: relative;
+			.neos-media-aside-list {
+				background-color: $grayLight;
+				border-top: 1px solid $grayLight;
 
-				a {
-					display: block;
-					color: #fff;
-					padding: ($tightMargin * 2 + 1) ($unit + $tightMargin) ($tightMargin * 2 + 2) $tightMargin;
-					border-radius: 0;
-					text-shadow: none;
-					font-weight: 400;
-					font-size: $baseFontSize;
-					line-height: 1.5;
-					border-top: 1px solid $grayLight;
+				&.neos-media-aside-list-editing-active {
+					li .neos-sidelist-edit-actions {
+						display: block;
+					}
+				}
 
-					&.neos-active {
-						color: $blue;
+				li {
+					position: relative;
+					background-color: $grayDark;
+
+					+ li {
+						margin-top: 1px;
 					}
 
-					&.neos-drag-active {
-						background-color: $green;
-					}
-
-					&:hover,
-					&.neos-drag-hover {
-						background-color: $blue;
+					> a {
+						display: block;
 						color: #fff;
+						padding: ($tightMargin * 2 + 1) ($unit * 2.5) ($tightMargin * 2 + 2) $tightMargin;
+						border-radius: 0;
+						text-shadow: none;
+						font-weight: 400;
+						font-size: $generalFontSize;
+						line-height: 1.5;
 
-						span {
-							background-color: #fff;
+						&.neos-active {
 							color: $blue;
+
+							&.neos-drag-active {
+								&:hover {
+									background-color: $warning;
+								}
+							}
+						}
+
+						&:not(.neos-active) {
+							&.neos-drag-active {
+								outline: 1px dashed #fff;
+								outline-offset: -1px;
+
+								span {
+									display: none;
+								}
+
+								&::after {
+									@include icon-FontAwesome();
+									content: $arrow-down;
+									position: absolute;
+									right: $relatedMargin + $tightMargin;
+								}
+
+								&:hover,
+								&.neos-drag-hover {
+									outline: 1px solid #fff;
+									outline-offset: -1px;
+
+									background-color: $blue;
+									color: #fff;
+								}
+							}
+						}
+
+						&:hover:not(.neos-drag-active) {
+							background-color: $blue;
+							color: #fff;
+
+							> span {
+								background-color: #fff;
+								color: $blue;
+
+								.neos-ellipsis {
+									color: $textOnWhite;
+								}
+							}
+						}
+
+						> span {
+							position: absolute;
+							top: $relatedMargin + 2;
+							right: $relatedMargin;
+							background-color: $blue;
+							color: #fff;
+							padding: $tightMargin;
+							line-height: 1;
 						}
 					}
 
-					span {
+					.neos-sidelist-edit-actions {
+						display: none;
 						position: absolute;
-						top: $relatedMargin + 2;
-						right: $relatedMargin;
-						background-color: $blue;
-						color: #fff;
-						padding: $tightMargin;
-						line-height: 1;
+						top: 0;
+						right: 0;
+						font-size: 0;
+
+						a,
+						button {
+							background-color: $grayDark;
+							width: auto;
+
+							&:hover {
+								background-color: $blue;
+
+								&.neos-button-danger {
+									background-color: $warning;
+								}
+							}
+						}
+
+						form {
+							display: inline-block;
+						}
 					}
 				}
+			}
 
-				button {
-					background-color: $grayDark;
+			> form {
+				display: none;
+				margin-top: $defaultMargin;
 
-					&:hover {
-						background-color: $blue;
-					}
-				}
-
-				button[type="submit"] {
-					position: absolute;
-					top: 1px;
-					right: 0;
-					background-color: $grayDark;
-					display: none;
-
-					&:hover {
-						background-color: $warning;
-					}
+				&.neos-media-aside-list-editing-active {
+					display: block;
 				}
 			}
 		}
 
-		input {
+		input,
+		button[type="submit"] {
 			width: 100%;
 		}
 	}
 
-	//Styles for Media grid view
-	.neos-thumbnails {
-		margin-bottom: $wideMargin;
-		font-size: 0;
-
-		li {
+	.neos-media-assets {
+		.neos-thumbnails {
+			margin-bottom: $wideMargin;
+			font-size: 0;
 			margin-left: 0;
-			margin-right: 16px;
-			@include box-sizing(border-box);
-			float: none;
-			display: inline-block;
-			vertical-align: top;
 
-			@media (max-width: 1023px) {
-				width: calc((100% - 16px * 3) / 4);
-
-				&:nth-child(4n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			@media (min-width: 1024px) and (max-width: 1199px) {
-				width: calc((100% - 16px * 4) / 5);
-
-				&:nth-child(5n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			@media (min-width: 1200px) {
-				width: calc((100% - 16px * 5) / 6);
-
-				&:nth-child(6n) {
-					margin-right: 0;
-					@include clearfix;
-				}
-			}
-
-			.neos-img-container {
-				position: relative;
-				background-color: $grayDarker;
-				padding-bottom: 100%;
-				height: 0;
-				margin-bottom: $relatedMargin * 1.5;
+			li {
+				margin-left: 0;
+				margin-right: $defaultMargin;
 				@include box-sizing(border-box);
-			}
+				float: none;
+				display: inline-block;
+				vertical-align: top;
 
-			.neos-caption {
-				padding: 0;
-				display: block;
-				font-size: 12px;
-				line-height: 1.2;
-				color: $textSubtleLight;
-				word-break: break-word;
-			}
+				@media (max-width: 479px) {
+					width: calc((100% - #{$defaultMargin}) / 2);
 
-			a {
-				border: 0;
-				border-radius: 0;
-				display: block;
-				box-shadow: none;
-				position: relative;
-				padding: 0;
-
-				&:hover {
-					box-shadow: none;
-					text-decoration: none;
+					&:nth-child(2n) {
+						margin-right: 0;
+						@include clearfix;
+					}
 				}
 
-				img {
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					@include translate(-50%, -50%);
-					height: auto;
-					width: auto;
-					max-height: 100%;
-					max-width: 100%;
+				@media (min-width: 480px) and (max-width: 767px) {
+					width: calc((100% - #{$defaultMargin} * 2) / 3);
+
+					&:nth-child(3n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 768px) and (max-width: 1023px) {
+					width: calc((100% - #{$defaultMargin} * 2) / 3);
+
+					&:nth-child(3n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1024px) and (max-width: 1199px) {
+					width: calc((100% - #{$defaultMargin} * 3) / 4);
+
+					&:nth-child(4n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1200px) and (max-width: 1599px) {
+					width: calc((100% - #{$defaultMargin} * 4) / 5);
+
+					&:nth-child(5n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				@media (min-width: 1600px) {
+					width: calc((100% - #{$defaultMargin} * 5) / 6);
+
+					&:nth-child(6n) {
+						margin-right: 0;
+						@include clearfix;
+					}
+				}
+
+				.neos-img-container {
+					position: relative;
+					background-color: $grayDarker;
+					padding-bottom: 100%;
+					height: 0;
+					margin-bottom: $relatedMargin * 1.5;
+					@include box-sizing(border-box);
+
+					&:hover {
+						.neos-media-delete,
+						&::after {
+							opacity: .9;
+						}
+					}
+
+					&.ui-draggable-dragging {
+						width: 250px;
+						height: 250px;
+					}
+
+					.neos-media-delete {
+						position: absolute;
+						bottom: 0;
+						right: 0;
+						background-color: $grayDark;
+						opacity: .5;
+
+						&:hover {
+							background-color: $warning;
+						}
+					}
+
+					&::after {
+						@include icon-FontAwesome();
+						content: $move;
+						display: block;
+						position: absolute;
+						left: 0;
+						bottom: 0;
+						width: $unit;
+						height: $unit;
+						background-color: $grayDark;
+						opacity: .5;
+						color: #fff;
+						font-size: 16px;
+						text-align: center;
+						line-height: $unit;
+						cursor: move;
+					}
+				}
+
+				.neos-caption {
+					padding: 0;
+					display: block;
+					font-size: 12px;
+					line-height: 1.2;
+					color: $textSubtleLight;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				> a {
+					border: 0;
+					border-radius: 0;
+					display: block;
+					box-shadow: none;
+					position: relative;
+					padding: 0;
+
+					&:hover {
+						box-shadow: none;
+						text-decoration: none;
+					}
+
+					img {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						@include translate(-50%, -50%);
+						height: auto;
+						width: auto;
+						max-height: 100%;
+						max-width: 100%;
+					}
+				}
+			}
+		}
+
+		@media (max-width: 540px) {
+			.page-navigation ul li {
+				display: none;
+
+				&.previous,
+				&.current,
+				&.next {
+					display: inline-block;
 				}
 			}
 		}
 	}
 
+	.neos-thumbnails li .neos-img-container:hover {
+		cursor: pointer;
+		outline: $tightMargin solid $blue;
+	}
+
 	&:not(.media-module) {
-		.neos-thumbnails li .neos-img-container:hover {
+		.neos-media-assets .neos-thumbnails li .neos-img-container:hover {
 			cursor: pointer;
 			outline: $tightMargin solid $blue;
 		}
@@ -291,6 +683,7 @@
 			padding: $relatedMargin;
 			@include font();
 			@include box-sizing(border-box);
+
 			&:focus {
 				background: #fff;
 				outline: 0;
@@ -321,7 +714,7 @@
 			overflow: hidden;
 			height: 0;
 			padding-bottom: 100%;
-			background: #323232;
+			background: $grayDarker;
 			position: relative;
 
 			img {
@@ -341,8 +734,26 @@
 	}
 
 	table.neos-table {
+		th {
+			white-space: nowrap;
+
+			a:hover {
+				color: $blue;
+			}
+
+			i {
+				vertical-align: baseline;
+			}
+		}
+
+		th,
+		td {
+			padding: $relatedMargin;
+			line-height: $unit - ($relatedMargin * 2);
+		}
+
 		tbody tr.asset td:first-child {
-			padding-left: 0 !important;
+			padding: 0 !important;
 		}
 
 		.neos-list-thumbnail {
@@ -350,6 +761,12 @@
 			height: $unit;
 			width: $unit;
 			position: relative;
+			display: inline-block;
+			float: left;
+
+			&[data-content] {
+				cursor: zoom-in;
+			}
 
 			img {
 				position: absolute;
@@ -359,11 +776,44 @@
 			}
 		}
 
+		.neos-popover {
+			width: auto;
+			height: auto;
+
+			.neos-popover-content {
+				width: 250px;
+				height: 250px;
+				position: relative;
+				padding: 0;
+
+				img {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					@include translate(-50%, -50%);
+				}
+			}
+		}
+
+		.icon-move {
+			float: left;
+			line-height: $unit;
+			padding-left: $relatedMargin + $tightMargin;
+		}
+
+		.tags {
+			.neos-label {
+				background-color: $textSubtle;
+			}
+		}
+
 		.neos-action {
 			width: 10%;
+			font-size: 0;
+			text-align: right;
 
-			form {
-				text-align: right;
+			.neos-modal {
+				text-align: left;
 			}
 		}
 	}
@@ -379,6 +829,10 @@
 				cursor: pointer;
 			}
 
+			.icon-move {
+				cursor: move;
+			}
+
 			.neos-action {
 				display: none;
 			}
@@ -388,8 +842,32 @@
 	.neos-upload-area {
 		text-align: center;
 		padding: $wideMargin;
-		border: 2px dashed $grayLight;
+		border: 1px dashed $grayLight;
 		margin-bottom: $wideMargin;
+		cursor: pointer;
+
+		&.neos-upload-area-active {
+			border-color: #fff;
+
+			i {
+				display: inline;
+			}
+
+			span {
+				display: none;
+			}
+		}
+
+		&.neos-upload-area-hover {
+			border-style: solid;
+			background-color: $blue;
+		}
+
+		i {
+			display: none;
+			vertical-align: baseline;
+			padding-left: $tightMargin;
+		}
 
 		#resource {
 			display: none;
@@ -398,20 +876,37 @@
 		&:hover {
 			border-color: $blue;
 		}
+	}
 
-		> span {
-			display: block;
+	#filelist {
+		margin-bottom: $wideMargin;
+
+		.progress {
+			background-color: $grayMedium;
+			border: 1px solid $grayLight;
+			width: 100%;
+			height: $unit;
 			margin-bottom: $relatedMargin;
-			color: $textSubtleLight;
+			position: relative;
 
-			&:first-child {
-				color: #fff;
+			.label {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				line-height: $unit;
+				text-align: center;
+			}
+
+			.bar {
+				background-color: $blue;
+				height: $unit;
 			}
 		}
+	}
 
-		label {
-			margin-bottom: 0;
-		}
+	#uploader .plupload {
+		display: none;
 	}
 
 	#resource {

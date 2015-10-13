@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,7 +32,7 @@ abstract class AbstractNodeData
     /**
      * Properties of this Node
      *
-     * @ORM\Column(type="objectarray")
+     * @ORM\Column(type="flow_json_array")
      * @var array<mixed>
      */
     protected $properties = array();
@@ -49,6 +50,21 @@ abstract class AbstractNodeData
      * @var string
      */
     protected $nodeType = 'unstructured';
+
+    /**
+     * @var \DateTime
+     */
+    protected $creationDateTime;
+
+    /**
+     * @var \DateTime
+     */
+    protected $lastModificationDateTime;
+
+    /**
+     * @var \DateTime
+     */
+    protected $lastPublicationDateTime;
 
     /**
      * If this node is hidden, it is not shown in a public place
@@ -81,6 +97,7 @@ abstract class AbstractNodeData
     /**
      * List of role names which are required to access this node at all
      *
+     * @ORM\Column(type="json_array")
      * @var array<string>
      */
     protected $accessRoles = array();
@@ -93,9 +110,24 @@ abstract class AbstractNodeData
 
     /**
      * @Flow\Inject
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
      * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * Constructs this node data container
+     */
+    public function __construct()
+    {
+        $this->creationDateTime = new \DateTime();
+        $this->lastModificationDateTime = new \DateTime();
+    }
 
     /**
      * Sets the specified property.
@@ -133,15 +165,37 @@ abstract class AbstractNodeData
                     $value = $nodeIdentifier;
                     break;
             }
+
+            $this->persistRelatedEntities($value);
+
             if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
                 return;
             }
+
             $this->properties[$propertyName] = $value;
+
             $this->addOrUpdate();
         } elseif (ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
             $contentObject = $this->contentObjectProxy->getObject();
             ObjectAccess::setProperty($contentObject, $propertyName, $value);
             $this->updateContentObject($contentObject);
+        }
+    }
+
+    /**
+     * Checks if a property value contains an entity and persists it.
+     *
+     * @param mixed $value
+     */
+    protected function persistRelatedEntities($value)
+    {
+        if (!is_array($value) && !$value instanceof \Iterator) {
+            $value = array($value);
+        }
+        foreach ($value as $element) {
+            if (is_object($element) && $element instanceof PersistenceMagicInterface) {
+                $this->persistenceManager->isNewObject($element) ? $this->persistenceManager->add($element) : $this->persistenceManager->update($element);
+            }
         }
     }
 
@@ -169,71 +223,18 @@ abstract class AbstractNodeData
      * there if it is gettable.
      *
      * @param string $propertyName Name of the property
-     * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
-     * @param \TYPO3\TYPO3CR\Domain\Service\Context $context An optional Context if $returnNodesAsIdentifiers === TRUE
      * @return mixed value of the property
      * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
      */
-    public function getProperty($propertyName, $returnNodesAsIdentifiers = false, \TYPO3\TYPO3CR\Domain\Service\Context $context = null)
+    public function getProperty($propertyName)
     {
         if (!is_object($this->contentObjectProxy)) {
             $value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : null;
             if (!empty($value)) {
-                // TODO: The next two lines are workarounds, actually a NodeData cannot correctly return references but should always return identifier. Node should then apply the context and return the real Node objects.
-                $dimensions = $context !== null ? $context->getDimensions() : array();
-                $workspace = $context !== null ? $context->getWorkspace() : $this->getWorkspace();
-                switch ($this->getNodeType()->getPropertyType($propertyName)) {
-                    case 'references' :
-                        $nodeDatas = array();
-                        if (!is_array($value)) {
-                            $value = array();
-                        }
-                        $valueNeedsToBeFixed = false;
-                        foreach ($value as $nodeIdentifier) {
-                            // in cases where a reference is a NodeData instance, fix this
-                            if ($nodeIdentifier instanceof NodeData) {
-                                $nodeIdentifier = $nodeIdentifier->getIdentifier();
-                                $valueNeedsToBeFixed = true;
-                            }
-                            if ($returnNodesAsIdentifiers === false) {
-                                $nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $workspace, $dimensions);
-                                if ($nodeData instanceof NodeData) {
-                                    $nodeDatas[] = $nodeData;
-                                }
-                            } else {
-                                $nodeDatas[] = $nodeIdentifier;
-                            }
-                        }
-                        if ($valueNeedsToBeFixed === true) {
-                            $fixedValue = array();
-                            foreach ($value as $nodeIdentifier) {
-                                if ($nodeIdentifier instanceof NodeData) {
-                                    $fixedValue[] = $nodeIdentifier->getIdentifier();
-                                } else {
-                                    $fixedValue[] = $nodeIdentifier;
-                                }
-                            }
-                            $this->properties[$propertyName] = $fixedValue;
-                            $this->addOrUpdate();
-                        }
-                        $value = $nodeDatas;
-                        break;
-                    case 'reference' :
-                        // in cases where a reference is a NodeData instance, fix this
-                        if ($value instanceof NodeData) {
-                            $value = $value->getIdentifier();
-                            $this->properties[$propertyName] = $value;
-                            $this->addOrUpdate();
-                        }
-                        if ($returnNodesAsIdentifiers === false) {
-                            $nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $workspace, $dimensions);
-                            if ($nodeData instanceof NodeData) {
-                                $value = $nodeData;
-                            } else {
-                                $value = null;
-                            }
-                        }
-                        break;
+                if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
+                    if (!is_array($value)) {
+                        $value = array();
+                    }
                 }
             }
             return $value;
@@ -271,11 +272,9 @@ abstract class AbstractNodeData
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
-     * @param \TYPO3\TYPO3CR\Domain\Service\Context $context An optional Context if $returnNodesAsIdentifiers === TRUE
      * @return array Property values, indexed by their name
      */
-    public function getProperties($returnNodesAsIdentifiers = false, \TYPO3\TYPO3CR\Domain\Service\Context $context = null)
+    public function getProperties()
     {
         if (is_object($this->contentObjectProxy)) {
             return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
@@ -283,7 +282,7 @@ abstract class AbstractNodeData
 
         $properties = array();
         foreach (array_keys($this->properties) as $propertyName) {
-            $properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers, $context);
+            $properties[$propertyName] = $this->getProperty($propertyName);
         }
         return $properties;
     }
@@ -364,6 +363,39 @@ abstract class AbstractNodeData
     public function getNodeType()
     {
         return $this->nodeTypeManager->getNodeType($this->nodeType);
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreationDateTime()
+    {
+        return $this->creationDateTime;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastModificationDateTime()
+    {
+        return $this->lastModificationDateTime;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastPublicationDateTime()
+    {
+        return $this->lastPublicationDateTime;
+    }
+
+    /**
+     * @param \DateTime $lastPublicationDateTime
+     * @return void
+     */
+    public function setLastPublicationDateTime(\DateTime $lastPublicationDateTime = null)
+    {
+        $this->lastPublicationDateTime = $lastPublicationDateTime;
     }
 
     /**

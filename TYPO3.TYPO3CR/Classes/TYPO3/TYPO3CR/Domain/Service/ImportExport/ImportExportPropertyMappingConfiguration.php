@@ -12,8 +12,10 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  */
 
 
+use TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
+use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\StringConverter;
 use TYPO3\Flow\Resource\ResourceTypeConverter;
@@ -72,6 +74,9 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
             return $this->resourceLoadSavePath;
         }
 
+        if ($typeConverterClassName === 'TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter' && $key === ArrayTypeConverter::CONFIGURATION_CONVERT_ELEMENTS) {
+            return true;
+        }
 
         // needed in IMPORT
         if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter' && $key === PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED) {
@@ -79,6 +84,10 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
         }
 
         if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter' && $key === PersistentObjectConverter::CONFIGURATION_IDENTITY_CREATION_ALLOWED) {
+            return true;
+        }
+
+        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ObjectConverter' && $key === ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
             return true;
         }
 
@@ -144,6 +153,10 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
      */
     public function getTargetPropertyName($sourcePropertyName)
     {
+        // TODO: This if statement is necessary for smooth migration to the new resource/media management. "originalImage" is deprecated, this can be removed in 3 versions.
+        if ($sourcePropertyName === 'originalImage') {
+            return 'originalAsset';
+        }
         return $sourcePropertyName;
     }
 

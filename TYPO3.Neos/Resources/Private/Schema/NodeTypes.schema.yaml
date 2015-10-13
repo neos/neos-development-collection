@@ -18,7 +18,9 @@ additionalProperties:
 
               'label': { type: string, description: "Human-readable label for this property." }
 
-              'reloadIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
+              'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
+
+              'reloadPageIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
 
               'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
 
@@ -153,6 +155,25 @@ additionalProperties:
                   'tab': { type: string, description: "Reference to a tab identifier." }
 
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
+
+                  'collapsed': { type: boolean, description: 'If TRUE, the group in the inspector panel is collapsed by default.' }
+
+            'views':
+              type: dictionary
+              additionalProperties:
+
+                # for each inspector view:
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'label': { type: string, description: "Human-readable label for this view." }
+
+                  'group': { type: string, description: "Name of the group this view is grouped into" }
+
+                  'view': { type: string, description: "The view implementation" }
+
+                  'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
 
         'search':
           type: dictionary

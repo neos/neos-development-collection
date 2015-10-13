@@ -5,8 +5,9 @@ define(
 		'Shared/LocalStorage',
 		'./MenuPanelController',
 		'Shared/EventDispatcher',
+		'Shared/I18n',
 		'text!./MenuPanel.html'
-	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, template) {
+	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, I18n, template) {
 
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
@@ -72,7 +73,7 @@ define(
 				}.property('controller.menuPanelStickyMode'),
 
 				title: function() {
-					return this.get('shouldShowDescription') ? this.get('description') : this.get('label');
+					return I18n.translate(this.get('shouldShowDescription') ? this.get('description') : this.get('label'));
 				}.property('description', 'label', 'shouldShowDescription')
 			}),
 

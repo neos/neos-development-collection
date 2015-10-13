@@ -2,11 +2,12 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
+	'Shared/I18n',
 	'text!./DateTimeEditor.html'
 ],
-function (Ember, $, template) {
+function (Ember, $, I18n, template) {
 	return Ember.View.extend({
-		attributeBindings: ['placeholder', 'name', 'value'],
+		attributeBindings: ['name', 'value'],
 		value: '',
 		hrValue: '',
 		_timeOnly: false,
@@ -55,7 +56,10 @@ function (Ember, $, template) {
 		/**
 		 * The placeholder shown when no date is selected
 		 */
-		placeholder: 'No date set',
+		placeholder: '',
+		_placeholder: function() {
+			return I18n.translate(this.get('placeholder'), 'No date set');
+		}.property('placeholder'),
 
 		/**
 		 * The DOM element the datetimepicker is bound to

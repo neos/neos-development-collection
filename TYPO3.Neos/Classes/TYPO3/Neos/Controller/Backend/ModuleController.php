@@ -14,6 +14,10 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use TYPO3\Neos\Controller\Exception\DisabledModuleException;
 
 /**
  * The TYPO3 Module
@@ -22,6 +26,8 @@ use TYPO3\Flow\Http\Response;
  */
 class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
+    use BackendUserTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Flow\Mvc\Dispatcher
@@ -42,7 +48,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
     /**
      * @param array $module
-     * @return void
+     * @return mixed
      */
     public function indexAction(array $module)
     {
@@ -50,6 +56,9 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
         $moduleRequest->setArgumentNamespace('moduleArguments');
         $moduleRequest->setControllerObjectName($module['controller']);
         $moduleRequest->setControllerActionName($module['action']);
+        if (isset($module['format'])) {
+            $moduleRequest->setFormat($module['format']);
+        }
         if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === true && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))) {
             $moduleRequest->setArguments($this->request->getArgument($moduleRequest->getArgumentNamespace()));
         }
@@ -59,14 +68,18 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
         $modules = explode('/', $module['module']);
 
-        $moduleConfiguration = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
+        $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
         $moduleConfiguration['path'] = $module['module'];
+
+        if (!$this->menuHelper->isModuleEnabled($moduleConfiguration['path'])) {
+            throw new DisabledModuleException(sprintf('The module "%s" is disabled. You can enable it with the "enabled" flag in Settings.yaml.', $module['module']), 1437148922);
+        }
 
         $moduleBreadcrumb = array();
         $path = array();
         foreach ($modules as $moduleIdentifier) {
             array_push($path, $moduleIdentifier);
-            $config = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
+            $config = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
             $moduleBreadcrumb[implode('/', $path)] = $config;
         }
 
@@ -78,6 +91,12 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
         if ($moduleResponse->hasHeader('Location')) {
             $this->redirectToUri($moduleResponse->getHeader('Location'));
+        } elseif ($moduleRequest->getFormat() !== 'html') {
+            $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
+            if ($mediaType !== 'application/octet-stream') {
+                $this->controllerContext->getResponse()->setHeader('Content-Type', $mediaType);
+            }
+            return $moduleResponse->getContent();
         } else {
             $user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 

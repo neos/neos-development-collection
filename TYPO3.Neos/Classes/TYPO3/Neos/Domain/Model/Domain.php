@@ -43,7 +43,7 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
      *
      * @var boolean
      */
-    protected $active = false;
+    protected $active = true;
 
     /**
      * Sets the pattern for the host of the domain

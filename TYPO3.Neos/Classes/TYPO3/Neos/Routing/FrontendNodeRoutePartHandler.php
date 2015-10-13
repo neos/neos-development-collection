@@ -19,9 +19,11 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use TYPO3\Neos\Routing\Exception\InvalidRequestPathException;
 use TYPO3\Neos\Routing\Exception\NoSuchDimensionValueException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -140,7 +142,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $contentContext = $this->buildContextFromRequestPath($requestPath);
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
 
-        $workspace = $contentContext->getWorkspace(false);
+        $workspace = $contentContext->getWorkspace();
         if ($workspace === null) {
             throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
@@ -193,7 +195,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if (is_string($node)) {
             $nodeContextPath = $node;
             $contentContext = $this->buildContextFromContextPath($nodeContextPath);
-            if ($contentContext->getWorkspace(false) === null) {
+            if ($contentContext->getWorkspace() === null) {
                 return false;
             }
             $nodePath = $this->removeContextFromPath($nodeContextPath);
@@ -238,13 +240,16 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildContextFromRequestPath(&$requestPath)
     {
+        $workspaceName = 'live';
         $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($requestPath);
 
-        $contextPathParts = array();
-        if ($requestPath !== '' && strpos($requestPath, '@') !== false) {
-            preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $requestPath, $contextPathParts);
+        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
+            try {
+                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
+                $workspaceName = $nodePathAndContext['workspaceName'];
+            } catch (\InvalidArgumentException $exception) {
+            }
         }
-        $workspaceName = isset($contextPathParts['WorkspaceName']) && $contextPathParts['WorkspaceName'] !== '' ? $contextPathParts['WorkspaceName'] : 'live';
 
         return $this->buildContextFromWorkspaceNameAndDimensions($workspaceName, $dimensionsAndDimensionValues);
     }
@@ -259,17 +264,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildContextFromPath($path, $convertLiveDimensions)
     {
-        $contextPathParts = array();
-        if ($path !== '' && strpos($path, '@') !== false) {
-            preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
-        }
-        $workspaceName = isset($contextPathParts['WorkspaceName']) && $contextPathParts['WorkspaceName'] !== '' ? $contextPathParts['WorkspaceName'] : 'live';
-
+        $workspaceName = 'live';
         $dimensions = null;
-        if (($workspaceName !== 'live' || $convertLiveDimensions === true) && isset($contextPathParts['Dimensions'])) {
-            $dimensions = $this->contextFactory->parseDimensionValueStringToArray($contextPathParts['Dimensions']);
-        }
 
+        if ($path !== '' && NodePaths::isContextPath($path)) {
+            $nodePathAndContext = NodePaths::explodeContextPath($path);
+            $workspaceName = $nodePathAndContext['workspaceName'];
+            $dimensions = ($workspaceName !== 'live' || $convertLiveDimensions === true) ? $nodePathAndContext['dimensions'] : null;
+        }
         return $this->buildContextFromWorkspaceName($workspaceName, $dimensions);
     }
 
@@ -308,12 +310,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function removeContextFromPath($path)
     {
-        if ($path === '' || strpos($path, '@') === false) {
+        if ($path === '' || NodePaths::isContextPath($path) === false) {
             return $path;
         }
-        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
-        if (isset($contextPathParts['NodePath'])) {
-            return $contextPathParts['NodePath'];
+        try {
+            $nodePathAndContext = NodePaths::explodeContextPath($path);
+            return $nodePathAndContext['nodePath'];
+        } catch (\InvalidArgumentException $exception) {
         }
 
         return null;
@@ -436,6 +439,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         $dimensionsAndDimensionValues = array();
+        $chosenDimensionPresets = array();
         $matches = array();
 
         preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
@@ -443,6 +447,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if (!isset($matches['dimensionPresetUriSegments'])) {
             foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
                 $dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
+                $chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
             }
         } else {
             $dimensionPresetUriSegments = explode('_', $matches['dimensionPresetUriSegments']);
@@ -458,9 +463,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                     throw new NoSuchDimensionValueException(sprintf('Could not find a preset for content dimension "%s" through the given URI segment "%s".', $dimensionName, $uriSegment), 1413389321);
                 }
                 $dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
+                $chosenDimensionPresets[$dimensionName] = $preset['identifier'];
             }
 
             $requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
+        }
+
+        if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
+            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', 'x'), 1428657721);
         }
 
         return $dimensionsAndDimensionValues;

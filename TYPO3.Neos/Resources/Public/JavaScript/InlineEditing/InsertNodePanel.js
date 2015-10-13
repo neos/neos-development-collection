@@ -8,6 +8,8 @@ define(
 	'Shared/Configuration',
 	'Content/Model/NodeActions',
 	'Shared/NodeTypeService',
+	'InlineEditing/ContentCommands',
+	'Shared/I18n',
 	'LibraryExtensions/Mousetrap'
 ],
 function(
@@ -18,18 +20,26 @@ function(
 	ContentModule,
 	Configuration,
 	NodeActions,
-	NodeTypeService
+	NodeTypeService,
+	ContentCommands,
+	I18n
 ) {
 	return AbstractInsertNodePanel.extend({
 		_node: null,
-		_index: null,
+		_position: null,
 
 		nodeTypeGroups: function() {
 			var groups = {},
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				$collectionElement = this.get('_node._vieEntity._enclosingCollectionWidget').element,
-				// $collectionElement is currently *ALWAYS* autocreated!!!
-				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.data('node-__parent-node-type'), $collectionElement.data('node-_name'));
+				node = this.get('_node'),
+				position = this.get('_position'),
+				types;
+
+			if (position === 'into') {
+				types = ContentCommands.getAllowedChildNodeTypesForNode(node);
+			} else {
+				types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
+			}
 
 			types = _.map(types, function(nodeType) {
 				return 'typo3:' + nodeType;
@@ -43,8 +53,8 @@ function(
 					return;
 				}
 
-				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
-				if (!contentTypes.hasOwnProperty(type.metadata.nodeType)) {
+				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(namespace, '');
+				if (!contentTypes.hasOwnProperty(nodeTypeName)) {
 					return;
 				}
 
@@ -57,8 +67,8 @@ function(
 						};
 					}
 					groups[type.metadata.ui.group].nodeTypes.push({
-						'nodeType': type.id.substring(1, type.id.length - 1).replace(namespace, ''),
-						'label': type.metadata.ui.label,
+						'nodeType': nodeTypeName,
+						'label': I18n.translate(type.metadata.ui.label),
 						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 						'position': type.metadata.ui.position
 					});
@@ -72,7 +82,7 @@ function(
 					groups[group.name].nodeTypes.sort(function(a, b) {
 						return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 					});
-					groups[group.name].label = group.label;
+					groups[group.name].label = I18n.translate(group.label);
 					data.push(groups[group.name]);
 				}
 			});
@@ -80,13 +90,22 @@ function(
 			return data;
 		}.property(),
 
+		/**
+		 * @param {string} nodeType
+		 */
 		insertNode: function(nodeType) {
-			NodeActions.set('_elementIsAddingNewContent', this.get('_node.nodePath'));
-
-			this.get('_node._vieEntity._enclosingCollectionWidget').options.collection.add({
-				'@type': 'typo3:' + nodeType
-			}, {at: this.get('_index')});
-
+			var referenceNode = this.get('_node');
+			switch (this.get('_position')) {
+				case 'before':
+					NodeActions.addAbove(nodeType, referenceNode);
+				break;
+				case 'after':
+					NodeActions.addBelow(nodeType, referenceNode);
+				break;
+				case 'into':
+					NodeActions.addInside(nodeType, referenceNode);
+				break;
+			}
 			this.destroy();
 		}
 	});

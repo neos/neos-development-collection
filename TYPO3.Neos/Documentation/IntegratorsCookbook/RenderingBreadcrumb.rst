@@ -1,5 +1,0 @@
-======================
-Rendering a Breadcrumb
-======================
-
-(Christian)

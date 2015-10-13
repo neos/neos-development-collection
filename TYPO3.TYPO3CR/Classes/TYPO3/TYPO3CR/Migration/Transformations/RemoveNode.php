@@ -33,6 +33,5 @@ class RemoveNode extends AbstractTransformation
     public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
     {
         $node->setRemoved(true);
-        $this->nodeDataRepository->remove($node);
     }
 }

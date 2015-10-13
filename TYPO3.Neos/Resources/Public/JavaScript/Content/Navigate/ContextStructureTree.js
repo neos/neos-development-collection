@@ -16,6 +16,7 @@ define(
 	'../Model/NodeSelection',
 	'../Model/PublishableNodes',
 	'./NavigatePanelController',
+	'Shared/I18n',
 	'text!./ContextStructureTree.html'
 ], function(
 	Ember,
@@ -31,6 +32,7 @@ define(
 	NodeSelection,
 	PublishableNodes,
 	NavigatePanelController,
+	I18n,
 	template
 ) {
 	var documentMetadata = $('#neos-document-metadata');
@@ -43,9 +45,29 @@ define(
 		baseNodeType: '!TYPO3.Neos:Document',
 		treeSelector: '#neos-context-structure-tree',
 		loadingDepth: 0,
-		unmodifiableLevels: 2,
+		desiredNewPosition: 'inside',
+		desiredPastePosition: 'inside',
 
 		publishableNodes: PublishableNodes,
+
+		_getAllowedChildNodeTypesForNode: function(node) {
+			if (node.data.isAutoCreated) {
+				var types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(node.parent.data.nodeType, node.data.name);
+			} else {
+				var types = NodeTypeService.getAllowedChildNodeTypes(node.data.nodeType);
+			}
+
+			if (types) {
+				var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+					contentTypesArray = Object.keys(contentTypes),
+					filteredTypes = types.filter(function(n) {
+						return contentTypesArray.indexOf(n) != -1;
+					});
+				return filteredTypes;
+			} else {
+				return [];
+			}
+		},
 
 		init: function() {
 			this._super();
@@ -67,22 +89,6 @@ define(
 			siteNode.fromDict({key: this.get('pageNodePath'), title: pageTitle});
 			this.refresh();
 		}.observes('pageNodePath'),
-
-		pasteIsActive: function() {
-			if (this.get('activeNode') && NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:Document')) {
-				return false;
-			}
-			return this.get('cutNode') !== null || this.get('copiedNode') !== null;
-		}.property('activeNode', 'cutNode', 'copiedNode'),
-
-		/**
-		 * The condition on NodeType is to prevent modification of ContentCollections as the Workspaces module / publishing are not
-		 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
-		 * is inside a moved Collection.
-		 */
-		currentFocusedNodeCanBeModified: function() {
-			return (this.get('activeNode') && (this.get('activeNode').getLevel() <= this.get('unmodifiableLevels') || NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:ContentCollection')));
-		}.property('activeNode'),
 
 		isExpanded: function() {
 			return NavigatePanelController.get('contextStructureMode');
@@ -124,7 +130,8 @@ define(
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(documentMetadata)),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath,
-				documentNodeType = (page ? page.get('typo3:_nodeType'): 'TYPO3.Neos.NodeTypes:Page'); // TODO: This fallback to TYPO3.Neos.NodeTypes:Page should go away, but currently in some rare cases "page" is not yet initialized. In order to fix this loading order issue, we need to re-structure the tree, though.
+				nodeType = documentMetadata.attr('typeof').substr(6),
+				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
 
 			this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 				parent: this,
@@ -138,35 +145,16 @@ define(
 						select: false,
 						active: false,
 						unselectable: true,
-						nodeType: documentNodeType,
+						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3-neos-page',
 						iconClass: 'icon-sitemap'
 					}
 				],
-				dnd: {
-					onDragStart: function(node) {
-						/**
-						 * This is to prevent changing of ContentCollections as the Workspaces module / publishing are not
-						 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
-						 * is inside a moved Collection.
-						 */
-						return !NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection');
-					}
-				},
 
 				onClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null) {
-						var nodePath = node.data.key,
-							offsetFromTop = 150,
-							$element = $('[about="' + nodePath + '"]');
-
-						// Prevent errors if the element cannot be found on the page
-						if ($element.length > 0) {
-							NodeSelection.updateSelection($element);
-							$('html, body').animate({
-								scrollTop: $element.offset().top - offsetFromTop
-							}, 500);
-						}
+						this.options.parent._selectNode(node);
 					}
 				},
 
@@ -179,6 +167,17 @@ define(
 					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
 						$(nodeSpan).addClass('neos-dynatree-dirty');
 					}
+				},
+
+				onCustomRender: function(node) {
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel),
+						tooltip = node.data.title;
+
+					if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
+						tooltip += ' (' + nodeTypeLabel + ')';
+					}
+					node.data.tooltip = tooltip;
+					return null;
 				}
 			}));
 
@@ -187,19 +186,31 @@ define(
 			this._initializePropertyObservers(documentMetadata);
 		},
 
+		_selectNode: function(node) {
+			var nodePath = node.data.key,
+				$element = $('[about="' + nodePath + '"]');
+			// Prevent errors if the element cannot be found on the page
+			if ($element.length > 0) {
+				NodeSelection.updateSelection($element, {scrollToElement: true, deselectEditables: true});
+			}
+		},
+
 		afterDeleteNode: function() {
 			ContentModule.reloadPage();
 		},
 
-		afterPersistNode: function() {
+		afterPersistNode: function(newNode) {
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 
-		afterPaste: function() {
+		afterPaste: function(newNode) {
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 
-		afterMove: function() {
+		afterMove: function(newNode) {
+			this._selectElementAfterPageReload(newNode);
 			ContentModule.reloadPage();
 		},
 

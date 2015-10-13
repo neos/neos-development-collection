@@ -48,7 +48,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      *
      * TODO: Implement a better search when Flow offer the possibility
      *
-     * @param string $term
+     * @param string|array $term search term
      * @param array $searchNodeTypes
      * @param Context $context
      * @param NodeInterface $startingPoint
@@ -56,7 +56,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      */
     public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
     {
-        if (strlen($term) === 0) {
+        if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $searchResult = array();

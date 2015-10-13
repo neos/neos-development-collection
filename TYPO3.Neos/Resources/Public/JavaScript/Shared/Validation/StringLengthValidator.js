@@ -3,16 +3,17 @@
  */
 define(
 	[
-		'./AbstractValidator'
+		'./AbstractValidator',
+		'Shared/I18n'
 	],
-	function(AbstractValidator) {
+	function(AbstractValidator, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * @var {object}
 			 */
 			supportedOptions: {
 				'minimum': [0, 'Minimum length for a valid string', 'integer'],
-				'maximum': [Number.MAX_VALUE, 'Maximum length for a valid string', 'integer']
+				'maximum': [10000, 'Maximum length for a valid string', 'integer']
 			},
 
 			/**
@@ -24,20 +25,20 @@ define(
 			 * @return {void}
 			 */
 			isValid: function(value) {
-				var minimum = parseInt(this.get('options.minimum'), 10),
-					maximum = parseInt(this.get('options.maximum'), 10);
+				var minimum = parseInt(this.get('options.minimum'), 0),
+					maximum = parseInt(this.get('options.maximum'), 10000);
 				if (maximum < minimum) {
 					throw 'The maximum is less than the minimum.';
 				}
 
 				var stringLength = value.toString().length;
 				if (stringLength < minimum || stringLength > maximum) {
-					if (minimum > 0 && maximum < Number.MAX_VALUE) {
-						this.addError('The length of this text must be between ' + minimum + ' and ' + maximum + ' characters.');
+					if (minimum > 0 && maximum < 10000) {
+						this.addError(I18n.translate('content.inspector.validators.stringLength.outOfBounds', null, null, null, {minimum: minimum, maximum: maximum}));
 					} else if (minimum > 0) {
-						this.addError('This field must contain at least ' + minimum + ' characters.');
+						this.addError(I18n.translate('content.inspector.validators.stringLength.smallerThanMinimum', null, null, null, {minimum: minimum}));
 					} else {
-						this.addError('This text may not exceed ' + maximum + ' characters.');
+						this.addError(I18n.translate('content.inspector.validators.stringLength.greaterThanMaximum', null, null, null, {minimum: minimum}));
 					}
 				}
 			}

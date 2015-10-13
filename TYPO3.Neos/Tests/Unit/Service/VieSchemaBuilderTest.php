@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -57,18 +56,18 @@ class VieSchemaBuilderTest extends UnitTestCase
             )
         ),
         'TYPO3.Neos:MyFinalType' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject'),
+            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
             'final' => true
         ),
         'TYPO3.Neos:AbstractType' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject'),
+            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
             'ui' => array(
                 'label' => 'Abstract type',
             ),
             'abstract' => true
         ),
         'TYPO3.Neos:Text' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject'),
+            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
             'ui' => array(
                 'label' => 'Text',
             ),
@@ -85,7 +84,7 @@ class VieSchemaBuilderTest extends UnitTestCase
             'inlineEditableProperties' => array('headline', 'text')
         ),
         'TYPO3.Neos:TextWithImage' => array(
-            'superTypes' => array('TYPO3.Neos:Text'),
+            'superTypes' => array('TYPO3.Neos:Text' => true),
             'ui' => array(
                 'label' => 'Text with image',
             ),

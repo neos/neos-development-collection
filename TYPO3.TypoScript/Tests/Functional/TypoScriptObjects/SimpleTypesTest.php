@@ -42,7 +42,17 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest
         $view->setTypoScriptPath('simpleTypes/booleanFalse');
         $this->assertSame(false, $view->render());
         $view->setTypoScriptPath('simpleTypes/booleanTrue');
-        $this->assertSame(true, $view->render());
+        $this->assertTrue($view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function nullSimpleTypeWorks()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('simpleTypes/null');
+        $this->assertNull($view->render());
     }
 
     /**
@@ -53,6 +63,17 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest
         $view = $this->buildView();
         $view->setTypoScriptPath('simpleTypes/wrappedString');
         $this->assertSame('Hello, Foo', $view->render());
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
+     */
+    public function renderingObjectWithMissingImplementationThrowsException()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('simpleTypes/missingImplementation');
+        $view->render();
     }
 
     /**

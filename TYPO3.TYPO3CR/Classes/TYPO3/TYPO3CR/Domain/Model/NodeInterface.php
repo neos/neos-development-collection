@@ -299,10 +299,9 @@ interface NodeInterface
      * the path of a node manually may lead to unexpected behavior and bad breath.
      *
      * @param string $path
-     * @param boolean $recursive
      * @return void
      */
-    public function setPath($path, $recursive = true);
+    public function setPath($path);
 
     /**
      * Returns the path of this node
@@ -483,7 +482,7 @@ interface NodeInterface
     public function hasChildNodes($nodeTypeFilter = null);
 
     /**
-     * Removes this node and all its child nodes.
+     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
      *
      * @return void
      * @api
@@ -491,9 +490,9 @@ interface NodeInterface
     public function remove();
 
     /**
-     * Enables using the remove method when only setters are available.
+     * Removes this node and all its child nodes or sets ONLY this node to not being removed.
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+     * @param boolean $removed If TRUE, this node and it's child nodes will be removed or set to be not removed.
      * @return void
      * @api
      */
@@ -640,4 +639,14 @@ interface NodeInterface
      * @return boolean TRUE if this node is auto-created by the parent.
      */
     public function isAutoCreated();
+
+    /**
+     * Get other variants of this node (with different dimension values)
+     *
+     * A variant of a node can have different dimension values and path (for non-aggregate nodes).
+     * The resulting node instances might belong to a different context.
+     *
+     * @return array<NodeInterface> All node variants of this node (excluding the current node)
+     */
+    public function getOtherNodeVariants();
 }

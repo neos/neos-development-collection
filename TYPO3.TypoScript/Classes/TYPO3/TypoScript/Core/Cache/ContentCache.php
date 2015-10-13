@@ -1,20 +1,21 @@
 <?php
 namespace TYPO3\TypoScript\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\TypoScript\Exception;
-use \Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Proxy\Proxy;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
@@ -74,6 +75,12 @@ class ContentCache
      * @Flow\Inject
      */
     protected $propertyMapper;
+
+    /**
+     * @var Context
+     * @Flow\Inject
+     */
+    protected $securityContext;
 
     /**
      * Takes the given content and adds markers for later use as a cached content segment.
@@ -143,8 +150,9 @@ class ContentCache
                 throw new Exception\CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
             }
         }
+        $identifierSource .= 'securityContextHash=' . $this->securityContext->getContextHash();
 
-        return md5($typoScriptPath . '@' . rtrim($identifierSource, '&'));
+        return md5($typoScriptPath . '@' . $identifierSource);
     }
 
     /**

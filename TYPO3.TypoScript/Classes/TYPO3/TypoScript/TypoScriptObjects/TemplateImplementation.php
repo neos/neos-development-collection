@@ -95,7 +95,14 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
 
         $templatePath = $this->getTemplatePath();
         if ($templatePath === null) {
-            throw new \Exception(sprintf('Template path "%s" at path "%s"  not found', $templatePath, $this->path));
+            throw new \Exception(sprintf("
+				No template path set.
+				Most likely you didn't configure `templatePath` in your TypoScript object correctly.
+				For example you could add and adapt the following line to your TypoScript:
+				`prototype(%s) < prototype(TYPO3.TypoScript:Template) {
+					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
+				}`
+			", $templatePath, $this->typoScriptObjectName));
         }
         $fluidTemplate->setTemplatePathAndFilename($templatePath);
 
@@ -116,6 +123,9 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
         }
 
         foreach ($this->properties as $key => $value) {
+            if (in_array($key, $this->ignoreProperties)) {
+                continue;
+            }
             if (!is_array($value)) {
                 // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
                     // we can just evaluate it (to handle processors) and then assign it to the template.

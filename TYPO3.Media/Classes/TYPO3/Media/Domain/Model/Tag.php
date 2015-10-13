@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Model;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -29,13 +30,17 @@ class Tag
     protected $label;
 
     /**
-     * Constructs tag
-     *
-     * @param string
+     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\AssetCollection>
+     * @ORM\ManyToMany(mappedBy="tags", cascade={"persist"})
+     * @ORM\OrderBy({"title"="ASC"})
+     * @Flow\Lazy
      */
+    protected $assetCollections;
+
     public function __construct($label)
     {
         $this->label = $label;
+        $this->assetCollections = new ArrayCollection();
     }
 
     /**
@@ -57,5 +62,37 @@ class Tag
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * Return the asset collections this tag is included in
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssetCollections()
+    {
+        return $this->assetCollections;
+    }
+
+    /**
+     * Set the asset collections that include this tag
+     *
+     * @param \Doctrine\Common\Collections\Collection $assetCollections
+     * @return void
+     */
+    public function setAssetCollections(\Doctrine\Common\Collections\Collection $assetCollections)
+    {
+        foreach ($this->assetCollections as $existingAssetCollection) {
+            $existingAssetCollection->removeTag($this);
+        }
+        foreach ($assetCollections as $newAssetCollection) {
+            $newAssetCollection->addTag($this);
+        }
+        foreach ($this->assetCollections as $assetCollection) {
+            if (!$assetCollections->contains($assetCollection)) {
+                $assetCollections->add($assetCollection);
+            }
+        }
+        $this->assetCollections = $assetCollections;
     }
 }

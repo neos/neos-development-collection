@@ -59,6 +59,7 @@ class NodeDataTest extends UnitTestCase
 
         $this->mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
         $this->mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
+        $this->mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(true));
         $this->inject($this->nodeData, 'nodeTypeManager', $this->mockNodeTypeManager);
 
         $this->mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
@@ -327,6 +328,7 @@ class NodeDataTest extends UnitTestCase
     {
         /** @var NodeTypeManager|\PHPUnit_Framework_MockObject_MockObject $mockNodeTypeManager */
         $mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+        $mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(true));
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnCallback(
             function ($name) {
                 return new NodeType($name, array(), array()) ;
@@ -340,6 +342,25 @@ class NodeDataTest extends UnitTestCase
         $myNodeType = $mockNodeTypeManager->getNodeType('typo3:mycontent');
         $this->nodeData->setNodeType($myNodeType);
         $this->assertEquals($myNodeType, $this->nodeData->getNodeType());
+    }
+
+    /**
+     * @test
+     */
+    public function getNodeTypeReturnsFallbackNodeTypeForUnknownNodeType()
+    {
+        $mockFallbackNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+
+        $mockNonExistingNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+        $mockNonExistingNodeType->expects($this->atLeastOnce())->method('getName')->willReturn('definitelyNotAvailableNodeType');
+
+        /** @var NodeTypeManager|\PHPUnit_Framework_MockObject_MockObject $mockNodeTypeManager */
+        $mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+        $mockNodeTypeManager->expects($this->atLeastOnce())->method('getNodeType')->with('definitelyNotAvailableNodeType')->will($this->returnValue($mockFallbackNodeType));
+        $this->inject($this->nodeData, 'nodeTypeManager', $mockNodeTypeManager);
+        $this->inject($this->nodeData, 'nodeType', $mockNonExistingNodeType);
+
+        $this->assertSame($mockFallbackNodeType, $this->nodeData->getNodeType());
     }
 
     /**
@@ -395,21 +416,6 @@ class NodeDataTest extends UnitTestCase
     /**
      * @test
      */
-    public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist()
-    {
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPath', 'getContext'), array(), '', false);
-        $nodeDataRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $this->mockWorkspace)->will($this->returnValue(null));
-
-        $currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('normalizePath', 'getContext'), array('/foo/baz', $this->mockWorkspace));
-        $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
-        $currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
-
-        $this->assertNull($currentNode->getNode('/foo/quux'));
-    }
-
-    /**
-     * @test
-     */
     public function getChildNodeDataFindsUnreducedNodeDataChildren()
     {
         $childNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/bar', $this->mockWorkspace));
@@ -434,16 +440,13 @@ class NodeDataTest extends UnitTestCase
     /**
      * @test
      */
-    public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace()
+    public function removeFlagsTheNodeAsRemoved()
     {
         $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $baseWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
-
         $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
-        $workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue($baseWorkspace));
 
-        $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove', 'update'), array(), '', false);
+        $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('setRemoved', 'update'), array(), '', false);
         $this->inject($nodeDataRepository, 'entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
@@ -472,67 +475,13 @@ class NodeDataTest extends UnitTestCase
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
         $currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', null, array('/foo', $workspace));
+        $this->inject($currentNode, 'persistenceManager', $mockPersistenceManager);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
 
         $nodeDataRepository->expects($this->once())->method('remove');
+        $mockPersistenceManager->expects($this->once())->method('isNewObject')->with($currentNode)->willReturn(false);
 
         $currentNode->remove();
-    }
-
-    /**
-     * @test
-     */
-    public function setRemovedCallsRemoveMethodIfArgumentIsTrue()
-    {
-        $node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove', 'addOrUpdate'), array(), '', false);
-        $node->expects($this->once())->method('remove');
-        $node->setRemoved(true);
-    }
-
-    /**
-     * @param string $currentPath
-     * @param string $relativePath
-     * @param string $normalizedPath
-     * @test
-     * @dataProvider abnormalPaths
-     */
-    public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath)
-    {
-        $this->nodeData->_set('path', $currentPath);
-        $this->assertSame($normalizedPath, $this->nodeData->_call('normalizePath', $relativePath));
-    }
-
-    /**
-     * @return array
-     */
-    public function abnormalPaths()
-    {
-        return array(
-            array('/', '/', '/'),
-            array('/', '/.', '/'),
-            array('/', '.', '/'),
-            array('/', 'foo/bar', '/foo/bar'),
-            array('/foo', '.', '/foo'),
-            array('/foo', '/foo/.', '/foo'),
-            array('/foo', '../', '/'),
-            array('/foo/bar', '../baz', '/foo/baz'),
-            array('/foo/bar', '../baz/../bar', '/foo/bar'),
-            array('/foo/bar', '.././..', '/'),
-            array('/foo/bar', '../../.', '/'),
-            array('/foo/bar/baz', '../..', '/foo'),
-            array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
-            array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
-        );
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash()
-    {
-        $node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array(), '', false);
-        $node->_call('normalizePath', 'foo//bar');
     }
 
     /**

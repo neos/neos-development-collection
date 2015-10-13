@@ -28,7 +28,7 @@ define([
 		/**
 		 * The underlying VIE entity
 		 */
-		_vieEntity: null,
+		_vieEntity: Ember.required(),
 
 		/**
 		 * Triggered each time "publishable" and "modified" properties change.
@@ -66,6 +66,10 @@ define([
 		nodeType: function() {
 			return Entity.extractNodeTypeFromVieEntity(this.get('_vieEntity'));
 		}.property('_vieEntity').volatile(),
+
+		nodeTypeLabel: function() {
+			return this.get('nodeTypeSchema.ui.label');
+		}.property('nodeTypeSchema.ui.label'),
 
 		/**
 		 * @return {void}

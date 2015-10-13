@@ -11,10 +11,13 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
+use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
-use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
@@ -34,7 +37,7 @@ class NodeImportService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -52,6 +55,12 @@ class NodeImportService
      * @var \Doctrine\Common\Persistence\ObjectManager
      */
     protected $entityManager;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * @var ImportExportPropertyMappingConfiguration
@@ -106,6 +115,21 @@ class NodeImportService
         'dimensionsHash' => array(),
         'dimensionValues' => array(),
         'properties' => array(),
+        'hiddenBeforeDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
+        'hiddenAfterDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
+        'creationDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
+        'lastModificationDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
+        'lastPublicationDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
         'accessRoles' => array()
     );
 
@@ -146,7 +170,7 @@ class NodeImportService
      * @param \XMLReader $xmlReader The XML input to import - must be either XML as a string or a prepared \XMLReader instance containing XML data
      * @param string $targetPath path to the node which becomes parent of the root of the imported sub-tree
      * @param string $resourceLoadPath
-     * @throws \Exception
+     * @throws ImportException
      * @return void
      */
     public function import(\XMLReader $xmlReader, $targetPath, $resourceLoadPath = null)
@@ -159,7 +183,9 @@ class NodeImportService
         $formatVersion = $this->determineFormatVersion($xmlReader);
         switch ($formatVersion) {
             case self::SUPPORTED_FORMAT_VERSION:
-                $this->importSubtree($xmlReader);
+                $this->securityContext->withoutAuthorizationChecks(function () use ($xmlReader) {
+                    $this->importSubtree($xmlReader);
+                });
                 break;
             case null:
                 throw new ImportException('Failed to recognize format of the Node Data XML to import. Please make sure that you use a valid Node Data XML structure.', 1409059346);
@@ -182,7 +208,7 @@ class NodeImportService
             }
         }
 
-        if ($xmlReader->name == 'nodes' && $xmlReader->nodeType == \XMLReader::ELEMENT) {
+        if ($xmlReader->name === 'nodes' && $xmlReader->nodeType === \XMLReader::ELEMENT) {
             return $xmlReader->getAttribute('formatVersion');
         }
 
@@ -226,6 +252,7 @@ class NodeImportService
      *
      * @param \XMLReader $xmlReader The XML Reader with the element to be parsed as its root
      * @return void
+     * @throws ImportException
      */
     protected function parseElement(\XMLReader $xmlReader)
     {
@@ -244,6 +271,7 @@ class NodeImportService
                 $path = $this->getCurrentPath();
                 $parentPath = $this->getParentPath($path);
 
+                $now = new Now();
                 $currentNodeIdentifier = $this->nodeIdentifierStack[count($this->nodeIdentifierStack) - 1];
                 $this->nodeDataStack[] = array(
                     'Persistence_Object_Identifier' => Algorithms::generateUUID(),
@@ -261,6 +289,8 @@ class NodeImportService
                     'parentPathHash' => md5($parentPath),
                     'properties' => array(),
                     'accessRoles' => array(),
+                    'creationDateTime' => $now,
+                    'lastModificationDateTime' => $now,
                     'dimensionValues' => array() // is post-processed before save in END_ELEMENT-case
                 );
                 break;
@@ -272,6 +302,13 @@ class NodeImportService
                 break;
             case 'accessRoles':
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                break;
+            case 'hiddenBeforeDateTime':
+            case 'hiddenAfterDateTime':
+            case 'creationDateTime':
+            case 'lastModificationDateTime':
+            case 'lastPublicationDateTime':
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
                 break;
             default:
                 throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
@@ -297,7 +334,7 @@ class NodeImportService
                     $currentDimension = $reader->name;
                     break;
                 case \XMLReader::END_ELEMENT:
-                    if ($reader->name == 'dimensions') {
+                    if ($reader->name === 'dimensions') {
                         return $dimensions;
                     }
                     break;
@@ -317,13 +354,20 @@ class NodeImportService
      * @param \XMLReader $reader reader positioned just after an opening array-tag
      * @param string $elementName
      * @return array the array values
-     * @throws \Exception
      */
     protected function parseArrayElements(\XMLReader $reader, $elementName)
     {
         $values = array();
-        $currentKey = null;
         $depth = 0;
+
+        // The following silences static code analysis warnings about undefined variables.
+        // during runtime this doesn't happen, because the $reader must be at an ELEMENT,
+        // thus the variables would be defined in the first case block before they can be
+        // used.
+        $currentType = null;
+        $currentEncoding = null;
+        $currentClassName = null;
+        $currentIdentifier = null;
 
         do {
             switch ($reader->nodeType) {
@@ -336,7 +380,7 @@ class NodeImportService
                     $currentEncoding = $reader->getAttribute('__encoding');
                     break;
                 case \XMLReader::END_ELEMENT:
-                    if ($reader->name == $elementName) {
+                    if ($reader->name === $elementName) {
                         return $values;
                     }
                     break;
@@ -354,13 +398,15 @@ class NodeImportService
      *
      * @param \XMLReader $reader reader positioned just after an opening properties-tag
      * @return array the properties
-     * @throws \Exception
      */
     protected function parsePropertiesElement(\XMLReader $reader)
     {
         $properties = array();
         $currentProperty = null;
         $currentType = null;
+        $currentEncoding = null;
+        $currentClassName = null;
+        $currentIdentifier = null;
 
         while ($reader->read()) {
             switch ($reader->nodeType) {
@@ -392,7 +438,7 @@ class NodeImportService
                     }
                     break;
                 case \XMLReader::END_ELEMENT:
-                    if ($reader->name == 'properties') {
+                    if ($reader->name === 'properties') {
                         return $properties;
                     }
                     break;
@@ -415,6 +461,7 @@ class NodeImportService
      * @param string $currentClassName class name of element
      * @param string $currentIdentifier identifier of element
      * @return mixed
+     * @throws ImportException
      */
     protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier = '')
     {
@@ -424,12 +471,8 @@ class NodeImportService
                     $value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
                 } elseif ($currentEncoding === 'json') {
                     $value = $this->propertyMapper->convert(json_decode($reader->value, true), $currentClassName, $this->propertyMappingConfiguration);
-                    if ($currentIdentifier !== '') {
-                        ObjectAccess::setProperty($value, 'Persistence_Object_Identifier', $currentIdentifier, true);
-                    }
-                    $this->persistObjects($value);
                 } else {
-                    throw new \Exception(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
+                    throw new ImportException(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
                 }
                 break;
             case 'string':
@@ -441,31 +484,30 @@ class NodeImportService
                 return $value;
         }
 
+        $this->persistEntities($value);
         return $value;
     }
 
     /**
-     * This takes care of persisting the "embedded" objects in an ImageVariant
-     * not really nice, will hopefully go away with a rewritten resource handling.
+     * Checks if a propertyValue contains an entity and persists it.
      *
-     * @param object $value
+     * @param mixed $propertyValue
      * @return void
      */
-    protected function persistObjects($value)
+    protected function persistEntities($propertyValue)
     {
-        if ($value instanceof AssetInterface) {
-            if ($value instanceof ImageVariant) {
-                $value = $value->getOriginalImage();
-            }
+        if (!$propertyValue instanceof \Iterator && !is_array($propertyValue)) {
+            $propertyValue = array($propertyValue);
+        }
+        foreach ($propertyValue as $possibleEntity) {
+            if (is_object($possibleEntity) && $possibleEntity instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
+                $this->persistenceManager->isNewObject($possibleEntity) ? $this->persistenceManager->add($possibleEntity) : $this->persistenceManager->update($possibleEntity);
 
-            $existingResource = $this->persistenceManager->getObjectByIdentifier($this->persistenceManager->getIdentifierByObject($value->getResource()), 'TYPO3\Flow\Resource\Resource');
-            if ($existingResource === null || $this->persistenceManager->isNewObject($existingResource)) {
-                $this->persistenceManager->add($value->getResource());
-            }
-
-            $existingAsset = $this->persistenceManager->getObjectByIdentifier($this->persistenceManager->getIdentifierByObject($value), 'TYPO3\Media\Domain\Model\Asset');
-            if ($existingAsset === null || $this->persistenceManager->isNewObject($existingAsset)) {
-                $this->persistenceManager->add($value);
+                // TODO: Needed because the originalAsset will not cascade persist. We should find a generic solution to this.
+                if ($possibleEntity instanceof ImageVariant) {
+                    $asset = $possibleEntity->getOriginalAsset();
+                    $this->persistenceManager->isNewObject($asset) ? $this->persistenceManager->add($asset) : $this->persistenceManager->update($asset);
+                }
             }
         }
     }
@@ -475,10 +517,14 @@ class NodeImportService
      *
      * @param \XMLReader $reader
      * @return void
+     * @throws ImportException
      */
     protected function parseEndElement(\XMLReader $reader)
     {
         switch ($reader->name) {
+            case 'creationDateTime':
+            case 'lastModificationDateTime':
+            case 'lastPublicationDateTime':
             case 'accessRoles':
                 break;
             case 'node':
@@ -505,42 +551,34 @@ class NodeImportService
     }
 
     /**
-     * provides the path for a NodeData according to the current stacks
+     * Provides the path for a NodeData according to the current stacks
      *
      * @return string
      */
     protected function getCurrentPath()
     {
-        $path = join('/', $this->nodeNameStack);
-        if ($path == '') {
-            $path = '/';
-
-            return $path;
-        }
-
-        return $path;
+        $path = implode('/', $this->nodeNameStack);
+        return ($path === '') ? '/' : $path;
     }
 
     /**
-     * provides the parent of the given path
+     * Provides the parent of the given path
      *
      * @param string $path path to get parent for
      * @return string parent path
      */
     protected function getParentPath($path)
     {
-        if ($path == '/') {
+        if ($path === '/') {
             return '';
         }
-        if ($path != '/') {
-            $endIndex = strrpos($path, '/');
-            $index = strpos($path, '/');
-            // path is something like /nodeInRootSpace
-            if ($index == $endIndex) {
-                return '/';
-            } else { // node is something like /node/not/in/root/space
-                return substr($path, 0, $endIndex);
-            }
+        $endIndex = strrpos($path, '/');
+        $index = strpos($path, '/');
+        // path is something like /nodeInRootSpace
+        if ($index === $endIndex) {
+            return '/';
+        } else { // node is something like /node/not/in/root/space
+            return substr($path, 0, $endIndex);
         }
     }
 
@@ -551,12 +589,12 @@ class NodeImportService
      * it is replaced.
      *
      * @param array $nodeData node data to save as an associative array ( $column_name => $value )
-     * @throws \TYPO3\TYPO3CR\Exception\ImportException
+     * @throws ImportException
      * @return void
      */
     protected function persistNodeData($nodeData)
     {
-        if ($nodeData['workspace'] != 'live') {
+        if ($nodeData['workspace'] !== 'live') {
             throw new ImportException('Saving NodeData with workspace != "live" using direct SQL not supported yet. Workspace is "' . $nodeData['workspace'] . '".');
         }
         if ($nodeData['path'] === '/') {
@@ -569,27 +607,24 @@ class NodeImportService
 
         // prepare node dimensions
         $dimensionValues = $nodeData['dimensionValues'];
-        $dimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+        $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
 
-        $objectArrayDataTypeHandler = \TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::getType(\TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::OBJECTARRAY);
+        $jsonPropertiesDataTypeHandler = JsonArrayType::getType(JsonArrayType::FLOW_JSON_ARRAY);
 
         // post-process node data
         $nodeData['dimensionsHash'] = $dimensionsHash;
-        $nodeData['dimensionValues'] = $objectArrayDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
-        $nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
-        $nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
+        $nodeData['dimensionValues'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
+        $nodeData['properties'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
+        $nodeData['accessRoles'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['accessRoles'], $connection->getDatabasePlatform());
 
-        // cleanup old data
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->entityManager->getConnection();
-        $connection->prepare('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
+        $connection->executeQuery('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
             . ' WHERE nodedata IN ('
             . '   SELECT persistence_object_identifier FROM typo3_typo3cr_domain_model_nodedata'
             . '   WHERE identifier = :identifier'
             . '   AND workspace = :workspace'
             . '   AND dimensionshash = :dimensionsHash'
-            . ' )'
-        )->execute(array(
+            . ' )',
+        array(
             'identifier' => $nodeData['identifier'],
             'workspace' => $nodeData['workspace'],
             'dimensionsHash' => $nodeData['dimensionsHash']
@@ -615,10 +650,12 @@ class NodeImportService
         $queryArguments = array();
         $queryTypes = array();
         foreach ($this->nodeDataPropertyNames as $propertyName => $propertyConfig) {
-            $queryParts[$propertyName] = ':' . $propertyName;
-            $queryArguments[$propertyName] = $nodeData[$propertyName];
-            if (isset($propertyConfig['columnType'])) {
-                $queryTypes[$propertyName] = $propertyConfig['columnType'];
+            if (isset($nodeData[$propertyName])) {
+                $queryParts[$propertyName] = ':' . $propertyName;
+                $queryArguments[$propertyName] = $nodeData[$propertyName];
+                if (isset($propertyConfig['columnType'])) {
+                    $queryTypes[$propertyName] = $propertyConfig['columnType'];
+                }
             }
         }
         $connection->executeUpdate('INSERT INTO typo3_typo3cr_domain_model_nodedata (' . implode(', ', array_keys($queryParts)) . ') VALUES (' . implode(', ', $queryParts) . ')', $queryArguments, $queryTypes);

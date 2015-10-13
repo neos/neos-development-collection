@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Domain\Service\NodeSearchService;
 use TYPO3\Neos\Service\View\NodeView;
-use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -40,9 +39,20 @@ class NodeController extends AbstractServiceController
     protected $view;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
+    protected $viewFormatToObjectNameMap = array(
+        'html' => 'TYPO3\Neos\Service\View\NodeView',
+        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+    );
+
+    /**
+     * @var array
+     */
+    protected $supportedMediaTypes = array(
+        'text/html',
+        'application/json'
+    );
 
     /**
      * @Flow\Inject
@@ -91,6 +101,15 @@ class NodeController extends AbstractServiceController
             $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         $this->uriBuilder->setRequest($this->request->getMainRequest());
+        if (in_array($this->request->getControllerActionName(), array('update', 'updateAndRender'), true)) {
+            // Set PropertyMappingConfiguration for updating the node (and attached objects)
+            $propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
+            $propertyMappingConfiguration->allowOverrideTargetType();
+            $propertyMappingConfiguration->allowAllProperties();
+            $propertyMappingConfiguration->skipUnknownProperties();
+            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        }
     }
 
     #
@@ -129,9 +148,9 @@ class NodeController extends AbstractServiceController
             $nodes = array();
             $nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
             foreach ($nodeDataRecords as $nodeData) {
-                $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-                if ($node !== null) {
-                    $nodes[$node->getPath()] = $node;
+                $matchedNode = $this->nodeFactory->createFromNodeData($nodeData, $context);
+                if ($matchedNode !== null) {
+                    $nodes[$matchedNode->getPath()] = $matchedNode;
                 }
             }
         }
@@ -144,50 +163,39 @@ class NodeController extends AbstractServiceController
     /**
      * Creates a new node
      *
-     * We need to call persistEntities() in order to return the nextUri.
+     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * because they might be connected to images / resources which need to be updated at the same time.
      *
      * @param Node $referenceNode
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function createAction(Node $referenceNode, array $nodeData, $position)
     {
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
-        $this->nodeDataRepository->persistEntities();
+        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+            $this->persistenceManager->persistAll();
+        }
 
         $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
         $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
     }
 
     /**
-     * Creates a new node and renders the node inside the containing section
+     * Creates a new node and renders the node inside the containing content collection.
      *
      * @param Node $referenceNode
      * @param string $typoScriptPath The TypoScript path of the collection
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return string
-     * @throws \InvalidArgumentException
      */
     public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position)
     {
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-
-        $view = new TypoScriptView();
-        $this->controllerContext->getRequest()->setFormat('html');
-        $view->setControllerContext($this->controllerContext);
-        $view->setOption('enableContentCache', false);
-
-        $view->setTypoScriptPath($typoScriptPath);
-        $view->assign('value', $newNode->getParent());
-
-        $result = $view->render();
-        $this->response->setContent(json_encode((object)array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
-
-        return '';
+        $this->redirectToRenderNode($newNode, $typoScriptPath);
     }
 
     /**
@@ -198,7 +206,6 @@ class NodeController extends AbstractServiceController
      * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
      * @param string $nodeTypeFilter
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '')
     {
@@ -209,17 +216,21 @@ class NodeController extends AbstractServiceController
     /**
      * Move $node before, into or after $targetNode
      *
-     * @param Node $node
-     * @param Node $targetNode
+     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * because they might be connected to images / resources which need to be updated at the same time.
+     *
+     * @param Node $node The node to be moved
+     * @param Node $targetNode The target node to be moved "to", see $position
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
-     * @throws NodeException
      */
     public function moveAction(Node $node, Node $targetNode, $position)
     {
         $node = $this->nodeOperations->move($node, $targetNode, $position);
 
-        $this->nodeDataRepository->persistEntities();
+        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+            $this->persistenceManager->persistAll();
+        }
 
         $data = array('newNodePath' => $node->getContextPath());
         if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
@@ -229,12 +240,30 @@ class NodeController extends AbstractServiceController
     }
 
     /**
+     * Move the given node before, into or after the target node depending on the given position and renders it's content collection.
+     *
+     * @param Node $node The node to be moved
+     * @param Node $targetNode The target node to be moved "to", see $position
+     * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+     * @param string $typoScriptPath The TypoScript path of the collection
+     * @return void
+     */
+    public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
+    {
+        $this->nodeOperations->move($node, $targetNode, $position);
+        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+    }
+
+    /**
      * Copy $node before, into or after $targetNode
      *
-     * @param Node $node the node to be copied
-     * @param Node $targetNode the target node to be copied "to", see $position
-     * @param string $position where the node should be added in relation to $targetNode (allowed: before, into, after)
-     * @param string $nodeName optional node name (if empty random node name will be generated)
+     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * because they might be connected to images / resources which need to be updated at the same time.
+     *
+     * @param Node $node The node to be copied
+     * @param Node $targetNode The target node to be copied "to", see $position
+     * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+     * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @return void
      * @throws NodeException
      */
@@ -242,7 +271,9 @@ class NodeController extends AbstractServiceController
     {
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
-        $this->nodeDataRepository->persistEntities();
+        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+            $this->persistenceManager->persistAll();
+        }
 
         $q = new FlowQuery(array($copiedNode));
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
@@ -260,19 +291,43 @@ class NodeController extends AbstractServiceController
     }
 
     /**
-     * Updates the specified node. Returns the following data:
+     * Copies the given node before, into or after the target node depending on the given position and renders it's content collection.
+     *
+     * @param Node $node The node to be copied
+     * @param Node $targetNode The target node to be copied "to", see $position
+     * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
+     * @param string $nodeName Optional node name (if empty random node name will be generated)
+     * @param string $typoScriptPath The TypoScript path of the collection
+     * @return void
+     */
+    public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
+    {
+        $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+    }
+
+    /**
+     * Updates the specified node.
+     *
+     * Returns the following data:
+     *
      * - the (possibly changed) workspace name of the node
      * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
-     *   This is important to handle renamings of nodes correctly.
+     *   This is important to handle renames of nodes correctly.
      *
      * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
+     *       We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     *       because they might be connected to images / resources which need to be updated at the same time.
      *
-     * @param Node $node
+     * @param Node $node The node to be updated
      * @return void
      */
     public function updateAction(Node $node)
     {
-        $this->nodeDataRepository->persistEntities();
+        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+            $this->persistenceManager->persistAll();
+        }
+
         $q = new FlowQuery(array($node));
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
         $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
@@ -280,14 +335,32 @@ class NodeController extends AbstractServiceController
     }
 
     /**
+     * Updates the specified node and renders it's content collection.
+     *
+     * @param Node $node The node to be updated
+     * @param string $typoScriptPath The TypoScript path of the collection
+     * @return void
+     */
+    public function updateAndRenderAction(Node $node, $typoScriptPath)
+    {
+        $this->redirectToRenderNode($node, $typoScriptPath);
+    }
+
+    /**
      * Deletes the specified node and all of its sub nodes
+     *
+     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * because they might be connected to images / resources which need to be removed at the same time.
      *
      * @param Node $node
      * @return void
      */
     public function deleteAction(Node $node)
     {
-        $this->nodeDataRepository->persistEntities();
+        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+            $this->persistenceManager->persistAll();
+        }
+
         $q = new FlowQuery(array($node));
         $node->remove();
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
@@ -316,17 +389,24 @@ class NodeController extends AbstractServiceController
     }
 
     /**
-     * Get the page by the node path, needed for internal links.
+     * Takes care of creating a redirect to properly render the collection the given node is in.
      *
-     * @param string $nodePath
-     * @return void
+     * @param NodeInterface $node
+     * @param string $typoScriptPath
+     * @return string
      */
-    public function getPageByNodePathAction($nodePath)
+    protected function redirectToRenderNode(NodeInterface $node, $typoScriptPath)
     {
-        $contentContext = $this->createContext('live');
+        $q = new FlowQuery(array($node));
+        $closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
+        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
-        $node = $contentContext->getNode($nodePath);
-        $this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => true));
+        $this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', [
+            'node' => $closestDocumentNode,
+            '__nodeContextPath' => $closestContentCollection->getContextPath(),
+            '__affectedNodeContextPath' => $node->getContextPath(),
+            '__typoScriptPath' => $typoScriptPath
+        ], 0, 303, 'html');
     }
 
     /**

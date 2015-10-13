@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
@@ -55,6 +56,11 @@ class NodeDataExportServiceTest extends FunctionalTestCase
     protected $workspaceRepository;
 
     /**
+     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
      * @return void
      */
     public function setUp()
@@ -68,7 +74,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
      */
     public function aSingleNodeExportedWithNodeDataExportCanBeImportedWithNodeDataImport()
     {
-        $originalNode = $this->rootNode->createNode('foo');
+        $originalNode = $this->rootNode->createNode('foo', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:ImportExport'));
         $originalNode->setProperty('description', 'Some node with a property');
         $originalNode->setProperty('someDate', new \DateTime());
         $this->persistenceManager->persistAll();
@@ -94,16 +100,24 @@ class NodeDataExportServiceTest extends FunctionalTestCase
         $this->assertEquals($originalNode->getProperty('someDate'), $importedNode->getProperty('someDate'));
     }
 
+    /**
+     * @return void
+     */
     protected function setUpRootNodeAndRepository()
     {
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
         $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
         $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository->add(new Workspace('live'));
+        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $this->rootNode = $this->context->getNode('/');
         $this->persistenceManager->persistAll();
     }
 
+    /**
+     * @return void
+     */
     protected function saveNodesAndTearDownRootNodeAndRepository()
     {
         if ($this->nodeDataRepository !== null) {

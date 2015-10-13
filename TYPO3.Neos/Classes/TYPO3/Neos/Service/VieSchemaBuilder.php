@@ -109,14 +109,12 @@ class VieSchemaBuilder
      * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
      * @return void
      */
-    protected function readNodeTypeConfiguration($nodeTypeName, $nodeType)
+    protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType)
     {
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         $this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
-        if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
-            foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
-                $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType;
-            }
+        foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
+            $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
         }
 
         $nodeTypeProperties = array();
@@ -141,7 +139,7 @@ class VieSchemaBuilder
         }
 
         $this->types['typo3:' . $nodeTypeName] = (object) array(
-            'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
+            'label' => $nodeType->getLabel() ?: $nodeTypeName,
             'id' => 'typo3:' . $nodeTypeName,
             'properties' => array(),
             'specific_properties' => $nodeTypeProperties,

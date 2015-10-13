@@ -1847,15 +1847,18 @@ body {
   float: right;
 }
 .neos .neos-error-screen {
-  background: transparent;
-  border: none;
+  background: #222;
+  padding: 16px;
+  border: 1px solid #3f3f3f;
   position: absolute;
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   top: 50%;
   left: 50%;
-  width: 480px;
-  height: 120px;
-  margin-top: -60px;
-  margin-left: -240px;
+  width: 720px;
+  margin-left: -360px;
   color: #fff;
   font-size: 16px;
   -webkit-box-shadow: none;
@@ -1869,10 +1872,13 @@ body {
   color: #ff460d;
   float: left;
   margin-right: 12px;
-  line-height: 76px;
+  margin-top: 8px;
+  height: 100%;
 }
 .neos .neos-error-screen .neos-message-icon i {
   font-size: 64px;
+  line-height: 1;
+  height: inherit;
 }
 .neos .neos-error-screen h1 {
   font-size: 26px;
@@ -1884,9 +1890,29 @@ body {
 .neos .neos-error-screen p {
   margin: 0 0 0 112px;
   font-size: 16px;
+  line-height: 1.2;
+}
+.neos .neos-error-screen p + p {
+  margin-top: 16px;
 }
 .neos .neos-error-screen a {
   color: #00b5ff;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-content {
+  font-size: 18px;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-stacktrace {
+  color: #adadad;
+  padding: 0 0 16px 16px;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-stacktrace + p {
+  margin-top: 0;
+}
+.neos .neos-error-screen .neos-message-wrapper .neos-message-stacktrace code {
+  white-space: pre;
 }
 .neos .neos-error-screen .neos-rendering-exception {
   background-color: transparent;

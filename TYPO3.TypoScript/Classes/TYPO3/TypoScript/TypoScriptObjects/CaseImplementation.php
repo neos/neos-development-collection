@@ -40,8 +40,6 @@ class CaseImplementation extends ArrayImplementation
      */
     public function evaluate()
     {
-        $this->unsetIgnoredProperties();
-
         $matcherKeys = $this->sortNestedTypoScriptKeys();
 
         foreach ($matcherKeys as $matcherName) {
@@ -52,21 +50,6 @@ class CaseImplementation extends ArrayImplementation
         }
 
         return null;
-    }
-
-    /**
-     * Unset ignored properties to exclude them when sorting the array and evaluating matchers
-     *
-     * @return void
-     */
-    protected function unsetIgnoredProperties()
-    {
-        $ignoredProperties = $this->tsValue('__meta/ignoreProperties');
-        if (is_array($ignoredProperties)) {
-            foreach ($ignoredProperties as $ignoredProperty) {
-                unset($this->properties[$ignoredProperty]);
-            }
-        }
     }
 
     /**

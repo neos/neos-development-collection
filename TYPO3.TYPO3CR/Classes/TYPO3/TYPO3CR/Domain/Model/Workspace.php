@@ -14,6 +14,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Utility\Now;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
@@ -31,6 +33,23 @@ class Workspace
      * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
      */
     protected $name;
+
+    /**
+     * A user-defined, human-friendly title for this workspace
+     *
+     * @var string
+     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
+     */
+    protected $title;
+
+    /**
+     * An optional user-defined description
+     *
+     * @var string
+     * @ORM\Column(type="text", length=500, nullable=true)
+     * @Flow\Validate(type="StringLength", options={ "minimum"=0, "maximum"=500 })
+     */
+    protected $description;
 
     /**
      * Workspace (if any) this workspace is based on.
@@ -61,15 +80,21 @@ class Workspace
 
     /**
      * @Flow\Inject
-     * @var ObjectManagerInterface
+     * @var \TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface
      */
-    protected $objectManager;
+    protected $publishingService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Service\PublishingServiceInterface
+     * @var NodeServiceInterface
      */
-    protected $publishingService;
+    protected $nodeService;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var Now
+     */
+    protected $now;
 
     /**
      * Constructs a new workspace
@@ -81,6 +106,7 @@ class Workspace
     public function __construct($name, Workspace $baseWorkspace = null)
     {
         $this->name = $name;
+        $this->title = $name;
         $this->baseWorkspace = $baseWorkspace;
     }
 
@@ -112,6 +138,63 @@ class Workspace
     }
 
     /**
+     * Returns the workspace title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Sets workspace title
+     *
+     * @param string $title
+     * @return void
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * Returns the workspace description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Sets the workspace description
+     *
+     * @param string $description
+     * @return void
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * Sets the base workspace
+     *
+     * @param Workspace $baseWorkspace
+     * @return void
+     */
+    public function setBaseWorkspace(Workspace $baseWorkspace)
+    {
+        $oldBaseWorkspace = $this->baseWorkspace;
+        if ($oldBaseWorkspace !== $baseWorkspace) {
+            $this->baseWorkspace = $baseWorkspace;
+            $this->emitBaseWorkspaceChanged($this, $oldBaseWorkspace, $baseWorkspace);
+        }
+    }
+
+    /**
      * Returns the base workspace, if any
      *
      * @return Workspace
@@ -120,6 +203,23 @@ class Workspace
     public function getBaseWorkspace()
     {
         return $this->baseWorkspace;
+    }
+
+    /**
+     * Returns all base workspaces, if any
+     *
+     * @return Workspace[]
+     */
+    public function getBaseWorkspaces()
+    {
+        $baseWorkspaces = array();
+        $baseWorkspace = $this->baseWorkspace;
+
+        while ($baseWorkspace !== null) {
+            $baseWorkspaces[$baseWorkspace->getName()] = $baseWorkspace;
+            $baseWorkspace = $baseWorkspace->getBaseWorkspace();
+        }
+        return $baseWorkspaces;
     }
 
     /**
@@ -189,6 +289,7 @@ class Workspace
         }
 
         $targetNodeData = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
+
         $matchingNodeVariantExistsInTargetWorkspace = $targetNodeData !== null && $targetNodeData->getDimensionValues() === $node->getDimensions();
 
         if ($matchingNodeVariantExistsInTargetWorkspace) {
@@ -231,7 +332,9 @@ class Workspace
             if ($nodeWasMoved) {
                 $targetNodeData->setPath($node->getPath(), false);
             }
+            $targetNodeData->setLastPublicationDateTime($this->now);
             $node->setNodeData($targetNodeData);
+            $this->nodeService->cleanUpProperties($node);
         }
         $this->nodeDataRepository->remove($sourceNodeData);
     }
@@ -259,6 +362,8 @@ class Workspace
             $this->nodeDataRepository->remove($nodeData);
         } else {
             $nodeData->setWorkspace($targetWorkspace);
+            $nodeData->setLastPublicationDateTime($this->now);
+            $this->nodeService->cleanUpProperties($node);
         }
         $node->setNodeDataIsMatchingContext(null);
     }
@@ -310,7 +415,21 @@ class Workspace
      */
     protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
     {
-        return $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
+        $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
+        return ($nodeData === null || $nodeData->getWorkspace() === $targetWorkspace) ? $nodeData : null;
+    }
+
+    /**
+     * Emits a signal after the base workspace has been changed
+     *
+     * @param Workspace $workspace This workspace
+     * @param Workspace $oldBaseWorkspace The workspace which was the base workspace before the change
+     * @param Workspace $newBaseWorkspace The new base workspace
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace, Workspace $newBaseWorkspace)
+    {
     }
 
     /**

@@ -11,8 +11,17 @@ namespace TYPO3\Media\Domain\Model;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * An Asset, the base for all more specific assets in this package.
@@ -25,10 +34,40 @@ use TYPO3\Flow\Annotations as Flow;
 class Asset implements AssetInterface
 {
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
      * @Flow\Inject
+     * @var Dispatcher
+     */
+    protected $signalSlotDispatcher;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
+
+    /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
 
     /**
      * @var \DateTime
@@ -48,29 +87,58 @@ class Asset implements AssetInterface
     protected $caption = '';
 
     /**
-     * @var \TYPO3\Flow\Resource\Resource
-     * @ORM\ManyToOne
-     * @Flow\Validate(type="NotEmpty")
+     * @var FlowResource
+     * @ORM\OneToOne(orphanRemoval=true, cascade={"all"})
      */
     protected $resource;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Thumbnail>
+     * @ORM\OneToMany(orphanRemoval=true, cascade={"all"}, mappedBy="originalAsset")
+     */
+    protected $thumbnails;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
      * @ORM\ManyToMany
+     * @ORM\OrderBy({"label"="ASC"})
+     * @Flow\Lazy
      */
     protected $tags;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\AssetCollection>
+     * @ORM\ManyToMany(mappedBy="assets", cascade={"persist"})
+     * @ORM\OrderBy({"title"="ASC"})
+     * @Flow\Lazy
+     */
+    protected $assetCollections;
 
     /**
      * Constructs an asset. The resource is set internally and then initialize()
      * is called.
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource
+     * @param FlowResource $resource
      */
-    public function __construct(\TYPO3\Flow\Resource\Resource $resource)
+    public function __construct(FlowResource $resource)
     {
-        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->setResource($resource);
+        $this->tags = new ArrayCollection();
+        $this->thumbnails = new ArrayCollection();
+        $this->resource = $resource;
         $this->lastModified = new \DateTime();
+        $this->assetCollections = new ArrayCollection();
+    }
+
+    /**
+     * @param integer $initializationCause
+     * @return void
+     */
+    public function initializeObject($initializationCause)
+    {
+        // FIXME: This is a workaround for after the resource management changes that introduced the property.
+        if ($this->thumbnails === null) {
+            $this->thumbnails = new ArrayCollection();
+        }
     }
 
     /**
@@ -115,24 +183,44 @@ class Asset implements AssetInterface
     /**
      * Sets the asset resource and (re-)initializes the asset.
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource
+     * @param FlowResource $resource
      * @return void
      */
-    public function setResource(\TYPO3\Flow\Resource\Resource $resource)
+    public function setResource(FlowResource $resource)
     {
         $this->lastModified = new \DateTime();
         $this->resource = $resource;
-        $this->initialize();
+        $this->refresh();
     }
 
     /**
      * Resource of the original file
      *
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return FlowResource
      */
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * Returns a file extension fitting to the media type of this asset
+     *
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return MediaTypes::getFilenameExtensionFromMediaType($this->resource->getMediaType());
+    }
+
+    /**
+     * Returns the IANA media type of this asset
+     *
+     * @return string
+     */
+    public function getMediaType()
+    {
+        return $this->resource->getMediaType();
     }
 
     /**
@@ -192,19 +280,68 @@ class Asset implements AssetInterface
     /**
      * Add a single tag to this asset
      *
-     * @param Tag $tag
-     * @return boolean
+     * @param Tag $tag The tag to add
+     * @return boolean TRUE if the tag added was new, FALSE if it already existed
      */
     public function addTag(Tag $tag)
     {
         if (!$this->tags->contains($tag)) {
             $this->lastModified = new \DateTime();
             $this->tags->add($tag);
-
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Returns a thumbnail of this asset
+     *
+     * If the maximum width / height is not specified or exceeds the original asset's dimensions, the width / height of
+     * the original asset is used.
+     *
+     * @param integer $maximumWidth The thumbnail's maximum width in pixels
+     * @param integer $maximumHeight The thumbnail's maximum height in pixels
+     * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image should be upscaled
+     * @return Thumbnail
+     * @api
+     */
+    public function getThumbnail($maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
+    {
+        $thumbnailConfiguration = new ThumbnailConfiguration(null, $maximumWidth, null, $maximumHeight, $ratioMode === ImageInterface::RATIOMODE_OUTBOUND, $allowUpScaling);
+        return $this->thumbnailService->getThumbnail($this, $thumbnailConfiguration);
+    }
+
+    /**
+     * An internal method which adds a thumbnail which was generated by the ThumbnailService.
+     *
+     * @param Thumbnail $thumbnail
+     * @return mixed
+     * @see getThumbnail()
+     */
+    public function addThumbnail(Thumbnail $thumbnail)
+    {
+        $this->thumbnails->add($thumbnail);
+    }
+
+    /**
+     * Refreshes this asset after the Resource or any other parameters affecting thumbnails have been modified
+     *
+     * @return void
+     */
+    public function refresh()
+    {
+        $assetClassType = str_replace('TYPO3\Media\Domain\Model\\', '', get_class($this));
+        $this->systemLogger->log(sprintf('%s: refresh() called, clearing all thumbnails. Filename: %s. Resource SHA1: %s', $assetClassType, $this->getResource()->getFilename(), $this->getResource()->getSha1()), LOG_DEBUG);
+
+        // whitelist objects so they can be deleted (even during safe requests)
+        $this->persistenceManager->whitelistObject($this);
+        foreach ($this->thumbnails as $thumbnail) {
+            $this->persistenceManager->whitelistObject($thumbnail);
+        }
+
+        $this->thumbnails->clear();
     }
 
     /**
@@ -235,5 +372,38 @@ class Asset implements AssetInterface
         }
 
         return false;
+    }
+
+    /**
+     * Return the asset collections this asset is included in
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssetCollections()
+    {
+        return $this->assetCollections;
+    }
+
+    /**
+     * Set the asset collections that include this asset
+     *
+     * @param \Doctrine\Common\Collections\Collection $assetCollections
+     * @return void
+     */
+    public function setAssetCollections(\Doctrine\Common\Collections\Collection $assetCollections)
+    {
+        $this->lastModified = new \DateTime();
+        foreach ($this->assetCollections as $existingAssetCollection) {
+            $existingAssetCollection->removeAsset($this);
+        }
+        foreach ($assetCollections as $newAssetCollection) {
+            $newAssetCollection->addAsset($this);
+        }
+        foreach ($this->assetCollections as $assetCollection) {
+            if (!$assetCollections->contains($assetCollection)) {
+                $assetCollections->add($assetCollection);
+            }
+        }
+        $this->assetCollections = $assetCollections;
     }
 }

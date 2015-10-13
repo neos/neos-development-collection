@@ -11,18 +11,22 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Model\User;
+
 /**
- * Testcase for the "User" domain model
+ * Test case for the "User" domain model
  *
  */
-class UserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class UserTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function constructorInitializesPreferences()
     {
-        $user = new \TYPO3\Neos\Domain\Model\User();
+        $user = new User();
         $this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
     }
 }

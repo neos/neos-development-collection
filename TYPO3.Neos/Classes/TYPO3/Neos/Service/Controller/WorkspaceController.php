@@ -26,6 +26,11 @@ class WorkspaceController extends AbstractServiceController
     protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
 
     /**
+     * @var \TYPO3\Neos\Service\View\NodeView
+     */
+    protected $view;
+
+    /**
      * @Flow\Inject
      * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
      */
@@ -85,13 +90,12 @@ class WorkspaceController extends AbstractServiceController
      * @param string $targetWorkspaceName
      * @return void
      */
-    public function publishNodeAction(NodeInterface $node, $targetWorkspaceName)
+    public function publishNodeAction(NodeInterface $node, $targetWorkspaceName = null)
     {
-        $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
-
+        $targetWorkspace = ($targetWorkspaceName !== null) ? $this->workspaceRepository->findOneByName($targetWorkspaceName) : null;
         $this->publishingService->publishNode($node, $targetWorkspace);
 
-        $this->throwStatus(204, 'Node has been published');
+        $this->throwStatus(204, 'Node published', '');
     }
 
     /**
@@ -101,13 +105,12 @@ class WorkspaceController extends AbstractServiceController
      * @param string $targetWorkspaceName
      * @return void
      */
-    public function publishNodesAction(array $nodes, $targetWorkspaceName)
+    public function publishNodesAction(array $nodes, $targetWorkspaceName  = null)
     {
-        $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
-
+        $targetWorkspace = ($targetWorkspaceName !== null) ? $this->workspaceRepository->findOneByName($targetWorkspaceName) : null;
         $this->publishingService->publishNodes($nodes, $targetWorkspace);
 
-        $this->throwStatus(204, 'Nodes have been published');
+        $this->throwStatus(204, 'Nodes published', '');
     }
 
     /**
@@ -120,7 +123,7 @@ class WorkspaceController extends AbstractServiceController
     {
         $this->publishingService->discardNode($node);
 
-        $this->throwStatus(204, 'Node changes have been discarded');
+        $this->throwStatus(204, 'Node changes have been discarded', '');
     }
 
     /**
@@ -133,21 +136,29 @@ class WorkspaceController extends AbstractServiceController
     {
         $this->publishingService->discardNodes($nodes);
 
-        $this->throwStatus(204, 'Node changes have been discarded');
+        $this->throwStatus(204, 'Node changes have been discarded', '');
     }
 
     /**
      * Publish everything in the workspace with the given workspace name
      *
-     * @param string $workspaceName
+     * @param string $sourceWorkspaceName Name of the source workspace containing the content to publish
+     * @param string $targetWorkspaceName Name of the target workspace the content should be published to
      * @return void
      */
-    public function publishAllAction($workspaceName)
+    public function publishAllAction($sourceWorkspaceName, $targetWorkspaceName)
     {
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
-        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace));
+        $sourceWorkspace = $this->workspaceRepository->findOneByName($sourceWorkspaceName);
+        $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
+        if ($sourceWorkspace === null) {
+            $this->throwStatus(400, 'Invalid source workspace');
+        }
+        if ($targetWorkspace === null) {
+            $this->throwStatus(400, 'Invalid target workspace');
+        }
+        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($sourceWorkspace), $targetWorkspace);
 
-        $this->throwStatus(204, 'Workspace changes have been published');
+        $this->throwStatus(204, sprintf('All changes in workspace %s have been published to %s', $sourceWorkspaceName, $targetWorkspaceName), '');
     }
 
     /**
@@ -158,9 +169,7 @@ class WorkspaceController extends AbstractServiceController
      */
     public function getWorkspaceWideUnpublishedNodesAction($workspace)
     {
-        $nodes = $this->publishingService->getUnpublishedNodes($workspace);
-
-        $this->view->assignNodes($nodes);
+        $this->view->assignNodes($this->publishingService->getUnpublishedNodes($workspace));
     }
 
     /**
@@ -171,8 +180,8 @@ class WorkspaceController extends AbstractServiceController
      */
     public function discardAllAction($workspace)
     {
-        $this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
+        $this->publishingService->discardAllNodes($workspace);
 
-        $this->throwStatus(204, 'Workspace changes have been discarded');
+        $this->throwStatus(204, 'Workspace changes have been discarded', '');
     }
 }

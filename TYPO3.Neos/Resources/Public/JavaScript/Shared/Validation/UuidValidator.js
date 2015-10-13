@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./RegularExpressionValidator'
+		'./RegularExpressionValidator',
+		'Shared/I18n'
 	],
-	function(RegularExpressionValidator) {
+	function(RegularExpressionValidator, I18n) {
 		return RegularExpressionValidator.extend({
 			/**
 			 * Checks if the given value is a syntactically valid UUID.
@@ -23,7 +24,7 @@ define(
 			 * @return {void}
 			 */
 			addError: function(message) {
-				this._super('The given subject is not a valid UUID.');
+					this._super(I18n.translate('content.inspector.validators.uuidValidator.invalidUuid'));
 			}
 		});
 	}

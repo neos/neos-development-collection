@@ -1,6 +1,6 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=1.2
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
@@ -18,4 +18,4 @@ Neos development collection
 This repository is a collection of packages for the Neos content application platform (learn more on https://www.neos.io/).
 The repository is used for development and all pull requests should go into it.
 
-If you want to install Neos, please have a look at the documentation: https://neos.readthedocs.org/en/1.2/
+If you want to install Neos, please have a look at the documentation: https://neos.readthedocs.org/en/latest/

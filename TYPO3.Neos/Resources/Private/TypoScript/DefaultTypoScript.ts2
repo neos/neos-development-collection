@@ -1,8 +1,6 @@
 include: Prototypes/ContentCase.ts2
 include: Prototypes/Document.ts2
 include: Prototypes/Content.ts2
-# Note: The TYPO3.Neos:Template prototype only exists for historical reasons and will be removed in a future version:
-include: Prototypes/Template.ts2
 include: Prototypes/PrimaryContent.ts2
 include: Prototypes/ContentCollection.ts2
 include: Prototypes/Page.ts2
@@ -20,6 +18,7 @@ include: Prototypes/DocumentMetadata.ts2
 include: Prototypes/ContentElementWrapping.ts2
 include: Prototypes/NodeUri.ts2
 include: Prototypes/ImageUri.ts2
+include: Prototypes/FallbackNode.ts2
 
 # The root matcher used to start rendering in Neos
 #
@@ -40,8 +39,9 @@ root {
 
 	editPreviewMode {
 		@position = 'end 9996'
-		condition = ${editPreviewMode != null}
-		renderPath = ${'/' + editPreviewMode}
+		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.typoScriptPath}
+		condition = ${this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
+		renderPath = ${'/' + this.possibleEditPreviewModePath}
 	}
 
 	layout {
@@ -68,19 +68,25 @@ root {
 
 		entryIdentifier {
 			node = ${node}
-			editPreviewMode = ${editPreviewMode}
-			format = ${request.format}
-			baseUri = ${String.toString(request.httpRequest.baseUri)}
+			editPreviewMode = ${documentNode.context.currentRenderingMode.name}
 		}
-
 		entryTags {
 			# Whenever the node changes the matched condition could change
 			1 = ${'Node_' + documentNode.identifier}
 			# Whenever one of the parent nodes changes the layout could change
-			2 = ${'DescendantOf_' + documentNode.identifier}
+			2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
 		}
 	}
 
 	# Catch all unhandled exceptions at the root
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\PageHandler'
+}
+
+# Extension of the GlobalCacheIdentifiers prototype
+#
+# We add the names of workspaces of the current workspace chain (for example, "user-john,some-workspace,live") to the list
+# of entry identifier pieces in order to make sure that a specific combination of workspaces has its own content cache entry.
+#
+prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+	workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
 }

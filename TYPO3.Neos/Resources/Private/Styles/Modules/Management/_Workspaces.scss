@@ -14,12 +14,7 @@
 			margin-bottom: 0;
 			font-size: inherit;
 			line-height: $unit;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
+			@include user-select(none);
 		}
 	}
 

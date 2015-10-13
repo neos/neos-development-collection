@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
@@ -245,8 +245,10 @@ class RuntimeContentCache
     {
         $cacheIdentifierValues = array();
         if (isset($configuration['entryIdentifier'])) {
-            foreach ($configuration['entryIdentifier'] as $identifierKey => $identifierValue) {
-                $cacheIdentifierValues[$identifierKey] = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier/' . $identifierKey, $tsObject);
+            if (isset($configuration['entryIdentifier']['__objectType'])) {
+                $cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier', $tsObject);
+            } else {
+                $cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier<TYPO3.TypoScript:GlobalCacheIdentifiers>', $tsObject);
             }
         } else {
             foreach ($this->runtime->getCurrentContext() as $key => $value) {
@@ -272,7 +274,9 @@ class RuntimeContentCache
         if (isset($configuration['entryTags'])) {
             foreach ($configuration['entryTags'] as $tagKey => $tagValue) {
                 $tagValue = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryTags/' . $tagKey, $tsObject);
-                if ((string)$tagValue !== '') {
+                if (is_array($tagValue)) {
+                    $cacheTags = array_merge($cacheTags, $tagValue);
+                } elseif ((string)$tagValue !== '') {
                     $cacheTags[] = $tagValue;
                 }
             }

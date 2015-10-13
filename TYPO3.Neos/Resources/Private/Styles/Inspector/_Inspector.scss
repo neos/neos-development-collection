@@ -50,6 +50,10 @@
 	@include transition-duration(.2s);
 	@include font;
 
+	&.neos-node-is-read-only * {
+		display: none;
+	}
+
 	.neos-inspector-panel-open & {
 		right: 0;
 	}
@@ -654,6 +658,29 @@
 			}
 		}
 	}
+
+	.widget {
+		margin: 0 $defaultMargin 20px $defaultMargin;
+		height: auto;
+
+		.neos-widget-subtitle {
+			color: $textSubtleLight;
+			float: right;
+		}
+
+		.neos-widget-loading {
+			color: $textSubtleLight;
+		}
+
+		.neos-widget-error i {
+			color: $warning;
+		}
+	}
+
+	@import "Views/ColumnView";
+	@import "Views/TableView";
+	@import "Views/TimeSeriesView";
+	@import "Views/NodeInfoView";
 }
 
 #neos-inspector-clickprotection {

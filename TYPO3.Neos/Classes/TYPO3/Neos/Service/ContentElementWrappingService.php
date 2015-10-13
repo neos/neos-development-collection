@@ -15,9 +15,12 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -42,15 +45,27 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var AccessDecisionManagerInterface
+     * @var PrivilegeManagerInterface
      */
-    protected $accessDecisionManager;
+    protected $privilegeManager;
+
+    /**
+     * @Flow\Inject
+     * @var AuthorizationService
+     */
+    protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
      * @var HtmlAugmenter
      */
     protected $htmlAugmenter;
+
+    /**
+     * @Flow\Inject
+     * @var EntityToIdentityConverter
+     */
+    protected $entityToIdentityConverter;
 
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
@@ -65,7 +80,7 @@ class ContentElementWrappingService
     {
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
             return $content;
         }
         $nodeType = $node->getNodeType();
@@ -80,7 +95,17 @@ class ContentElementWrappingService
             // Add the workspace of the TYPO3CR context to the attributes
             $attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
             $attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
+
+            if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+                $attributes['data-node-__read-only'] = 'true';
+                $attributes['data-nodedatatype-__read-only'] = 'boolean';
+            }
         } else {
+            if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+                return $content;
+            }
+
+
             if ($node->isRemoved()) {
                 $classNames[] = 'neos-contentelement-removed';
             }
@@ -91,6 +116,8 @@ class ContentElementWrappingService
 
             if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
                 $attributes['rel'] = 'typo3:content-collection';
+                // This is needed since the backend relies on this class (should not be necessary)
+                $classNames[] = 'neos-contentcollection';
             } else {
                 $classNames[] = 'neos-contentelement';
             }
@@ -103,7 +130,7 @@ class ContentElementWrappingService
             $attributes['tabindex'] = 0;
         }
 
-        if (!$node->dimensionsAreMatchingTargetDimensionValues()) {
+        if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
             $classNames[] = 'neos-contentelement-shine-through';
         }
 
@@ -124,9 +151,11 @@ class ContentElementWrappingService
 
         if ($node->isAutoCreated()) {
             $attributes['data-node-_name'] = $node->getName();
+            $attributes['data-node-_is-autocreated'] = 'true';
         }
 
         if ($node->getParent() && $node->getParent()->isAutoCreated()) {
+            $attributes['data-node-_parent-is-autocreated'] = 'true';
             // we shall only add these properties if the parent is actually auto-created; as the Node-Type-Switcher in the UI relies on that.
             $attributes['data-node-__parent-node-name'] = $node->getParent()->getName();
             $attributes['data-node-__grandparent-node-type'] = $node->getParent()->getParent()->getNodeType()->getName();
@@ -134,7 +163,7 @@ class ContentElementWrappingService
 
         $attributes = $this->addNodePropertyAttributes($node, $attributes);
 
-        return $this->htmlAugmenter->addAttributes($content, $attributes);
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', array('typeof'));
     }
 
     /**
@@ -157,6 +186,7 @@ class ContentElementWrappingService
                 // skip the node name of the site node
                 continue;
             }
+            // Serialize objects to JSON strings
             $dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
             $dasherizedPropertyName = $this->dasherize($propertyName);
             $attributes['data-node-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
@@ -169,7 +199,8 @@ class ContentElementWrappingService
     }
 
     /**
-     * TODO This implementation is directly linked to the inspector editors, since they need the actual values
+     * TODO This implementation is directly linked to the inspector editors, since they need the actual values,
+     * this should change to use TypeConverters
      *
      * @param NodeInterface $node
      * @param string $propertyName
@@ -200,7 +231,7 @@ class ContentElementWrappingService
         }
 
         // Serialize date values to String
-        if ($dataType === 'date') {
+        if ($dataType === 'DateTime') {
             if (!$propertyValue instanceof \DateTime) {
                 return '';
             }
@@ -229,20 +260,9 @@ class ContentElementWrappingService
             }
         }
 
-        // Serialize ImageVariant to JSON
-        if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
-            $gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
-            $convertedProperties = array();
-            foreach ($gettableProperties as $key => $value) {
-                if (is_object($value)) {
-                    $entityIdentifier = $this->persistenceManager->getIdentifierByObject($value);
-                    if ($entityIdentifier !== null) {
-                        $value = $entityIdentifier;
-                    }
-                }
-                $convertedProperties[$key] = $value;
-            }
-            return json_encode($convertedProperties);
+        if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
+            $propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+            return json_encode($this->entityToIdentityConverter->convertFrom($propertyValue, 'array', array(), $propertyMappingConfiguration));
         }
 
         // Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)

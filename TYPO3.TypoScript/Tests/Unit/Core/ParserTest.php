@@ -673,10 +673,30 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 '__objectType' => null
                             ),
                             'blah3' => array(
-                                '__eelExpression' => 'my.expression("asdf")',
+                                '__eelExpression' => 'my.expression("as' . "		some stuff }		" . '" + "df")',
                                 '__value' => null,
                                 '__objectType' => null
                             ),
+                            'multiline2' => array(
+                                '__eelExpression' => "my.expression(		Foo.bar(\"foo\")	)",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline3' => array(
+                                '__eelExpression' => "		my.expression(			Bar.foo(\"bar\")		)	",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline4' => array(
+                                '__eelExpression' => "my.expression(		\"bla\",		\"blubb\",		Test()	)",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline5' => array(
+                                '__eelExpression' => "'col-sm-'+		String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
+                                '__value' => null,
+                                '__objectType' => null
+                            )
                         )
                     )
                 )
@@ -698,6 +718,18 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $actualParseTree = $this->parser->parse($sourceCode, $fixture);
         $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\TypoScript\Exception
+     */
+    public function parserThrowsExceptionOnFixture16b()
+    {
+        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16b.ts2';
+        $sourceCode = file_get_contents($fixture, FILE_TEXT);
+
+        $this->parser->parse($sourceCode, $fixture);
     }
 
     /**
@@ -810,6 +842,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'stringValue' => 'A string value',
                 'booleanValueFalse' => false,
                 'booleanValueTrue' => true,
+                'nullValue' => null,
                 'integerValue' => 42
             ),
         );

@@ -16,17 +16,17 @@ use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * The Neos Sites Management module controller
@@ -59,6 +59,12 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
+     * @var AssetCollectionRepository
+     */
+    protected $assetCollectionRepository;
+
+    /**
+     * @Flow\Inject
      * @var PackageManagerInterface
      */
     protected $packageManager;
@@ -71,21 +77,15 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var PropertyMapper
+     * @var SiteService
      */
-    protected $propertyMapper;
+    protected $siteService;
 
     /**
      * @Flow\Inject
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject
@@ -98,7 +98,26 @@ class SitesController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $this->view->assign('sites', $this->siteRepository->findAll());
+        $sitePackagesAndSites = array();
+        foreach ($this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site') as $sitePackageKey => $sitePackage) {
+            /** \TYPO3\Flow\Package\PackageInterface $sitePackage */
+            $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
+        }
+        $sites = $this->siteRepository->findAll();
+        foreach ($sites as $site) {
+            $siteResourcePackageKey = strtolower(str_replace('.', '_', $site->getSiteResourcesPackageKey()));
+            if (!isset($sitePackagesAndSites[$siteResourcePackageKey])) {
+                $sitePackagesAndSites[$siteResourcePackageKey] = array('packageKey' => $site->getSiteResourcesPackageKey());
+            }
+            if (!isset($sitePackagesAndSites[$siteResourcePackageKey]['sites'])) {
+                $sitePackagesAndSites[$siteResourcePackageKey]['sites'] = array();
+            }
+            $sitePackagesAndSites[$siteResourcePackageKey]['sites'][] = $site;
+        }
+        $this->view->assignMultiple(array(
+            'sitePackagesAndSites' => $sitePackagesAndSites,
+            'multipleSites' => count($sites) > 1
+        ));
     }
 
     /**
@@ -119,7 +138,8 @@ class SitesController extends AbstractModuleController
         $this->view->assignMultiple(array(
             'site' => $site,
             'sitePackageMetaData' => isset($sitePackage) ? $sitePackage->getPackageMetaData() : array(),
-            'domains' => $this->domainRepository->findBySite($site)
+            'domains' => $this->domainRepository->findBySite($site),
+            'assetCollections' => $this->assetCollectionRepository->findAll()
         ));
     }
 
@@ -150,7 +170,7 @@ class SitesController extends AbstractModuleController
             $this->nodeDataRepository->persistEntities();
         }
         $this->siteRepository->update($site);
-        $this->addFlashMessage(sprintf('The site "%s" has been updated.', $site->getName()));
+        $this->addFlashMessage('The site "%s" has been updated.', 'Update', null, array($site->getName()), 1412371798);
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -184,33 +204,33 @@ class SitesController extends AbstractModuleController
     {
         if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
             if ($this->packageManager->isPackageAvailable($packageKey)) {
-                $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array($packageKey));
+                $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array($packageKey), 1412372021);
                 $this->redirect('index');
             }
 
             $generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
             $generatorService->generateSitePackage($packageKey, $siteName);
-            $this->packageManager->activatePackage($packageKey);
         } else {
             $packageKey = $site;
         }
 
+        $deactivatedSitePackages = $this->deactivateAllOtherSitePackages($packageKey);
+        if (count($deactivatedSitePackages) > 0) {
+            $this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', implode(', ', $deactivatedSitePackages), $packageKey)));
+        }
+
+        $this->packageManager->activatePackage($packageKey);
+
         if ($packageKey !== '') {
             try {
-                /** @var $contentContext ContentContext */
-                $contentContext = $this->contextFactory->create(array(
-                    'workspaceName' => 'live',
-                    'invisibleContentShown' => true,
-                    'inaccessibleContentShown' => true
-                ));
-                $this->siteImportService->importFromPackage($packageKey, $contentContext);
-                $this->addFlashMessage('The site has been created.');
+                $this->siteImportService->importFromPackage($packageKey);
+                $this->addFlashMessage('The site has been created.', '', null, array(), 1412372266);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array($packageKey, $exception->getMessage()));
+                $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array($packageKey, $exception->getMessage()), 1412372375);
             }
         } else {
-            $this->addFlashMessage('No site selected for import and no package name provided.', 'No site selected', Message::SEVERITY_ERROR);
+            $this->addFlashMessage('No site selected for import and no package name provided.', 'No site selected', Message::SEVERITY_ERROR, array(), 1412372554);
             $this->redirect('newSite');
         }
 
@@ -226,16 +246,8 @@ class SitesController extends AbstractModuleController
      */
     public function deleteSiteAction(Site $site)
     {
-        $domains = $this->domainRepository->findBySite($site);
-        if (count($domains) > 0) {
-            foreach ($domains as $domain) {
-                $this->domainRepository->remove($domain);
-            }
-        }
-        $this->siteRepository->remove($site);
-        $siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $siteNode->remove();
-        $this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()));
+        $this->siteService->pruneSite($site);
+        $this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()), 1412372689);
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -249,7 +261,7 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_ONLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array($site->getName()));
+        $this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array($site->getName()), 1412372881);
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -263,7 +275,7 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_OFFLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array($site->getName()));
+        $this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array($site->getName()), 1412372975);
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -289,7 +301,7 @@ class SitesController extends AbstractModuleController
     public function updateDomainAction(Domain $domain)
     {
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array($domain->getHostPattern()), 1412373069);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -319,7 +331,7 @@ class SitesController extends AbstractModuleController
     public function createDomainAction(Domain $domain)
     {
         $this->domainRepository->add($domain);
-        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array($domain->getHostPattern()), 1412373192);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -333,7 +345,7 @@ class SitesController extends AbstractModuleController
     public function deleteDomainAction(Domain $domain)
     {
         $this->domainRepository->remove($domain);
-        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array($domain->getHostPattern()), 1412373310);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -347,7 +359,7 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(true);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array($domain->getHostPattern()), 1412373539);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -361,7 +373,7 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(false);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array($domain->getHostPattern()), 1412373425);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -379,5 +391,27 @@ class SitesController extends AbstractModuleController
     {
         $this->session->putData('lastVisitedNode', null);
         parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
+    }
+
+    /**
+     * If site packages already exist and are active, we will deactivate them in order to prevent
+     * interactions with the newly created or imported package (like Content Dimensions being used).
+     *
+     * @param string $activePackageKey Package key of one package which should stay active
+     * @return array deactivated site packages
+     */
+    protected function deactivateAllOtherSitePackages($activePackageKey)
+    {
+        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $deactivatedSitePackages = array();
+
+        foreach (array_keys($sitePackagesToDeactivate) as $packageKey) {
+            if ($packageKey !== $activePackageKey) {
+                $this->packageManager->deactivatePackage($packageKey);
+                $deactivatedSitePackages[] = $packageKey;
+            }
+        }
+
+        return $deactivatedSitePackages;
     }
 }

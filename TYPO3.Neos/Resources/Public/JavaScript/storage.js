@@ -1,5 +1,6 @@
 define(
 [
+	'Library/jquery-with-dependencies',
 	'Content/Model/Node',
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
@@ -7,6 +8,7 @@ define(
 	'Shared/EventDispatcher',
 	'Shared/Notification'
 ], function(
+	$,
 	Entity,
 	Backbone,
 	PublishableNodes,
@@ -23,11 +25,15 @@ define(
 				console.log('READ', arguments);
 			},
 			'update': function(model, options) {
-				var that = this,
-					nodeJson = this._convertModelToJson(model);
+				var nodeJson = this._convertModelToJson(model),
+					method = options.render === true ? 'updateAndRender' : 'update',
+					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
+				var xhr = $.ajaxSettings.xhr();
 				NodeEndpoint.set('_saveRunning', true);
-				NodeEndpoint.update(nodeJson).then(
+				NodeEndpoint[method](nodeJson, typoScriptPath, {xhr: function() {
+					return xhr;
+				}}).then(
 					function(result) {
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,
@@ -43,12 +49,15 @@ define(
 						NodeEndpoint.set('_saveRunning', false);
 						EventDispatcher.trigger('contentSaved');
 
-						if (result !== undefined && result.success === true) {
-							model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+						if (result !== undefined && (result.success === true || options.render)) {
+							if (!options.render) {
+								model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+								PublishableNodes._updatePublishableEntities();
+							}
+
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
-							PublishableNodes._updatePublishableEntities();
 							if (options && options.success) {
-								options.success(model, result);
+								options.success(model, result, xhr);
 							}
 						}
 					},

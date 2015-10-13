@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
  */
 
 use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -87,6 +88,14 @@ class NodeConverterTest extends FunctionalTestCase
         ));
         $this->currentTestWorkspaceName = uniqid('user-');
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+
+        if ($this->liveWorkspace === null) {
+            $this->liveWorkspace = new Workspace('live');
+            $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+            $this->workspaceRepository->add($this->liveWorkspace);
+        }
+
+        $this->workspaceRepository->add(new Workspace($this->currentTestWorkspaceName, $this->liveWorkspace));
 
         $this->personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
         $this->liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
@@ -183,15 +192,49 @@ class NodeConverterTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
+     */
+    public function settingUnknownNodePropertiesThrowsException()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+        $input = array(
+            '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
+            'title' => 'New title',
+            'non-existing-input' => 'test'
+        );
+        $this->convert($input);
+    }
+
+    /**
+     * @test
+     */
+    public function unknownNodePropertiesAreSkippedIfTypeConverterIsConfiguredLikeThis()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+        $input = array(
+            '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
+            'title' => 'New title',
+            'non-existing-input' => 'test'
+        );
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration->skipUnknownProperties();
+        $headlineNode = $this->convert($input, $propertyMappingConfiguration);
+        $this->assertSame('New title', $headlineNode->getProperty('title'));
+        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+        $this->assertFalse($headlineNode->hasProperty('non-existing-input'));
+    }
+
+    /**
      * Helper which calls the NodeConverter; with some error-handling built in
      *
      * @param $nodePath
      * @return NodeInterface
      */
-    protected function convert($nodePath)
+    protected function convert($nodePath, PropertyMappingConfiguration $propertyMappingConfiguration = null)
     {
         $nodeConverter = new NodeConverter();
-        $result = $nodeConverter->convertFrom($nodePath);
+        $result = $nodeConverter->convertFrom($nodePath, null, array(), $propertyMappingConfiguration);
         if ($result instanceof Error) {
             $this->fail('Failed with error: ' . $result->getMessage());
         }

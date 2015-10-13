@@ -262,6 +262,13 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
             // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
         $secondRenderResult = $view->render();
         $this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
+
+            // This should flush "Inner segment 2"
+        $this->contentCache->flushByTag('Node_47a6ee72-936a-4489-abc1-3666a63cdc4a');
+
+            // Since the cache entry for "Inner segment 2" is missing, the outer segment is also evaluated, but not "Inner segment 1"
+        $secondRenderResult = $view->render();
+        $this->assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
     }
 
     /**
@@ -438,19 +445,121 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $this->assertCount(3, $entriesWritten);
         $this->assertEquals(array(
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
-            '46f41cbf610fd5892d847acbdb2c3f4c' => array(
+            'bd35f9d36e0e24992cb4810f759bced4' => array(
                 'lifetime' => 60
             ),
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
-            '13535edf2b61c31bc76fc7c09714f10f' => array(
+            'd5bfcc617aa269282dbfa0887b7e1c65' => array(
                 'lifetime' => null
             ),
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments
-            '6bcf61d298cd47155c5b74bd33a6621c' => array(
+            'a604a8f56ba95f256b3df4769b42bc6a' => array(
                 'lifetime' => 5
             )
         ), $entriesWritten);
     }
+
+    /**
+     * @test
+     */
+    public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
+    {
+        $entriesWritten = array();
+        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
+        $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
+        $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+            $entriesWritten[$entryIdentifier] = array(
+                'tags' => $tags
+            );
+        }));
+        $this->inject($this->contentCache, 'cache', $mockCache);
+
+        $object = new TestModel(42, 'Object value 1');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->setTypoScriptPath('contentCache/entryIdentifiersAreMergedWithGlobalIdentifiers');
+
+        $view->assign('object', $object);
+        $view->assign('site', 'site1');
+
+        $firstRenderResult = $view->render();
+
+        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+
+        // As the site should be added to the entry identifier because it is in the TYPO3.TypoScript:GlobalCacheIdentifiers prototype, changing the value should give us a different identifier
+        $view->assign('site', 'site2');
+        $secondRenderResult = $view->render();
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+        $this->assertCount(2, $entriesWritten);
+        $this->assertEquals(array(
+            '49c7f1e2dde942ea9cc6c658a7ece943' => array(
+                'tags' => array('site1')
+            ),
+            'a932d6d5860b204e82079255e224c613' => array(
+                'tags' => array('site2')
+            ),
+        ), $entriesWritten);
+    }
+
+    /**
+     * @test
+     */
+    public function cacheIdentifierPrototypeCanBeOverwritten()
+    {
+        $entriesWritten = array();
+        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache->expects($this->any())->method('get')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+            if (isset($entriesWritten[$entryIdentifier])) {
+                return $entriesWritten[$entryIdentifier]['data'];
+            } else {
+                return false;
+            }
+        }));
+        $mockCache->expects($this->any())->method('has')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+            if (isset($entriesWritten[$entryIdentifier])) {
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+            if (!isset($entriesWritten[$entryIdentifier])) {
+                $entriesWritten[$entryIdentifier] = array(
+                    'tags' => $tags,
+                    'data' => $data
+                );
+            }
+        }));
+        $this->inject($this->contentCache, 'cache', $mockCache);
+
+        $object = new TestModel(42, 'Object value 1');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->setTypoScriptPath('contentCache/entryIdentifierPrototypeCanBeOverwritten');
+
+        $view->assign('object', $object);
+        $view->assign('site', 'site1');
+
+        $firstRenderResult = $view->render();
+
+        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+
+        // We overwrote the prototype for cacheIdentifier, so site is not part of the identifier and therefor the same identifier should be created.
+        $view->assign('site', 'site2');
+        $secondRenderResult = $view->render();
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+        $this->assertCount(1, $entriesWritten);
+        $this->assertEquals(array(
+            '21fe7cb71a709292398e766a9bb45662' => array(
+                'tags' => array('site1'),
+                'data' => 'Cached segment|Object value 1'
+            ),
+        ), $entriesWritten);
+    }
+
 
     /**
      * @test

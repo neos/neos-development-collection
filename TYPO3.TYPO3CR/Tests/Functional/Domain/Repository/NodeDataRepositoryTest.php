@@ -12,10 +12,11 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
  */
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization;
 
 /**
  * Functional test case.
@@ -48,12 +49,26 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     protected $nodeDataRepository;
 
     /**
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
+     * @var Workspace
+     */
+    protected $liveWorkspace;
+
+    /**
      * @return void
      */
     public function setUp()
     {
         parent::setUp();
         $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->liveWorkspace = new Workspace('live');
+        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository->add($this->liveWorkspace);
+        $this->persistenceManager->persistAll();
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
         $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
@@ -71,7 +86,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMapFindsExistingNodeWithMatchingEntityProperty()
+    public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingEntityProperty()
     {
         $rootNode = $this->context->getRootNode();
         $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
@@ -83,9 +98,11 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $result = $this->nodeDataRepository->findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($this->persistenceManager->getIdentifierByObject($testImage), array(
-            'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image' => ''
-        ));
+        $relationMap = array(
+            'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image' => array($this->persistenceManager->getIdentifierByObject($testImage))
+        );
+
+        $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 
         $this->assertCount(1, $result);
     }
@@ -93,29 +110,44 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMapFindsExistingNodeWithMatchingNestedEntityProperty()
+    public function findNodeByPropertySearch()
     {
-        $persistenceDriver = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.persistence.backendOptions.driver');
-        if ($persistenceDriver === 'pdo_sqlite') {
-            $this->markTestSkipped('This test fails on SQLite, thus it is skipped.');
-        }
+        $this->createNodesForNodeSearchTest();
 
+        $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(2, $result);
+        $this->assertEquals('test-node-1', array_shift($result)->getName());
+        $this->assertEquals('test-node-2', array_shift($result)->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function findNodesByPropertyKeyAndValue()
+    {
+        $this->createNodesForNodeSearchTest();
+
+        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(1, $result);
+        $this->assertEquals('test-node-2', array_shift($result)->getName());
+    }
+
+    /**
+     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     */
+    protected function createNodesForNodeSearchTest()
+    {
         $rootNode = $this->context->getRootNode();
-        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
-        $testImage = new Image();
-        $this->persistenceManager->add($testImage);
+        $newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode1->setProperty('test1', 'simpleTestValue');
 
-        $imageWrapper = new TestObjectForSerialization($testImage);
+        $newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test2', 'simpleTestValue');
 
-        $newNode->setProperty('wrappedImage', $imageWrapper);
+        $newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test1', 'otherValue');
 
         $this->persistenceManager->persistAll();
-
-        $result = $this->nodeDataRepository->findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($this->persistenceManager->getIdentifierByObject($testImage), array(
-            'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization' => 'value'
-        ));
-
-        $this->assertCount(1, $result);
     }
 }

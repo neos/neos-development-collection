@@ -2,7 +2,7 @@
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
 <ul{attributes -> f:format.raw()}>
 <f:for each="{items}" as="item">
-	<li{ts:render(path:'{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+	<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
 		<f:if condition="{item.node}">
 			<f:then>
 				<neos:link.node node="{item.node}">{item.label}</neos:link.node>

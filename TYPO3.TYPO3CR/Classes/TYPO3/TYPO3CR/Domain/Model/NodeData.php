@@ -13,13 +13,16 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use Gedmo\Mapping\Annotation as Gedmo;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * The node data inside the content repository. This is only a data
@@ -164,6 +167,18 @@ class NodeData extends AbstractNodeData
 
     /**
      * @var \DateTime
+     * @Gedmo\Timestampable(on="update", field={"pathHash", "parentPathHash", "identifier", "index", "contentObjectProxy", "removed", "dimensionHash", "hidden", "hiddenBeforeDateTime", "hiddenAfterDateTime", "hiddenInIndex", "nodeType", "properties"})
+     */
+    protected $lastModificationDateTime;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(nullable=true)
+     */
+    protected $lastPublicationDateTime;
+
+    /**
+     * @var \DateTime
      * @ORM\Column(nullable=true)
      */
     protected $hiddenBeforeDateTime;
@@ -175,7 +190,7 @@ class NodeData extends AbstractNodeData
     protected $hiddenAfterDateTime;
 
     /**
-     * @ORM\Column(type="objectarray")
+     * @ORM\Column(type="json_array")
      * @var array
      */
     protected $dimensionValues;
@@ -197,9 +212,9 @@ class NodeData extends AbstractNodeData
 
     /**
      * @Flow\Inject
-     * @var PersistenceManagerInterface
+     * @var NodeServiceInterface
      */
-    protected $persistenceManager;
+    protected $nodeService;
 
     /**
      * Constructs this node data container
@@ -216,6 +231,9 @@ class NodeData extends AbstractNodeData
      */
     public function __construct($path, Workspace $workspace, $identifier = null, array $dimensions = null)
     {
+        parent::__construct();
+        $this->creationDateTime = new \DateTime();
+        $this->lastModificationDateTime = new \DateTime();
         $this->setPath($path, false);
         $this->workspace = $workspace;
         $this->identifier = ($identifier === null) ? Algorithms::generateUUID() : $identifier;
@@ -238,7 +256,7 @@ class NodeData extends AbstractNodeData
      */
     public function getName()
     {
-        return $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
+        return NodePaths::getNodeNameFromPath($this->path);
     }
 
     /**
@@ -262,7 +280,7 @@ class NodeData extends AbstractNodeData
         if ($recursive === true) {
             /** @var $childNodeData NodeData */
             foreach ($this->getChildNodeData() as $childNodeData) {
-                $childNodeData->setPath($path . '/' . $childNodeData->getName());
+                $childNodeData->setPath(NodePaths::addNodePathSegment($path, $childNodeData->getName()));
             }
         }
 
@@ -270,15 +288,9 @@ class NodeData extends AbstractNodeData
 
         $this->path = $path;
         $this->calculatePathHash();
-        if ($path === '/') {
-            $this->parentPath = '';
-            $this->depth = 0;
-        } elseif (substr_count($path, '/') === 1) {
-            $this->parentPath = '/';
-        } else {
-            $this->parentPath = substr($path, 0, strrpos($path, '/'));
-        }
+        $this->parentPath = NodePaths::getParentPath($path);
         $this->calculateParentPathHash();
+        $this->depth = NodePaths::getPathDepth($path);
 
         if ($pathBeforeChange !== null) {
             // this method is called both for changing the path AND in the constructor of Node; so we only want to do
@@ -309,12 +321,7 @@ class NodeData extends AbstractNodeData
      */
     public function getContextPath()
     {
-        $contextPath = $this->path;
-        $workspaceName = $this->workspace->getName();
-        if ($workspaceName !== 'live') {
-            $contextPath .= '@' . $workspaceName;
-        }
-        return $contextPath;
+        return NodePaths::generateContextPath($this->path, $this->workspace->getName(), $this->getDimensionValues());
     }
 
     /**
@@ -326,7 +333,7 @@ class NodeData extends AbstractNodeData
     public function getDepth()
     {
         if ($this->depth === null) {
-            $this->depth = $this->path === '/' ? 0 : substr_count($this->path, '/');
+            $this->depth = NodePaths::getPathDepth($this->path);
         }
         return $this->depth;
     }
@@ -468,12 +475,12 @@ class NodeData extends AbstractNodeData
     public function createSingleNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
     {
         if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
-            throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
+            throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1292428697);
         }
 
         $nodeWorkspace = $workspace ? : $this->workspace;
-        $newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
-        if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions) !== null) {
+        $newPath = NodePaths::addNodePathSegment($this->path, $name);
+        if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions, null) !== null) {
             throw new NodeExistsException(sprintf('Node with path "' . $newPath . '" already exists in workspace %s and given dimensions %s.', $nodeWorkspace->getName(), var_export($dimensions, true)), 1292503471);
         }
 
@@ -498,29 +505,11 @@ class NodeData extends AbstractNodeData
     public function createNodeDataFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null, Workspace $workspace = null, array $dimensions = null)
     {
         $newNodeName = $nodeName !== null ? $nodeName : $nodeTemplate->getName();
-
-        $possibleNodeName = $newNodeName;
-        $counter = 1;
-        while ($this->getNode($possibleNodeName) !== null) {
-            $possibleNodeName = $newNodeName . '-' . $counter++;
-        }
+        $possibleNodeName = $this->nodeService->generateUniqueNodeName($this->getPath(), $newNodeName);
 
         $newNodeData = $this->createNodeData($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace, $dimensions);
         $newNodeData->similarize($nodeTemplate);
         return $newNodeData;
-    }
-
-    /**
-     * Returns a node specified by the given relative path.
-     *
-     * @param string $path Path specifying the node, relative to this node
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The specified node or NULL if no such node exists
-     *
-     * @TODO This method should be removed, since it doesn't take the context into account correctly
-     */
-    public function getNode($path)
-    {
-        return $this->nodeDataRepository->findOneByPath($this->normalizePath($path), $this->workspace);
     }
 
     /**
@@ -560,33 +549,25 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Removes this node and all its child nodes.
+     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
      *
      * @return void
      */
     public function remove()
     {
-        if ($this->workspace->getBaseWorkspace() === null) {
-            $this->nodeDataRepository->remove($this);
-        } else {
-            $this->removed = true;
-        }
+        $this->setRemoved(true);
     }
 
     /**
      * Enables using the remove method when only setters are available
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. This can handle FALSE as well.
      * @return void
      */
     public function setRemoved($removed)
     {
-        if ((boolean)$removed === true) {
-            $this->removed = true;
-            $this->remove();
-        } else {
-            $this->removed = false;
-        }
+        $this->removed = (boolean)$removed;
+
         $this->addOrUpdate();
     }
 
@@ -727,12 +708,13 @@ class NodeData extends AbstractNodeData
      * will be set to the same values as in the source node.
      *
      * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $sourceNode
+     * @param boolean $isCopy
      * @return void
      */
-    public function similarize(AbstractNodeData $sourceNode)
+    public function similarize(AbstractNodeData $sourceNode, $isCopy = false)
     {
         $this->properties = array();
-        foreach ($sourceNode->getProperties(true) as $propertyName => $propertyValue) {
+        foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
             $this->setProperty($propertyName, $propertyValue);
         }
 
@@ -740,6 +722,10 @@ class NodeData extends AbstractNodeData
             'nodeType', 'hidden', 'hiddenAfterDateTime',
             'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
         );
+        if (!$isCopy) {
+            $propertyNames[] = 'creationDateTime';
+            $propertyNames[] = 'lastModificationDateTime';
+        }
         if ($sourceNode instanceof NodeData) {
             $propertyNames[] = 'index';
         }
@@ -751,48 +737,6 @@ class NodeData extends AbstractNodeData
         if ($contentObject !== null) {
             $this->setContentObject($contentObject);
         }
-    }
-
-    /**
-     * Normalizes the given path and returns an absolute path
-     *
-     * @param string $path The non-normalized path
-     * @return string The normalized absolute path
-     * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
-     */
-    public function normalizePath($path)
-    {
-        if ($path === '.') {
-            return $this->path;
-        }
-
-        if (!is_string($path)) {
-            throw new \InvalidArgumentException(sprintf('An invalid node path was specified: is of type %s but a string is expected.', gettype($path)), 1357832901);
-        }
-
-        if (strpos($path, '//') !== false) {
-            throw new \InvalidArgumentException('Paths must not contain two consecutive slashes.', 1291371910);
-        }
-
-        if ($path[0] === '/') {
-            $absolutePath = $path;
-        } else {
-            $absolutePath = ($this->path === '/' ? '' : $this->path) . '/' . $path;
-        }
-        $pathSegments = explode('/', $absolutePath);
-        while (each($pathSegments)) {
-            if (current($pathSegments) === '..') {
-                prev($pathSegments);
-                unset($pathSegments[key($pathSegments)]);
-                unset($pathSegments[key($pathSegments)]);
-                prev($pathSegments);
-            } elseif (current($pathSegments) === '.') {
-                unset($pathSegments[key($pathSegments)]);
-                prev($pathSegments);
-            }
-        }
-        $normalizedPath = implode('/', $pathSegments);
-        return ($normalizedPath === '') ? '/' : $normalizedPath;
     }
 
     /**
@@ -817,27 +761,8 @@ class NodeData extends AbstractNodeData
             /** @var NodeDimension $dimension */
             $dimensionValues[$dimension->getName()][] = $dimension->getValue();
         }
-        $this->dimensionsHash = self::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+        $this->dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
         $this->dimensionValues = $dimensionValues;
-    }
-
-    /**
-     * Sorts the incoming $dimensionValues array to make sure that before hashing, the ordering is made deterministic.
-     * Then, calculates and returns the dimensionsHash.
-     *
-     * This method is public because it is used inside SiteImportService.
-     *
-     * @param array $dimensionValues, which will be ordered alphabetically
-     * @return string the calculated DimensionsHash
-     */
-    public static function sortDimensionValueArrayAndReturnDimensionsHash(array &$dimensionValues)
-    {
-        foreach ($dimensionValues as &$values) {
-            sort($values);
-        }
-        ksort($dimensionValues);
-
-        return md5(json_encode($dimensionValues));
     }
 
     /**
@@ -905,7 +830,7 @@ class NodeData extends AbstractNodeData
     {
         $nodeData = $this;
         $originalPath = $this->path;
-        if ($originalPath ===  $path) {
+        if ($originalPath === $path) {
             return $this;
         }
 
@@ -1047,9 +972,9 @@ class NodeData extends AbstractNodeData
 
         // If this NodeData was previously removed and is in live workspace we don't want to add it again to persistence.
         if ($nodeData->isRemoved() && $this->workspace->getBaseWorkspace() === null) {
-            // Just in case, normally setRemoved() should have already removed the object from the identityMap.
+            // Actually it should be removed from the identity map here.
             if ($this->persistenceManager->isNewObject($nodeData) === false) {
-                $nodeData->remove();
+                $this->nodeDataRepository->remove($nodeData);
             }
         } else {
             if ($this->persistenceManager->isNewObject($nodeData)) {

@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
@@ -30,7 +31,7 @@ use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 class ContextFactory implements ContextFactoryInterface
 {
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Service\Context>
+     * @var array<Context>
      */
     protected $contextInstances = array();
 
@@ -54,6 +55,12 @@ class ContextFactory implements ContextFactoryInterface
     protected $now;
 
     /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * Create the context from the given properties. If a context with those properties was already
      * created before then the existing one is returned.
      *
@@ -73,7 +80,7 @@ class ContextFactory implements ContextFactoryInterface
      * This array also shows the defaults that get used if you don't provide a certain property.
      *
      * @param array $contextProperties
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      * @api
      */
     public function create(array $contextProperties = array())
@@ -94,12 +101,12 @@ class ContextFactory implements ContextFactoryInterface
      * This needs to be overridden if the Builder is extended.
      *
      * @param array $contextProperties
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     protected function buildContextInstance(array $contextProperties)
     {
         $contextProperties = $this->removeDeprecatedProperties($contextProperties);
-        return new \TYPO3\TYPO3CR\Domain\Service\Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
+        return new Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
     }
 
     /**
@@ -138,7 +145,7 @@ class ContextFactory implements ContextFactoryInterface
      */
     protected function getIdentifier(array $contextProperties)
     {
-        return md5($this->getIdentifierSource($contextProperties));
+        return md5($this->securityContext->getContextHash() . $this->getIdentifierSource($contextProperties));
     }
 
     /**
@@ -279,6 +286,8 @@ class ContextFactory implements ContextFactoryInterface
     /**
      * @param array $contextProperties
      * @param array $mergedProperties
+     * @return void
+     * @throws InvalidNodeContextException
      */
     protected function mergeDimensionValues(array $contextProperties, array &$mergedProperties)
     {
@@ -298,32 +307,12 @@ class ContextFactory implements ContextFactoryInterface
     }
 
     /**
-     * Helper method which parses the "dimension" part of the context, i.e.
-     * "locales=de_DE,mul_ZZ&...." into an *array* of dimension values.
+     * Returns all known instances of Context.
      *
-     * Is needed at both the RoutePartHandler and the ObjectConverter; that's why
-     * it's placed here.
-     *
-     * @param string $dimensionPartOfContext
-     * @return array
+     * @return array<Context>
      */
-    public function parseDimensionValueStringToArray($dimensionPartOfContext)
+    public function getInstances()
     {
-        parse_str($dimensionPartOfContext, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
-
-        return $dimensions;
-    }
-
-    /**
-     * Internal method to flush first-level node caches of all contexts
-     *
-     * @return void
-     */
-    public function flushFirstLevelNodeCaches()
-    {
-        foreach ($this->contextInstances as $context) {
-            $context->getFirstLevelNodeCache()->flush();
-        }
+        return $this->contextInstances;
     }
 }

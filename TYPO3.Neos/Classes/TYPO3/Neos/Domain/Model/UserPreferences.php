@@ -21,7 +21,6 @@ use TYPO3\Flow\Annotations as Flow;
  * information about possible help texts etc.
  *
  * @Flow\Entity
- * @Flow\Scope("prototype")
  * @todo Provide a more capable implementation
  */
 class UserPreferences
@@ -44,6 +43,15 @@ class UserPreferences
     }
 
     /**
+     * @param array $preferences
+     * @return void
+     */
+    public function setPreferences(array $preferences)
+    {
+        $this->preferences = $preferences;
+    }
+
+    /**
      * @param string $key
      * @param mixed $value
      * @return void
@@ -60,5 +68,22 @@ class UserPreferences
     public function get($key)
     {
         return isset($this->preferences[$key]) ? $this->preferences[$key] : null;
+    }
+
+    /**
+     * @param string $localeIdentifier
+     * @return void
+     */
+    public function setInterfaceLanguage($localeIdentifier)
+    {
+        $this->set('interfaceLanguage', $localeIdentifier);
+    }
+
+    /**
+     * @return string the locale identifier
+     */
+    public function getInterfaceLanguage()
+    {
+        return $this->get('interfaceLanguage');
     }
 }

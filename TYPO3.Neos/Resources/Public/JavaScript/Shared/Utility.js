@@ -54,6 +54,16 @@ define(function() {
 		 */
 		isExternalUrl: function(value) {
 			return /^([a-z-]){2,}:.{2,}$/.test(value);
+		},
+
+		/**
+		 * Removes the node context path from a given string (URL or path)
+		 *
+		 * @param {string} value
+		 * @returns {string}
+		 */
+		removeContextPath: function(value) {
+			return value.replace(/@([^.]+)/, '');
 		}
 	};
 });

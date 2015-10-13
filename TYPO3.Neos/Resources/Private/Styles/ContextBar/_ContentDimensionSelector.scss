@@ -1,4 +1,4 @@
-.neos-content-dimension-selector {
+#neos-context-bar .neos-content-dimension-selector {
 	@include clearfix;
 	position: relative;
 	float: left;
@@ -102,6 +102,37 @@
 
 			.chosen-container {
 				width: $unit * 8 !important;
+			}
+		}
+
+		.neos-content-dimension-selector-dimensions-footer {
+			margin-bottom: $defaultMargin;
+
+			.neos-button {
+				float: none;
+
+				&.neos-button-success {
+					background-color: $green;
+				}
+			}
+
+		}
+
+		.neos-content-dimension-selector-initial-translation-dialog {
+			white-space: normal;
+
+			.neos-button {
+				border: none;
+				float: none;
+
+				&.neos-close {
+					float: right;
+					background-color: $grayDark;
+
+					&:hover {
+						background-color: $blue;
+					}
+				}
 			}
 		}
 	}

@@ -4,9 +4,23 @@ TYPO3:
       doctrine:
         eventListeners:
           'TYPO3\Media\Domain\EventListener\ImageEventListener':
-            events: ['prePersist', 'preUpdate', 'postRemove']
+            events: ['postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
   Media:
+    # This setting simulates how Neos 1.2 handled image cropping with "maximumWidth" and "maximumHeight".
+    # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
+    # need to be replaced by "width" and "height" if you need fixed dimensions.
+    behaviourFlag: '1.2'
+    asset:
+      modelMappingStrategy:
+        default: TYPO3\Media\Domain\Model\Document
+        patterns:
+          '[image/.*]':
+            className: TYPO3\Media\Domain\Model\Image
+          '[audio/.*]':
+            className: TYPO3\Media\Domain\Model\Audio
+          '[video/.*]':
+            className: TYPO3\Media\Domain\Model\Video
     image:
       defaultOptions:
         # Image quality, from 0 to 100
@@ -19,4 +33,3 @@ TYPO3:
       - resource://TYPO3.Twitter.Bootstrap/Public/2/css/bootstrap.min.css
       - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
       - resource://TYPO3.Media/Public/Libraries/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.css
-      - resource://TYPO3.Media/Public/Styles/Main.css

@@ -19,15 +19,15 @@ prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
 	# }
 	# in your site's TypoScript if you don't need that behavior.
 	attributes.class.@process.nodeType = TYPO3.TypoScript:Case {
-		@override.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
+		@context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
 
 		classIsString {
-			condition = ${q(value).count() == 1}
-			renderer = ${String.trim(value + ' ' + nodeTypeClassName)}
+			condition = ${Type.isString(value)}
+			renderer = ${String.trim(value) + ' ' + nodeTypeClassName}
 		}
 
 		classIsArray {
-			condition = ${q(value).count() > 0}
+			condition = ${Type.isArray(value)}
 			renderer = ${Array.push(value, nodeTypeClassName)}
 		}
 	}

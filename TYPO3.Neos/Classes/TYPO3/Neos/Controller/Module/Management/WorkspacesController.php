@@ -14,55 +14,64 @@ namespace TYPO3\Neos\Controller\Module\Management;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\Neos\Service\PublishingService;
 use TYPO3\Neos\Service\UserService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
- * The TYPO3 Workspaces module controller
+ * The Neos Workspaces module controller
  *
  * @Flow\Scope("singleton")
  */
-class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController
+class WorkspacesController extends AbstractModuleController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\PublishingService
+     * @var PublishingService
      */
     protected $publishingService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var SiteRepository
      */
     protected $siteRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      */
     protected $securityContext;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
+     * @var ContentContextFactory
      */
     protected $contextFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
+     * @var PropertyMappingConfigurationBuilder
      */
     protected $propertyMappingConfigurationBuilder;
 
@@ -87,6 +96,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     }
 
     /**
+     * Display a list of unpublished content
+     *
      * @param Workspace $workspace
      * @return void
      * @todo Pagination
@@ -97,31 +108,29 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     public function indexAction(Workspace $workspace = null)
     {
         if ($workspace === null) {
-            $workspace = $this->userService->getCurrentWorkspace();
+            $workspace = $this->userService->getUserWorkspace();
         }
 
         $sites = array();
         foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
-            if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
-                $pathParts = explode('/', $node->getPath());
-                if (count($pathParts) > 2) {
-                    $siteNodeName = $pathParts[2];
-                    $q = new FlowQuery(array($node));
-                    $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-                    // FIXME: $document will be NULL if we have a broken rootline for this node. This actually should never happen, but currently can in some scenarios.
-                    if ($document !== null) {
-                        $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
-                        $relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
-                        if (!isset($sites[$siteNodeName]['siteNode'])) {
-                            $sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
-                        }
-                        $sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
-                        $change = array('node' => $node);
-                        if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
-                            $change['configuration'] = $node->getNodeType()->getFullConfiguration();
-                        }
-                        $sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
+            $pathParts = explode('/', $node->getPath());
+            if (count($pathParts) > 2) {
+                $siteNodeName = $pathParts[2];
+                $q = new FlowQuery(array($node));
+                $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+                // FIXME: $document will be NULL if we have a broken rootline for this node. This actually should never happen, but currently can in some scenarios.
+                if ($document !== null) {
+                    $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
+                    $relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
+                    if (!isset($sites[$siteNodeName]['siteNode'])) {
+                        $sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
                     }
+                    $sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
+                    $change = array('node' => $node);
+                    if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
+                        $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                    }
+                    $sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
             }
         }
@@ -158,29 +167,35 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     }
 
     /**
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+     * Publish a single node
+     *
+     * @param NodeInterface $node
      * @return void
      */
-    public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node)
+    public function publishNodeAction(NodeInterface $node)
     {
         $this->publishingService->publishNode($node);
-        $this->addFlashMessage('Node has been published', 'Node published');
+        $this->addFlashMessage('Node has been published', 'Node published', null, array(), 1412421581);
         $this->redirect('index');
     }
 
     /**
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+     * Discard a a single node
+     *
+     * @param NodeInterface $node
      * @return void
      */
-    public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node)
+    public function discardNodeAction(NodeInterface $node)
     {
         // Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
         $this->publishingService->discardNode($node);
-        $this->addFlashMessage('Node has been discarded', 'Node discarded');
+        $this->addFlashMessage('Node has been discarded', 'Node discarded', null, array(), 1412420292);
         $this->redirect('index');
     }
 
     /**
+     * Publishes or discards the given nodes
+     *
      * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
      * @param string $action
      * @return void
@@ -198,21 +213,22 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
                 foreach ($nodes as $node) {
                     $this->publishingService->publishNode($node);
                 }
-                $message = 'Selected changes have been published';
+                $this->addFlashMessage('Selected changes have been published', null, null, array(), 412420736);
             break;
             case 'discard':
                 $this->publishingService->discardNodes($nodes);
-                $message = 'Selected changes have been discarded';
+                $this->addFlashMessage('Selected changes have been discarded', null, null, array(), 412420851);
             break;
             default:
                 throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
         }
 
-        $this->addFlashMessage($message);
         $this->redirect('index');
     }
 
     /**
+     * Publishes the whole workspace
+     *
      * @param Workspace $workspace
      * @return void
      */
@@ -220,11 +236,13 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     {
         $liveWorkspace = $this->workspaceRepository->findOneByName('live');
         $workspace->publish($liveWorkspace);
-        $this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()));
+        $this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()), 1412420808);
         $this->redirect('index');
     }
 
     /**
+     * Discards content of the whole workspace
+     *
      * @param Workspace $workspace
      * @return void
      */
@@ -232,7 +250,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()));
+        $this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()), 1412420835);
         $this->redirect('index');
     }
 }

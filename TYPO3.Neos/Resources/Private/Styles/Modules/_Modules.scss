@@ -2,6 +2,7 @@
 	@import "Administration/Packages";
 	@import "Administration/Configuration";
 	@import "Management/Workspaces";
+	@import "Management/History";
 	@include font;
 
 	background-color: $grayDarker;
@@ -325,6 +326,10 @@
 
 		.neos-button {
 			margin-right: $relatedMargin;
+		}
+
+		.neos-modal .neos-button {
+			margin-right: 0;
 		}
 	}
 

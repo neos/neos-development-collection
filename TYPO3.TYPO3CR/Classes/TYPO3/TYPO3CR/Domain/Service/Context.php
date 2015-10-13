@@ -12,8 +12,13 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache;
 
 /**
@@ -25,21 +30,33 @@ class Context
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+     * @var NodeFactory
      */
     protected $nodeFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * @var Workspace
@@ -98,14 +115,13 @@ class Context
      *
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
      *
-     * @param string $workspaceName
-     * @param \DateTime $currentDateTime
+     * @param string $workspaceName Name of the current workspace
+     * @param \DateTime $currentDateTime The current date and time
      * @param array $dimensions Array of dimensions with array of ordered values
-     * @param array $targetDimensions
-     * @param boolean $invisibleContentShown
-     * @param boolean $removedContentShown
-     * @param boolean $inaccessibleContentShown
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @param array $targetDimensions Array of dimensions used when creating / modifying content
+     * @param boolean $invisibleContentShown If invisible content should be returned in query results
+     * @param boolean $removedContentShown If removed content should be returned in query results
+     * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @see ContextFactoryInterface
      */
     public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown)
@@ -124,35 +140,27 @@ class Context
     /**
      * Returns the current workspace.
      *
-     * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
+     * @param boolean $createWorkspaceIfNecessary DEPRECATED: If enabled, creates a workspace with the configured name if it doesn't exist already. This option is DEPRECATED, create workspace explicitly instead.
      * @return Workspace The workspace or NULL
      * @api
      */
     public function getWorkspace($createWorkspaceIfNecessary = true)
     {
-        if ($this->workspace === null) {
-            $this->workspace = $this->workspaceRepository->findByIdentifier($this->workspaceName);
-            if (!$this->workspace) {
-                if ($createWorkspaceIfNecessary === false) {
-                    return null;
-                }
-                $liveWorkspace = null;
-                if ($this->workspaceName !== 'live') {
-                    $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
-                }
-                if (!$liveWorkspace) {
-                    $liveWorkspace = new Workspace('live');
-                    $this->workspaceRepository->add($liveWorkspace);
-                }
-                if ($this->workspaceName === 'live') {
-                    $this->workspace = $liveWorkspace;
-                } else {
-                    $this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
-                    $this->workspaceRepository->add($this->workspace);
-                }
-            }
+        if ($this->workspace !== null) {
+            return $this->workspace;
         }
-        return $this->workspace;
+
+        $this->workspace = $this->workspaceRepository->findByIdentifier($this->workspaceName);
+        if ($this->workspace !== null) {
+            return $this->workspace;
+        }
+
+        if ($createWorkspaceIfNecessary) {
+            $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+            $this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
+            $this->workspaceRepository->add($this->workspace);
+            $this->systemLogger->log(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.', __CLASS__, $this->workspaceName), LOG_NOTICE);
+        }
     }
 
     /**
@@ -186,7 +194,7 @@ class Context
      * Convenience method returns the root node for
      * this context workspace.
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @return NodeInterface
      * @api
      */
     public function getRootNode()
@@ -198,7 +206,7 @@ class Context
      * Returns a node specified by the given absolute path.
      *
      * @param string $path Absolute path specifying the node
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+     * @return NodeInterface The specified node or NULL if no such node exists
      * @throws \InvalidArgumentException
      * @api
      */
@@ -207,6 +215,9 @@ class Context
         if (!is_string($path) || $path[0] !== '/') {
             throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
         }
+
+        $path = strtolower($path);
+
         $workspaceRootNode = $this->getWorkspace()->getRootNodeData();
         $rootNode = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
         if ($path !== '/') {
@@ -226,7 +237,7 @@ class Context
      * Get a node by identifier and this context
      *
      * @param string $identifier The identifier of a node
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node with the given identifier or NULL if no such node exists
+     * @return NodeInterface The node with the given identifier or NULL if no such node exists
      */
     public function getNodeByIdentifier($identifier)
     {
@@ -234,7 +245,7 @@ class Context
         if ($node !== false) {
             return $node;
         }
-        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(false), $this->dimensions);
+        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions);
         if ($nodeData !== null) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
         } else {
@@ -245,18 +256,43 @@ class Context
     }
 
     /**
+     * Get all node variants for the given identifier
+     *
+     * A variant of a node can have different dimension values and path (for non-aggregate nodes).
+     * The resulting node instances might belong to a different context.
+     *
+     * @param string $identifier The identifier of a node
+     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     */
+    public function getNodeVariantsByIdentifier($identifier)
+    {
+        $nodeVariants = array();
+        $nodeDataElements = $this->nodeDataRepository->findByIdentifierWithoutReduce($identifier, $this->getWorkspace());
+        /** @var NodeData $nodeData */
+        foreach ($nodeDataElements as $nodeData) {
+            $contextProperties = $this->getProperties();
+            $contextProperties['dimensions'] = $nodeData->getDimensionValues();
+            unset($contextProperties['targetDimensions']);
+            $adjustedContext = $this->contextFactory->create($contextProperties);
+            $nodeVariant = $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
+            $nodeVariants[] = $nodeVariant;
+        }
+        return $nodeVariants;
+    }
+
+    /**
      * Finds all nodes lying on the path specified by (and including) the given
      * starting point and end point.
      *
-     * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
-     * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
+     * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysitecom
+     * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysitecom/homepage/subpage
      * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
      * @api
      */
     public function getNodesOnPath($startingPoint, $endPoint)
     {
-        $startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
-        $endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
+        $startingPointPath = ($startingPoint instanceof NodeInterface) ? $startingPoint->getPath() : $startingPoint;
+        $endPointPath = ($endPoint instanceof NodeInterface) ? $endPoint->getPath() : $endPoint;
 
         $nodeDataElements = $this->nodeDataRepository->findOnPath($startingPointPath, $endPointPath, $this->getWorkspace(), $this->getDimensions(), $this->isRemovedContentShown());
         $nodes = array();
@@ -281,13 +317,16 @@ class Context
      * new, more specific node is created and returned.
      *
      * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
+     * @param boolean $recursive If TRUE also adopt all descendant nodes which are non-aggregate
      * @return NodeInterface A new or existing node that matches this context
      */
-    public function adoptNode(NodeInterface $node)
+    public function adoptNode(NodeInterface $node, $recursive = false)
     {
         if ($node->getContext() === $this && $node->dimensionsAreMatchingTargetDimensionValues()) {
             return $node;
         }
+
+        $this->emitBeforeAdoptNode($node, $this, $recursive);
 
         $existingNode = $this->getNodeByIdentifier($node->getIdentifier());
         if ($existingNode !== null) {
@@ -299,9 +338,41 @@ class Context
         } else {
             $adoptedNode = $node->createVariantForContext($this);
         }
-
         $this->firstLevelNodeCache->setByIdentifier($adoptedNode->getIdentifier(), $adoptedNode);
+
+        if ($recursive) {
+            $childNodes = $node->getChildNodes();
+            /** @var NodeInterface $childNode */
+            foreach ($childNodes as $childNode) {
+                if (!$childNode->getNodeType()->isAggregate()) {
+                    $this->adoptNode($childNode, true);
+                }
+            }
+        }
+
+        $this->emitAfterAdoptNode($node, $this, $recursive);
+
         return $adoptedNode;
+    }
+
+    /**
+     * @Flow\Signal
+     * @param NodeInterface $node
+     * @param Context $context
+     * @param $recursive
+     */
+    protected function emitBeforeAdoptNode(NodeInterface $node, Context $context, $recursive)
+    {
+    }
+
+    /**
+     * @Flow\Signal
+     * @param NodeInterface $node
+     * @param Context $context
+     * @param $recursive
+     */
+    protected function emitAfterAdoptNode(NodeInterface $node, Context $context, $recursive)
+    {
     }
 
     /**

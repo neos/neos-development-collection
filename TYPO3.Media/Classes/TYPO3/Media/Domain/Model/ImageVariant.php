@@ -11,23 +11,24 @@ namespace TYPO3\Media\Domain\Model;
  * source code.
  */
 
+use Doctrine\Common\Collections\Collection;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Exception;
-use TYPO3\Media\Exception\ImageFileException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 
 /**
- * An image variant that has a relation to the original image
+ * A user defined variant (working copy) of an original Image asset
  *
- * TODO: Remove duplicate code at Image and ImageVariant, either via underlying Abstract Class or once Mixins/Traits are available
- * Note: This is neither an entity nor a value object, ImageVariants won't be persisted on their own.
+ * @Flow\Entity
  */
-class ImageVariant implements ImageInterface
+class ImageVariant extends Asset implements AssetVariantInterface, ImageInterface
 {
-    /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
-     * @Flow\Inject
-     */
-    protected $persistenceManager;
+    use DimensionsTrait;
 
     /**
      * @var \TYPO3\Media\Domain\Service\ImageService
@@ -36,201 +37,102 @@ class ImageVariant implements ImageInterface
     protected $imageService;
 
     /**
-     * @var \TYPO3\Media\Domain\Model\ImageInterface
+     * @var \TYPO3\Media\Domain\Model\Image
+     * @ORM\ManyToOne(inversedBy="variants")
+     * @ORM\JoinColumn(nullable=false)
+     * @Flow\Validate(type="NotEmpty")
      */
-    protected $originalImage;
+    protected $originalAsset;
 
     /**
-     * @var array
+     * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
+     * @ORM\OneToMany(mappedBy="imageVariant", cascade={"all"}, orphanRemoval=TRUE)
+     * @ORM\OrderBy({"position" = "ASC"})
      */
-    protected $processingInstructions = array();
+    protected $adjustments;
 
     /**
-    * @var \TYPO3\Flow\Resource\Resource
-    */
-    protected $resource;
-
-    /**
-     * @var integer
-     */
-    protected $width;
-
-    /**
-     * @var integer
-     */
-    protected $height;
-
-    /**
-     * one of PHPs IMAGETYPE_* constants
-     *
-     * @var integer
-     */
-    protected $type;
-
-    /**
-     * alias for this variant which makes its identification easier for reuse.
-     *
      * @var string
+     * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
      */
-    protected $alias;
+    protected $name = '';
 
     /**
-     * @var boolean
-     */
-    protected $imageSizeAndTypeInitialized = false;
-
-    /**
-     * @param \TYPO3\Media\Domain\Model\ImageInterface $originalImage
-     * @param array $processingInstructions
-     * @param string $alias An alias for this variant which makes its identification easier for reuse.
-     */
-    public function __construct(ImageInterface $originalImage, array $processingInstructions, $alias = null)
-    {
-        if ($originalImage instanceof ImageVariant) {
-            $this->originalImage = $originalImage->getOriginalImage();
-        } else {
-            $this->originalImage = $originalImage;
-        }
-        $this->processingInstructions = $processingInstructions;
-        $this->alias = $alias;
-    }
-
-    /**
-     * @return void
-     * @throws ImageFileException
-     */
-    protected function initializeImageSizeAndType()
-    {
-        try {
-            if ($this->imageSizeAndTypeInitialized === true) {
-                return;
-            }
-            $this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
-            list($this->width, $this->height, $this->type) = $this->imageService->getImageSize($this->resource);
-            $this->imageSizeAndTypeInitialized = true;
-        } catch (ImageFileException $exception) {
-            throw $exception;
-        } catch (\Exception $exception) {
-            $exceptionMessage = 'An error with code "' . $exception->getCode() . '" occurred when trying to read the image: "' . $exception->getMessage() . '"';
-            throw new ImageFileException($exceptionMessage, 1391806394);
-        }
-    }
-
-    /**
-     * @return \TYPO3\Media\Domain\Model\ImageInterface
-     */
-    public function getOriginalImage()
-    {
-        return $this->originalImage;
-    }
-
-    /**
-     * Resource of the variant
+     * Constructs a new Image Variant based on the given original
      *
-     * @return \TYPO3\Flow\Resource\Resource
+     * @param Image $originalAsset The original Image asset this variant is derived from
+     */
+    public function __construct(Image $originalAsset)
+    {
+        $this->originalAsset = $originalAsset;
+
+        $this->thumbnails = new ArrayCollection();
+        $this->adjustments = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->lastModified = new \DateTime();
+        $this->variants = new ArrayCollection();
+    }
+
+    /**
+     * Initialize this image variant
+     *
+     * This method will generate the resource of this asset when this object has just been newly created.
+     * We can't run renderResource() in the constructor since not all dependencies have been injected then. Generating
+     * resources lazily in the getResource() method is not feasible either, because getters will be triggered
+     * by the validation mechanism on flushing the persistence which will result in undefined behavior.
+     *
+     * We don't call refresh() here because we only want the resource to be rendered, not all other refresh actions
+     * from parent classes being executed.
+     *
+     * @param integer $initializationCause
+     * @return void
+     */
+    public function initializeObject($initializationCause)
+    {
+        parent::initializeObject($initializationCause);
+        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+            $this->renderResource();
+        }
+    }
+
+    /**
+     * Returns the original image this variant is based on
+     *
+     * @return Image
+     */
+    public function getOriginalAsset()
+    {
+        return $this->originalAsset;
+    }
+
+    /**
+     * Returns the resource of this image variant
+     *
+     * @return Resource
      */
     public function getResource()
     {
-        $this->initializeImageSizeAndType();
         return $this->resource;
     }
 
     /**
-     * Width of the image in pixels
+     * Refreshes this image variant: according to the added adjustments, a new image is rendered and stored as this
+     * image variant's resource.
      *
-     * @return integer
+     * @return void
+     * @see getResource()
      */
-    public function getWidth()
+    public function refresh()
     {
-        $this->initializeImageSizeAndType();
-        return $this->width;
-    }
-
-    /**
-     * Height of the image in pixels
-     *
-     * @return integer
-     */
-    public function getHeight()
-    {
-        $this->initializeImageSizeAndType();
-        return $this->height;
-    }
-
-    /**
-     * Edge / aspect ratio of the image
-     *
-     * @param boolean $respectOrientation If false (the default), orientation is disregarded and always a value >= 1 is returned (like usual in "4 / 3" or "16 / 9")
-     * @return float
-     */
-    public function getAspectRatio($respectOrientation = false)
-    {
-        $aspectRatio = $this->getWidth() / $this->getHeight();
-        if ($respectOrientation === false && $aspectRatio < 1) {
-            $aspectRatio = 1 / $aspectRatio;
+        // Several refresh() calls might happen during one request. If that is the case, the Resource Manager can't know
+        // that the first created resource object doesn't have to be persisted / published anymore. Thus we need to
+        // delete the resource manually in order to avoid orphaned resource objects:
+        if ($this->resource !== null) {
+            $this->resourceManager->deleteResource($this->resource);
         }
 
-        return $aspectRatio;
-    }
-
-    /**
-     * Orientation of this image, i.e. portrait, landscape or square
-     *
-     * @return string One of this interface's ORIENTATION_* constants.
-     */
-    public function getOrientation()
-    {
-        $aspectRatio = $this->getAspectRatio(true);
-        if ($aspectRatio > 1) {
-            return ImageInterface::ORIENTATION_LANDSCAPE;
-        } elseif ($aspectRatio < 1) {
-            return ImageInterface::ORIENTATION_PORTRAIT;
-        } else {
-            return ImageInterface::ORIENTATION_SQUARE;
-        }
-    }
-
-    /**
-     * Whether this image is square aspect ratio and therefore has a square orientation
-     *
-     * @return boolean
-     */
-    public function isOrientationSquare()
-    {
-        return $this->getOrientation() === ImageInterface::ORIENTATION_SQUARE;
-    }
-
-    /**
-     * Whether this image is in landscape orientation
-     *
-     * @return boolean
-     */
-    public function isOrientationLandscape()
-    {
-        return $this->getOrientation() === ImageInterface::ORIENTATION_LANDSCAPE;
-    }
-
-    /**
-     * Whether this image is in portrait orientation
-     *
-     * @return boolean
-     */
-    public function isOrientationPortrait()
-    {
-        return $this->getOrientation() === ImageInterface::ORIENTATION_PORTRAIT;
-    }
-
-    /**
-     * One of PHPs IMAGETYPE_* constants that reflects the image type
-     * This will return the type of the original image as this should not be different in image variants
-     *
-     * @see http://php.net/manual/image.constants.php
-     * @return integer
-     */
-    public function getType()
-    {
-        $this->initializeImageSizeAndType();
-        return $this->originalImage->getType();
+        parent::refresh();
+        $this->renderResource();
     }
 
     /**
@@ -241,7 +143,7 @@ class ImageVariant implements ImageInterface
      */
     public function getFileExtension()
     {
-        return $this->originalImage->getFileExtension();
+        return $this->originalAsset->getFileExtension();
     }
 
     /**
@@ -251,91 +153,49 @@ class ImageVariant implements ImageInterface
      */
     public function getTitle()
     {
-        return $this->originalImage->getTitle();
+        return $this->originalAsset->getTitle();
     }
 
     /**
-     * Returns the processing instructions that were used to create this image variant.
+     * Returns the caption of the original image
      *
      * @return string
-     * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
      */
-    public function getProcessingInstructions()
+    public function getCaption()
     {
-        return $this->processingInstructions;
+        return $this->originalAsset->getCaption();
     }
 
     /**
-     * Creates a thumbnail of the original image
+     * Sets a name which can be used for identifying this variant
      *
-     * If maximum width/height is not specified or exceed the original images size,
-     * width/height of the original image is used
-     *
-     * Note: The image variant that will be created is intentionally not added to the
-     * imageVariants collection of the original image. If you want to create a persisted
-     * image variant, use createImageVariant() instead.
-     *
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @param string $ratioMode
-     * @return \TYPO3\Media\Domain\Model\ImageVariant
-     * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
-     */
-    public function getThumbnail($maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET)
-    {
-        $processingInstructions = array_merge($this->processingInstructions, array(array(
-            'command' => 'thumbnail',
-            'options' => array(
-                'size' => array(
-                    'width' => intval($maximumWidth ?: $this->width),
-                    'height' => intval($maximumHeight ?: $this->height)
-                ),
-                'mode' => $ratioMode
-            )
-        )));
-
-        return new ImageVariant($this, $processingInstructions);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    /**
-     * @return array
-     */
-    public function __sleep()
-    {
-        return array('originalImage', 'processingInstructions', 'alias');
-    }
-
-    /**
+     * @param string $name
      * @return void
      */
-    public function __wakeup()
+    public function setName($name)
     {
-        // in some rare cases originalImage may be not set, like when one node has two properties with the same image resource
-        if ($this->originalImage instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
-            if ($this->originalImage->getResource() === null) {
-                // hack for working around a bug that is caused by serialization under some (unknown) circumstances
-                $this->originalImage = $this->persistenceManager->getObjectByIdentifier(\TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->originalImage, 'Persistence_Object_Identifier', true), 'TYPO3\Media\Domain\Model\Image');
-            }
-        }
+        $this->name = $name;
+    }
+
+    /**
+     * Returns the name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
      * Setting the image resource on an ImageVariant is not allowed, this method will
      * throw a RuntimeException.
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource
+     * @param Resource $resource
      * @return void
      * @throws \RuntimeException
      */
-    public function setResource(\TYPO3\Flow\Resource\Resource $resource)
+    public function setResource(Resource $resource)
     {
         throw new \RuntimeException('Setting the resource on an ImageVariant is not supported.', 1366627480);
     }
@@ -356,7 +216,7 @@ class ImageVariant implements ImageInterface
     /**
      * Add a single tag to this asset
      *
-     * @param \TYPO3\Media\Domain\Model\Tag $tag
+     * @param Tag $tag
      * @return void
      */
     public function addTag(Tag $tag)
@@ -373,5 +233,108 @@ class ImageVariant implements ImageInterface
     public function setTags(\Doctrine\Common\Collections\Collection $tags)
     {
         throw new \RuntimeException('Settings tags on an ImageVariant is not supported.', 1371237597);
+    }
+
+    /**
+     * Adding variants to variants is not supported.
+     *
+     * @param ImageVariant $variant
+     * @return void
+     */
+    public function addVariant(ImageVariant $variant)
+    {
+        throw new \RuntimeException('Adding variants to an ImageVariant is not supported.', 1381419461);
+    }
+
+    /**
+     * Retrieving variants from variants is not supported (no-operation)
+     *
+     * @return array
+     */
+    public function getVariants()
+    {
+        return array();
+    }
+
+    /**
+     * Adds the given adjustment to the list of adjustments applied to this image variant.
+     *
+     * If an adjustment of the given type already exists, the existing one will be overridden by the new one.
+     *
+     * @param ImageAdjustmentInterface $adjustment The adjustment to apply
+     * @return void
+     */
+    public function addAdjustment(ImageAdjustmentInterface $adjustment)
+    {
+        $this->applyAdjustment($adjustment);
+        $this->refresh();
+    }
+
+    /**
+     * Adds the given adjustments to the list of adjustments applied to this image variant.
+     *
+     * If an adjustment of one of the given types already exists, the existing one will be overridden by the new one.
+     *
+     * @param array<ImageAdjustmentInterface> $adjustments
+     * @return void
+     */
+    public function addAdjustments(array $adjustments)
+    {
+        foreach ($adjustments as $adjustment) {
+            $this->applyAdjustment($adjustment);
+        }
+
+        $this->refresh();
+    }
+
+    /**
+     * Apply the given adjustment to the image variant.
+     * If an adjustment of the given type already exists, the existing one will be overridden by the new one.
+     *
+     * @param ImageAdjustmentInterface $adjustment
+     * @return void
+     */
+    protected function applyAdjustment(ImageAdjustmentInterface $adjustment)
+    {
+        $existingAdjustmentFound = false;
+        $newAdjustmentClassName = TypeHandling::getTypeForValue($adjustment);
+
+        foreach ($this->adjustments as $existingAdjustment) {
+            if (TypeHandling::getTypeForValue($existingAdjustment) === $newAdjustmentClassName) {
+                foreach (ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
+                    ObjectAccess::setProperty($existingAdjustment, $propertyName, $propertyValue);
+                }
+                $existingAdjustmentFound = true;
+            }
+        }
+        if (!$existingAdjustmentFound) {
+            $this->adjustments->add($adjustment);
+            $adjustment->setImageVariant($this);
+            $this->adjustments = $this->adjustments->matching(new \Doctrine\Common\Collections\Criteria(null, array('position' => 'ASC')));
+        }
+
+        $this->lastModified = new \DateTime();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAdjustments()
+    {
+        return $this->adjustments;
+    }
+
+    /**
+     * Tells the ImageService to render the resource of this ImageVariant according to the existing adjustments.
+     *
+     * @return void
+     */
+    protected function renderResource()
+    {
+        $processedImageInfo = $this->imageService->processImage($this->originalAsset->getResource(), $this->adjustments->toArray());
+        $this->resource = $processedImageInfo['resource'];
+        $this->width = $processedImageInfo['width'];
+        $this->height = $processedImageInfo['height'];
+        $this->persistenceManager->whiteListObject($this->resource);
     }
 }

@@ -33,3 +33,28 @@ TYPO3:
           Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
           Math: 'TYPO3\Eel\Helper\MathHelper'
           Json: 'TYPO3\Eel\Helper\JsonHelper'
+          I18n: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
+
+    # the fallback NodeType can be used as a replacement for unknown NodeTypes
+    #
+    # Example
+    #
+    #  fallbackNodeType: 'Some.Package:SomeNodeType'
+    fallbackNodeType: ~
+
+  Flow:
+     # Register soft deletable filter & event listeners
+    persistence:
+      doctrine:
+        eventListeners:
+          'Gedmo\Timestampable\TimestampableListener':
+            events: ['prePersist', 'onFlush', 'loadClassMetadata']
+            listener: 'Gedmo\Timestampable\TimestampableListener'
+
+    # Improve debug output for node objects by ignoring large classes
+    error:
+      debugger:
+        ignoredClasses:
+          'TYPO3\\TYPO3CR\\Domain\\Service\\NodeTypeManager': TRUE
+          'TYPO3\\TYPO3CR\\Domain\\Factory\\NodeFactory': TRUE
+          'TYPO3\\TYPO3CR\\Domain\\Service\\Cache\\FirstLevelNodeCache': TRUE

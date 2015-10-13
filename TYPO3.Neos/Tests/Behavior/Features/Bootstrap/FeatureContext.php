@@ -1,20 +1,47 @@
 <?php
 
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
+use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
 require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
-require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/StepDefinitionsTrait.php');
+require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
+require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 /**
  * Features context
  */
 class FeatureContext extends MinkContext
 {
-    use StepDefinitionsTrait;
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
+    use SecurityOperationsTrait;
+    use IsolatedBehatStepsTrait;
+    use HistoryDefinitionsTrait;
+
+    /**
+     * @var string
+     */
+    protected $behatTestHelperObjectName = 'TYPO3\Neos\Tests\Functional\Command\BehatTestHelper';
 
     /**
      * @var \TYPO3\Flow\Object\ObjectManagerInterface
@@ -40,6 +67,17 @@ class FeatureContext extends MinkContext
     {
         $this->useContext('flow', new \Flowpack\Behat\Tests\Behat\FlowContext($parameters));
         $this->objectManager = $this->getSubcontext('flow')->getObjectManager();
+        $this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+        $this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
+        $this->setupSecurity();
+    }
+
+    /**
+     * @return \TYPO3\Flow\Object\ObjectManagerInterface
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
     }
 
     /**
@@ -47,7 +85,6 @@ class FeatureContext extends MinkContext
      */
     private function getPublishingService()
     {
-        /** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
         return $this->getObjectManager()->get('TYPO3\Neos\Service\PublishingService');
     }
 
@@ -74,8 +111,8 @@ class FeatureContext extends MinkContext
     public function theFollowingUsersExist(TableNode $table)
     {
         $rows = $table->getHash();
-        /** @var \TYPO3\Neos\Domain\Factory\UserFactory $userFactory */
-        $userFactory = $this->objectManager->get('TYPO3\Neos\Domain\Factory\UserFactory');
+        /** @var \TYPO3\Neos\Domain\Service\UserService $userService */
+        $userService = $this->objectManager->get('\TYPO3\Neos\Domain\Service\UserService');
         /** @var \TYPO3\Party\Domain\Repository\PartyRepository $partyRepository */
         $partyRepository = $this->objectManager->get('TYPO3\Party\Domain\Repository\PartyRepository');
         /** @var \TYPO3\Flow\Security\AccountRepository $accountRepository */
@@ -84,13 +121,7 @@ class FeatureContext extends MinkContext
             $roleIdentifiers = array_map(function ($role) {
                 return 'TYPO3.Neos:' . $role;
             }, Arrays::trimExplode(',', $row['roles']));
-            $user = $userFactory->create($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
-
-            $partyRepository->add($user);
-            $accounts = $user->getAccounts();
-            foreach ($accounts as $account) {
-                $accountRepository->add($account);
-            }
+            $userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
         }
         $this->getSubcontext('flow')->persistAll();
     }

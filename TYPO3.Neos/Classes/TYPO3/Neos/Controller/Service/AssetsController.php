@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Neos\View\Service\AssetJsonView;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * Rudimentary REST service for assets
@@ -22,6 +22,8 @@ use TYPO3\Neos\View\Service\AssetJsonView;
  */
 class AssetsController extends ActionController
 {
+    use BackendUserTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Media\Domain\Repository\AssetRepository
@@ -66,7 +68,7 @@ class AssetsController extends ActionController
             $this->tagRepository->findBySearchTerm($searchTerm)->toArray()
         );
 
-        $this->view->assign('assets', $assets->toArray());
+        $this->view->assign('assets', $assets);
     }
 
     /**

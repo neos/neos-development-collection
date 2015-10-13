@@ -45,6 +45,12 @@ class NodeTypeManager
     protected $configurationManager;
 
     /**
+     * @Flow\InjectConfiguration(path="fallbackNodeType")
+     * @var string
+     */
+    protected $fallbackNodeTypeName;
+
+    /**
      * Return all registered node types.
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
@@ -114,10 +120,18 @@ class NodeTypeManager
         if ($this->cachedNodeTypes === array()) {
             $this->loadNodeTypes();
         }
-        if (!isset($this->cachedNodeTypes[$nodeTypeName])) {
-            throw new NodeTypeNotFoundException('The node type "' . $nodeTypeName . '" is not available.', 1316598370);
+        if (isset($this->cachedNodeTypes[$nodeTypeName])) {
+            return $this->cachedNodeTypes[$nodeTypeName];
         }
-        return $this->cachedNodeTypes[$nodeTypeName];
+
+        if ($this->fallbackNodeTypeName === null) {
+            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and no fallback NodeType is configured.', $nodeTypeName), 1316598370);
+        }
+
+        if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
+            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and the configured fallback NodeType "%s" is not available.', $nodeTypeName, $this->fallbackNodeTypeName), 1438166322);
+        }
+        return $this->getNodeType($this->fallbackNodeTypeName);
     }
 
     /**
@@ -198,34 +212,47 @@ class NodeTypeManager
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];
 
-        $mergedConfiguration = array();
         $superTypes = array();
         if (isset($nodeTypeConfiguration['superTypes'])) {
-            foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName) {
+            foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName => $enabled) {
+                // Skip unset node types
+                if ($enabled === false || $enabled === null) {
+                    $superTypes[$superTypeName] = null;
+                    continue;
+                }
+
+                // Make this setting backwards compatible with old array schema (deprecated since 2.0)
+                if (!is_bool($enabled)) {
+                    $superTypeName = $enabled;
+                }
+
+                // when removing super types by setting them to null, only string keys can be overridden
+                if ($superTypeName === null) {
+                    throw new \TYPO3\TYPO3CR\Exception\NodeConfigurationException('Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.', 1416578395);
+                }
+
                 $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
                 if ($superType->isFinal() === true) {
-                    throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a supertype "' . $superType->getName() . '" which is final.', 1316452423);
+                    throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a super type "' . $superType->getName() . '" which is final.', 1316452423);
                 }
-                $superTypes[] = $superType;
-                $mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getFullConfiguration());
+
+                $superTypes[$superTypeName] = $superType;
             }
-            unset($mergedConfiguration['superTypes']);
         }
-        $mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $nodeTypeConfiguration);
 
         // Remove unset properties
-        if (isset($mergedConfiguration['properties'])) {
-            foreach ($mergedConfiguration['properties'] as $propertyName => $propertyConfiguration) {
+        if (isset($nodeTypeConfiguration['properties'])) {
+            foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {
                 if ($propertyConfiguration === null) {
-                    unset($mergedConfiguration['properties'][$propertyName]);
+                    unset($nodeTypeConfiguration['properties'][$propertyName]);
                 }
             }
-            if ($mergedConfiguration['properties'] === array()) {
-                unset($mergedConfiguration['properties']);
+            if ($nodeTypeConfiguration['properties'] === array()) {
+                unset($nodeTypeConfiguration['properties']);
             }
         }
 
-        $nodeType = new NodeType($nodeTypeName, $superTypes, $mergedConfiguration);
+        $nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration);
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;
         return $nodeType;

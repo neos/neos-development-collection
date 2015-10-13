@@ -25,8 +25,10 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 
 /**
@@ -85,7 +87,7 @@ class NodeConverter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var NodeService
+     * @var NodeServiceInterface
      */
     protected $nodeService;
 
@@ -140,17 +142,13 @@ class NodeConverter extends AbstractTypeConverter
             return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
         }
 
-        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
-        if (!isset($matches['NodePath'])) {
+        try {
+            $nodePathAndContext = NodePaths::explodeContextPath($source['__contextNodePath']);
+            $nodePath = $nodePathAndContext['nodePath'];
+            $workspaceName = $nodePathAndContext['workspaceName'];
+            $dimensions = $nodePathAndContext['dimensions'];
+        } catch (\InvalidArgumentException $exception) {
             return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
-        }
-        $nodePath = $matches['NodePath'];
-
-        $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-
-        $dimensions = null;
-        if (isset($matches['Dimensions'])) {
-            $dimensions = $this->contextFactory->parseDimensionValueStringToArray($matches['Dimensions']);
         }
 
         $context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
@@ -164,22 +162,21 @@ class NodeConverter extends AbstractTypeConverter
             return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
         }
 
-        $targetNodeType = null;
-        if (isset($source['_nodeType'])) {
-            $source['_nodeType'] = $this->nodeTypeManager->getNodeType($source['_nodeType']);
-            if ($source['_nodeType'] !== $node->getNodeType()) {
-                if ($context->getWorkspace()->getName() === 'live') {
-                    throw new NodeException('Could not convert the node type in live workspace');
-                }
-                $targetNodeType = $source['_nodeType'];
+        if (isset($source['_nodeType']) && $source['_nodeType'] !== $node->getNodeType()->getName()) {
+            if ($context->getWorkspace()->getName() === 'live') {
+                throw new NodeException('Could not convert the node type in live workspace', 1429989736);
             }
-        }
-        $this->setNodeProperties($node, $node->getNodeType(), $source, $context);
-        if ($targetNodeType !== null) {
-            $this->nodeService->setDefaultValues($node, $targetNodeType);
-            $this->nodeService->createChildNodes($node, $targetNodeType);
-        }
 
+            $oldNodeType = $node->getNodeType();
+            $targetNodeType = $this->nodeTypeManager->getNodeType($source['_nodeType']);
+            $node->setNodeType($targetNodeType);
+            $this->nodeService->setDefaultValues($node);
+            $this->nodeService->cleanUpAutoCreatedChildNodes($node, $oldNodeType);
+            $this->nodeService->createChildNodes($node);
+        }
+        unset($source['_nodeType']);
+
+        $this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
         return $node;
     }
 
@@ -190,12 +187,14 @@ class NodeConverter extends AbstractTypeConverter
      * @param NodeType $nodeType
      * @param array $properties
      * @param TYPO3CRContext $context
-     * @throws TypeConverterException
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return void
+     * @throws TypeConverterException
      */
-    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context)
+    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context, PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTypeProperties = $nodeType->getProperties();
+        unset($properties['_lastPublicationDateTime']);
         foreach ($properties as $nodePropertyName => $nodePropertyValue) {
             if (substr($nodePropertyName, 0, 2) === '__') {
                 continue;
@@ -219,7 +218,7 @@ class NodeConverter extends AbstractTypeConverter
                         throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
                     }
                 break;
-                case 'date':
+                case 'DateTime':
                     if ($nodePropertyValue !== '') {
                         $nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue);
                         $nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
@@ -244,8 +243,13 @@ class NodeConverter extends AbstractTypeConverter
                 ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
                 continue;
             }
+
             if (!isset($nodeTypeProperties[$nodePropertyName])) {
-                throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+                if ($configuration !== null && $configuration->shouldSkipUnknownProperties()) {
+                    continue;
+                } else {
+                    throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+                }
             }
             $innerType = $nodePropertyType;
             if ($nodePropertyType !== null) {
@@ -255,8 +259,9 @@ class NodeConverter extends AbstractTypeConverter
                 } catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
                 }
             }
-            if ($this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
-                $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType);
+
+            if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
+                $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
             }
             $nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
         }

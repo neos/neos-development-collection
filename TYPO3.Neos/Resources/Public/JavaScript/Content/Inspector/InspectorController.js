@@ -11,7 +11,11 @@ define(
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
 	'Content/Application',
-	'Content/LoadingIndicator'
+	'Content/LoadingIndicator',
+	'Shared/I18n',
+	'create',
+	'vie',
+	'Shared/EventDispatcher'
 ], function(
 	Ember,
 	$,
@@ -21,7 +25,11 @@ define(
 	LocalStorage,
 	NodeSelection,
 	ContentModule,
-	LoadingIndicator
+	LoadingIndicator,
+	I18n,
+	CreateJS,
+	vie,
+	EventDispatcher
 ) {
 
 	/**
@@ -95,7 +103,7 @@ define(
 		 * This is a computed property which builds up a nested array powering the Inspector.
 		 * It essentially contains three levels: On the first level, the tabs are configured,
 		 * on the second level the groups are displayed, while on the third level, the properties
-		 * belonging to each group are displayed.
+		 * and views belonging to each group are displayed.
 		 *
 		 * Thus, the output looks possibly as follows:
 		 * - Default
@@ -105,10 +113,13 @@ define(
 		 *    - Image Settings
 		 *    - image (file upload)
 		 */
-		groupedPropertyViews: function() {
+		groupedViews: function() {
 			var selectedNodeSchema,
 				propertiesArray,
 				sortedPropertiesArray,
+				declaredViews,
+				viewsArray,
+				sortedViewsArray,
 				groupsObject,
 				tabsObject,
 				sortedGroupsArray,
@@ -131,48 +142,90 @@ define(
 					}, selectedNodeSchema.properties[property]));
 				}
 			}
+
 			sortedPropertiesArray = propertiesArray.sort(function(a, b) {
 				return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 			});
 
+			declaredViews = Ember.get(selectedNodeSchema, 'ui.inspector.views') || [];
+
+			viewsArray = [];
+			for (var key in declaredViews) {
+				if (declaredViews.hasOwnProperty(key)) {
+					viewsArray.push($.extend({
+						key: key,
+						elementId: Ember.generateGuid()
+					}, declaredViews[key]));
+				}
+			}
+
+			sortedViewsArray = viewsArray.sort(function(a, b) {
+				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
+			});
+
 			// groups
 			groupsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.groups'));
+			for (groupName in groupsObject) {
+				groupsObject[groupName].label = I18n.translate(groupsObject[groupName].label);
+			}
 
 			// tabs
 			tabsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.tabs'));
+			for (tabName in tabsObject) {
+				tabsObject[tabName].label = I18n.translate(tabsObject[tabName].label);
+			}
 
 			// build nested structure
-			sortedGroupsArray = this._assignPropertiesToGroups(sortedPropertiesArray, groupsObject);
+			sortedGroupsArray = this._assignPropertiesAndViewsToGroups(sortedPropertiesArray, sortedViewsArray, groupsObject);
 			sortedTabsArray = this._assignGroupsToTabs(sortedGroupsArray, tabsObject);
 
 			return sortedTabsArray;
 		}.property('nodeSelection.selectedNodeSchema'),
 
-		_assignPropertiesToGroups: function(sortedPropertiesArray, groupsObject) {
+		_assignPropertiesAndViewsToGroups: function(sortedPropertiesArray, sortedViewsArray, groupsObject) {
 			var groupsArray;
 
 			// 1. assign properties to groups
 			sortedPropertiesArray.forEach(function(property) {
 				var groupIdentifier = Ember.get(property, 'ui.inspector.group');
+
 				if (groupIdentifier in groupsObject) {
 					if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]) {
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
+
+						property.ui.label = I18n.translate(property.ui.label);
+
 						groupsObject[groupIdentifier].properties.push(property);
 					}
 				}
 			});
 
-			// 2. transform object into array
+			// 2. assign views to groups
+			sortedViewsArray.forEach(function(view) {
+				var groupIdentifier = Ember.get(view, 'group');
+				if (groupIdentifier in groupsObject) {
+					if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]) {
+						if (!groupsObject[groupIdentifier].views) {
+							groupsObject[groupIdentifier].views = [];
+						}
+						groupsObject[groupIdentifier].views.push(view);
+					}
+				}
+			});
+
+			// 3. transform object into array
 			groupsArray = [];
 			for (var groupIdentifier in groupsObject) {
-				if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier] && groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length) {
+				if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier]
+					&& ((groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length)
+					|| (groupsObject[groupIdentifier].views && groupsObject[groupIdentifier].views.length))) {
 					groupsArray.push($.extend({group: groupIdentifier}, groupsObject[groupIdentifier]));
 				}
 			}
 
-			// 3. sort
+			// 4. sort
 			groupsArray.sort(function(a, b) {
 				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 			});
@@ -220,19 +273,19 @@ define(
 		},
 
 		_ensureTabSelection: function() {
-			var groupedPropertyViews = this.get('groupedPropertyViews');
+			var groupedViews = this.get('groupedViews');
 			if (this.get('preferredTab')) {
-				var preferredTab = groupedPropertyViews.findBy('tab', this.get('preferredTab'));
+				var preferredTab = groupedViews.findBy('tab', this.get('preferredTab'));
 				if (preferredTab) {
 					this.set('activeTab', preferredTab.get('tab'));
 					this.set('preferredTab', null);
 					return;
 				}
 			}
-			var activeTabExists = groupedPropertyViews.findBy('tab', this.get('activeTab'));
+			var activeTabExists = groupedViews.findBy('tab', this.get('activeTab'));
 			if (!activeTabExists) {
 				this.set('preferredTab', this.get('activeTab'));
-				var firstTab = groupedPropertyViews.objectAt(0);
+				var firstTab = groupedViews.objectAt(0);
 				if (firstTab) {
 					this.set('activeTab', firstTab.get('tab'));
 				}
@@ -328,49 +381,100 @@ define(
 			var that = this,
 				cleanProperties,
 				nodeTypeSchema = NodeSelection.get('selectedNodeSchema'),
+				reloadElement = false,
 				reloadPage = false,
-				selectedNode = this.get('selectedNode');
+				selectedNode = this.get('selectedNode'),
+				propertyValuePostprocessPromises = [],
+				propertyPromise;
+
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-				var value = that.get('nodeProperties').get(key);
-				if (value !== cleanPropertyValue) {
-					selectedNode.setAttribute(key, value, {validate: false});
+				var valueOrPromise = that.get('nodeProperties').get(key);
+
+				// check if the value is actually a promise
+				if (valueOrPromise._propertyChangePromiseClosure) {
+					propertyPromise = valueOrPromise._propertyChangePromiseClosure();
+				} else {
+					propertyPromise = Ember.RSVP.Promise(function (resolve, reject) {
+						resolve(valueOrPromise);
+					});
+				}
+
+				propertyValuePostprocessPromises.push(propertyPromise.then(function(value) {
 					if (value !== cleanPropertyValue) {
-						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+						selectedNode.setAttribute(key, value, {validate: false});
+						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadPageIfChanged')) {
 							reloadPage = true;
+						} else if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+							reloadElement = true;
 						}
 					}
-				}
+				}));
 			});
 
-			var entity = this.get('selectedNode._vieEntity');
-			if (entity.isValid() !== true) {
-				return;
-			}
+			Ember.RSVP.all(propertyValuePostprocessPromises).then(function() {
+				var entity = that.get('selectedNode._vieEntity');
+				if (entity.isValid() !== true) {
+					return;
+				}
 
-			if (reloadPage === true) {
-				LoadingIndicator.start();
-			}
+				// Reload element is only possible if the element is inside a content collection
+				var isInsideCollection = typeof entity._enclosingCollectionWidget !== 'undefined';
+				if (!isInsideCollection) {
+					reloadPage = true;
+					reloadElement = false;
+				}
 
-			Backbone.sync('update', entity, {
-				success: function(model, result) {
-					if (reloadPage === true) {
-						if (result && result.data && result.data.nextUri) {
-							// It might happen that the page has been renamed, so we need to take the server-side URI
-							ContentModule.loadPage(result.data.nextUri);
-						} else {
-							ContentModule.reloadPage();
+				if (reloadPage === true || reloadElement === true) {
+					LoadingIndicator.start();
+				}
+				Backbone.sync('update', entity, {
+					success: function (model, result, xhr) {
+						if (reloadPage !== true && reloadElement !== true) {
+							return;
 						}
-					}
-				}
+						if (reloadPage === true) {
+							if (result && result.data && result.data.nextUri) {
+								// It might happen that the page has been renamed, so we need to take the server-side URI
+								ContentModule.loadPage(result.data.nextUri);
+								return;
+							}
+						} else if (reloadElement === true) {
+							if (result && result.data && result.data.collectionContent) {
+								LoadingIndicator.done();
+								var id = entity.id.substring(1, entity.id.length - 1),
+									$element = $('[about="' + id + '"]').first(),
+									content = $(result.data.collectionContent).find('[about="' + xhr.getResponseHeader('X-Neos-AffectedNodePath') + '"]').first();
+								if (content.length === 0) {
+									console.warn('Node could not be found in rendered collection.');
+									ContentModule.reloadPage();
+									return;
+								}
+
+								var entityView = vie.service('rdfa')._getViewForElement($element);
+								entityView.$el.replaceWith(content);
+								var $newElement = $('[about="' + id + '"]');
+								entityView.el = $newElement.get(0);
+								entityView.$el = $newElement;
+								CreateJS.refreshEdit(entityView.el);
+								NodeSelection.replaceEntityWrapper($newElement, true);
+								NodeSelection.updateSelection($newElement);
+								EventDispatcher.trigger('contentChanged');
+								return;
+							}
+						}
+						ContentModule.reloadPage();
+					},
+					render: (isInsideCollection && reloadElement)
+				});
+
+				that.set('modified', false);
+
+				cleanProperties = that.get('selectedNode.attributes');
+				that.set('cleanProperties', cleanProperties);
+				that.set('nodeProperties', Ember.Object.create(cleanProperties));
+				SecondaryInspectorController.hide();
 			});
-
-			this.set('modified', false);
-
-			cleanProperties = this.get('selectedNode.attributes');
-			this.set('cleanProperties', cleanProperties);
-			this.set('nodeProperties', Ember.Object.create(cleanProperties));
-			SecondaryInspectorController.hide();
 		},
 
 		/**

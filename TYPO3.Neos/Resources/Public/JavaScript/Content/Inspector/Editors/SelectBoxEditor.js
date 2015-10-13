@@ -3,8 +3,9 @@ define([
 	'emberjs',
 	'Shared/HttpClient',
 	'Content/Inspector/InspectorController',
+	'Shared/I18n',
 	'Shared/Utility'
-], function($, Ember, HttpClient, InspectorController, Utility) {
+], function($, Ember, HttpClient, InspectorController, I18n, Utility) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -76,7 +77,12 @@ define([
 		values: [],
 		allowEmpty: false,
 		multiple: false,
-		placeholder: 'Choose',
+
+		placeholder: '',
+		_placeholder: function () {
+			return I18n.translate(this.get('placeholder'));
+		}.property('placeholder'),
+
 		dataSourceIdentifier: null,
 		dataSourceUri: null,
 		attributeBindings: ['size', 'disabled', 'multiple'],
@@ -111,6 +117,11 @@ define([
 				if (configuration === null) {
 					return;
 				}
+
+				if (configuration.label) {
+					configuration.label = I18n.translate(configuration.label);
+				}
+
 				options.push(Ember.Object.create($.extend({
 					selected: that.get('multiple') && Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : (that.get('propertyType') === 'integer' ? parseInt(value, 10) === parseInt(currentValue, 10) : value === currentValue),
 					value: value,
@@ -178,7 +189,7 @@ define([
 				maximumSelectionSize: this.get('multiple') ? 0 : 1,
 				minimumResultsForSearch: 5,
 				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
-				placeholder: this.get('placeholder'),
+				placeholder: this.get('_placeholder'),
 				relative: true,
 				formatSelection: function (data, container, escapeMarkup) {
 					var icon = $(data.element).attr('icon');
@@ -215,7 +226,7 @@ define([
 			if (this.$()) {
 				this._initializeSelect2();
 			}
-		}.observes('placeholder'),
+		}.observes('_placeholder'),
 
 		/**
 		 * @param {string} dataSourceUri

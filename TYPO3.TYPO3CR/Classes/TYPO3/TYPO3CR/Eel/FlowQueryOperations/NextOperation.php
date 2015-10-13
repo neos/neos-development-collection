@@ -18,8 +18,9 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * "next" operation working on TYPO3CR nodes. It iterates over all
- * context elements and returns each following sibling or only those matching
- * the filter expression specified as optional argument.
+ * context elements and returns the immediately following sibling.
+ * If an optional filter expression is provided, it only returns the node
+ * if it matches the given expression.
  */
 class NextOperation extends AbstractOperation
 {
@@ -75,7 +76,7 @@ class NextOperation extends AbstractOperation
 
     /**
      * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @return NodeInterface The preceding node of $contextNode or NULL
+     * @return NodeInterface The following node of $contextNode or NULL
      */
     protected function getNextForNode($contextNode)
     {

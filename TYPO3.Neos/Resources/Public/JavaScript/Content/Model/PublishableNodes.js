@@ -9,23 +9,29 @@ define(
 	'Library/jquery-with-dependencies',
 	'vie',
 	'Content/Model/Node',
+	'Content/Components/TargetWorkspaceController',
 	'Shared/EventDispatcher',
 	'Shared/NodeTypeService',
 	'Shared/ResourceCache',
 	'Shared/Configuration',
 	'Shared/Notification',
-	'Shared/Endpoint/WorkspaceEndpoint'
+	'Shared/Endpoint/WorkspaceEndpoint',
+	'Content/Application',
+	'Shared/I18n'
 ], function(
 	Ember,
 	$,
 	vie,
 	EntityWrapper,
+	TargetWorkspaceController,
 	EventDispatcher,
 	NodeTypeService,
 	ResourceCache,
 	Configuration,
 	Notification,
-	WorkspaceEndpoint
+	WorkspaceEndpoint,
+	ContentModule,
+	I18n
 ) {
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
@@ -34,6 +40,7 @@ define(
 		publishAllRunning: false,
 		discardRunning: false,
 		discardAllRunning: false,
+		targetWorkspaceController: TargetWorkspaceController,
 
 		noChanges: function() {
 			return this.get('publishableEntitySubjects').length === 0;
@@ -53,13 +60,13 @@ define(
 
 		init: function() {
 			vie.entities.on('change', this._updatePublishableEntities, this);
-			this._updatePublishableEntities();
 
 			EventDispatcher
 				.on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeDeleted', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes')
-				.on('nodesUpdated', this, '_updatePublishableEntities');
+				.on('contentChanged', this, '_updatePublishableEntities');
+			ContentModule.on('pageLoaded', this, '_updatePublishableEntities');
 		},
 
 		/**
@@ -83,18 +90,17 @@ define(
 				}
 			}, this);
 			this.set('publishableEntitySubjects', publishableEntitySubjects);
-		},
+		}.observes('targetWorkspaceController.userWorkspace'),
 
 		/**
-		 * Check whether the entity is publishable or not. Currently, everything
-		 * which is not in the live workspace is publishable.
+		 * Check whether the entity is publishable or not. Everything which is in the user workspace is publishable.
 		 *
 		 * @param {object} entity
 		 * @return {boolean}
 		 */
 		_isEntityPublishable: function(entity) {
 			var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
-			return attributes.__workspaceName && attributes.__workspaceName !== 'live';
+			return attributes.__workspaceName && attributes.__workspaceName === this.get('targetWorkspaceController.userWorkspace.name');
 		},
 
 		/**
@@ -105,7 +111,7 @@ define(
 		 */
 		publishChanges: function(autoPublish) {
 			var that = this,
-				targetWorkspace = 'live',
+				targetWorkspaceName = this.get('targetWorkspaceController.targetWorkspace.name'),
 				entitySubjects = this.get('publishableEntitySubjects'),
 				nodes = entitySubjects.map(function(subject) {
 					return vie.entities.get(subject).fromReference(subject);
@@ -113,10 +119,10 @@ define(
 
 			if (nodes.length > 0) {
 				that.set('publishRunning', true);
-				WorkspaceEndpoint.publishNodes(nodes, targetWorkspace).then(
+				WorkspaceEndpoint.publishNodes(nodes, targetWorkspaceName).then(
 					function() {
 						entitySubjects.forEach(function(subject) {
-							that._removeNodeFromPublishableEntitySubjects(subject, 'live');
+							that._removeNodeFromPublishableEntitySubjects(subject, targetWorkspaceName);
 						});
 						that._updatePublishableEntities();
 						that.getWorkspaceWideUnpublishedNodes();
@@ -128,7 +134,7 @@ define(
 								namespace = Configuration.get('TYPO3_NAMESPACE'),
 								title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
 								nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-							Notification.ok('Published changes for ' + nodeTypeDefinition.ui.label + ' "' + $('<a />').html(title).text() + '"');
+							Notification.ok('Published changes for ' + I18n.translate(nodeTypeDefinition.ui.label) + ' "' + $('<a />').html(title).text() + '"');
 						}
 						that.set('publishRunning', false);
 					},
@@ -221,13 +227,14 @@ define(
 		publishAll: function() {
 			var that = this,
 				entitySubjects = this.get('publishableEntitySubjects'),
-				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
+				sourceWorkspaceName = this.get('targetWorkspaceController.userWorkspace.name'),
+				targetWorkspaceName = this.get('targetWorkspaceController.targetWorkspace.name');
 
 			that.set('publishAllRunning', true);
-			WorkspaceEndpoint.publishAll(workspaceName).then(
+			WorkspaceEndpoint.publishAll(sourceWorkspaceName, targetWorkspaceName).then(
 				function() {
 					entitySubjects.forEach(function(subject) {
-						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
+						that._removeNodeFromPublishableEntitySubjects(subject, targetWorkspaceName);
 					});
 					that._updatePublishableEntities();
 					that.set('workspaceWidePublishableEntitySubjects', []);
@@ -248,7 +255,7 @@ define(
 		 */
 		discardAll: function() {
 			var that = this,
-				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
+				workspaceName = this.get('targetWorkspaceController.userWorkspace.name');
 
 			that.set('discardAllRunning', true);
 			WorkspaceEndpoint.discardAll(workspaceName).then(

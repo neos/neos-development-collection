@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -28,10 +29,10 @@ class MenuHelper
     protected $siteRepository;
 
     /**
-     * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+     * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
      * @Flow\Inject
      */
-    protected $accessDecisionManager;
+    protected $privilegeManager;
 
     /**
      * @var array
@@ -102,13 +103,19 @@ class MenuHelper
     {
         $modules = array();
         foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
-            if (isset($moduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($moduleConfiguration['resource'])) {
+            if (!$this->isModuleEnabled($module)) {
+                continue;
+            }
+            if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
                 continue;
             }
             $submodules = array();
             if (isset($moduleConfiguration['submodules'])) {
                 foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
-                    if (isset($submoduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($submoduleConfiguration['resource'])) {
+                    if (!$this->isModuleEnabled($module . '/' . $submodule)) {
+                        continue;
+                    }
+                    if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
                         continue;
                     }
                     $submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
@@ -120,6 +127,26 @@ class MenuHelper
             );
         }
         return $modules;
+    }
+
+    /**
+     * Checks whether a module is enabled or disabled in the configuration
+     *
+     * @param string $modulePath name of the module including parent modules ("mainModule/subModule/subSubModule")
+     * @return boolean TRUE if module is enabled (default), FALSE otherwise
+     */
+    public function isModuleEnabled($modulePath)
+    {
+        $modulePathSegments = explode('/', $modulePath);
+        $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modulePathSegments));
+        if (isset($moduleConfiguration['enabled']) && $moduleConfiguration['enabled'] !== true) {
+            return false;
+        }
+        array_pop($modulePathSegments);
+        if ($modulePathSegments === []) {
+            return true;
+        }
+        return $this->isModuleEnabled(implode('/', $modulePathSegments));
     }
 
     /**

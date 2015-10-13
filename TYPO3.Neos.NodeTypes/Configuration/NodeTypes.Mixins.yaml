@@ -27,7 +27,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: '<p>Enter text here</p>'
+          placeholder: i18n
           autoparagraph: TRUE
           'format':
             'strong': TRUE
@@ -57,13 +57,13 @@
     inspector:
       groups:
         image:
-          label: 'Image'
+          label: i18n
           position: 5
   properties:
     image:
-      type: TYPO3\Media\Domain\Model\ImageVariant
+      type: TYPO3\Media\Domain\Model\ImageInterface
       ui:
-        label: 'Image'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -71,7 +71,7 @@
     alternativeText:
       type: string
       ui:
-        label: 'Alternative text'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -79,7 +79,7 @@
     title:
       type: string
       ui:
-        label: 'Title'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -92,7 +92,7 @@
     hasCaption:
       type: boolean
       ui:
-        label: 'Enable caption'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -103,7 +103,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: '<p>Enter caption here</p>'
+          placeholder: i18n
           autoparagraph: TRUE
 
 # Image alignment mixin
@@ -114,23 +114,23 @@
       type: string
       defaultValue: ''
       ui:
-        label: 'Alignment'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
           position: 400
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            placeholder: 'Default'
+            placeholder: i18n
             values:
               '':
                 label: ''
               center:
-                label: 'Center'
+                label: i18n
               left:
-                label: 'Left'
+                label: i18n
               right:
-                label: 'Right'
+                label: i18n
 
 # Link mixin
 'TYPO3.Neos.NodeTypes:LinkMixin':
@@ -139,7 +139,7 @@
     link:
       type: string
       ui:
-        label: 'Link'
+        label: i18n
         reloadIfChanged: TRUE
         inspector:
           position: 300
@@ -149,10 +149,10 @@
 'TYPO3.Neos.NodeTypes:ContentImageMixin':
   abstract: TRUE
   superTypes:
-    - 'TYPO3.Neos.NodeTypes:ImageMixin'
-    - 'TYPO3.Neos.NodeTypes:LinkMixin'
-    - 'TYPO3.Neos.NodeTypes:ImageCaptionMixin'
-    - 'TYPO3.Neos.NodeTypes:ImageAlignmentMixin'
+    'TYPO3.Neos.NodeTypes:ImageMixin': TRUE
+    'TYPO3.Neos.NodeTypes:LinkMixin': TRUE
+    'TYPO3.Neos.NodeTypes:ImageCaptionMixin': TRUE
+    'TYPO3.Neos.NodeTypes:ImageAlignmentMixin': TRUE
   properties:
     link:
       ui:

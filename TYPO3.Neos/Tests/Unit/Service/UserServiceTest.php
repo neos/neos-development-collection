@@ -72,44 +72,44 @@ class UserServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getCurrentWorkspaceReturnsLiveWorkspaceIfNoUserIsLoggedIn()
+    public function getUserWorkspaceReturnsLiveWorkspaceIfNoUserIsLoggedIn()
     {
         $mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(null));
         $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
-        $this->assertSame($mockLiveWorkspace, $this->userService->getCurrentWorkspace());
+        $this->assertSame($mockLiveWorkspace, $this->userService->getUserWorkspace());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
+    public function getUserWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
     {
         $mockUserWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $mockAccount = $this->getMockBuilder('TYPO3\Flow\Security\Account')->disableOriginalConstructor()->getMock();
         $mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
         $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will($this->returnValue($mockUserWorkspace));
-        $this->assertSame($mockUserWorkspace, $this->userService->getCurrentWorkspace());
+        $this->assertSame($mockUserWorkspace, $this->userService->getUserWorkspace());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceNameReturnsLiveIfNoUserIsLoggedIn()
+    public function getUserWorkspaceNameReturnsLiveIfNoUserIsLoggedIn()
     {
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue(null));
-        $this->assertSame('live', $this->userService->getCurrentWorkspaceName());
+        $this->assertSame('live', $this->userService->getUserWorkspaceName());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
+    public function getUserWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
     {
         $mockAccount = $this->getMockBuilder('TYPO3\Flow\Security\Account')->disableOriginalConstructor()->getMock();
         $mockAccount->expects($this->atLeastOnce())->method('getAccountIdentifier')->will($this->returnValue('The UserName'));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
-        $this->assertSame('user-TheUserName', $this->userService->getCurrentWorkspaceName());
+        $this->assertSame('user-TheUserName', $this->userService->getUserWorkspaceName());
     }
 }

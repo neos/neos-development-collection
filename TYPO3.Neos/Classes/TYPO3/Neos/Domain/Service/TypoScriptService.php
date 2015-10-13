@@ -81,7 +81,7 @@ class TypoScriptService
     protected $appendTypoScriptIncludes = array();
 
     /**
-     * @Flow\Inject(setting="typoScript.autoInclude")
+     * @Flow\InjectConfiguration("typoScript.autoInclude")
      * @var array
      */
     protected $autoIncludeConfiguration = array();
@@ -161,7 +161,7 @@ class TypoScriptService
      */
     protected function readExternalTypoScriptFile($pathAndFilename)
     {
-        return (file_exists($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
+        return (is_file($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
     }
 
     /**

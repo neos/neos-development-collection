@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
  * @Flow\Scope("singleton")
@@ -45,6 +46,12 @@ class MediaCommandController extends CommandController
     protected $assetRepository;
 
     /**
+     * @Flow\Inject
+     * @var ThumbnailRepository
+     */
+    protected $thumbnailRepository;
+
+    /**
      * Import resources to asset management
      *
      * This command detects Flow "Resource" objects which are not yet available as "Asset" objects and thus don't appear
@@ -58,14 +65,16 @@ class MediaCommandController extends CommandController
     {
         $this->initializeConnection();
 
-        $sql = "
+        $sql = '
 			SELECT
-				r.persistence_object_identifier, r.filename, r.fileextension
+				r.persistence_object_identifier, r.filename, r.mediatype
 			FROM typo3_flow_resource_resource r
 			LEFT JOIN typo3_media_domain_model_asset a
 			ON a.resource = r.persistence_object_identifier
-			WHERE a.persistence_object_identifier IS NULL
-		";
+			LEFT JOIN typo3_media_domain_model_thumbnail t
+			ON t.resource = r.persistence_object_identifier
+			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
+		';
         $statement = $this->dbalConnection->prepare($sql);
         $statement->execute();
         $resourceInfos = $statement->fetchAll();
@@ -76,7 +85,7 @@ class MediaCommandController extends CommandController
         }
 
         foreach ($resourceInfos as $resourceInfo) {
-            $mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
+            $mediaType = $resourceInfo['mediatype'];
 
             if (substr($mediaType, 0, 6) === 'image/') {
                 $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], 'TYPO3\Flow\Resource\Resource');
@@ -84,11 +93,7 @@ class MediaCommandController extends CommandController
                     $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;
                 }
-                if ($resource->getResourcePointer() === null) {
-                    $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. The resource object %s did not contain a resource pointer.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
-                    continue;
-                }
-                if (!file_exists('resource://' . $resource->getResourcePointer()->getHash())) {
+                if (!$resource->getStream()) {
                     $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;
                 }
@@ -100,6 +105,20 @@ class MediaCommandController extends CommandController
                     $this->outputLine('Adding new image "%s" (%sx%s px)', array($image->getResource()->getFilename(), $image->getWidth(), $image->getHeight()));
                 }
             }
+        }
+    }
+
+    /**
+     * Remove all thumbnail objects and resources
+     */
+    public function clearThumbnailsCommand()
+    {
+        $thumbnailCount = $this->thumbnailRepository->countAll();
+        $this->output->progressStart($thumbnailCount);
+        $iterator = $this->thumbnailRepository->findAllIterator();
+        foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+            $this->thumbnailRepository->remove($thumbnail);
+            $this->output->progressAdvance(1);
         }
     }
 

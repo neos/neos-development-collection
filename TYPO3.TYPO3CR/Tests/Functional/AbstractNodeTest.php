@@ -11,6 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Functional;
  * source code.
  */
 
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+
 /**
  * Base test case for nodes
  */
@@ -22,7 +26,13 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
+     * If enabled, this test case will modify the behavior of the security framework
+     * in a way which allows for easy simulation of roles and authentication.
+     *
+     * Note: this will implicitly enable testable HTTP as well.
+     *
      * @var boolean
+     * @api
      */
     protected $testableSecurityEnabled = true;
 
@@ -37,7 +47,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $nodeContextPath = '/sites/example/home';
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -45,6 +55,16 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
+     * @var Workspace
+     */
+    protected $liveWorkspace;
 
     /**
      * @param string $name
@@ -61,6 +81,15 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
+
+        if ($this->liveWorkspace === null) {
+            $this->liveWorkspace = new Workspace('live');
+            $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+            $this->workspaceRepository->add($this->liveWorkspace);
+            $this->workspaceRepository->add(new Workspace('test', $this->liveWorkspace));
+            $this->persistenceManager->persistAll();
+        }
+
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
         $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
@@ -76,7 +105,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      * Retrieve a node through the property mapper
      *
      * @param $contextPath
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @return NodeInterface
      */
     protected function getNodeWithContextPath($contextPath)
     {

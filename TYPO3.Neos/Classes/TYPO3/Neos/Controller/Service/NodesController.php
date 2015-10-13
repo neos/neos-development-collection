@@ -15,13 +15,15 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\NodeSearchService;
-use TYPO3\Neos\View\Service\NodeJsonView;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
@@ -31,6 +33,8 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  */
 class NodesController extends ActionController
 {
+    use BackendUserTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var DomainRepository
@@ -45,7 +49,7 @@ class NodesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContextFactoryInterface
+     * @var ContentContextFactory
      */
     protected $contextFactory;
 
@@ -57,7 +61,7 @@ class NodesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeSearchService
+     * @var NodeSearchServiceInterface
      */
     protected $nodeSearchService;
 
@@ -132,6 +136,7 @@ class NodesController extends ActionController
         $node = $contentContext->getNodeByIdentifier($identifier);
 
         if ($node === null) {
+            $this->addExistingNodeVariantInformationToResponse($identifier, $contentContext);
             $this->throwStatus(404);
         }
 
@@ -144,21 +149,58 @@ class NodesController extends ActionController
             }
         }
 
-        $flowQuery = new FlowQuery(array($node));
-        $closestDocumentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
         $this->view->assignMultiple(array(
             'node' => $node,
-            'closestDocumentNode' => $closestDocumentNode,
             'convertedNodeProperties' => $convertedProperties
         ));
     }
 
     /**
-     * Create a Content Context based on the given workspace name
+     * Create a new node from an existing one
+     *
+     * The "mode" property defines the basic mode of operation. Currently supported modes:
+     *
+     * 'adoptFromAnotherDimension': Adopts the single node from another dimension
+     *   - $identifier, $workspaceName and $sourceDimensions specify the source node
+     *   - $identifier, $workspaceName and $dimensions specify the target node
+     *
+     * @param string $mode
+     * @param string $identifier Specifies the identifier of the node to be created; if source
+     * @param string $workspaceName Name of the workspace where to create the node in
+     * @param array $dimensions Optional list of dimensions and their values in which the node should be created
+     * @param array $sourceDimensions
+     * @return string
+     */
+    public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = array(), array $sourceDimensions = array())
+    {
+        if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
+            $originalContentContext = $this->createContentContext($workspaceName, $sourceDimensions);
+            $node = $originalContentContext->getNodeByIdentifier($identifier);
+
+            if ($node === null) {
+                $this->throwStatus(404, 'Original node was not found.');
+            }
+
+            $contentContext = $this->createContentContext($workspaceName, $dimensions);
+
+            $this->adoptNodeAndParents($node, $contentContext, $mode === 'adoptFromAnotherDimensionAndCopyContent');
+
+            $this->redirect('show', null, null, array(
+                'identifier' => $identifier,
+                'workspaceName' => $workspaceName,
+                'dimensions' => $dimensions
+            ));
+        } else {
+            $this->throwStatus(400, sprintf('The create mode "%s" is not supported.', $mode));
+        }
+    }
+
+    /**
+     * Create a ContentContext based on the given workspace name
      *
      * @param string $workspaceName Name of the workspace to set for the context
      * @param array $dimensions Optional list of dimensions and their values which should be set
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return ContentContext
      */
     protected function createContentContext($workspaceName, array $dimensions = array())
     {
@@ -184,5 +226,56 @@ class NodesController extends ActionController
         }
 
         return $this->contextFactory->create($contextProperties);
+    }
+
+    /**
+     * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
+     *
+     * @param $identifier
+     * @param Context $context
+     * @return void
+     */
+    protected function addExistingNodeVariantInformationToResponse($identifier, Context $context)
+    {
+        $nodeVariants = $context->getNodeVariantsByIdentifier($identifier);
+        if (count($nodeVariants) > 0) {
+            $this->response->setHeader('X-Neos-Node-Exists-In-Other-Dimensions', true);
+
+            // If the node exists in another dimension, we want to know how many nodes in the rootline are also missing for the target
+            // dimension. This is needed in the UI to tell the user if nodes will be materialized recursively upwards in the rootline.
+            // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
+            // "Document" nodes (aggregate=TRUE), because they are always moved in-sync.
+            $node = reset($nodeVariants);
+            if ($node->getNodeType()->isAggregate()) {
+                $pathSegments = count(explode('/', $node->getPath()));
+                $nodes = $context->getNodesOnPath('/', $node->getPath());
+                // We subtract 3 because:
+                // - /sites/ is never translated (first part of the rootline)
+                // - the actual document is not translated either (last part of the rootline). Otherwise, we wouldn't be inside this IF-branch.
+                // - we count the number of path segments, and the first path segment (before the / which indicates an absolute path) is always empty.
+                $this->response->setHeader('X-Neos-Nodes-Missing-On-Rootline', $pathSegments - count($nodes) - 3);
+            }
+        }
+    }
+
+    /**
+     * Adopt (translate) the given node and parents that are not yet visible to the given context
+     *
+     * @param NodeInterface $node
+     * @param ContentContext $contentContext
+     * @param boolean $copyContent TRUE if the content from the nodes that are translated should be copied
+     * @return void
+     */
+    protected function adoptNodeAndParents(NodeInterface $node, ContentContext $contentContext, $copyContent)
+    {
+        $contentContext->adoptNode($node, $copyContent);
+
+        $parentNode = $node;
+        while ($parentNode = $parentNode->getParent()) {
+            $visibleInContext = $contentContext->getNodeByIdentifier($parentNode->getIdentifier()) !== null;
+            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== '/sites' && !$visibleInContext) {
+                $contentContext->adoptNode($parentNode, $copyContent);
+            }
+        }
     }
 }

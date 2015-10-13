@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -51,6 +52,12 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
+
+    /**
+     * @Flow\Inject
      * @var \TYPO3\Flow\Log\SystemLoggerInterface
      */
     protected $systemLogger;
@@ -73,6 +80,15 @@ class SiteCommandController extends CommandController
      */
     public function importCommand($packageKey = null, $filename = null)
     {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $filename === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $filename = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+
         if ($packageKey === null && $filename === null) {
             $this->outputLine('You have to specify either "--package-key" or "--filename"');
             $this->quit(1);
@@ -116,9 +132,10 @@ class SiteCommandController extends CommandController
      * @param boolean $tidy Whether to export formatted XML
      * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
      * @param string $packageKey Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
      * @return void
      */
-    public function exportCommand($siteNode = null, $tidy = false, $filename = null, $packageKey = null)
+    public function exportCommand($siteNode = null, $tidy = false, $filename = null, $packageKey = null, $nodeTypeFilter = null)
     {
         if ($siteNode === null) {
             $sites = $this->siteRepository->findAll()->toArray();
@@ -132,21 +149,21 @@ class SiteCommandController extends CommandController
         }
 
         if ($packageKey !== null) {
-            $this->siteExportService->exportToPackage($sites, $tidy, $packageKey);
+            $this->siteExportService->exportToPackage($sites, $tidy, $packageKey, $nodeTypeFilter);
             if ($siteNode !== null) {
                 $this->outputLine('The site "%s" has been exported to package "%s".', array($siteNode, $packageKey));
             } else {
                 $this->outputLine('All sites have been exported to package "%s".', array($packageKey));
             }
         } elseif ($filename !== null) {
-            $this->siteExportService->exportToFile($sites, $tidy, $filename);
+            $this->siteExportService->exportToFile($sites, $tidy, $filename, $nodeTypeFilter);
             if ($siteNode !== null) {
                 $this->outputLine('The site "%s" has been exported to "%s".', array($siteNode, $filename));
             } else {
                 $this->outputLine('All sites have been exported to "%s".', array($filename));
             }
         } else {
-            $this->output($this->siteExportService->export($sites, $tidy));
+            $this->output($this->siteExportService->export($sites, $tidy, $nodeTypeFilter));
         }
     }
 

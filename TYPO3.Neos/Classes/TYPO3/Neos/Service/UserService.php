@@ -38,6 +38,12 @@ class UserService
     protected $workspaceRepository;
 
     /**
+     * @Flow\InjectConfiguration("userInterface.defaultLanguage")
+     * @var string
+     */
+    protected $defaultLanguageIdentifier;
+
+    /**
      * @return User
      */
     public function getBackendUser()
@@ -54,26 +60,47 @@ class UserService
      *
      * @return Workspace
      */
-    public function getCurrentWorkspace()
+    public function getUserWorkspace()
     {
-        return $this->workspaceRepository->findOneByName($this->getCurrentWorkspaceName());
+        return $this->workspaceRepository->findOneByName($this->getUserWorkspaceName());
     }
 
     /**
-     * Returns the Workspace name of the currently logged in user (even if that might not exist at that time)
-     * If no user is logged in this returns "live"
-     *
-     * Note: This currently always constructs the workspace name from the logged in users account identifier (username)
-     * In the future a user can have access to more than one workspace
+     * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
+     * If no user is logged in this method returns "live".
      *
      * @return string
      */
-    public function getCurrentWorkspaceName()
+    public function getUserWorkspaceName()
     {
         $account = $this->securityContext->getAccount();
         if ($account === null) {
             return 'live';
         }
         return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
+    }
+
+    /**
+     * Returns the preference of a user
+     *
+     * @param string $preference
+     * @return mixed
+     */
+    public function getUserPreference($preference)
+    {
+        $user = $this->getBackendUser();
+        if ($user && $user->getPreferences()) {
+            return $user->getPreferences()->get($preference) ?: null;
+        }
+    }
+
+    /**
+     * Returns the interface language the user selected. Will fall back to the default language defined in settings
+     *
+     * @return string
+     */
+    public function getInterfaceLanguage()
+    {
+        return $this->getUserPreference('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
     }
 }

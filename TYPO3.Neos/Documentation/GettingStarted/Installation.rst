@@ -13,6 +13,17 @@ Requirements
 Neos has at least the same system requirements as Flow. You can find them in the
 `Flow Requirements Documentation`_.
 
+The most important requirements are:
+
+* A Webserver (Apache and Nginx are preferred but others work as well)
+* A Database (MySQL and MariaDB are preferred but any `Database supported by Doctrine DBAL
+  <http://www.doctrine-project.org/projects/dbal.html>`_ should work).
+* PHP >= 5.5.0 (make sure the PHP CLI has the same version)
+
+  * PHP modules mbstring, tokenizer and pdo_mysql
+  * PHP functions system(), shell_exec(), escapeshellcmd() and escapeshellarg()
+  * It is recommended to install one of the PHP modules imagick or gmagick
+
 Fundamental Installation
 ------------------------
 #. First you need to install the dependency manager *Composer* (if you don't have it already):
@@ -141,7 +152,7 @@ The Neos Setup Tool
       :alt: The Neos start page
       :class: screenshot-fullsize
 
-	The Neos start page
+      The Neos start page
 
 .. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
 .. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html

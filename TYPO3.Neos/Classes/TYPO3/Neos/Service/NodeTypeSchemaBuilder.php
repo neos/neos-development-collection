@@ -22,8 +22,8 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 class NodeTypeSchemaBuilder
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
      * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -73,7 +73,6 @@ class NodeTypeSchemaBuilder
 
         return $schema;
     }
-
 
     /**
      * In order to allow unsetting options via the YAML settings merging, the

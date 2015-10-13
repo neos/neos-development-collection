@@ -38,18 +38,18 @@ class RouteCacheFlusher
      * Schedules flushing of the routing cache entry for the given $nodeData
      * Note: This is not done recursively because the nodePathChanged signal is triggered for any affected node data instance
      *
-     * @param NodeData $nodeData The affected node data instance
+     * @param NodeInterface $node The affected node data instance
      * @return void
      */
-    public function registerNodePathChange(NodeData $nodeData)
+    public function registerNodePathChange(NodeInterface $node)
     {
-        if (in_array($nodeData->getIdentifier(), $this->tagsToFlush)) {
+        if (in_array($node->getIdentifier(), $this->tagsToFlush)) {
             return;
         }
-        if (!$nodeData->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        if (!$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
             return;
         }
-        $this->tagsToFlush[] = $nodeData->getIdentifier();
+        $this->tagsToFlush[] = $node->getIdentifier();
     }
 
     /**
@@ -60,7 +60,7 @@ class RouteCacheFlusher
      */
     public function registerNodeChange(NodeInterface $node)
     {
-        $this->registerNodePathChange($node->getNodeData());
+        $this->registerNodePathChange($node);
         /** @var NodeInterface $childNode */
         foreach ($node->getChildNodes('TYPO3.Neos:Document') as $childNode) {
             $this->registerNodeChange($childNode);

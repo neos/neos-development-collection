@@ -67,7 +67,7 @@ class ContentDimensionCombinator
                 $currentPresetCombination['withDimensionValues'][$dimensionName] = $presetForDimension['values'];
             }
 
-            if ($skipCurrentCombination === false) {
+            if ($skipCurrentCombination === false && $this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($currentPresetCombination['withPresetIdentifiers'])) {
                 $dimensionCombinations[] = $currentPresetCombination['withDimensionValues'];
             }
 

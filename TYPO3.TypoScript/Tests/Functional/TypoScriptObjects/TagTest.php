@@ -96,4 +96,14 @@ class TagTest extends AbstractTypoScriptObjectTest
         $view->setTypoScriptPath('tag/withThis');
         $this->assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function tagWithIgnorePropertiesInAttributes()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('tag/withIgnorePropertiesInAttributes');
+        $this->assertSame('<title datafoo="baz_baz">foo</title>', $view->render());
+    }
 }

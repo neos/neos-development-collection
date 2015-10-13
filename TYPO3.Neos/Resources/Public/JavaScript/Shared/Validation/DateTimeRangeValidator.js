@@ -4,9 +4,10 @@
 define(
 	[
 		'./AbstractValidator',
-		'Library/iso8601-js-period'
+		'Library/iso8601-js-period',
+		'Shared/I18n'
 	],
-	function(AbstractValidator, iso8601JsPeriod) {
+	function(AbstractValidator, iso8601JsPeriod, I18n) {
 		return AbstractValidator.extend({
 			/**
 			 * @var {object}
@@ -24,7 +25,7 @@ define(
 			 */
 			isValid: function(value) {
 				if (/^(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})[+-](\d{2})\:(\d{2})$/.test(value) === false || /Invalid|NaN/.test(new Date(value).toString())) {
-					this.addError('The given value was not a valid date.');
+					this.addError(I18n.translate('content.inspector.validators.dateTimeRangeValidator.invalidDate'));
 					return;
 				}
 
@@ -32,17 +33,20 @@ define(
 					latestDate = this.get('options.latestDate') !== null ? this.parseReferenceDate(this.get('options.latestDate')) : null,
 					earliestDate = this.get('options.earliestDate') !== null ? this.parseReferenceDate(this.get('options.earliestDate')) : null;
 
+				var formatEarliestDate = this.formatDate(earliestDate);
+				var formatLatestDate = this.formatDate(latestDate);
+
 				if (earliestDate !== null && latestDate !== null) {
 					if (date < earliestDate || date > latestDate) {
-						this.addError('The given date must be between ' + this.formatDate(earliestDate) + ' and ' + this.formatDate(latestDate));
+						this.addError(I18n.translate('content.inspector.validators.dateTimeRangeValidator.mustBeBetween', null, null, null, {formatEarliestDate: formatEarliestDate, formatLatestDate: formatLatestDate}));
 					}
 				} else if (earliestDate !== null) {
 					if (date < earliestDate) {
-						this.addError('The given date must be after ' + this.formatDate(earliestDate));
+						this.addError(I18n.translate('content.inspector.validators.dateTimeRangeValidator.mustBeAfter', null, null, null, {formatEarliestDate: formatEarliestDate}));
 					}
 				} else if (latestDate !== null) {
 					if (date > latestDate) {
-						this.addError('The given date must be before ' + this.formatDate(latestDate));
+						this.addError(I18n.translate('content.inspector.validators.dateTimeRangeValidator.mustBeBefore', null, null, null, {formatEarliestDate: formatLatestDate}));
 					}
 				}
 			},

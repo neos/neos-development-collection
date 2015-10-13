@@ -34,12 +34,12 @@ class Video extends Asset
     protected $height;
 
     /**
-     * Determines video width and height.
-     *
-     * @return void
+     * Constructs the object and sets default values for width and height
      */
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
+
         $this->width = -1;
         $this->height = -1;
     }

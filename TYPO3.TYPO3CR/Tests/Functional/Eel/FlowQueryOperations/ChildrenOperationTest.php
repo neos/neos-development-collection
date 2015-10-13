@@ -60,6 +60,16 @@ class ChildrenOperationTest extends AbstractNodeTest
     /**
      * @test
      */
+    public function pathFiltersIsSupported()
+    {
+        $q = new FlowQuery(array($this->node));
+        $foundNodes = $q->children('teaser/dummy42, sidebar')->get();
+        $this->assertEquals(2, count($foundNodes));
+    }
+
+    /**
+     * @test
+     */
     public function attributeFilterIsSupported()
     {
         $q = new FlowQuery(array($this->node));

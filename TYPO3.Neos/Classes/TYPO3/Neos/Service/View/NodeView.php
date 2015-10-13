@@ -14,8 +14,11 @@ namespace TYPO3\Neos\Service\View;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 
 /**
  * An View specialized on single or multiple Nodes in a tree structure
@@ -43,6 +46,12 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
     /**
      * Assigns a node to the NodeView.
@@ -104,7 +113,9 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
     {
         $this->outputStyle = $outputStyle;
         $nodes = array();
-        $this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
+        if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            $this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
+        }
         $this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 
         $this->assign('value', array('data' => $nodes, 'success' => true));
@@ -122,9 +133,12 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
     public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, NodeInterface $untilNode = null)
     {
         $this->outputStyle = self::STYLE_TREE;
-        $childNodes = array();
-        $this->collectChildNodeData($childNodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
-        $data = $this->collectTreeNodeData($node, true, $childNodes, $childNodes !== array());
+        $data = array();
+        if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            $childNodes = array();
+            $this->collectChildNodeData($childNodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
+            $data = $this->collectTreeNodeData($node, true, $childNodes, $childNodes !== array());
+        }
         $this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 
         $this->assign('value', array('data' => $data, 'success' => true));
@@ -161,6 +175,9 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
     protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, NodeInterface $untilNode = null, $recursionPointer = 1)
     {
         foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
+            if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {
+                continue;
+            }
             /** @var NodeInterface $childNode */
             $expand = ($depth === 0 || $recursionPointer < $depth);
 
@@ -298,7 +315,8 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
             'key' => $node->getContextPath(),
             'title' => $label,
             'fullTitle' => $node->getProperty('title'),
-            'tooltip' => ($nodeTypeLabel == '' || strpos($label, $nodeTypeLabel) === false) ? $label . ' (' . $nodeTypeLabel . ')' : $label,
+            'nodeTypeLabel' => $nodeTypeLabel,
+            'tooltip' => '', // will be filled on the client side, because nodeTypeLabel contains the localization string instead of the localized value
             'href' => $uriForNode,
             'isFolder' => $hasChildNodes,
             'isLazy' => ($hasChildNodes && !$expand),

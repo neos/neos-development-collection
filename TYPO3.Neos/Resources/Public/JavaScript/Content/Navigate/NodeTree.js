@@ -18,7 +18,8 @@ define(
 		'./NavigatePanelController',
 		'../Inspector/InspectorController',
 		'text!./NodeTree.html',
-		'Shared/Endpoint/NodeEndpoint'
+		'Shared/Endpoint/NodeEndpoint',
+		'Shared/I18n'
 	], function(
 		Ember,
 		$,
@@ -35,7 +36,8 @@ define(
 		NavigatePanelController,
 		InspectorController,
 		template,
-		NodeEndpoint
+		NodeEndpoint,
+		I18n
 	) {
 		var documentMetadata = $('#neos-document-metadata');
 
@@ -83,7 +85,10 @@ define(
 				_delay: 300,
 				_value: '',
 				_timeout: null,
-
+				attributeBindings: ['placeholder'],
+				placeholder: function() {
+					return I18n.translate('TYPO3.Neos:Main:search', 'Search');
+				}.property(),
 				keyUp: function() {
 					var that = this,
 						value = this.get('value');
@@ -123,7 +128,7 @@ define(
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
 
 				$.each(availableNodeTypes, function(nodeTypeName, nodeTypeInfo) {
-					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + nodeTypeInfo.ui.label + '</option>');
+					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + I18n.translate(nodeTypeInfo.ui.label) + '</option>');
 				});
 				$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 
@@ -154,13 +159,14 @@ define(
 				var siteName = documentMetadata.data('neos-site-name'),
 					nodeType = documentMetadata.attr('typeof').substr(6),
 					nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
 					parent: this,
 					children: [
 						{
 							title: siteName,
-							tooltip: siteName + ' (' + nodeTypeConfiguration.label + ')',
+							tooltip: siteName + (nodeTypeConfiguration ? ' (' + I18n.translate(nodeTypeConfiguration.label) + ')' : ''),
 							href: $('link[rel="neos-site"]').attr('href'),
 							key: this.get('siteNodeContextPath'),
 							isFolder: true,
@@ -375,9 +381,8 @@ define(
 				});
 			},
 
-			createNode: function(activeNode, title, nodeType, iconClass) {
+			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var that = this,
-					newPosition = this.get('newPosition'),
 					data = {
 						title: title,
 						nodeType: nodeType,
@@ -387,7 +392,7 @@ define(
 					},
 					newNode;
 
-				switch (newPosition) {
+				switch (position) {
 					case 'before':
 						newNode = activeNode.getParent().addChild(data, activeNode);
 						break;
@@ -400,7 +405,7 @@ define(
 				var prevTitle = newNode.data.tooltip,
 					tree = newNode.tree;
 
-				if (newPosition === 'into') {
+				if (position === 'into') {
 					activeNode.expand(true);
 				}
 
@@ -438,7 +443,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
-						that.persistNode(activeNode, newNode, nodeType, title, newPosition);
+						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});
 			},

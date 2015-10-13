@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -41,9 +42,16 @@ class NodeFactory
 
     /**
      * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
+
 
     /**
      * Creates a node from the given NodeData container.
@@ -63,6 +71,11 @@ class NodeFactory
         }
 
         $internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
+
+        // In case there is a Node with an internal NodeData (because the NodeData was changed in the meantime) we need to flush it.
+        if (isset($this->nodes[$internalNodeIdentifier]) && $this->nodes[$internalNodeIdentifier]->getNodeData()->isInternal()) {
+            unset($this->nodes[$internalNodeIdentifier]);
+        }
 
         if (!isset($this->nodes[$internalNodeIdentifier])) {
             // Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
@@ -101,15 +114,19 @@ class NodeFactory
      */
     protected function filterNodeByContext(NodeInterface $node, Context $context)
     {
-        if (!$context->isRemovedContentShown() && $node->isRemoved()) {
-            return null;
-        }
-        if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
-            return null;
-        }
-        if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
-            return null;
-        }
+        $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $context) {
+            if (!$context->isRemovedContentShown() && $node->isRemoved()) {
+                $node = null;
+                return;
+            }
+            if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
+                $node = null;
+                return;
+            }
+            if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
+                $node = null;
+            }
+        });
         return $node;
     }
 

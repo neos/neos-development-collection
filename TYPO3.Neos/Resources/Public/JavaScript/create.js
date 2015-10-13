@@ -21,6 +21,24 @@ define(
 		return Ember.Object.create({
 				// Initially set state to null
 			_state: null,
+			editableOptions: {
+				disabled: false,
+				vie: vieInstance,
+				widgets: {
+					'default': 'aloha'
+				},
+				collectionWidgets: {
+					'default': 'typo3CollectionWidget'
+				},
+				editors: {
+					aloha: {
+						widget: 'alohaWidget'
+					},
+					'inline-only': {
+						widget: 'editWidget'
+					}
+				}
+			},
 
 			initialize: function() {
 				var that = this;
@@ -47,27 +65,12 @@ define(
 			},
 
 			enableEdit: function() {
-				var editableOptions = {
-					disabled: false,
-					vie: vieInstance,
-					widgets: {
-						'default': 'aloha'
-					},
-					collectionWidgets: {
-						'default': 'typo3CollectionWidget'
-					},
-					editors: {
-						aloha: {
-							widget: 'alohaWidget'
-						},
-						'inline-only': {
-							widget: 'editWidget'
-						}
-					}
-				};
-
+				var editableOptions = this.get('editableOptions'),
+					specificEditableOptions;
 				$('[about]').each(function() {
-					$(this).midgardEditable(editableOptions);
+					var entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(this));
+					specificEditableOptions = $.extend(true, {model: entity}, editableOptions);
+					$(this).midgardEditable(specificEditableOptions);
 				});
 
 				this.set('_state', 'edit');
@@ -83,6 +86,26 @@ define(
 					$(this).removeClass('ui-state-disabled');
 				});
 				this.set('_state', 'browse');
+			},
+
+			/**
+			 * Refresh an editable by the given DOM element
+			 *
+			 * @param {Element} element
+			 */
+			refreshEdit: function(element) {
+				var editableOptions = this.get('editableOptions'),
+					specificEditableOptions;
+
+				vieInstance.load({
+					element: element
+				}).from('rdfa').execute().done(function() {
+					$(element).find('[about]').add(element).each(function() {
+						var entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(this));
+						specificEditableOptions = $.extend(true, {model: entity}, editableOptions);
+						$(this).midgardEditable(specificEditableOptions);
+					});
+				});
 			},
 
 			/**
