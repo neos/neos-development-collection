@@ -5,11 +5,11 @@
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
         "typo3/flow": "2.3.*",
-        "typo3/media": "1.2.*",
+        "typo3/media": "~1.2.0",
         "typo3/setup": "1.1.*",
         "typo3/twitter-bootstrap": "1.0.*",
-        "typo3/typo3cr": "1.2.*",
-        "typo3/typoscript": "1.2.*"
+        "typo3/typo3cr": "~1.2.0",
+        "typo3/typoscript": "~1.2.0"
     },
     "suggest": {
         "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."
