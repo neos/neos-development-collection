@@ -363,7 +363,7 @@ class NodeExportService
 
             $this->xmlWriter->writeAttribute('__type', gettype($propertyValue));
             try {
-                if (is_object($propertyValue) && !$propertyValue instanceof \DateTime) {
+                if (is_object($propertyValue) && !$propertyValue instanceof \DateTimeInterface) {
                     $objectIdentifier = $this->persistenceManager->getIdentifierByObject($propertyValue);
                     if ($objectIdentifier !== null) {
                         $this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
@@ -383,7 +383,7 @@ class NodeExportService
                         $this->writeConvertedElement($propertyValue, $key, 'entry' . $key);
                     }
                 } else {
-                    if ($propertyValue instanceof \DateTime) {
+                    if ($propertyValue instanceof \DateTimeInterface) {
                         $this->xmlWriter->writeAttribute('__classname', 'DateTime');
                     }
                     $this->xmlWriter->text($this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration));

@@ -116,7 +116,7 @@ class Context
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
      *
      * @param string $workspaceName Name of the current workspace
-     * @param \DateTime $currentDateTime The current date and time
+     * @param \DateTimeInterface $currentDateTime The current date and time
      * @param array $dimensions Array of dimensions with array of ordered values
      * @param array $targetDimensions Array of dimensions used when creating / modifying content
      * @param boolean $invisibleContentShown If invisible content should be returned in query results
@@ -124,7 +124,7 @@ class Context
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown)
     {
         $this->workspaceName = $workspaceName;
         $this->currentDateTime = $currentDateTime;
