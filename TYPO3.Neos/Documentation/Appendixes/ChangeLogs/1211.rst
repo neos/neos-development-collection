@@ -1,0 +1,187 @@
+`1.2.11 (2015-10-14) <https://github.com/neos/neos-development-collection/releases/tag/1.2.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[BUGFIX] Graceful handling of node linking exceptions <https://github.com/neos/neos-development-collection/pull/119>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+- Gracefully handle exceptions in the NodeUri TS object
+- Gracefully handle exceptions in node linking view helpers
+
+* Resolves: `NEOS-1625 <https://jira.neos.io/browse/NEOS-1625>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent fatal error in ``node:repair`` with broken node structure <https://github.com/neos/neos-development-collection/pull/122>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+When the "/sites" root node or it's children cannot be found a fatal error
+is thrown or it's silently ignored. Instead output an error message that the
+nodes could not be found.
+
+* Packages: ``Neos``
+
+`[TASK] Enable Behat Neos Behat tests for Travis <https://github.com/neos/neos-development-collection/pull/129>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Adds a ``@browser`` tag used to skip those since they require
+Selenium and take very long to run.
+
+* Packages: ``Neos``
+
+`[TASK] Enable Behat Travis tests <https://github.com/neos/neos-development-collection/pull/128>`_
+--------------------------------------------------------------------------------------------------
+
+Additionally includes a couple of general improvements.
+
+* Packages: ``Neos``
+
+`[TASK] Ignore built JavaScript/CSS to avoid merge conflicts <https://github.com/neos/neos-development-collection/pull/127>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+To avoid merge conflicts, the minified built files are ignored in Git and
+instead added using force by the automated jobs in Jenkins.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Behavior tests failing with new structure <https://github.com/neos/neos-development-collection/pull/76>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`[TASK] Replace usage of compass font-files to get rid of cache bust <https://github.com/neos/neos-development-collection/pull/125>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This is done since we don't need that cache bust and since it's updated
+on every new compilation unnecessarily. It's not possible to disable in
+Compass without scripting, so the inclusion is just done manually instead.
+
+* Packages: ``Neos``
+
+`[BUGFIX] No longer use invalid data in functional test <https://github.com/neos/neos-development-collection/pull/121>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The MigrationStatusRepositoryTest used invalid fixture data, the
+direction was filled with strings that were too long for the related
+DB column. On MySQL this is silently truncated, but on PostgreSQL it
+leads to an error.
+
+Now the expected class constants are used in the test.
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Use current node as document node if no document node is found <https://github.com/neos/neos-development-collection/pull/117>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+When the fallback node mode is triggered, the ``documentNode`` TypoScript
+variable is empty leading to various issues. This solves that by using the
+current node as the document node in that case.
+
+* Fixes: `NEOS-1624 <https://jira.neos.io/browse/NEOS-1624>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Position master plugin selection above plugin view selection <https://github.com/neos/neos-development-collection/pull/46>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Positions the master plugin selection in the inspector for a PluginView above
+instead of undernearth the plugin view selection, to avoid confusion since
+the plugin view selection depends on the master plugin selection.
+
+* Fixes: `NEOS-1544 <https://jira.neos.io/browse/NEOS-1544>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Unset selected plugin view when changing master view <https://github.com/neos/neos-development-collection/pull/41>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+When changing the master view selection for a PluginView,
+the selected plugin view is not unset causing confusion.
+
+* Fixes: `NEOS-1541 <https://jira.neos.io/browse/NEOS-1541>`_
+* Packages: ``Neos``
+
+`[TASK] Remove superfluous quotes from PluginView label <https://github.com/neos/neos-development-collection/pull/40>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Removes superfluous quotes around PluginView label seen in the plugin view editor for plugin views.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix license header text <https://github.com/neos/neos-development-collection/pull/106>`_
+--------------------------------------------------------------------------------------------------
+
+Removes a superfluous "the" in the license header, it's
+not "THE Neos".
+
+* Packages: ``Neos``
+
+`[TASK] Fix some code style issues <https://github.com/neos/neos-development-collection/pull/105>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Adjust documentation link in setup final step <https://github.com/neos/neos-development-collection/pull/98>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Update license headers <https://github.com/neos/neos-development-collection/pull/95>`_
+----------------------------------------------------------------------------------------------
+
+This change updates license headers in all packages contained in the Neos Development Collection according to what has been discussed earlier: https://discuss.neos.io/t/rfc-license-header-file-doc-comment-change/517
+
+
+* Packages: ``Neos``
+
+`[TASK] Add .editorconfig file <https://github.com/neos/neos-development-collection/pull/78>`_
+----------------------------------------------------------------------------------------------
+
+`[TASK] Add .travis.yml for the 1.2 branch <https://github.com/neos/neos-development-collection/pull/87>`_
+----------------------------------------------------------------------------------------------------------
+
+`[TASK] Add configuration file for StyleCI <https://github.com/neos/neos-development-collection/pull/77>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent fatal error for missing master plugin in PluginViews <https://github.com/neos/neos-development-collection/pull/42>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Prevents PluginViews with a master plugin selected that cannot be found
+from throwing a fatal error. This can happen when the master plugin is
+removed/moved or is not available in the context.
+
+* Fixes: `NEOS-1530 <https://jira.neos.io/browse/NEOS-1530>`_
+* Packages: ``Neos``
+
+`[TASK] Add Code of Conduct <https://github.com/neos/neos-development-collection/pull/71>`_
+-------------------------------------------------------------------------------------------
+
+This adds a reStructuredText version of the Contributor Covenant
+code of conduct, to make it clear the project is governed by that.
+
+See also http://contributor-covenant.org/version/1/2/0/
+
+`[TASK] Add Readme.rst files for individual packages <https://github.com/neos/neos-development-collection/pull/74>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adds a Readme.rst to each package, so that the read-only subsplit
+repositories have a readme file for GitHub to show and for the users
+to read.
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``NodeTypes`` ``TYPO3CR`` ``TypoScript``
+
+`[BUGFIX] Reset date picker to current date instead of null <https://github.com/neos/neos-development-collection/pull/66>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+If reset to null, the date picker would default to 1899 instead of the
+current date when being opened again.
+
+* Fixes: `NEOS-1351 <https://jira.neos.io/browse/NEOS-1351>`_
+* Packages: ``Neos``
+
+`[TASK] Add composer.json and template <https://github.com/neos/neos-development-collection/pull/39>`_
+------------------------------------------------------------------------------------------------------
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/1.2.10...1.2.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
