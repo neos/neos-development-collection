@@ -261,6 +261,10 @@ Options Reference:
 ``multiple`` (boolean)
 	If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
 
+``minimumResultsForSearch`` (integer)
+	The minimum amount of items in the select before showing a search box,
+	if set to ``-1`` the search box will never be shown.
+
 ``dataSourceUri`` (string)
 	If set, this URI will be called for loading the options of the select field.
 
