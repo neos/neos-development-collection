@@ -122,21 +122,21 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      */
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
-        $baseContext = $this->createContext($workspaceName, []);
+        $baseContext = $this->createContext($workspaceName, array());
         $baseContextSitesNode = $baseContext->getNode('/sites');
         if (!$baseContextSitesNode) {
             $this->output->outputLine('<error>Could not find "/sites" root node</error>');
             return;
         }
         $baseContextSiteNodes = $baseContextSitesNode->getChildNodes();
-        if ($baseContextSiteNodes === []) {
+        if ($baseContextSiteNodes === array()) {
             $this->output->outputLine('<error>Could not find any site nodes in "/sites" root node</error>');
             return;
         }
 
         foreach ($this->dimensionCombinator->getAllAllowedCombinations() as $dimensionCombination) {
             $flowQuery = new FlowQuery($baseContextSiteNodes);
-            $siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
+            $siteNodes = $flowQuery->context(array('dimensions' => $dimensionCombination, 'targetDimensions' => array()))->get();
             if (count($siteNodes) > 0) {
                 $dimensionString = '';
                 foreach ($dimensionCombination as $dimensionName => $dimensionValues) {
