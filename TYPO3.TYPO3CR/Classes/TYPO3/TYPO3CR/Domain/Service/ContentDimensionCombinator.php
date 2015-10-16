@@ -34,13 +34,13 @@ class ContentDimensionCombinator
     public function getAllAllowedCombinations()
     {
         $configuration = $this->contentDimensionPresetSource->getAllPresets();
-        $dimensionCombinations = [];
+        $dimensionCombinations = array();
         $dimensionNames = array_keys($configuration);
         $dimensionCount = count($dimensionNames);
 
         if ($dimensionCount === 0) {
             // This is correct, we have one allowed combination which is no dimension values (empty array).
-            return [[]];
+            return array(array());
         }
 
         // Reset all presets first just to be sure
@@ -51,10 +51,10 @@ class ContentDimensionCombinator
 
         while (true) {
             $skipCurrentCombination = false;
-            $currentPresetCombination = [
-                'withPresetIdentifiers' => [],
-                'withDimensionValues' => []
-            ];
+            $currentPresetCombination = array(
+                'withPresetIdentifiers' => array(),
+                'withDimensionValues' => array()
+            );
             foreach ($dimensionNames as $dimensionName) {
                 $presetIdentifierForDimension = key($configuration[$dimensionName]['presets']);
                 $presetForDimension = current($configuration[$dimensionName]['presets']);
