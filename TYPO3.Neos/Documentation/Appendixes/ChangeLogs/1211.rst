@@ -13,8 +13,8 @@ Overview of merged pull requests
 * Resolves: `NEOS-1625 <https://jira.neos.io/browse/NEOS-1625>`_
 * Packages: ``Neos``
 
-`[BUGFIX] Prevent fatal error in ``node:repair`` with broken node structure <https://github.com/neos/neos-development-collection/pull/122>`_
---------------------------------------------------------------------------------------------------------------------------------------------
+`[BUGFIX] Prevent fatal error in \`\`node:repair\`\` with broken node structure <https://github.com/neos/neos-development-collection/pull/122>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 When the "/sites" root node or it's children cannot be found a fatal error
 is thrown or it's silently ignored. Instead output an error message that the
