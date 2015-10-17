@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\LinkingService;
@@ -133,7 +134,9 @@ class NodeViewHelper extends AbstractViewHelper
             );
         } catch (NeosException $exception) {
             $this->systemLogger->logException($exception);
-            return '';
+        } catch (NoMatchingRouteException $exception) {
+            $this->systemLogger->logException($exception);
         }
+        return '';
     }
 }
