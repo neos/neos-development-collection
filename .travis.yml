@@ -20,7 +20,7 @@ before_install:
   - git clone https://github.com/neos/neos-development-distribution.git -b master
   - cd neos-development-distribution
 install:
-  - composer install
+  - composer install --no-progress --no-interaction
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:

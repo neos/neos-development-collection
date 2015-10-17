@@ -368,6 +368,7 @@ Example::
 
     publishingDate:
       type: date
+      defaultValue: 'today midnight'
       ui:
         label: 'Publishing Date'
         inspector:
@@ -381,6 +382,11 @@ Options Reference:
 ``format`` (required string)
 	The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N,
 	S, w, a, A, g, G, h, H, i, s. Default ``d-m-Y``.
+
+``defaultValue`` (string)
+  Sets property value, when the node is created. Accepted values are whatever
+  ``strtotime()`` can parse, but it works best with relative formats like
+  ``tomorrow 09:00`` etc. Use ``now`` to set current date and time.
 
 ``placeholder`` (string)
 	The placeholder shown when no date is selected
