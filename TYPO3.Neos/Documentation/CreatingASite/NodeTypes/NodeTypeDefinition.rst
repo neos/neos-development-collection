@@ -69,6 +69,19 @@ The following options are allowed:
             # only allow images in this ContentCollection
             'TYPO3.Neos.NodeTypes:Image': TRUE
             '*': FALSE
+  By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
+  An example may look like::
+
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        'someChild':
+          type: 'TYPO3.Neos:ContentCollection'
+          position: 'before main'
+
+  This adds a new ContentCollection called someChild to the default page.
+  It will be positioned before the main ContentCollection that the default page has.
+  The position setting follows the same sorting logic used in TypoScript
+  (see the :ref:`neos-typoscript-reference`).
 
 ``ui``
   Configuration options related to the user interface representation of the node type
