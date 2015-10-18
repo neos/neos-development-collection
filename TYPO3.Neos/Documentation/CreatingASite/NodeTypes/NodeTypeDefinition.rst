@@ -69,6 +69,7 @@ The following options are allowed:
             # only allow images in this ContentCollection
             'TYPO3.Neos.NodeTypes:Image': TRUE
             '*': FALSE
+
   By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
   An example may look like::
 
