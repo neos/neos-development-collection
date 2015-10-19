@@ -147,20 +147,15 @@ class PluginImplementation extends AbstractArrayTypoScriptObject
      */
     public function evaluate()
     {
-        try {
-            $currentContext = $this->tsRuntime->getCurrentContext();
-            $this->node = $currentContext['node'];
-            $this->documentNode = $currentContext['documentNode'];
-            /** @var $parentResponse Response */
-            $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
-            $pluginResponse = new Response($parentResponse);
+        $currentContext = $this->tsRuntime->getCurrentContext();
+        $this->node = $currentContext['node'];
+        $this->documentNode = $currentContext['documentNode'];
+        /** @var $parentResponse Response */
+        $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
+        $pluginResponse = new Response($parentResponse);
 
-            $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
-            $content = $pluginResponse->getContent();
-        } catch (\Exception $exception) {
-            $content = $this->tsRuntime->handleRenderingException($this->path, $exception);
-        }
-        return $content;
+        $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
+        $content = $pluginResponse->getContent();
     }
 
     /**
