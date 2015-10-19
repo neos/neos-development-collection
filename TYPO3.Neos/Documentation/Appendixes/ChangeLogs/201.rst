@@ -1,0 +1,436 @@
+`2.0.1 (2015-10-19) <https://github.com/neos/neos-development-collection/releases/tag/2.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[BUGFIX] Translate node type label in PluginView master plugin selection <https://github.com/neos/neos-development-collection/pull/45>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `NEOS-1543 <https://jira.neos.io/browse/NEOS-1543>`_
+* Packages: ``Neos``
+
+`[TASK] Update list of available user interface languages <https://github.com/neos/neos-development-collection/pull/65>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Adding Spanish, Khmer, Portuguese (Brazilian), Norwegian & Chinese Simplified
+
+* Related: `NEOS-1486 <https://jira.neos.io/browse/NEOS-1486>`_
+* Packages: ``Neos``
+
+`[TASK] Remove custom exception handling in PluginViewImplementation <https://github.com/neos/neos-development-collection/pull/48>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Removes the custom handling of exceptions for PluginViews, which is limited
+and unnecessary. Instead the general NodeWrapping exception handler is used.
+
+* Resolves: `NEOS-1537 <https://jira.neos.io/browse/NEOS-1537>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Missing \`\`inversedBy\`\` mapping on event \`\`parentEvent\`\` <https://github.com/neos/neos-development-collection/pull/131>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] PHP 5.3 array declarations (TYPO3CR) <https://github.com/neos/neos-development-collection/pull/148>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] PHP 5.3 array declarations (Neos) <https://github.com/neos/neos-development-collection/pull/147>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Kickstarter`` ``Neos`` ``NodeTypes``
+
+`[BUGFIX] Hidden before/after properties breaks site import <https://github.com/neos/neos-development-collection/pull/143>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The closing tags for the ``hiddenBeforeDateTime`` and ``hiddenAfterDateTime``
+properties were not handled in the node import service.
+
+* Resolves: `NEOS-1554 <https://jira.neos.io/browse/NEOS-1554>`_
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Render exception in HTML even if an other format is given <https://github.com/neos/neos-development-collection/pull/141>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+If an exception is thrown while rendering a page with an alternative format
+like .json, the ExceptionHandlers\\ageHandler tries to fetch a layout for this alternative
+format which raises another exception: `#1288092555: Could not load layout file`
+
+Switching the setters of the RequestHandler and the format always renders the
+exception as HTML.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Graceful handling of node linking exceptions <https://github.com/neos/neos-development-collection/pull/119>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+- Gracefully handle exceptions in the NodeUri TS object
+- Gracefully handle exceptions in node linking view helpers
+
+* Resolves: `NEOS-1625 <https://jira.neos.io/browse/NEOS-1625>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent fatal error in \`\`node:repair\`\` with broken node structure <https://github.com/neos/neos-development-collection/pull/122>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+When the "/sites" root node or it's children cannot be found a fatal error
+is thrown or it's silently ignored. Instead output an error message that the
+nodes could not be found.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix wrong markup in 2.0 release notes ACL example YAML <https://github.com/neos/neos-development-collection/pull/136>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Document \`defaultValue\` for \`DateTimeEditor\` <https://github.com/neos/neos-development-collection/pull/135>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Documentation of the `defaultValue` option for the `DateTime` property type.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Behat tests <https://github.com/neos/neos-development-collection/pull/130>`_
+--------------------------------------------------------------------------------------
+
+Using relative paths fails when using isolated tests that are run
+in a subprocess. To support the development collection and
+read-only repositories full paths are used by checking which
+structure is present.
+
+Related: `cdbffb7f5ab28d630601c733e97568c27a8b0cbf <https://github.com/neos/neos-development-collection/commit/cdbffb7f5ab28d630601c733e97568c27a8b0cbf>`_
+
+* Packages: ``Neos``
+
+`[TASK] Enable Behat Neos Behat tests for Travis <https://github.com/neos/neos-development-collection/pull/129>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Adds a ``@browser`` tag used to skip those since they require
+Selenium and take very long to run.
+
+* Packages: ``Neos``
+
+`[TASK] Enable Behat Travis tests <https://github.com/neos/neos-development-collection/pull/128>`_
+--------------------------------------------------------------------------------------------------
+
+Additionally includes a couple of general improvements.
+
+* Packages: ``Neos``
+
+`[TASK] Ignore built JavaScript/CSS files during merge <https://github.com/neos/neos-development-collection/pull/126>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When merging a lower branch to an upper one the built files often conflict.
+To avoid that the file in the current branch is used when solving conflicts.
+This is done using ``.gitattributes`` stored in the root of the repository.
+
+Enable this with::
+
+  git config merge.ours.driver true
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`[TASK] Ignore built JavaScript/CSS to avoid merge conflicts <https://github.com/neos/neos-development-collection/pull/127>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+To avoid merge conflicts, the minified built files are ignored in Git and
+instead added using force by the automated jobs in Jenkins.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Behavior tests failing with new structure <https://github.com/neos/neos-development-collection/pull/76>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`[TASK] Replace usage of compass font-files to get rid of cache bust <https://github.com/neos/neos-development-collection/pull/125>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This is done since we don't need that cache bust and since it's updated
+on every new compilation unnecessarily. It's not possible to disable in
+Compass without scripting, so the inclusion is just done manually instead.
+
+* Packages: ``Neos``
+
+`[BUGFIX] No longer use invalid data in functional test <https://github.com/neos/neos-development-collection/pull/121>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The MigrationStatusRepositoryTest used invalid fixture data, the
+direction was filled with strings that were too long for the related
+DB column. On MySQL this is silently truncated, but on PostgreSQL it
+leads to an error.
+
+Now the expected class constants are used in the test.
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Use current node as document node if no document node is found <https://github.com/neos/neos-development-collection/pull/117>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+When the fallback node mode is triggered, the ``documentNode`` TypoScript
+variable is empty leading to various issues. This solves that by using the
+current node as the document node in that case.
+
+* Fixes: `NEOS-1624 <https://jira.neos.io/browse/NEOS-1624>`_
+* Packages: ``Neos``
+
+`[TASK] Add missing slashes to FQN in CustomViewHelpers.rst <https://github.com/neos/neos-development-collection/pull/120>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Position master plugin selection above plugin view selection <https://github.com/neos/neos-development-collection/pull/46>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Positions the master plugin selection in the inspector for a PluginView above
+instead of undernearth the plugin view selection, to avoid confusion since
+the plugin view selection depends on the master plugin selection.
+
+* Fixes: `NEOS-1544 <https://jira.neos.io/browse/NEOS-1544>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Unset selected plugin view when changing master view <https://github.com/neos/neos-development-collection/pull/41>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+When changing the master view selection for a PluginView,
+the selected plugin view is not unset causing confusion.
+
+* Fixes: `NEOS-1541 <https://jira.neos.io/browse/NEOS-1541>`_
+* Packages: ``Neos``
+
+`[TASK] Remove superfluous quotes from PluginView label <https://github.com/neos/neos-development-collection/pull/40>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Removes superfluous quotes around PluginView label seen in the plugin view editor for plugin views.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Flush on change of descendants of referenced node <https://github.com/neos/neos-development-collection/pull/112>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Add descendants of referenced nodes to cache tags of the "Content References"
+node type. This ensures that nested nodes inside a node inserted as a reference
+will be updated when those nodes are flushed.
+
+* Packages: ``NodeTypes``
+
+`[TASK] Fix some code style issues <https://github.com/neos/neos-development-collection/pull/113>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] CachingHelper generation of entry tags for descendants of a node <https://github.com/neos/neos-development-collection/pull/110>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Cache entry tags are case sensitive.
+
+* Packages: ``Neos``
+
+`[MERGE] Merge '2.0' <https://github.com/neos/neos-development-collection/pull/108>`_
+-------------------------------------------------------------------------------------
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``NodeTypes`` ``TYPO3CR`` ``TypoScript``
+
+`[BUGFIX] Fix license header text <https://github.com/neos/neos-development-collection/pull/106>`_
+--------------------------------------------------------------------------------------------------
+
+Removes a superfluous "the" in the license header, it's
+not "THE Neos".
+
+* Packages: ``Neos``
+
+`[TASK] Fix some code style issues (Neos) <https://github.com/neos/neos-development-collection/pull/105>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Adjust documentation link in setup final step <https://github.com/neos/neos-development-collection/pull/98>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Update license headers <https://github.com/neos/neos-development-collection/pull/95>`_
+----------------------------------------------------------------------------------------------
+
+This change updates license headers in all packages contained in the Neos Development Collection according to what has been discussed earlier: https://discuss.neos.io/t/rfc-license-header-file-doc-comment-change/517
+
+
+* Packages: ``Neos``
+
+`[BUGFIX] Service\\odesController should stick to interfaces <https://github.com/neos/neos-development-collection/pull/96>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The ``Service\\odesController`` should refer to the
+``NodeSearchServiceInterface`` instead of the implementation class
+to avoid hard dependencies and allow overwriting the implementation
+from the outside.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Make PluginView label translatable <https://github.com/neos/neos-development-collection/pull/44>`_
+------------------------------------------------------------------------------------------------------------
+
+* Fixes: `NEOS-1540 <https://jira.neos.io/browse/NEOS-1540>`_
+* Packages: ``Neos``
+
+`[!!!][TASK] Fix support for thumbnail with fixed width and height <https://github.com/neos/neos-development-collection/pull/60>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Neos 2.0 introduce a regression that break thumbnails with fixed height
+and width (if the ratio of the original image is different than the
+ratio of the Thumbnail).
+
+This change allow to set fixed width and height in Image ViewHelpers, TS
+Objects and change the internal API. This change is currently breaking
+(internal API only) but BC if you use only the ViewHelpers or the TS objects.
+
+This change introduce ```ThumbnailConfiguration``` value object to make
+the method signature more readable and make the breaking change more visible.
+
+This change change the database structure for thumbnail entity to store
+a JSON representation of the configuration and a hash of this configuration.
+The hash is used to check if a thumbnail exist with the same configuration.
+By default NULL value are not stored in the database to allow change in the
+ThumbnailConfiguration without invalidating all the generated thumbnails.
+
+This change require a database migration::
+
+  ./flow doctrine:migrate
+  # or specifically
+  ./flow doctrine:migrationexecute --version 20150913173832
+
+This change also simulate to behaviour of Neos 1.2 for BC, where
+this snippet will generate a square image of 200x200::
+
+  <typo3.media:image image="{image}" maximumWidth="200" maximumHeight="200" allowCropping="true" alt="{title}" />
+
+In Neos 2.0, this snipped should be adjusted to::
+
+  <typo3.media:image image="{image}" width="200" height="200" allowCropping="true" alt="{title}" />
+
+You can unset the settings ``TYPO3.Media.behaviourFlag`` to disable the
+Neos 1.2 behaviour compatibility. Previously Neos can generate fixed
+dimensions by setting maximumWidth and maximumHeight. The new behaviour
+introduced by Neos 2.0 is to use width and height.
+
+* Resolves: `NEOS-1511 <https://jira.neos.io/browse/NEOS-1511>`_
+* Packages: ``Media`` ``Neos`` ``NodeTypes``
+
+`[TASK] Streamline "Loading ..." labels <https://github.com/neos/neos-development-collection/pull/43>`_
+-------------------------------------------------------------------------------------------------------
+
+Changes the usage of "Loading ..." labels to be used consistently
+across the user interface.
+
+* Resolves: `NEOS-1539 <https://jira.neos.io/browse/NEOS-1539>`_
+* Packages: ``Neos``
+
+`[TASK] Add .editorconfig file <https://github.com/neos/neos-development-collection/pull/78>`_
+----------------------------------------------------------------------------------------------
+
+`[BUGFIX] Fix timing issue in NodeImportServiceTest <https://github.com/neos/neos-development-collection/pull/85>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The node import service puts an instance of `Now` in the expected
+value and afterwards starts the import that will write the actual
+`creationDateTime` and `lastModificationDateTime` properties. Because
+the import takes time there's no guarantee that those values will
+match and as such the tests randomly fail.
+
+This change changes the check so it validates the properties to
+be an instance of `DateTime` after the import, but removes it from
+the expectedValue definition.
+
+* Packages: ``TYPO3CR``
+
+`[TASK] Add .travis.yml to 2.0 branch <https://github.com/neos/neos-development-collection/pull/89>`_
+-----------------------------------------------------------------------------------------------------
+
+`[TASK] Add .travis.yml for the 1.2 branch <https://github.com/neos/neos-development-collection/pull/87>`_
+----------------------------------------------------------------------------------------------------------
+
+`[TASK] Add configuration file for StyleCI <https://github.com/neos/neos-development-collection/pull/77>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent fatal error for missing master plugin in PluginViews <https://github.com/neos/neos-development-collection/pull/42>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Prevents PluginViews with a master plugin selected that cannot be found
+from throwing a fatal error. This can happen when the master plugin is
+removed/moved or is not available in the context.
+
+* Fixes: `NEOS-1530 <https://jira.neos.io/browse/NEOS-1530>`_
+* Packages: ``Neos``
+
+`[TASK] Add Code of Conduct <https://github.com/neos/neos-development-collection/pull/71>`_
+-------------------------------------------------------------------------------------------
+
+This adds a reStructuredText version of the Contributor Covenant
+code of conduct, to make it clear the project is governed by that.
+
+See also http://contributor-covenant.org/version/1/2/0/
+
+`[BUGFIX] Adjust carousel node type example <https://github.com/neos/neos-development-collection/pull/72>`_
+-----------------------------------------------------------------------------------------------------------
+
+Since Neos 2.0 you have to write content.iterationName instead of iterationName.
+
+* Packages: ``Neos``
+
+`[TASK] Add Readme.rst files for individual packages <https://github.com/neos/neos-development-collection/pull/74>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adds a Readme.rst to each package, so that the read-only subsplit
+repositories have a readme file for GitHub to show and for the users
+to read.
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``NodeTypes`` ``TYPO3CR`` ``TypoScript``
+
+`[BUGFIX] Reset date picker to current date instead of null <https://github.com/neos/neos-development-collection/pull/66>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+If reset to null, the date picker would default to 1899 instead of the
+current date when being opened again.
+
+* Fixes: `NEOS-1351 <https://jira.neos.io/browse/NEOS-1351>`_
+* Packages: ``Neos``
+
+`[TASK] Add composer.json and template <https://github.com/neos/neos-development-collection/pull/39>`_
+------------------------------------------------------------------------------------------------------
+
+`[TASK] Add merged composer.json and template <https://github.com/neos/neos-development-collection/pull/38>`_
+-------------------------------------------------------------------------------------------------------------
+
+`[BUGFIX] Add inversedBy attribute to association <https://github.com/neos/neos-development-collection/pull/14>`_
+-----------------------------------------------------------------------------------------------------------------
+
+When running a doctrine:validate an error is shown for the Tag model
+since it does not contain the required inversedBy attribute. This
+change fixes that by adding it.
+
+* Fixes: `NEOS-1507 <https://jira.neos.io/browse/NEOS-1507>`_
+* Packages: ``Media``
+
+`Merge branch 1.2 into 2.0 <https://github.com/neos/neos-development-collection/pull/29>`_
+------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Resolve test trait paths relatively <https://github.com/neos/neos-development-collection/pull/9>`_
+----------------------------------------------------------------------------------------------------------
+
+In order to accomodate running the tests with the new joined
+repositories as well as the read-only ones the require path
+must be relative to the current path to avoid passing the
+Application/Neos folder.
+
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.0...2.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
