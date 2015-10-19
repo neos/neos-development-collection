@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
@@ -400,7 +401,14 @@ class ContentController extends ActionController
                 if ($page === null) {
                     continue;
                 }
-                $masterPlugins[$pluginNode->getPath()] = sprintf('"%s" on page "%s"', $pluginNode->getNodeType()->getLabel(), $page->getLabel());
+                $translationHelper = new TranslationHelper();
+                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
+                    'masterPlugins.nodeTypeOnPageLabel',
+                    null,
+                    ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
+                    'Main',
+                    'TYPO3.Neos'
+               );
             }
         }
         return json_encode((object) $masterPlugins);
