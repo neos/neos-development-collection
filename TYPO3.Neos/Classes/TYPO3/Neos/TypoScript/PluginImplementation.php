@@ -155,7 +155,7 @@ class PluginImplementation extends AbstractArrayTypoScriptObject
         $pluginResponse = new Response($parentResponse);
 
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
-        $content = $pluginResponse->getContent();
+        return $pluginResponse->getContent();
     }
 
     /**
