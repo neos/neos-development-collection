@@ -1,7 +1,7 @@
 # folder inside repository, branch, title - adjust per branch!
-branch: '1.2'
-docs-path: 'neos/1.2'
-title: 'Neos 1.2'
+branch: '2.0'
+docs-path: 'neos/2.0'
+title: 'Neos 2.0'
 
 # some project specific settings
 docs-repository: 'neos/api-docs'
