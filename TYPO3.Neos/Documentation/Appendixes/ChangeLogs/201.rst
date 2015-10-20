@@ -55,7 +55,7 @@ properties were not handled in the node import service.
 ------------------------------------------------------------------------------------------------------------------------------------
 
 If an exception is thrown while rendering a page with an alternative format
-like .json, the ExceptionHandlers\\ageHandler tries to fetch a layout for this alternative
+like .json, the ExceptionHandlers\\PageHandler tries to fetch a layout for this alternative
 format which raises another exception: `#1288092555: Could not load layout file`
 
 Switching the setters of the RequestHandler and the format always renders the
@@ -260,10 +260,10 @@ This change updates license headers in all packages contained in the Neos Develo
 
 * Packages: ``Neos``
 
-`[BUGFIX] Service\\odesController should stick to interfaces <https://github.com/neos/neos-development-collection/pull/96>`_
+`[BUGFIX] Service\\NodesController should stick to interfaces <https://github.com/neos/neos-development-collection/pull/96>`_
 ----------------------------------------------------------------------------------------------------------------------------
 
-The ``Service\\odesController`` should refer to the
+The ``Service\NodesController`` should refer to the
 ``NodeSearchServiceInterface`` instead of the implementation class
 to avoid hard dependencies and allow overwriting the implementation
 from the outside.
