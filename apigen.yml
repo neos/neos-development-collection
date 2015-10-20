@@ -4,7 +4,7 @@ docs-path: 'neos/2.0'
 title: 'Neos 2.0'
 
 # some project specific settings
-docs-repository: 'neos/api-docs'
+docs-repository: 'neos/neos.github.io'
 exclude: 'TYPO3.*/Tests/*,TYPO3.*/Resources/*,TYPO3.*/Migrations/*'
 template-theme: 'bootstrap'
 annotation-groups: 'api,deprecated,todo'
