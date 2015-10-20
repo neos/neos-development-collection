@@ -1,0 +1,17 @@
+# folder inside repository, branch, title - adjust per branch!
+branch: '2.0'
+docs-path: 'neos/2.0'
+title: 'Neos 2.0'
+
+# some project specific settings
+docs-repository: 'neos/api-docs'
+exclude: 'TYPO3.*/Tests/*,TYPO3.*/Resources/*,TYPO3.*/Migrations/*'
+template-theme: 'bootstrap'
+annotation-groups: 'api,deprecated,todo'
+
+# privates are useful to know for developers
+access-levels: public,protected,private
+# even internals are useful to know for developers
+internal: yes
+# the php lib is already documented on php.net
+php: false

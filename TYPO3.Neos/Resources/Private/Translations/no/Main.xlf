@@ -459,6 +459,10 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="no" state="translated">Konfigurasjonen av nodetypen som skal gjengis her er ikke tilgjengelig. Sannsynligvis har du omdøpt nodetypen og mangler en migrasjon eller du har feilstavet navnet.</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="no" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -461,6 +461,10 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="km" state="translated">ការកំណត់រចនាសម្ព័ន្ធត្រូវបានសន្មត់ថា NodeType ត្រូវបានបង្ហាញនៅទីនេះមិនអាចរកបាន។ ប្រហែលជាអ្នកបានប្ដូរឈ្មោះ NodeType និងត្រូវបានខកខាន migration ឬអ្នកសរសេរមិនបានត្រឹមត្រូវ។</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="km" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
     </body>
   </file>
 </xliff>
