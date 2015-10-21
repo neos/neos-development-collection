@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -17,6 +17,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Exception\NoThumbnailAvailableException;
@@ -73,23 +74,18 @@ class ThumbnailService
      * the original asset is used.
      *
      * @param AssetInterface $asset The asset to render a thumbnail for
-     * @param integer $maximumWidth The thumbnail's maximum width in pixels
-     * @param integer $maximumHeight The thumbnail's maximum height in pixels
-     * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
-     * @param boolean $allowUpScaling Whether the resulting image should be upscaled
+     * @param ThumbnailConfiguration $configuration
      * @return Thumbnail
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, $maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        $thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight, $allowUpScaling);
-
+        $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
         if ($thumbnail === null) {
             if (!$asset instanceof ImageInterface) {
                 throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
             }
-
-            $thumbnail = new Thumbnail($asset, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
+            $thumbnail = new Thumbnail($asset, $configuration);
             $this->thumbnailRepository->add($thumbnail);
             $asset->addThumbnail($thumbnail);
 

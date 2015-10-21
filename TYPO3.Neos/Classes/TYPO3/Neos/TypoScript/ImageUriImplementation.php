@@ -1,24 +1,25 @@
 <?php
 namespace TYPO3\Neos\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the TYPO3.Media package:
- * asset, maximumWidth, maximumHeight, allowCropping, allowUpScaling.
+ * asset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling.
  *
  */
 class ImageUriImplementation extends AbstractTypoScriptObject
@@ -42,6 +43,16 @@ class ImageUriImplementation extends AbstractTypoScriptObject
     }
 
     /**
+     * Width
+     *
+     * @return integer
+     */
+    public function getWidth()
+    {
+        return $this->tsValue('width');
+    }
+
+    /**
      * MaximumWidth
      *
      * @return integer
@@ -49,6 +60,16 @@ class ImageUriImplementation extends AbstractTypoScriptObject
     public function getMaximumWidth()
     {
         return $this->tsValue('maximumWidth');
+    }
+
+    /**
+     * Height
+     *
+     * @return integer
+     */
+    public function getHeight()
+    {
+        return $this->tsValue('height');
     }
 
     /**
@@ -85,18 +106,15 @@ class ImageUriImplementation extends AbstractTypoScriptObject
      * Returns a processed image path
      *
      * @return string
+     * @throws \Exception
      */
     public function evaluate()
     {
         $asset = $this->getAsset();
-        $maximumWidth = $this->getMaximumWidth();
-        $maximumHeight = $this->getMaximumHeight();
-        $allowCropping = $this->getAllowCropping();
-        $allowUpScaling = $this->getAllowUpScaling();
-
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }
-        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling)['src'];
+        $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling());
+        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration)['src'];
     }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Uri;
@@ -138,16 +138,17 @@ class LinkingService
      * @param string|Uri $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
+     * @param bool $absolute
      * @return string
      */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
+    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
             return null;
         }
-        return $this->createNodeUri($controllerContext, $targetObject);
+        return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
     /**

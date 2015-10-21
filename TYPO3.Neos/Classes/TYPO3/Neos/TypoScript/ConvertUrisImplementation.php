@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Exception;
@@ -40,6 +40,12 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *   prototype(TYPO3.Neos:ConvertUris) {
  *     externalLinkTarget = '_blank'
  *     resourceLinkTarget = '_blank'
+ *   }
+ *
+ * The optional property ``absolute`` can be used to convert node uris to absolute links::
+ *
+ *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
+ *     absolute = true
  *   }
  */
 class ConvertUrisImplementation extends AbstractTypoScriptObject
@@ -85,10 +91,12 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject
         $linkingService = $this->linkingService;
         $controllerContext = $this->tsRuntime->getControllerContext();
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
+        $absolute = $this->tsValue('absolute');
+
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris, $absolute) {
             switch ($matches[1]) {
                 case 'node':
-                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
+                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);

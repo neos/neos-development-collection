@@ -1,20 +1,21 @@
 <?php
 namespace TYPO3\Media\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use \TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 class AssetService
 {
@@ -35,51 +36,23 @@ class AssetService
      * In case of Images this is a thumbnail of the image, in case of other assets an icon representation.
      *
      * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
+     * @param ThumbnailConfiguration $configuration
      * @return array with keys "width", "height" and "src"
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight, $allowCropping = false, $allowUpScaling = null)
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         if ($asset instanceof ImageInterface) {
-            $thumbnailImage = $this->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+            $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
             $thumbnailData = array(
                 'width' => $thumbnailImage->getWidth(),
                 'height' => $thumbnailImage->getHeight(),
                 'src' => $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource())
             );
         } else {
-            $thumbnailData = $this->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+            $thumbnailData = $this->getAssetThumbnailImage($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
         }
 
         return $thumbnailData;
-    }
-
-    /**
-     * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
-     * differ from the specified image dimensions, otherwise the original image is returned.
-     *
-     * @param ImageInterface $image
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
-     * @return ImageInterface
-     */
-    protected function getImageThumbnailImage(ImageInterface $image, $maximumWidth = null, $maximumHeight = null, $allowCropping = null, $allowUpScaling = null)
-    {
-        $ratioMode = ($allowCropping ? ImageInterface::RATIOMODE_OUTBOUND : ImageInterface::RATIOMODE_INSET);
-        if ($allowUpScaling === false) {
-            $maximumWidth = ($maximumWidth > $image->getWidth()) ? $image->getWidth() : $maximumWidth;
-            $maximumHeight = ($maximumHeight > $image->getHeight()) ? $image->getHeight() : $maximumHeight;
-        }
-        if ($maximumWidth === $image->getWidth() && $maximumHeight === $image->getHeight()) {
-            return $image;
-        }
-
-        return $this->thumbnailService->getThumbnail($image, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
     }
 
     /**

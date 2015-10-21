@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Invalid node</source>
-			<target xml:lang="km" state="needs-translation">Invalid node</target></trans-unit>
+			<target xml:lang="km" state="translated">ណូតមិនត្រឹមត្រូវ</target></trans-unit>
     </body>
   </file>
 </xliff>

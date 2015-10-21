@@ -190,7 +190,7 @@ define(
 					item = Ember.Object.extend({
 						id: value,
 						text: function() {
-							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...');
+							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
 						}.property(),
 						data: {}
 					}).create();

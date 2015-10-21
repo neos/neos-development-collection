@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -52,17 +52,17 @@ abstract class AbstractNodeData
     protected $nodeType = 'unstructured';
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $creationDateTime;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $lastModificationDateTime;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $lastPublicationDateTime;
 
@@ -76,14 +76,14 @@ abstract class AbstractNodeData
     /**
      * If set, this node is automatically hidden before the specified date / time
      *
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $hiddenBeforeDateTime;
 
     /**
      * If set, this node is automatically hidden after the specified date / time
      *
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $hiddenAfterDateTime;
 
@@ -390,10 +390,10 @@ abstract class AbstractNodeData
     }
 
     /**
-     * @param \DateTime $lastPublicationDateTime
+     * @param \DateTimeInterface $lastPublicationDateTime
      * @return void
      */
-    public function setLastPublicationDateTime(\DateTime $lastPublicationDateTime = null)
+    public function setLastPublicationDateTime(\DateTimeInterface $lastPublicationDateTime = null)
     {
         $this->lastPublicationDateTime = $lastPublicationDateTime;
     }
@@ -425,10 +425,10 @@ abstract class AbstractNodeData
     /**
      * Sets the date and time when this node becomes potentially visible.
      *
-     * @param \DateTime $dateTime Date before this node should be hidden
+     * @param \DateTimeInterface $dateTime Date before this node should be hidden
      * @return void
      */
-    public function setHiddenBeforeDateTime(\DateTime $dateTime = null)
+    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null)
     {
         if ($this->hiddenBeforeDateTime != $dateTime) {
             $this->hiddenBeforeDateTime = $dateTime;
@@ -449,10 +449,10 @@ abstract class AbstractNodeData
     /**
      * Sets the date and time when this node should be automatically hidden
      *
-     * @param \DateTime $dateTime Date after which this node should be hidden or NULL if no such time was set
+     * @param \DateTimeInterface $dateTime Date after which this node should be hidden or NULL if no such time was set
      * @return void
      */
-    public function setHiddenAfterDateTime(\DateTime $dateTime = null)
+    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null)
     {
         if ($this->hiddenAfterDateTime != $dateTime) {
             $this->hiddenAfterDateTime = $dateTime;

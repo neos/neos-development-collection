@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-08-17
+The following reference was automatically generated from code on 2015-10-09
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -989,6 +989,41 @@ and will remove the respective Asset object from the database when the broken re
 This command will ask you interactively what to do before deleting anything.
 
 
+
+
+
+
+
+.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:resource:copy`:
+
+``typo3.flow:resource:copy``
+****************************
+
+**Copy resources**
+
+This command copies all resources from one collection to another storage identified by name.
+The target storage must be empty and must not be identical to the current storage of the collection.
+
+This command merely copies the binary data from one storage to another, it does not change the related
+Resource objects in the database in any way. Since the Resource objects in the database refer to a
+collection name, you can use this command for migrating from one storage to another my configuring
+the new storage with the name of the old storage collection after the resources have been copied.
+
+Arguments
+^^^^^^^^^
+
+``--source-collection``
+  The name of the collection you want to copy the assets from
+``--target-collection``
+  The name of the collection you want to copy the assets to
+
+
+
+Options
+^^^^^^^
+
+``--publish``
+  If enabled, the target collection will be published after the resources have been copied
 
 
 
@@ -2412,6 +2447,11 @@ position from the parents NodeType configuration.
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have a property that have a default value configuration
 the default value for that property will be set.
+
+*Remove broken object references*
+
+Detects and removes references from nodes to entities which don't exist anymore (for
+example Image nodes referencing ImageVariant objects which are gone for some reason).
 
 
 **Examples:**

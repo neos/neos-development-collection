@@ -1,20 +1,19 @@
 <?php
 namespace TYPO3\Neos\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Service\PluginService;
@@ -112,21 +111,18 @@ class PluginViewImplementation extends PluginImplementation
         $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
         $pluginResponse = new Response($parentResponse);
 
-        try {
-            $pluginRequest = $this->buildPluginRequest();
-            if ($pluginRequest->getControllerObjectName() === '') {
-                return '<p>No PluginView Configured</p>';
+        $pluginRequest = $this->buildPluginRequest();
+        if ($pluginRequest->getControllerObjectName() === '') {
+            $message = 'Master View not selected';
+            if ($this->node->getProperty('plugin')) {
+                $message = 'Plugin View not selected';
             }
-            $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-            return $pluginResponse->getContent();
-        } catch (StopActionException $stopActionException) {
-            throw $stopActionException;
-        } catch (RequiredArgumentMissingException $exception) {
-            return '<p>' . $exception->getMessage() . '</p>';
-        } catch (\Exception $exception) {
-            $this->systemLogger->logException($exception);
-            $message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
-            return ($this->objectManager->getContext()->isDevelopment()) ? ('<p><strong>' . $message . '</strong></p>') : ('<!--' . $message . '-->');
+            if ($this->node->getProperty('view')) {
+                $message ='Master View or Plugin View not found';
+            }
+            return $this->node->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
+        $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+        return $pluginResponse->getContent();
     }
 }
