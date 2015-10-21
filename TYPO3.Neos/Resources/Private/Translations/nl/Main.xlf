@@ -53,7 +53,7 @@
 			<target xml:lang="nl">Element verwijderen</target><alt-trans><target xml:lang="nl">Verwijder het element</target></alt-trans></trans-unit>
       <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="nl">Annuleren</target></trans-unit>
+			<target xml:lang="nl">Verwerpen</target><alt-trans><target xml:lang="nl">Annuleren</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
 			<target xml:lang="nl">Wijzigingen negeren</target></trans-unit>
