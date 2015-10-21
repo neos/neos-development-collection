@@ -216,7 +216,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getCreationDateTime()
     {
@@ -224,7 +224,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getLastModificationDateTime()
     {
@@ -232,10 +232,10 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @param \DateTime $lastModificationDateTime
+     * @param \DateTimeInterface $lastModificationDateTime
      * @return void
      */
-    public function setLastPublicationDateTime(\DateTime $lastModificationDateTime)
+    public function setLastPublicationDateTime(\DateTimeInterface $lastModificationDateTime)
     {
         $this->nodeData->setLastPublicationDateTime($lastModificationDateTime);
     }
@@ -1245,7 +1245,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
         }
-        if ($this->getHiddenAfterDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+        if ($this->getHiddenAfterDateTime() instanceof \DateTimeInterface && $dateTime instanceof \DateTimeInterface && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
         $this->nodeData->setHiddenAfterDateTime($dateTime);

@@ -172,7 +172,7 @@ class ContextFactory implements ContextFactoryInterface
                 }
                 $stringValue = implode('&', $stringParts);
             } else {
-                $stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+                $stringValue = $propertyValue instanceof \DateTimeInterface ? $propertyValue->getTimestamp() : (string)$propertyValue;
             }
             $identifierSource .= ':' . $stringValue;
         }
@@ -208,7 +208,7 @@ class ContextFactory implements ContextFactoryInterface
             }
         }
         if (isset($contextProperties['currentDateTime'])) {
-            if (!$contextProperties['currentDateTime'] instanceof \DateTime) {
+            if (!$contextProperties['currentDateTime'] instanceof \DateTimeInterface) {
                 throw new InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
             }
         }

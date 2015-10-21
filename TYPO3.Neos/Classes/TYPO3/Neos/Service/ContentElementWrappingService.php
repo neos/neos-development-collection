@@ -232,7 +232,7 @@ class ContentElementWrappingService
 
         // Serialize date values to String
         if ($dataType === 'DateTime') {
-            if (!$propertyValue instanceof \DateTime) {
+            if (!$propertyValue instanceof \DateTimeInterface) {
                 return '';
             }
             $value = clone $propertyValue;
