@@ -7663,6 +7663,17 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=75);
   opacity: 0.75;
 }
+.neos #neos-publish-menu.neos-button-group .neos-publish-button .icon-lock {
+  line-height: 19px;
+}
+.neos #neos-publish-menu.neos-button-group .neos-publish-button .badge {
+  background-color: #fff;
+  color: #ff8700;
+  position: relative;
+  top: 0;
+  left: 5px;
+  margin-right: 5px;
+}
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle {
   width: 40px;
   border: 0;
@@ -7709,6 +7720,18 @@
 }
 .neos .neos-target-workspace-selector ul.neos-select2-results li:not(.neos-select2-highlighted) {
   background: #3f3f3f;
+}
+.neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label {
+  padding-left: 20px;
+}
+.neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label .icon {
+  margin-left: -20px;
+  line-height: 19px;
+}
+.neos #neos-target-workspace-selector .neos-select2-container .neos-select2-chosen .icon {
+  line-height: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .neos .neos-user-menu.neos-button-group {
   font-size: 14px;
@@ -9394,8 +9417,21 @@
 .neos.neos-module.neos-module-administration-configuration #configuration .value[title="string"] {
   color: #00b5ff;
 }
+.neos.neos-module .neos-hidden {
+  display: none;
+  visibility: hidden;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-footer p {
+  font-size: 11.9px;
+  margin-right: 8px;
+}
 .neos.neos-module.neos-module-management-workspaces td {
   white-space: nowrap;
+}
+.neos.neos-module.neos-module-management-workspaces td.description {
+  white-space: normal;
+  line-height: 20px;
+  padding: 10px 0 5px 0;
 }
 .neos.neos-module.neos-module-management-workspaces td.node-type {
   white-space: nowrap;
@@ -9414,9 +9450,17 @@
   -o-user-select: none;
   user-select: none;
 }
-.neos.neos-module.neos-module-management-workspaces th,
-.neos.neos-module.neos-module-management-workspaces td.actions {
+.neos.neos-module.neos-module-management-workspaces th {
   white-space: nowrap;
+}
+.neos.neos-module.neos-module-management-workspaces td.neos-workspace-type {
+  width: 46px;
+}
+.neos.neos-module.neos-module-management-workspaces td.neos-action {
+  width: 90px;
+}
+.neos.neos-module.neos-module-management-workspaces td.neos-changes {
+  width: 120px;
 }
 .neos.neos-module.neos-module-management-workspaces td.node-type,
 .neos.neos-module.neos-module-management-workspaces td.relpath {
@@ -9455,6 +9499,24 @@
   margin-left: 15px;
   text-align: center;
   padding-right: 4px;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change {
+  box-sizing: border-box;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-new {
+  color: #00a338;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-changed {
+  color: #ff8700;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-removed {
+  color: #ff460d;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-unchanged {
+  color: #3f3f3f;
 }
 .neos.neos-module.neos-module-management-history .neos-history-events-divider {
   margin: 0;

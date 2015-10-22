@@ -18,10 +18,12 @@ use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
@@ -101,6 +103,12 @@ class UserService
      * @var AuthenticationManagerInterface
      */
     protected $authenticationManager;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
     /**
      * @Flow\Inject
@@ -220,7 +228,7 @@ class UserService
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
 
-        $this->createUserWorkspace($username);
+        $this->createUserWorkspace($user, $account);
 
         $this->emitUserCreated($user);
         return $user;
@@ -511,6 +519,46 @@ class UserService
     }
 
     /**
+     * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     * @api
+     */
+    public function currentUserCanPublishToWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return $this->securityContext->hasRole('TYPO3.Neos:LivePublisher');
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === NULL) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the current user may delete the given workspace according to one the roles of the user's accounts
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     * @api
+     */
+    public function currentUserCanDeleteWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return false;
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.DeleteOwnWorkspaces', array('workspace' => $workspace));
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the default authentication provider name
      *
      * @return string
@@ -564,23 +612,59 @@ class UserService
     }
 
     /**
+     * Returns an array with all roles of a user's accounts, including parent roles, the "Everybody" role and the
+     * "AuthenticatedUser" role, assuming that the user is logged in.
+     *
+     * @param User $user The user
+     * @return array
+     */
+    protected function getAllRoles(User $user)
+    {
+        $roles = array(
+            'TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody'),
+            'TYPO3.Flow:AuthenticatedUser' => $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser')
+        );
+
+        foreach ($user->getAccounts() as $account) {
+            /** @var Account $account */
+            $accountRoles = $account->getRoles();
+            /** @var $currentRole Role */
+            foreach ($accountRoles as $currentRole) {
+                if (!in_array($currentRole, $roles)) {
+                    $roles[$currentRole->getIdentifier()] = $currentRole;
+                }
+                /** @var $currentParentRole Role */
+                foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
+                    if (!in_array($currentParentRole, $roles)) {
+                        $roles[$currentParentRole->getIdentifier()] = $currentParentRole;
+                    }
+                }
+            }
+        }
+
+        return $roles;
+    }
+
+    /**
      * Creates a user workspace for the given user's account if it does not exist already.
      *
-     * @param string $accountIdentifier Identifier of the user's account to create workspaces for
-     * @return void
+     * @param User $user The new user to create a workspace for
+     * @param Account $account The user's backend account
+     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    protected function createUserWorkspace($accountIdentifier)
+    protected function createUserWorkspace(User $user, Account $account)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $userWorkspaceName = 'user-' . $account->getAccountIdentifier();
+        $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             if (!($liveWorkspace instanceof Workspace)) {
                 $liveWorkspace = new Workspace('live');
                 $this->workspaceRepository->add($liveWorkspace);
             }
-            $owner = $this->getUser($accountIdentifier);
 
-            $userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace, $owner);
+            $userWorkspace = new Workspace($userWorkspaceName, $liveWorkspace, $user);
+            $userWorkspace->setTitle((string)$user->getName());
             $this->workspaceRepository->add($userWorkspace);
         }
     }

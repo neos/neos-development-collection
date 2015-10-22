@@ -53,6 +53,9 @@
 			<trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
 				<source>Shared workspace</source>
 			</trans-unit>
+			<trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
+				<source>Read-only workspace</source>
+			</trans-unit>
 			<trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			</trans-unit>
@@ -73,6 +76,9 @@
 			</trans-unit>
 			<trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+			</trans-unit>
+			<trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+				<source>You don't have the permissions for deleting this workspace.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>

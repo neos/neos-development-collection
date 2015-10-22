@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -39,12 +38,6 @@ class WorkspacesController extends ActionController
     protected $userService;
 
     /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
@@ -66,17 +59,27 @@ class WorkspacesController extends ActionController
     /**
      * Shows a list of existing workspaces
      *
-     * @param boolean $onlyPublishable
      * @return string
      */
-    public function indexAction($onlyPublishable = false)
+    public function indexAction()
     {
-        $workspaces = $this->workspaceRepository->findAll();
-        if ($onlyPublishable) {
-            $workspaces = $this->filterWorkspacesByPublishPrivilege($workspaces);
+        $user = $this->userService->getCurrentUser();
+        $workspacesArray = array();
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+            /** @var Workspace $workspace */
+            $workspaceArray = array(
+                'name' => $workspace->getName(),
+                'title' => $workspace->getTitle(),
+                'description' => $workspace->getDescription(),
+                'baseWorkspace' => $workspace->getBaseWorkspace()
+            );
+            if ($user !== null) {
+                $workspaceArray['readonly'] = !$this->userService->currentUserCanPublishToWorkspace($workspace);
+            }
+            $workspacesArray[] = $workspaceArray;
         }
 
-        $this->view->assign('workspaces', $workspaces);
+        $this->view->assign('workspaces', $workspacesArray);
     }
 
     /**
@@ -154,24 +157,5 @@ class WorkspacesController extends ActionController
         $filteredWorkspaces = array_filter($workspaces->toArray(), [$this, 'filterWorkspaceByPublishPrivilege']);
 
         return $filteredWorkspaces;
-    }
-
-    /**
-     * Check privilege to publish to the given workspace is granted.
-     *
-     * @param Workspace $workspace
-     * @return boolean
-     */
-    protected function filterWorkspaceByPublishPrivilege(Workspace $workspace)
-    {
-        if ($workspace->getName() !== 'live') {
-            return true;
-        }
-
-        if ($this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.PublishToLiveWorkspace')) {
-            return true;
-        }
-
-        return false;
     }
 }

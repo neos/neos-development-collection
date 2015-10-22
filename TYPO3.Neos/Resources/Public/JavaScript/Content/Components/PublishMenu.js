@@ -99,31 +99,42 @@ define(
 				defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
 
 				_labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
+				_targetWorkspaceReadOnlyBinding: 'targetWorkspaceController.targetWorkspace.readOnly',
 
 				label: function() {
 					if (this.get('_savePending')) {
-						return 'Saving<span class="neos-ellipsis"></span>'.htmlSafe();
+						return (I18n.translate('TYPO3.Neos:Main:saving') + '<span class="neos-ellipsis"></span>').htmlSafe();
 					} else if (this.get('_publishRunning')) {
-						return 'Publishing<span class="neos-ellipsis"></span>'.htmlSafe();
+						return (I18n.translate('TYPO3.Neos:Main:publishing') + '<span class="neos-ellipsis"></span>').htmlSafe();
 					} else if (this.get('autoPublish')) {
-						return 'Auto-Publish' + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
+						if (this.get('_label')) {
+							return I18n.translate('autoPublishTo', '', 'TYPO3.Neos', 'Main', [ this.get('_label') ]).htmlSafe();
+						} else {
+							return I18n.translate('autoPublish', '', 'TYPO3.Neos', 'Main').htmlSafe();
+						}
 					}
 
 					if (this.get('_noChanges')) {
-						return I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
+						return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
 					}
 
-					return I18n.translate('TYPO3.Neos:Main:publish') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '') + ' (' + this.get('_numberOfChanges') + ')';
+					if (this.get('_label')) {
+						return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [ this.get('_label') ]) + ' <span class="badge">' + this.get('_numberOfChanges') + '</span>');
+					} else {
+						return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
+					}
+
 				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
 
 				title: function() {
-					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
-					if (this.get('autoPublish')) {
-						return titleText;
-					} else if (!this.get('_noChanges')) {
-						return titleText;
+					if (this.get('_targetWorkspaceReadOnly')) {
+						return I18n.translate('TYPO3.Neos:Main:cantPublishBecauseTargetWorkspaceIsReadOnly');
 					}
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges'),
+					if (this.get('autoPublish') || !this.get('_noChanges')) {
+						return I18n.translate('TYPO3.Neos:Main:publishAllChangesForCurrentPage');
+					}
+					return '';
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_targetWorkspaceReadOnly'),
 
 				_autoPublishTimer: null,
 
@@ -143,8 +154,9 @@ define(
 				}.observes('autoPublish').on('init'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending'),
+					console.log(this.get('_targetWorkspaceReadOnly'));
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending') || this.get('_targetWorkspaceReadOnly');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending', '_targetWorkspaceReadOnly'),
 
 				_hasChanges: function() {
 					if (this.get('autoPublish')) {

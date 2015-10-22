@@ -32,11 +32,16 @@ define(
 			title: null,
 			description: null,
 			baseWorkspace: null,
+			readOnly: null,
 			isUserWorkspace: false,
 			isCurrentUserWorkspace: false,
 			label: function() {
-				return (this.get('title') != '' ? this.get('title') : this.get('name'));
-			}.property('name', 'title')
+				var output = (this.get('title') != '' ? this.get('title') : this.get('name'));
+				if (this.get('readOnly')) {
+					output = '<span class="icon icon-lock"></span> ' + output;
+				}
+				return output;
+			}.property('name', 'title', 'readOnly')
 		});
 
 		/**
@@ -46,13 +51,12 @@ define(
 			classNames: 'neos-target-workspace-selector',
 			targetWorkspaceLabel: '',
 
-
 			/**
 			 * Retrieve the available workspaces via the REST service and set the local configuration accordingly.
 			 */
 			_loadConfiguration: function() {
 				var that = this;
-				HttpRestClient.getResource('neos-service-workspaces', null, {data: {'onlyPublishable': true}}).then(function(result) {
+				HttpRestClient.getResource('neos-service-workspaces').then(function(result) {
 					var configuration = {},
 					currentUserWorkspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
@@ -63,15 +67,10 @@ define(
 							title: $('.workspace-title', workspaceSnippet).text(),
 							description: $('.workspace-description', workspaceSnippet).text(),
 							baseWorkspace: $('.workspace-baseworkspace-name', workspaceSnippet).text(),
+							readOnly: $('.workspace-readonly', workspaceSnippet).length ? true : false,
 							isUserWorkspace: (workspaceName.substr(0, 5) === 'user-'),
 							isCurrentUserWorkspace: (currentUserWorkspaceName == workspaceName)
 						};
-					});
-
-					$.each(configuration, function(workspaceName, workspace) {
-						if (configuration[workspace.baseWorkspace]) {
-							workspace.baseWorkspace = configuration[workspace.baseWorkspace];
-						}
 					});
 
 					that.set('configuration', configuration);
@@ -91,6 +90,11 @@ define(
 
 				$.each(this.get('configuration'), function(workspaceName, workspaceConfiguration) {
 					workspaces.push(Workspace.create($.extend(true, {}, workspaceConfiguration, {name: workspaceName})));
+				});
+				$.each(workspaces, function(index, workspace) {
+					if (workspace.baseWorkspace) {
+						workspace.baseWorkspace = workspaces.findBy('name', workspace.baseWorkspace);
+					}
 				});
 
 				return workspaces;
@@ -134,8 +138,7 @@ define(
 			/**
 			 * Switches user's target workspace to the specified workspace
 			 */
-			setTargetWorkspace: function(newTargetWorkspaceName, thelabel) {
-				console.log('thelabel', thelabel);
+			setTargetWorkspace: function(newTargetWorkspaceName) {
 				if (this.get('workspaceRebasePending')) {
 					return;
 				}

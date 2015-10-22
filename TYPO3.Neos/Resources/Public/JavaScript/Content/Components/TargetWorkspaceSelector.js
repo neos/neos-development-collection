@@ -28,7 +28,7 @@ define(
 
 			dirtyWorkspaceDialog: null,
 
-		/**
+			/**
 			 * General initialization of this view
 			 */
 			init: function() {
@@ -42,12 +42,16 @@ define(
 			 */
 			_initialize: function() {
 				var that = this;
+
 				Ember.run.next(this, function() {
-					that.set('controller.targetWorkspaceLabel', this.get('controller.targetWorkspace.title'));
+					that.set('controller.targetWorkspaceLabel', this.get('controller.targetWorkspace.label'));
 					that.$('select').select2('destroy').select2({
 						maximumSelectionSize: 1,
 						minimumResultsForSearch: 10,
-						dropdownCssClass: 'neos-select2-large neos-target-workspace-selector'
+						dropdownCssClass: 'neos-select2-large neos-target-workspace-selector',
+						escapeMarkup: function(markup) {
+							return markup;
+						}
 					}).on('select2-selecting', function(event) {
 						if (that.get('publishableNodes.numberOfWorkspaceWidePublishableNodes') > 0) {
 							if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').state === 'destroying') {
@@ -60,9 +64,10 @@ define(
 							$('#neos-publish-menu').removeClass('neos-open open');
 							that.get('controller').setTargetWorkspace(event.val);
 						}
-					}).select2('data', {id: that.get('controller.targetWorkspace.name'), text: that.get('controller.targetWorkspace.title')})
+					}).select2('data', {id: that.get('controller.targetWorkspace.name'), text: that.get('controller.targetWorkspace.label')})
 				});
 			}.observes('controller.workspaces')
 
 		});
-	});
+	}
+);

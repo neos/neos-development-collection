@@ -22,8 +22,8 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Service\PublishingService;
-use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -111,19 +111,26 @@ class WorkspacesController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $userWorkspace = $this->userService->getUserWorkspace();
+        $currentAccount = $this->securityContext->getAccount();
+        $userWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        /** @var Workspace $userWorkspace */
+
         $workspacesAndCounts = array(
             $userWorkspace->getName() => array(
                 'workspace' => $userWorkspace,
-                'changesCounts' => $this->computeChangesCount($userWorkspace)
+                'changesCounts' => $this->computeChangesCount($userWorkspace),
+                'canPublish' => false,
+                'canDelete' => false
             )
         );
 
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (substr($workspace->getName(), 0, 5) !== 'user-' && $workspace->getBaseWorkspace() !== null) {
+            if (substr($workspace->getName(), 0, 5) !== 'user-') {
                 $workspacesAndCounts[$workspace->getName()]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspace->getName()]['changesCounts'] = $this->computeChangesCount($workspace);
+                $workspacesAndCounts[$workspace->getName()]['canPublish'] = $this->userService->currentUserCanPublishToWorkspace($workspace);
+                $workspacesAndCounts[$workspace->getName()]['canDelete'] = $this->userService->currentUserCanDeleteWorkspace($workspace);
                 $workspacesAndCounts[$workspace->getName()]['dependentWorkspacesCount'] = count($this->workspaceRepository->findByBaseWorkspace($workspace));
             }
         }
@@ -143,6 +150,7 @@ class WorkspacesController extends AbstractModuleController
             'selectedWorkspaceLabel' => $workspace->getTitle() ?: $workspace->getName(),
             'baseWorkspaceName' => $workspace->getBaseWorkspace()->getName(),
             'baseWorkspaceLabel' => $workspace->getBaseWorkspace()->getTitle() ?: $workspace->getBaseWorkspace()->getName(),
+            'canPublishToBaseWorkspace' => $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'siteChanges' => $this->computeSiteChanges($workspace)
         ));
     }
@@ -177,7 +185,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $baseWorkspace = $this->workspaceRepository->findOneByName('live');
-        $owner = $this->userService->getBackendUser();
+        $owner = $this->userService->getCurrentUser();
 
         $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
         $workspace->setTitle($title);
@@ -268,7 +276,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
-        $userWorkspace = $this->userService->getUserWorkspace();
+        $currentAccount = $this->securityContext->getAccount();
+        $userWorkspace = $this->workspaceRepository->$this->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        /** @var Workspace $userWorkspace */
 
         if ($this->publishingService->getUnpublishedNodesCount($userWorkspace) > 0) {
             $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', array(), NULL, NULL, 'Modules', 'TYPO3.Neos');

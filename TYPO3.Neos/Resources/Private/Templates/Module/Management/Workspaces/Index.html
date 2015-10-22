@@ -14,8 +14,8 @@
 				<th>&nbsp;</th>
 			</tr>
 			</thead>
-			<f:for each="{workspacesAndChangeCounts}" key="workspaceName" as="workspaceAndCounts">
-				<f:alias map="{workspace: workspaceAndCounts.workspace, changesCounts: workspaceAndCounts.changesCounts, dependentWorkspacesCount: workspaceAndCounts.dependentWorkspacesCount}">
+			<f:for each="{workspacesAndChangeCounts}" key="workspaceName" as="workspaceAndCounts" iteration="workspacesIterator">
+				<f:alias map="{workspace: workspaceAndCounts.workspace, changesCounts: workspaceAndCounts.changesCounts, canPublish: workspaceAndCounts.canPublish, canDelete: workspaceAndCounts.canDelete, dependentWorkspacesCount: workspaceAndCounts.dependentWorkspacesCount}">
 					<tr>
 						<td class="neos-workspace-type">
 							<f:if condition="{userWorkspace} == {workspace}">
@@ -23,7 +23,14 @@
 									<span class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
 								</f:then>
 								<f:else>
-									<span class="icon-th-large" title="{neos:backend.translate(id: 'workspaces.sharedWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+									<f:if condition="{canPublish}">
+										<f:then>
+											<span class="icon-group" title="{neos:backend.translate(id: 'workspaces.sharedWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+										</f:then>
+										<f:else>
+											<span class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+										</f:else>
+									</f:if>
 								</f:else>
 							</f:if>
 						</td>
@@ -31,12 +38,14 @@
 						<td class="description"><span title="{workspace.description}">{workspace.description -> f:format.crop(maxCharacters: 170, append: '…')}</span></td>
 						<td>{workspace.owner.name}</td>
 						<td class="neos-changes">
-							<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}">
-								<neos:backend.changeStats changeCounts="{changesCounts}" />
-							</span>
-							<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
-								{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'TYPO3.Neos')}
-							</f:link.action>
+							<f:if condition="{workspace.baseWorkspace}">
+								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}">
+									<neos:backend.changeStats changeCounts="{changesCounts}" />
+								</span>
+								<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
+									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'TYPO3.Neos')}
+								</f:link.action>
+							</f:if>
 						</td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
@@ -59,31 +68,38 @@
 														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
 													</f:then>
 													<f:else>
-														<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#workspace-{index}">
-															<i class="icon-trash icon-white"></i>
-														</button>
-														<div class="neos-hide" id="workspace-{index}">
-															<div class="neos-modal">
-																<div class="neos-modal-header">
-																	<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-																	<div class="neos-header">{neos:backend.translate(id: 'workspaces.dialog.confirmWorkspaceDeletion', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}</div>
-																	<div>
-																		<div class="neos-subheader">
-																			<p>{neos:backend.translate(id: 'workspaces.dialog.thisWillDeleteTheWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</p>
+														<f:if condition="{canDelete}">
+															<f:then>
+																<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#workspace-{workspacesIterator.index}">
+																	<i class="icon-trash icon-white"></i>
+																</button>
+																<div class="neos-hide" id="workspace-{workspacesIterator.index}">
+																	<div class="neos-modal">
+																		<div class="neos-modal-header">
+																			<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+																			<div class="neos-header">{neos:backend.translate(id: 'workspaces.dialog.confirmWorkspaceDeletion', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}</div>
+																			<div>
+																				<div class="neos-subheader">
+																					<p>{neos:backend.translate(id: 'workspaces.dialog.thisWillDeleteTheWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</p>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="neos-modal-footer">
+																			<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+																			<f:form action="delete" arguments="{workspace: workspace}" class="neos-inline">
+																				<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}">
+																					{neos:backend.translate(id: 'workspaces.yesDeleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}
+																				</button>
+																			</f:form>
 																		</div>
 																	</div>
+																	<div class="neos-modal-backdrop neos-in"></div>
 																</div>
-																<div class="neos-modal-footer">
-																	<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-																	<f:form action="delete" arguments="{workspace: workspace}" class="neos-inline">
-																		<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}">
-																			{neos:backend.translate(id: 'workspaces.yesDeleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}
-																		</button>
-																	</f:form>
-																</div>
-															</div>
-															<div class="neos-modal-backdrop neos-in"></div>
-														</div>
+															</f:then>
+															<f:else>
+																<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteNoPermission', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
+															</f:else>
+														</f:if>
 													</f:else>
 												</f:if>
 											</f:else>
