@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
@@ -27,61 +27,63 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * 	q(node).context({'invisibleContentShown': true}).children()
  *
  */
-class ContextOperation extends AbstractOperation {
+class ContextOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'context';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'context';
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 1;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var integer
-	 */
-	static protected $priority = 1;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param array (or array-like object) $context onto which this operation should be applied
-	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
-	 */
-	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery The FlowQuery object
+     * @param array $arguments The arguments for this operation
+     * @return void
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        if (!isset($arguments[0]) || !is_array($arguments[0])) {
+            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('context() requires an array argument of context properties', 1398030427);
+        }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery The FlowQuery object
-	 * @param array $arguments The arguments for this operation
-	 * @return void
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		if (!isset($arguments[0]) || !is_array($arguments[0])) {
-			throw new \TYPO3\Eel\FlowQuery\FlowQueryException('context() requires an array argument of context properties', 1398030427);
-		}
+        $output = array();
+        foreach ($flowQuery->getContext() as $contextNode) {
+            $contextProperties = $contextNode->getContext()->getProperties();
+            $modifiedContext = $this->contextFactory->create(array_merge($contextProperties, $arguments[0]));
 
-		$output = array();
-		foreach ($flowQuery->getContext() as $contextNode) {
-			$contextProperties = $contextNode->getContext()->getProperties();
-			$modifiedContext = $this->contextFactory->create(array_merge($contextProperties, $arguments[0]));
+            $nodeInModifiedContext = $modifiedContext->getNodeByIdentifier($contextNode->getIdentifier());
+            if ($nodeInModifiedContext !== null) {
+                $output[$nodeInModifiedContext->getPath()] = $nodeInModifiedContext;
+            }
+        }
 
-			$nodeInModifiedContext = $modifiedContext->getNodeByIdentifier($contextNode->getIdentifier());
-			if ($nodeInModifiedContext !== NULL) {
-				$output[$nodeInModifiedContext->getPath()] = $nodeInModifiedContext;
-			}
-		}
-
-		$flowQuery->setContext(array_values($output));
-	}
+        $flowQuery->setContext(array_values($output));
+    }
 }

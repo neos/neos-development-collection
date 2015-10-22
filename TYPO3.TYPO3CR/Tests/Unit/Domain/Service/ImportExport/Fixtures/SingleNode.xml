@@ -7,6 +7,8 @@
 				<language>en_UK</language>
 			</dimensions>
 			<accessRoles __type="array" />
+			<hiddenBeforeDateTime __type="object" __classname="DateTime">2015-10-01T03:45:04+02:00</hiddenBeforeDateTime>
+			<hiddenAfterDateTime __type="object" __classname="DateTime">2015-10-22T07:50:04+02:00</hiddenAfterDateTime>
 			<properties>
 				<title __type="string">Home</title>
 				<layout __type="string">landingPage</layout>

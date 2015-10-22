@@ -1,3 +1,4 @@
+@browser
 Feature: Backend Login
   In order to access the Neos backend
   As a user of the system

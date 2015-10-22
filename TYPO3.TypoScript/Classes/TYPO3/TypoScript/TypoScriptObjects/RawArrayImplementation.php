@@ -1,45 +1,45 @@
 <?php
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Evaluate sub objects to an array (instead of a string as ArrayImplementation does)
  */
-class RawArrayImplementation extends ArrayImplementation {
+class RawArrayImplementation extends ArrayImplementation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @return array
+     */
+    public function evaluate()
+    {
+        $sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return array
-	 */
-	public function evaluate() {
-		$sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
+        if (count($sortedChildTypoScriptKeys) === 0) {
+            return array();
+        }
 
-		if (count($sortedChildTypoScriptKeys) === 0) {
-			return array();
-		}
+        $output = array();
+        foreach ($sortedChildTypoScriptKeys as $key) {
+            $value = $this->tsValue($key);
+            if ($value === null && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
+                continue;
+            }
+            $output[$key] = $value;
+        }
 
-		$output = array();
-		foreach ($sortedChildTypoScriptKeys as $key) {
-			$value = $this->tsValue($key);
-			if ($value === NULL && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
-				continue;
-			}
-			$output[$key] = $value;
-		}
-
-		return $output;
-	}
-
+        return $output;
+    }
 }

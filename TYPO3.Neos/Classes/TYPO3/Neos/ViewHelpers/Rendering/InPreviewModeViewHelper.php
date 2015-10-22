@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\Rendering;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -53,23 +53,24 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * Shown in all other cases.
  * </output>
  */
-class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper {
+class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
+{
+    /**
+     * @param NodeInterface $node Optional Node to use context from
+     * @param string $mode Optional rendering mode name to check if this specific mode is active
+     * @return boolean
+     * @throws \TYPO3\Neos\Exception
+     */
+    public function render(NodeInterface $node = null, $mode = null)
+    {
+        $context = $this->getNodeContext($node);
+        $renderingMode = $context->getCurrentRenderingMode();
+        if ($mode !== null) {
+            $result = ($renderingMode->getName() === $mode) && $renderingMode->isPreview();
+        } else {
+            $result = $renderingMode->isPreview();
+        }
 
-	/**
-	 * @param NodeInterface $node Optional Node to use context from
-	 * @param string $mode Optional rendering mode name to check if this specific mode is active
-	 * @return boolean
-	 * @throws \TYPO3\Neos\Exception
-	 */
-	public function render(NodeInterface $node = NULL, $mode = NULL) {
-		$context = $this->getNodeContext($node);
-		$renderingMode = $context->getCurrentRenderingMode();
-		if ($mode !== NULL) {
-			$result = ($renderingMode->getName() === $mode) && $renderingMode->isPreview();
-		} else {
-			$result = $renderingMode->isPreview();
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 }

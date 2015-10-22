@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\Domain\Repository;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Repository;
@@ -19,11 +19,10 @@ use TYPO3\Flow\Persistence\Repository;
  *
  * @Flow\Scope("singleton")
  */
-class AssetCollectionRepository extends Repository {
-
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
-
+class AssetCollectionRepository extends Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 }

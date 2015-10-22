@@ -15,7 +15,7 @@ function(
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
-			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...'));
+			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			this._loadOptionsOnChange();
 			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
 
@@ -66,7 +66,11 @@ function(
 					}
 				);
 			} else {
-				this.set('placeholder', 'No Plugin selected');
+				that.setProperties({
+					placeholder: 'No plugin selected',
+					values: {},
+					value: ''
+				});
 			}
 		}
 	});

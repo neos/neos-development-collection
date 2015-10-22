@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
@@ -19,32 +19,35 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
  *
  * Needed for more complex prototype inheritance chain testing.
  */
-class WrappedNestedObjectRenderer extends AbstractArrayTypoScriptObject {
+class WrappedNestedObjectRenderer extends AbstractArrayTypoScriptObject
+{
+    /**
+     * The string the current value should be prepended with
+     *
+     * @return string
+     */
+    public function getPrepend()
+    {
+        return $this->tsValue('prepend');
+    }
 
-	/**
-	 * The string the current value should be prepended with
-	 *
-	 * @return string
-	 */
-	public function getPrepend() {
-		return $this->tsValue('prepend');
-	}
+    /**
+     * The string the current value should be suffixed with
+     *
+     * @return string
+     */
+    public function getAppend()
+    {
+        return $this->tsValue('append');
+    }
 
-	/**
-	 * The string the current value should be suffixed with
-	 *
-	 * @return string
-	 */
-	public function getAppend() {
-		return $this->tsValue('append');
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function evaluate()
+    {
+        return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
+    }
 }

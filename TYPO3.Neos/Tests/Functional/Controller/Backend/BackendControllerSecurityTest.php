@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Neos\Domain\Model\User;
 
@@ -18,33 +18,35 @@ use TYPO3\Neos\Domain\Model\User;
  *
  * @group large
  */
-class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected $testableSecurityEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
+    /**
+     * @test
+     */
+    public function indexActionIsGrantedForAdministrator()
+    {
+        $user = new User();
 
-	/**
-	 * @test
-	 */
-	public function indexActionIsGrantedForAdministrator() {
-		$user = new User();
+        $account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
+        $account->setAccountIdentifier('admin');
+        $account->setParty($user);
+        $this->browser->request('http://localhost/neos/login');
 
-		$account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
-		$account->setAccountIdentifier('admin');
-		$account->setParty($user);
-		$this->browser->request('http://localhost/neos/login');
+            // dummy assertion to avoid PHPUnit warning
+        $this->assertTrue(true);
+    }
 
-			// dummy assertion to avoid PHPUnit warning
-		$this->assertTrue(TRUE);
-	}
-
-	/**
-	 * @test
-	 */
-	public function indexActionIsDeniedForEverybody() {
-		$this->browser->request('http://localhost/neos/');
-		$this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
-	}
+    /**
+     * @test
+     */
+    public function indexActionIsDeniedForEverybody()
+    {
+        $this->browser->request('http://localhost/neos/');
+        $this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
+    }
 }

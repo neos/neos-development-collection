@@ -1,31 +1,33 @@
 <?php
 namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
-	Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 
 /**
  * Enforce lowercase node paths.
  */
-class Version20150408112833 extends AbstractMigration {
+class Version20150408112833 extends AbstractMigration
+{
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function up(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function up(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->addSql("UPDATE typo3_typo3cr_domain_model_nodedata SET path = LOWER(path), parentpath = LOWER(parentpath), pathhash = MD5(LOWER(path)), parentpathhash = MD5(LOWER(parentpath))");
+    }
 
-		$this->addSql("UPDATE typo3_typo3cr_domain_model_nodedata SET path = LOWER(path), parentpath = LOWER(parentpath), pathhash = MD5(LOWER(path)), parentpathhash = MD5(LOWER(parentpath))");
-	}
+    /**
+     * @param Schema $schema
+     * @return void
+     */
+    public function down(Schema $schema)
+    {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-	/**
-	 * @param Schema $schema
-	 * @return void
-	 */
-	public function down(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
-
-		// No down migration available
-	}
+        // No down migration available
+    }
 }

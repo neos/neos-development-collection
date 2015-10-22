@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Controller\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\Asset;
@@ -19,24 +19,23 @@ use TYPO3\Media\Domain\Repository\ImageRepository;
 /**
  * Controller for browsing images in the ImageEditor
  */
-class ImageBrowserController extends MediaBrowserController {
+class ImageBrowserController extends MediaBrowserController
+{
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ImageRepository
-	 */
-	protected $assetRepository;
-
-	/**
-	 * @param Asset $asset
-	 * @return void
-	 */
-	public function editAction(Asset $asset) {
-		if ($asset instanceof ImageVariant) {
-			$asset = $asset->getOriginalAsset();
-		}
-		parent::editAction($asset);
-	}
-
-
+    /**
+     * @param Asset $asset
+     * @return void
+     */
+    public function editAction(Asset $asset)
+    {
+        if ($asset instanceof ImageVariant) {
+            $asset = $asset->getOriginalAsset();
+        }
+        parent::editAction($asset);
+    }
 }

@@ -1,15 +1,16 @@
 <?php
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
 
-require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
@@ -28,38 +29,40 @@ use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 /**
  * Features context
  */
-class FeatureContext extends \Behat\Behat\Context\BehatContext {
+class FeatureContext extends \Behat\Behat\Context\BehatContext
+{
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
+    use SecurityOperationsTrait;
+    use IsolatedBehatStepsTrait;
 
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
-	use SecurityOperationsTrait;
-	use IsolatedBehatStepsTrait;
+    /**
+     * @var string
+     */
+    protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
 
-	/**
-	 * @var string
-	 */
-	protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
+    /**
+     * Initializes the context
+     *
+     * @param array $parameters Context parameters (configured through behat.yml)
+     */
+    public function __construct(array $parameters)
+    {
+        $this->useContext('flow', new FlowContext($parameters));
+        /** @var FlowContext $flowContext */
+        $flowContext = $this->getSubcontext('flow');
+        $this->objectManager = $flowContext->getObjectManager();
+        $this->environment = $this->objectManager->get(Environment::class);
+        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $this->setupSecurity();
+    }
 
-	/**
-	 * Initializes the context
-	 *
-	 * @param array $parameters Context parameters (configured through behat.yml)
-	 */
-	public function __construct(array $parameters) {
-		$this->useContext('flow', new FlowContext($parameters));
-		/** @var FlowContext $flowContext */
-		$flowContext = $this->getSubcontext('flow');
-		$this->objectManager = $flowContext->getObjectManager();
-		$this->environment = $this->objectManager->get(Environment::class);
-		$this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
-		$this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-		$this->setupSecurity();
-	}
-
-	/**
-	 * @return ObjectManagerInterface
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return ObjectManagerInterface
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }
