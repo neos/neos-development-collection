@@ -8,7 +8,7 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th>{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'TYPO3.Neos')}</th>
-				<th>{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Modules', package: 'TYPO3.Neos')}</th>
+				<th>{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</th>
 				<th>{neos:backend.translate(id: 'workspaces.workspace.owner', source: 'Modules', package: 'TYPO3.Neos')}</th>
 				<th class="neos-changes">{neos:backend.translate(id: 'workspaces.workspace.changes', source: 'Modules', package: 'TYPO3.Neos')}</th>
 				<th>&nbsp;</th>
@@ -35,7 +35,16 @@
 							</f:if>
 						</td>
 						<td><span title="{workspace.name}">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
-						<td class="description"><span title="{workspace.description}">{workspace.description -> f:format.crop(maxCharacters: 170, append: '…')}</span></td>
+						<td>
+							<f:if condition="{workspace.baseWorkspace}">
+								<f:then>
+									<span title="{workspace.baseWorkspace.name}">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+								</f:then>
+								<f:else>
+									<span>-</span>
+								</f:else>
+							</f:if>
+						</td>
 						<td>{workspace.owner.name}</td>
 						<td class="neos-changes">
 							<f:if condition="{workspace.baseWorkspace}">

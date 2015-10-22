@@ -21,6 +21,21 @@
 			</div>
 		</div>
 
+		<div class="neos-control-group{f:validation.ifHasErrors(for: 'baseWorkspace', then: ' neos-error')}">
+			<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</label>
+			<div class="neos-controls">
+				<f:if condition="{disableBaseWorkspaceSelector}">
+					<f:then>
+						<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" disabled="disabled" title="{neos:backend.translate(id: 'workspaces.help.cantRebaseWorkspaceContainsChanges', source: 'Modules', package: 'TYPO3.Neos')}" />
+					</f:then>
+					<f:else>
+						<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" />
+					</f:else>
+				</f:if>
+
+			</div>
+		</div>
+
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'TYPO3.Neos')}
 			</f:link.action>

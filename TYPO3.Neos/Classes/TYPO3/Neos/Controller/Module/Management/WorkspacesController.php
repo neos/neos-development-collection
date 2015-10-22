@@ -160,6 +160,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function newAction()
     {
+        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions());
     }
 
     /**
@@ -167,11 +168,12 @@ class WorkspacesController extends AbstractModuleController
      *
      * @Flow\Validate(argumentName="title", type="\TYPO3\Flow\Validation\Validator\NotEmptyValidator")
      * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param Workspace $baseWorkspace Workspace the new workspace should be based on
      * @param string $description A description explaining the purpose of the new workspace
      * @param string $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createAction($title, $description = '')
+    public function createAction($title, Workspace $baseWorkspace, $description = '')
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
@@ -184,7 +186,6 @@ class WorkspacesController extends AbstractModuleController
             $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
         }
 
-        $baseWorkspace = $this->workspaceRepository->findOneByName('live');
         $owner = $this->userService->getCurrentUser();
 
         $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
@@ -204,6 +205,8 @@ class WorkspacesController extends AbstractModuleController
     public function editAction(Workspace $workspace)
     {
         $this->view->assign('workspace', $workspace);
+        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
+        $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
     }
 
     /**
@@ -469,5 +472,24 @@ class WorkspacesController extends AbstractModuleController
         }
 
         return $siteChanges;
+    }
+
+    /**
+     * Creates an array of workspace names and their respective titles which are possible base workspaces for other
+     * workspaces.
+     *
+     * @param Workspace $excludedWorkspace If set, this workspace will be excluded from the list of returned workspaces
+     * @return array
+     */
+    protected function prepareBaseWorkspaceOptions(Workspace $excludedWorkspace = NULL)
+    {
+        $baseWorkspaceOptions = [];
+        foreach($this->workspaceRepository->findAll() as $workspace) {
+            /** @var Workspace $workspace */
+            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace) {
+                $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
+            }
+        }
+        return $baseWorkspaceOptions;
     }
 }

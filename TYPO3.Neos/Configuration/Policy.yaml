@@ -73,10 +73,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|new|edit|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update)Action(workspace.name == current.userInformation.userWorkspaceName))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update)Action(workspace.owner == current.userInformation.backendUser))'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.DeleteOwnWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->deleteAction(workspace.owner == current.userInformation.backendUser))'

@@ -62,6 +62,9 @@
 			<trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			</trans-unit>
+			<trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
+				<source>Base workspace</source>
+			</trans-unit>
 			<trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			</trans-unit>
@@ -73,6 +76,9 @@
 			</trans-unit>
 			<trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
+			</trans-unit>
+			<trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>

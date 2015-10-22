@@ -257,10 +257,12 @@ class UserService
     {
         $backendUserRole = $this->policyService->getRole('TYPO3.Neos:Editor');
 
+        $this->removeOwnerFromUsersWorkspaces($user);
+
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             if ($account->hasRole($backendUserRole)) {
-                $this->deleteUserWorkspaces($account->getAccountIdentifier());
+                $this->deletePersonalWorkspace($account->getAccountIdentifier());
             }
             $this->accountRepository->remove($account);
         }
@@ -660,6 +662,7 @@ class UserService
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             if (!($liveWorkspace instanceof Workspace)) {
                 $liveWorkspace = new Workspace('live');
+                $liveWorkspace->setTitle('Live');
                 $this->workspaceRepository->add($liveWorkspace);
             }
 
@@ -676,12 +679,27 @@ class UserService
      * @param string $accountIdentifier Identifier of the user's account
      * @return void
      */
-    protected function deleteUserWorkspaces($accountIdentifier)
+    protected function deletePersonalWorkspace($accountIdentifier)
     {
         $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
+        }
+    }
+
+    /**
+     * Removes ownership of all workspaces currently owned by the given user
+     *
+     * @param User $user The user currently owning workspaces
+     * @return void
+     */
+    protected function removeOwnerFromUsersWorkspaces(User $user)
+    {
+        foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
+            /** @var Workspace $workspace */
+            $workspace->setOwner();
+            $this->workspaceRepository->update($workspace);
         }
     }
 }

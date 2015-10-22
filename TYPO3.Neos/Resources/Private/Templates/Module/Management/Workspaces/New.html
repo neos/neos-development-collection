@@ -24,6 +24,13 @@
 			</div>
 		</div>
 
+		<div class="neos-control-group{f:validation.ifHasErrors(for: 'baseWorkspace', then: ' neos-error')}">
+			<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</label>
+			<div class="neos-controls">
+				<f:form.select name="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" value="live" />
+			</div>
+		</div>
+
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'TYPO3.Neos')}
 			</f:link.action>

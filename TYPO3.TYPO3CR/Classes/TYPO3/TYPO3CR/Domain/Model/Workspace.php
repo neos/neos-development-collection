@@ -150,6 +150,7 @@ class Workspace
      * Returns the workspace title
      *
      * @return string
+     * @api
      */
     public function getTitle()
     {
@@ -161,6 +162,7 @@ class Workspace
      *
      * @param string $title
      * @return void
+     * @api
      */
     public function setTitle($title)
     {
@@ -171,6 +173,7 @@ class Workspace
      * Returns the workspace description
      *
      * @return string
+     * @api
      */
     public function getDescription()
     {
@@ -182,6 +185,7 @@ class Workspace
      *
      * @param string $description
      * @return void
+     * @api
      */
     public function setDescription($description)
     {
@@ -192,10 +196,33 @@ class Workspace
      * Returns the workspace owner.
      *
      * @return User
+     * @api
      */
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    /**
+     * Returns the workspace owner.
+     *
+     * @param User $user The new user
+     * @api
+     */
+    public function setOwner(User $user = NULL)
+    {
+        $this->owner = $user;
+    }
+
+    /**
+     * Checks if this workspace is a user's personal workspace
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPersonalWorkspace()
+    {
+        return strpos($this->name, 'user-') === 0;
     }
 
     /**
