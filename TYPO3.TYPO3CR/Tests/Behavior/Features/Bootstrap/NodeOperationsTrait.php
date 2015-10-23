@@ -908,7 +908,11 @@ trait NodeOperationsTrait
                     $contextProperties['dimensions'][substr($propertyName, strlen('Dimension: '))] = Arrays::trimExplode(',', $propertyValue);
                 }
 
+                // FIXME We lack a good API to manipulate dimension values explicitly or assign multiple values, so we are doing this via target dimension values
                 if (strpos($propertyName, 'Target dimension: ') === 0) {
+                    if ($propertyValue === '') {
+                        $propertyValue = null;
+                    }
                     $contextProperties['targetDimensions'][substr($propertyName, strlen('Target dimension: '))] = $propertyValue;
                 }
             }
