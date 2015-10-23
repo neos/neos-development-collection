@@ -159,7 +159,7 @@
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="sv-SE" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Allmänt</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="sv-SE" state="needs-translation">Structure</target></trans-unit>

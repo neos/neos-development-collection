@@ -7,7 +7,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Page</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="sv-SE" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Titel</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
 			<target xml:lang="sv-SE" state="needs-translation">Layout</target></trans-unit>

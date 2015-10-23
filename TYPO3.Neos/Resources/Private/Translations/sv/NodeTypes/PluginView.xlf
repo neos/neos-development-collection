@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="sv-SE" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Plugin Vy</target><alt-trans><target xml:lang="sv-SE">Plugin Visa</target></alt-trans></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="sv-SE" state="needs-translation">Plugin Views</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Plugin vyer</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="sv-SE" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Master-vy</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="sv-SE" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Plugin Vy</target><alt-trans><target xml:lang="sv-SE">Plugin Visa</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
