@@ -462,7 +462,7 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="de" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="de" state="translated">"{nodeTypeName}" auf Seite "{pageLabel}"</target></trans-unit>
     </body>
   </file>
 </xliff>
