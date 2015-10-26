@@ -209,20 +209,6 @@
 				<source>All changes from workspace "{0}" have been discarded.</source>
 			</trans-unit>
 
-			<trans-unit id="media.dragHelp" xml:space="preserve">
-				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			</trans-unit>
-			<trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
-				<source>Keep the filename "{0}"</source>
-			</trans-unit>
-
-			<trans-unit id="media.label" xml:space="preserve">
-				<source>Media</source>
-			</trans-unit>
-			<trans-unit id="media.description" xml:space="preserve">
-				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			</trans-unit>
-
 			<trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
 			</trans-unit>

@@ -1,0 +1,12 @@
+-
+  requestFilter: 'isPackage("Neos.Media.Browser") && isFormat("html") && (isController("Backend\MediaBrowser") || isController("Backend\ImageBrowser"))'
+  options:
+    layoutRootPaths:
+      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts'
+      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts'
+    partialRootPaths:
+      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials'
+      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
+
+    templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
+    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Module/Management/Asset/@action.@format'
