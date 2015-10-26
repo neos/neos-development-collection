@@ -25,18 +25,10 @@ TYPO3:
             label: 'Neos Backend'
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              'TYPO3.Neos:backendControllers':
-                pattern: 'ControllerObjectName'
+              'TYPO3.Neos:BackendControllers':
+                pattern: ControllerObjectName
                 patternOptions:
-                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*'
-              'TYPO3.Neos:serviceControllers':
-                pattern: 'ControllerObjectName'
-                patternOptions:
-                  controllerObjectNamePattern: 'TYPO3\Neos\Service\.*'
-              'TYPO3.Neos:mediaControllers':
-                pattern: 'ControllerObjectName'
-                patternOptions:
-                  controllerObjectNamePattern: 'TYPO3\Media\Controller\.*'
+                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               routeValues:
@@ -376,12 +368,6 @@ TYPO3:
             description: 'TYPO3.Neos:Modules:workspaces.description'
             icon: 'icon-th-large'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces'
-          media:
-            label: 'TYPO3.Neos:Modules:media.label'
-            controller: '\TYPO3\Neos\Controller\Module\Management\AssetController'
-            description: 'TYPO3.Neos:Modules:media.description'
-            icon: 'icon-camera'
-            privilegeTarget: 'TYPO3.Media:ManageAssets'
           history:
             label: 'TYPO3.Neos:Modules:history.label'
             controller: '\TYPO3\Neos\Controller\Module\Management\HistoryController'
@@ -493,14 +479,6 @@ TYPO3:
       'TYPO3.Neos:Preview':
         maximumWidth: 1000
         maximumHeight: 1000
-    bodyClasses: 'neos neos-module media-browser'
-    scripts:
-      - resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js
-      - resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js
-      - resource://TYPO3.Neos/Public/Library/bootstrap-components.js
-      - resource://TYPO3.Neos/Public/JavaScript/Modules/media-browser.js
-    styles:
-      - resource://TYPO3.Neos/Public/Styles/Neos.css
 
   TypoScript:
     rendering:
@@ -569,7 +547,7 @@ TYPO3:
 
     commandReferences:
       'Neos:NeosCommands':
-        title: 'Command Reference'
+        title: 'Neos Command Reference'
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'

@@ -3,6 +3,17 @@
 #                                                                        #
 
 ##
+# MediaBrowser
+-
+  name: 'Neos Media Browser'
+  uriPattern: 'neos/module/media/browser/<NeosMediaBrowserSubroutes>'
+  subRoutes:
+    'NeosMediaBrowserSubroutes':
+      package: 'Neos.Media.Browser'
+      variables:
+        'defaultUriSuffix': '.html'
+
+##
 # Authentication
 
 -

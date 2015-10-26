@@ -1,38 +1,16 @@
 {
-    "name": "typo3/neos",
+    "name": "neos/media-browser",
     "type": "typo3-flow-package",
-    "license": "GPL-3.0+",
-    "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
+    "description": "Add description here",
     "require": {
-        "neos/diff": "*",
-        "typo3/flow": "*",
-        "neos/mediabrowser": "*",
-        "typo3/party": "*",
-        "typo3/setup": "*",
-        "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "*",
-        "typo3/typoscript": "*",
-        "neos/fluid-adaptor": "*",
-        "behat/transliterator": "~1.0"
-    },
-    "suggest": {
-        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos.",
-        "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
+        "typo3/media": "*"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos": "Classes"
+        "psr-4": {
+            "Neos\\Media\\Browser\\": "Classes"
         }
     },
     "extra": {
-        "typo3/flow": {
-            "manage-resources": true
-        },
-        "neos": {
-            "installer-resource-folders": [
-                "Resources/Private/Installer/"
-            ]
-        },
         "applied-flow-migrations": [
             "TYPO3.TYPO3CR-20150510103823",
             "TYPO3.FLOW3-201201261636",
@@ -64,11 +42,7 @@
             "TYPO3.TYPO3CR-20140911160326",
             "TYPO3.Flow-201209251426",
             "TYPO3.FLOW3-201209201112",
-            "TYPO3.Neos-20150303231600",
-            "TYPO3.Flow-20151113161300",
-            "TYPO3.Form-20160601101500",
-            "TYPO3.Flow-20161115140400",
-            "TYPO3.Flow-20161115140430"
+            "TYPO3.Flow-20151113161300"
         ]
     }
 }
