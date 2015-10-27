@@ -22,38 +22,48 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
+ *
  * The target node can be provided as string or as a Node object; if not specified
  * at all, the generated URI will refer to the current document node inside the TypoScript context.
+ *
  * When specifying the ``node`` argument as string, the following conventions apply:
+ *
  * *``node`` starts with ``/``:*
  * The given path is an absolute node path and is treated as such.
  * Example: ``/sites/acmecom/home/about/us``
+ *
  * *``node`` does not start with ``/``:*
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
  * ``../about`` results in ``/sites/acmecom/about/``,
  * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
+ *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
  * Example: given that the current node is ``/sites/acmecom/products/``,
  * ``~/about/us`` results in ``/sites/acmecom/about/us``,
  * ``~`` results in ``/sites/acmecom``.
+ *
  * = Examples =
  * <code title="Defaults">
  * <neos:link.node>some link</neos:link.node>
  * </code>
  * <output>
+ *
  * <a href="sites/mysite.com/homepage/about.html">some link</a>
  * (depending on current node, format etc.)
  * </output>
+ *
  * <code title="Generating a link with an absolute URI">
  * <neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
  * </code>
  * <output>
+ *
  * <a href="http://www.example.org/homepage/about.html">bookmark this page</a>
  * (depending on current workspace, current node, format, host etc.)
  * </output>
+ *
  * <code title="Target node given as absolute node path">
  * <neos:link.node node="/sites/exampleorg/contact/imprint">Corporate imprint</neos:link.node>
  * </code>
@@ -61,6 +71,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * <a href="contact/imprint.html">Corporate imprint</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
  * <code title="Target node given as node uri">
  * <neos:link.node node="node://<node identifier>">Corporate imprint</neos:link.node>
  * </code>
@@ -68,6 +79,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * <a href="contact/imprint.html">Corporate imprint</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
  * <code title="Target node given as relative node path">
  * <neos:link.node node="~/about/us">About us</neos:link.node>
  * </code>
@@ -75,6 +87,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * <a href="about/us.html">About us</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
  * <code title="Node label as tag content">
  * <neos:link.node node="/sites/exampleorg/contact/imprint" />
  * </code>
