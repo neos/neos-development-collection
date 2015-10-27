@@ -50,7 +50,7 @@ class UriViewHelperTest extends FunctionalTestCase
     public function uriViewHelperRendersALinkToTheGivenUri()
     {
         $this->assertSame(
-            '<a href="http://foor.bar" target="_blank">Foo bar</a>',
+            '<a href="http://foor.bar">Foo bar</a>',
             $this->viewHelper->render('http://foor.bar')
         );
     }

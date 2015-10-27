@@ -87,8 +87,8 @@ class AssetViewHelperTest extends FunctionalTestCase
         $resourceUri = $this->resourceManager->getPublicPersistentResourceUri($resource);
 
         $this->assertSame(
-            '<a href="' . $resourceUri . '" target="_blank">' . $asset->getLabel() . '</a>',
-            $this->viewHelper->render('asset://' . $asset->getIdentifier())
+            '<a href="' . $resourceUri . '" target="_top">' . $asset->getLabel() . '</a>',
+            $this->viewHelper->render('asset://' . $asset->getIdentifier(), '_top')
         );
     }
 
