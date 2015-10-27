@@ -45,12 +45,14 @@ class UriViewHelper extends AbstractTagBasedViewHelper
      * @param string $target
      * @return string
      */
-    public function render($uri, $target = '_blank')
+    public function render($uri, $target = '')
     {
         $content = $this->renderChildren();
         $this->tag->setContent($content);
         $this->tag->addAttribute('href', $uri);
-        $this->tag->addAttribute('target', $target);
+        if ($target !== '') {
+            $this->tag->addAttribute('target', $target);
+        }
         $this->tag->forceClosingTag(true);
         return $this->tag->render();
     }

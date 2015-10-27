@@ -63,7 +63,7 @@ class AssetViewHelper extends AbstractTagBasedViewHelper
      * @param string|null $target if null the target attribute is skipped
      * @return bool|string
      */
-    public function render($asset, $target = '_blank')
+    public function render($asset, $target = '')
     {
         if (is_string($asset) && preg_match('/^(asset:\/\/)([a-zA-Z0-9\-]+)$/', $asset, $matches)) {
             $asset = $this->assetRepository->findByIdentifier($matches[2]);
