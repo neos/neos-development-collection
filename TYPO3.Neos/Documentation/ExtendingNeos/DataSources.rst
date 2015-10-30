@@ -51,28 +51,28 @@ Example ``TestDataSource.php``:
 
 .. code-block:: php
 
-	<?php
-	namespace Acme\YourPackage\DataSource;
+    <?php
+    namespace Acme\YourPackage\DataSource;
 
-	use TYPO3\Neos\Service\DataSource\AbstractDataSource;
-	use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+    use TYPO3\Neos\Service\DataSource\AbstractDataSource;
+    use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
-	class TestDataSource extends AbstractDataSource {
+    class TestDataSource extends AbstractDataSource {
 
-		/**
-		 * @var string
-		 */
-		static protected $identifier = 'acme-yourpackage-test';
+        /**
+         * @var string
+         */
+        static protected $identifier = 'acme-yourpackage-test';
 
-		/**
-		 * Get data
-		 *
-		 * @param NodeInterface $node The node that is currently edited (optional)
-		 * @param array $arguments Additional arguments (key / value)
-		 * @return array JSON serializable data
-		 */
-		public function getData(NodeInterface $node = NULL, array $arguments) {
-			return isset($arguments['integers']) ? array(1, 2, 3) : array('a', 'b', 'c');
-		}
-
-	}
+        /**
+         * Get data
+         *
+         * @param NodeInterface $node The node that is currently edited (optional)
+         * @param array $arguments Additional arguments (key / value)
+         * @return array JSON serializable data
+         */
+        public function getData(NodeInterface $node = NULL, array $arguments)
+        {
+            return isset($arguments['integers']) ? array(1, 2, 3) : array('a', 'b', 'c');
+        }
+    }
