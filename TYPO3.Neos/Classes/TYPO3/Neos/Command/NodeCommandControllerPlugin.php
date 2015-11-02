@@ -108,7 +108,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         $this->output = $output;
         switch ($controllerCommandName) {
             case 'repair':
-                $this->generateUriPathSegments($workspaceName, $dryRun);
+                if ($nodeType !== null) {
+                    $this->output->outputLine('Skip <u>Generate missing URI path segments</u>, nodeType argument not supported');
+                } else {
+                    $this->generateUriPathSegments($workspaceName, $dryRun);
+                }
         }
     }
 
