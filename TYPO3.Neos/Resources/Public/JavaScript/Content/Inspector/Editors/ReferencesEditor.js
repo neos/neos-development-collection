@@ -33,7 +33,7 @@ define(
 				var that = this,
 					currentQueryTimer = null;
 
-				if (this.get('startingPoint') === null) {
+				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
 					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
 				}
 
