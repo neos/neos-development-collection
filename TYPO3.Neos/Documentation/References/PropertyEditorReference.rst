@@ -347,6 +347,12 @@ Options Reference:
 ``placeholder`` (string)
 	Placeholder text to be shown if nothing is selected
 
+``startingPoint`` (string)
+	The starting point (node path) for finding possible nodes to create a reference.
+	This allows to search for nodes outside the current site. If not given, nodes
+	will be searched for in the current site. For all nodes outside the current site
+	the node path is shown instead of the url path.
+
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search
 
