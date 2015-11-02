@@ -25,6 +25,8 @@ TYPO3:
       defaultOptions:
         # Image quality, from 0 to 100
         'quality': 90
+        # Resolution used for Document preview (like PDF)
+        'resolution': 200
     bodyClasses: 'media-browser'
     scripts:
       - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.10.1.min.js

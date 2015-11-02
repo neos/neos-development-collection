@@ -41,15 +41,15 @@ class AssetService
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        if ($asset instanceof ImageInterface) {
-            $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
+        $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
+        if ($thumbnailImage instanceof ImageInterface) {
             $thumbnailData = array(
                 'width' => $thumbnailImage->getWidth(),
                 'height' => $thumbnailImage->getHeight(),
                 'src' => $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource())
             );
         } else {
-            $thumbnailData = $this->getAssetThumbnailImage($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
+            $thumbnailData = $this->getAssetIcon($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
         }
 
         return $thumbnailData;
@@ -61,7 +61,7 @@ class AssetService
      * @param integer $maximumHeight
      * @return array
      */
-    protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight)
+    protected function getAssetIcon(AssetInterface $asset, $maximumWidth, $maximumHeight)
     {
         // TODO: Could be configurable at some point
         $iconPackage = 'TYPO3.Media';

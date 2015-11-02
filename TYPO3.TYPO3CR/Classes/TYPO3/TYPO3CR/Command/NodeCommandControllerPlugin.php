@@ -161,9 +161,21 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         switch ($controllerCommandName) {
             case 'repair':
                 if ($cleanup === true) {
-                    $this->removeAbstractAndUndefinedNodes($workspaceName, $dryRun);
-                    $this->removeOrphanNodes($workspaceName, $dryRun);
-                    $this->removeDisallowedChildNodes($workspaceName, $dryRun);
+                    if ($nodeType !== null) {
+                        $this->output->outputLine('Skip <u>Remove abstract and undefined node types</u>, nodeType argument not supported');
+                    } else {
+                        $this->removeAbstractAndUndefinedNodes($workspaceName, $dryRun);
+                    }
+                    if ($nodeType !== null) {
+                        $this->output->outputLine('Skip <u>Remove orphan (parentless) nodes</u>, nodeType argument not supported');
+                    } else {
+                        $this->removeOrphanNodes($workspaceName, $dryRun);
+                    }
+                    if ($nodeType !== null) {
+                        $this->output->outputLine('Skip <u>Remove disallowed child nodes</u>, nodeType argument not supported');
+                    } else {
+                        $this->removeDisallowedChildNodes($workspaceName, $dryRun);
+                    }
                     $this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
                 }
                 $this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);

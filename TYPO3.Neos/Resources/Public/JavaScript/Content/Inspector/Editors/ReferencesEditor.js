@@ -119,29 +119,28 @@ define(
 
 				if (value && value !== currentValue) {
 					// Remove all items so they don't appear multiple times.
-					// TODO: cache already found items and load multiple node records at once
 					that.set('content', []);
-					// load names of already selected nodes via the Node REST service:
-					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
-						var item = Ember.Object.extend({
-							id: nodeIdentifier,
-							text: function() {
-								return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
-							}.property()
-						}).create();
+					var parameters = {
+						nodeIdentifiers: JSON.parse(value),
+						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					};
+					HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
+						$(result.resource).find('li').each(function(index, value) {
+							var nodeIdentifier = $('.node-identifier', value).text().trim(),
+								label = $('.node-label', value).text().trim(),
+								icon = $('.node-icon', value).text().trim();
 
-						that.get('content').pushObject(item);
+							var item = Ember.Object.extend({
+								id: nodeIdentifier
+							}).create();
 
-						var parameters = {
-							workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-							dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
-						};
-						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-							item.set('text', $('.node-label', result.resource).text().trim());
-							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
-							that._updateSelect2();
+							item.set('text', $('.node-label', value).text().trim());
+							item.set('data', {identifier: $('.node-identifier', value).text(), path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()});
+
+							that.get('content').pushObject(item);
 						});
-
+						that._updateSelect2();
 					});
 					that._updateSelect2();
 				}
