@@ -226,7 +226,31 @@ class Workspace
     }
 
     /**
+     * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPrivateWorkspace()
+    {
+        return $this->owner !== null;
+    }
+
+    /**
+     * Checks if this workspace is shared accross all editors
+     *
+     * @return boolean
+     * @api
+     */
+    public function isInternalWorkspace()
+    {
+        return $this->owner === null;
+    }
+
+    /**
      * Sets the base workspace
+     *
+     * Note that this method is not part of the public API because further action is necessary for rebasing a workspace
      *
      * @param Workspace $baseWorkspace
      * @return void

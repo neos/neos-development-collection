@@ -67,6 +67,12 @@ class WorkspacesController extends ActionController
         $workspacesArray = array();
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
+
+            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
+            if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
+                continue;
+            }
+
             $workspaceArray = array(
                 'name' => $workspace->getName(),
                 'title' => $workspace->getTitle(),

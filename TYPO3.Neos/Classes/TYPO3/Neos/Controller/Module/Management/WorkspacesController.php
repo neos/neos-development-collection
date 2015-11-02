@@ -20,6 +20,7 @@ use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\UserService;
@@ -120,17 +121,19 @@ class WorkspacesController extends AbstractModuleController
                 'workspace' => $userWorkspace,
                 'changesCounts' => $this->computeChangesCount($userWorkspace),
                 'canPublish' => false,
+                'canManage' => false,
                 'canDelete' => false
             )
         );
 
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (substr($workspace->getName(), 0, 5) !== 'user-') {
+            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
+            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
                 $workspacesAndCounts[$workspace->getName()]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspace->getName()]['changesCounts'] = $this->computeChangesCount($workspace);
                 $workspacesAndCounts[$workspace->getName()]['canPublish'] = $this->userService->currentUserCanPublishToWorkspace($workspace);
-                $workspacesAndCounts[$workspace->getName()]['canDelete'] = $this->userService->currentUserCanDeleteWorkspace($workspace);
+                $workspacesAndCounts[$workspace->getName()]['canManage'] = $this->userService->currentUserCanManageWorkspace($workspace);
                 $workspacesAndCounts[$workspace->getName()]['dependentWorkspacesCount'] = count($this->workspaceRepository->findByBaseWorkspace($workspace));
             }
         }
@@ -169,11 +172,11 @@ class WorkspacesController extends AbstractModuleController
      * @Flow\Validate(argumentName="title", type="\TYPO3\Flow\Validation\Validator\NotEmptyValidator")
      * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param Workspace $baseWorkspace Workspace the new workspace should be based on
+     * @param string $visibility Visibility of the new workspace, must be either "internal" or "shared"
      * @param string $description A description explaining the purpose of the new workspace
-     * @param string $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createAction($title, Workspace $baseWorkspace, $description = '')
+    public function createAction($title, Workspace $baseWorkspace, $visibility, $description = '')
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
@@ -186,7 +189,11 @@ class WorkspacesController extends AbstractModuleController
             $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
         }
 
-        $owner = $this->userService->getCurrentUser();
+        if ($visibility === 'private') {
+            $owner = $this->userService->getCurrentUser();
+        } else {
+            $owner = null;
+        }
 
         $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
         $workspace->setTitle($title);
@@ -207,6 +214,8 @@ class WorkspacesController extends AbstractModuleController
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
         $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
+        $this->view->assign('showOwnerSelector', $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace));
+        $this->view->assign('ownerOptions', $this->prepareOwnerOptions($workspace));
     }
 
     /**
@@ -491,5 +500,20 @@ class WorkspacesController extends AbstractModuleController
             }
         }
         return $baseWorkspaceOptions;
+    }
+
+    /**
+     * Creates an array of usernames and their respective labels which are possible owners for a workspace.
+     *
+     * @return array
+     */
+    protected function prepareOwnerOptions()
+    {
+        $ownerOptions = [ '' => '-'];
+        foreach($this->userService->getUsers() as $user) {
+            /** @var User $user */
+            $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getName()->getFullName();
+        }
+        return $ownerOptions;
     }
 }

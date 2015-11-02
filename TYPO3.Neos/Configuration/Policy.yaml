@@ -1,10 +1,15 @@
 #                                                                        #
-# Security policy for the Neos package                             #
+# Security policy for the Neos package                                   #
 #                                                                        #
 
 privilegeTargets:
 
   'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+
+
+    #
+    # General access to frontend and backend
+    #
 
     'TYPO3.Neos:AllControllerActions':
       matcher: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
@@ -13,7 +18,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Fluid\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(TYPO3\Fluid\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'TYPO3.Neos:PublicFrontendAccess':
-      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction())'
+      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
 
     'TYPO3.Neos:BackendLogin':
       matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
@@ -21,8 +26,18 @@ privilegeTargets:
     'TYPO3.Neos:Backend.GeneralAccess':
       matcher: 'method(TYPO3\Neos\Controller\Backend\BackendController->(index|getXliffAsJson)Action()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
 
+    #
+    # Content access and publishing
+    #
+
     'TYPO3.Neos:Backend.Module.Content':
       matcher: 'method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction()) || method(TYPO3\Neos\Controller\Backend\SettingsController->editPreviewAction())'
+
+    'TYPO3.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
+      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.userWorkspaceName))'
+
+    'TYPO3.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner != current.userInformation.backendUser, this.workspace.personalWorkspace == true)'
 
     'TYPO3.Neos:Backend.EditContent':
       matcher: 'method(TYPO3\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(TYPO3\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(TYPO3\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
@@ -33,29 +48,37 @@ privilegeTargets:
     'TYPO3.Neos:Backend.PublishAllToLiveWorkspace':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name == "live"))'
 
-    'TYPO3.Neos:Backend.AccessContentInOwnOrLiveWorkspace':
-      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
-
-    'TYPO3.Neos:Backend.AccessContentInOthersWorkspace':
-      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != current.userInformation.userWorkspaceName)) && method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName != "live")) && method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspace.owner != current.userInformation.backendUser))'
-
     'TYPO3.Neos:Backend.PublishOwnWorkspaceContent':
       matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.DiscardOwnWorkspaceContent':
       matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
-    'TYPO3.Neos:Backend.ContentDimensions':
-      matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
-
-    'TYPO3.Neos:Backend.WorkspacesList':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error)Action())'
+    #
+    # Workspace management
+    #
 
     'TYPO3.Neos:Backend.CreateWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->createAction()) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->createAction())'
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(new|create)Action()) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(create|new)Action())'
 
-    'TYPO3.Neos:Backend.DataSource':
-      matcher: 'method(TYPO3\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+    'TYPO3.Neos:Backend.Module.Management.Workspaces':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+
+    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == current.userInformation.backendUser))'
+
+    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == null))'
+
+    'TYPO3.Neos:Backend.Service.Workspaces.Index':
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
+
+    'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces':
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner== current.userInformation.backendUser))'
+
+    #
+    # User management and user settings
+    #
 
     'TYPO3.Neos:Backend.Module.User':
       matcher: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
@@ -69,23 +92,12 @@ privilegeTargets:
     'TYPO3.Neos:Backend.EditUserPreferences':
       matcher: 'method(TYPO3\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
-    'TYPO3.Neos:Backend.Module.Management':
-      matcher: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
+    'TYPO3.Neos:Backend.Module.Administration.Users':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|editAccount|updateAccount)Action())'
 
-    'TYPO3.Neos:Backend.Module.Management.Workspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
-
-    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update)Action(workspace.owner == current.userInformation.backendUser))'
-
-    'TYPO3.Neos:Backend.Module.Management.Workspaces.DeleteOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->deleteAction(workspace.owner == current.userInformation.backendUser))'
-
-    'TYPO3.Neos:Backend.Service.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner== current.userInformation.backendUser))'
-
-    'TYPO3.Neos:Backend.Module.Management.History':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\HistoryController->(index)Action())'
+    #
+    # Asset management
+    #
 
     'TYPO3.Neos:Backend.Module.Media.ManageAssets':
       matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection)Action())'
@@ -93,11 +105,28 @@ privilegeTargets:
     'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections':
       matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
 
+    #
+    # Miscellaneous services
+    #
+
+    'TYPO3.Neos:Backend.ContentDimensions':
+      matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
+
+    'TYPO3.Neos:Backend.DataSource':
+      matcher: 'method(TYPO3\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+
+    #
+    # Miscellaneous backend modules
+    #
+
+    'TYPO3.Neos:Backend.Module.Management':
+      matcher: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
+
+    'TYPO3.Neos:Backend.Module.Management.History':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\HistoryController->(index)Action())'
+
     'TYPO3.Neos:Backend.Module.Administration':
       matcher: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
-
-    'TYPO3.Neos:Backend.Module.Administration.Users':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|editAccount|updateAccount)Action())'
 
     'TYPO3.Neos:Backend.Module.Administration.Packages':
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'
@@ -108,11 +137,12 @@ privilegeTargets:
     'TYPO3.Neos:Backend.Module.Administration.Configuration':
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'
 
-
+# Doesn't work yet, because workspaces are used very early where no security context is available yet, but we basically
+# need a rule like this:
+#
 #  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-
 #    'TYPO3.Neos:RestrictedWorkspaces':
-#      matcher: 'isType("TYPO3\TYPO3CR\Domain\Model\Workspace") && !(property("owner").equals("context.userInformation.backendUser")) && property("owner") != NULL && property("name") !=  context.userInformation.userWorkspaceName'
+#      matcher: 'isType("TYPO3\TYPO3CR\Domain\Model\Workspace") && !(property("owner").equals(context.userInformation.userWorkspaceName)) && property("owner") != NULL && property("name") !=  context.userInformation.userWorkspaceName'
 
 roles:
 
@@ -123,20 +153,13 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'TYPO3.Neos:Backend.AccessContentInOthersWorkspace'
-        permission: DENY
-
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.AccessContentInOwnOrLiveWorkspace'
-        permission: GRANT
-
-      -
         privilegeTarget: 'TYPO3.Neos:BackendLogin'
         permission: GRANT
 
       -
         privilegeTarget: 'TYPO3.Neos:WidgetControllers'
         permission: GRANT
+
 
   'TYPO3.Neos:LivePublisher':
     privileges:
@@ -148,18 +171,8 @@ roles:
         privilegeTarget: 'TYPO3.Neos:Backend.PublishAllToLiveWorkspace'
         permission: GRANT
 
-  'TYPO3.Neos:Reviewer':
-    parentRoles: ['TYPO3.Neos:Editor']
-    privileges:
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.AccessContentInOthersWorkspace'
-        permission: GRANT
-
-#      -
-#        privilegeTarget: 'TYPO3.Neos:RestrictedWorkspaces'
-#        permission: GRANT
-
-  'TYPO3.Neos:RestrictedEditor':
+  'TYPO3.Neos:AbstractEditor':
+    abstract: true
     parentRoles: ['TYPO3.TYPO3CR:Administrator']
     privileges:
       -
@@ -168,6 +181,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Content'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter'
         permission: GRANT
 
       -
@@ -183,19 +200,19 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'TYPO3.Neos:Backend.WorkspacesList'
+        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspaces.Index'
         permission: GRANT
 
+#      -
+#        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspaces.Show.OwnerIsCurrentUser'
+#        permission: GRANT
+#
       -
-        privilegeTarget: 'TYPO3.Neos:Backend.Service.ManageOwnWorkspaces'
+        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces'
         permission: GRANT
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.DeleteOwnWorkspaces'
         permission: GRANT
 
       -
@@ -246,11 +263,14 @@ roles:
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
         permission: GRANT
 
+  'TYPO3.Neos:RestrictedEditor':
+    parentRoles: ['TYPO3.Neos:AbstractEditor']
+
   'TYPO3.Neos:Editor':
-    parentRoles: ['TYPO3.Neos:RestrictedEditor', 'TYPO3.Neos:LivePublisher']
+    parentRoles: ['TYPO3.Neos:AbstractEditor', 'TYPO3.Neos:LivePublisher']
 
   'TYPO3.Neos:Administrator':
-    parentRoles: ['TYPO3.Neos:Editor', 'TYPO3.Neos:Reviewer']
+    parentRoles: ['TYPO3.Neos:Editor']
     privileges:
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration'
@@ -262,6 +282,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Packages'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces'
         permission: GRANT
 
       -

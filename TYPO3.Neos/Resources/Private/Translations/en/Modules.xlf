@@ -50,8 +50,11 @@
 			<trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
 			</trans-unit>
-			<trans-unit id="workspaces.sharedWorkspace" xml:space="preserve">
-				<source>Shared workspace</source>
+			<trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
+				<source>Private workspace</source>
+			</trans-unit>
+			<trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
+				<source>Internal workspace</source>
 			</trans-unit>
 			<trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
@@ -67,6 +70,21 @@
 			</trans-unit>
 			<trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
+				<source>Visibility</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+				<source>Private</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+				<source>Internal</source>
+			</trans-unit>
+			<trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+				<source>Any logged in editor can see and modify this workspace.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>

@@ -161,6 +161,27 @@ class UserService
     }
 
     /**
+     * Returns the username of the given user
+     *
+     * Technically, this method will look for the user's backend account (or, if authenticationProviderName is specified,
+     * for the account matching the given authentication provider) and return the account's identifier.
+     *
+     * @param User $user
+     * @param null $authenticationProviderName
+     * @return string The username or null if the given user does not have a backend account
+     */
+    public function getUsername(User $user, $authenticationProviderName = null)
+    {
+        $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+        foreach ($user->getAccounts() as $account) {
+            /** @var Account $account */
+            if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
+                return $account->getAccountIdentifier();
+            }
+        }
+    }
+
+    /**
      * Returns the currently logged in user, if any
      *
      * @return User The currently logged in user, or NULL
@@ -240,6 +261,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserCreated(User $user)
     {
@@ -257,8 +279,6 @@ class UserService
     {
         $backendUserRole = $this->policyService->getRole('TYPO3.Neos:Editor');
 
-        $this->removeOwnerFromUsersWorkspaces($user);
-
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             if ($account->hasRole($backendUserRole)) {
@@ -266,6 +286,9 @@ class UserService
             }
             $this->accountRepository->remove($account);
         }
+
+        $this->removeOwnerFromUsersWorkspaces($user);
+
         $this->partyRepository->remove($user);
         $this->emitUserDeleted($user);
     }
@@ -276,6 +299,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserDeleted(User $user)
     {
@@ -370,6 +394,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserUpdated(User $user)
     {
@@ -433,6 +458,7 @@ class UserService
      * @param array<Role> An array of Role objects which have been added for that account
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitRolesAdded(Account $account, array $roles)
     {
@@ -470,6 +496,7 @@ class UserService
      * @param array<Role> An array of Role objects which have been removed
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitRolesRemoved(Account $account, array $roles)
     {
@@ -498,6 +525,7 @@ class UserService
      * @param User $user The user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserActivated(User $user)
     {
@@ -523,9 +551,11 @@ class UserService
     /**
      * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
      *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
      * @param Workspace $workspace The workspace
      * @return boolean
-     * @api
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace)
     {
@@ -541,29 +571,57 @@ class UserService
     }
 
     /**
-     * Checks if the current user may delete the given workspace according to one the roles of the user's accounts
+     * Checks if the current user may manage the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
      *
      * @param Workspace $workspace The workspace
      * @return boolean
-     * @api
      */
-    public function currentUserCanDeleteWorkspace(Workspace $workspace)
+    public function currentUserCanManageWorkspace(Workspace $workspace)
     {
-        if ($workspace->getName() === 'live') {
+        if ($workspace->isPersonalWorkspace()) {
             return false;
         }
 
-        if ($workspace->getOwner() === $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.DeleteOwnWorkspaces', array('workspace' => $workspace));
+        if ($workspace->isInternalWorkspace()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces');
+        }
+
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() == $this->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
         }
 
         return false;
     }
 
     /**
+     * Checks if the current user may transfer ownership of the given workspace
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace)
+    {
+        if ($workspace->isPersonalWorkspace()) {
+            return false;
+        }
+
+        // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
+        // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
+        // ownership back to themselves.
+        return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces');
+    }
+
+    /**
      * Returns the default authentication provider name
      *
      * @return string
+     * @api
      */
     public function getDefaultAuthenticationProviderName()
     {
@@ -576,6 +634,7 @@ class UserService
      * @param User $user The user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserDeactivated(User $user)
     {

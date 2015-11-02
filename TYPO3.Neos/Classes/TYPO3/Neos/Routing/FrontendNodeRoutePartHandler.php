@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Routing;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -44,6 +45,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
      * @var DomainRepository
      */
     protected $domainRepository;
@@ -61,13 +68,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected $contentDimensionPresetSource;
 
     const DIMENSION_REQUEST_PATH_MATCHER = '|^
-		(?<dimensionPresetUriSegments>[^/@]+)      # the first part of the URI, before the first slash is the encoded dimension preset
-		(?:                                        # start of non-capturing submatch for the remaining URL
-			/?                                     # a "/"; optional. it must also match en@user-admin
-			(?<remainingRequestPath>.*)            # the remaining request path
-		)?                                         # ... and this whole remaining URL is optional
-		$                                          # make sure we consume the full string
-	|x';
+        (?<dimensionPresetUriSegments>[^/@]+)      # the first part of the URI, before the first slash is the encoded dimension preset
+        (?:                                        # start of non-capturing submatch for the remaining URL
+            /?                                     # a "/"; optional. it must also match en@user-admin
+            (?<remainingRequestPath>.*)            # the remaining request path
+        )?                                         # ... and this whole remaining URL is optional
+        $                                          # make sure we consume the full string
+    |x';
 
     /**
      * Extracts the node path from the request path.
@@ -104,7 +111,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function matchValue($requestPath)
     {
         try {
-            $node = $this->convertRequestPathToNode($requestPath);
+            $node = null;
+
+            // Build context explictly without authorization checks because the security context isn't available yet
+            // anyway and any Entity Privilege targeted on Workspace would fail at this point:
+            $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $requestPath) {
+                $node = $this->convertRequestPathToNode($requestPath);
+            });
         } catch (Exception $exception) {
             if ($requestPath === '') {
                 throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
