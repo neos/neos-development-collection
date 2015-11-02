@@ -143,7 +143,7 @@ class UserService
      *
      * @param string $username The username
      * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Typo3BackendProvider"
-     * @return User The user, or NULL if the user does not exist
+     * @return User The user, or null if the user does not exist
      * @throws Exception
      * @api
      */
@@ -184,7 +184,7 @@ class UserService
     /**
      * Returns the currently logged in user, if any
      *
-     * @return User The currently logged in user, or NULL
+     * @return User The currently logged in user, or null
      * @api
      */
     public function getCurrentUser()
@@ -563,7 +563,7 @@ class UserService
             return $this->securityContext->hasRole('TYPO3.Neos:LivePublisher');
         }
 
-        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === NULL) {
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
             return true;
         }
 

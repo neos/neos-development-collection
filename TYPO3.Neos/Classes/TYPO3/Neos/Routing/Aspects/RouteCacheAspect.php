@@ -52,7 +52,7 @@ class RouteCacheAspect
 
         // Build context explictly without authorization checks because the security context isn't available yet
         // anyway and any Entity Privilege targeted on Workspace would fail at this point:
-        $this->securityContext->withoutAuthorizationChecks(function () use($joinPoint, $values) {
+        $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values) {
             $contextPathPieces = NodePaths::explodeContextPath($values['node']);
             $context = $this->contextFactory->create(array(
                 'workspaceName' => $contextPathPieces['workspaceName'],

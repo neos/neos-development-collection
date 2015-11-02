@@ -493,7 +493,7 @@ class WorkspacesController extends AbstractModuleController
     protected function prepareBaseWorkspaceOptions(Workspace $excludedWorkspace = null)
     {
         $baseWorkspaceOptions = [];
-        foreach($this->workspaceRepository->findAll() as $workspace) {
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
             if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace) {
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
@@ -510,7 +510,7 @@ class WorkspacesController extends AbstractModuleController
     protected function prepareOwnerOptions()
     {
         $ownerOptions = [ '' => '-'];
-        foreach($this->userService->getUsers() as $user) {
+        foreach ($this->userService->getUsers() as $user) {
             /** @var User $user */
             $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getName()->getFullName();
         }

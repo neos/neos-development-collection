@@ -66,7 +66,7 @@ class Workspace
      *
      * @var Workspace
      * @ORM\ManyToOne
-     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @ORM\JoinColumn(onDelete="SET null")
      */
     protected $baseWorkspace;
 
@@ -209,7 +209,7 @@ class Workspace
      * @param User $user The new user
      * @api
      */
-    public function setOwner(User $user = NULL)
+    public function setOwner(User $user = null)
     {
         $this->owner = $user;
     }
@@ -477,7 +477,7 @@ class Workspace
 
     /**
      * Returns the NodeData instance with the given identifier from the target workspace.
-     * If no NodeData instance is found, NULL is returned.
+     * If no NodeData instance is found, null is returned.
      *
      * @param NodeInterface $node
      * @param Workspace $targetWorkspace
