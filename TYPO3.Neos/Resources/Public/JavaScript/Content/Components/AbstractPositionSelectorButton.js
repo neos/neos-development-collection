@@ -73,7 +73,7 @@ function (
 
 		PositionSelectorOption: Ember.Component.extend({
 			// Set position to either `into`, `before` or `after` when using
-			position: Ember.required(),
+			position: null,
 
 			tagName: 'button',
 

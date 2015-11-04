@@ -6,7 +6,7 @@
 				{{#each editingModes as |editingMode|}}
 					<li>
 						<button class="neos-button {{if editingMode.active 'neos-pressed'}}" {{action "activateMode" editingMode}}>
-						    {{boundTranslate idBinding="editingMode.title"}}
+						    {{boundTranslate id=editingMode.title}}
 						</button>
 					</li>
 				{{/each}}
@@ -25,7 +25,7 @@
 				{{#each previewModes as |previewMode|}}
 					<li>
 						<button class="neos-button {{if previewMode.active 'neos-pressed'}}" {{action "activateMode" previewMode}}>
-						    {{boundTranslate idBinding="previewMode.title"}}
+						    {{boundTranslate id=previewMode.title}}
 						</button>
 					</li>
 				{{/each}}

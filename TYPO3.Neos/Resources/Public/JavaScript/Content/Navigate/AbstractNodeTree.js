@@ -223,7 +223,7 @@ define(
 					);
 				},
 			},
-			template: Ember.required(),
+			template: null,
 
 			/**
 			 * DOM node which is the container for the dynatree

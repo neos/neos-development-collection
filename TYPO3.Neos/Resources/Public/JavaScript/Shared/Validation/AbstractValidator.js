@@ -84,7 +84,7 @@ define(
 			 * @param {mixed} value The value that should be validated
 			 * @return {void}
 			 */
-			isValid: Ember.required(),
+			isValid: null,
 
 			/**
 			 * Adds a new validation error to the result

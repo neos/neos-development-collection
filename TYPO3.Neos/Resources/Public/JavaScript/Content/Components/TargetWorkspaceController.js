@@ -28,7 +28,7 @@ define(
 		 * Helper class for a Workspace
 		 */
 		Workspace = Ember.Object.extend({
-			name: Ember.required(),
+			name: null,
 			title: null,
 			description: null,
 			baseWorkspace: null,

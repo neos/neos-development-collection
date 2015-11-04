@@ -27,11 +27,11 @@ function(
 	 * Helper class for a Content Dimension
 	 */
 	Dimension = Ember.Object.extend({
-		identifier: Ember.required(),
-		defaultPreset: Ember.required(),
-		label: Ember.required(),
-		icon: Ember.required(),
-		options: Ember.required(),
+		identifier: null,
+		defaultPreset: null,
+		label: null,
+		icon: null,
+		options: null,
 		selected: null,
 		_presetsDidChange: function() {
 			this.set('selected', this.get('presets').findBy('selected', true));
@@ -42,10 +42,10 @@ function(
 	 * Helper class for a Dimension Preset
 	 */
 	Preset = Ember.Object.extend({
-		identifier: Ember.required(),
-		label: Ember.required(),
+		identifier: null,
+		label: null,
 		disabled: false,
-		values: Ember.required()
+		values: null
 	});
 
 	/**

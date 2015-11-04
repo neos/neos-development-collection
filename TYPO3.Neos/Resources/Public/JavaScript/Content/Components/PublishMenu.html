@@ -1,7 +1,7 @@
-{{view view.PublishButton autoPublishBinding="view.autoPublish"}}
+{{view view.PublishButton autoPublish=view.autoPublish}}
 <button class="neos-button neos-dropdown-toggle {{if view._hasWorkspaceWideChanges 'neos-publish-menu-active'}}" data-neos-toggle="dropdown"></button>
 <ul class="neos-dropdown-menu">
-	{{view view.TargetWorkspaceSelector isVisibleBinding="view._isTargetWorkspaceSelectorVisible"}}
+	{{view view.TargetWorkspaceSelector isVisible=view._isTargetWorkspaceSelectorVisible}}
 	<li>
 		{{view view.PublishAllButton}}
 	</li>
@@ -13,7 +13,7 @@
 	</li>
 	<li>
 		<label class="neos-checkbox">
-			{{view Ember.Checkbox checkedBinding="view.autoPublish"}}<span></span>{{translate id="autoPublish" fallback="Auto-Publish"}}
+			{{view Ember.Checkbox checked=view.autoPublish}}<span></span>{{translate id="autoPublish" fallback="Auto-Publish"}}
 		</label>
 	</li>
 	<li>

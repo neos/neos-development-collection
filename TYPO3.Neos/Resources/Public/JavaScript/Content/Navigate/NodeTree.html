@@ -34,7 +34,7 @@
 			<span class="icon-sort-by-attributes"></span>
 		</div>
 		<div id="neos-node-tree-search">
-			{{view view.searchField valueBinding="view.searchTerm"}}
+			{{view view.searchField value=view.searchTerm}}
 			<span class="{{if view.searchTermIsEmpty 'icon-search' 'icon-remove-sign'}}" {{action "clearSearchTerm" target=view}}></span>
 		</div>
 	</div>

@@ -8,7 +8,7 @@ define(
 		return Ember.Component.extend({
 			tagName: 'div',
 			elementId: 'neos-context-bar',
-			template: Ember.required()
+			template: null
 		});
 	}
 );
