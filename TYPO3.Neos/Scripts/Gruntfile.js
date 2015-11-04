@@ -227,7 +227,7 @@ module.exports = function (grunt) {
 			ember: {
 				src: [
 					libraryPath + 'emberjs/ember-template-compiler.js',
-					libraryPath + 'emberjs/ember-2.1.0.js',
+					libraryPath + 'emberjs/ember-2.0.2.js',
 					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',
