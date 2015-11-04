@@ -22,19 +22,19 @@ define(
 			classNameBindings: ['open:neos-open'],
 			template: Ember.Handlebars.compile(template),
 
-			controller: TargetWorkspaceController,
+			_controller: TargetWorkspaceController,
 			nodeSelection: NodeSelection,
 			publishableNodes: PublishableNodes,
 
 			dirtyWorkspaceDialog: null,
 
-		/**
+			/**
 			 * General initialization of this view
 			 */
 			init: function() {
 				this._super();
 				this._initialize();
-				this.get('controller')._loadConfiguration();
+				this.get('_controller').send('loadConfiguration');
 			},
 
 			/**

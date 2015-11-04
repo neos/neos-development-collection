@@ -50,34 +50,37 @@ define(
 			/**
 			 * Retrieve the available workspaces via the REST service and set the local configuration accordingly.
 			 */
-			_loadConfiguration: function() {
-				var that = this;
-				HttpRestClient.getResource('neos-service-workspaces').then(function(result) {
-					var configuration = {},
-					currentUserWorkspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
+			actions: {
+				loadConfiguration: function() {
+					console.log('x');
+					var that = this;
+					HttpRestClient.getResource('neos-service-workspaces').then(function(result) {
+						var configuration = {},
+						currentUserWorkspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
-					$.each($('.workspaces', result.resource).children('li'), function(key, workspaceSnippet) {
-						var workspaceName = $('.workspace-name', workspaceSnippet).text();
-						configuration[workspaceName] = {
-							name: workspaceName,
-							title: $('.workspace-title', workspaceSnippet).text(),
-							description: $('.workspace-description', workspaceSnippet).text(),
-							baseWorkspace: $('.workspace-baseworkspace-name', workspaceSnippet).text(),
-							isUserWorkspace: (workspaceName.substr(0, 5) === 'user-'),
-							isCurrentUserWorkspace: (currentUserWorkspaceName == workspaceName)
-						};
+						$.each($('.workspaces', result.resource).children('li'), function(key, workspaceSnippet) {
+							var workspaceName = $('.workspace-name', workspaceSnippet).text();
+							configuration[workspaceName] = {
+								name: workspaceName,
+								title: $('.workspace-title', workspaceSnippet).text(),
+								description: $('.workspace-description', workspaceSnippet).text(),
+								baseWorkspace: $('.workspace-baseworkspace-name', workspaceSnippet).text(),
+								isUserWorkspace: (workspaceName.substr(0, 5) === 'user-'),
+								isCurrentUserWorkspace: (currentUserWorkspaceName == workspaceName)
+							};
+						});
+
+						$.each(configuration, function(workspaceName, workspace) {
+							if (configuration[workspace.baseWorkspace]) {
+								workspace.baseWorkspace = configuration[workspace.baseWorkspace];
+							}
+						});
+
+						that.set('configuration', configuration);
+					}, function(error) {
+						console.error('Failed loading workspaces data.', error);
 					});
-
-					$.each(configuration, function(workspaceName, workspace) {
-						if (configuration[workspace.baseWorkspace]) {
-							workspace.baseWorkspace = configuration[workspace.baseWorkspace];
-						}
-					});
-
-					that.set('configuration', configuration);
-				}, function(error) {
-					console.error('Failed loading workspaces data.', error);
-				});
+				}
 			},
 
 			/**
@@ -150,7 +153,7 @@ define(
 				};
 
 				HttpRestClient.updateResource('neos-service-workspaces', this.get('userWorkspace.name'), options).then(function(result) {
-					that._loadConfiguration();
+					that.send('loadConfiguration');
 					ContentModule.reloadPage();
 					that.set('workspaceRebasePending', false);
 				}, function(error) {
