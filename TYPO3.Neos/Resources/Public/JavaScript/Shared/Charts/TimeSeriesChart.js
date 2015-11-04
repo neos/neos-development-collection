@@ -9,7 +9,7 @@ define(
 		 *
 		 * Code taken from the Ember Charts project, 0.3.0 (BSD license)
 		 */
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			classNames: ['chart-time-series'],
 
 			template: Ember.Handlebars.compile('<svg {{bind-attr width="view.outerWidth" height="view.outerHeight"}}><g class="chart-viewport" {{ bind-attr transform="view.transformViewport" }}></g></svg>'),

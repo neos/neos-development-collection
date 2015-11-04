@@ -28,7 +28,7 @@ function(Ember, Button) {
 		/**
 		 * Internal. The view class which is displayed in SecondaryInspectorView
 		 */
-		_viewClass: Ember.Component.extend(),
+		_viewClass: Ember.View.extend(),
 
 		/**
 		 * if TRUE, the secondary inspector is currently visible.

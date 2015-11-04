@@ -32,7 +32,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._super();
 
 			// Create new instance per asset editor to avoid side effects
-			this.set('_mediaBrowserView', Ember.Component.extend({
+			this.set('_mediaBrowserView', Ember.View.extend({
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
 			})),
 
@@ -58,7 +58,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		assetView: Ember.CollectionView.extend({
 			tagName: 'ul',
-			itemViewClass: Ember.Component.extend({
+			itemViewClass: Ember.View.extend({
 				template: Ember.Handlebars.compile('<img src="{{unbound view.content.previewImageResourceUri}}" alt="" />{{view.content.filename}} <i class="icon-remove neos-pull-right" {{action remove target="view"}}> </i>'),
 				actions: {
 					remove: function() {
@@ -66,7 +66,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 					}
 				}
 			}),
-			emptyView: Ember.Component.extend({
+			emptyView: Ember.View.extend({
 				template: Ember.Handlebars.compile('{{view._parentView._parentView._loadingLabel}}'),
 				tagName: 'span',
 				classNames: ['neos-inspector-file-loading']

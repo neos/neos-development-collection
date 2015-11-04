@@ -16,7 +16,7 @@ define(
 	EventDispatcher,
 	template
 ) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		elementId: 'neos-navigate-panel',
 		template: Ember.Handlebars.compile(template),
 		classNameBindings: ['controller.contextStructureMode:neos-navigate-panel-context-structure-open'],

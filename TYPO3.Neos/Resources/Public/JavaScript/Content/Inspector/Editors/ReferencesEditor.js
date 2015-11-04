@@ -8,7 +8,7 @@ define(
 		'Shared/Utility'
 	],
 	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',

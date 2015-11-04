@@ -9,7 +9,7 @@ define(
 		'text!./MenuPanel.html'
 	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, I18n, template) {
 
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			actions: {
 				toggleCollapsed: function() {
 					return this.toggleCollapsed();
@@ -20,7 +20,7 @@ define(
 			template: Ember.Handlebars.compile(template),
 			controller: MenuPanelController,
 
-			ToggleMenuPanelHeadline: Ember.Component.extend({
+			ToggleMenuPanelHeadline: Ember.View.extend({
 				tagName: 'div',
 				classNameBindings: ['collapsed:neos-collapsed:neos-open'],
 				_collapsed: false,
@@ -74,7 +74,7 @@ define(
 				}.observes('collapsed')
 			}),
 
-			LinkView: Ember.Component.extend({
+			LinkView: Ember.View.extend({
 				tagName: 'a',
 				attributeBindings: ['href', 'title'],
 				description: '',

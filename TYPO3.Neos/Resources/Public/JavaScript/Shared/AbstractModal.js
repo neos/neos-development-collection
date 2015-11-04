@@ -5,7 +5,7 @@ define(
 		'LibraryExtensions/Mousetrap'
 	],
 	function (Ember, $, Mousetrap) {
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			actions: {
 				cancel: function() {
 					this.destroy();

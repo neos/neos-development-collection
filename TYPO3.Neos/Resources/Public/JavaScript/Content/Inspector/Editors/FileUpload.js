@@ -9,7 +9,7 @@ define(
 	'Shared/I18n'
 ],
 function(Ember, $, template, plupload, Notification, Configuration, I18n) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		actions: {
 			upload: function() {
 				this.set('_uploadInProgress', true);

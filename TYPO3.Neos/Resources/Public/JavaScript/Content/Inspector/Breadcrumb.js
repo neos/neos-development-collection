@@ -11,7 +11,7 @@ define(
 	NodeSelection,
 	template
 ) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		elementId: 'neos-content-breadcrumb',
 		classNameBindings: ['open:neos-open'],
 		template: Ember.Handlebars.compile(template),

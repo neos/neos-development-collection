@@ -7,7 +7,7 @@ define(
 		'Shared/I18n'
 	],
 	function (Ember, I18n) {
-		return Ember.Component.extend(Ember.TargetActionSupport, {
+		return Ember.View.extend(Ember.TargetActionSupport, {
 			tagName: 'button',
 			classNames: ['neos-button'],
 			attributeBindings: ['disabled', 'title'],

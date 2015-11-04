@@ -28,7 +28,7 @@ define(
 	 *
 	 * Furthermore, it contains *Editors* and *Views*
 	 */
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		elementId: 'neos-inspector',
 
 		template: Ember.Handlebars.compile(template),

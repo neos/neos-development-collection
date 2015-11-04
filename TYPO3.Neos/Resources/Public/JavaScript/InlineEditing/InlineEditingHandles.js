@@ -31,7 +31,7 @@ function (
 	DeleteNodeDialog,
 	InsertNodePanel
 ) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		actions: {
 			toggleHidden: function() {
 				var entity = this.get('_node._vieEntity'),

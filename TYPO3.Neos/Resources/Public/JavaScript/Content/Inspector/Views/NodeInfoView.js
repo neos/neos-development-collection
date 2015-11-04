@@ -17,7 +17,7 @@ function(
 			return '';
 		}
 	});
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template)
 	});
 });

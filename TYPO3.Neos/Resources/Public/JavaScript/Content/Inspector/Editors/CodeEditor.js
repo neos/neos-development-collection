@@ -15,7 +15,7 @@ function(Ember, SecondaryInspectorController, CodeMirror, I18n) {
 		viewClass: function() {
 			var that = this;
 
-			return Ember.Component.extend({
+			return Ember.View.extend({
 				classNames: ['neos-secondary-inspector-code-editor'],
 				template: Ember.Handlebars.compile('<textarea></textarea>'),
 

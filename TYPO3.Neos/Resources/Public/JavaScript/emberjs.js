@@ -1,3 +1,8 @@
+EmberENV = {
+	_ENABLE_LEGACY_VIEW_SUPPORT: true,
+	_ENABLE_LEGACY_CONTROLLER_SUPPORT: true
+};
+
 define(['Library/ember'], function(Ember) {
 
 	// We overwrite default Ember.Logger behavior so we can mute logging if needed.
@@ -31,11 +36,6 @@ define(['Library/ember'], function(Ember) {
 		// for debugging only - do not ship
 		// Ember.LOG_BINDINGS = true;
 	}
-
-	// export Ember.Component - https://github.com/emberjs/ember.js/issues/11775
-	Ember.ENV._ENABLE_LEGACY_VIEW_SUPPORT = true;
-	Ember.ENV._ENABLE_LEGACY_CONTROLLER_SUPPORT = true;
-
 
 	return Ember;
 });

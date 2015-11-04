@@ -10,7 +10,7 @@ function (
 	Ember,
 	template
 ) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 
 		// Private API: set when extending
@@ -71,7 +71,7 @@ function (
 			this.set('isExpanded', false);
 		},
 
-		PositionSelectorOption: Ember.Component.extend({
+		PositionSelectorOption: Ember.View.extend({
 			// Set position to either `into`, `before` or `after` when using
 			position: null,
 

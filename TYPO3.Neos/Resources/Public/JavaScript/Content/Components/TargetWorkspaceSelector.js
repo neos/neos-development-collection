@@ -17,7 +17,7 @@ define(
 		DirtyWorkspaceDialog,
 		template
 	) {
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			elementId: 'neos-target-workspace-selector',
 			classNameBindings: ['open:neos-open'],
 			template: Ember.Handlebars.compile(template),

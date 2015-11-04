@@ -5,7 +5,7 @@ define(
 	[
 		'emberjs'
 	], function(Ember) {
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			tagName: 'div',
 			elementId: 'neos-context-bar',
 			template: null

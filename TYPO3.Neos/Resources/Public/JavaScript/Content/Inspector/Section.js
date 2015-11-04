@@ -13,7 +13,7 @@ define(
 	ViewView,
 	NodeSelection
 ) {
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		actions: {
 			toggleCollapsed: function() {
 				this.set('_collapsed', !this.get('_collapsed'));

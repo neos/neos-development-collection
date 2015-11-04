@@ -31,7 +31,7 @@ define(
 		I18n,
 		template
 	) {
-		return Ember.Component.extend({
+		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
 			classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],

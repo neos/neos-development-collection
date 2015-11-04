@@ -24,7 +24,7 @@ function(
 	 * even if the dimensions selector is collapsed, and the expandable selector which shows a selector box for each
 	 * dimension with more than one preset.
 	 */
-	return Ember.Component.extend({
+	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 		classNames: ['neos-content-dimension-selector'],
 		classNameBindings: ['isActive:active'],
