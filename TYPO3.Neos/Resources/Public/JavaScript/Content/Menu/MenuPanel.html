@@ -23,7 +23,7 @@
 		{{/view}}
 		{{view view.parentView.parentView.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group=view.content.group}}
 
-		{{#collection tagName="div" classNames="neos-menu-list" content="submodules"}}
+		{{#collection tagName="div" classNames="neos-menu-list" content=submodules}}
 			{{#unless hideInMenu}}
 				{{#view view.parentView.parentView.parentView.parentView.LinkView href=uri label=label description=description classNameBindings="active:neos-active"}}
 					{{#if icon}}<i class="{{unbound icon}}"></i>{{else}}<i class="icon-puzzle-piece"></i>{{/if}} {{boundTranslate id=label package="TYPO3.Neos" source="Modules"}}
