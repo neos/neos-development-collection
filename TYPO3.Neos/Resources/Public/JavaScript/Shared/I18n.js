@@ -30,8 +30,9 @@
 define(
 [
 	'emberjs',
-	'Library/underscore'
-], function(Ember, _) {
+	'Library/underscore',
+	'Library/handlebars'
+], function(Ember, _, Handlebars) {
 
 	/**
 	 * @singleton
@@ -52,8 +53,8 @@ define(
 				attrs = hash;
 				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
 			};
-			Ember.Helper.helper('translate', translateHelperClosure);
-			Ember.Helper.helper('boundTranslate', translateHelperClosure);
+			Ember.HTMLBars.helpers.registerHelper('translate', translateHelperClosure);
+			Ember.HTMLBars.helpers.registerHelper('boundTranslate', translateHelperClosure);
 		},
 
 		/**

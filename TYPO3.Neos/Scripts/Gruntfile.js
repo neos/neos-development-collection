@@ -247,6 +247,9 @@ module.exports = function (grunt) {
 						src = src.replace("Handlebars.registerHelper('t'", "Handlebars.registerHelper('translate'");
 						src = src.replace('t: function(key, context)', 'translate: function(key, context)');
 
+						// Expose HTMLBars helpers to register helpers that cannot be loaded
+						src = src.replace(/(DOMHelper\: \_emberHtmlbarsSystemDomHelper\.default)/g, '$1, helpers: _emberHtmlbarsHelpers');
+
 						return src;
 					}
 				}

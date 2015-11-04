@@ -28363,7 +28363,7 @@ if (typeof exports === "object") {
             precompile: _emberTemplateCompiler.precompile,
             makeBoundHelper: _emberHtmlbarsSystemMake_bound_helper.default,
             registerPlugin: _emberTemplateCompiler.registerPlugin,
-            DOMHelper: _emberHtmlbarsSystemDomHelper.default
+            DOMHelper: _emberHtmlbarsSystemDomHelper.default, helpers: _emberHtmlbarsHelpers
         };
 
         _emberHtmlbarsHelper.default.helper = _emberHtmlbarsHelper.helper;
