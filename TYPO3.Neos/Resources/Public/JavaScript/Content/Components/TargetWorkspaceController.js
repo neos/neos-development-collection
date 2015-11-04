@@ -52,7 +52,6 @@ define(
 			 */
 			actions: {
 				loadConfiguration: function() {
-					console.log('x');
 					var that = this;
 					HttpRestClient.getResource('neos-service-workspaces').then(function(result) {
 						var configuration = {},
