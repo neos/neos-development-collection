@@ -12,7 +12,7 @@
 		<label for="neos-content-breadcrumb">{{translate id="content-inspector-inspectorView-selectedElement" fallback="Selected element"}}</label>
 		{{view view.Breadcrumb}}
 	</div>
-	{{#each tab in groupedViews}}
+	{{#each groupedViews as |tab|}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each tab.groups as |group|}}
 			{{#view view.Section classNames="neos-inspector-section" group=group groupName=group.group properties=group.properties views´=group.views inspector=controller}}
