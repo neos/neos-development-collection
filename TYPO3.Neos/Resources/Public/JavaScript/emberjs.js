@@ -34,6 +34,8 @@ define(['Library/ember'], function(Ember) {
 
 	// export Ember.Component - https://github.com/emberjs/ember.js/issues/11775
 	Ember.ENV._ENABLE_LEGACY_VIEW_SUPPORT = true;
+	Ember.ENV._ENABLE_LEGACY_CONTROLLER_SUPPORT = true;
+
 
 	return Ember;
 });

@@ -47,19 +47,18 @@ define(
 			var self = this,
 				translateHelperClosure;
 
-			translateHelperClosure = function (param, hash) {
+			translateHelperClosure = function (params, hash) {
 				var attrs;
 				attrs = hash;
 				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
 			};
-
-			//Ember.Handlebars.registerHelper('translate', translateHelperClosure);
-			Ember.HTMLBars.makeBoundHelper('translate', translateHelperClosure);
+			Ember.Helper.helper('translate', translateHelperClosure);
+			Ember.Helper.helper('boundTranslate', translateHelperClosure);
 		},
 
 		/**
 		 * Returns a translated label.
-
+		 *
 		 * Replaces all placeholders with corresponding values if they exist in the
 		 * translated label.
 		 *

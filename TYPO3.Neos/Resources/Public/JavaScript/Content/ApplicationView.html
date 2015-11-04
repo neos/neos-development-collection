@@ -1,4 +1,4 @@
-{{#unbound if view._isContentModule}}
+{{#if view._isContentModule}}
 	{{view view.ContentContextBar}}
 	{{view view.EditPreviewPanel}}
 	{{view view.SecondaryInspectorView}}
@@ -8,6 +8,6 @@
 	{{view view.InspectorView}}
 	{{view view.NavigatePanel}}
 	{{view view.InlineEditingHandles}}
-{{/unbound}}
+{{/if}}
 
 {{view view.MenuPanel}}
