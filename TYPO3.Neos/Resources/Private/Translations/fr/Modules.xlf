@@ -65,7 +65,7 @@
 			<target xml:lang="fr">Il n'y a aucun changement non publié dans cet espace de travail.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="fr">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></trans-unit>
+			<target xml:lang="fr">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target><alt-trans><target xml:lang="fr">Voulez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></alt-trans></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="fr">Média</target></trans-unit>
@@ -89,7 +89,7 @@
 			<target xml:lang="fr">{0} a créé le {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="fr">{0} supprimé le {1} {2}.</target></trans-unit>
+			<target xml:lang="fr">{0} supprimé le {1} {2}.</target><alt-trans><target xml:lang="fr">{0} a supprimé le {1} {2}.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of {2} {3}.</source>
 			<target xml:lang="fr">{0} a créé la variante {1} de {2} {3}.</target></trans-unit>
@@ -113,7 +113,7 @@
 			<target xml:lang="fr">{0} a créé un nouvel utilisateur "{1}" pour {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target xml:lang="fr">{0} a supprimé un utilisateur "{1}" de {2}.</target></trans-unit>
+			<target xml:lang="fr">{0} a supprimé un utilisateur "{1}" de {2}.</target><alt-trans><target xml:lang="fr">{0} a supprimé le compte "{1}" de {2}.</target></alt-trans></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -141,7 +141,7 @@
 			<target xml:lang="fr">Éditer</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target xml:lang="fr">Edité le profile</target><alt-trans><target xml:lang="fr">Editer le profil</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Edité le profile</target><alt-trans><target xml:lang="fr">Éditer le compte</target></alt-trans><alt-trans><target xml:lang="fr">Editer le profil</target></alt-trans></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target xml:lang="fr">Nouvelle adresse électronique</target></trans-unit>
@@ -231,7 +231,7 @@
 			<target xml:lang="fr">Supprimer l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target xml:lang="fr">Editer l'utilisateur</target></trans-unit>
+			<target xml:lang="fr">Editer l'utilisateur</target><alt-trans><target xml:lang="fr">Éditer l'utilisateur</target></alt-trans></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="fr">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
@@ -240,7 +240,7 @@
 			<target xml:lang="fr">Cliquez ici pour supprimer cet utilisateur</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target xml:lang="fr">Voulez-vous réellement supprimer le Job "{0}"?</target></trans-unit>
+			<target xml:lang="fr">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target xml:lang="fr">Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target xml:lang="fr">Oui, supprimer l'utilisateur</target></trans-unit>
@@ -249,10 +249,10 @@
 			<target xml:lang="fr">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target xml:lang="fr">Cette opération ne peut ptre annulée</target></trans-unit>
+			<target xml:lang="fr">Cette opération ne peut ptre annulée</target><alt-trans><target xml:lang="fr">Cette opération ne peut pas être annulée</target></alt-trans></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target xml:lang="fr">Modifier le compte «{accountIdentifier} »</target></trans-unit>
+			<target xml:lang="fr">Modifier le compte «{accountIdentifier} »</target><alt-trans><target xml:lang="fr">Éditer le compte "{accountIdentifier}"</target></alt-trans></trans-unit>
       <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
 			<target xml:lang="fr">Compte</target></trans-unit>
@@ -276,7 +276,7 @@
 			<target xml:lang="fr">Gestion des paquets</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="fr">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target></trans-unit>
+			<target xml:lang="fr">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target><alt-trans><target xml:lang="fr">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets dans le contexte du développement.</target></alt-trans></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="fr">Gestion des sites</target></trans-unit>
@@ -316,7 +316,7 @@
 			<target xml:lang="fr">Nouvelle adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target xml:lang="fr">Edité le profile</target><alt-trans><target xml:lang="fr">Editer le profil</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Edité le profile</target><alt-trans><target xml:lang="fr">Éditer le compte</target></alt-trans><alt-trans><target xml:lang="fr">Editer le profil</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="fr">Données personnelles</target></trans-unit>
@@ -364,7 +364,7 @@
 			<target xml:lang="fr">Sauvegarder l'utilisateur</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target xml:lang="fr">Editer l'utilisateur</target></trans-unit>
+			<target xml:lang="fr">Editer l'utilisateur</target><alt-trans><target xml:lang="fr">Éditer l'utilisateur</target></alt-trans></trans-unit>
       <!-- Media -->
       <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
@@ -401,13 +401,13 @@
 			<target xml:lang="fr">Glisser et déposer sur l'étiquette ou la collection</target></trans-unit>
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target xml:lang="fr">Editer la ressource numérique</target><alt-trans><target xml:lang="fr">Editer la ressource multimédia</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Editer la ressource numérique</target><alt-trans><target xml:lang="fr">Éditer la ressource numérique</target></alt-trans><alt-trans><target xml:lang="fr">Editer la ressource multimédia</target></alt-trans></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="fr">Effacer la ressource numérique</target><alt-trans><target xml:lang="fr">Effacer la ressource multimédia</target></alt-trans></trans-unit>
       <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="fr">Souhaitez-vous vraiment supprimer la ressource numérique "{0}"?</target><alt-trans><target xml:lang="fr">Souhaitez-vous vraiment supprimer la ressource multimédia "{0}"?</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Souhaitez-vous vraiment supprimer la ressource numérique "{0}"?</target><alt-trans><target xml:lang="fr">Voulez-vous vraiment supprimer la ressource numérique "{0}"?</target></alt-trans><alt-trans><target xml:lang="fr">Souhaitez-vous vraiment supprimer la ressource multimédia "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target xml:lang="fr">Voulez-vous vraiment supprimer la collection «{0} » ?</target></trans-unit>
@@ -443,7 +443,7 @@
 			<target xml:lang="fr">Oui, supprimer l'étiquette</target></trans-unit>
       <trans-unit id="media.thumbnail.editTitle" xml:space="preserve" approved="yes">
 				<source>Edit {0}</source>
-			<target xml:lang="fr">Modifier {0}</target></trans-unit>
+			<target xml:lang="fr">Modifier {0}</target><alt-trans><target xml:lang="fr">Éditer {0}</target></alt-trans></trans-unit>
       <trans-unit id="media.search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
 			<target xml:lang="fr">Rechercher dans les ressources numériques</target><alt-trans><target xml:lang="fr">Rechercher dans les ressources multimédias</target></alt-trans></trans-unit>
@@ -497,7 +497,7 @@
 			<target xml:lang="fr">Options de tri</target></trans-unit>
       <trans-unit id="media.tooltip.listView" xml:space="preserve" approved="yes">
 				<source>List view</source>
-			<target xml:lang="fr">Vue Liste</target></trans-unit>
+			<target xml:lang="fr">Vue Liste</target><alt-trans><target xml:lang="fr">Vue liste</target></alt-trans></trans-unit>
       <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="fr">Vue miniature</target></trans-unit>
@@ -506,10 +506,10 @@
 			<target xml:lang="fr">Collections</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target xml:lang="fr">Editer des collections</target></trans-unit>
+			<target xml:lang="fr">Editer des collections</target><alt-trans><target xml:lang="fr">Éditer des collections</target></alt-trans></trans-unit>
       <trans-unit id="media.editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target xml:lang="fr">Editer cette collection</target><alt-trans><target xml:lang="fr">Editer des collections</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Editer cette collection</target><alt-trans><target xml:lang="fr">Éditer cette collection</target></alt-trans><alt-trans><target xml:lang="fr">Editer des collections</target></alt-trans></trans-unit>
       <trans-unit id="media.deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
 			<target xml:lang="fr">Supprimer cette collection</target></trans-unit>
@@ -518,7 +518,7 @@
 			<target xml:lang="fr">Créer une collection</target></trans-unit>
       <trans-unit id="media.newCollection.placeholder" xml:space="preserve" approved="yes">
 				<source>Enter collection title</source>
-			<target xml:lang="fr">Entrez le titre de la collection</target></trans-unit>
+			<target xml:lang="fr">Entrez le titre de la collection</target><alt-trans><target xml:lang="fr">Entrer le titre de la collection</target></alt-trans></trans-unit>
       <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
 			<target xml:lang="fr">Toutes les collections</target></trans-unit>
@@ -530,7 +530,7 @@
 			<target xml:lang="fr">Éditer les tags</target></trans-unit>
       <trans-unit id="media.editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target xml:lang="fr">Editer l’étiquette</target></trans-unit>
+			<target xml:lang="fr">Editer l’étiquette</target><alt-trans><target xml:lang="fr">Éditer l’étiquette</target></alt-trans></trans-unit>
       <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
 			<target xml:lang="fr">Supprimer l’étiquette</target></trans-unit>

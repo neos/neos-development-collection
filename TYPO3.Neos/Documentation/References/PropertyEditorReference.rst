@@ -261,6 +261,10 @@ Options Reference:
 ``multiple`` (boolean)
 	If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
 
+``minimumResultsForSearch`` (integer)
+	The minimum amount of items in the select before showing a search box,
+	if set to ``-1`` the search box will never be shown.
+
 ``dataSourceUri`` (string)
 	If set, this URI will be called for loading the options of the select field.
 
@@ -347,6 +351,12 @@ Options Reference:
 ``placeholder`` (string)
 	Placeholder text to be shown if nothing is selected
 
+``startingPoint`` (string)
+	The starting point (node path) for finding possible nodes to create a reference.
+	This allows to search for nodes outside the current site. If not given, nodes
+	will be searched for in the current site. For all nodes outside the current site
+	the node path is shown instead of the url path.
+
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search
 
@@ -364,6 +374,7 @@ Example::
 
     publishingDate:
       type: date
+      defaultValue: 'today midnight'
       ui:
         label: 'Publishing Date'
         inspector:
@@ -377,6 +388,11 @@ Options Reference:
 ``format`` (required string)
 	The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N,
 	S, w, a, A, g, G, h, H, i, s. Default ``d-m-Y``.
+
+``defaultValue`` (string)
+  Sets property value, when the node is created. Accepted values are whatever
+  ``strtotime()`` can parse, but it works best with relative formats like
+  ``tomorrow 09:00`` etc. Use ``now`` to set current date and time.
 
 ``placeholder`` (string)
 	The placeholder shown when no date is selected

@@ -37,9 +37,11 @@ for access of a member-only area on the respective website.
 
 As an example, a privilege only giving access to a specific part of the node tree looks as follows:
 
-'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
-    'YourSite:EditWebsitePart':
-      matcher: 'isDescendantNodeOf("/sites/yourwebsite/custom")'
+.. code-block: yaml
+
+  'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+      'YourSite:EditWebsitePart':
+        matcher: 'isDescendantNodeOf("/sites/yourwebsite/custom")'
 
 
 Translated Neos User Interface

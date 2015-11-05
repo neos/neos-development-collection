@@ -26,7 +26,7 @@
 			<target xml:lang="de">Arbeitsbereiche</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="de">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target></trans-unit>
+			<target xml:lang="de">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target><alt-trans><target xml:lang="de">Dieses Modul bietet einen Überblick aller geänderten Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes</source>
 			<target xml:lang="de">Unveröffentlichte Änderungen</target></trans-unit>
@@ -53,13 +53,13 @@
 			<target xml:lang="de">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target xml:lang="de">erstellt</target></trans-unit>
+			<target xml:lang="de">erstellt</target><alt-trans><target xml:lang="de">verschoben</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target xml:lang="de">erstellt</target></trans-unit>
+			<target xml:lang="de">erstellt</target><alt-trans><target xml:lang="de">versteckt</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target xml:lang="de">erstellt</target></trans-unit>
+			<target xml:lang="de">erstellt</target><alt-trans><target xml:lang="de">bearbeitet</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="de">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target></trans-unit>
@@ -77,13 +77,13 @@
 			<target xml:lang="de">Verlauf</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target></trans-unit>
+			<target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target><alt-trans><target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse, die diese Neos-Installation betreffen.</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos:</source>
 			<target xml:lang="de">Dies ist kürzlich in Neos geschehen:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target></trans-unit>
+			<target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target><alt-trans><target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet, die in diesem Verlauf dargestellt werden könnten.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} {2}.</source>
 			<target xml:lang="de">{0} hat {1} {2} erstellt.</target></trans-unit>
@@ -126,7 +126,7 @@
 			<target xml:lang="de">Benutzerverwaltung</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="de">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></trans-unit>
+			<target xml:lang="de">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target><alt-trans><target xml:lang="de">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, um sicherzustellen, dass die Benutzer ordnungsgemäß konfiguriert sind.</target></alt-trans></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
 			<target xml:lang="de">Übersicht</target></trans-unit>
@@ -246,7 +246,7 @@
 			<target xml:lang="de">Ja, den Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="de">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target></trans-unit>
+			<target xml:lang="de">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target><alt-trans><target xml:lang="de">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte, gelöscht.</target></alt-trans></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target xml:lang="de">Dieser Vorgang kann nicht rückgängig gemacht werden</target></trans-unit>
@@ -261,7 +261,7 @@
 			<target xml:lang="de">Benutzername</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve" approved="yes">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="de">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target></trans-unit>
+			<target xml:lang="de">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target><alt-trans><target xml:lang="de">Der Benutzername kann nicht über die Benutzeroberfläche geändert werden</target></alt-trans></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve" approved="yes">
 				<source>Save account</source>
 			<target xml:lang="de">Benutzerkonto speichern</target><alt-trans><target xml:lang="de">Benutzer speichern</target></alt-trans></trans-unit>
@@ -422,7 +422,7 @@
 			<target xml:lang="de">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
       <trans-unit id="media.message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="de">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target></trans-unit>
+			<target xml:lang="de">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target><alt-trans><target xml:lang="de">Dadurch wird das Tag gelöscht, aber nicht die Assets, denen es zugeordnet wurde.</target></alt-trans></trans-unit>
       <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="de">Dieser Vorgang kann nicht rückgängig gemacht werden.</target></trans-unit>
@@ -605,7 +605,7 @@
 			<target xml:lang="de">für die Datei</target></trans-unit>
       <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="de">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target></trans-unit>
+			<target xml:lang="de">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target><alt-trans><target xml:lang="de">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite, um zu sehen, welche.</target></alt-trans></trans-unit>
       <trans-unit id="media.taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
 			<target xml:lang="de">Beim Zuordnen des Tags ist ein Fehler aufgetreten.</target></trans-unit>
