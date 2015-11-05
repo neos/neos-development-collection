@@ -109,55 +109,7 @@ define(
 				},
 
 				paste: function(position) {
-					var targetNode = this.get('activeNode'),
-						cutNode = this.get('cutNode'),
-						copiedNode = this.get('copiedNode');
-					if (!targetNode) {
-						Notification.info('You have to select a node');
-					}
-					if (cutNode) {
-						this.set('cutNode', null);
-						this.move(cutNode, targetNode, position);
-					}
-					if (copiedNode) {
-						var that = this,
-							newNode;
-						switch (position) {
-							case 'before':
-								newNode = targetNode.getParent().addChild(copiedNode.data, targetNode);
-								break;
-							case 'after':
-								newNode = targetNode.getParent().addChild(copiedNode.data, targetNode.getNextSibling());
-								break;
-							case 'into':
-								newNode = targetNode.addChild(copiedNode.data);
-						}
-						newNode.setLazyNodeStatus(this.statusCodes.loading);
-						NodeEndpoint.copy(
-							copiedNode.data.key,
-							targetNode.data.key,
-							position,
-							copiedNode.data.name
-						).then(
-							function(result) {
-								// after we finished moving, update the node path/url
-								newNode.data.href = result.data.nodeUri;
-								newNode.data.key = result.data.newNodePath;
-								newNode.render();
-								newNode.setLazyNodeStatus(that.statusCodes.ok);
-								if (typeof newNode.data.children !== 'undefined') {
-									newNode.removeChildren();
-									newNode.setLazyNodeStatus(that.statusCodes.loading);
-									that.loadNode(newNode, 1);
-								}
-								that.afterPaste(newNode);
-							},
-							function(error) {
-								newNode.setLazyNodeStatus(that.statusCodes.error);
-								Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
-							}
-						);
-					}
+					this.paste.apply(this, arguments);
 				},
 
 				move: function() {
@@ -383,15 +335,18 @@ define(
 			}.property('activeNode', 'copiedNode'),
 
 			currentFocusedNodeCantBeModified: function() {
-				if (this.get('activeNode')) {
-					if ((this.get('activeNode').data.isAutoCreated === true) ||
-						(typeof this.get('activeNode').parent.data.nodeType === 'undefined')) {
-						// AutoCreated node or root site node
-						return true;
-					} else {
-						return false;
-					}
+				var activeNode = this.get('activeNode');
+				if (!activeNode) {
+					return false;
 				}
+
+				if ((activeNode.data.isAutoCreated === true) ||
+						(typeof activeNode.parent.data.nodeType === 'undefined')) {
+					// AutoCreated node or root site node
+					return true;
+				}
+
+				return false;
 			}.property('activeNode'),
 
 			init: function() {
@@ -784,6 +739,58 @@ define(
 					);
 				} catch(e) {
 					Notification.error('Unexpected error while moving node: ' + e.toString());
+				}
+			},
+
+			paste: function (position) {
+				var targetNode = this.get('activeNode'),
+						cutNode = this.get('cutNode'),
+						copiedNode = this.get('copiedNode');
+				if (!targetNode) {
+					Notification.info('You have to select a node');
+				}
+				if (cutNode) {
+					this.set('cutNode', null);
+					this.move(cutNode, targetNode, position);
+				}
+				if (copiedNode) {
+					var that = this,
+							newNode;
+					switch (position) {
+						case 'before':
+							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode);
+							break;
+						case 'after':
+							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode.getNextSibling());
+							break;
+						case 'into':
+							newNode = targetNode.addChild(copiedNode.data);
+					}
+					newNode.setLazyNodeStatus(this.statusCodes.loading);
+					NodeEndpoint.copy(
+							copiedNode.data.key,
+							targetNode.data.key,
+							position,
+							copiedNode.data.name
+					).then(
+							function (result) {
+								// after we finished moving, update the node path/url
+								newNode.data.href = result.data.nodeUri;
+								newNode.data.key = result.data.newNodePath;
+								newNode.render();
+								newNode.setLazyNodeStatus(that.statusCodes.ok);
+								if (typeof newNode.data.children !== 'undefined') {
+									newNode.removeChildren();
+									newNode.setLazyNodeStatus(that.statusCodes.loading);
+									that.loadNode(newNode, 1);
+								}
+								that.afterPaste(newNode);
+							},
+							function (error) {
+								newNode.setLazyNodeStatus(that.statusCodes.error);
+								Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							}
+					);
 				}
 			},
 

@@ -36,6 +36,7 @@ define(
 		toggleNavigatePanelMode: function() {
 			this.toggleProperty('navigatePanelMode');
 		},
+
 		toggleContextStructureMode: function() {
 			this.toggleProperty('contextStructureMode');
 		},

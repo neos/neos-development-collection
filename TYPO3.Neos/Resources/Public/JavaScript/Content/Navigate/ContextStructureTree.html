@@ -1,5 +1,5 @@
 <div class="neos-node-tree-toolbar neos-context-structure-toolbar">
-	<div title="Toggle context structure" class="neos-context-structure-collapse {{if contextStructureMode 'collapsed' 'open'}}" {{action "toggleContextStructureMode"}}></div>
+	<div title="Toggle context structure" class="neos-context-structure-collapse {{if view.isExpanded 'collapsed' 'open'}}" {{action "toggleContextStructureMode"}}></div>
 	{{#if view.isExpanded}}
 		Structure
 	{{else}}
@@ -13,13 +13,13 @@
 
 			{{view view.PastePositionSelectorButton}}
 
-			<button title="{{translate id='cut' value='Cut'}}" class="neos-button neos-node-tree-cut-node {{if view.currentFocusedNodeIsCut 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "cut" target=view}}>
+			<button title="{{translate id='cut' value='Cut'}}" class="neos-button neos-node-tree-cut-node {{if view.currentFocusedNodeIsCut 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "cut" target=view}}>
 				<i class="icon-cut"></i>
 			</button>
-			<button title="{{translate id='copy' value='Copy'}}" class="neos-button neos-node-tree-copy-node {{if view.currentFocusedNodeIsCopied 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "copy" target=view}}>
+			<button title="{{translate id='copy' value='Copy'}}" class="neos-button neos-node-tree-copy-node {{if view.currentFocusedNodeIsCopied 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "copy" target=view}}>
 				<i class="icon-copy"></i>
 			</button>
-			<button title="{{translate id='hideUnhide' value='Hide/unhide'}}" class="neos-button neos-node-tree-toggle-hidden {{if view.currentFocusedNodeIsHidden 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "toggleHidden" target=view}}>
+			<button title="{{translate id='hideUnhide' value='Hide/unhide'}}" class="neos-button neos-node-tree-toggle-hidden {{if view.currentFocusedNodeIsHidden 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "toggleHidden" target=view}}>
 				<i class="icon-eye-close"></i>
 			</button>
 

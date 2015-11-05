@@ -15,7 +15,7 @@ function (
 
 		// Private API: set when extending
 		desiredPosition: 'after',
-		allowedPositions: '',
+		allowedPositions: [],
 		title: null,
 		iconClass: null,
 		mouseUp: function(event) {},
@@ -42,7 +42,7 @@ function (
 		},
 
 		position: function() {
-			var allowedPositions = this.get('allowedPositions'),
+			var allowedPositions = this.get('allowedPositions') || [],
 				desiredPosition = this.get('desiredPosition');
 			return allowedPositions.indexOf(desiredPosition) !== -1 ? desiredPosition : allowedPositions[allowedPositions.length - 1];
 		}.property('allowedPositions', 'desiredPosition'),
@@ -52,7 +52,8 @@ function (
 		}.property('position'),
 
 		isDisabled: function() {
-			return this.get('allowedPositions').length === 0;
+			var allowedPositions = this.get('allowedPositions') || [];
+			return allowedPositions.length === 0;
 		}.property('allowedPositions'),
 
 		mouseDown: function(event) {

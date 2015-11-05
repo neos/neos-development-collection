@@ -9,16 +9,16 @@
 
 		{{view view.PastePositionSelectorButton}}
 
-		<button id="neos-node-tree-cut-node" title="{{translate id='cut' value='Cut'}}" class="neos-button {{if view.currentFocusedNodeIsCut 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "cut" target=view}}>
+		<button id="neos-node-tree-cut-node" title="{{translate id='cut' value='Cut'}}" class="neos-button {{if view.currentFocusedNodeIsCut 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "cut" target=view}}>
 			<i class="icon-cut"></i>
 		</button>
-		<button id="neos-node-tree-copy-node" title="{{translate id='copy' value='Copy'}}" class="neos-button {{if view.currentFocusedNodeIsCopied 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "copy" target=view}}>
+		<button id="neos-node-tree-copy-node" title="{{translate id='copy' value='Copy'}}" class="neos-button {{if view.currentFocusedNodeIsCopied 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "copy" target=view}}>
 			<i class="icon-copy"></i>
 		</button>
-		<button id="neos-node-tree-toggle-hidden" title="{{translate id='hideUnhide' value='Hide/unhide'}}" class="neos-button {{if view.currentFocusedNodeIsHidden 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "toggleHidden" target=view}}>
+		<button id="neos-node-tree-toggle-hidden" title="{{translate id='hideUnhide' value='Hide/unhide'}}" class="neos-button {{if view.currentFocusedNodeIsHidden 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "toggleHidden" target=view}}>
 			<i class="icon-eye-close"></i>
 		</button>
-		<button id="neos-node-tree-edit-node" title="{{translate id='editTitle' value='Edit title'}}" class="neos-button {{if view.editNodeTitleMode 'neos-pressed'}}" disabled="{{view.currentFocusedNodeCantBeModified}}" {{action "editNode" target=view}}>
+		<button id="neos-node-tree-edit-node" title="{{translate id='editTitle' value='Edit title'}}" class="neos-button {{if view.editNodeTitleMode 'neos-pressed'}}" disabled={{view.currentFocusedNodeCantBeModified}} {{action "editNode" target=view}}>
 			<i class="icon-pencil"></i>
 		</button>
 
