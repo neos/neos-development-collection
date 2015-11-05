@@ -14,7 +14,7 @@
 	</div>
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
-		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" label="Media" action="_beforeMediaBrowserIsShown" target=view}}
+		{{view view.SecondaryInspectorButton viewClass=view._mediaBrowserView label="Media" action="_beforeMediaBrowserIsShown" target=view}}
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" disabled="{{if view._uploadInProgress 'neos-disabled'}}">
 			{{view._fileChooserLabel}}
 		</button>
@@ -22,16 +22,16 @@
 			{{view.removeButtonLabel}}
 		</button>
 		{{#if view.shouldRenderCrop}}
-			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
+			{{view view.SecondaryInspectorButton viewClass=view._cropView isVisible=view._uploadPreviewNotShown class="neos-inspector-image-crop-button" label=view.cropLabel}}
 		{{/if}}
 	</div>
 	{{#if view.shouldRenderResize}}
 	<div class="neos-inspector-image-width">
 		<label for={{view.imageWidthField.elementId}}>{{translate id='width' fallback='Width'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
-			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-width-check">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle" elementId="neos-inspector-image-width-check"}}</label></span>
+			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-width-check">{{view view.BooleanEditor checked=view._imageWidthToggle elementId="neos-inspector-image-width-check"}}</label></span>
 			<span>
-				{{view Ember.TextField viewName="imageWidthField" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageDimensions.width"}}
+				{{view Ember.TextField viewName="imageWidthField" type="number" pattern="\d*" step="1" min="0" name="width" value=view._finalImageDimensions.width}}
 			</span>
 			<span class="neos-add-on">px</span>
 		</div>
@@ -39,9 +39,9 @@
 	<div class="neos-inspector-image-height">
 		<label for={{view.imageHeightField.elementId}}>{{translate id='height' fallback='Height'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
-			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle" elementId="neos-inspector-image-height-check"}}</span>
+			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checked=view._imageHeightToggle elementId="neos-inspector-image-height-check"}}</span>
 			<span>
-				{{view Ember.TextField viewName="imageHeightField" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageDimensions.computedHeight"}}
+				{{view Ember.TextField viewName="imageHeightField" type="number" pattern="\d*" step="1" min="0" name="height" value=view._finalImageDimensions.computedHeight}}
 			</span>
 			<span class="neos-add-on">px</span>
 		</div>

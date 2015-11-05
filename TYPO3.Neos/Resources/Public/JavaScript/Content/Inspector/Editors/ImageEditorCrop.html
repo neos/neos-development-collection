@@ -9,11 +9,11 @@
 		{{/if}}
 	</span>
 	{{#unless view.aspectRatioLocked}}
-		{{view Ember.Select contentBinding="view.aspectRatioOptions" optionLabelPath="content.label" optionValuePath="content.key" valueBinding="view.selection"}}
+		{{view Ember.Select content=view.aspectRatioOptions optionLabelPath="content.label" optionValuePath="content.key" value=view.selection}}
 		{{#if view.aspectRatioAllowCustom}}
-			{{input valueBinding="view.aspectRatioWidth" type="number"}}
+			{{input value=view.aspectRatioWidth type="number"}}
 			<button {{action "exchangeAspectRatio" target=view}}><i class="icon-exchange"></i></button>
-			{{input valueBinding="view.aspectRatioHeight" type="number"}}
+			{{input value=view.aspectRatioHeight type="number"}}
 		{{else}}
 			<input value={{view.aspectRatioWidth}} type="number" readonly="readonly" />
 			<input value={{view.aspectRatioHeight}} type="number" readonly="readonly" />
