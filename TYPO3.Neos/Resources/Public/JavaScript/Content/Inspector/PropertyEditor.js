@@ -13,7 +13,7 @@ define(
 	Configuration,
 	Notification
 ) {
-	return Ember.ContainerView.extend(Ember.MutableArray, {
+	return Ember.ContainerView.extend({
 		propertyDefinition: null,
 		value: null,
 		isModified: false,
