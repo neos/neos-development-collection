@@ -6,15 +6,15 @@
 	</span>
 </div>
 <ul>
-	{{#each view.nodes as |node|}}
-		{{#if _view.contentIndex}}
-			<li>
-				<a href="#" {{action "selectNode" node bubbles=false target=view.nodeSelection}}>
-				<i class="{{if node.nodeTypeSchema.ui.icon '' 'icon-sign-blank' }} {{node.nodeTypeSchema.ui.icon}}"></i>
-				{{translate fallback=node.nodeTypeLabel id=node.nodeTypeLabel}}
-				{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}
-				</a>
-			</li>
-		{{/if}}
+	{{#each view.nodes as |node index|}}
+	{{#if index}}
+	<li>
+		<a href="#" {{action "selectNode" node bubbles=false target=view.nodeSelection}}>
+		<i class="{{if node.nodeTypeSchema.ui.icon '' 'icon-sign-blank' }} {{node.nodeTypeSchema.ui.icon}}"></i>
+		{{translate fallback=node.nodeTypeLabel id=node.nodeTypeLabel}}
+		{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}
+		</a>
+	</li>
+	{{/if}}
 	{{/each}}
 </ul>
