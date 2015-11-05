@@ -13,7 +13,7 @@
 		{{view view.Breadcrumb}}
 	</div>
 	{{#each groupedViews as |tab|}}
-		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
+		<div class="{{if tab.isActive 'is-visible'}} neos-inspector-tab-content">
 			{{#each tab.groups as |group|}}
 				{{#view view.Section classNames="neos-inspector-section" group=group groupName=group.group properties=group.properties views´=group.views inspector=controller}}
 					<div class="neos-inspector-headline {{if view._hasValidationErrors 'neos-validation-error'}}">
