@@ -39,7 +39,7 @@
 	<div class="neos-inspector-image-height">
 		<label for={{view.imageHeightField.elementId}}>{{translate id='height' fallback='Height'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
-			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checked=view._imageHeightToggle elementId="neos-inspector-image-height-check"}}</span>
+			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checked=view._imageHeightToggle elementId="neos-inspector-image-height-check"}}</label></span>
 			<span>
 				{{view Ember.TextField viewName="imageHeightField" type="number" pattern="\d*" step="1" min="0" name="height" value=view._finalImageDimensions.computedHeight}}
 			</span>
