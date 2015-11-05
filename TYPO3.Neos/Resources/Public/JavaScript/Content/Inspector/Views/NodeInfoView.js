@@ -11,7 +11,7 @@ function(
 	Ember.HTMLBars.helpers.registerHelper('formatDate', function(value) {
 		// Fallback if the value is undefined,
 		// since the Date Object requires a string/Datetime-Object as the first parameter.
-		if (value) {
+		if (typeof value === 'undefined') {
 			return new Date(value).toISOString().slice(0, 16).replace('T', ' ');
 		} else {
 			return '';
