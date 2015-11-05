@@ -34,7 +34,7 @@ define([
 			return groupedContent;
 		}).property('optionGroupPath', 'content.[]'),
 
-		groupView: Ember.CollectionView.extend({
+		groupView: Ember.ContainerView.extend({
 			childViews: ['view'],
 			init: function() {
 				if (this.get('content')) {
