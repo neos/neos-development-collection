@@ -411,7 +411,8 @@ define(
 
 			didInsertElement: function() {
 				var that = this;
-				$(document).ready(function() {
+				// TODO This fixes the deprecation warnings for property modification in a hook but we should calculate the active node before inserting the element (somehow)
+				Ember.run.next(that, function() {
 					that._initializeTree();
 				});
 			},

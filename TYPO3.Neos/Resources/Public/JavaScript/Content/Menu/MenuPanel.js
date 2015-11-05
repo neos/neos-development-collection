@@ -36,15 +36,22 @@ define(
 				// bound in handlebar
 				group: undefined,
 
-				didInsertElement: function() {
+				init: function() {
+					this._super();
+
 					var menuGroup = this.get('group'),
 						collapsed = this.get('controller.configuration.' + menuGroup);
 
 					if (typeof menuGroup !== 'undefined') {
 						if (collapsed) {
-							this.$().next().hide();
 							this.set('_collapsed', true);
 						}
+					}
+				},
+
+				didInsertElement: function() {
+					if (this.get('_collapsed')) {
+						this.$().next().hide();
 					}
 				},
 

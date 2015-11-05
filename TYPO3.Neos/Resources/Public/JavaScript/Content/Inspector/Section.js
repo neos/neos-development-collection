@@ -31,21 +31,29 @@ define(
 		_nodeType: '',
 		_automaticallyCollapsed: false,
 
-		didInsertElement: function() {
-			var that = this,
-				selectedNode = NodeSelection.get('selectedNode'),
+		init: function() {
+			this._super();
+
+			var selectedNode = NodeSelection.get('selectedNode'),
 				nodeType = (selectedNode.$element ? selectedNode.$element.attr('typeof').replace(/\./g,'_') : 'ALOHA'),
-				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('groupName')),
-				properties = this.get('properties') || [];
+				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('groupName'));
 
 			this.set('_nodeType', nodeType);
 			if (collapsed === undefined) {
 				collapsed = this.get('group.collapsed');
 			}
 			if (collapsed) {
-				this.$().find('.neos-inspector-field,.neos-inspector-view').hide();
 				this.set('_collapsed', true);
 				this.set('_automaticallyCollapsed', true);
+			}
+		},
+
+		didInsertElement: function() {
+			var that = this,
+				properties = this.get('properties') || [];
+
+			if (this.get('_collapsed')) {
+				this.$().find('.neos-inspector-field,.neos-inspector-view').hide();
 			}
 			properties.forEach(function(property) {
 				that.get('inspector.validationErrors').addObserver(property.key, that, '_validationErrorsDidChange');
