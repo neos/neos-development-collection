@@ -109,9 +109,9 @@ define(
 				});
 			}, function(err) {
 				if (window.console && window.console.error) {
-					window.console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '". The editor "' + editor + '" not found! Please check your configuration.');
+					window.console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '" Message: ' + err.message);
 				}
-				Notification.error('Error loading inspector: ' + propertyDefinition.key, err.message);
+				Notification.error('Error loading inspector', 'Inspector editor for property "' + propertyDefinition.key + '" could not be loaded. See console for further details.');
 			});
 		},
 
