@@ -15,8 +15,8 @@
 	{{#each groupedViews as |tab|}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each tab.groups as |group|}}
-			{{#view view.Section classNames="neos-inspector-section" group=group groupName=group.group properties=group.properties views´=group.views inspector=controller}}
-			<div class="neos-inspector-headline {{if view._hasValidationErrors 'neos-validation-error'}}">
+				{{#view view.Section classNames="neos-inspector-section" group=group groupName=group.group properties=group.properties views´=group.views inspector=controller}}
+					<div class="neos-inspector-headline {{if view._hasValidationErrors 'neos-validation-error'}}">
 						<span>{{unbound group.label}}</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
 						<div class="neos-inspector-collapse {{if view._collapsed 'neos-collapsed' 'neos-open'}}" {{action "toggleCollapsed" target=view}}></div>

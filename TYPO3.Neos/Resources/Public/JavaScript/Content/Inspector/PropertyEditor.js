@@ -13,7 +13,7 @@ define(
 	Configuration,
 	Notification
 ) {
-	return Ember.View.extend(Ember.MutableArray, {
+	return Ember.ContainerView.extend(Ember.MutableArray, {
 		propertyDefinition: null,
 		value: null,
 		isModified: false,
@@ -23,7 +23,6 @@ define(
 
 		// a reference to the InspectorController (set from the outside in the Handlebars template)
 		inspector: null,
-
 
 		_valueDidChange: function() {
 			if (this.get('inspector').isPropertyModified(this.get('propertyDefinition.key')) === true) {
