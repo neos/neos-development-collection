@@ -187,8 +187,12 @@ define([
 			}
 		},
 
+		willDestroyElement: function() {
+			this._removeSelect2();
+		},
+
 		_initializeSelect2: function() {
-			this.$().select2('destroy').select2({
+			this.$().select2({
 				maximumSelectionSize: this.get('multiple') ? 0 : 1,
 				minimumResultsForSearch: this.get('minimumResultsForSearch'),
 				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
@@ -225,8 +229,17 @@ define([
 			});
 		},
 
+		_removeSelect2: function() {
+			var $element = this.$();
+			if ($element) {
+				$element.off('select2-open').off('select2-close');
+				$element.select2('destroy');
+			}
+		},
+
 		_placeholderDidChange: function() {
 			if (this.$()) {
+				this._removeSelect2();
 				this._initializeSelect2();
 			}
 		}.observes('_placeholder'),
