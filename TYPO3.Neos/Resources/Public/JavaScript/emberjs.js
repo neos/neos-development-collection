@@ -1,8 +1,3 @@
-EmberENV = {
-	_ENABLE_LEGACY_VIEW_SUPPORT: true,
-	_ENABLE_LEGACY_CONTROLLER_SUPPORT: true
-};
-
 define(['Library/ember'], function(Ember) {
 
 	// We overwrite default Ember.Logger behavior so we can mute logging if needed.

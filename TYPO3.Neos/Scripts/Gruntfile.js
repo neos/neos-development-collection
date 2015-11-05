@@ -235,7 +235,7 @@ module.exports = function (grunt) {
 					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
 					'  CLDR.defaultLocale = window.T3Configuration.locale;' + // TODO: make configurable, as this is only used for plurals this is not highest prio (same behavior in cldr for most languages)
 					'  var Ember = {exports: {}};' +
-					'  var ENV = {LOG_VERSION: false};' +
+					'  var EmberENV = {LOG_VERSION: false, _ENABLE_LEGACY_VIEW_SUPPORT: true, _ENABLE_LEGACY_CONTROLLER_SUPPORT: true};' +
 					'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
 						// TODO: window.T3 can be removed!
 					'  Ember.lookup = { Ember: Ember, T3: window.T3};' +

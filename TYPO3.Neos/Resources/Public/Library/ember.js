@@ -1,4 +1,4 @@
-define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {  CLDR.defaultLocale = window.T3Configuration.locale;  var Ember = {exports: {}};  var ENV = {LOG_VERSION: false};  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};  Ember.lookup = { Ember: Ember, T3: window.T3};  window.Ember = Ember;/*!
+define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {  CLDR.defaultLocale = window.T3Configuration.locale;  var Ember = {exports: {}};  var EmberENV = {LOG_VERSION: false, _ENABLE_LEGACY_VIEW_SUPPORT: true, _ENABLE_LEGACY_CONTROLLER_SUPPORT: true};  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};  Ember.lookup = { Ember: Ember, T3: window.T3};  window.Ember = Ember;/*!
  * @overview  Ember - JavaScript Application Framework
  * @copyright Copyright 2011-2015 Tilde Inc. and contributors
  *            Portions Copyright 2006-2011 Strobe Inc.
