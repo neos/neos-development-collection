@@ -38,14 +38,14 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
             $message = sprintf(
                 '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Exception while rendering</div><div class="neos-typoscript-path"><div>%s:</div></div> <div class="neos-exception-message">%s (%s)</div></div>',
                 $this->formatScriptPath($typoScriptPath, '<br/></div><div style="padding-left: 2em">'),
-                $exception->getMessage(),
+                htmlspecialchars($exception->getMessage()),
                 $referenceCode
             );
         } else {
             $message = sprintf(
                 '<div class="neos-rendering-exception">Exception while rendering <div class="neos-typoscript-path"><div>%s:</div></div> <div class="neos-exception-message">%s</div></div>',
                 $this->formatScriptPath($typoScriptPath, '<br/></div><div style="padding-left: 2em">'),
-                $exception->getMessage()
+                htmlspecialchars($exception->getMessage())
             );
         }
         $this->systemLogger->logException($exception);

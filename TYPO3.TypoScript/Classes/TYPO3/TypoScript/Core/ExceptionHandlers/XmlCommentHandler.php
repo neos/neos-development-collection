@@ -39,14 +39,14 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
             return sprintf(
                 '<!-- Exception while rendering %s: %s (%s) -->',
                 $this->formatScriptPath($typoScriptPath, ''),
-                $exception->getMessage(),
+                htmlspecialchars($exception->getMessage()),
                 $referenceCode
             );
         } else {
             return sprintf(
                 '<!-- Exception while rendering %s: %s -->',
                 $this->formatScriptPath($typoScriptPath, ''),
-                $exception->getMessage()
+                htmlspecialchars($exception->getMessage())
             );
         }
     }
