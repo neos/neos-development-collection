@@ -43,7 +43,7 @@ class HistoryController extends AbstractModuleController
         $events = $this->eventRepository->findRelevantEvents($offset, $limit + 1)->toArray();
 
         if (count($events) == $limit + 1) {
-            $events = array_slice($events, 0, 10);
+            $events = array_slice($events, 0, $limit);
 
             $nextPage = $this
                 ->controllerContext
