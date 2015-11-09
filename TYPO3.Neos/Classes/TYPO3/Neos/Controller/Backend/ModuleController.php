@@ -77,7 +77,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
         if ($moduleResponse->hasHeader('Location')) {
-            $this->redirectToUri($moduleResponse->getHeader('Location'));
+            $this->redirectToUri($moduleResponse->getHeader('Location'), 0, $moduleResponse->getStatusCode());
         } else {
             $user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
