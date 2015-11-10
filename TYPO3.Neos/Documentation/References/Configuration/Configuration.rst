@@ -1,5 +1,8 @@
 .. _`Configuration Reference`:
 
+.. note::
+  This is a documentation stub.
+
 Configuration Reference
 ========================
 
