@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Service\DataSource;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 
@@ -18,39 +18,40 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
  *
  * @api
  */
-abstract class AbstractDataSource implements DataSourceInterface {
+abstract class AbstractDataSource implements DataSourceInterface
+{
+    /**
+     * The identifier of the operation
+     *
+     * @var string
+     * @api
+     */
+    protected static $identifier = null;
 
-	/**
-	 * The identifier of the operation
-	 *
-	 * @var string
-	 * @api
-	 */
-	static protected $identifier = NULL;
+    /**
+     * @return string the short name of the operation
+     * @api
+     * @throws \TYPO3\Neos\Exception
+     */
+    public static function getIdentifier()
+    {
+        if (!is_string(static::$identifier)) {
+            throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
+        }
+        return static::$identifier;
+    }
 
-	/**
-	 * @return string the short name of the operation
-	 * @api
-	 * @throws \TYPO3\Neos\Exception
-	 */
-	static public function getIdentifier() {
-		if (!is_string(static::$identifier)) {
-			throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
-		}
-		return static::$identifier;
-	}
+    /**
+     * @var ControllerContext
+     */
+    protected $controllerContext;
 
-	/**
-	 * @var ControllerContext
-	 */
-	protected $controllerContext;
-
-	/**
-	 * @param ControllerContext $controllerContext
-	 * @return void
-	 */
-	public function setControllerContext(ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
-	}
-
+    /**
+     * @param ControllerContext $controllerContext
+     * @return void
+     */
+    public function setControllerContext(ControllerContext $controllerContext)
+    {
+        $this->controllerContext = $controllerContext;
+    }
 }

@@ -1,97 +1,100 @@
 <?php
 namespace TYPO3\TYPO3CR\Migration\Filters;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Filter nodes by node type.
  */
-class NodeType implements FilterInterface {
+class NodeType implements FilterInterface
+{
+    /**
+     * The node type to match on.
+     *
+     * @var string
+     */
+    protected $nodeTypeName;
 
-	/**
-	 * The node type to match on.
-	 *
-	 * @var string
-	 */
-	protected $nodeTypeName;
+    /**
+     * If set to true also all subtypes of the given nodeType will match.
+     *
+     * @var boolean
+     */
+    protected $withSubTypes = false;
 
-	/**
-	 * If set to true also all subtypes of the given nodeType will match.
-	 *
-	 * @var boolean
-	 */
-	protected $withSubTypes = FALSE;
+    /**
+     * If set this NodeType is actually excluded instead exclusively included.
+     *
+     * @var boolean
+     */
+    protected $exclude = false;
 
-	/**
-	 * If set this NodeType is actually excluded instead exclusively included.
-	 *
-	 * @var boolean
-	 */
-	protected $exclude = FALSE;
+    /**
+     * Sets the node type name to match on.
+     *
+     * @param string $nodeTypeName
+     * @return void
+     */
+    public function setNodeType($nodeTypeName)
+    {
+        $this->nodeTypeName = $nodeTypeName;
+    }
 
-	/**
-	 * Sets the node type name to match on.
-	 *
-	 * @param string $nodeTypeName
-	 * @return void
-	 */
-	public function setNodeType($nodeTypeName) {
-		$this->nodeTypeName = $nodeTypeName;
-	}
+    /**
+     * Whether the filter should match also on all subtypes of the configured
+     * node type.
+     *
+     * Note: This can only be used with node types still available in the
+     * system!
+     *
+     * @param boolean $withSubTypes
+     * @return void
+     */
+    public function setWithSubTypes($withSubTypes)
+    {
+        $this->withSubTypes = $withSubTypes;
+    }
 
-	/**
-	 * Whether the filter should match also on all subtypes of the configured
-	 * node type.
-	 *
-	 * Note: This can only be used with node types still available in the
-	 * system!
-	 *
-	 * @param boolean $withSubTypes
-	 * @return void
-	 */
-	public function setWithSubTypes($withSubTypes) {
-		$this->withSubTypes = $withSubTypes;
-	}
+    /**
+     * Wether the filter should exclude the given NodeType instead of including only this node type.
+     *
+     * @param boolean $exclude
+     */
+    public function setExclude($exclude)
+    {
+        $this->exclude = $exclude;
+    }
 
-	/**
-	 * Wether the filter should exclude the given NodeType instead of including only this node type.
-	 *
-	 * @param boolean $exclude
-	 */
-	public function setExclude($exclude) {
-		$this->exclude = $exclude;
-	}
+    /**
+     * Returns TRUE if the given node is of the node type this filter expects.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        if ($this->withSubTypes === true) {
+            $nodeIsMatchingNodeType = $node->getNodeType()->isOfType($this->nodeTypeName);
+        } else {
+            // This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
+            $nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', true);
+            $nodeIsMatchingNodeType = $nodeType === $this->nodeTypeName;
+        }
 
-	/**
-	 * Returns TRUE if the given node is of the node type this filter expects.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		if ($this->withSubTypes === TRUE) {
-			$nodeIsMatchingNodeType = $node->getNodeType()->isOfType($this->nodeTypeName);
-		} else {
-			// This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
-			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', TRUE);
-			$nodeIsMatchingNodeType = $nodeType === $this->nodeTypeName;
-		}
+        if ($this->exclude === true) {
+            return !$nodeIsMatchingNodeType;
+        }
 
-		if ($this->exclude === TRUE) {
-			return !$nodeIsMatchingNodeType;
-		}
-
-		return $nodeIsMatchingNodeType;
-	}
-
+        return $nodeIsMatchingNodeType;
+    }
 }

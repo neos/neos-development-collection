@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\Domain\Session;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -18,37 +18,39 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("session")
  */
-class BrowserState {
+class BrowserState
+{
+    /**
+     * @var array
+     */
+    protected $data = array(
+        'activeTag' => null,
+        'view' => 'Thumbnail',
+        'sort' => 'Modified',
+        'filter' => 'All'
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $data = array(
-		'activeTag' => NULL,
-		'view' => 'Thumbnail',
-		'sort' => 'Modified',
-		'filter' => 'All'
-	);
+    /**
+     * Set a $value for $key
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     * @Flow\Session(autoStart = TRUE)
+     */
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
 
-	/**
-	 * Set a $value for $key
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 * @Flow\Session(autoStart = TRUE)
-	 */
-	public function set($key, $value) {
-		$this->data[$key] = $value;
-	}
-
-	/**
-	 * Return a value for $key.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
-	}
+    /**
+     * Return a value for $key.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : null;
+    }
 }

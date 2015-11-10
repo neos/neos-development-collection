@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\ContentElement;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -36,38 +36,39 @@ use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
  * </neos:contentElement.wrap>
  * </code>
  */
-class WrapViewHelper extends AbstractViewHelper {
+class WrapViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * @Flow\Inject
+     * @var ContentElementWrappingService
+     */
+    protected $contentElementWrappingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var ContentElementWrappingService
-	 */
-	protected $contentElementWrappingService;
+    /**
+     * In live workspace this just renders a the content.
+     * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
+     *
+     * @param NodeInterface $node The node of the content element. Optional, will be resolved from the TypoScript context by default.
+     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
+     * @throws ViewHelperException
+     */
+    public function render(NodeInterface $node = null)
+    {
+        $view = $this->viewHelperVariableContainer->getView();
+        if (!$view instanceof TypoScriptAwareViewInterface) {
+            throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
+        }
+        $typoScriptObject = $view->getTypoScriptObject();
+        $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 
-	/**
-	 * In live workspace this just renders a the content.
-	 * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
-	 *
-	 * @param NodeInterface $node The node of the content element. Optional, will be resolved from the TypoScript context by default.
-	 * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
-	 * @throws ViewHelperException
-	 */
-	public function render(NodeInterface $node = NULL) {
-		$view = $this->viewHelperVariableContainer->getView();
-		if (!$view instanceof TypoScriptAwareViewInterface) {
-			throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
-		}
-		$typoScriptObject = $view->getTypoScriptObject();
-		$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-
-		if ($node === NULL) {
-			$node = $currentContext['node'];
-		}
-		return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptObject->getPath(), $this->renderChildren());
-	}
+        if ($node === null) {
+            $node = $currentContext['node'];
+        }
+        return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptObject->getPath(), $this->renderChildren());
+    }
 }

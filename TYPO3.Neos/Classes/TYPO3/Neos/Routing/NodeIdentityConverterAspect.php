@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Routing;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -24,21 +24,22 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class NodeIdentityConverterAspect {
-
-	/**
-	 * Convert the object to its context path, if we deal with TYPO3CR nodes.
-	 *
-	 * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
-	 * @return string|array the context path to be used for routing
-	 */
-	public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		$objectArgument = $joinPoint->getMethodArgument('object');
-		if ($objectArgument instanceof NodeInterface) {
-			return $objectArgument->getContextPath();
-		} else {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		}
-	}
+class NodeIdentityConverterAspect
+{
+    /**
+     * Convert the object to its context path, if we deal with TYPO3CR nodes.
+     *
+     * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
+     * @return string|array the context path to be used for routing
+     */
+    public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $objectArgument = $joinPoint->getMethodArgument('object');
+        if ($objectArgument instanceof NodeInterface) {
+            return $objectArgument->getContextPath();
+        } else {
+            return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        }
+    }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Core;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
@@ -27,39 +27,40 @@ use TYPO3\Flow\Utility\Arrays;
  * @Flow\Scope("singleton")
  * @api
  */
-class RuntimeFactory {
+class RuntimeFactory
+{
+    /**
+     * @param array $typoScriptConfiguration
+     * @param ControllerContext $controllerContext
+     * @return Runtime
+     */
+    public function create($typoScriptConfiguration, ControllerContext $controllerContext = null)
+    {
+        if ($controllerContext === null) {
+            $controllerContext = $this->createControllerContextFromEnvironment();
+        }
 
-	/**
-	 * @param array $typoScriptConfiguration
-	 * @param ControllerContext $controllerContext
-	 * @return Runtime
-	 */
-	public function create($typoScriptConfiguration, ControllerContext $controllerContext = NULL) {
-		if ($controllerContext === NULL) {
-			$controllerContext = $this->createControllerContextFromEnvironment();
-		}
+        return new Runtime($typoScriptConfiguration, $controllerContext);
+    }
 
-		return new Runtime($typoScriptConfiguration, $controllerContext);
-	}
+    /**
+     * @return ControllerContext
+     */
+    protected function createControllerContextFromEnvironment()
+    {
+        $httpRequest = Request::createFromEnvironment();
 
-	/**
-	 * @return ControllerContext
-	 */
-	protected function createControllerContextFromEnvironment() {
-		$httpRequest = Request::createFromEnvironment();
+        /** @var ActionRequest $request */
+        $request = $httpRequest->createActionRequest();
 
-		/** @var ActionRequest $request */
-		$request = $httpRequest->createActionRequest();
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($request);
 
-		$uriBuilder = new UriBuilder();
-		$uriBuilder->setRequest($request);
-
-		return new \TYPO3\Flow\Mvc\Controller\ControllerContext(
-			$request,
-			new Response(),
-			new Arguments(array()),
-			$uriBuilder
-		);
-	}
-
+        return new \TYPO3\Flow\Mvc\Controller\ControllerContext(
+            $request,
+            new Response(),
+            new Arguments(array()),
+            $uriBuilder
+        );
+    }
 }

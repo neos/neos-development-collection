@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\View\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\JsonView;
@@ -22,38 +22,38 @@ use TYPO3\Media\Domain\Model\AssetInterface;
  *
  * @Flow\Scope("prototype")
  */
-class AssetJsonView extends JsonView {
+class AssetJsonView extends JsonView
+{
+    /**
+     * Configures rendering according to the set variable(s) and calls
+     * render on the parent.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if (isset($this->variables['assets'])) {
+            $this->setConfiguration(
+                array(
+                    'assets' => array(
+                        '_descendAll' => array(
+                            '_only' => array('label', 'tags', 'identifier')
+                        )
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('assets'));
+        } else {
+            $this->setConfiguration(
+                array(
+                    'asset' => array(
+                        '_only' => array('label', 'tags', 'identifier')
+                    )
+                )
+            );
+            $this->setVariablesToRender(array('asset'));
+        }
 
-	/**
-	 * Configures rendering according to the set variable(s) and calls
-	 * render on the parent.
-	 *
-	 * @return string
-	 */
-	public function render() {
-		if (isset($this->variables['assets'])) {
-			$this->setConfiguration(
-				array(
-					'assets' => array(
-						'_descendAll' => array(
-							'_only' => array('label', 'tags', 'identifier')
-						)
-					)
-				)
-			);
-			$this->setVariablesToRender(array('assets'));
-		} else {
-			$this->setConfiguration(
-				array(
-					'asset' => array(
-						'_only' => array('label', 'tags', 'identifier')
-					)
-				)
-			);
-			$this->setVariablesToRender(array('asset'));
-		}
-
-		return parent::render();
-	}
-
+        return parent::render();
+    }
 }

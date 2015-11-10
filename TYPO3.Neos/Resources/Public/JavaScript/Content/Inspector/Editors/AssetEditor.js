@@ -45,7 +45,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._readAndDeserializeValue();
 
 			if (!this.get('loadingLabel')) {
-				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading'));
+				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			}
 		},
 

@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-08-11
+This reference was automatically generated from code on 2015-10-10
 
 
 .. _`Media ViewHelper Reference: typo3.media:form.checkbox`:
@@ -138,9 +138,13 @@ Arguments
 
 * ``image`` (TYPO3\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
 
-* ``maximumWidth`` (integer, *optional*): Desired maximum height of the image
+* ``width`` (integer, *optional*): Desired width of the image
 
-* ``maximumHeight`` (integer, *optional*): Desired maximum width of the image
+* ``maximumWidth`` (integer, *optional*): Desired maximum width of the image
+
+* ``height`` (integer, *optional*): Desired height of the image
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum height of the image
 
 * ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
 
@@ -252,9 +256,13 @@ Arguments
 
 * ``image`` (TYPO3\Media\Domain\Model\ImageInterface, *optional*)
 
-* ``maximumWidth`` (integer, *optional*): Desired maximum height of the image
+* ``width`` (integer, *optional*): Desired width of the image
 
-* ``maximumHeight`` (integer, *optional*): Desired maximum width of the image
+* ``maximumWidth`` (integer, *optional*): Desired maximum width of the image
+
+* ``height`` (integer, *optional*): Desired height of the image
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum height of the image
 
 * ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
 

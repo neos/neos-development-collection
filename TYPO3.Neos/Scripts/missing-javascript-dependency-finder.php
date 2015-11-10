@@ -54,32 +54,32 @@ json_decode('["emberjs","jquery-ui","emberjs/dictionary-object","aloha","neos/co
 
 $allBuiltClauses = array();
 foreach ($successfulRuns as $runIndex => $successfulRun) {
-	for ($i = 0; $i < count($successfulRun); $i++) {
-		for ($a = $i+1; $a < count($successfulRun); $a++) {
-			$allBuiltClauses[] = $successfulRun[$i] . ' -> ' . $successfulRun[$a];
-		}
-	}
+    for ($i = 0; $i < count($successfulRun); $i++) {
+        for ($a = $i+1; $a < count($successfulRun); $a++) {
+            $allBuiltClauses[] = $successfulRun[$i] . ' -> ' . $successfulRun[$a];
+        }
+    }
 }
 
 $clausesForErrorRuns = array();
 foreach ($errorRuns as $index => $errorRun) {
-	$clausesForErrorRuns[$index] = array();
-	for ($i = 0; $i < count($errorRun); $i++) {
-		for ($a = $i+1; $a < count($errorRun); $a++) {
-			$clausesForErrorRuns[$index][] = $errorRun[$i] . ' -> ' . $errorRun[$a];
-		}
-	}
+    $clausesForErrorRuns[$index] = array();
+    for ($i = 0; $i < count($errorRun); $i++) {
+        for ($a = $i+1; $a < count($errorRun); $a++) {
+            $clausesForErrorRuns[$index][] = $errorRun[$i] . ' -> ' . $errorRun[$a];
+        }
+    }
 }
 
 
 $possibleErrorClauses = array();
 
 foreach ($clausesForErrorRuns as $index => $errorRunClauses) {
-	foreach ($errorRunClauses as $errorRunClause) {
-		if (!in_array($errorRunClause, $allBuiltClauses)) {
-			$possibleErrorClauses[] = $errorRunClause;
-		}
-	}
+    foreach ($errorRunClauses as $errorRunClause) {
+        if (!in_array($errorRunClause, $allBuiltClauses)) {
+            $possibleErrorClauses[] = $errorRunClause;
+        }
+    }
 };
 printf('----------------
 

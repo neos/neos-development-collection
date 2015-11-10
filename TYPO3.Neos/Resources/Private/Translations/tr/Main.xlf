@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="tr">
     <body>
@@ -459,6 +459,10 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="tr" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="tr" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
     </body>
   </file>
 </xliff>

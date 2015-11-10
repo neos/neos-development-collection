@@ -1,76 +1,80 @@
 <?php
 namespace TYPO3\TYPO3CR\Migration\Transformations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Rename a given property.
  */
-class RenameProperty extends AbstractTransformation {
+class RenameProperty extends AbstractTransformation
+{
+    /**
+     * Property name to change
+     *
+     * @var string
+     */
+    protected $oldPropertyName;
 
-	/**
-	 * Property name to change
-	 *
-	 * @var string
-	 */
-	protected $oldPropertyName;
+    /**
+     * New name of property
+     *
+     * @var string
+     */
+    protected $newPropertyName;
 
-	/**
-	 * New name of property
-	 *
-	 * @var string
-	 */
-	protected $newPropertyName;
+    /**
+     * Sets the name of the property to change.
+     *
+     * @param string $oldPropertyName
+     * @return void
+     */
+    public function setFrom($oldPropertyName)
+    {
+        $this->oldPropertyName = $oldPropertyName;
+    }
 
-	/**
-	 * Sets the name of the property to change.
-	 *
-	 * @param string $oldPropertyName
-	 * @return void
-	 */
-	public function setFrom($oldPropertyName) {
-		$this->oldPropertyName = $oldPropertyName;
-	}
+    /**
+     * Sets the new name for the property to change.
+     *
+     * @param string $newPropertyName
+     * @return void
+     */
+    public function setTo($newPropertyName)
+    {
+        $this->newPropertyName = $newPropertyName;
+    }
 
-	/**
-	 * Sets the new name for the property to change.
-	 *
-	 * @param string $newPropertyName
-	 * @return void
-	 */
-	public function setTo($newPropertyName) {
-		$this->newPropertyName = $newPropertyName;
-	}
+    /**
+     * Returns TRUE if the given node has a property with the name to work on
+     * and does not yet have a property with the name to rename that property to.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return boolean
+     */
+    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
+    }
 
-	/**
-	 * Returns TRUE if the given node has a property with the name to work on
-	 * and does not yet have a property with the name to rename that property to.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return boolean
-	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
-	}
-
-	/**
-	 * Renames the configured property to the new name.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-	 * @return void
-	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
-		$node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
-		$node->removeProperty($this->oldPropertyName);
-	}
+    /**
+     * Renames the configured property to the new name.
+     *
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @return void
+     */
+    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    {
+        $node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
+        $node->removeProperty($this->oldPropertyName);
+    }
 }

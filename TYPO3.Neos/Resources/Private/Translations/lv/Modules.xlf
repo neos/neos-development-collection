@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
@@ -38,7 +38,7 @@
 			<target xml:lang="lv">Publicēt iezīmētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="lv">Atcelt visas izmaiņas</target></trans-unit>
+			<target xml:lang="lv">Atcelt visas izmaiņas</target><alt-trans><target xml:lang="lv">Atmest visas izmaiņas</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="lv">Publicēt visas izmaiņas</target></trans-unit>
@@ -144,7 +144,7 @@
 			<target xml:lang="lv">Rediģēt kontu</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="lv">Jaunā elektroniskā adrese</target></trans-unit>
+			<target xml:lang="lv">Jaunā elektroniskā adrese</target><alt-trans><target xml:lang="lv">Jauna elektroniskā adrese</target></alt-trans></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target xml:lang="lv">Izmantot sistēmas noklusējumu</target></trans-unit>
@@ -168,7 +168,7 @@
 			<target xml:lang="lv">Atkārtot paroli</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
-			<target xml:lang="lv">Loma (s)</target></trans-unit>
+			<target xml:lang="lv">Loma (s)</target><alt-trans><target xml:lang="lv">Loma(s)</target></alt-trans></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="lv">Lietotāja informācija</target></trans-unit>
@@ -183,7 +183,7 @@
 			<target xml:lang="lv">Lietotāja uzstādījumi</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target xml:lang="lv">Vadības valoda</target></trans-unit>
+			<target xml:lang="lv">Vadības valoda</target><alt-trans><target xml:lang="lv">Saskarnes valoda</target></alt-trans></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target xml:lang="lv">Izveidot lietotāju</target></trans-unit>
@@ -234,10 +234,10 @@
 			<target xml:lang="lv">Rediģēt lietotāju</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="lv">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target><alt-trans><target xml:lang="lv">Jūs nevarat izdzēst savus ievadītos datus.</target></alt-trans></trans-unit>
+			<target xml:lang="lv">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target><alt-trans><target xml:lang="lv">Jūs esat ienācis kā šis lietotājs un sevi izdzēst nevar.</target></alt-trans><alt-trans><target xml:lang="lv">Jūs nevarat izdzēst savus ievadītos datus.</target></alt-trans></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
-			<target xml:lang="lv">Uzklikšķiniet šeit lai izdzēstu šo lietotāju</target></trans-unit>
+			<target xml:lang="lv">Uzklikšķiniet šeit lai izdzēstu šo lietotāju</target><alt-trans><target xml:lang="lv">Uzklikšķiniet šeit, lai izdzēstu šo lietotāju</target></alt-trans></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target xml:lang="lv">Vai tiešām vēlaties dzēst lietotāju "{0}"?</target></trans-unit>
@@ -313,7 +313,7 @@
 			<target xml:lang="lv">Labot</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target xml:lang="lv">Jaunā elektroniskā adrese</target></trans-unit>
+			<target xml:lang="lv">Jaunā elektroniskā adrese</target><alt-trans><target xml:lang="lv">Jauna elektroniskā adrese</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target xml:lang="lv">Rediģēt kontu</target></trans-unit>
@@ -328,7 +328,7 @@
 			<target xml:lang="lv">Lietotāja uzstādījumi</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target xml:lang="lv">Vadības valoda</target></trans-unit>
+			<target xml:lang="lv">Vadības valoda</target><alt-trans><target xml:lang="lv">Saskarnes valoda</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target xml:lang="lv">Izmantot sistēmas noklusējumu</target></trans-unit>

@@ -18,7 +18,7 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 		class = 'normal'
 	}
 
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
 	@cache {
 		mode = 'cached'

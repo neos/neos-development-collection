@@ -1,0 +1,16 @@
+`2.0.3 (2015-10-20) <https://github.com/neos/neos-development-collection/releases/tag/2.0.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[BUGFIX] Output plugin content <https://github.com/neos/neos-development-collection/pull/152>`_
+------------------------------------------------------------------------------------------------
+
+Regression of `57025d40e65c6f43d528b317ab4c583b5a476f52 <https://github.com/neos/neos-development-collection/commit/57025d40e65c6f43d528b317ab4c583b5a476f52>`_ resulted in
+plugins not returning any output.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.2...2.0.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

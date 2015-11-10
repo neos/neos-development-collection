@@ -121,7 +121,7 @@ TYPO3:
           label: 'TYPO3.Neos:Main:nodeTypes.groups.plugins'
 
     userInterface:
-      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 
@@ -151,15 +151,18 @@ TYPO3:
         'da': 'Dansk – Danish'
         'de': 'Deutsch – German'
         'en': 'English – English'
-#        'es': 'Español – Spanish'
+        'es': 'Español – Spanish'
         'fi': 'Suomi – Finnish'
         'fr': 'Français – French'
-#        'km': 'ភាសាខ្មែរ – Khmer'
+        'km': 'ភាសាខ្មែរ – Khmer'
         'lv': 'Latviešu – Latvian'
         'nl': 'Nederlands – Dutch'
+        'no': 'Norsk bokmål – Norwegian Bokmål'
         'pl': 'Polski – Polish'
+        'pt-BR': 'Português (Brasil) – Portuguese (Brazil)'
         'ru': 'Pусский – Russian'
 #        'sv': 'Svenska – Swedish'
+        'zh-CN': '简体中文 – Chinese, Simplified'
 
       navigateComponent:
         nodeTree:
@@ -491,14 +494,14 @@ TYPO3:
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
           - 'TYPO3.Neos'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/CommandReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
     references:
 
       # View Helpers
       'Neos:FluidViewHelpers':
         title: 'Fluid ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
@@ -509,7 +512,7 @@ TYPO3:
               f: 'TYPO3\Fluid\ViewHelpers'
       'Neos:MediaViewHelpers':
         title: 'Media ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
@@ -520,7 +523,7 @@ TYPO3:
               'typo3.media': 'TYPO3\Media\ViewHelpers'
       'Neos:FormViewHelpers':
         title: 'Form ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
@@ -531,7 +534,7 @@ TYPO3:
               'typo3.form': 'TYPO3\Form\ViewHelpers'
       'Neos:NeosViewHelpers':
         title: 'Neos ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
@@ -543,7 +546,7 @@ TYPO3:
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:Typo3CrViewHelpers':
         title: 'Content Repository ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
@@ -557,7 +560,7 @@ TYPO3:
       # Validators
       'Neos:FlowValidators':
         title: 'Flow Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Flow.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Flow.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Flow\\Validation\\Validator\\.*$/i'
@@ -565,7 +568,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
       'Neos:PartyValidators':
         title: 'Party Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Party.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Party.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Party\\Validation\\Validator\\.*$/i'
@@ -573,7 +576,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
       'Neos:MediaValidators':
         title: 'Media Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Media.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Media.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
@@ -583,7 +586,7 @@ TYPO3:
       # Signals
       'Neos:FlowSignals':
         title: 'Flow Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Flow\\.*$/i'
@@ -592,7 +595,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
       'Neos:NeosSignals':
         title: 'Neos Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Neos.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Neos.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Neos\\.*$/i'
@@ -601,7 +604,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
       'Neos:Typo3CrSignals':
         title: 'Content Repository Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/TYPO3CR.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/TYPO3CR.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\TYPO3CR\\.*$/i'
@@ -612,7 +615,7 @@ TYPO3:
       # Flow Query
       'Neos:FlowQueryOperations':
         title: 'FlowQuery Operation Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\FlowQuery\OperationInterface'
         parser:
@@ -621,7 +624,7 @@ TYPO3:
       # EelHelpers
       'Neos:EelHelpers':
         title: 'Eel Helpers Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\ProtectedContextAwareInterface'
           classNamePattern: '/^.*Helper$/i'
