@@ -12,9 +12,8 @@ Node tree ``loadingDepth``
 If you have lots of nodes you should maybe reduce this number of elements inside ``Settings.yaml``::
 
   TYPO3:
-    Flow:
-      Neos:
+    Neos:
+      userInterface:
         navigateComponent:
-          userInterface:
-            nodeTree:
-              loadingDepth: 2
+          nodeTree:
+            loadingDepth: 2
