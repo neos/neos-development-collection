@@ -106,12 +106,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         try {
             $node = $this->convertRequestPathToNode($requestPath);
         } catch (Exception $exception) {
+            $this->systemLogger->log('FrontendNodeRoutePartHandler matchValue(): ' . $exception->getMessage(), LOG_DEBUG);
             if ($requestPath === '') {
                 throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
             }
-
-            $this->systemLogger->log('FrontendNodeRoutePartHandler matchValue(): ' . $exception->getMessage(), LOG_DEBUG);
-
             return false;
         }
         if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
@@ -154,7 +152,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $siteNode = $contentContext->getCurrentSiteNode();
         if ($siteNode === null) {
-            throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s"', $requestPath), 1346949728);
+            $currentDomain = $contentContext->getCurrentDomain() ? 'Domain with host pattern "' . $contentContext->getCurrentDomain()->getHostPattern() . '" matched.' : 'No specific domain matched.';
+            throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s". %s', $requestPath, $currentDomain), 1346949728);
         }
 
         if ($requestPathWithoutContext === '') {

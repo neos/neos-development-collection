@@ -147,7 +147,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 Use custom DataSources for a selectbox element
 ==============================================
 
-To add custom selectbox-options Neos uses :ref:`data-sources` for the inspector that can be implemented via php.
+To add custom selectbox-options, Neos uses `data-sources` for the inspector that can be implemented via php. These custom data-sources needs to return a serializable data structure in a format like described in :ref:`property-editor-reference`.
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
@@ -158,7 +158,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
           inspector:
             editor: Content/Inspector/Editors/SelectBoxEditor
             editorOptions:
-              dataSourceIdentifier: 'acme-yourpackage-test''
+              dataSourceIdentifier: 'acme-yourpackage-test'
 
 
 Remove fields from an existing Node Type
