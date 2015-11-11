@@ -170,7 +170,7 @@ define(
 						}
 					}
 
-					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, clipboard.type === 'cut');
 				}
 			).fail(
 				function(error) {
@@ -254,7 +254,7 @@ define(
 				}
 			).then(
 				function(result) {
-					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, false);
 				}
 			).fail(
 				function(error) {
@@ -274,9 +274,10 @@ define(
 		 * @param {object} collection The collection to insert the node into.
 		 * @param {string} position The position to insert the node relative to the reference node
 		 * @param {object} referenceNodeEntity
+		 * @param {boolean} isMoved If the inserted node was moved
 		 * @return {void}
 		 */
-		_insertNode: function(result, xhr, nodeType, collection, position, referenceNodeEntity) {
+		_insertNode: function(result, xhr, nodeType, collection, position, referenceNodeEntity, isMoved) {
 			var rdfaService = vieInstance.service('rdfa'),
 				affectedNodePath = xhr.getResponseHeader('X-Neos-AffectedNodePath');
 			var newElement = $(result).find('[about="' + affectedNodePath + '"]').first();
@@ -324,11 +325,13 @@ define(
 			}
 			CreateJS.refreshEdit($newElement.get(0));
 
-			// Replace existing entity wrapper in case it already exists
-			NodeSelection.replaceEntityWrapper($newElement, true);
+			if (isMoved) {
+				// Replace existing entity wrapper in case it already exists
+				NodeSelection.replaceEntityWrapper($newElement, true);
+			}
 
 			// Select the inserted node
-			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true});
+			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true, selectFirstEditable: !isMoved});
 
 			EventDispatcher.trigger('contentChanged');
 			EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $newElement.get(0)});
