@@ -55,6 +55,7 @@ define(
 					}).on('select2-selecting', function(event) {
 						if (that.get('publishableNodes.numberOfWorkspaceWidePublishableNodes') > 0) {
 							if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').state === 'destroying') {
+								that.$('select').select2('close');
 								that.set('dirtyWorkspaceDialog', DirtyWorkspaceDialog.create());
 							}
 							event.preventDefault();
