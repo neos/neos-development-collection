@@ -5243,6 +5243,7 @@
   -ms-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
   font-smoothing: antialiased;
+  text-align: center;
 }
 .neos [class^="icon-"]:before, .neos [class^="icon-"]:after, .neos [class*=" icon-"]:before, .neos [class*=" icon-"]:after {
   font-family: FontAwesome;
