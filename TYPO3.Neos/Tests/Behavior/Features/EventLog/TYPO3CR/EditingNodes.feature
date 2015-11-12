@@ -13,6 +13,7 @@ Feature: Editing Nodes
 
   @fixtures
   Scenario: Change a Document node property in the live workspace (e.g. like an API)
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace |
       | live      |
@@ -23,6 +24,7 @@ Feature: Editing Nodes
 
   @fixtures
   Scenario: Change a Document node property inside a workspace
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace  |
       | user-admin |
@@ -33,6 +35,7 @@ Feature: Editing Nodes
 
   @fixtures
   Scenario: Change a Document node property inside a workspace, and publishing afterwards adds the update event to the publish event.
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace  |
       | user-admin |
@@ -46,6 +49,7 @@ Feature: Editing Nodes
 
   @fixtures
   Scenario: Change a Content node property inside a workspace, and publishing afterwards adds the update event to the publish event.
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     When I get a node by path "/sites/typo3cr/main/headline" with the following context:
       | Workspace  |
       | user-admin |
