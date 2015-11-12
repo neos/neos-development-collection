@@ -364,6 +364,7 @@ define(
 									if (isCurrentNode) {
 										ContentModule.loadPage(node.data.href);
 									}
+									EventDispatcher.trigger('nodeEdited');
 								} else {
 									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 									node.setLazyNodeStatus(that.statusCodes.error);
