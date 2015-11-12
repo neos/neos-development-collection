@@ -148,7 +148,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 continue;
             }
 
-            if ($this->shouldGenerateLabel($propertyConfiguration['ui'])) {
+            if ($this->shouldFetchTranslation($propertyConfiguration['ui'])) {
                 $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
             }
 
@@ -156,7 +156,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 $this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
             }
 
-            if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['aloha'], 'placeholder')) {
+            if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['aloha'], 'placeholder')) {
                 $propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
             }
         }
@@ -174,7 +174,7 @@ class NodeTypeConfigurationEnrichmentAspect
 
         switch ($editorName) {
             case 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
+                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
                 }
 
@@ -185,13 +185,13 @@ class NodeTypeConfigurationEnrichmentAspect
                     if ($optionConfiguration === null) {
                         continue;
                     }
-                    if ($this->shouldGenerateLabel($optionConfiguration)) {
+                    if ($this->shouldFetchTranslation($optionConfiguration)) {
                         $optionConfiguration['label'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.values.' . $value);
                     }
                 }
                 break;
             case 'TYPO3.Neos/Inspector/Editors/CodeEditor':
-                if ($this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
+                if ($this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
                 }
                 break;
@@ -207,7 +207,7 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration)
     {
-        if ($this->shouldGenerateLabel($configuration['ui'])) {
+        if ($this->shouldFetchTranslation($configuration['ui'])) {
             $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
         }
 
@@ -215,7 +215,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (!$this->shouldGenerateLabel($elementConfiguration)) {
+                    if (!$this->shouldFetchTranslation($elementConfiguration)) {
                         continue;
                     }
 
@@ -233,7 +233,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
-    protected function shouldGenerateLabel($parentConfiguration, $fieldName = 'label')
+    protected function shouldFetchTranslation($parentConfiguration, $fieldName = 'label')
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
