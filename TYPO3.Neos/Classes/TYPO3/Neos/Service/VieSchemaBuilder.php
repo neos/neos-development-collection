@@ -13,7 +13,6 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use League\CommonMark\CommonMarkConverter;
 
 /**
  * Generate a schema in JSON format for the VIE dataTypes validation, necessary
@@ -30,12 +29,6 @@ class VieSchemaBuilder
      * @Flow\Inject
      */
     protected $nodeTypeManager;
-
-    /**
-     * @var CommonMarkConverter
-     * @Flow\Inject
-     */
-    protected $markdownConverter;
 
     /**
      * @var array
@@ -119,8 +112,8 @@ class VieSchemaBuilder
     protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType)
     {
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
-        $this->parseMarkdown($nodeTypeConfiguration);
         $this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
+        /** @var NodeType $superType */
         foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
             $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
         }
@@ -159,26 +152,6 @@ class VieSchemaBuilder
             'comment' => '',
             'comment_plain' => ''
         );
-    }
-
-    /**
-     * Process markdown syntax for help message properties
-     *
-     * @param array $options The options array, passed by reference
-     * @return void
-     */
-    protected function parseMarkdown(array &$options)
-    {
-        if (isset($options['ui']['help']['message'])) {
-            $options['ui']['help']['message'] = $this->markdownConverter->convertToHtml($options['ui']['help']['message']);
-        }
-        if (isset($options['properties'])) {
-            foreach (array_keys($options['properties']) as $propertyName) {
-                if (isset($options['properties'][$propertyName]['ui']['help']['message'])) {
-                    $options['properties'][$propertyName]['ui']['help']['message'] = $this->markdownConverter->convertToHtml($options['properties'][$propertyName]['ui']['help']['message']);
-                }
-            }
-        }
     }
 
     /**
