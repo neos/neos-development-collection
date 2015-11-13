@@ -199,7 +199,7 @@ In the controller of your plugin you can access the value from TypoScript like t
 Linking to a Plugin
 ===================
 
-Inside of your Plugin you can use the usual f:link and f:uri ViewHelpers from fluid to link to other ControllerActions::
+Inside of your Plugin you can use the usual f:link.action and f:uri.action ViewHelpers from fluid to link to other ControllerActions::
 
   <f:link.action package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
 
