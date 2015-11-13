@@ -12,6 +12,7 @@ define(
 		'Shared/Configuration',
 		'Shared/NodeTypeService',
 		'Shared/Notification',
+		'Shared/EventDispatcher',
 		'../Inspector/InspectorController',
 		'./DeleteNodeDialog',
 		'./InsertNodePanel',
@@ -27,6 +28,7 @@ define(
 		Configuration,
 		NodeTypeService,
 		Notification,
+		EventDispatcher,
 		InspectorController,
 		DeleteNodeDialog,
 		InsertNodePanel,
@@ -889,6 +891,7 @@ define(
 							InspectorController.set('cleanProperties._hidden', value);
 							InspectorController.set('nodeProperties._hidden', value);
 						}
+						EventDispatcher.trigger('nodeUpdated');
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						that.afterToggleHidden(node);
 					},

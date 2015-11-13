@@ -58,7 +58,9 @@ define(
 			EventDispatcher
 				.on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeDeleted', this, 'getWorkspaceWideUnpublishedNodes')
+				.on('nodeUpdated', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes')
+				.on('nodeUpdated', this, '_updatePublishableEntities')
 				.on('nodesUpdated', this, '_updatePublishableEntities');
 		},
 
