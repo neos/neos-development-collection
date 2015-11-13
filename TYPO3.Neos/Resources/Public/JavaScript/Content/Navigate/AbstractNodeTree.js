@@ -610,6 +610,7 @@ define(
 					} else {
 						classes = $.trim(classes.replace(/neos-hiddenInIndex/g, ''));
 					}
+					node.data.isHidden = attributes._hidden;
 					node.data.addClass = classes;
 					node.render();
 				}
