@@ -325,12 +325,15 @@ define(
 						title;
 					// Re-enable mouse and keyboard handling
 					tree.$widget.bind();
-					node.activate();
 
 					if (prevTitle === newTitle || newTitle === '') {
-						title = croppedTitle;
+						node.render();
 					} else {
 						title = newTitle;
+						node.data.title = title;
+						node.data.fullTitle = title;
+						node.data.addClass += ' neos-dynatree-dirty';
+						node.render();
 						node.setLazyNodeStatus(that.statusCodes.loading);
 						NodeEndpoint.update(
 							{
@@ -340,22 +343,16 @@ define(
 						).then(
 							function(result) {
 								if (result !== null && result.success === true) {
-									var selectedNode = NodeSelection.get('selectedNode'),
-										entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-									if (entity) {
-										entity.set('typo3:title', title);
-									}
-									if (node.data.key === selectedNode.$element.attr('about')) {
-										InspectorController.set('cleanProperties.title', title);
-										InspectorController.set('nodeProperties.title', title);
-									}
-									var isCurrentNode = node.data.key === that.get('pageNodePath');
 									node.data.href = result.data.nextUri;
-									node.data.title = title;
-									node.data.fullTitle = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
-									node.render();
-									if (isCurrentNode) {
+									var nodeEntity = NodeSelection.getNode(node.data.key),
+										selectedNodeEntity = NodeSelection.get('selectedNode');
+									if (nodeEntity) {
+										nodeEntity.setAttribute('title', title);
+										if (nodeEntity === selectedNodeEntity) {
+											InspectorController.set('cleanProperties.title', title);
+											InspectorController.set('nodeProperties.title', title);
+										}
 										ContentModule.loadPage(node.data.href);
 									}
 									EventDispatcher.trigger('nodeUpdated');
@@ -366,10 +363,7 @@ define(
 							}
 						);
 					}
-
 					node.activate();
-					input.parent().text(title);
-					input.remove();
 					setTimeout(function() {
 						that.set('editNodeTitleMode', false);
 					}, 50);
