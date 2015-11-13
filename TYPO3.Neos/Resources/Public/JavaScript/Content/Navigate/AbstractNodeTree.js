@@ -884,14 +884,14 @@ define(
 					}
 				).then(
 					function(result) {
-						var selectedNode = NodeSelection.get('selectedNode'),
-							entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-						if (entity) {
-							entity.set('typo3:_hidden', value);
-						}
-						if (node.data.key === selectedNode.$element.attr('about')) {
-							InspectorController.set('cleanProperties._hidden', value);
-							InspectorController.set('nodeProperties._hidden', value);
+						var nodeEntity = NodeSelection.getNode(node.data.key),
+							selectedNodeEntity = NodeSelection.get('selectedNode');
+						if (nodeEntity) {
+							nodeEntity.setAttribute('_hidden', value);
+							if (nodeEntity === selectedNodeEntity) {
+								InspectorController.set('cleanProperties._hidden', value);
+								InspectorController.set('nodeProperties._hidden', value);
+							}
 						}
 						EventDispatcher.trigger('nodeUpdated');
 						node.setLazyNodeStatus(that.statusCodes.ok);
