@@ -288,6 +288,58 @@ target is then granted for the "Editor" role.
           privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
           permission: GRANT
 
+Restricting Access to Backend Modules
+=====================================
+
+Restrict Module Access
+----------------------
+
+The available modules are defined in the settings of Neos. Along with those settings privilege targets can be defined.
+Those are used to remove the module from the UI if access would not be granted. Here is a shortened example containing
+only the relevant parts:
+
+ .. code-block:: yaml
+
+  TYPO3:
+   Neos:
+     modules:
+      management:
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management'
+        submodules:
+          workspaces:
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces'
+
+The targets are defined as usual in the security policy, here is a shortened example:
+
+.. code-block:: yaml
+
+    'TYPO3.Neos:Backend.Module.Management':
+      matcher: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
+
+    'TYPO3.Neos:Backend.Module.Management.Workspaces':
+      matcher: >-
+        method(
+          TYPO3\Neos\Controller\Module\Management\WorkspacesController
+          ->(publishNode|discardNode|publishOrDiscardNodes)Action()
+        ) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())
+
+Now those privilege targets can be used to grant/deny access for specific roles.
+
+Disable Modules
+---------------
+
+To completely disable modules available in the Neos UI a setting can be used:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos:
+      modules:
+        management:
+          submodules:
+            history:
+              enabled: FALSE
+
 Limitations
 ===========
 
