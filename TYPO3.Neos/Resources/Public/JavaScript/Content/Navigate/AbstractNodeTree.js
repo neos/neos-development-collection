@@ -865,8 +865,9 @@ define(
 					Notification.info('You have to select a node');
 				}
 				var value = !node.data.isHidden;
-				this.set('currentFocusedNodeIsHidden', value);
 				node.data.isHidden = value;
+				// Trigger update of ``currentFocusedNodeIsHidden``
+				this.notifyPropertyChange('activeNode');
 				if (value === true) {
 					node.data.addClass = node.data.addClass += ' neos-hidden';
 				} else {
