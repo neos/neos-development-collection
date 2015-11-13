@@ -888,6 +888,7 @@ define(
 							selectedNodeEntity = NodeSelection.get('selectedNode');
 						if (nodeEntity) {
 							nodeEntity.setAttribute('_hidden', value);
+							nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
 							if (nodeEntity === selectedNodeEntity) {
 								InspectorController.set('cleanProperties._hidden', value);
 								InspectorController.set('nodeProperties._hidden', value);

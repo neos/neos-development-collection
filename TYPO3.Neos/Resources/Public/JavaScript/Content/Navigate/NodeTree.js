@@ -349,6 +349,7 @@ define(
 										selectedNodeEntity = NodeSelection.get('selectedNode');
 									if (nodeEntity) {
 										nodeEntity.setAttribute('title', title);
+										nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
 										if (nodeEntity === selectedNodeEntity) {
 											InspectorController.set('cleanProperties.title', title);
 											InspectorController.set('nodeProperties.title', title);
