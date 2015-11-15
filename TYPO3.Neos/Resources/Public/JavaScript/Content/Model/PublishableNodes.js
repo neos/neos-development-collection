@@ -131,11 +131,10 @@ define(
               if (autoPublish !== true) {
                 var documentMetadata = $('#neos-document-metadata'),
                   nodeType = documentMetadata.data('node-_node-type'),
-                  page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
-                  namespace = Configuration.get('TYPO3_NAMESPACE'),
-                  title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
-                  nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-                Notification.ok('Published changes for ' + I18n.translate(nodeTypeDefinition.ui.label) + ' "' + $('<a />').html(title).text() + '"');
+                  page = NodeSelection.getNode(documentMetadata.attr('about')),
+                  pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
+                  nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+                Notification.ok('Published changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
               }
               that.set('publishRunning', false);
             },
@@ -205,11 +204,10 @@ define(
               );
               var documentMetadata = $('#neos-document-metadata'),
                 nodeType = documentMetadata.data('node-_node-type'),
-                page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
-                namespace = Configuration.get('TYPO3_NAMESPACE'),
-                title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
-                nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-              Notification.ok('Discarded changes for ' + nodeTypeDefinition.ui.label + ' "' + title + '"');
+                page = NodeSelection.getNode(documentMetadata.attr('about')),
+                pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
+                nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+              Notification.ok('Discarded changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
               that.set('discardRunning', false);
             },
             function (error) {
