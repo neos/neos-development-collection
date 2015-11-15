@@ -30,7 +30,6 @@ function(
 
 		nodeTypeGroups: function() {
 			var groups = {},
-				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				node = this.get('_node'),
 				position = this.get('_position'),
 				types;
@@ -53,7 +52,7 @@ function(
 					return;
 				}
 
-				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(namespace, '');
+				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(type.metadata.url, '');
 				if (!contentTypes.hasOwnProperty(nodeTypeName)) {
 					return;
 				}
