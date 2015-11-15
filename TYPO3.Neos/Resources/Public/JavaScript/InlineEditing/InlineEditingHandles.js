@@ -190,10 +190,10 @@ function (
 		}.property('nodeActions.clipboard', '_node'),
 
 		toggleHidden: function() {
-			var entity = this.get('_node._vieEntity'),
-				value = !entity.get('typo3:_hidden');
+			var node = this.get('_node'),
+				value = !node.getAttribute('_hidden');
 			this.set('_hidden', value);
-			entity.set('typo3:_hidden', value);
+			node.setAttribute('_hidden', value);
 			InspectorController.set('nodeProperties._hidden', value);
 			InspectorController.apply();
 		},

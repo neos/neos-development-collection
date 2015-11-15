@@ -76,21 +76,22 @@ define([
 		 */
 		init: function() {
 			var that = this,
-				vieEntity = this.get('_vieEntity'),
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				vieEntity = this.get('_vieEntity');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(namespace + '__workspaceName') !== 'live');
+			this.set('publishable', this.getAttribute('__workspaceName') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
-				// this event fires if inline content changes
+
+			// this event fires if inline content changes
 			$entityElement.bind('midgardeditablechanged', function(event, data) {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
 			});
-				// this event fires if content changes through the property inspector
+
+			// this event fires if content changes through the property inspector
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
-				that.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
+				that.set('publishable', that.getAttribute('__workspacename') !== 'live');
 			});
 
 			this.set('$element', $entityElement);
