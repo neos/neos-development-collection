@@ -159,7 +159,7 @@ function (
 		}.property('nodeSelection.selectedNode', 'nodeActions.clipboard'),
 
 		_entityChanged: function() {
-			this.set('_hidden', this.get('_node._vieEntity').get('typo3:_hidden'));
+			this.set('_hidden', this.get('_node').getAttribute('_hidden'));
 		},
 
 		/** Content element actions **/
