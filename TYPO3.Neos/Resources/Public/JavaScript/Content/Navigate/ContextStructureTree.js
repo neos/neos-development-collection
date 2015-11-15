@@ -81,11 +81,13 @@ define(
 			var page = NodeSelection.getNode($('#neos-document-metadata').attr('about')),
 				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
 				documentNodeType = page.get('typo3:_nodeType'),
+				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(documentNodeType),
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 			siteNode.fromDict({
 				key: this.get('pageNodePath'),
 				title: pageTitle,
-				nodeType: documentNodeType
+				nodeType: documentNodeType,
+				nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : ''
 			});
 			this.refresh();
 		}.observes('pageNodePath'),
