@@ -108,6 +108,17 @@ define([
 		}.property('_vieEntity').volatile(),
 
 		/**
+		 * Check if an attribute exists on the underlying VIE entity
+		 *
+		 * @param {string} key
+		 * @return {void}
+		 */
+		hasAttribute: function(key) {
+			var attributeName = 'typo3:' + key;
+			return this.get('_vieEntity').has(attributeName);
+		},
+
+		/**
 		 * Set an attribute on the underlying VIE entity
 		 *
 		 * @param {string} key
