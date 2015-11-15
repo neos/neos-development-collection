@@ -165,25 +165,21 @@ define([
 		 * @return {boolean}
 		 */
 		isHideable: function() {
-			return this.get('_vieEntity').has('typo3:_hidden');
+			return this.hasAttribute('_hidden');
 		},
 
 		/**
 		 * @return {boolean}
 		 */
 		isHidden: function() {
-			return this.get('_vieEntity').get('typo3:_hidden');
+			return this.getAttribute('_hidden');
 		},
 
 		/**
 		 * @return {string}
 		 */
 		nodeLabel: function() {
-			if (this.get('_vieEntity').get('typo3:title') !== undefined) {
-				return this.get('_vieEntity').get('typo3:title');
-			}
-
-			return '';
+			return this.getAttribute('title') || '';
 		}.property('_vieEntity'),
 
 		/**
