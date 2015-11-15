@@ -134,6 +134,15 @@ define([
 		},
 
 		/**
+		 * @param {string} key
+		 * @return {object}
+		 */
+		getPreviousAttribute: function(key) {
+			var vieEntity = this.get('_vieEntity');
+			return Entity.extractAttributesFromVieEntity(vieEntity, vieEntity.previousAttributes())[key];
+		},
+
+		/**
 		 * @return {string}
 		 */
 		nodePath: function() {
