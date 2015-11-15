@@ -78,9 +78,10 @@ define(
 		},
 
 		_onPageNodePathChanged: function() {
-			var page = NodeSelection.getNode($('#neos-document-metadata').attr('about')),
+			var documentMetadata = $('#neos-document-metadata'),
+				page = NodeSelection.getNode(documentMetadata.attr('about')),
 				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
-				documentNodeType = page.get('typo3:_nodeType'),
+				documentNodeType = documentMetadata.data('node-_node-type'),
 				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(documentNodeType),
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 			siteNode.fromDict({
@@ -131,7 +132,7 @@ define(
 
 			var page = NodeSelection.getNode(documentMetadata.attr('about')),
 				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
-				nodeType = documentMetadata.attr('typeof').substr(6),
+				nodeType = documentMetadata.data('node-_node-type'),
 				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
 
 			this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
