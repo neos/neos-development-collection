@@ -186,7 +186,6 @@ define([
 		}.property()
 	});
 
-	var namespace = Configuration.get('TYPO3_NAMESPACE');
 	Entity.reopenClass({
 		/**
 		 * @param {object} vieEntity
@@ -195,7 +194,8 @@ define([
 		 * @return {object}
 		 */
 		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
-			var cleanAttributes = {};
+			var cleanAttributes = {},
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
 			_.each(attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
@@ -215,7 +215,8 @@ define([
 		 */
 		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
-				type;
+				type,
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			if (!_.isArray(types)) {
 				types = [types];
 			}
