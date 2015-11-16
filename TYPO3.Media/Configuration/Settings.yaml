@@ -11,6 +11,8 @@ TYPO3:
     # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
     # need to be replaced by "width" and "height" if you need fixed dimensions.
     behaviourFlag: '1.2'
+    # Enable asynchronous thumbnails
+    asyncThumbnails: true
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document
