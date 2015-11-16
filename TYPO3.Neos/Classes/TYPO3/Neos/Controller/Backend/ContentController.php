@@ -233,7 +233,7 @@ class ContentController extends ActionController
      */
     protected function getImagePreviewData(Image $image)
     {
-        $thumbnail = $image->getThumbnail(600, 600);
+        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Preview'));
         $imageProperties = array(
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
             'previewImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()),
