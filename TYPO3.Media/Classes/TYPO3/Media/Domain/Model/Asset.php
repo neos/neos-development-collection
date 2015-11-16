@@ -18,7 +18,6 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Service\ThumbnailService;
@@ -33,12 +32,6 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  */
 class Asset implements AssetInterface
 {
-    /**
-     * @Flow\Inject
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
-
     /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
