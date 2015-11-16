@@ -146,7 +146,7 @@ define(
 					}, selectedNodeSchema.properties[property]));
 
 					// we need to register any configured listeners for other properties.
-					if (selectedNodeSchema.properties[property].ui && selectedNodeSchema.properties[property].ui.inspector.editorListeners) {
+					if (selectedNodeSchema.properties[property].ui && selectedNodeSchema.properties[property].ui.inspector && selectedNodeSchema.properties[property].ui.inspector.editorListeners) {
 						for (var listenerName in selectedNodeSchema.properties[property].ui.inspector.editorListeners) {
 							var observedProperty = selectedNodeSchema.properties[property].ui.inspector.editorListeners[listenerName].property;
 							var handler = selectedNodeSchema.properties[property].ui.inspector.editorListeners[listenerName].handler;
