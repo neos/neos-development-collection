@@ -75,23 +75,27 @@ class ThumbnailService
      *
      * @param AssetInterface $asset The asset to render a thumbnail for
      * @param ThumbnailConfiguration $configuration
+     * @param boolean $async Create asynchronous thumbnail if it doesn't already exist
      * @return Thumbnail
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration, $async = false)
     {
         $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
         if ($thumbnail === null) {
             if (!$asset instanceof ImageInterface) {
                 throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
             }
-            $thumbnail = new Thumbnail($asset, $configuration);
+            $thumbnail = new Thumbnail($asset, $configuration, $async);
             $this->thumbnailRepository->add($thumbnail);
             $asset->addThumbnail($thumbnail);
 
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
             $this->persistenceManager->whiteListObject($thumbnail);
-            $this->persistenceManager->whiteListObject($thumbnail->getResource());
+        } elseif ($thumbnail->getResource() === null && $async === false) {
+            $thumbnail->refresh();
+            $this->persistenceManager->whiteListObject($thumbnail);
+            $this->thumbnailRepository->update($thumbnail);
         }
 
         return $thumbnail;
