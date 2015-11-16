@@ -113,7 +113,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         try {
             $node = null;
 
-            // Build context explictly without authorization checks because the security context isn't available yet
+            // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $requestPath) {
                 $node = $this->convertRequestPathToNode($requestPath);
