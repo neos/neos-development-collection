@@ -334,7 +334,6 @@ define(
 				enableTransactionalInspector = true;
 
 			this.set('registeredEditors', Ember.Object.create());
-			this.set('listeners', Ember.Object.create());
 
 			SecondaryInspectorController.hide();
 			this.set('selectedNode', selectedNode);
@@ -367,7 +366,7 @@ define(
 		 * This is triggered when one of the editors was changed even before the change was applied.
 		 */
 		registerPendingChange: function(propertyName, value) {
-			var registeredListeners, evaluator;
+			var registeredListeners;
 
 			registeredListeners = this.get('listeners.' + propertyName);
 			if (!registeredListeners) {
