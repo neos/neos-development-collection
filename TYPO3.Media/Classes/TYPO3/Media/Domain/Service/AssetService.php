@@ -73,54 +73,9 @@ class AssetService
                 'src' => $uri
             );
         } else {
-            $thumbnailData = $this->getAssetThumbnailImage($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
+            $thumbnailData = $this->thumbnailService->getStaticThumbnailForAsset($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
         }
 
         return $thumbnailData;
-    }
-
-    /**
-     * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
-     */
-    protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight)
-    {
-        // TODO: Could be configurable at some point
-        $iconPackage = 'TYPO3.Media';
-
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
-        }
-
-        return array(
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'src' => $this->resourceManager->getPublicPackageResourceUri($iconPackage, $icon)
-        );
-    }
-
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
     }
 }

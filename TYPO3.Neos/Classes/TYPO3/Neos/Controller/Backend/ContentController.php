@@ -21,6 +21,7 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
@@ -96,6 +97,12 @@ class ContentController extends ActionController
      * @var EntityToIdentityConverter
      */
     protected $entityToIdentityConverter;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -280,7 +287,7 @@ class ContentController extends ActionController
      */
     protected function getAssetProperties(Asset $asset)
     {
-        $thumbnail = $this->getAssetThumbnailImage($asset, 16, 16);
+        $thumbnail = $this->thumbnailService->getStaticThumbnailForAsset($asset, 16, 16);
         $assetProperties = array(
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
             'filename' => $asset->getResource()->getFilename(),
@@ -288,51 +295,6 @@ class ContentController extends ActionController
             'previewSize' => array('w' => $thumbnail['width'], 'h' => $thumbnail['height'])
         );
         return $assetProperties;
-    }
-
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
-    }
-
-    /**
-     * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
-     */
-    protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight)
-    {
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        $iconPackage = 'TYPO3.Media';
-
-        if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon =  sprintf('Icons/%spx/_blank.png', $iconSize);
-        }
-
-        return array(
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'package' => $iconPackage,
-            'src' => $icon
-        );
     }
 
     /**
