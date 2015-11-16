@@ -85,7 +85,7 @@ The right approach would be to create a TypoScript prototype for your default pa
 
 But now how to link this TypoScript path to your node type? For this we can have a look at the
 TypoScript `root` path. This `root` path is a `TYPO3.TypoScript:Case` object, which will render
-the `page` path by default. But you can add your own conditions to render a different path.
+the `/page` path by default. But you can add your own conditions to render a different path.
 
 In our case we will add a condition on the first position of the condition::
 
@@ -104,7 +104,7 @@ Using a `DefaultPage` Prototype
 ===============================
 
 This is an alternative and more flexible approach to the `Select Template based on NodeType` method descriped above.
-First we adjust the `default` `root` matcher not to render the page path, but a prototype derived from the current document node type name instead::
+First we adjust the `default` `root` matcher not to render the `/page` path, but a prototype derived from the current document node type name instead::
 
     root {
         default {
@@ -169,5 +169,3 @@ In case we have a `layout` property within our node type configuration, we can d
     customLayout = TYPO3.Neos.NodeTypes:Page.Document {
        # custom properties for your node type
     }
-
-The credit for this approach goes to Christopher Hlubek.
