@@ -122,6 +122,7 @@ class Thumbnail implements ImageInterface
 
     /**
      * @param ThumbnailConfiguration $configuration
+     * @return void
      */
     protected function setConfiguration(ThumbnailConfiguration $configuration)
     {
