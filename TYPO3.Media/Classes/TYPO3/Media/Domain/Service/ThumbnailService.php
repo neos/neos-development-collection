@@ -21,6 +21,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Exception\NoThumbnailAvailableException;
+use TYPO3\Media\Exception\ThumbnailServiceException;
 
 /**
  * An internal thumbnail service.
@@ -66,6 +67,12 @@ class ThumbnailService
      * @var \TYPO3\Flow\Resource\ResourceManager
      */
     protected $resourceManager;
+
+    /**
+     * @Flow\InjectConfiguration("thumbnailPresets")
+     * @var boolean
+     */
+    protected $presets;
 
     /**
      * Returns a thumbnail of the given asset
@@ -124,6 +131,29 @@ class ThumbnailService
             'height' => $iconSize,
             'src' => $icon
         );
+    }
+
+    /**
+     * @return array Returns preset configuration for all presets
+     */
+    public function getPresets()
+    {
+        return $this->presets;
+    }
+
+    /**
+     * @param string $preset The preset identifier
+     * @return ThumbnailConfiguration
+     * @throws ThumbnailServiceException
+     */
+    public function getThumbnailConfigurationForPreset($preset)
+    {
+        if (!isset($this->presets[$preset])) {
+            throw new ThumbnailServiceException(sprintf('Thumbnail preset configuration for "%s" not found.', $preset), 1447664950);
+        }
+        $thumbnailConfiguration = new ThumbnailConfiguration;
+        call_user_func_array(array($thumbnailConfiguration, '__construct'), $this->presets[$preset]);
+        return $thumbnailConfiguration;
     }
 
     /**

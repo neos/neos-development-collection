@@ -13,6 +13,8 @@ TYPO3:
     behaviourFlag: '1.2'
     # Enable asynchronous thumbnails
     asyncThumbnails: true
+    # Thumbnail presets
+    thumbnailPresets: []
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document

@@ -13,10 +13,8 @@ namespace TYPO3\Media\ViewHelpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
-use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
 
 /**
  * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
@@ -119,14 +117,19 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
+     * @param string $preset Preset used to determine image configuration
      * @return string an <img...> html tag
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
         if ($image === null && $this->hasArgument('asset')) {
             $image = $this->arguments['asset'];
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
+        if ($preset) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
+        }
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $async, $this->controllerContext->getRequest());
 
         $this->tag->addAttribute('src', $thumbnailData['src']);
