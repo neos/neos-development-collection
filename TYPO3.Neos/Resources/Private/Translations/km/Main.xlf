@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="km">
     <body>
@@ -35,7 +35,7 @@
 			<target xml:lang="km" state="translated">បង្កើតថ្មី</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="km" state="translated">បិត</target></trans-unit>
+			<target xml:lang="km" state="translated">បិទ</target><alt-trans><target xml:lang="km">បិត</target></alt-trans></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
 			<target xml:lang="km" state="translated">ចម្លង</target></trans-unit>
@@ -56,7 +56,7 @@
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="km" state="translated">លះបង់ការ កែ</target></trans-unit>
+			<target xml:lang="km" state="translated">លះបង់​ការកែ</target><alt-trans><target xml:lang="km">លះបង់ការ កែ</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
 			<target xml:lang="km" state="translated">កែ​ចំណង​ជើង</target></trans-unit>
@@ -74,7 +74,7 @@
 			<target xml:lang="km" state="translated">កំពុងតម្លើង</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="km" state="translated">បង្កើតថ្មីបន្ទាប់ទៀត</target></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតថ្មីបន្ទាប់</target><alt-trans><target xml:lang="km">បង្កើតថ្មីបន្ទាប់ទៀត</target></alt-trans></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
 			<target xml:lang="km" state="translated">បង្កើតថ្មីមុន</target></trans-unit>
@@ -143,7 +143,7 @@
 			<target xml:lang="km" state="translated">អ្នក</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="km" state="translated">[គ្មានចំណង]</target></trans-unit>
+			<target xml:lang="km" state="translated">[គ្មានចំណងជើង]</target><alt-trans><target xml:lang="km">[គ្មានចំណង]</target></alt-trans></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="km" state="translated">ស្លាក</target></trans-unit>
@@ -162,26 +162,26 @@
 			<target xml:lang="km" state="translated">ជាទូទៅ</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="km" state="translated">រចនាសម្ព័ន</target></trans-unit>
+			<target xml:lang="km" state="translated">រចនាសម្ព័ន្ធ</target><alt-trans><target xml:lang="km">រចនាសម្ព័ន</target></alt-trans></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
 			<target xml:lang="km" state="translated">ឧបករណ៍</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តរទៅទំព័រ {0}</target></trans-unit>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទំព័រ {0}។</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទំព័រ {0}</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទ្រព្យ {0}</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទ្រព្យ {0}</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅឯកសារ {0}។</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅឯកសារ {0}</target></alt-trans><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទ្រព្យ {0}</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទំព័រមុន {0}.</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទំព័រមុន {0}.</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">ចុចទីនេះដើម្បីបន្តទៅទំព័រមុន {0}។</target><alt-trans><target xml:lang="km">ចុចទីនេះដើម្បីបន្តរទៅទំព័រមុន {0}.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="km" state="translated">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></trans-unit>
+			<target xml:lang="km" state="translated">(មិនទាន់បានជ្រើសរើសគោលដៅណាមួយទេ)</target><alt-trans><target xml:lang="km">(មិនជ្រើសរើសគោលដៅណាមួយទេ)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តទៅរកទំព័រនោះ។</target><alt-trans><target xml:lang="km">នេះគឺជាផ្លូវកាត់ទៅរកកូនទំព័រដំបូង។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="km" state="translated">នេះគឺជាផ្លូវកាត់ទៅរកទំព័រមេ។ &lt;br /&gt; សូមចុច {0} ដើម្បីបន្តរទៅរកទំព័រនោះ។</target></trans-unit>
@@ -464,7 +464,7 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="km" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="km" state="translated">"{nodeTypeName}" នៅលើទំព័រ "{pageLabel}"</target></trans-unit>
     </body>
   </file>
 </xliff>

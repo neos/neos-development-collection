@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="de">
     <body>
@@ -279,10 +279,10 @@
 			<target xml:lang="de">Das Paketverwaltungs-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target xml:lang="de">Seitenverwaltung</target></trans-unit>
+			<target xml:lang="de">Websites Verwaltung</target><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></trans-unit>
+			<target xml:lang="de">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></alt-trans></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="de">Website erstellen</target><alt-trans><target xml:lang="de">Seite erstellen</target></alt-trans></trans-unit>

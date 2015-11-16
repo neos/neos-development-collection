@@ -466,8 +466,8 @@ class Workspace
      */
     protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace)
     {
-        $baseWorkspace = $this->baseWorkspace;
-        while ($targetWorkspace !== $baseWorkspace) {
+        $baseWorkspace = $this;
+        while ($baseWorkspace === null || $targetWorkspace->getName() !== $baseWorkspace->getName()) {
             if ($baseWorkspace === null) {
                 throw new WorkspaceException(sprintf('The specified workspace "%s" is not a base workspace of "%s".', $targetWorkspace->getName(), $this->getName()), 1289499117);
             }

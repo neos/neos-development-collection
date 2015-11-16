@@ -26,10 +26,17 @@ define(
 			// Minimum amount of characters to trigger search
 			threshold: 2,
 
-			didInsertElement: function() {
-				var that = this;
+			// The path to a node that defines the starting point for the reference search
+			startingPoint: null,
 
-				var currentQueryTimer = null;
+			didInsertElement: function() {
+				var that = this,
+					currentQueryTimer = null;
+
+				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
+					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
+				}
+
 				this.$().select2({
 					multiple: true,
 					minimumInputLength: that.get('threshold'),
@@ -76,7 +83,7 @@ define(
 								searchTerm: query.term,
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
-								contextNode: $('#neos-document-metadata').data('neos-site-node-context-path'),
+								contextNode: that.get('startingPoint'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
@@ -84,6 +91,7 @@ define(
 								var data = {results: []};
 								$(result.resource).find('li').each(function(index, value) {
 									var identifier = $('.node-identifier', value).text();
+
 									data.results.push({
 										id: identifier,
 										text: $('.node-label', value).text().trim(),
