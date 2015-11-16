@@ -48,8 +48,7 @@ class Thumbnail implements ImageInterface
     /**
      * @var \TYPO3\Flow\Resource\Resource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
-     * @Flow\Validate(type = "NotEmpty")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $resource;
 
