@@ -440,6 +440,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $siteChanges = array();
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
+            /** @var NodeInterface $node */
             if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
                 $pathParts = explode('/', $node->getPath());
                 if (count($pathParts) > 2) {

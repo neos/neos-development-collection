@@ -38,7 +38,7 @@
 												<strong>{neos:backend.translate(id: 'site', value: 'Site')}: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
 											</div>
 										</f:if>
-										<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}: /{documentPath}</strong>
+										<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}: <span title="{document.documentNode.path}"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"/></span></strong>
 									</td>
 									<td class="neos-priority1 neos-aRight">
 										<f:if condition="{document.documentNode.removed}">
