@@ -151,17 +151,4 @@ class WorkspacesController extends ActionController
         $this->workspaceRepository->update($workspace);
         $this->throwStatus(200, 'Workspace updated', '');
     }
-
-    /**
-     * Filters the given query result by publish privilege.
-     *
-     * @param QueryResultInterface $workspaces
-     * @return array
-     */
-    protected function filterWorkspacesByPublishPrivilege(QueryResultInterface $workspaces)
-    {
-        $filteredWorkspaces = array_filter($workspaces->toArray(), [$this, 'filterWorkspaceByPublishPrivilege']);
-
-        return $filteredWorkspaces;
-    }
 }
