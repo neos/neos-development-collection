@@ -14,8 +14,9 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Now;
-use TYPO3\Neos\Domain\Model\User;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
@@ -53,8 +54,17 @@ class Workspace
     protected $description;
 
     /**
-     * @var User
-     * @ORM\ManyToOne
+     * This property contains a UUID of the User object which is the owner of this workspace.
+     * We can't use a real many-to-many relation here, because the User implementation will come from a different
+     * package (e.g. Neos) which TYPO3CR does not depend on.
+     *
+     * This relation may be implemented with a target entity listener at a later stage, when we implemented support
+     * for it in Flow core.
+     *
+     * See also: http://doctrine-orm.readthedocs.org/projects/doctrine-orm/en/latest/cookbook/resolve-target-entity-listener.html
+     *
+     * @var string
+     * @ORM\Column(type="string", length=40, nullable=true)
      */
     protected $owner;
 
@@ -104,14 +114,26 @@ class Workspace
     protected $now;
 
     /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Constructs a new workspace
      *
      * @param string $name Name of this workspace
      * @param Workspace $baseWorkspace A workspace this workspace is based on (if any)
-     * @param User $owner The user that created the workspace (if any, "system" workspaces have none)
+     * @param UserInterface $owner The user that created the workspace (if any, "system" workspaces have none)
      * @api
      */
-    public function __construct($name, Workspace $baseWorkspace = null, User $owner =  null)
+    public function __construct($name, Workspace $baseWorkspace = null, UserInterface $owner =  null)
     {
         $this->name = $name;
         $this->title = $name;
@@ -195,23 +217,33 @@ class Workspace
     /**
      * Returns the workspace owner.
      *
-     * @return User
+     * @return UserInterface
      * @api
      */
     public function getOwner()
     {
-        return $this->owner;
+        if ($this->owner === null) {
+            return null;
+        }
+        return $this->persistenceManager->getObjectByIdentifier($this->owner, $this->reflectionService->getDefaultImplementationClassNameForInterface(UserInterface::class));
     }
 
     /**
      * Returns the workspace owner.
      *
-     * @param User $user The new user
+     * @param UserInterface|string $user The new user
      * @api
      */
-    public function setOwner(User $user = null)
+    public function setOwner($user)
     {
-        $this->owner = $user;
+        if (is_string($user) && preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user)) {
+            $this->owner = $user;
+            return;
+        }
+        if (!$user instanceof UserInterface) {
+            throw new \InvalidArgumentException(sprintf('$user must be an instance of UserInterface, %s given.', gettype($user)), 1447764244);
+        }
+        $this->owner = $this->persistenceManager->getIdentifierByObject($user);
     }
 
     /**

@@ -504,7 +504,7 @@ class WorkspacesController extends AbstractModuleController
     }
 
     /**
-     * Creates an array of usernames and their respective labels which are possible owners for a workspace.
+     * Creates an array of user names and their respective labels which are possible owners for a workspace.
      *
      * @return array
      */
@@ -513,7 +513,7 @@ class WorkspacesController extends AbstractModuleController
         $ownerOptions = [ '' => '-'];
         foreach ($this->userService->getUsers() as $user) {
             /** @var User $user */
-            $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getName()->getFullName();
+            $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getLabel();
         }
         return $ownerOptions;
     }
