@@ -163,6 +163,28 @@ class UserService
     }
 
     /**
+     * Returns the username of the given user
+     *
+     * Technically, this method will look for the user's backend account (or, if authenticationProviderName is specified,
+     * for the account matching the given authentication provider) and return the account's identifier.
+     *
+     * @param User $user
+     * @param string $authenticationProviderName
+     * @return string The username or null if the given user does not have a backend account
+     */
+    public function getUsername(User $user, $authenticationProviderName = null)
+    {
+        $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+        foreach ($user->getAccounts() as $account) {
+            /** @var Account $account */
+            if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
+                return $account->getAccountIdentifier();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the currently logged in user, if any
      *
      * @return User The currently logged in user, or NULL
@@ -170,10 +192,14 @@ class UserService
      */
     public function getCurrentUser()
     {
-        $account = $this->securityContext->getAccount();
-        if ($account !== null) {
-            return $this->getUser($account->getAccountIdentifier());
+        if ($this->securityContext->canBeInitialized() === true) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                return $this->getUser($account->getAccountIdentifier());
+            }
         }
+
+        return null;
     }
 
     /**
