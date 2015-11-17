@@ -23,6 +23,7 @@ TypoScript code::
             /Templates/TypoScriptObjects/MetaMenu.html'
             maximumLevels = 1
             startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
+            filter = 'TYPO3.Neos.NodeTypes:Page'
         }
     }
 
@@ -37,6 +38,8 @@ that is called metaMenu. The options available in this example is:
 * maximumLevels: How many levels the menu can show.
 * startingPoint: The starting point of the menu, in this case the
   node with name 'nameOfNode' is the starting point.
+* filter: Only pages that are instances of this node type will be
+  added.
 
 HTML template code::
 
