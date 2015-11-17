@@ -249,7 +249,7 @@ class UserService
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
 
-        $this->createUserWorkspace($user, $account);
+        $this->createPersonalWorkspace($user, $account);
 
         $this->emitUserCreated($user);
         return $user;
@@ -707,13 +707,13 @@ class UserService
     }
 
     /**
-     * Creates a user workspace for the given user's account if it does not exist already.
+     * Creates a personal workspace for the given user's account if it does not exist already.
      *
      * @param User $user The new user to create a workspace for
      * @param Account $account The user's backend account
      * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    protected function createUserWorkspace(User $user, Account $account)
+    protected function createPersonalWorkspace(User $user, Account $account)
     {
         $userWorkspaceName = 'user-' . $account->getAccountIdentifier();
         $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
