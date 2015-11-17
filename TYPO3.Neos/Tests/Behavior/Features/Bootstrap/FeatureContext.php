@@ -41,7 +41,7 @@ class FeatureContext extends MinkContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = 'TYPO3\Neos\Tests\Functional\Command\BehatTestHelper';
+    protected $behatTestHelperObjectName = \TYPO3\Neos\Tests\Functional\Command\BehatTestHelper::class;
 
     /**
      * @var \TYPO3\Flow\Object\ObjectManagerInterface
@@ -67,8 +67,8 @@ class FeatureContext extends MinkContext
     {
         $this->useContext('flow', new \Flowpack\Behat\Tests\Behat\FlowContext($parameters));
         $this->objectManager = $this->getSubcontext('flow')->getObjectManager();
-        $this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
-        $this->nodeAuthorizationService = $this->objectManager->get('TYPO3\TYPO3CR\Service\AuthorizationService');
+        $this->environment = $this->objectManager->get(\TYPO3\Flow\Utility\Environment::class);
+        $this->nodeAuthorizationService = $this->objectManager->get(\TYPO3\TYPO3CR\Service\AuthorizationService::class);
         $this->setupSecurity();
     }
 
@@ -85,7 +85,7 @@ class FeatureContext extends MinkContext
      */
     private function getPublishingService()
     {
-        return $this->getObjectManager()->get('TYPO3\Neos\Service\PublishingService');
+        return $this->getObjectManager()->get(\TYPO3\Neos\Service\PublishingService::class);
     }
 
     /**
@@ -112,11 +112,11 @@ class FeatureContext extends MinkContext
     {
         $rows = $table->getHash();
         /** @var \TYPO3\Neos\Domain\Service\UserService $userService */
-        $userService = $this->objectManager->get('\TYPO3\Neos\Domain\Service\UserService');
+        $userService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\UserService::class);
         /** @var \TYPO3\Party\Domain\Repository\PartyRepository $partyRepository */
-        $partyRepository = $this->objectManager->get('TYPO3\Party\Domain\Repository\PartyRepository');
+        $partyRepository = $this->objectManager->get(\TYPO3\Party\Domain\Repository\PartyRepository::class);
         /** @var \TYPO3\Flow\Security\AccountRepository $accountRepository */
-        $accountRepository = $this->objectManager->get('TYPO3\Flow\Security\AccountRepository');
+        $accountRepository = $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class);
         foreach ($rows as $row) {
             $roleIdentifiers = array_map(function ($role) {
                 return 'TYPO3.Neos:' . $role;
@@ -231,14 +231,14 @@ class FeatureContext extends MinkContext
     public function iImportedTheSite($packageKey)
     {
         /** @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository $nodeDataRepository */
-        $nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
         /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-        $contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
         $contentContext = $contextFactory->create(array('workspace' => 'live'));
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, true);
 
         /** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
         $siteImportService->importFromPackage($packageKey, $contentContext);
 
         $this->getSubcontext('flow')->persistAll();
@@ -299,7 +299,7 @@ class FeatureContext extends MinkContext
     public function resetContextFactory()
     {
         /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-        $contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($contextFactory, 'contextInstances', array(), true);
     }
 
@@ -457,7 +457,7 @@ class FeatureContext extends MinkContext
         $site = new \TYPO3\Neos\Domain\Model\Site($siteName);
         $site->setSiteResourcesPackageKey('TYPO3.NeosDemoTypo3Org');
         /** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
-        $siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
+        $siteRepository = $this->objectManager->get(\TYPO3\Neos\Domain\Repository\SiteRepository::class);
         $siteRepository->add($site);
 
         $this->getSubContext('flow')->persistAll();
@@ -469,10 +469,10 @@ class FeatureContext extends MinkContext
     public function iExportTheSite($siteNodeName)
     {
         /** @var \TYPO3\Neos\Domain\Service\SiteExportService $siteExportService */
-        $siteExportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteExportService');
+        $siteExportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteExportService::class);
 
         /** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
-        $siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
+        $siteRepository = $this->objectManager->get(\TYPO3\Neos\Domain\Repository\SiteRepository::class);
         $site = $siteRepository->findOneByNodeName($siteNodeName);
 
         $this->lastExportedSiteXmlPathAndFilename = tempnam(sys_get_temp_dir(), 'Neos_LastExportedSite');
@@ -486,7 +486,7 @@ class FeatureContext extends MinkContext
     public function iPruneAllSites()
     {
         /** @var \TYPO3\Neos\Domain\Service\SiteService $siteService */
-        $siteService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteService');
+        $siteService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteService::class);
         $siteService->pruneAll();
 
         $this->getSubContext('flow')->persistAll();
@@ -503,7 +503,7 @@ class FeatureContext extends MinkContext
         $this->resetNodeInstances();
 
         /** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
     }
 }
