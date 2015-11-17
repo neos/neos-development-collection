@@ -155,6 +155,10 @@ class Workspace
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->rootNodeData = new NodeData('/', $this);
             $this->nodeDataRepository->add($this->rootNodeData);
+
+            if ($this->owner instanceof UserInterface) {
+                $this->setOwner($this->owner);
+            }
         }
     }
 
