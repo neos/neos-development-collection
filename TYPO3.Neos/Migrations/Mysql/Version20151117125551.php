@@ -18,16 +18,16 @@ class Version20151117125551 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $workspacesQuery = $this->connection->executeQuery('SELECT name FROM typo3_typo3cr_domain_model_workspace t0 WHERE t0.name LIKE "user-%" AND t0.owner IS NULL');
+        $workspacesQuery = $this->connection->executeQuery('SELECT name FROM typo3_typo3cr_domain_model_workspace t0 WHERE t0.name LIKE \'user-%\' AND t0.owner IS NULL');
         while ($workspaceRecord = $workspacesQuery->fetch(\PDO::FETCH_ASSOC)) {
             $username = substr($workspaceRecord['name'], 5);
-            $accountQuery = $this->connection->executeQuery('SELECT persistence_object_identifier FROM typo3_flow_security_account t0 WHERE t0.accountidentifier LIKE "' . $username . '" AND t0.authenticationprovidername = "Typo3BackendProvider"');
+            $accountQuery = $this->connection->executeQuery('SELECT persistence_object_identifier FROM typo3_flow_security_account t0 WHERE t0.accountidentifier = \'' . $username . '\' AND t0.authenticationprovidername = \'Typo3BackendProvider\'');
             $accountRecord = $accountQuery->fetch(\PDO::FETCH_ASSOC);
 
-            $partyQuery = $this->connection->executeQuery('SELECT party_abstractparty FROM typo3_party_domain_model_abstractparty_accounts_join t0 WHERE t0.flow_security_account = "' .  $accountRecord['persistence_object_identifier'] . '"');
+            $partyQuery = $this->connection->executeQuery('SELECT party_abstractparty FROM typo3_party_domain_model_abstractparty_accounts_join t0 WHERE t0.flow_security_account = \'' .  $accountRecord['persistence_object_identifier'] . '\'');
             $partyRecord = $partyQuery->fetch(\PDO::FETCH_ASSOC);
 
-            $this->addSql('UPDATE typo3_typo3cr_domain_model_workspace SET owner = "'. $partyRecord['party_abstractparty'] . '" WHERE name = "user-' . $username . '"');
+            $this->addSql('UPDATE typo3_typo3cr_domain_model_workspace SET owner = \''. $partyRecord['party_abstractparty'] . '\' WHERE name = \'user-' . $username . '\'');
         }
     }
 
