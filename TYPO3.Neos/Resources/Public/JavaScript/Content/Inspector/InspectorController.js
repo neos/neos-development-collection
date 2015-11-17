@@ -15,7 +15,8 @@ define(
 	'Shared/I18n',
 	'create',
 	'vie',
-	'Shared/EventDispatcher'
+	'Shared/EventDispatcher',
+	'Shared/Notification'
 ], function(
 	Ember,
 	$,
@@ -29,7 +30,8 @@ define(
 	I18n,
 	CreateJS,
 	vie,
-	EventDispatcher
+	EventDispatcher,
+	Notification
 ) {
 
 	/**
@@ -394,7 +396,7 @@ define(
 				});
 			}, function () {
 				if (window.console && window.console.error) {
-					window.console.error('Couldn\'t create handler "' + handler + '" assigned to "' + listenerName + '"! Please check your configuration.');
+					window.console.error('Couldn\'t create handler "' + handlerConfiguration.handler + '" assigned to "' + listenerName + '"! Please check your configuration.');
 				}
 				Notification.error('Error in inspector', 'Inspector change handler could not be loaded. See console for further details.');
 			});
