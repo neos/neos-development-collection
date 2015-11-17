@@ -136,12 +136,14 @@ The Neos Setup Tool
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
+   
+   *(WARNING: If you install the Neos demo site and it is publicly accessible, make sure the "Try me" page in the page tree is not publicly accessible because it has a form allowing you to create backend editor accounts with rights to edit website content.)*
 
    .. figure:: Images/StartPage.png
       :alt: The Neos start page
       :class: screenshot-fullsize
 
-	The Neos start page
+	The Neos demo site start page
 
 .. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
 .. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html
