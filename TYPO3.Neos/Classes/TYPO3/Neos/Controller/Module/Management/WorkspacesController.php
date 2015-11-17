@@ -215,7 +215,7 @@ class WorkspacesController extends AbstractModuleController
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
         $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
         $this->view->assign('showOwnerSelector', $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace));
-        $this->view->assign('ownerOptions', $this->prepareOwnerOptions($workspace));
+        $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
     }
 
     /**
@@ -289,20 +289,20 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $userWorkspace = $this->workspaceRepository->$this->findOneByName('user-' . $currentAccount->getAccountIdentifier());
-        /** @var Workspace $userWorkspace */
+        $personalWorkspace = $this->workspaceRepository->$this->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        /** @var Workspace $personalWorkspace */
 
-        if ($this->publishingService->getUnpublishedNodesCount($userWorkspace) > 0) {
+        if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
             $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', array(), null, null, 'Modules', 'TYPO3.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, array(), 1437833387);
             $this->redirect('show', null, null, array('workspace' => $targetWorkspace));
         }
 
-        $userWorkspace->setBaseWorkspace($targetWorkspace);
-        $this->workspaceRepository->update($userWorkspace);
+        $personalWorkspace->setBaseWorkspace($targetWorkspace);
+        $this->workspaceRepository->update($personalWorkspace);
 
         $contextProperties = $targetNode->getContext()->getProperties();
-        $contextProperties['workspaceName'] = $userWorkspace->getName();
+        $contextProperties['workspaceName'] = $personalWorkspace->getName();
         $context = $this->contextFactory->create($contextProperties);
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();

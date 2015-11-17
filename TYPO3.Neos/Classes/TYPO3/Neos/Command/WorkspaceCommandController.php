@@ -14,7 +14,6 @@ namespace TYPO3\Neos\Command;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Repository\UserRepository;
 use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -237,7 +236,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         if (substr($workspaceName, 0, 5) === 'user-') {
-            $this->outputLine('Did not delete workspace "%s" because it is a user workspace. User workspaces cannot be deleted manually.', array($workspaceName));
+            $this->outputLine('Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.', array($workspaceName));
             $this->quit(2);
         }
 
