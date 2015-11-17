@@ -31,6 +31,7 @@ use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
  */
 class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface
 {
+
     /**
      * @Flow\Inject
      * @var SystemLoggerInterface
@@ -111,6 +112,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function matchValue($requestPath)
     {
         try {
+            /** @var NodeInterface $node */
             $node = null;
 
             // Build context explicitly without authorization checks because the security context isn't available yet
@@ -123,6 +125,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             if ($requestPath === '') {
                 throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
             }
+
             return false;
         }
         if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
@@ -284,6 +287,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $workspaceName = $nodePathAndContext['workspaceName'];
             $dimensions = ($workspaceName !== 'live' || $convertLiveDimensions === true) ? $nodePathAndContext['dimensions'] : null;
         }
+
         return $this->buildContextFromWorkspaceName($workspaceName, $dimensions);
     }
 
@@ -294,11 +298,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildContextFromWorkspaceName($workspaceName, array $dimensions = null)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        );
+        ];
 
         if ($dimensions !== null) {
             $contextProperties['dimensions'] = $dimensions;
@@ -327,6 +331,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
         try {
             $nodePathAndContext = NodePaths::explodeContextPath($path);
+
             return $nodePathAndContext['nodePath'];
         } catch (\InvalidArgumentException $exception) {
         }
@@ -383,7 +388,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
     {
-        $relativeNodePathSegments = array();
+        $relativeNodePathSegments = [];
         $node = $siteNode;
 
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
@@ -418,7 +423,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return '';
         }
 
-        $requestPathSegments = array();
+        $requestPathSegments = [];
         while ($siteNode !== $node && $node instanceof NodeInterface) {
             if (!$node->hasProperty('uriPathSegment')) {
                 throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
@@ -440,6 +445,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
      * @return array An array of dimension name => dimension values (array of string)
+     * @throws InvalidDimensionPresetCombinationException
      * @throws InvalidRequestPathException
      * @throws NoSuchDimensionValueException
      */
@@ -447,12 +453,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
         if (count($dimensionPresets) === 0) {
-            return array();
+            return [];
         }
 
-        $dimensionsAndDimensionValues = array();
-        $chosenDimensionPresets = array();
-        $matches = array();
+        $dimensionsAndDimensionValues = [];
+        $chosenDimensionPresets = [];
+        $matches = [];
 
         preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
 
@@ -498,12 +504,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildContextFromWorkspaceNameAndDimensions($workspaceName, array $dimensionsAndDimensionValues)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => ($workspaceName !== 'live'),
             'inaccessibleContentShown' => ($workspaceName !== 'live'),
             'dimensions' => $dimensionsAndDimensionValues
-        );
+        ];
 
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
 

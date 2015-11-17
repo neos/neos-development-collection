@@ -29,6 +29,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class UserService
 {
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Neos\Domain\Service\UserService
@@ -98,7 +99,7 @@ class UserService
      *
      * @return Workspace
      * @api
-     * @deprecated
+     * @deprecated 2.1
      */
     public function getUserWorkspace()
     {
@@ -112,7 +113,7 @@ class UserService
      *
      * @return string
      * @api
-     * @deprecated
+     * @deprecated 2.1
      */
     public function getUserWorkspaceName()
     {

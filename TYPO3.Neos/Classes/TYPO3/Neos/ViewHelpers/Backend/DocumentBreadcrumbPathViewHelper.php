@@ -21,6 +21,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
+
     /**
      * @param NodeInterface $node A document node
      * @return string
@@ -30,10 +31,11 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
         $output = '/' . $node->getLabel();
         $flowQuery = new FlowQuery(array($node));
         $nodes = $flowQuery->parents('[instanceof TYPO3.Neos:Document]')->get();
+        /** @var NodeInterface $node */
         foreach ($nodes as $node) {
-            /** @var NodeInterface $node */
             $output = '/' . $node->getLabel() . $output;
         }
+
         return $output;
     }
 }

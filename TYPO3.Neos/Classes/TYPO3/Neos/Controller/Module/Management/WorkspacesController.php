@@ -37,6 +37,7 @@ use TYPO3\TYPO3CR\Utility;
  */
 class WorkspacesController extends AbstractModuleController
 {
+
     /**
      * @Flow\Inject
      * @var PublishingService
@@ -116,15 +117,15 @@ class WorkspacesController extends AbstractModuleController
         $userWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
         /** @var Workspace $userWorkspace */
 
-        $workspacesAndCounts = array(
-            $userWorkspace->getName() => array(
+        $workspacesAndCounts = [
+            $userWorkspace->getName() => [
                 'workspace' => $userWorkspace,
                 'changesCounts' => $this->computeChangesCount($userWorkspace),
                 'canPublish' => false,
                 'canManage' => false,
                 'canDelete' => false
-            )
-        );
+            ]
+        ];
 
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
@@ -148,14 +149,14 @@ class WorkspacesController extends AbstractModuleController
      */
     public function showAction(Workspace $workspace)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'selectedWorkspace' => $workspace,
             'selectedWorkspaceLabel' => $workspace->getTitle() ?: $workspace->getName(),
             'baseWorkspaceName' => $workspace->getBaseWorkspace()->getName(),
             'baseWorkspaceLabel' => $workspace->getBaseWorkspace()->getTitle() ?: $workspace->getBaseWorkspace()->getName(),
             'canPublishToBaseWorkspace' => $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'siteChanges' => $this->computeSiteChanges($workspace)
-        ));
+        ]);
     }
 
     /**
@@ -180,7 +181,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
-            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', array(), null, null, 'Modules', 'TYPO3.Neos'), '', Message::SEVERITY_WARNING);
+            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'TYPO3.Neos'), '', Message::SEVERITY_WARNING);
             $this->redirect('new');
         }
 
@@ -231,7 +232,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $this->workspaceRepository->update($workspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.workspaceHasBeenUpdated', array($workspace->getTitle()), null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.workspaceHasBeenUpdated', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -249,12 +250,13 @@ class WorkspacesController extends AbstractModuleController
 
         $dependentWorkspaces = $this->workspaceRepository->findByBaseWorkspace($workspace);
         if (count($dependentWorkspaces) > 0) {
-            $dependentWorkspaceTitles = array();
+            $dependentWorkspaceTitles = [];
+            /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
                 $dependentWorkspaceTitles[] = $dependentWorkspace->getTitle();
             }
 
-            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfDependencies', array($workspace->getTitle(), implode(', ', $dependentWorkspaceTitles)), null, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfDependencies', [$workspace->getTitle(), implode(', ', $dependentWorkspaceTitles)], null, null, 'Modules', 'TYPO3.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
@@ -263,18 +265,18 @@ class WorkspacesController extends AbstractModuleController
         try {
             $nodesCount = $this->publishingService->getUnpublishedNodesCount($workspace);
         } catch (\Exception $exception) {
-            $message = $this->translator->translateById('workspaces.notDeletedErrorWhileFetchingUnpublishedNodes', array($workspace->getTitle()), null, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.notDeletedErrorWhileFetchingUnpublishedNodes', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
         if ($nodesCount > 0) {
-            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes', array($workspace->getTitle(), $nodesCount), $nodesCount, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes', [$workspace->getTitle(), $nodesCount], $nodesCount, null, 'Modules', 'TYPO3.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
 
         $this->workspaceRepository->remove($workspace);
-        $this->addFlashMessage($message = $this->translator->translateById('workspaces.workspaceHasBeenRemoved', array($workspace->getTitle()), null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($message = $this->translator->translateById('workspaces.workspaceHasBeenRemoved', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -293,9 +295,9 @@ class WorkspacesController extends AbstractModuleController
         /** @var Workspace $personalWorkspace */
 
         if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
-            $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', array(), null, null, 'Modules', 'TYPO3.Neos');
-            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, array(), 1437833387);
-            $this->redirect('show', null, null, array('workspace' => $targetWorkspace));
+            $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', [], null, null, 'Modules', 'TYPO3.Neos');
+            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
+            $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
         }
 
         $personalWorkspace->setBaseWorkspace($targetWorkspace);
@@ -308,7 +310,7 @@ class WorkspacesController extends AbstractModuleController
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
         /** @var ActionRequest $mainRequest */
         $this->uriBuilder->setRequest($mainRequest);
-        $this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', array('node' => $context->getNode($targetNode->getPath())));
+        $this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', ['node' => $context->getNode($targetNode->getPath())]);
     }
 
     /**
@@ -320,8 +322,8 @@ class WorkspacesController extends AbstractModuleController
     public function publishNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
     {
         $this->publishingService->publishNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', array(), null, null, 'Modules', 'TYPO3.Neos'));
-        $this->redirect('show', null, null, array('workspace' => $selectedWorkspace));
+        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
     /**
@@ -335,8 +337,8 @@ class WorkspacesController extends AbstractModuleController
     {
         // Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
         $this->publishingService->discardNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', array(), null, null, 'Modules', 'TYPO3.Neos'));
-        $this->redirect('show', null, null, array('workspace' => $selectedWorkspace));
+        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
     /**
@@ -361,17 +363,17 @@ class WorkspacesController extends AbstractModuleController
                 foreach ($nodes as $node) {
                     $this->publishingService->publishNode($node);
                 }
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', array(), null, null, 'Modules', 'TYPO3.Neos'));
+                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'TYPO3.Neos'));
             break;
             case 'discard':
                 $this->publishingService->discardNodes($nodes);
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', array(), null, null, 'Modules', 'TYPO3.Neos'));
+                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
             break;
             default:
                 throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
         }
 
-        $this->redirect('show', null, null, array('workspace' => $selectedWorkspace));
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
     /**
@@ -386,7 +388,7 @@ class WorkspacesController extends AbstractModuleController
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
         $workspace->publish($targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', array($workspace->getTitle(), $targetWorkspace->getTitle()), null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [$workspace->getTitle(), $targetWorkspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -400,7 +402,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', array($workspace->getTitle()), null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -412,7 +414,7 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function computeChangesCount(Workspace $selectedWorkspace)
     {
-        $changesCount = array('new' => 0, 'changed' => 0, 'removed' => 0, 'total' => 0);
+        $changesCount = ['new' => 0, 'changed' => 0, 'removed' => 0, 'total' => 0];
         foreach ($this->computeSiteChanges($selectedWorkspace) as $siteChanges) {
             foreach ($siteChanges['documents'] as $documentChanges) {
                 foreach ($documentChanges['changes'] as $change) {
@@ -427,6 +429,7 @@ class WorkspacesController extends AbstractModuleController
                 }
             }
         }
+
         return $changesCount;
     }
 
@@ -438,14 +441,14 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace)
     {
-        $siteChanges = array();
+        $siteChanges = [];
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
             /** @var NodeInterface $node */
             if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
                 $pathParts = explode('/', $node->getPath());
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
-                    $q = new FlowQuery(array($node));
+                    $q = new FlowQuery([$node]);
                     $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
                     // FIXME: $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
@@ -455,7 +458,7 @@ class WorkspacesController extends AbstractModuleController
                             $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
                         }
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
-                        $change = array('node' => $node);
+                        $change = ['node' => $node];
                         if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
                         }
@@ -465,9 +468,9 @@ class WorkspacesController extends AbstractModuleController
             }
         }
 
-        $liveContext = $this->contextFactory->create(array(
+        $liveContext = $this->contextFactory->create([
             'workspaceName' => 'live'
-        ));
+        ]);
 
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
@@ -500,6 +503,7 @@ class WorkspacesController extends AbstractModuleController
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
             }
         }
+
         return $baseWorkspaceOptions;
     }
 
@@ -510,11 +514,12 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function prepareOwnerOptions()
     {
-        $ownerOptions = [ '' => '-'];
+        $ownerOptions = ['' => '-'];
         foreach ($this->userService->getUsers() as $user) {
             /** @var User $user */
             $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getLabel();
         }
+
         return $ownerOptions;
     }
 }

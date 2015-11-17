@@ -43,6 +43,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class UserService
 {
+
     /**
      * Might be configurable in the future, for now centralising this as a "constant"
      *
@@ -115,6 +116,7 @@ class UserService
      * @var Context
      */
     protected $securityContext;
+
     /**
      * @Flow\Inject
      * @var HashService
@@ -157,6 +159,7 @@ class UserService
         if (!$user instanceof User) {
             throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
         }
+
         return $user;
     }
 
@@ -167,7 +170,7 @@ class UserService
      * for the account matching the given authentication provider) and return the account's identifier.
      *
      * @param User $user
-     * @param null $authenticationProviderName
+     * @param string $authenticationProviderName
      * @return string The username or null if the given user does not have a backend account
      */
     public function getUsername(User $user, $authenticationProviderName = null)
@@ -179,6 +182,8 @@ class UserService
                 return $account->getAccountIdentifier();
             }
         }
+
+        return null;
     }
 
     /**
@@ -254,6 +259,7 @@ class UserService
         $this->createPersonalWorkspace($user, $account);
 
         $this->emitUserCreated($user);
+
         return $user;
     }
 
@@ -369,6 +375,7 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             $counter += $this->addRoleToAccount($account, $roleIdentifier);
         }
+
         return $counter;
     }
 
@@ -387,6 +394,7 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             $counter += $this->removeRoleFromAccount($account, $roleIdentifier);
         }
+
         return $counter;
     }
 
@@ -447,6 +455,7 @@ class UserService
             $account->addRole($role);
             $this->accountRepository->update($account);
             $this->emitRolesAdded($account, array($role));
+
             return 1;
         }
 
@@ -485,6 +494,7 @@ class UserService
             $account->removeRole($role);
             $this->accountRepository->update($account);
             $this->emitRolesRemoved($account, array($role));
+
             return 1;
         }
 
@@ -542,8 +552,8 @@ class UserService
      */
     public function deactivateUser(User $user)
     {
+        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
             $account->setExpirationDate($this->now);
             $this->accountRepository->update($account);
         }
@@ -653,6 +663,7 @@ class UserService
         foreach ($roleIdentifiers as &$roleIdentifier) {
             $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
         }
+
         return $roleIdentifiers;
     }
 
@@ -671,6 +682,7 @@ class UserService
         if (!$this->policyService->hasRole($roleIdentifier)) {
             throw new NoSuchRoleException(sprintf('The role %s does not exist.', $roleIdentifier), 1422540184);
         }
+
         return $roleIdentifier;
     }
 
@@ -688,8 +700,8 @@ class UserService
             'TYPO3.Flow:AuthenticatedUser' => $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser')
         );
 
+        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
             $accountRoles = $account->getRoles();
             /** @var $currentRole Role */
             foreach ($accountRoles as $currentRole) {
@@ -757,8 +769,8 @@ class UserService
      */
     protected function removeOwnerFromUsersWorkspaces(User $user)
     {
+        /** @var Workspace $workspace */
         foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
-            /** @var Workspace $workspace */
             $workspace->setOwner();
             $this->workspaceRepository->update($workspace);
         }

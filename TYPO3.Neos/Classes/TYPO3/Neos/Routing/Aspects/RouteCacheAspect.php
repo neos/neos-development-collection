@@ -24,6 +24,7 @@ use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
  */
 class RouteCacheAspect
 {
+
     /**
      * @Flow\Inject
      * @var ContextFactoryInterface
@@ -50,22 +51,21 @@ class RouteCacheAspect
             return;
         }
 
-        // Build context explictly without authorization checks because the security context isn't available yet
+        // Build context explicitly without authorization checks because the security context isn't available yet
         // anyway and any Entity Privilege targeted on Workspace would fail at this point:
         $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values) {
             $contextPathPieces = NodePaths::explodeContextPath($values['node']);
-            $context = $this->contextFactory->create(array(
+            $context = $this->contextFactory->create([
                 'workspaceName' => $contextPathPieces['workspaceName'],
                 'dimensions' => $contextPathPieces['dimensions'],
                 'invisibleContentShown' => true
-            ));
+            ]);
 
             $node = $context->getNode($contextPathPieces['nodePath']);
             if ($node instanceof NodeInterface) {
                 $values['node-identifier'] = $node->getIdentifier();
                 $joinPoint->setMethodArgument('values', $values);
             }
-
         });
     }
 }

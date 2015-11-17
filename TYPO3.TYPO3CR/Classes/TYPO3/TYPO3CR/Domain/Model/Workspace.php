@@ -28,6 +28,7 @@ use TYPO3\TYPO3CR\Exception\WorkspaceException;
  */
 class Workspace
 {
+
     /**
      * @var string
      * @Flow\Identity
@@ -76,7 +77,7 @@ class Workspace
      *
      * @var Workspace
      * @ORM\ManyToOne
-     * @ORM\JoinColumn(onDelete="SET null")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $baseWorkspace;
 
@@ -133,7 +134,7 @@ class Workspace
      * @param UserInterface $owner The user that created the workspace (if any, "system" workspaces have none)
      * @api
      */
-    public function __construct($name, Workspace $baseWorkspace = null, UserInterface $owner =  null)
+    public function __construct($name, Workspace $baseWorkspace = null, UserInterface $owner = null)
     {
         $this->name = $name;
         $this->title = $name;
@@ -332,6 +333,7 @@ class Workspace
             $baseWorkspaces[$baseWorkspace->getName()] = $baseWorkspace;
             $baseWorkspace = $baseWorkspace->getBaseWorkspace();
         }
+
         return $baseWorkspaces;
     }
 
@@ -529,6 +531,7 @@ class Workspace
     protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
     {
         $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
+
         return ($nodeData === null || $nodeData->getWorkspace() === $targetWorkspace) ? $nodeData : null;
     }
 

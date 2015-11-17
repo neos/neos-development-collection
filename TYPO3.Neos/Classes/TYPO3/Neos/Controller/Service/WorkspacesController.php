@@ -25,6 +25,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class WorkspacesController extends ActionController
 {
+
     /**
      * @Flow\Inject
      * @var WorkspaceRepository
@@ -40,10 +41,10 @@ class WorkspacesController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => 'TYPO3\Fluid\View\TemplateView',
         'json' => 'TYPO3\Neos\View\Service\NodeJsonView'
-    );
+    ];
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -51,10 +52,10 @@ class WorkspacesController extends ActionController
      * @var array
      * @see http://www.iana.org/assignments/media-types/index.html
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * Shows a list of existing workspaces
@@ -64,21 +65,21 @@ class WorkspacesController extends ActionController
     public function indexAction()
     {
         $user = $this->userService->getCurrentUser();
-        $workspacesArray = array();
+        $workspacesArray = [];
+        /** @var Workspace $workspace */
         foreach ($this->workspaceRepository->findAll() as $workspace) {
-            /** @var Workspace $workspace */
 
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
                 continue;
             }
 
-            $workspaceArray = array(
+            $workspaceArray = [
                 'name' => $workspace->getName(),
                 'title' => $workspace->getTitle(),
                 'description' => $workspace->getDescription(),
                 'baseWorkspace' => $workspace->getBaseWorkspace()
-            );
+            ];
             if ($user !== null) {
                 $workspaceArray['readonly'] = !$this->userService->currentUserCanPublishToWorkspace($workspace);
             }
