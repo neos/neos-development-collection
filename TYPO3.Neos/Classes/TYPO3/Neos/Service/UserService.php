@@ -12,8 +12,6 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -33,9 +31,9 @@ class UserService
 {
     /**
      * @Flow\Inject
-     * @var Context
+     * @var \TYPO3\Neos\Domain\Service\UserService
      */
-    protected $securityContext;
+    protected $userDomainService;
 
     /**
      * @Flow\Inject
@@ -57,10 +55,7 @@ class UserService
      */
     public function getBackendUser()
     {
-        if ($this->securityContext->canBeInitialized() === true) {
-            return $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-        }
-        return null;
+        return $this->userDomainService->getCurrentUser();
     }
 
     /**
@@ -86,9 +81,14 @@ class UserService
      */
     public function getPersonalWorkspaceName()
     {
-        $account = $this->securityContext->getAccount();
-        if ($account instanceof Account) {
-            return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
+        $currentUser = $this->userDomainService->getCurrentUser();
+
+        if ($currentUser instanceof User) {
+            $username = $this->userDomainService->getUsername($currentUser);
+
+            return 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
+        } else {
+            return null;
         }
     }
 

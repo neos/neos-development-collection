@@ -189,12 +189,14 @@ class UserService
      */
     public function getCurrentUser()
     {
-        $account = $this->securityContext->getAccount();
-        if ($account !== null) {
-            return $this->getUser($account->getAccountIdentifier());
-        } else {
-            return null;
+        if ($this->securityContext->canBeInitialized() === true) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                return $this->getUser($account->getAccountIdentifier());
+            }
         }
+
+        return null;
     }
 
     /**
