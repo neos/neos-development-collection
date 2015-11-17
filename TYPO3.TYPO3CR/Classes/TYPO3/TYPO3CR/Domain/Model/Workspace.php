@@ -276,7 +276,7 @@ class Workspace
      */
     public function isInternalWorkspace()
     {
-        return $this->owner === null;
+        return $this->baseWorkspace !== null && $this->owner === null;
     }
 
     /**
