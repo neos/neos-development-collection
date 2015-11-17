@@ -233,11 +233,11 @@ class Workspace
      */
     public function isPrivateWorkspace()
     {
-        return $this->owner !== null;
+        return $this->owner !== null && !$this->isPersonalWorkspace();
     }
 
     /**
-     * Checks if this workspace is shared accross all editors
+     * Checks if this workspace is shared across all editors
      *
      * @return boolean
      * @api
@@ -245,6 +245,17 @@ class Workspace
     public function isInternalWorkspace()
     {
         return $this->owner === null;
+    }
+
+    /**
+     * Checks if this workspace is public to everyone, even without authentication
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPublicWorkspace()
+    {
+        return $this->baseWorkspace === null && $this->owner === null;
     }
 
     /**
