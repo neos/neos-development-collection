@@ -74,7 +74,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
 
     'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner== current.userInformation.backendUser))'
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner == current.userInformation.backendUser))'
 
     #
     # User management and user settings
@@ -137,13 +137,6 @@ privilegeTargets:
     'TYPO3.Neos:Backend.Module.Administration.Configuration':
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'
 
-# Doesn't work yet, because workspaces are used very early where no security context is available yet, but we basically
-# need a rule like this:
-#
-#  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-#    'TYPO3.Neos:RestrictedWorkspaces':
-#      matcher: 'isType("TYPO3\TYPO3CR\Domain\Model\Workspace") && !(property("owner").equals(context.userInformation.userWorkspaceName)) && property("owner") != NULL && property("name") !=  context.userInformation.userWorkspaceName'
-
 roles:
 
   'TYPO3.Flow:Everybody':
@@ -203,10 +196,6 @@ roles:
         privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspaces.Index'
         permission: GRANT
 
-#      -
-#        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspaces.Show.OwnerIsCurrentUser'
-#        permission: GRANT
-#
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces'
         permission: GRANT
