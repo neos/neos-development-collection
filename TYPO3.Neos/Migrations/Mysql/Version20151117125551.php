@@ -38,6 +38,6 @@ class Version20151117125551 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-        $this->addSql('UPDATE typo3_typo3cr_domain_model_workspace SET owner = NULL WHERE 1');
+        $this->addSql('UPDATE typo3_typo3cr_domain_model_workspace SET owner = NULL');
     }
 }
