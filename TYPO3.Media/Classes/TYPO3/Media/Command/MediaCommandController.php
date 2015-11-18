@@ -195,9 +195,7 @@ class MediaCommandController extends CommandController
         $iteration = 0;
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             if ($thumbnail->getResource() === null) {
-                $thumbnail->refresh();
-                $this->persistenceManager->whiteListObject($thumbnail);
-                $this->thumbnailRepository->update($thumbnail);
+                $this->thumbnailService->refreshThumbnail($thumbnail);
                 $this->persistenceManager->persistAll();
             }
             $this->output->progressAdvance(1);

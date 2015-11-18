@@ -93,9 +93,7 @@ class ThumbnailService
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
             $this->persistenceManager->whiteListObject($thumbnail);
         } elseif ($thumbnail->getResource() === null && $async === false) {
-            $thumbnail->refresh();
-            $this->persistenceManager->whiteListObject($thumbnail);
-            $this->thumbnailRepository->update($thumbnail);
+            $this->refreshThumbnail($thumbnail);
         }
 
         return $thumbnail;
@@ -147,6 +145,19 @@ class ThumbnailService
         $thumbnailConfiguration = new ThumbnailConfiguration;
         call_user_func_array(array($thumbnailConfiguration, '__construct'), $this->presets[$preset]);
         return $thumbnailConfiguration;
+    }
+
+    /**
+     * Refreshes a thumbnail and persists the thumbnail
+     *
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function refreshThumbnail(Thumbnail $thumbnail)
+    {
+        $thumbnail->refresh();
+        $this->persistenceManager->whiteListObject($thumbnail);
+        $this->thumbnailRepository->update($thumbnail);
     }
 
     /**

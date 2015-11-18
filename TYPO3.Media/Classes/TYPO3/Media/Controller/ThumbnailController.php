@@ -16,6 +16,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * Controller for asynchronous thumbnail handling
@@ -26,21 +27,15 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
     /**
      * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
+
+    /**
+     * @Flow\Inject
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
-     * @Flow\Inject
-     * @var ThumbnailRepository
-     */
-    protected $thumbnailRepository;
 
     /**
      * Generate thumbnail and redirect to resource URI
@@ -51,9 +46,7 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function thumbnailAction(Thumbnail $thumbnail)
     {
         if ($thumbnail->getResource() === null) {
-            $thumbnail->refresh();
-            $this->persistenceManager->whiteListObject($thumbnail);
-            $this->thumbnailRepository->update($thumbnail);
+            $this->thumbnailService->refreshThumbnail($thumbnail);
         }
         $this->redirectToUri($this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()), 0, 302);
     }
