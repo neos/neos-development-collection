@@ -88,6 +88,7 @@ define([
 		dataSourceUri: null,
 		dataSourceAdditionalData: {},
 		elementInserted: false,
+		initialLoadDone: false,
 
 		attributeBindings: ['size', 'disabled', 'multiple'],
 		optionLabelPath: 'content.label',
@@ -201,8 +202,43 @@ define([
 
 			this._loadValuesFromController(dataSourceUri, parameters, function(options) {
 				that.set('values', options);
+
+				if (that.get('initialLoadDone')) {
+					that._matchValueAgainstOptions(options);
+				} else {
+					that.set('initialLoadDone', true);
+				}
 			});
 		}.observes('elementInserted', 'dataSourceUri', 'dataSourceIdentifier', 'dataSourceAdditionalData.changed'),
+
+		// this is used to remove options no longer available after a data source refresh
+		_matchValueAgainstOptions: function(options) {
+			var value, availableValues, newValue;
+
+			value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value');
+
+			if (this.get('multiple')) {
+				availableValues = options.filter(function (option) {
+					return value.filter(function (value) {
+							return value.value === option.value;
+						}).length > 0
+				});
+				newValue = availableValues.length > 0 ? JSON.stringify(availableValues) : '';
+			} else {
+				newValue = options.filter(
+					function (option) {
+						return option.value === value;
+					}).length > 0 ? value : '';
+			}
+
+			if (newValue !== this.get('value')) {
+				console.log('setting new value: ' + newValue + ' (old value: ' + this.get('value') + ')');
+				console.log(options);
+				this.set('value', newValue);
+			} else {
+				console.log('not setting new value, ' + newValue + ' == ' + this.get('value'));
+			}
+		},
 
 		_initializeSelect2: function() {
 			this.$().select2('destroy').select2({
