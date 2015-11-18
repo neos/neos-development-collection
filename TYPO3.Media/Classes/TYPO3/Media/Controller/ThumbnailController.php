@@ -50,7 +50,7 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     public function thumbnailAction(Thumbnail $thumbnail)
     {
-        if ($thumbnail->getResource() === NULL) {
+        if ($thumbnail->getResource() === null) {
             $thumbnail->refresh();
             $this->persistenceManager->whiteListObject($thumbnail);
             $this->thumbnailRepository->update($thumbnail);
