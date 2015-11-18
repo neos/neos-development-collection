@@ -108,13 +108,11 @@ additionalProperties:
                     type: dictionary
                     additionalProperties:
                       type: dictionary
+                      additionalProperties: FALSE
                       properties:
                         'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
                         'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
-                        'handlerOptions':
-                          type: dictionary
-                          additionalProperties:
-                            type: ['string', 'null', 'dictionary', 'boolean', 'array']
+                        'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
 
     'ui':
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
