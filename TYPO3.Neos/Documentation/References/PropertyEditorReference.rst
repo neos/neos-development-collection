@@ -212,6 +212,8 @@ for properties of type ``array``. If an empty value is allowed as well, ``allowE
 Because selection options shall be fetched from server-side code frequently, the Select Box Editor contains
 support for so-called *data sources*, by setting a ``dataSourceIdentifier``, or optionally a ``dataSourceUri``.
 This helps to provide data to the editing interface without having to define routes, policies or a controller.
+You can provide an array of ``dataSourceAdditionalData`` that will be sent to the data source with each request,
+the key/value pairs can be accessed in the ``$arguments`` array passed to ``getData()``.
 
 .. code-block:: yaml
 
@@ -223,6 +225,8 @@ This helps to provide data to the editing interface without having to define rou
             dataSourceIdentifier: 'questions'
             # alternatively using a custom uri:
             # dataSourceUri: 'custom-route/end-point'
+            dataSourceAdditionalData:
+              apiKey: 'foo-bar-baz'
 
 See :ref:`data-sources` for more details on implementing a *data source* based on Neos conventions. If you are using a
 data source to populate SelectBoxEditor instances it has to be matching the ``values`` option. Make sure you sort by
@@ -301,6 +305,9 @@ Options Reference:
 ``dataSourceIdentifier`` (string)
 	If set, a server-side data source will be called for loading the
 	possible options of the select field.
+
+``dataSourceAdditionalData`` (array)
+	Key/value pairs that will be sent to the server-side data source with every request.
 
 Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

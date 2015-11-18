@@ -79,3 +79,51 @@ The handle function receives the following arguments:
 - ``property`` is the name of the observed property, literally ``border-width`` in the above example.
 - ``listenerName`` is the configured name of the listener in question, literally ``activeWithNonEmptyValue``
   in the example above.
+
+If you are using select box editors with *data sources* (see :ref:`data-sources` for more details) you can use
+editor listeners to adjust ``dataSourceAdditionalData`` when properties are changed in the inspector. The
+following example shows this. It defines two properties (*serviceType* and *contractType*) where changes to the
+first property cause the ``searchTerm`` on the second properties' data source to be updated. That in turn triggers
+a refresh of the available options from the data source.
+
+.. code-block:: yaml
+
+  properties:
+    serviceType:
+      type: string
+      ui:
+        label: 'Service Type'
+        inspector:
+          group: product
+          editor: 'Content/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            allowEmpty: TRUE
+            placeholder: 'Service Type'
+            dataSourceIdentifier: 'acme-servicetypes'
+    contractType:
+      type: string
+      ui:
+        label: 'Contract Type'
+        inspector:
+          group: product
+          editor: 'Content/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            allowEmpty: TRUE
+            placeholder: 'Contract Type'
+            dataSourceIdentifier: 'acme-contracttypes'
+            dataSourceAdditionalData:
+              searchTerm: ~
+          editorListeners:
+            updateForSourceData:
+              property: 'serviceType'
+              handler: 'TYPO3.NeosDemoTypo3Org/Handlers/TeaserOptionsHandler'
+
+.. code-block:: js
+
+  define(['emberjs'], function (Ember) {
+    return Ember.Object.extend({
+      handle: function(listeningEditor, newValue, property, listenerName) {
+        listeningEditor.set('dataSourceAdditionalData.searchTerm', newValue);
+      }
+    });
+  });
