@@ -159,12 +159,22 @@ class MediaCommandController extends CommandController
 
     /**
      * Remove all thumbnail objects and resources
+     *
+     * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
+     * @return void
      */
-    public function clearThumbnailsCommand()
+    public function clearThumbnailsCommand($preset = null)
     {
-        $thumbnailCount = $this->thumbnailRepository->countAll();
+        if ($preset !== null) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+            $thumbnailConfigurationHash = $thumbnailConfiguration->getHash();
+            $thumbnailCount = $this->thumbnailRepository->countByConfigurationHash($thumbnailConfigurationHash);
+            $iterator = $this->thumbnailRepository->findAllIterator($thumbnailConfigurationHash);
+        } else {
+            $thumbnailCount = $this->thumbnailRepository->countAll();
+            $iterator = $this->thumbnailRepository->findAllIterator();
+        }
         $this->output->progressStart($thumbnailCount);
-        $iterator = $this->thumbnailRepository->findAllIterator();
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
             $this->output->progressAdvance(1);
