@@ -4,10 +4,10 @@
  */
 define(
 [
-	'emberjs',
-	'Library/underscore'
+  'emberjs',
+  'Library/underscore'
 ], function (Ember, _) {
-	return Ember.Object.extend({
+  return Ember.Object.extend({
 
         changed: 0,
         propertyNames: [],
@@ -48,22 +48,6 @@ define(
             }
 
             return allProperties;
-        },
-
-        /**
-         * Get a JavaScript array containing objects of the form {name, value} with all set properties.
-         *
-         * @returns {Array}
-         */
-        getKeyValueArray: function() {
-            var propertyNames = _.uniq(this.propertyNames),
-                keyValueArray = [];
-
-            for (var i = 0; i < propertyNames.length; i++) {
-                keyValueArray.push({name: propertyNames[i], value: this.get(propertyNames[i])});
-            }
-
-            return keyValueArray;
         }
-	});
+  });
 });

@@ -193,7 +193,7 @@ define([
 
 			var that = this,
 				dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier'),
-				parameters = this.get('dataSourceAdditionalData').getKeyValueArray();
+				parameters = Utility.getKeyValueArray(this.get('dataSourceAdditionalData').getAllProperties());
 
 			parameters.push({
 				name: 'node',
