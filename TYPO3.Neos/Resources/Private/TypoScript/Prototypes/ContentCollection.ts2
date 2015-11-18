@@ -15,7 +15,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 	@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
 	@process.contentElementWrapping {
-		node = ${contentCollectionNode}
+		expression.node = ${contentCollectionNode}
 	}
 
 	@cache {
