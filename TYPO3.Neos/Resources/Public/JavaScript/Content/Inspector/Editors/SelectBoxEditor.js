@@ -234,11 +234,7 @@ define([
 			}
 
 			if (newValue !== this.get('value')) {
-				console.log('setting new value: ' + newValue + ' (old value: ' + this.get('value') + ')');
-				console.log(options);
 				this.set('value', newValue);
-			} else {
-				console.log('not setting new value, ' + newValue + ' == ' + this.get('value'));
 			}
 		},
 
