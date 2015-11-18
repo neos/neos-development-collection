@@ -207,6 +207,8 @@ define([
 					that._matchValueAgainstOptions(options);
 				} else {
 					that.set('initialLoadDone', true);
+					// trigger listeners that might be registered
+					that.get('inspector').registerPendingChange(that.get('property'), that.get('value'));
 				}
 			});
 		}.observes('elementInserted', 'dataSourceUri', 'dataSourceIdentifier', 'dataSourceAdditionalData.changed'),
