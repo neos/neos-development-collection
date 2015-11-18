@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="sv-SE">
     <body>
@@ -174,10 +174,10 @@
 			<target xml:lang="sv-SE" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Förnamn</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Efternamn</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="sv-SE" state="needs-translation">User Preferences</target></trans-unit>
@@ -195,19 +195,19 @@
 			<target xml:lang="sv-SE" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="sv-SE" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Titel</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Förnamn</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Mellannamn</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Efternamn</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="sv-SE" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Andra namn</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="sv-SE" state="needs-translation">Accounts</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="sv-SE" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Primärt</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="sv-SE" state="needs-translation">N/A</target></trans-unit>
@@ -371,7 +371,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="sv-SE" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Titel</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="sv-SE" state="needs-translation">Label</target></trans-unit>
@@ -386,7 +386,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="sv-SE" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Typ</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="sv-SE" state="needs-translation">Tags</target></trans-unit>
@@ -572,7 +572,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="sv-SE" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Metadata</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="sv-SE" state="needs-translation">Filename</target></trans-unit>
@@ -587,7 +587,7 @@
 			<target xml:lang="sv-SE" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="sv-SE" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Typ</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="sv-SE" state="needs-translation">Identifier</target></trans-unit>

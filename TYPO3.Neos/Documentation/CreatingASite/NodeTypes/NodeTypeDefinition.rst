@@ -70,6 +70,20 @@ The following options are allowed:
             'TYPO3.Neos.NodeTypes:Image': TRUE
             '*': FALSE
 
+  By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
+  An example may look like::
+
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        'someChild':
+          type: 'TYPO3.Neos:ContentCollection'
+          position: 'before main'
+
+  This adds a new ContentCollection called someChild to the default page.
+  It will be positioned before the main ContentCollection that the default page has.
+  The position setting follows the same sorting logic used in TypoScript
+  (see the :ref:`neos-typoscript-reference`).
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 
@@ -122,6 +136,9 @@ The following options are allowed:
 
       ``tab``
         The tab the group belongs to. If left empty the group is added to the ``default`` tab.
+
+      ``collapsed``
+        If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
 
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.

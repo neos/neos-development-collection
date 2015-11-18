@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -22,20 +22,22 @@ use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine\ConditionGenera
  * Currently only doctrine persistence is supported as we use
  * the doctrine filter api, to rewrite SQL queries.
  */
-class ReadNodePrivilege extends EntityPrivilege {
+class ReadNodePrivilege extends EntityPrivilege
+{
+    /**
+     * @param string $entityType
+     * @return boolean
+     */
+    public function matchesEntityType($entityType)
+    {
+        return $entityType === NodeData::class;
+    }
 
-	/**
-	 * @param string $entityType
-	 * @return boolean
-	 */
-	public function matchesEntityType($entityType) {
-		return $entityType === NodeData::class;
-	}
-
-	/**
-	 * @return ConditionGenerator
-	 */
-	protected function getConditionGenerator() {
-		return new ConditionGenerator();
-	}
+    /**
+     * @return ConditionGenerator
+     */
+    protected function getConditionGenerator()
+    {
+        return new ConditionGenerator();
+    }
 }

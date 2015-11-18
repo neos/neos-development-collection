@@ -1,43 +1,43 @@
 <?php
 namespace TYPO3\TYPO3CR\Migration\Configuration;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Interface for Migration Configurations to allow different configuration sources.
  */
-interface ConfigurationInterface {
+interface ConfigurationInterface
+{
+    /**
+     * Returns all available versions.
+     *
+     * @return array
+     */
+    public function getAvailableVersions();
 
-	/**
-	 * Returns all available versions.
-	 *
-	 * @return array
-	 */
-	public function getAvailableVersions();
+    /**
+     * Is the given version available?
+     *
+     * @param string $version
+     * @return boolean
+     */
+    public function isVersionAvailable($version);
 
-	/**
-	 * Is the given version available?
-	 *
-	 * @param string $version
-	 * @return boolean
-	 */
-	public function isVersionAvailable($version);
-
-	/**
-	 * Returns the migration configuration with the given version.
-	 *
-	 * @param string $version
-	 * @return array
-	 */
-	public function getMigrationVersion($version);
+    /**
+     * Returns the migration configuration with the given version.
+     *
+     * @param string $version
+     * @return array
+     */
+    public function getMigrationVersion($version);
 }

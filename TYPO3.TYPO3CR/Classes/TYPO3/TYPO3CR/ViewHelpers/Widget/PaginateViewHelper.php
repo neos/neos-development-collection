@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
@@ -40,26 +40,27 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @api
  */
-class PaginateViewHelper extends AbstractWidgetViewHelper {
+class PaginateViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController
-	 */
-	protected $controller;
-
-	/**
-	 * Render this view helper
-	 *
-	 * @param string $as Variable name for the result set
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
-	 * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
-	 * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
-	 * @param array $configuration Additional configuration
-	 * @return string
-	 */
-	public function render($as, NodeInterface $parentNode = NULL, array $nodes = array(), $nodeTypeFilter = NULL, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0)) {
-		$response = $this->initiateSubRequest();
-		return $response->getContent();
-	}
+    /**
+     * Render this view helper
+     *
+     * @param string $as Variable name for the result set
+     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
+     * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
+     * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
+     * @param array $configuration Additional configuration
+     * @return string
+     */
+    public function render($as, NodeInterface $parentNode = null, array $nodes = array(), $nodeTypeFilter = null, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0))
+    {
+        $response = $this->initiateSubRequest();
+        return $response->getContent();
+    }
 }

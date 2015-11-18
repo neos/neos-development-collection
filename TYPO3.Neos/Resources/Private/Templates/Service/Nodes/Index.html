@@ -10,9 +10,11 @@
 				<li class="node">
 					<span class="node-path">{node.path}</span>
 					<f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
-					<neos:link.node node="{documentNode}" absolute="true" resolveShortcuts="false" class="node-frontend-uri">
-						<neos:uri.node node="{documentNode}" absolute="false" resolveShortcuts="false" />
-					</neos:link.node>
+						<f:alias map="{relativeUrl: '{neos:uri.node(node: documentNode, absolute: false, resolveShortcuts: false)}'}">
+							<a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
+								{f:if(condition: relativeUrl, then: relativeUrl, else: node.path)}
+							</a>
+						</f:alias>
 					</f:alias>
 					<label class="node-label">{node.label}</label>
 					(<span class="node-identifier">{node.identifier}</span>)

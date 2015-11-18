@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\NodeTypes\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos.NodeTypes".  *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos.NodeTypes package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\Asset;
@@ -31,43 +31,44 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * @see NEOS-121
  * @deprecated DO NOT USE!
  */
-class AssetListImplementation extends TemplateImplementation {
+class AssetListImplementation extends TemplateImplementation
+{
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $imageRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ImageRepository
-	 */
-	protected $imageRepository;
+    /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var AssetRepository
-	 */
-	protected $assetRepository;
+    /**
+     * @param FluidView $view
+     * @return void
+     */
+    public function initializeView(FluidView $view)
+    {
+        $assets = $this->tsValue('assets');
+        $processedAssets = array();
 
-	/**
-	 * @param FluidView $view
-	 * @return void
-	 */
-	public function initializeView(FluidView $view) {
-		$assets = $this->tsValue('assets');
-		$processedAssets = array();
+        /** @var Asset $asset */
+        if (is_array($assets)) {
+            foreach ($assets as $asset) {
+                if ($asset->getResource() === null) {
+                    if ($asset instanceof Image) {
+                        $processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
+                    } elseif ($asset instanceof Asset) {
+                        $processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
+                    }
+                } else {
+                    $processedAssets[] = $asset;
+                }
+            }
+        }
 
-		/** @var Asset $asset */
-		if (is_array($assets)) {
-			foreach ($assets as $asset) {
-				if ($asset->getResource() === NULL) {
-					if ($asset instanceof Image) {
-						$processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
-					} elseif ($asset instanceof Asset) {
-						$processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
-					}
-				} else {
-					$processedAssets[] = $asset;
-				}
-			}
-		}
-
-		$view->assign('assets', $processedAssets);
-	}
+        $view->assign('assets', $processedAssets);
+    }
 }

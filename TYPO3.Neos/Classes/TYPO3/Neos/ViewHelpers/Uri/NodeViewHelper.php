@@ -1,17 +1,18 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\Uri;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\LinkingService;
@@ -80,60 +81,62 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * </output>
  * @api
  */
-class NodeViewHelper extends AbstractViewHelper {
+class NodeViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var LinkingService
+     */
+    protected $linkingService;
 
-	/**
-	 * @Flow\Inject
-	 * @var LinkingService
-	 */
-	protected $linkingService;
+    /**
+     * Renders the URI.
+     *
+     * @param mixed $node A node object or a string node path (absolute or relative) or NULL to resolve the current document node
+     * @param string $format Format to use for the URL, for example "html" or "json"
+     * @param boolean $absolute If set, an absolute URI is rendered
+     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
+     * @param string $section
+     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+     * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+     * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @return string The rendered URI or NULL if no URI could be resolved for the given node
+     * @throws ViewHelperException
+     */
+    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $resolveShortcuts = true)
+    {
+        $baseNode = null;
+        if (!$node instanceof NodeInterface) {
+            $view = $this->viewHelperVariableContainer->getView();
+            if ($view instanceof TypoScriptAwareViewInterface) {
+                /** @var TemplateImplementation $typoScriptObject */
+                $typoScriptObject = $view->getTypoScriptObject();
+                $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+                if (isset($currentContext[$baseNodeName])) {
+                    $baseNode = $currentContext[$baseNodeName];
+                }
+            }
+        }
 
-	/**
-	 * Renders the URI.
-	 *
-	 * @param mixed $node A node object or a string node path (absolute or relative) or NULL to resolve the current document node
-	 * @param string $format Format to use for the URL, for example "html" or "json"
-	 * @param boolean $absolute If set, an absolute URI is rendered
-	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-	 * @param string $section
-	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
-	 * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
-	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
-	 * @throws ViewHelperException
-	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $resolveShortcuts = TRUE) {
-		$baseNode = NULL;
-		if (!$node instanceof NodeInterface) {
-			$view = $this->viewHelperVariableContainer->getView();
-			if ($view instanceof TypoScriptAwareViewInterface) {
-				/** @var TemplateImplementation $typoScriptObject */
-				$typoScriptObject = $view->getTypoScriptObject();
-				$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-				if (isset($currentContext[$baseNodeName])) {
-					$baseNode = $currentContext[$baseNodeName];
-				}
-			}
-		}
-
-		try {
-			return $this->linkingService->createNodeUri(
-				$this->controllerContext,
-				$node,
-				$baseNode,
-				$format,
-				$absolute,
-				$arguments,
-				$section,
-				$addQueryString,
-				$argumentsToBeExcludedFromQueryString,
-				$resolveShortcuts
-			);
-		} catch (NeosException $exception) {
-			$this->systemLogger->logException($exception);
-			return '';
-		}
-	}
-
+        try {
+            return $this->linkingService->createNodeUri(
+                $this->controllerContext,
+                $node,
+                $baseNode,
+                $format,
+                $absolute,
+                $arguments,
+                $section,
+                $addQueryString,
+                $argumentsToBeExcludedFromQueryString,
+                $resolveShortcuts
+            );
+        } catch (NeosException $exception) {
+            $this->systemLogger->logException($exception);
+        } catch (NoMatchingRouteException $exception) {
+            $this->systemLogger->logException($exception);
+        }
+        return '';
+    }
 }

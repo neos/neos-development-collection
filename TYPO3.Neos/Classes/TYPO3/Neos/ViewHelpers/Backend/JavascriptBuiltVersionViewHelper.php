@@ -1,34 +1,34 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Returns a shortened md5 of the built JavaScript file
  */
-class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     */
+    protected $backendAssetsUtility;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Utility\BackendAssetsUtility
-	 */
-	protected $backendAssetsUtility;
-
-	/**
-	 * @return string
-	 */
-	public function render() {
-		return $this->backendAssetsUtility->getJavascriptBuiltVersion();
-	}
-
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        return $this->backendAssetsUtility->getJavascriptBuiltVersion();
+    }
 }

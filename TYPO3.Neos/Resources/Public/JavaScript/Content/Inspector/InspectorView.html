@@ -15,7 +15,7 @@
 	{{#each tab in groupedViews}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each group in tab.groups}}
-				{{#view view.Section classNames="neos-inspector-section" groupBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
+				{{#view view.Section classNames="neos-inspector-section" groupBinding="group" groupNameBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
 					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
 						<span>{{unbound group.label}}</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}

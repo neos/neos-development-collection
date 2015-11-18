@@ -8,4 +8,5 @@ prototype(TYPO3.Neos:ConvertUris) {
 	node = ${node}
 	externalLinkTarget = '_blank'
 	resourceLinkTarget = '_blank'
+	absolute = false
 }

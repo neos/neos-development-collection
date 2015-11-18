@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Aspects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
@@ -19,253 +19,262 @@ use TYPO3\Flow\Utility\Arrays;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class NodeTypeConfigurationEnrichmentAspect {
+class NodeTypeConfigurationEnrichmentAspect
+{
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.dataTypes")
+     */
+    protected $dataTypesDefaultConfiguration;
 
-	/**
-	 * @var array
-	 * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.dataTypes")
-	 */
-	protected $dataTypesDefaultConfiguration;
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.editors")
+     */
+    protected $editorDefaultConfiguration;
 
-	/**
-	 * @var array
-	 * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.editors")
-	 */
-	protected $editorDefaultConfiguration;
+    /**
+     * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
+     * @return void
+     */
+    public function enrichNodeTypeConfiguration(JoinPointInterface $joinPoint)
+    {
+        $configuration = $joinPoint->getMethodArgument('configuration');
+        $nodeTypeName = $joinPoint->getMethodArgument('name');
 
-	/**
-	 * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
-	 * @return void
-	 */
-	public function enrichNodeTypeConfiguration(JoinPointInterface $joinPoint) {
-		$configuration = $joinPoint->getMethodArgument('configuration');
-		$nodeTypeName = $joinPoint->getMethodArgument('name');
+        $this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
+        $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration);
 
-		$this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
-		$this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration);
+        $joinPoint->setMethodArgument('configuration', $configuration);
+        $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
 
-		$joinPoint->setMethodArgument('configuration', $configuration);
-		$joinPoint->getAdviceChain()->proceed($joinPoint);
-	}
+    /**
+     * @param string $nodeTypeName
+     * @param array $configuration
+     * @return void
+     */
+    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    {
+        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
 
-	/**
-	 * @param string $nodeTypeName
-	 * @param array $configuration
-	 * @return void
-	 */
-	protected function addLabelsToNodeTypeConfiguration($nodeTypeName, &$configuration) {
-		$nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
+        if (isset($configuration['ui'])) {
+            $this->setGlobalUiElementLabels($nodeTypeLabelIdPrefix, $configuration);
+        }
 
-		if (isset($configuration['ui'])) {
-			$this->setGlobalUiElementLabels($nodeTypeLabelIdPrefix, $configuration);
-		}
+        if (isset($configuration['properties'])) {
+            $this->setPropertyLabels($nodeTypeLabelIdPrefix, $configuration);
+        }
+    }
 
-		if (isset($configuration['properties'])) {
-			$this->setPropertyLabels($nodeTypeLabelIdPrefix, $configuration);
-		}
-	}
+    /**
+     * @param string $nodeTypeName
+     * @param array $configuration
+     * @throws \TYPO3\Neos\Exception
+     * @return void
+     */
+    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    {
+        if (isset($configuration['properties']) && is_array($configuration['properties'])) {
+            foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+                if (!isset($propertyConfiguration['type'])) {
+                    continue;
+                }
+                $type = $propertyConfiguration['type'];
 
-	/**
-	 * @param string $nodeTypeName
-	 * @param array $configuration
-	 * @throws \TYPO3\Neos\Exception
-	 * @return void
-	 */
-	protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration) {
-		if (isset($configuration['properties']) && is_array($configuration['properties'])) {
-			foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+                if (!isset($this->dataTypesDefaultConfiguration[$type])) {
+                    continue;
+                }
 
-				if (!isset($propertyConfiguration['type'])) {
-					continue;
-				}
-				$type = $propertyConfiguration['type'];
+                if (!isset($propertyConfiguration['ui']['inspector'])) {
+                    continue;
+                }
 
-				if (!isset($this->dataTypesDefaultConfiguration[$type])) {
-					continue;
-				}
+                $defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
 
-				if (!isset($propertyConfiguration['ui']['inspector'])) {
-					continue;
-				}
+                // FIRST STEP: Figure out which editor should be used
+                // - Default: editor as configured from the data type
+                // - Override: editor as configured from the property configuration.
+                if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
+                    $editor = $propertyConfiguration['ui']['inspector']['editor'];
+                } elseif (isset($defaultConfigurationFromDataType['editor'])) {
+                    $editor = $defaultConfigurationFromDataType['editor'];
+                } else {
+                    throw new \TYPO3\Neos\Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
+                }
 
-				$defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
+                // SECOND STEP: Build up the full inspector configuration by merging:
+                // - take configuration from editor defaults
+                // - take configuration from dataType
+                // - take configuration from properties (NodeTypes)
+                $mergedInspectorConfiguration = array();
+                if (isset($this->editorDefaultConfiguration[$editor])) {
+                    $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
+                }
 
-				// FIRST STEP: Figure out which editor should be used
-				// - Default: editor as configured from the data type
-				// - Override: editor as configured from the property configuration.
-				if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
-					$editor = $propertyConfiguration['ui']['inspector']['editor'];
-				} elseif (isset($defaultConfigurationFromDataType['editor'])) {
-					$editor = $defaultConfigurationFromDataType['editor'];
-				} else {
-					throw new \TYPO3\Neos\Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
-				}
+                $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
+                $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
+                $propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
+                $propertyConfiguration['ui']['inspector']['editor'] = $editor;
+            }
+        }
+    }
 
-				// SECOND STEP: Build up the full inspector configuration by merging:
-				// - take configuration from editor defaults
-				// - take configuration from dataType
-				// - take configuration from properties (NodeTypes)
-				$mergedInspectorConfiguration = array();
-				if (isset($this->editorDefaultConfiguration[$editor])) {
-					$mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
-				}
+    /**
+     * @param string $nodeTypeLabelIdPrefix
+     * @param array $configuration
+     * @return void
+     */
+    protected function setPropertyLabels($nodeTypeLabelIdPrefix, &$configuration)
+    {
+        foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+            if (!isset($propertyConfiguration['ui'])) {
+                continue;
+            }
 
-				$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
-				$mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
-				$propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
-				$propertyConfiguration['ui']['inspector']['editor'] = $editor;
-			}
-		}
-	}
+            if ($this->shouldGenerateLabel($propertyConfiguration['ui'])) {
+                $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
+            }
 
-	/**
-	 * @param string $nodeTypeLabelIdPrefix
-	 * @param array $configuration
-	 * @return void
-	 */
-	protected function setPropertyLabels($nodeTypeLabelIdPrefix, &$configuration) {
-		foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
-			if (!isset($propertyConfiguration['ui'])) {
-				continue;
-			}
+            if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
+                $this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
+            }
 
-			if ($this->shouldGenerateLabel($propertyConfiguration['ui'])) {
-				$propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
-			}
+            if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['aloha'], 'placeholder')) {
+                $propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
+            }
+        }
+    }
 
-			if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
-				$this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
-			}
+    /**
+     * @param string $nodeTypeLabelIdPrefix
+     * @param string $propertyName
+     * @param array $propertyConfiguration
+     * @return void
+     */
+    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, &$propertyConfiguration)
+    {
+        $editorName = $propertyConfiguration['ui']['inspector']['editor'];
 
-			if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['aloha'], 'placeholder')) {
-				$propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
-			}
-		}
-	}
+        switch ($editorName) {
+            case 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
+                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
+                    $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
+                }
 
-	/**
-	 * @param string $nodeTypeLabelIdPrefix
-	 * @param string $propertyName
-	 * @param array $propertyConfiguration
-	 * @return void
-	 */
-	protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, &$propertyConfiguration) {
-		$editorName = $propertyConfiguration['ui']['inspector']['editor'];
+                if (!isset($propertyConfiguration['ui']['inspector']['editorOptions']['values']) || !is_array($propertyConfiguration['ui']['inspector']['editorOptions']['values'])) {
+                    break;
+                }
+                foreach ($propertyConfiguration['ui']['inspector']['editorOptions']['values'] as $value => &$optionConfiguration) {
+                    if ($optionConfiguration === null) {
+                        continue;
+                    }
+                    if ($this->shouldGenerateLabel($optionConfiguration)) {
+                        $optionConfiguration['label'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.values.' . $value);
+                    }
+                }
+                break;
+            case 'TYPO3.Neos/Inspector/Editors/CodeEditor':
+                if ($this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
+                    $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
+                }
+                break;
+        }
+    }
 
-		switch ($editorName) {
-			case 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
-				if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
-					$propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
-				}
+    /**
+     * Sets labels for global NodeType elements like tabs and groups and the general label.
+     *
+     * @param string $nodeTypeLabelIdPrefix
+     * @param array $configuration
+     * @return void
+     */
+    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration)
+    {
+        if ($this->shouldGenerateLabel($configuration['ui'])) {
+            $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
+        }
 
-				if (!isset($propertyConfiguration['ui']['inspector']['editorOptions']['values']) || !is_array($propertyConfiguration['ui']['inspector']['editorOptions']['values'])) {
-					break;
-				}
-				foreach ($propertyConfiguration['ui']['inspector']['editorOptions']['values'] as $value => &$optionConfiguration) {
-					if ($optionConfiguration === NULL) {
-						continue;
-					}
-					if ($this->shouldGenerateLabel($optionConfiguration)) {
-						$optionConfiguration['label'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.values.' . $value);
-					}
-				}
-				break;
-			case 'TYPO3.Neos/Inspector/Editors/CodeEditor':
-				if ($this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
-					$propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
-				}
-				break;
-		}
+        $inspectorConfiguration = Arrays::getValueByPath($configuration, 'ui.inspector');
+        if (is_array($inspectorConfiguration)) {
+            foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
+                foreach ($elementTypeItems as $elementName => $elementConfiguration) {
+                    if (!$this->shouldGenerateLabel($elementConfiguration)) {
+                        continue;
+                    }
 
-	}
+                    $translationLabelId = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, $elementTypeName, $elementName);
+                    $configuration['ui']['inspector'][$elementTypeName][$elementName]['label'] = $translationLabelId;
+                }
+            }
+        }
+    }
 
-	/**
-	 * Sets labels for global NodeType elements like tabs and groups and the general label.
-	 *
-	 * @param string $nodeTypeLabelIdPrefix
-	 * @param array $configuration
-	 * @return void
-	 */
-	protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration) {
-		if ($this->shouldGenerateLabel($configuration['ui'])) {
-			$configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
-		}
+    /**
+     * Should a label be generated for the given field or is there something configured?
+     *
+     * @param array $parentConfiguration
+     * @param string $fieldName Name of the possibly existing subfield
+     * @return boolean
+     */
+    protected function shouldGenerateLabel($parentConfiguration, $fieldName = 'label')
+    {
+        $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
-		$inspectorConfiguration = Arrays::getValueByPath($configuration, 'ui.inspector');
-		if (is_array($inspectorConfiguration)) {
-			foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
-				foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-					if (!$this->shouldGenerateLabel($elementConfiguration)) {
-						continue;
-					}
+        return (trim($fieldValue) === 'i18n');
+    }
 
-					$translationLabelId = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, $elementTypeName, $elementName);
-					$configuration['ui']['inspector'][$elementTypeName][$elementName]['label'] = $translationLabelId;
-				}
-			}
-		}
-	}
+    /**
+     * Generates a generic inspector element label with the given $nodeTypeSpecificPrefix.
+     *
+     * @param string $nodeTypeSpecificPrefix
+     * @param string $elementType
+     * @param string $elementName
+     * @return string
+     */
+    protected function getInspectorElementTranslationId($nodeTypeSpecificPrefix, $elementType, $elementName)
+    {
+        return $nodeTypeSpecificPrefix . $elementType . '.' . $elementName;
+    }
 
-	/**
-	 * Should a label be generated for the given field or is there something configured?
-	 *
-	 * @param array $parentConfiguration
-	 * @param string $fieldName Name of the possibly existing subfield
-	 * @return boolean
-	 */
-	protected function shouldGenerateLabel($parentConfiguration, $fieldName = 'label') {
-		$fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
+    /**
+     * Generates a property label with the given $nodeTypeSpecificPrefix.
+     *
+     * @param string $nodeTypeSpecificPrefix
+     * @param string $propertyName
+     * @return string
+     */
+    protected function getPropertyLabelTranslationId($nodeTypeSpecificPrefix, $propertyName)
+    {
+        return $nodeTypeSpecificPrefix . 'properties.' . $propertyName;
+    }
 
-		return (trim($fieldValue) === 'i18n');
-	}
+    /**
+     * Generates a property configuration-label with the given $nodeTypeSpecificPrefix.
+     *
+     * @param string $nodeTypeSpecificPrefix
+     * @param string $propertyName
+     * @param string $labelPath
+     * @return string
+     */
+    protected function getPropertyConfigurationTranslationId($nodeTypeSpecificPrefix, $propertyName, $labelPath)
+    {
+        return $nodeTypeSpecificPrefix . 'properties.' . $propertyName . '.' . $labelPath;
+    }
 
-	/**
-	 * Generates a generic inspector element label with the given $nodeTypeSpecificPrefix.
-	 *
-	 * @param string $nodeTypeSpecificPrefix
-	 * @param string $elementType
-	 * @param string $elementName
-	 * @return string
-	 */
-	protected function getInspectorElementTranslationId($nodeTypeSpecificPrefix, $elementType, $elementName) {
-		return $nodeTypeSpecificPrefix . $elementType . '.' . $elementName;
-	}
+    /**
+     * Generates a label prefix for a specific node type with this format: "Vendor_Package:NodeTypes.NodeTypeName"
+     *
+     * @param string $nodeTypeName
+     * @return string
+     */
+    protected function generateNodeTypeLabelIdPrefix($nodeTypeName)
+    {
+        $nodeTypeNameParts = explode(':', $nodeTypeName, 2);
+        // in case the NodeType has just one section we default to 'TYPO3.Neos' as package as we don't have any further information.
+        $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'TYPO3.Neos';
+        $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
 
-	/**
-	 * Generates a property label with the given $nodeTypeSpecificPrefix.
-	 *
-	 * @param string $nodeTypeSpecificPrefix
-	 * @param string $propertyName
-	 * @return string
-	 */
-	protected function getPropertyLabelTranslationId($nodeTypeSpecificPrefix, $propertyName) {
-		return $nodeTypeSpecificPrefix . 'properties.' . $propertyName;
-	}
-
-	/**
-	 * Generates a property configuration-label with the given $nodeTypeSpecificPrefix.
-	 *
-	 * @param string $nodeTypeSpecificPrefix
-	 * @param string $propertyName
-	 * @param string $labelPath
-	 * @return string
-	 */
-	protected function getPropertyConfigurationTranslationId($nodeTypeSpecificPrefix, $propertyName, $labelPath) {
-		return $nodeTypeSpecificPrefix . 'properties.' . $propertyName . '.' . $labelPath;
-	}
-
-	/**
-	 * Generates a label prefix for a specific node type with this format: "Vendor_Package:NodeTypes.NodeTypeName"
-	 *
-	 * @param string $nodeTypeName
-	 * @return string
-	 */
-	protected function generateNodeTypeLabelIdPrefix($nodeTypeName) {
-		$nodeTypeNameParts = explode(':', $nodeTypeName, 2);
-		// in case the NodeType has just one section we default to 'TYPO3.Neos' as package as we don't have any further information.
-		$packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'TYPO3.Neos';
-		$nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
-
-		return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
-	}
+        return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
+    }
 }
