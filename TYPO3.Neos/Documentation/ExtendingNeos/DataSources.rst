@@ -16,63 +16,90 @@ To implement a data source, create a class that implements ``TYPO3\Neos\Service\
 preferably by extending ``TYPO3\Neos\Service\DataSource\AbstractDataSource``. Then set the static protected
 property ``identifier`` to a string. Make sure you use a unique identifier, e.g. ``acme-demo-available-dates``.
 
-Then implement the ``getData`` method, which has the following parameters:
+Then implement the ``getData`` method, with the following signature:
 
-- ``NodeInterface $node = NULL`` (optional)
-- ``array $arguments`` (key / value)
+.. code-block:: php
 
-The return of the method must be JSON serializable data.
+  /**
+   * Get data
+   *
+   * The return value must be JSON serializable data structure.
+   *
+   * @param NodeInterface $node The node that is currently edited (optional)
+   * @param array $arguments Additional arguments (key / value)
+   * @return mixed JSON serializable data
+   * @api
+   */
+  public function getData(NodeInterface $node = null, array $arguments);
+
+The return value of the method will be JSON encoded.
 
 Data sources are available with the following URI pattern ``/neos/data-source/<identifier>``, which can be linked to
 using the follow parameters:
 
-- '@package':    'TYPO3.Neos'
-- '@subpackage': 'Service'
-- '@controller': 'DataSource'
-- '@action':     'index
-- '@format':     'json'
-- 'dataSourceIdentifier': '<identifier>'
+- ``@package``:    'TYPO3.Neos'
+- ``@subpackage``: 'Service'
+- ``@controller``: 'DataSource'
+- ``@action``:     'index
+- ``@format``:     'json'
+- ``dataSourceIdentifier``: '<identifier>'
 
 Arbitrary additional arguments are allowed. Additionally the routing only accepts ``GET`` requests.
 
-If additional arguments are provided then they will automatically be available in the $arguments parameter of the
-``getData`` method. Additional arguments will not be property mapped, meaning they'll contain their plain value.
-However if a argument with the key ``node`` is provided, it will automatically convert this into a node. Provide a
+If additional arguments are provided then they will automatically be available in the ``$arguments`` parameter of the
+``getData`` method. Additional arguments will not be property mapped, meaning they will contain their plain value.
+However if an argument with the key ``node`` is provided, it will automatically be converted into a node. Provide a
 valid node path to use this, and keep in mind that the ``node`` argument is restricted to this use-case. This is done
 to make working with nodes easy.
+
 The ``dataSourceIdentifier`` will automatically be removed from the ``arguments`` parameter.
 
 .. note::
-	Data sources are restricted to only be accessible for users with the ``TYPO3.Neos:Backend.DataSource`` privilege,
-	which is included in the ``TYPO3.Neos:Editor`` role. This means that a user has to have access to the backend to
-	be able to access a data point.
+  Data sources are restricted to only be accessible for users with the ``TYPO3.Neos:Backend.DataSource`` privilege,
+  which is included in the ``TYPO3.Neos:Editor`` role. This means that a user has to have access to the backend to
+  be able to access a data point.
 
 Example ``TestDataSource.php``:
 
 .. code-block:: php
 
-    <?php
-    namespace Acme\YourPackage\DataSource;
+  <?php
+  namespace Acme\YourPackage\DataSource;
 
-    use TYPO3\Neos\Service\DataSource\AbstractDataSource;
-    use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+  use TYPO3\Neos\Service\DataSource\AbstractDataSource;
+  use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
-    class TestDataSource extends AbstractDataSource {
+  class TestDataSource extends AbstractDataSource {
 
-        /**
-         * @var string
-         */
-        static protected $identifier = 'acme-yourpackage-test';
+      /**
+       * @var string
+       */
+      static protected $identifier = 'acme-yourpackage-test';
 
-        /**
-         * Get data
-         *
-         * @param NodeInterface $node The node that is currently edited (optional)
-         * @param array $arguments Additional arguments (key / value)
-         * @return array JSON serializable data
-         */
-        public function getData(NodeInterface $node = NULL, array $arguments)
-        {
-            return isset($arguments['integers']) ? array(1, 2, 3) : array('a', 'b', 'c');
-        }
-    }
+      /**
+       * Get data
+       *
+       * @param NodeInterface $node The node that is currently edited (optional)
+       * @param array $arguments Additional arguments (key / value)
+       * @return array JSON serializable data
+       */
+      public function getData(NodeInterface $node = NULL, array $arguments)
+      {
+          return isset($arguments['integers']) ? array(1, 2, 3) : array('a', 'b', 'c');
+      }
+  }
+
+.. note::
+  If you are using a data source to populate SelectBoxEditor instances it has to be matching the
+  ``values`` option. Make sure you sort by group first, if using the grouping option.
+
+  Example for returning compatible data:
+
+  .. code-block:: php
+
+    return array(
+        array('value' => 'key', 'label' => 'Foo', 'group' => 'A', 'icon' => 'icon-key'),
+        array('value' => 'fire', 'label' => 'Fire', 'group' => 'A', 'icon' => 'icon-fire'),
+        array('value' => 'legal', 'label' => 'Legal', 'group' => 'B', 'icon' => 'icon-legal')
+    );
+

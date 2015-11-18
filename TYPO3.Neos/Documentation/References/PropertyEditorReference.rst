@@ -133,6 +133,8 @@ Options Reference:
 	``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
 	used, they must be loaded beforehand using custom JS code. Default ``text/html``.
 
+.. _property-editor-reference-selectboxeditor:
+
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -209,7 +211,9 @@ for properties of type ``array``. If an empty value is allowed as well, ``allowE
 
 Because selection options shall be fetched from server-side code frequently, the Select Box Editor contains
 support for so-called *data sources*, by setting a ``dataSourceIdentifier``, or optionally a ``dataSourceUri``.
-This helps to provide data to the editing interface without having to define routes, policies or a controller.::
+This helps to provide data to the editing interface without having to define routes, policies or a controller.
+
+.. code-block:: yaml
 
     questions:
       ui:
@@ -220,20 +224,32 @@ This helps to provide data to the editing interface without having to define rou
             # alternatively using a custom uri:
             # dataSourceUri: 'custom-route/end-point'
 
-See :ref:`data-sources` for more details.
+See :ref:`data-sources` for more details on implementing a *data source* based on Neos conventions. If you use the
+``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source is a JSON
+formatted array matching the following structure. Make sure you sort by group first, if using the grouping option.
 
-The output of the data source has to be a JSON formatted array matching the ``values`` option. Make sure you sort by
-group first, if using the grouping option.
+Example for compatible data:
 
-Example:
+.. code-block:: json
 
-.. code-block:: php
-
-	return json_encode(array(
-		'key' => array('label' => 'Foo', group => 'A', 'icon' => 'icon-key'),
-		'fire' => array('label' => 'Fire', group => 'A', 'icon' => 'icon-fire')
-		'legal' => array('label' => 'Legal', group => 'B', 'icon' => 'icon-legal')
-	));
+  [{
+    "value:" "key"
+    "label": "Key",
+    "group": "A",
+    "icon": "icon-key"
+  },
+  {
+    "value": "fire"
+    "label": "Fire",
+    "group": "A",
+    "icon": "icon-fire"
+  },
+  {
+    "value": "legal",
+    "label": "Legal",
+    "group": "B",
+    "icon": "icon-legal"
+  }]
 
 Options Reference:
 
