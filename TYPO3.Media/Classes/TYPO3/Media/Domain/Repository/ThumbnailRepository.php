@@ -78,6 +78,22 @@ class ThumbnailRepository extends Repository
     }
 
     /**
+     * Find ungenerated objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findUngeneratedIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder
+            ->select('t')
+            ->from($this->getEntityClassName(), 't')
+            ->where('t.resource IS NULL');
+        return $queryBuilder->getQuery()->iterate();
+    }
+
+    /**
      * Returns a thumbnail of the given asset with the specified dimensions.
      *
      * @param AssetInterface $asset The asset to render a thumbnail for

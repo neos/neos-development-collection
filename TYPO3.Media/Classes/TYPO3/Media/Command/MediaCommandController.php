@@ -182,6 +182,33 @@ class MediaCommandController extends CommandController
     }
 
     /**
+     * Generate uninitialized asynchronous thumbnails
+     *
+     * @param integer $limit
+     * @return void
+     */
+    public function generateThumbnailsCommand($limit = null)
+    {
+        $thumbnailCount = $this->thumbnailRepository->countByResource(null);
+        $iterator = $this->thumbnailRepository->findUngeneratedIterator();
+        $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
+        $iteration = 0;
+        foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+            if ($thumbnail->getResource() === null) {
+                $thumbnail->refresh();
+                $this->persistenceManager->whiteListObject($thumbnail);
+                $this->thumbnailRepository->update($thumbnail);
+                $this->persistenceManager->persistAll();
+            }
+            $this->output->progressAdvance(1);
+            $iteration++;
+            if ($iteration === $limit) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Initializes the DBAL connection which is currently bound to the Doctrine Entity Manager
      *
      * @return void
