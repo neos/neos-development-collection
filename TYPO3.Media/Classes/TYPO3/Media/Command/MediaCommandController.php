@@ -15,7 +15,10 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * @Flow\Scope("singleton")
@@ -41,15 +44,34 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ImageRepository
+     */
+    protected $imageRepository;
 
     /**
      * @Flow\Inject
      * @var ThumbnailRepository
      */
     protected $thumbnailRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
+
+    /**
+     * If enabled
+     * @Flow\InjectConfiguration("asyncThumbnails")
+     * @var boolean
+     */
+    protected $asyncThumbnails;
 
     /**
      * Import resources to asset management
@@ -104,6 +126,33 @@ class MediaCommandController extends CommandController
                     $this->assetRepository->add($image);
                     $this->outputLine('Adding new image "%s" (%sx%s px)', array($image->getResource()->getFilename(), $image->getWidth(), $image->getHeight()));
                 }
+            }
+        }
+    }
+
+    /**
+     * Generate thumbnails for thumbnail presets
+     *
+     * @param string $preset Preset name, if not provided thumbnails are created for all presets
+     * @param boolean $async Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
+     * @return void
+     */
+    public function createThumbnailsCommand($preset = null, $async = null)
+    {
+        $async = $async !== null ? $async : $this->asyncThumbnails;
+        $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
+        $presetThumbnailConfigurations = [];
+        foreach ($presets as $preset) {
+            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+        }
+        $iterator = $this->imageRepository->findAllIterator();
+        $imageCount = $this->imageRepository->countAll();
+        $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
+        foreach ($this->imageRepository->iterate($iterator) as $image) {
+            foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
+                $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration, $async);
+                $this->persistenceManager->persistAll();
+                $this->output->progressAdvance(1);
             }
         }
     }

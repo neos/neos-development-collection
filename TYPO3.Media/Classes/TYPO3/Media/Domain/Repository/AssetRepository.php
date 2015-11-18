@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Repository;
  * source code.
  */
 
+use Doctrine\ORM\Internal\Hydration\IterableResult;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
@@ -237,5 +238,43 @@ class AssetRepository extends Repository
         $query = $this->createQuery();
         $query->matching($query->equals('resource.sha1', $sha1, false))->setLimit(1);
         return $query->execute()->getFirst();
+    }
+
+    /**
+     * Iterate over an IterableResult and return a Generator
+     *
+     * This method is useful for batch processing huge result set as it clears the object
+     * manager and detaches the current object on each iteration.
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            $object = current($object);
+            yield $object;
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+            ++$iteration;
+        }
+    }
+
+    /**
+     * Find all objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findAllIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('a')
+            ->from($this->getEntityClassName(), 'a')
+            ->getQuery()->iterate();
     }
 }
