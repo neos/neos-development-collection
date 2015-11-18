@@ -68,6 +68,11 @@ class ThumbnailService
     protected $presets;
 
     /**
+     * @var array
+     */
+    protected $thumbnailCache = [];
+
+    /**
      * Returns a thumbnail of the given asset
      *
      * If the maximum width / height is not specified or exceeds the original asset's dimensions, the width / height of
@@ -81,7 +86,17 @@ class ThumbnailService
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration, $async = false)
     {
-        $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
+        $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+        $configurationHash = $configuration->getHash();
+        if (!isset($this->thumbnailCache[$assetIdentifier])) {
+            $this->thumbnailCache[$assetIdentifier] = [];
+        }
+        if (isset($this->thumbnailCache[$assetIdentifier][$configurationHash])) {
+            $thumbnail = $this->thumbnailCache[$assetIdentifier][$configurationHash];
+        } else {
+            $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
+            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+        }
         if ($thumbnail === null) {
             if (!$asset instanceof ImageInterface) {
                 throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
@@ -92,6 +107,7 @@ class ThumbnailService
 
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
             $this->persistenceManager->whiteListObject($thumbnail);
+            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($thumbnail->getResource() === null && $async === false) {
             $this->refreshThumbnail($thumbnail);
         }
