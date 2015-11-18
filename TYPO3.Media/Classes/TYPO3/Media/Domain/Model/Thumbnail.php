@@ -85,6 +85,7 @@ class Thumbnail implements ImageInterface
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
         $this->async = $async;
+        $this->emitThumbnailCreated($this);
     }
 
     /**
@@ -164,5 +165,16 @@ class Thumbnail implements ImageInterface
         $this->resource = $processedImageInfo['resource'];
         $this->width = $processedImageInfo['width'];
         $this->height = $processedImageInfo['height'];
+    }
+
+    /**
+     * Signals that a thumbnail was created.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    {
     }
 }
