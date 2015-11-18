@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Command;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -126,14 +127,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
         $baseContext = $this->createContext($workspaceName, []);
-        $baseContextSitesNode = $baseContext->getNode('/sites');
+        $baseContextSitesNode = $baseContext->getNode(SiteService::SITES_ROOT_PATH);
         if (!$baseContextSitesNode) {
-            $this->output->outputLine('<error>Could not find "/sites" root node</error>');
+            $this->output->outputLine('<error>Could not find "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
             return;
         }
         $baseContextSiteNodes = $baseContextSitesNode->getChildNodes();
         if ($baseContextSiteNodes === []) {
-            $this->output->outputLine('<error>Could not find any site nodes in "/sites" root node</error>');
+            $this->output->outputLine('<error>Could not find any site nodes in "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
             return;
         }
 

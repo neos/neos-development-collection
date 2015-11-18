@@ -26,6 +26,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Site Import Service
@@ -179,9 +180,9 @@ class SiteImportService
             $rootNode = $this->contextFactory->create()->getRootNode();
             $this->persistenceManager->persistAll();
 
-            $sitesNode = $rootNode->getNode('/sites');
+            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
-                $sitesNode = $rootNode->createSingleNode('sites');
+                $sitesNode = $rootNode->createSingleNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
 
             while ($xmlReader->read()) {
@@ -212,9 +213,9 @@ class SiteImportService
                 // so the workspace and site node are persisted before we import any nodes to it.
                 $rootNode->getContext()->getWorkspace();
                 $this->persistenceManager->persistAll();
-                $sitesNode = $rootNode->getNode('/sites');
+                $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
                 if ($sitesNode === null) {
-                    $sitesNode = $rootNode->createNode('sites');
+                    $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
                 }
 
                 $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
