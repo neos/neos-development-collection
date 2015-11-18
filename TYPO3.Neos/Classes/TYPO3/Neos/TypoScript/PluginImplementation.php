@@ -154,7 +154,7 @@ class PluginImplementation extends AbstractArrayTypoScriptObject
         $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
         $pluginResponse = new Response($parentResponse);
 
-        foreach($pluginResponse->getHeaders()->getAll() as $key => $value) {
+        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
             $parentResponse->getHeaders()->set($key, $value, true);
         }
 
