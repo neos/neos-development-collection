@@ -15,6 +15,8 @@ TYPO3:
     asyncThumbnails: true
     # Thumbnail presets
     thumbnailPresets: []
+    # Automatically generate preset thumbnails when adding images
+    autoGenerateThumbnailPresets: true
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document
