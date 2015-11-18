@@ -23,9 +23,12 @@ use TYPO3\Media\Exception;
  *
  * @Flow\Entity
  * @ORM\Table(
- *    indexes={
- * 		@ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
- *    }
+ *  uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
+ *  },
+ *  indexes={
+ *      @ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
+ *  }
  * )
  */
 class Thumbnail implements ImageInterface
