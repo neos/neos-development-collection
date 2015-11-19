@@ -1,6 +1,6 @@
-==================
+========================
 2.0.0-beta6 (2015-07-23)
-==================
+========================
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Base Distribution
@@ -363,8 +363,8 @@ Resolves: NEOS-1427
 
 * Commit: `a022062 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a02206284ddef9e31ddbe5fa5a2eb4e0a01dda17>`_
 
-[BUGFIX] fix regression in ImageEditor introduced by I40311648344e1cf3015e4006c035d8d079d0e254
------------------------------------------------------------------------------------------
+[BUGFIX] fix regression in ImageEditor introduced by I40311648344e1cf3015e4006c035d8d079d0e254
+----------------------------------------------------------------------------------------------
 
 Without this change, the Image Editor is completely broken.
 
@@ -714,7 +714,7 @@ Resolves: NEOS-1182
 * Commit: `509a40c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/509a40c5f24bd0baea87189eab22fedebeb962a4>`_
 
 [TASK] add a short abbreviation of the installation requirements to the neos documentation
------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
 (cherry picked from commit bad1434e3251435585d4771a42a641f8f70a7ede)
 
@@ -1104,7 +1104,7 @@ This adds support for sphinx-autobuild, which watches the Documentation
 directory and automatically re-renders docs on change. This allows for
 a livepreview while editing the docs.
 
-To use it, install `sphinx-autobuild`_::
+To use it, install `sphinx-autobuild` (https://github.com/GaretJax/sphinx-autobuild):
 
     pip install sphinx-autobuild
 
@@ -1113,8 +1113,6 @@ Then, visit http://127.0.0.1:8000 to see the livereload version of the
 docs. Note, this builds the docs in ``_build/livehtml`` instead of
 ``_build/html`` because the docs include some javascript to make
 livereload work.
-
-.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
 
 * Commit: `988151a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/988151adac5944234a05b946ba0195c3f2e86353>`_
 
