@@ -240,7 +240,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     protected function buildObject(array &$possibleConstructorArgumentValues, $objectType)
     {
         $className = $this->objectManager->getClassNameByObjectName($objectType) ?: static::$defaultNewAssetType;
-        return parent::buildObject($possibleConstructorArgumentValues, $className);
+        if (count($possibleConstructorArgumentValues)) {
+            return parent::buildObject($possibleConstructorArgumentValues, $className);
+        } else {
+            return null;
+        }
     }
 
     /**
