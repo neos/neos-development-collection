@@ -261,7 +261,7 @@ This change updates license headers in all packages contained in the Neos Develo
 * Packages: ``Neos``
 
 `[BUGFIX] Service\\NodesController should stick to interfaces <https://github.com/neos/neos-development-collection/pull/96>`_
-----------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------
 
 The ``Service\NodesController`` should refer to the
 ``NodeSearchServiceInterface`` instead of the implementation class
