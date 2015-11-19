@@ -199,9 +199,9 @@ In the controller of your plugin you can access the value from TypoScript like t
 Linking to a Plugin
 ===================
 
-Inside of your Plugin you can use the usual f:link and f:uri ViewHelpers from fluid to link to other ControllerActions::
+Inside of your Plugin you can use the usual ``f:link.action`` and ``f:uri.action`` ViewHelpers from fluid to link to other ControllerActions::
 
-  <f:link.uri package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
+  <f:link.action package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
 
 
 If you want to create links to your plugin from outside the plugin context you have to use one of the following methods.

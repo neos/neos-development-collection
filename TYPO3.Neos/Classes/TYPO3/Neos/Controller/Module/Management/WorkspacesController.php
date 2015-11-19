@@ -24,6 +24,7 @@ use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\UserService;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -453,7 +454,7 @@ class WorkspacesController extends AbstractModuleController
                     // FIXME: $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
-                        $relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
+                        $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
                         }
