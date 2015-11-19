@@ -237,7 +237,9 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView
                     $collectTreeNodeData($children, $childNode);
                 }
             }
-            $treeNodes[] = $self->collectTreeNodeData($node['node'], true, $children, $children !== array(), isset($node['matched']));
+            if (isset($node['node']) && $node['node'] instanceof NodeInterface) {
+                $treeNodes[] = $self->collectTreeNodeData($node['node'], true, $children, $children !== array(), isset($node['matched']));
+            }
         };
 
         foreach ($nodeCollection as $firstLevelNode) {
