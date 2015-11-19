@@ -49,6 +49,31 @@ Node Privileges
 Node privileges define what can be restricted in relation to accessing and editing nodes. In combination with matchers
 (see the next section) they allow to define privilege targets that can be granted or denied for specific roles.
 
+.. note::
+  This is a blacklist by default, so the privilege won't match if one of the conditions don't match. So the example:
+
+  .. code-block:: yaml
+
+    privilegeTargets:
+      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+        'Some.Package:SomeIdentifier':
+          matcher: >-
+            isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
+            && createdNodeIsOfType("TYPO3.Neos.NodeTypes:Text")
+
+  will actually only affect nodes of that type (and subtypes). All users will still be able to create other node types,
+  unless you also add a more generic privilege target:
+
+  .. code-block:: yaml
+
+    privilegeTargets:
+      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+        'Some.Package:SomeIdentifier':
+          matcher: isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
+
+  That will be abstained by default. It's the same with MethodPrivileges, but with those we abstain all actions by
+  default (in Neos that is).
+
 NodeTreePrivilege
 -----------------
 
