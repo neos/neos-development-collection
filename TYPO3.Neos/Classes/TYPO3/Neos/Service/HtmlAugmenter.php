@@ -108,7 +108,7 @@ class HtmlAugmenter
     {
         $renderedAttributes = '';
         foreach ($attributes as $attributeName => $attributeValue) {
-            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8');
             if ($attributeValue === null) {
                 $renderedAttributes .= ' ' . $encodedAttributeName;
             } else {
@@ -116,7 +116,7 @@ class HtmlAugmenter
                     throw new Exception(sprintf('Only attributes with string values can be rendered, attribute %s is of type %s', $attributeName, gettype($attributeValue)));
                 }
 
-                $encodedAttributeValue = htmlspecialchars((string)$attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $encodedAttributeValue = htmlspecialchars((string)$attributeValue, ENT_COMPAT, 'UTF-8');
                 $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
             }
         }
