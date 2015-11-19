@@ -224,22 +224,36 @@ This helps to provide data to the editing interface without having to define rou
             # alternatively using a custom uri:
             # dataSourceUri: 'custom-route/end-point'
 
-See :ref:`data-sources` for more details on implementing a *data source* based on Neos conventions. If you use the
-``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source is a JSON
-formatted array matching the following structure. Make sure you sort by group first, if using the grouping option.
+See :ref:`data-sources` for more details on implementing a *data source* based on Neos conventions. If you are using a
+data source to populate SelectBoxEditor instances it has to be matching the ``values`` option. Make sure you sort by
+group first, if using the grouping option.
+
+Example for returning compatible data:
+
+.. code-block:: php
+
+  return array(
+      array('value' => 'key', 'label' => 'Foo', 'group' => 'A', 'icon' => 'icon-key'),
+      array('value' => 'fire', 'label' => 'Fire', 'group' => 'A', 'icon' => 'icon-fire'),
+      array('value' => 'legal', 'label' => 'Legal', 'group' => 'B', 'icon' => 'icon-legal')
+  );
+
+If you use the ``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source
+is a JSON formatted array matching the following structure. Make sure you sort by group first, if using the grouping
+option.
 
 Example for compatible data:
 
 .. code-block:: json
 
   [{
-    "value:" "key"
+    "value": "key",
     "label": "Key",
     "group": "A",
     "icon": "icon-key"
   },
   {
-    "value": "fire"
+    "value": "fire",
     "label": "Fire",
     "group": "A",
     "icon": "icon-fire"
