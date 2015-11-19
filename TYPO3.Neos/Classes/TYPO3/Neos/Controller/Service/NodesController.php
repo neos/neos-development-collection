@@ -21,6 +21,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -273,7 +274,7 @@ class NodesController extends ActionController
         $parentNode = $node;
         while ($parentNode = $parentNode->getParent()) {
             $visibleInContext = $contentContext->getNodeByIdentifier($parentNode->getIdentifier()) !== null;
-            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== '/sites' && !$visibleInContext) {
+            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== SiteService::SITES_ROOT_PATH && !$visibleInContext) {
                 $contentContext->adoptNode($parentNode, $copyContent);
             }
         }
