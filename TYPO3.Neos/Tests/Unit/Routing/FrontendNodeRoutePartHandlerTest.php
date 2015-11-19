@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  */
 
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -100,6 +101,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
         $this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
+
+        $this->inject($this->routePartHandler, 'securityContext', new SecurityContext());
 
         $this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
         $this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);

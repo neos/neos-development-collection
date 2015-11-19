@@ -1,6 +1,24 @@
+// Hide from screenreaders and browsers
+// Credit: HTML5 Boilerplate
+.neos-hidden {
+	display: none;
+	visibility: hidden;
+}
+
 &.neos-module-management-workspaces {
+	.neos-footer p {
+		font-size: $fontSizeSmall;
+		margin-right: 8px;
+	}
+
 	td {
 		white-space: nowrap;
+
+		&.description {
+			white-space: normal;
+			line-height: 20px;
+			padding: 10px 0 5px 0;
+		}
 
 		&.node-type {
 			white-space: nowrap;
@@ -18,9 +36,19 @@
 		}
 	}
 
-	th,
-	td.actions {
+	th {
 		white-space: nowrap;
+	}
+
+	td.neos-workspace-type {
+	  width: 46px;
+	}
+	td.neos-action {
+		width: 90px;
+	}
+
+	td.neos-changes {
+		width: 120px;
 	}
 
 	td.node-type,
@@ -69,4 +97,28 @@
 			padding-right: $tightMargin;
 		}
 	}
+
+	.neos-change {
+		box-sizing: border-box;
+		white-space: nowrap;
+		letter-spacing: 1px;
+		font-size: 16px;
+	}
+
+	.neos-change-new {
+		color: $green;
+	}
+
+	.neos-change-changed {
+		color: $orange;
+	}
+
+	.neos-change-removed {
+		color: $warning;
+  	}
+
+	.neos-change-unchanged {
+		color: $grayLight;
+	}
+
 }

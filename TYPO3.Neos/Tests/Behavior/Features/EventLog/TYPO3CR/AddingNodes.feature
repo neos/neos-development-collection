@@ -11,7 +11,8 @@ Feature: Adding Nodes
 
   @fixtures
   Scenario: Add a new document node to live workspace
-    Given I create the following nodes:
+    Given I am authenticated with role "TYPO3.Neos:Editor"
+    And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace |
       | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | live      |
     Then I should have the following history entries:
@@ -23,7 +24,8 @@ Feature: Adding Nodes
 
   @fixtures
   Scenario: Add a new document node in user workspace, and publish it
-    Given I create the following nodes:
+    Given I am authenticated with role "TYPO3.Neos:Editor"
+    And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace  |
       | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | user-admin |
     And I publish the workspace "user-admin"
@@ -36,7 +38,8 @@ Feature: Adding Nodes
 
   @fixtures
   Scenario: Adding multiple document nodes in user workspace and publishing them yields one publish-event per document
-    Given I create the following nodes:
+    Given I am authenticated with role "TYPO3.Neos:Editor"
+    And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace  |
       | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | user-admin |
       | 9c881754-6a51-11e4-9026-7831c1d118bc | /sites/typo3cr/about-us | TYPO3.TYPO3CR.Testing:Page | {"title": "About Us"} | user-admin |

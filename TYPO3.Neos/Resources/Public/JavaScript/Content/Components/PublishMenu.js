@@ -1,268 +1,278 @@
 define(
-	[
-		'emberjs',
-		'Library/jquery-with-dependencies',
-		'Shared/LocalStorage',
-		'./Button',
-		'Content/Model/PublishableNodes',
-		'./StorageManager',
-		'./TargetWorkspaceController',
-		'./TargetWorkspaceSelector',
-		'./PublishAllDialog',
-		'./DiscardAllDialog',
-		'Shared/Endpoint/NodeEndpoint',
-		'Shared/HttpClient',
-		'Shared/I18n',
-		'text!./PublishMenu.html'
-	],
-	function (
-		Ember,
-		$,
-		LocalStorage,
-		Button,
-		PublishableNodes,
-		StorageManager,
-		TargetWorkspaceController,
-		TargetWorkspaceSelector,
-		PublishAllDialog,
-		DiscardAllDialog,
-		NodeEndpoint,
-		HttpClient,
-		I18n,
-		template
-	) {
-		return Ember.View.extend({
-			template: Ember.Handlebars.compile(template),
-			elementId: 'neos-publish-menu',
-			classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],
-			autoPublish: function(key, value) {
-				if (arguments.length > 1) {
-					LocalStorage.setItem('isAutoPublishEnabled', value);
-				}
-				return LocalStorage.getItem('isAutoPublishEnabled');
-			}.property(),
-			controller: PublishableNodes,
-			targetWorkspaceController: TargetWorkspaceController,
+  [
+    'emberjs',
+    'Library/jquery-with-dependencies',
+    'Shared/LocalStorage',
+    './Button',
+    'Content/Model/PublishableNodes',
+    './StorageManager',
+    './TargetWorkspaceController',
+    './TargetWorkspaceSelector',
+    './PublishAllDialog',
+    './DiscardAllDialog',
+    'Shared/Endpoint/NodeEndpoint',
+    'Shared/HttpClient',
+    'Shared/I18n',
+    'text!./PublishMenu.html'
+  ],
+  function (Ember,
+            $,
+            LocalStorage,
+            Button,
+            PublishableNodes,
+            StorageManager,
+            TargetWorkspaceController,
+            TargetWorkspaceSelector,
+            PublishAllDialog,
+            DiscardAllDialog,
+            NodeEndpoint,
+            HttpClient,
+            I18n,
+            template) {
+    return Ember.View.extend({
+      template: Ember.Handlebars.compile(template),
+      elementId: 'neos-publish-menu',
+      classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],
+      autoPublish: function (key, value) {
+        if (arguments.length > 1) {
+          LocalStorage.setItem('isAutoPublishEnabled', value);
+        }
+        return LocalStorage.getItem('isAutoPublishEnabled');
+      }.property(),
+      controller: PublishableNodes,
+      targetWorkspaceController: TargetWorkspaceController,
 
-			/**
-			 * Only show the target workspace selector if more than one workspace can be selected
-			 */
-			_isTargetWorkspaceSelectorVisible: function() {
-				return this.targetWorkspaceController.get('targetWorkspaces').length > 1;
-			}.property('targetWorkspaceController.targetWorkspaces'),
+      /**
+       * Only show the target workspace selector if more than one workspace can be selected
+       */
+      _isTargetWorkspaceSelectorVisible: function () {
+        return this.targetWorkspaceController.get('targetWorkspaces').length > 1;
+      }.property('targetWorkspaceController.targetWorkspaces'),
 
-			_actionRunning: function() {
-				return this.get('controller.publishAllRunning') || this.get('controller.discardRunning') || this.get('controller.discardAllRunning');
-			}.property('controller.publishAllRunning', 'controller.discardRunning', 'controller.discardAllRunning'),
+      _actionRunning: function () {
+        return this.get('controller.publishAllRunning') || this.get('controller.discardRunning') || this.get('controller.discardAllRunning');
+      }.property('controller.publishAllRunning', 'controller.discardRunning', 'controller.discardAllRunning'),
 
-			/**
-			 * The URI of the Workspaces Management backend module
-			 */
-			_workspacesManagementModuleUri: $('link[rel="neos-module-workspacesmanagement"]').attr('href'),
+      /**
+       * The URI of the Workspaces Management backend module
+       */
+      _workspacesManagementModuleUri: $('link[rel="neos-module-workspacesmanagement"]').attr('href'),
 
-			_hasWorkspaceWideChanges: function() {
-				return !this.get('_noWorkspaceWideChanges');
-			}.property('_noWorkspaceWideChanges'),
+      _hasWorkspaceWideChanges: function () {
+        return !this.get('_noWorkspaceWideChanges');
+      }.property('_noWorkspaceWideChanges'),
 
-			_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
+      _noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 
-			didInsertElement: function() {
-				this.$().find('.neos-dropdown-toggle').dropdown();
-			},
+      didInsertElement: function () {
+        this.$().find('.neos-dropdown-toggle').dropdown();
+      },
 
-			PublishButton: Button.extend({
-				autoPublish: false,
-				classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active'],
-				classNames: ['neos-publish-button'],
-				controller: PublishableNodes,
-				targetWorkspaceController: TargetWorkspaceController,
-				targetWorkspaceSelector: TargetWorkspaceSelector,
+      PublishButton: Button.extend({
+        autoPublish: false,
+        classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active'],
+        classNames: ['neos-publish-button'],
+        controller: PublishableNodes,
+        targetWorkspaceController: TargetWorkspaceController,
+        targetWorkspaceSelector: TargetWorkspaceSelector,
 
-				target: 'controller',
-				action: 'publishChanges',
+        target: 'controller',
+        action: 'publishChanges',
 
-				_nodeEndpoint: NodeEndpoint,
-				_storageManager: StorageManager,
+        _nodeEndpoint: NodeEndpoint,
+        _storageManager: StorageManager,
 
-				_httpClient: HttpClient,
-				_connectionFailedBinding: '_httpClient._failedRequest',
+        _httpClient: HttpClient,
+        _connectionFailedBinding: '_httpClient._failedRequest',
 
-				_saveRunningBinding: '_nodeEndpoint._saveRunning',
-				_savePendingBinding: '_storageManager.savePending',
+        _saveRunningBinding: '_nodeEndpoint._saveRunning',
+        _savePendingBinding: '_storageManager.savePending',
 
-				_workspaceRebasePendingBinding: 'targetWorkspaceController.workspaceRebasePending',
+        _workspaceRebasePendingBinding: 'targetWorkspaceController.workspaceRebasePending',
 
-				_publishRunningBinding: 'controller.publishRunning',
-				_noChangesBinding: 'controller.noChanges',
-				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
+        _publishRunningBinding: 'controller.publishRunning',
+        _noChangesBinding: 'controller.noChanges',
+        _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
-				defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
+        defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
 
-				_labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
+        _labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
+        _targetWorkspaceReadOnlyBinding: 'targetWorkspaceController.targetWorkspace.readOnly',
 
-				label: function() {
-					if (this.get('_savePending')) {
-						return 'Saving<span class="neos-ellipsis"></span>'.htmlSafe();
-					} else if (this.get('_publishRunning')) {
-						return 'Publishing<span class="neos-ellipsis"></span>'.htmlSafe();
-					} else if (this.get('autoPublish')) {
-						return 'Auto-Publish' + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
-					}
+        label: function () {
+          if (this.get('_savePending')) {
+            return (I18n.translate('TYPO3.Neos:Main:saving') + '<span class="neos-ellipsis"></span>').htmlSafe();
+          } else if (this.get('_publishRunning')) {
+            return (I18n.translate('TYPO3.Neos:Main:publishing') + '<span class="neos-ellipsis"></span>').htmlSafe();
+          } else if (this.get('autoPublish')) {
+            if (this.get('_label')) {
+              return I18n.translate('autoPublishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]).htmlSafe();
+            } else {
+              return I18n.translate('autoPublish', '', 'TYPO3.Neos', 'Main').htmlSafe();
+            }
+          }
 
-					if (this.get('_noChanges')) {
-						return I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '');
-					}
+          if (this.get('_noChanges')) {
+            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
+          }
 
-					return I18n.translate('TYPO3.Neos:Main:publish') + (this.get('_label') ? ' (' + this.get('_label') + ')' : '') + ' (' + this.get('_numberOfChanges') + ')';
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
+          if (this.get('_label')) {
+            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="badge">' + this.get('_numberOfChanges') + '</span>');
+          } else {
+            return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
+          }
 
-				title: function() {
-					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
-					if (this.get('autoPublish')) {
-						return titleText;
-					} else if (!this.get('_noChanges')) {
-						return titleText;
-					}
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges'),
+        }.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
 
-				_autoPublishTimer: null,
+        title: function () {
+          if (this.get('_targetWorkspaceReadOnly')) {
+            return I18n.translate('TYPO3.Neos:Main:cantPublishBecauseTargetWorkspaceIsReadOnly');
+          }
+          if (this.get('autoPublish') || !this.get('_noChanges')) {
+            return I18n.translate('TYPO3.Neos:Main:publishAllChangesForCurrentPage');
+          }
+          return '';
+        }.property('_noChanges', 'autoPublish', '_numberOfChanges', '_targetWorkspaceReadOnly'),
 
-				_autoPublishTimerOnAutoPublish: function() {
-					var that = this;
+        _autoPublishTimer: null,
 
-					if (this.get('autoPublish') && !this._autoPublishTimer) {
-						this._autoPublishTimer = window.setInterval(function() {
-							if (!that.get('_saveRunning') && !that.get('noChanges')) {
-								PublishableNodes.publishChanges(true);
-							}
-						}, 10000);
-					} else if (this._autoPublishTimer) {
-						window.clearInterval(this._autoPublishTimer);
-						this._autoPublishTimer = null;
-					}
-				}.observes('autoPublish').on('init'),
+        _autoPublishTimerOnAutoPublish: function () {
+          var that = this;
 
-				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending'),
+          if (this.get('autoPublish') && !this._autoPublishTimer) {
+            this._autoPublishTimer = window.setInterval(function () {
+              if (!that.get('_saveRunning') && !that.get('noChanges')) {
+                PublishableNodes.publishChanges(true);
+              }
+            }, 10000);
+          } else if (this._autoPublishTimer) {
+            window.clearInterval(this._autoPublishTimer);
+            this._autoPublishTimer = null;
+          }
+        }.observes('autoPublish').on('init'),
 
-				_hasChanges: function() {
-					if (this.get('autoPublish')) {
-						return false;
-					}
-					return !this.get('_noChanges') || this.get('_saveRunning') || this.get('_savePending');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
+        disabled: function () {
+          console.log(this.get('_targetWorkspaceReadOnly'));
+          return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending') || this.get('_targetWorkspaceReadOnly');
+        }.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending', '_targetWorkspaceReadOnly'),
 
-				connectionStatusClass: function() {
-					var className = 'neos-connection-status-';
-					className += this.get('_connectionFailed') ? 'down' : 'up';
-					return className;
-				}.property('_connectionFailed')
-			}),
+        _hasChanges: function () {
+          if (this.get('autoPublish')) {
+            return false;
+          }
+          return !this.get('_noChanges') || this.get('_saveRunning') || this.get('_savePending');
+        }.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
 
-			TargetWorkspaceSelector: TargetWorkspaceSelector,
+        connectionStatusClass: function () {
+          var className = 'neos-connection-status-';
+          className += this.get('_connectionFailed') ? 'down' : 'up';
+          return className;
+        }.property('_connectionFailed')
+      }),
 
-			DiscardButton: Button.extend({
-				classNames: ['neos-discard-button'],
-				controller: PublishableNodes,
+      TargetWorkspaceSelector: TargetWorkspaceSelector,
 
-				target: 'controller',
-				action: 'discardChanges',
+      DiscardButton: Button.extend({
+        classNames: ['neos-discard-button'],
+        controller: PublishableNodes,
 
-				_nodeEndpoint: NodeEndpoint,
-				_saveRunningBinding: '_nodeEndpoint._saveRunning',
+        target: 'controller',
+        action: 'discardChanges',
 
-				_noChangesBinding: 'controller.noChanges',
-				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
+        _nodeEndpoint: NodeEndpoint,
+        _saveRunningBinding: '_nodeEndpoint._saveRunning',
 
-				label: function() {
-					return ('<i class="icon-ban-circle"></i> ' + this.get('title')).htmlSafe();
-				}.property('title'),
+        _noChangesBinding: 'controller.noChanges',
+        _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
-				title: function() {
-					return I18n.translate('TYPO3.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' ('  + this.get('_numberOfChanges') + ')');
-				}.property('_noChanges', '_numberOfChanges'),
+        label: function () {
+          return ('<i class="icon-ban-circle"></i> ' + this.get('title')).htmlSafe();
+        }.property('title'),
 
-				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('controller.discardRunning');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', 'controller.discardRunning')
-			}),
+        title: function () {
+          return I18n.translate('TYPO3.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' (' + this.get('_numberOfChanges') + ')');
+        }.property('_noChanges', '_numberOfChanges'),
 
-			PublishAllButton: Button.extend({
-				classNameBindings: ['disabledClass'],
-				classNames: ['neos-publish-all-button'],
-				controller: PublishableNodes,
-				attributeBindings: ['title'],
-				labelIcon: '<i class="icon-upload"></i> ',
+        disabled: function () {
+          return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('controller.discardRunning');
+        }.property('_noChanges', 'autoPublish', '_saveRunning', 'controller.discardRunning')
+      }),
 
-				label: function() {
-					return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
-				}.property('title'),
+      PublishAllButton: Button.extend({
+        classNameBindings: ['disabledClass'],
+        classNames: ['neos-publish-all-button'],
+        controller: PublishableNodes,
+        attributeBindings: ['title'],
+        labelIcon: '<i class="icon-upload"></i> ',
 
-				title: function() {
-					return (I18n.translate('TYPO3.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
-				}.property('_numberOfWorkspaceWideChanges'),
+        label: function () {
+          return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
+        }.property('title'),
 
-				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
-				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
+        title: function () {
+          return (I18n.translate('TYPO3.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
+        }.property('_numberOfWorkspaceWideChanges'),
 
-				_nodeEndpoint: NodeEndpoint,
-				_saveRunningBinding: '_nodeEndpoint._saveRunning',
+        _noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
+        _numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
 
-				click: function() {
-					PublishAllDialog.create();
-				},
+        _nodeEndpoint: NodeEndpoint,
+        _saveRunningBinding: '_nodeEndpoint._saveRunning',
 
-				didInsertElement: function() {
-					PublishableNodes.getWorkspaceWideUnpublishedNodes();
-				},
+        click: function () {
+          PublishAllDialog.create();
+        },
 
-				disabled: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.publishAllRunning');
-				}.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.publishAllRunning'),
+        didInsertElement: function () {
+          PublishableNodes.getWorkspaceWideUnpublishedNodes();
+        },
 
-				disabledClass: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
-				}.property('_noWorkspaceWideChanges', '_saveRunning')
-			}),
+        disabled: function () {
+          return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.publishAllRunning');
+        }.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.publishAllRunning'),
 
-			DiscardAllButton: Button.extend({
-				classNameBindings: ['disabledClass'],
-				classNames: ['neos-publish-all-button'],
-				controller: PublishableNodes,
-				attributeBindings: ['title'],
-				labelIcon: '<i class="icon-ban-circle"></i> ',
+        disabledClass: function () {
+          return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
+        }.property('_noWorkspaceWideChanges', '_saveRunning')
+      }),
 
-				title: function() {
-					if (this.get('_noWorkspaceWideChanges')) {
-						return (I18n.translate('TYPO3.Neos:Main:discardAll')).htmlSafe();
-					} else {
-						return (I18n.translate('TYPO3.Neos:Main:discardAll') + ' (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
-					}
-				}.property('_numberOfWorkspaceWideChanges'),
+      DiscardAllButton: Button.extend({
+        classNameBindings: ['disabledClass'],
+        classNames: ['neos-publish-all-button'],
+        controller: PublishableNodes,
+        attributeBindings: ['title'],
+        labelIcon: '<i class="icon-ban-circle"></i> ',
 
-				label: function() {
-					return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
-				}.property('title'),
+        title: function () {
+          if (this.get('_noWorkspaceWideChanges')) {
+            return (I18n.translate('TYPO3.Neos:Main:discardAll')).htmlSafe();
+          } else {
+            return (I18n.translate('TYPO3.Neos:Main:discardAll') + ' (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
+          }
+        }.property('_numberOfWorkspaceWideChanges'),
 
-				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
-				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
+        label: function () {
+          return (this.get('labelIcon') + ' ' + this.get('title')).htmlSafe();
+        }.property('title'),
 
-				_nodeEndpoint: NodeEndpoint,
-				_saveRunningBinding: '_nodeEndpoint._saveRunning',
+        _noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
+        _numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
 
-				click: function() {
-					DiscardAllDialog.create();
-				},
+        _nodeEndpoint: NodeEndpoint,
+        _saveRunningBinding: '_nodeEndpoint._saveRunning',
 
-				disabled: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.discardAllRunning');
-				}.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.discardAllRunning'),
+        click: function () {
+          DiscardAllDialog.create();
+        },
 
-				disabledClass: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
-				}.property('_noWorkspaceWideChanges', '_saveRunning')
-			})
-		});
-	}
+        disabled: function () {
+          return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.discardAllRunning');
+        }.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.discardAllRunning'),
+
+        disabledClass: function () {
+          return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
+        }.property('_noWorkspaceWideChanges', '_saveRunning')
+      })
+    });
+  }
 );

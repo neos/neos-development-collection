@@ -24,6 +24,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class WorkspacesController extends ActionController
 {
+
     /**
      * @Flow\Inject
      * @var WorkspaceRepository
@@ -31,12 +32,18 @@ class WorkspacesController extends ActionController
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Service\UserService
+     */
+    protected $userService;
+
+    /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => 'TYPO3\Fluid\View\TemplateView',
         'json' => 'TYPO3\Neos\View\Service\NodeJsonView'
-    );
+    ];
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -44,10 +51,10 @@ class WorkspacesController extends ActionController
      * @var array
      * @see http://www.iana.org/assignments/media-types/index.html
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * Shows a list of existing workspaces
@@ -56,7 +63,29 @@ class WorkspacesController extends ActionController
      */
     public function indexAction()
     {
-        $this->view->assign('workspaces', $this->workspaceRepository->findAll());
+        $user = $this->userService->getCurrentUser();
+        $workspacesArray = [];
+        /** @var Workspace $workspace */
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+
+            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
+            if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
+                continue;
+            }
+
+            $workspaceArray = [
+                'name' => $workspace->getName(),
+                'title' => $workspace->getTitle(),
+                'description' => $workspace->getDescription(),
+                'baseWorkspace' => $workspace->getBaseWorkspace()
+            ];
+            if ($user !== null) {
+                $workspaceArray['readonly'] = !$this->userService->currentUserCanPublishToWorkspace($workspace);
+            }
+            $workspacesArray[] = $workspaceArray;
+        }
+
+        $this->view->assign('workspaces', $workspacesArray);
     }
 
     /**
@@ -71,20 +100,30 @@ class WorkspacesController extends ActionController
     }
 
     /**
-     * Shows details of the given workspace
+     * Create a workspace
      *
      * @param string $workspaceName
      * @param Workspace $baseWorkspace
+     * @param string $ownerAccountIdentifier
      * @return string
      */
-    public function createAction($workspaceName, Workspace $baseWorkspace)
+    public function createAction($workspaceName, Workspace $baseWorkspace, $ownerAccountIdentifier = null)
     {
         $existingWorkspace = $this->workspaceRepository->findByIdentifier($workspaceName);
         if ($existingWorkspace !== null) {
             $this->throwStatus(409, 'Workspace already exists', '');
         }
 
-        $workspace = new Workspace($workspaceName, $baseWorkspace);
+        if ($ownerAccountIdentifier !== null) {
+            $owner = $this->userService->getUser($ownerAccountIdentifier);
+            if ($owner === null) {
+                $this->throwStatus(422, 'Requested owner account does not exist', '');
+            }
+        } else {
+            $owner = null;
+        }
+
+        $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
         $this->workspaceRepository->add($workspace);
         $this->throwStatus(201, 'Workspace created', '');
     }
