@@ -46,7 +46,7 @@ class PluginImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->pluginImplementation = $this->getAccessibleMock('TYPO3\Neos\TypoScript\PluginImplementation', array('buildPluginRequest'), array(), '', false);
+        $this->pluginImplementation = $this->getAccessibleMock('TYPO3\Neos\TypoScript\PluginImplementation', ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
         $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
@@ -76,17 +76,17 @@ class PluginImplementationTest extends UnitTestCase
         return [
             [
                 'Plugin response key does already exist in parent with same value',
-                ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'value'] ],
+                ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'value']],
                 ['key' => 'value']
             ],
             [
                 'Plugin response key does not exist in parent with different value',
-                ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'otherValue'] ],
+                ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'otherValue']],
                 ['key' => 'otherValue']
             ],
             [
                 'Plugin response key does not exist in parent',
-                ['parent' => ['key' => 'value'], 'plugin' => ['otherkey' => 'value'] ],
+                ['parent' => ['key' => 'value'], 'plugin' => ['otherkey' => 'value']],
                 ['key' => 'value', 'otherkey' => 'value']
             ]
         ];
@@ -107,7 +107,7 @@ class PluginImplementationTest extends UnitTestCase
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
         $this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($parentResponse));
 
-        $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function($request, $response) use ($input) {
+        $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
             $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
 
@@ -126,7 +126,7 @@ class PluginImplementationTest extends UnitTestCase
      */
     private function _setHeadersIntoResponse(Response $response, $headers)
     {
-        foreach($headers as $key => $value) {
+        foreach ($headers as $key => $value) {
             $response->getHeaders()->set($key, $value);
         }
     }
