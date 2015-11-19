@@ -130,5 +130,4 @@ class PluginImplementationTest extends UnitTestCase
             $response->getHeaders()->set($key, $value);
         }
     }
-
 }
