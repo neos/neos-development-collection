@@ -10,3 +10,4 @@ These are the development guidelines of Neos.
 	NodeTypeDefinition
 	NodeConstraints
 	TranslateNodeTypes
+	DependingProperties

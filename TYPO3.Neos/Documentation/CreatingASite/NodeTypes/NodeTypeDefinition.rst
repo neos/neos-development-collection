@@ -243,6 +243,9 @@ The following options are allowed:
       ``editorOptions``
         A set of options for the given editor, see the :ref:`property-editor-reference`.
 
+      ``editorListeners``
+        Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
+
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
