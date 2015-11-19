@@ -67,7 +67,7 @@ privilegeTargets:
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == current.userInformation.backendUser))'
 
-    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces':
+    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == null))'
 
     'TYPO3.Neos:Backend.Service.Workspaces.Index':
@@ -274,7 +274,7 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces'
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
         permission: GRANT
 
       -

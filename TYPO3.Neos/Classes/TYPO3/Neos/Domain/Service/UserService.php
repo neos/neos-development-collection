@@ -598,7 +598,7 @@ class UserService
         }
 
         if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() == $this->getCurrentUser()) {
@@ -626,7 +626,7 @@ class UserService
         // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageSharedWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
     }
 
     /**
