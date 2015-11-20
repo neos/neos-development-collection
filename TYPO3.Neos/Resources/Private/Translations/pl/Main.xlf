@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="pl">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="pl" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="pl">Zastosuj</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="pl">Anuluj</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="pl">Wstecz</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="pl">Wybierz</target></trans-unit>
@@ -111,21 +117,36 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="pl">Publikuj</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			<target xml:lang="pl" state="needs-translation">Publish to {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="pl" state="needs-translation">Publish all changes for current page</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="pl" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			<target xml:lang="pl" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="pl">Opublikowano</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="pl">Docelowy obszar roboczy</target><alt-trans><target xml:lang="pl">Przestrzeń robocza</target></alt-trans></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			<target xml:lang="pl" state="needs-translation">Current workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="pl">Usuń</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="pl">Odśwież</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
-			<target xml:lang="pl">Zapisywanie...</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve">
+				<source>Saving</source>
+			<target xml:lang="pl" state="translated">Zapisywanie...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="pl">Zapisano</target></trans-unit>
@@ -147,15 +168,15 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="pl">Etykieta</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="pl">Typ węzła</target><alt-trans><target xml:lang="pl">Węzeł</target></alt-trans></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Content Type</source>
+			<target xml:lang="pl" state="translated">Typ węzła</target><alt-trans><target xml:lang="pl">Węzeł</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="pl">Ścieżka</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
-			<target xml:lang="pl">Ścieżka względna</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative Path</source>
+			<target xml:lang="pl" state="translated">Ścieżka względna</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>

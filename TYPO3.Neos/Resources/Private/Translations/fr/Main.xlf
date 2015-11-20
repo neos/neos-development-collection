@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="fr">Publication automatique</target><alt-trans><target xml:lang="fr">Auto-publication</target></alt-trans></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="fr" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="fr">Appliquer</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fr">Annuler</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="fr">Retour</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="fr">Selectionner</target><alt-trans><target xml:lang="fr">Sélectionner</target></alt-trans><alt-trans><target xml:lang="fr">Selectionnez</target></alt-trans></trans-unit>
@@ -111,21 +117,36 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="fr">Publier</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			<target xml:lang="fr" state="needs-translation">Publish to {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="fr" state="needs-translation">Publish all changes for current page</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="fr" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			<target xml:lang="fr" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="fr">Publié</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="fr">Espace de travail cible</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			<target xml:lang="fr" state="needs-translation">Current workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="fr">Supprimer</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="fr">Rafraîchir</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
-			<target xml:lang="fr">Enregistrement...</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve">
+				<source>Saving</source>
+			<target xml:lang="fr" state="translated">Enregistrement...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="fr">Sauvegardé</target></trans-unit>
@@ -147,15 +168,15 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="fr">Libellé</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="fr">Type de nœud</target><alt-trans><target xml:lang="fr">Type de noeud</target></alt-trans></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Content Type</source>
+			<target xml:lang="fr" state="translated">Type de noeud</target><alt-trans><target xml:lang="fr">Type de nœud</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="fr">Chemin</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
-			<target xml:lang="fr">Chemin relatif</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative Path</source>
+			<target xml:lang="fr" state="translated">Chemin relatif</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
