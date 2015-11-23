@@ -4,6 +4,38 @@
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`[SECURITY] Escape flash message arguments in controllers <https://github.com/neos/neos-development-collection/commit/8e41443f65e509fb771fb1ba33722395011210e1>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The module controllers used unescaped content in flash messages,
+leading to potential XSS issues.
+
+* Fixes: `NEOS-1653 <https://jira.neos.io/browse/NEOS-1653>`_
+* Packages: ``Neos``
+
+`[SECURITY] Fix XSS in TypoScript exception handlers <https://github.com/neos/neos-development-collection/commit/83dafef5dffe3c84bc257de5fb2489d1fcdf973e>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In exceptions some information from the request is output unchanged and
+unescaped, so that injection if JS is possible. One example is calling
+the registration plugin and adjusting the action parameter.
+
+* Fixes: `NEOS-1654 <https://jira.neos.io/browse/NEOS-1654>`_
+* Packages: ``Neos``
+
+`[SECURITY] Use double encoding in HtmlAugmenter <https://github.com/neos/neos-development-collection/commit/d3968af6a5840a1a49a365844467fb5c8e8439f8>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When entering HTML tags into text elements (using Aloha), the tags were
+correctly escaped by Neos. Still the tags would be in the DOM as "real"
+tags when switching to a preview mode in the backend.
+
+This is caused by VIE and is resolved by double-encoding when using
+htmlspecialchars() on the attribute values used to pass data to VIE.
+
+* Fixes: `NEOS-1655 <https://jira.neos.io/browse/NEOS-1655>`_
+* Packages: ``Neos``
+
 `[BUGFIX] Use correct node for content collection metadata <https://github.com/neos/neos-development-collection/pull/180>`_
 ---------------------------------------------------------------------------------------------------------------------------
 
