@@ -402,7 +402,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $translationHelper = new TranslationHelper();
-                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
+                $masterPlugins[$pluginNode->getPath()] = $translationHelper->translate(
                     'masterPlugins.nodeTypeOnPageLabel',
                     null,
                     ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
