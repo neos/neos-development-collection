@@ -1,0 +1,185 @@
+`2.0.4 (2015-11-23) <https://github.com/neos/neos-development-collection/releases/tag/2.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[BUGFIX] Avoid "Missing constructor argument" exception <https://github.com/neos/neos-development-collection/pull/203>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The type converter would always call ``buildObject()`` on the parent,
+even if the possible constructor arguments were empty. This lead to:
+
+Missing constructor argument "resource" for object of type
+``TYPO3\\Media\\Domain\\Model\Asset``.
+
+A check is added to avoid that.
+
+* Packages: ``Media`` ``Neos`` ``NodeTypes``
+
+`[TASK] Security documentation <https://github.com/neos/neos-development-collection/pull/187>`_
+-----------------------------------------------------------------------------------------------
+
+This documents node privileges and their matchers, as well as how to restrict
+access to backend modules.
+
+* Packages: ``Neos``
+
+`[TASK] Fix and amend data sources documentation <https://github.com/neos/neos-development-collection/pull/197>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This fixes and amends the documentation on data sources. Some code
+cleanup to related classes is done along the way.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Use correct node for content collection metadata <https://github.com/neos/neos-development-collection/pull/180>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Content collection handles are not shown since the meta data
+added is using the document node instead of the actual node.
+
+Regression introduced with `4672697b9477ceca53ee7b4e47c4def002e50e32 <https://github.com/neos/neos-development-collection/commit/4672697b9477ceca53ee7b4e47c4def002e50e32>`_
+causing the node not to be set correctly for the
+``contentElementWrapping`` processor.
+
+* Related: `NEOS-1326 <https://jira.neos.io/browse/NEOS-1326>`_
+* Packages: ``Neos``
+
+`[TASK] Security warning if Neos demo is public <https://github.com/neos/neos-development-collection/pull/193>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Fix rst syntax in CustomViewHelpers.rst <https://github.com/neos/neos-development-collection/pull/191>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Fixed documentation for creating a plugin <https://github.com/neos/neos-development-collection/pull/184>`_
+------------------------------------------------------------------------------------------------------------------
+
+Wrong ViewHelper was used in an example.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix transient error when moving of nodes in Node Tree <https://github.com/neos/neos-development-collection/pull/172>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+How to Reproduce:
+
+- have a website with dimension fallbacks configured; e.g. Language "de"
+  which falls back to "en".
+- Your content should be in German (no content in English actually needed)
+- Try to move nodes across the tree with changing the Node's Parent Node
+- watch the exception "Could not convert array to Node object because
+  [the-old-node-path] does not exist" in the get-child-nodes-for-tree
+  endpoint.
+
+This error happens because the "move" operation, which is supposed to return
+the *new* node path of the moved node, still returns the old path.
+
+And this error, in turn, is triggered by some bug inside Node->setPath
+(see inline comments for a full description).
+
+* Resolves: `NEOS-1652 <https://jira.neos.io/browse/NEOS-1652>`_
+* Packages: ``Neos`` ``TYPO3CR``
+
+`[TASK] Improve logging for "no homepage found" situations <https://github.com/neos/neos-development-collection/pull/178>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When the Node Route Part Handler wasn't able to find a site node,
+the exception now contains information about if at least a domain
+could be detected and if so, which one matched.
+
+Additionally, `matchValue()` will now also log an exception if the
+request path was empty (that is, the user requested the homepage) and
+not only for sub pages.
+
+* Packages: ``Neos``
+
+`[BUGFIX] if in backend, do not intercept links to static resources <https://github.com/neos/neos-development-collection/pull/177>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Prevents loading links to static resources using AJAX in the backend interface,
+which fail when loaded.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fixes correct getting of options for StringLengthValidator (JS) <https://github.com/neos/neos-development-collection/pull/155>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixed the second parameter (radix) of parseInt to get the correct configured max and min. Was falsely changed during translation of JS messages.
+
+Related: `5723c22561591d1ada93ee7cef5b85d30c47b9a2 <https://github.com/neos/neos-development-collection/commit/5723c22561591d1ada93ee7cef5b85d30c47b9a2>`_
+* Fixes: `NEOS-1636 <https://jira.neos.io/browse/NEOS-1636>`_
+
+`[TASK] Add documentation for child node positioning. <https://github.com/neos/neos-development-collection/pull/149>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Add the missing documentation for the positioning of child nodes in the structure tree.
+
+* Resolves: `NEOS-1629 <https://jira.neos.io/browse/NEOS-1629>`_
+* Packages: ``Neos``
+
+`[BUGFIX] create index file and index entry for \`\`Configuration\`\` section and fix sample code <https://github.com/neos/neos-development-collection/pull/176>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Add brief section about \`\`loadingDepth\`\` node tree setting <https://github.com/neos/neos-development-collection/pull/174>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`[FEATURE] Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as `['key' => 'value']`.
+
+* Resolves: `NEOS-1460 <https://jira.neos.io/browse/NEOS-1460>`_
+* Packages: ``Neos`` ``NodeTypes``
+
+`[BUGFIX] Keep status code from module response on redirect <https://github.com/neos/neos-development-collection/pull/170>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The response of a module loses the status code if it contains a Location
+header. This is caused by the ModuleController redirecting to the found
+location but ignoring any status code that may have been set. This means
+that a module will only create 303 redirects.
+
+This change takes the status code of a module response and applies it to
+the generated redirect, fixing this behavior.
+
+* Packages: ``Neos``
+
+`[TASK] Change documentation for data sources <https://github.com/neos/neos-development-collection/pull/158>`_
+--------------------------------------------------------------------------------------------------------------
+
+Fix doubled quotes in CustomizingInspector.rst
+Change the example in DataSources.rst - the example now makes sens for the use
+in an inspector select box. Also adjust the code style.
+
+* Packages: ``Neos``
+
+`[TASK] Fix code-block syntax in 2.0 release notes <https://github.com/neos/neos-development-collection/pull/154>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Add apigen.yml <https://github.com/neos/neos-development-collection/pull/153>`_
+---------------------------------------------------------------------------------------
+
+This adds an apigen.yml file for use when generating API docs.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.3...2.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
