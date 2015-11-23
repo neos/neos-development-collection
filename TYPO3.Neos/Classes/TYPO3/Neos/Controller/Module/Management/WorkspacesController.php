@@ -371,7 +371,7 @@ class WorkspacesController extends AbstractModuleController
                 $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
             break;
             default:
-                throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
+                throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
@@ -389,7 +389,7 @@ class WorkspacesController extends AbstractModuleController
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
         $workspace->publish($targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [$workspace->getTitle(), $targetWorkspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -403,7 +403,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 

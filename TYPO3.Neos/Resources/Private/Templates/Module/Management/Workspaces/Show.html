@@ -35,7 +35,7 @@
 									<td colspan="5" class="neos-priority1">
 										<f:if condition="{siteChanges -> f:count()} > 1">
 											<div class="neos-pull-right">
-												<strong>{neos:backend.translate(id: 'site', value: 'Site')}: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
+												<strong>{neos:backend.translate(id: 'site', value: 'Site')}: {f:if(condition: site.siteNode.name, then: '{site.siteNode.name}', else: '{site.siteNode.nodeName}')}</strong>
 											</div>
 										</f:if>
 										<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}: <span title="{document.documentNode.path}"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"/></span></strong>
@@ -84,16 +84,16 @@
 												</f:if>
 											</label>
 										</td>
-										<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>{neos:backend.translate(id: "noTitle", source: "Main", package: "TYPO3.Neos")}</em>')}</label></td>
+										<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: '{change.node.label}', else: '<em>{neos:backend.translate(id: "noTitle", source: "Main", package: "TYPO3.Neos")}</em>')}</label></td>
 										<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
 											<label for="{change.node.identifier}">
 												<f:if condition="{change.configuration.ui.icon}">
 													<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
 												</f:if>
-												{f:if(condition: change.node.nodeType.label, then: "{neos:backend.translate(id: change.node.nodeType.label)}", else: change.node.nodeType.name)}
+												{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
 											</label>
 										</td>
-										<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
+										<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: '{relativePath}', else: '&nbsp;')}</label></td>
 										<td class="neos-action neos-aRight neos-priority1">
 											<f:if condition="{canPublishToBaseWorkspace}">
 												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}">
