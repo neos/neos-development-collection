@@ -113,7 +113,7 @@ class SitesController extends AbstractModuleController
         try {
             $sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
         } catch (\Exception $e) {
-            $this->addFlashMessage('The site package with key "%s" was not found.', 'Site package not found', Message::SEVERITY_ERROR, array($site->getSiteResourcesPackageKey()));
+            $this->addFlashMessage('The site package with key "%s" was not found.', 'Site package not found', Message::SEVERITY_ERROR, array(htmlspecialchars($site->getSiteResourcesPackageKey())));
         }
 
         $this->view->assignMultiple(array(
@@ -150,7 +150,7 @@ class SitesController extends AbstractModuleController
             $this->nodeDataRepository->persistEntities();
         }
         $this->siteRepository->update($site);
-        $this->addFlashMessage(sprintf('The site "%s" has been updated.', $site->getName()));
+        $this->addFlashMessage('The site "%s" has been updated.', 'Update', htmlspecialchars($site->getName()));
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -184,7 +184,7 @@ class SitesController extends AbstractModuleController
     {
         if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
             if ($this->packageManager->isPackageAvailable($packageKey)) {
-                $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array($packageKey));
+                $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array(htmlspecialchars($packageKey)));
                 $this->redirect('index');
             }
 
@@ -207,7 +207,7 @@ class SitesController extends AbstractModuleController
                 $this->addFlashMessage('The site has been created.');
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array($packageKey, $exception->getMessage()));
+                $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array(htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())));
             }
         } else {
             $this->addFlashMessage('No site selected for import and no package name provided.', 'No site selected', Message::SEVERITY_ERROR);
@@ -235,7 +235,7 @@ class SitesController extends AbstractModuleController
         $this->siteRepository->remove($site);
         $siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $siteNode->remove();
-        $this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()));
+        $this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array(htmlspecialchars($site->getName())));
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -249,7 +249,7 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_ONLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array($site->getName()));
+        $this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array(htmlspecialchars($site->getName())));
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -263,7 +263,7 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_OFFLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array($site->getName()));
+        $this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array(htmlspecialchars($site->getName())));
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -289,7 +289,7 @@ class SitesController extends AbstractModuleController
     public function updateDomainAction(Domain $domain)
     {
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())));
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -319,7 +319,7 @@ class SitesController extends AbstractModuleController
     public function createDomainAction(Domain $domain)
     {
         $this->domainRepository->add($domain);
-        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())));
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -333,7 +333,7 @@ class SitesController extends AbstractModuleController
     public function deleteDomainAction(Domain $domain)
     {
         $this->domainRepository->remove($domain);
-        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())));
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -347,7 +347,7 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(true);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())));
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -361,7 +361,7 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(false);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array($domain->getHostPattern()));
+        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())));
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 

@@ -205,7 +205,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
                 $message = 'Selected changes have been discarded';
             break;
             default:
-                throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
+                throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
         $this->addFlashMessage($message);
@@ -220,7 +220,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     {
         $liveWorkspace = $this->workspaceRepository->findOneByName('live');
         $workspace->publish($liveWorkspace);
-        $this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()));
+        $this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array(htmlspecialchars($workspace->getName())));
         $this->redirect('index');
     }
 
@@ -232,7 +232,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()));
+        $this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array(htmlspecialchars($workspace->getName())));
         $this->redirect('index');
     }
 }

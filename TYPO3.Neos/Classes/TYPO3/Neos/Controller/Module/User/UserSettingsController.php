@@ -120,10 +120,7 @@ class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModul
         $party = $this->securityContext->getAccount()->getParty();
         $party->addElectronicAddress($electronicAddress);
         $this->partyRepository->update($party);
-        $this->addFlashMessage(sprintf(
-            'An electronic "%s" address has been added.',
-            $electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')'
-        ));
+        $this->addFlashMessage('An electronic "%s" (%s) address has been added.', 'Electronic address added', \TYPO3\Flow\Error\Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getType()), htmlspecialchars($electronicAddress->getIdentifier())));
         $this->redirect('index');
     }
 
@@ -139,11 +136,7 @@ class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModul
         $party = $this->securityContext->getAccount()->getParty();
         $party->removeElectronicAddress($electronicAddress);
         $this->partyRepository->update($party);
-        $this->addFlashMessage(sprintf(
-            'The electronic address "%s" has been deleted for the person "%s".',
-            $electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')',
-            $party->getName()
-        ));
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for the person "%s".', 'Electronic address removed', \TYPO3\Flow\Error\Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getType()), htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($party->getName())));
         $this->redirect('index');
     }
 

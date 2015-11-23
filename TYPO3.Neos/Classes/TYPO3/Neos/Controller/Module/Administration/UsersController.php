@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
 
 /**
  * The TYPO3 User Admin module controller
@@ -236,10 +237,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
         $party = $account->getParty();
         $party->addElectronicAddress($electronicAddress);
         $this->partyRepository->update($party);
-        $this->addFlashMessage(sprintf(
-            'An electronic "%s" address has been added.',
-            $electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')'
-        ));
+        $this->addFlashMessage('An electronic "%s" (%s) address has been added.', 'Electronic address added', Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getType()), htmlspecialchars($electronicAddress->getIdentifier())));
         $this->redirect('edit', null, null, array('account' => $account));
     }
 
@@ -256,11 +254,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
         $party = $account->getParty();
         $party->removeElectronicAddress($electronicAddress);
         $this->partyRepository->update($party);
-        $this->addFlashMessage(sprintf(
-            'The electronic address "%s" has been deleted for the person "%s".',
-            $electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')',
-            $party->getName()
-        ));
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for the person "%s".', 'Electronic address removed', Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getType()), htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($party->getName())));
         $this->redirect('edit', null, null, array('account' => $account));
     }
 

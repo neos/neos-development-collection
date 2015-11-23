@@ -56,7 +56,7 @@ class ConfigurationController extends AbstractModuleController
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
             } catch (\TYPO3\Flow\Configuration\Exception\SchemaValidationException $exception) {
-                $this->addFlashMessage('An error occurred during validation of the configuration.', $exception->getMessage(), Message::SEVERITY_ERROR);
+                $this->addFlashMessage(htmlspecialchars($exception->getMessage()), 'An error occurred during validation of the configuration.', Message::SEVERITY_ERROR);
             }
         } else {
             $this->addFlashMessage('Configuration type not found.', '', Message::SEVERITY_ERROR);
