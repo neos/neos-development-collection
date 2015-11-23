@@ -148,8 +148,8 @@
 				<source>Label</source>
 			<target xml:lang="de">Bezeichnung</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="de">Knotentyp</target></trans-unit>
+				<source>Node Type</source>
+			<target xml:lang="de">Inhaltstyp</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="de">Pfad</target></trans-unit>

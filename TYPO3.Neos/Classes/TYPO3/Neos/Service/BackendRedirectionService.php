@@ -196,7 +196,8 @@ class BackendRedirectionService
         $workspace = $this->workspaceRepository->findOneByName($workspaceName);
         if ($workspace === null) {
             $liveWorkspace = $this->workspaceRepository->findOneByName('live');
-            $workspace = new Workspace($workspaceName, $liveWorkspace);
+            $owner = $this->userService->getBackendUser();
+            $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
             $this->workspaceRepository->add($workspace);
             $this->persistenceManager->whitelistObject($workspace);
         }

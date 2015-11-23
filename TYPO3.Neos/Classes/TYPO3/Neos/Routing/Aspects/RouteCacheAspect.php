@@ -13,9 +13,10 @@ namespace TYPO3\Neos\Routing\Aspects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * @Flow\Scope("singleton")
@@ -23,11 +24,18 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
  */
 class RouteCacheAspect
 {
+
     /**
      * @Flow\Inject
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * Add the current node identifier to be used for cache entry tagging
@@ -42,39 +50,22 @@ class RouteCacheAspect
         if (!isset($values['node']) || strpos($values['node'], '@') === false) {
             return;
         }
-        list($nodePath, $contextArguments) = explode('@', $values['node']);
-        $context = $this->getContext($contextArguments);
-        $node = $context->getNode($nodePath);
-        if ($node instanceof NodeInterface) {
-            $values['node-identifier'] = $node->getIdentifier();
-            $joinPoint->setMethodArgument('values', $values);
-        }
-    }
 
-    /**
-     * Create a context object based on the context stored in the node path
-     *
-     * @param string $contextArguments
-     * @return Context
-     */
-    protected function getContext($contextArguments)
-    {
-        $contextConfiguration = explode(';', $contextArguments);
-        $workspaceName = array_shift($contextConfiguration);
-        $dimensionConfiguration = explode('&', array_shift($contextConfiguration));
+        // Build context explicitly without authorization checks because the security context isn't available yet
+        // anyway and any Entity Privilege targeted on Workspace would fail at this point:
+        $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values) {
+            $contextPathPieces = NodePaths::explodeContextPath($values['node']);
+            $context = $this->contextFactory->create([
+                'workspaceName' => $contextPathPieces['workspaceName'],
+                'dimensions' => $contextPathPieces['dimensions'],
+                'invisibleContentShown' => true
+            ]);
 
-        $dimensions = array();
-        foreach ($contextConfiguration as $dimension) {
-            list($dimensionName, $dimensionValue) = explode('=', $dimension);
-            $dimensions[$dimensionName] = explode(',', $dimensionValue);
-        }
-
-        $context = $this->contextFactory->create(array(
-            'workspaceName' => $workspaceName,
-            'dimensions' => $dimensions,
-            'invisibleContentShown' => true
-        ));
-
-        return $context;
+            $node = $context->getNode($contextPathPieces['nodePath']);
+            if ($node instanceof NodeInterface) {
+                $values['node-identifier'] = $node->getIdentifier();
+                $joinPoint->setMethodArgument('values', $values);
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@ Feature: Publish user workspace
 
   @fixtures
   Scenario: Publish a new ContentCollection with Content
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     When I create the following nodes:
       | Path                                     | Node Type                      | Properties              | Workspace |
       | /sites/example/main/twocol               | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
@@ -25,6 +26,7 @@ Feature: Publish user workspace
 
   @fixtures
   Scenario: Unpublished nodes returns the correct count before publish
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     And I create the following nodes:
       | Path                                     | Node Type                      | Properties              | Workspace |
       | /sites/example/main/twocol               | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
@@ -36,6 +38,7 @@ Feature: Publish user workspace
 
   @fixtures
   Scenario: Unpublished nodes returns the correct count after publish
+    Given I am authenticated with role "TYPO3.Neos:Editor"
     And I create the following nodes:
       | Path                                     | Node Type                      | Properties              | Workspace |
       | /sites/example/main/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
