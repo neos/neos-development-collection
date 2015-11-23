@@ -1,0 +1,67 @@
+`1.2.13 (2015-11-23) <https://github.com/neos/neos-development-collection/releases/tag/1.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[BUGFIX] Use correct node for content collection metadata <https://github.com/neos/neos-development-collection/pull/180>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Content collection handles are not shown since the meta data
+added is using the document node instead of the actual node.
+
+Regression introduced with `4672697b9477ceca53ee7b4e47c4def002e50e32 <https://github.com/neos/neos-development-collection/commit/4672697b9477ceca53ee7b4e47c4def002e50e32>`_
+causing the node not to be set correctly for the
+``contentElementWrapping`` processor.
+
+* Related: `NEOS-1326 <https://jira.neos.io/browse/NEOS-1326>`_
+* Packages: ``Neos``
+
+`[TASK] Security warning if Neos demo is public <https://github.com/neos/neos-development-collection/pull/193>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Improve logging for "no homepage found" situations <https://github.com/neos/neos-development-collection/pull/178>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When the Node Route Part Handler wasn't able to find a site node,
+the exception now contains information about if at least a domain
+could be detected and if so, which one matched.
+
+Additionally, `matchValue()` will now also log an exception if the
+request path was empty (that is, the user requested the homepage) and
+not only for sub pages.
+
+* Packages: ``Neos``
+
+`[BUGFIX] if in backend, do not intercept links to static resources <https://github.com/neos/neos-development-collection/pull/177>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Prevents loading links to static resources using AJAX in the backend interface,
+which fail when loaded.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Keep status code from module response on redirect <https://github.com/neos/neos-development-collection/pull/170>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The response of a module loses the status code if it contains a Location
+header. This is caused by the ModuleController redirecting to the found
+location but ignoring any status code that may have been set. This means
+that a module will only create 303 redirects.
+
+This change takes the status code of a module response and applies it to
+the generated redirect, fixing this behavior.
+
+* Packages: ``Neos``
+
+`[TASK] Add apigen.yml <https://github.com/neos/neos-development-collection/pull/153>`_
+---------------------------------------------------------------------------------------
+
+This adds an apigen.yml file for use when generating API docs.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/1.2.12...1.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
