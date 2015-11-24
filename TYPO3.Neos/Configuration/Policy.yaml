@@ -36,6 +36,7 @@ privilegeTargets:
     'TYPO3.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
       matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.userWorkspaceName))'
 
+    # No role should have this privilege assigned:
     'TYPO3.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
       matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner != current.userInformation.backendUser, this.workspace.personalWorkspace == true)'
 
@@ -65,15 +66,18 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == current.userInformation.backendUser))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == null))'
 
+    'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner != current.userInformation.backendUser, this.workspace.personalWorkspace == false)'
+
     'TYPO3.Neos:Backend.Service.Workspaces.Index':
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
 
-    'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces':
+    'TYPO3.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces':
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner == current.userInformation.backendUser))'
 
     #
@@ -197,7 +201,7 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspacs.ManageOwnWorkspaces'
+        privilegeTarget: 'TYPO3.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces'
         permission: GRANT
 
       -
@@ -275,6 +279,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
         permission: GRANT
 
       -
