@@ -144,6 +144,24 @@ class Runtime
     }
 
     /**
+     * Add a tag to the current cache segment
+     *
+     * During TS rendering the method can be used to add tag dynamicaly for the current cache segment.
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     * @api
+     */
+    public function addCacheTag($key, $value)
+    {
+        if ($this->runtimeContentCache->getEnableContentCache() === false) {
+            return;
+        }
+        $this->runtimeContentCache->addTag($key, $value);
+    }
+
+    /**
      * Completely replace the context array with the new $contextArray.
      *
      * Purely internal method, should not be called outside of TYPO3.TypoScript.
