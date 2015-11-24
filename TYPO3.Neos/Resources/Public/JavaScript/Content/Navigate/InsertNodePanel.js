@@ -40,10 +40,11 @@ define(
 							'nodeTypes': []
 						};
 					}
+					var helpMessage;
 					if (nodeType.ui.help && nodeType.ui.help.message) {
-						var helpMessage = nodeType.ui.help.message;
+						helpMessage = nodeType.ui.help.message;
 					} else {
-						var helpMessage = '';
+						helpMessage = '';
 					}
 					groupedNodeTypes[groupName].nodeTypes.push({
 						'nodeType': nodeTypeName,

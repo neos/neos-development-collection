@@ -96,6 +96,24 @@ The following options are allowed:
       Help text for the node type. It supports markdown to format the help text and can
       be translated (see :ref:`translate-nodetypes`).
 
+    ``thumbnail``
+      This is shown in the popover and can be supplied in two ways:
+
+      - as an absolute URL to an image (``http://static/acme.com/thumbnails/bar.png``)
+      - as a resource URI (``resource://AcmeCom.Website/NodeTypes/Thumbnails/foo.png``)
+
+      If the ``thumbnail`` setting is undefined but an image matching the nodetype name
+       is found, it will be used automatically. It will be looked for in
+       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
+       like this:
+
+       ``AcmeCom.Website:FooWithBar`` -> ``AcmeCom.Website`` and ``FooWithBar``
+
+       The image will be downscaled to a width of 342 pixels, so it should either be that
+       size to be placed above any further help text (if supplied) or be half that size for
+       the help text to flow around it.
+
   ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
     If FALSE, an overlay is shown preventing any interaction with the node.

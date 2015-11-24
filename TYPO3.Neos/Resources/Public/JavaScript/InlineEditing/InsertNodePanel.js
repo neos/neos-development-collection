@@ -66,10 +66,11 @@ function(
 							nodeTypes: []
 						};
 					}
+					var helpMessage;
 					if (type.metadata.ui.help && type.metadata.ui.help.message) {
-						var helpMessage = type.metadata.ui.help.message;
+						helpMessage = type.metadata.ui.help.message;
 					} else {
-						var helpMessage = '';
+						helpMessage = '';
 					}
 					groups[type.metadata.ui.group].nodeTypes.push({
 						'nodeType': nodeTypeName,

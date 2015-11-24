@@ -29,7 +29,7 @@ define([
 					trigger: that.triggerMode,
 					html: true
 				}).click(function(e) {
-					// Prevent popover to be immediaely closed
+					// Prevent popover to be immediately closed
 					e.stopPropagation();
 					e.preventDefault();
 				});

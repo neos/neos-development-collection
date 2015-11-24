@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Aspects;
 use League\CommonMark\CommonMarkConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -42,10 +43,16 @@ class NodeTypeConfigurationEnrichmentAspect
     protected $translator;
 
     /**
-     * @var CommonMarkConverter
      * @Flow\Inject
+     * @var CommonMarkConverter
      */
     protected $markdownConverter;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
     /**
      * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
@@ -305,7 +312,7 @@ class NodeTypeConfigurationEnrichmentAspect
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
 
-        $this->translateAndConvertHelpMessage($configuration, $nodeTypeLabelIdPrefix);
+        $this->translateAndConvertHelpMessage($configuration, $nodeTypeLabelIdPrefix, $nodeTypeName);
 
         if (isset($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -319,17 +326,52 @@ class NodeTypeConfigurationEnrichmentAspect
      *
      * @param array $configuration
      * @param string $idPrefix
+     * @param string $nodeTypeName
      * @return void
      */
-    protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix)
+    protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null)
     {
-        if (isset($configuration['ui']['help']['message'])) {
-            if ($this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
-                $translationIdentifier = $this->splitIdentifier($idPrefix . 'ui.help.message');
-                $configuration['ui']['help']['message'] = $this->translator->translateById($translationIdentifier['id'], [], null, null, $translationIdentifier['source'], $translationIdentifier['packageKey']);
+        $helpMessage = '';
+
+        if (isset($configuration['ui']['help'])) {
+            // message handling
+            if (isset($configuration['ui']['help']['message'])) {
+                if ($this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
+                    $translationIdentifier = $this->splitIdentifier($idPrefix . 'ui.help.message');
+                    $helpMessage = $this->translator->translateById($translationIdentifier['id'], [], null, null, $translationIdentifier['source'], $translationIdentifier['packageKey']);
+                } else {
+                    $helpMessage = $configuration['ui']['help']['message'];
+                }
             }
-            $configuration['ui']['help']['message'] = $this->markdownConverter->convertToHtml($configuration['ui']['help']['message']);
+
+            // prepare thumbnail
+            if ($nodeTypeName !== null) {
+                $thumbnailUrl = '';
+                if (isset($configuration['ui']['help']['thumbnail'])) {
+                    $thumbnailUrl = $configuration['ui']['help']['thumbnail'];
+                    $matches = [];
+                    if (preg_match('/resource:\/\/(?P<packageKey>[^\/]+)\/(?P<relativePathAndFilename>.+)/', $thumbnailUrl, $matches) === 1) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($matches['packageKey'], $matches['relativePathAndFilename']);
+                    }
+                } else {
+                    # look in well know location
+                    $splitPrefix = $this->splitIdentifier($nodeTypeName);
+                    $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+                    if (file_exists('resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename)) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($splitPrefix['packageKey'], $relativePathAndFilename);
+                    }
+                }
+
+                if ($thumbnailUrl !== '') {
+                    $helpMessage = '![alt text](' . $thumbnailUrl . ') ' . $helpMessage;
+                }
+            }
+
+            if ($helpMessage !== '') {
+                $helpMessage = $this->markdownConverter->convertToHtml($helpMessage);
+            }
         }
+        $configuration['ui']['help']['message'] = $helpMessage;
     }
 
     /**
