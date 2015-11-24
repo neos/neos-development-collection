@@ -118,34 +118,7 @@
 											</f:else>
 										</f:if>
 									</f:else>
-																		<f:else>
-																			<f:if condition="{change.node.hidden}">
-																				<f:then>
-																					<i class="legend icon-eye-close icon-white" title="{neos:backend.translate(id: 'workspaces.legend.hidden', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																				</f:then>
-																				<f:else>
-																					<i class="legend icon-pencil icon-white" title="{neos:backend.translate(id: 'workspaces.legend.edited', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																				</f:else>
-																			</f:if>
-																		</f:else>
-																	</f:if>
-																</f:else>
-															</f:if>
-														</f:else>
-													</f:if>
-												</label>
-											</td>
-											<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>{neos:backend.translate(id: "noTitle", source: "Main", package: "TYPO3.Neos")}</em>')}</label></td>
-											<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
-												<label for="{change.node.identifier}">
-													<f:if condition="{change.configuration.ui.icon}">
-														<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
-													</f:if>
-													{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
-												</label>
 								</f:if>
-											<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: '{relativePath}', else: '&nbsp;')}</label></td>
-											<td class="neos-action neos-aRight neos-priority1">
 							</div>
 						</td>
 					</tr>
