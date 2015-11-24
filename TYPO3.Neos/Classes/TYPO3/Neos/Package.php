@@ -67,7 +67,12 @@ class Package extends BasePackage
             if ($nodeData->getNodeType()->isOfType('TYPO3.Neos:Document')) {
                 $contextFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
                 $nodeFactory = $bootstrap->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
-                $context = $contextFactory->create(array('workspaceName' => $nodeData->getWorkspace()->getName()));
+                $context = $contextFactory->create(array(
+                    'workspaceName' => $nodeData->getWorkspace()->getName(),
+                    'invisibleContentShown' => true,
+                    'removedContentShown' => true,
+                    'inaccessibleContentShown' => true
+                ));
                 $node = $nodeFactory->createFromNodeData($nodeData, $context);
                 $uriPathSegmentGenerator($node);
             }
