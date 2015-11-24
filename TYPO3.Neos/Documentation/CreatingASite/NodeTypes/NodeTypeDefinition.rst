@@ -89,11 +89,12 @@ The following options are allowed:
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
   ``help``
-    Configuration of contextual help. For now only ``message`` that is rendered as popover
-    is supported.
+    Configuration of contextual help. Displays a message that is rendered as popover
+    when the user clicks the help icon in an insert node dialog.
 
     ``message``
-      Help text for the node type. Supports markdown.
+      Help text for the node type. It supports markdown to format the help text and can
+      be translated (see :ref:`translate-nodetypes`).
 
   ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
@@ -152,11 +153,12 @@ The following options are allowed:
       The human-readable label of the property
 
     ``help``
-      Configuration of contextual help. For now only ``message`` that is rendered as popover
-      is supported.
+      Configuration of contextual help. Displays a message that is rendered as popover
+      when the user clicks the help icon in the inspector.
 
       ``message``
-        Help text for this property. Supports markdown.
+        Help text for this property. It supports markdown to format the help text and can
+        be translated (see :ref:`translate-nodetypes`).
 
     ``reloadIfChanged``
       If TRUE, the whole content element needs to be re-rendered on the server side if the value
