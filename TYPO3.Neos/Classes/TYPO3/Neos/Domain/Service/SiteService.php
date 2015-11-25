@@ -80,21 +80,14 @@ class SiteService
     }
 
     /**
-     * Remove all nodes, workspaces, domains and sites.
+     * Remove all sites and their respective nodes and domains
      *
      * @return void
      */
     public function pruneAll()
     {
-        $sites = $this->siteRepository->findAll();
-
-        $this->nodeDataRepository->removeAll();
-        $this->workspaceRepository->removeAll();
-        $this->domainRepository->removeAll();
-        $this->siteRepository->removeAll();
-
-        foreach ($sites as $site) {
-            $this->emitSitePruned($site);
+        foreach ($this->siteRepository->findAll() as $site) {
+            $this->pruneSite($site);
         }
     }
 
