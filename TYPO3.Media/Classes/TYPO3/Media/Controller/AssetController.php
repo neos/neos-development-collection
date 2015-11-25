@@ -397,10 +397,6 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
         $existingTag = $this->tagRepository->findByLabel($label);
         if (count($existingTag) > 0) {
             $this->addFlashMessage(sprintf('Tag "%s" already exists.', $label), '', \TYPO3\Flow\Error\Message::SEVERITY_ERROR);
-            if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($existingTag)) {
-                $this->assetCollectionRepository->update($assetCollection);
-                $this->addFlashMessage(sprintf('Tag "%s" added to collection.', $label));
-            }
         } else {
             $tag = new Tag($label);
             $this->tagRepository->add($tag);
