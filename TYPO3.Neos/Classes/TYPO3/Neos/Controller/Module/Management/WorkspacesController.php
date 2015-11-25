@@ -224,16 +224,12 @@ class WorkspacesController extends AbstractModuleController
      * Update a workspace
      *
      * @param Workspace $workspace A workspace to update
-     * @param User $newOwner New owner for the workspace, if any
      * @return void
      */
-    public function updateAction(Workspace $workspace, $newOwner = null)
+    public function updateAction(Workspace $workspace)
     {
         if ($workspace->getTitle() === '') {
             $workspace->setTitle($workspace->getName());
-        }
-        if ($newOwner !== null) {
-            $workspace->setOwner($newOwner);
         }
 
         $this->workspaceRepository->update($workspace);

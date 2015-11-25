@@ -236,12 +236,20 @@ class Workspace
     /**
      * Returns the workspace owner.
      *
-     * @param UserInterface|string $user The new user
+     * @param UserInterface|string $user The new user, or user's UUID
      * @api
      */
     public function setOwner($user)
     {
-        if (is_string($user) && ($user === '' || preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user))) {
+        // Note: We need to do a bit of uuid juggling here, because we can't bind the workspaces Owner to a specific
+        // implementation, and creating entity relations via interfaces is not supported by Flow. Since the property
+        // mapper will call setOwner() with a string parameter (because the property $owner is string), but developers
+        // will want to use objects, we need to support both.
+        if ($user === null || $user === '') {
+            $this->owner = '';
+            return;
+        }
+        if (is_string($user) && preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user)) {
             $this->owner = $user;
             return;
         }
