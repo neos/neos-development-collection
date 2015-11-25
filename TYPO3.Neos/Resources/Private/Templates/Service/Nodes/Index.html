@@ -10,11 +10,20 @@
 				<li class="node">
 					<span class="node-path">{node.path}</span>
 					<f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
-						<f:alias map="{relativeUrl: '{neos:uri.node(node: documentNode, absolute: false, resolveShortcuts: false)}'}">
-							<a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
-								{f:if(condition: relativeUrl, then: '{relativeUrl}', else: '{node.path}')}
-							</a>
-						</f:alias>
+						<f:if condition="{documentNode}">
+							<f:then>
+								<f:alias map="{relativeUrl: '{neos:uri.node(node: documentNode, absolute: false, resolveShortcuts: false)}'}">
+									<a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
+										{f:if(condition: relativeUrl, then: '{relativeUrl}', else: '{node.path}')}
+									</a>
+								</f:alias>
+							</f:then>
+							<f:else>
+								<a class="node-frontend-uri">
+									This node can't be accessed through a public URL
+								</a>
+						</f:else>
+						</f:if>
 					</f:alias>
 					<label class="node-label">{node.label}</label>
 					(<span class="node-identifier">{node.identifier}</span>)
