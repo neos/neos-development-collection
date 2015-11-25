@@ -241,7 +241,7 @@ class Workspace
      */
     public function setOwner($user)
     {
-        if (is_string($user) && preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user)) {
+        if (is_string($user) && ($user === '' || preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user))) {
             $this->owner = $user;
             return;
         }
