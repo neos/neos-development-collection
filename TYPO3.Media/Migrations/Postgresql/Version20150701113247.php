@@ -31,7 +31,6 @@ class Version20150701113247 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-		$this->addSql("CREATE SCHEMA public");
 		$this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER width SET NOT NULL");
 		$this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER height SET NOT NULL");
 		$this->addSql("ALTER TABLE typo3_media_domain_model_imagevariant ALTER width SET NOT NULL");
