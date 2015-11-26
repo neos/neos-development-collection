@@ -186,9 +186,9 @@ class WorkspacesController extends AbstractModuleController
             $this->redirect('new');
         }
 
-        $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
+        $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         while ($this->workspaceRepository->findOneByName($workspaceName) instanceof Workspace) {
-            $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
+            $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         }
 
         if ($visibility === 'private') {
