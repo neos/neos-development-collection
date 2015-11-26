@@ -152,7 +152,6 @@ define(
         }.observes('autoPublish').on('init'),
 
         disabled: function () {
-          console.log(this.get('_targetWorkspaceReadOnly'));
           return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning') || this.get('_workspaceRebasePending') || this.get('_targetWorkspaceReadOnly');
         }.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning', '_workspaceRebasePending', '_targetWorkspaceReadOnly'),
 
