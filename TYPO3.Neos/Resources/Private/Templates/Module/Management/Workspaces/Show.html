@@ -193,7 +193,7 @@
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
 					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
 					<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
-					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.publishAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: baseWorkspaceLabel})}</button>
 				</f:then>
 				<f:else>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
@@ -202,13 +202,5 @@
 				</f:else>
 			</f:if>
 		</div>
-		<f:if condition="{canPublishToBaseWorkspace}">
-			<f:then>
-				<p class="neos-clear pull-right">{neos:backend.translate(id: 'workspaces.willPublishTo', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: baseWorkspaceLabel})}</p>
-			</f:then>
-			<f:else>
-				<p class="neos-clear pull-right">{neos:backend.translate(id: 'workspaces.noLivePublishPermission', source: 'Modules', package: 'TYPO3.Neos')}</p>
-			</f:else>
-		</f:if>
 	</div>
 </f:section>

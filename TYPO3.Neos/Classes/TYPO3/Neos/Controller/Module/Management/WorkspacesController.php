@@ -292,7 +292,7 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceRepository->$this->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        $personalWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
         /** @var Workspace $personalWorkspace */
 
         if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
@@ -500,7 +500,7 @@ class WorkspacesController extends AbstractModuleController
         $baseWorkspaceOptions = [];
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace) {
+            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace && ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
             }
         }
