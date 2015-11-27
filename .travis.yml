@@ -1,9 +1,15 @@
 language: php
+addons:
+  postgresql: "9.4"
+services:
+  - postgresql
 matrix:
   fast_finish: true
   include:
     - php: 7.0
       env: DB=mysql
+    - php: 7.0
+      env: DB=pgsql
     - php: 7.0
       env: DB=mysql BEHAT=true
     - php: 5.6
