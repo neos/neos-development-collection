@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
+use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
@@ -106,6 +107,12 @@ class NodeImportService
         'dimensionsHash' => array(),
         'dimensionValues' => array(),
         'properties' => array(),
+        'hiddenBeforeDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
+        'hiddenAfterDateTime' => array(
+            'columnType' => Type::DATETIME
+        ),
         'accessRoles' => array()
     );
 
@@ -268,10 +275,14 @@ class NodeImportService
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['dimensionValues'] = $this->parseDimensionsElement($xmlReader);
                 break;
             case 'properties':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['properties'] = $this->parsePropertiesElement($xmlReader);
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parsePropertiesElement($xmlReader);
                 break;
             case 'accessRoles':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                break;
+            case 'hiddenBeforeDateTime':
+            case 'hiddenAfterDateTime':
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
                 break;
             default:
                 throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
@@ -479,6 +490,8 @@ class NodeImportService
     protected function parseEndElement(\XMLReader $reader)
     {
         switch ($reader->name) {
+            case 'hiddenBeforeDateTime':
+            case 'hiddenAfterDateTime':
             case 'accessRoles':
                 break;
             case 'node':
@@ -615,10 +628,12 @@ class NodeImportService
         $queryArguments = array();
         $queryTypes = array();
         foreach ($this->nodeDataPropertyNames as $propertyName => $propertyConfig) {
-            $queryParts[$propertyName] = ':' . $propertyName;
-            $queryArguments[$propertyName] = $nodeData[$propertyName];
-            if (isset($propertyConfig['columnType'])) {
-                $queryTypes[$propertyName] = $propertyConfig['columnType'];
+            if (isset($nodeData[$propertyName])) {
+                $queryParts[$propertyName] = ':' . $propertyName;
+                $queryArguments[$propertyName] = $nodeData[$propertyName];
+                if (isset($propertyConfig['columnType'])) {
+                    $queryTypes[$propertyName] = $propertyConfig['columnType'];
+                }
             }
         }
         $connection->executeUpdate('INSERT INTO typo3_typo3cr_domain_model_nodedata (' . implode(', ', array_keys($queryParts)) . ') VALUES (' . implode(', ', $queryParts) . ')', $queryArguments, $queryTypes);
