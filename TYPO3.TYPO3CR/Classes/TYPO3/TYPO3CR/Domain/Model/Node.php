@@ -1227,7 +1227,7 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
         if ($nodes === false) {
-            $nodes = $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, $limit, $offset);
+            $nodes = $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, false);
             $this->context->getFirstLevelNodeCache()->setChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter, $nodes);
         }
 
@@ -1261,7 +1261,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function hasChildNodes($nodeTypeFilter = null)
     {
-        return ($this->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions()) > 0);
+        return ($this->getNumberOfChildNodes($nodeTypeFilter) > 0);
     }
 
     /**
