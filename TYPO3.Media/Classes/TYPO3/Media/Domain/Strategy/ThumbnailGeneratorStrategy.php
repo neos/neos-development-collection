@@ -62,12 +62,19 @@ class ThumbnailGeneratorStrategy
         /** @var ReflectionService $reflectionService */
         $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
         $generatorClassNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Model\ThumbnailGenerator\ThumbnailGeneratorInterface');
+        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $generatorOptions = $configurationManager->getConfiguration('Settings', 'TYPO3.Media.thumbnailGenerators');
         $generators = array();
         foreach ($generatorClassNames as $generatorClassName) {
             /** @var ThumbnailGeneratorInterface $generator */
             $generator = $objectManager->get($generatorClassName);
+            if (isset($generatorOptions[$generatorClassName]['priority'])) {
+                $priority = $generatorOptions[$generatorClassName]['priority'];
+            } else {
+                $priority = $generatorClassName::getPriority();
+            }
             $generators[] = array(
-                'priority' => (integer)$generatorClassName::getPriority(),
+                'priority' => (integer)$priority,
                 'className' => $generatorClassName
             );
         }
