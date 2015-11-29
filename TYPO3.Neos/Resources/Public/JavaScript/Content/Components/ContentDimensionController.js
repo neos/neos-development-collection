@@ -67,7 +67,7 @@ function(
 		 */
 		_loadConfiguration: function() {
 			var that = this;
-			HttpRestClient.getResource('neos-service-contentdimensions-index').then(function(result) {
+			ResourceCache.getItem('neos-service-contentdimensions-index').then(function(result) {
 				var configuration = {};
 
 				$.each($('.contentdimensions', result.resource).children('li'), function(key, contentDimensionSnippet) {
