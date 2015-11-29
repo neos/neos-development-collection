@@ -6,6 +6,10 @@ TYPO3:
           'TYPO3\Media\Domain\EventListener\ImageEventListener':
             events: ['postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
+    mvc:
+      routes:
+        'TYPO3.Media':
+          position: 'before TYPO3.Neos'
   Media:
     # This setting simulates how Neos 1.2 handled image cropping with "maximumWidth" and "maximumHeight".
     # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
