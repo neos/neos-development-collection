@@ -134,6 +134,9 @@
 			<trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			</trans-unit>
+			<trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+				<source>Publish all changes to {0}</source>
+			</trans-unit>
 			<trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
 			</trans-unit>
@@ -151,12 +154,6 @@
 			</trans-unit>
 			<trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			</trans-unit>
-			<trans-unit id="workspaces.willPublishTo" xml:space="preserve">
-				<source>Changes will be published to the "{0}" workspace.</source>
-			</trans-unit>
-			<trans-unit id="workspaces.noLivePublishPermission" xml:space="preserve">
-				<source>You have no permission to publish to the "live" workspace.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>

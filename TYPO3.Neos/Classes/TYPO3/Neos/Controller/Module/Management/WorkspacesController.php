@@ -186,9 +186,9 @@ class WorkspacesController extends AbstractModuleController
             $this->redirect('new');
         }
 
-        $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
+        $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         while ($this->workspaceRepository->findOneByName($workspaceName) instanceof Workspace) {
-            $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(uniqid(), 0, 4);
+            $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         }
 
         if ($visibility === 'private') {
@@ -292,7 +292,7 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceRepository->$this->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        $personalWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
         /** @var Workspace $personalWorkspace */
 
         if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
@@ -371,7 +371,7 @@ class WorkspacesController extends AbstractModuleController
                 $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
             break;
             default:
-                throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
+                throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
@@ -389,7 +389,7 @@ class WorkspacesController extends AbstractModuleController
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
         $workspace->publish($targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [$workspace->getTitle(), $targetWorkspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -403,7 +403,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
 
@@ -500,7 +500,7 @@ class WorkspacesController extends AbstractModuleController
         $baseWorkspaceOptions = [];
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace) {
+            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace && ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
             }
         }
