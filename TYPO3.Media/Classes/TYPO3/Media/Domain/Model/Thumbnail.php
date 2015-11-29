@@ -180,6 +180,7 @@ class Thumbnail implements ImageInterface
 
     /**
      * @param boolean $isTransient
+     * @return void
      */
     public function setTransient($isTransient)
     {
@@ -196,6 +197,7 @@ class Thumbnail implements ImageInterface
 
     /**
      * @param string $staticResource
+     * @return void
      */
     public function setStaticResource($staticResource)
     {
