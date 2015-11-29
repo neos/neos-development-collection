@@ -28,32 +28,30 @@ interface NodeInterface
      * workspace name. This pattern is used at least in the route part handler.
      */
     const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
-		(?P<NodePath>                       # 1) a NODE PATH
+		(?>(?P<NodePath>                       # 1) a NODE PATH
 			\/?                             #    A node Path starts with optional slash
 			[a-z0-9\-]+                     #    followed by a path part
 			(?:                             #    and (optionally) more path-parts)
 				\/
 				[a-z0-9\-]+
 			)*
-		)?
+		))
 		(?:                                 # 2) a CONTEXT
 			@                               #    which is delimited from the node path by the "@" sign
-			(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
+			(?>(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
 				[a-z0-9\-]+
-			)
+			))
 			(?:                             #    OPTIONALLY followed by dimension values
 				;                           #    ... which always start with ";"
 				(?P<Dimensions>
-					(?:                     #        A Dimension Value is a key=value structure, delimited by &
-						(?:
-							[a-zA-Z_]+
-							=
-							[^=&]+
-						)
-						&?
-					)+
-				))?
-		)?$/ix';
+					(?>                     #        A Dimension Value is a key=value structure
+						[a-zA-Z_]+
+						=
+						[^=&]+
+					)
+					(?>&(?-1))?             #        ... delimited by &
+				)){0,1}
+		){0,1}$/ix';
 
     /**
      * Regex pattern which matches a Node Name (ie. segment of a node path)
