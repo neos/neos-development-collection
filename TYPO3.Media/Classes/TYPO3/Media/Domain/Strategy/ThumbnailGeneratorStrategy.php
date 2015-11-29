@@ -66,6 +66,9 @@ class ThumbnailGeneratorStrategy
         $generatorOptions = $configurationManager->getConfiguration('Settings', 'TYPO3.Media.thumbnailGenerators');
         $generators = array();
         foreach ($generatorClassNames as $generatorClassName) {
+            if (isset($generatorOptions[$generatorClassName]['disable']) && $generatorOptions[$generatorClassName]['disable'] === true) {
+                continue;
+            }
             /** @var ThumbnailGeneratorInterface $generator */
             $generator = $objectManager->get($generatorClassName);
             if (isset($generatorOptions[$generatorClassName]['priority'])) {
