@@ -52,7 +52,7 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
      * @var integer
      * @api
      */
-    protected $priority = 1;
+    protected static $priority = 1;
 
     /**
      * @Flow\InjectConfiguration(path="thumbnailGenerator", package="TYPO3.Media")
@@ -62,10 +62,11 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
 
     /**
      * @return integer
+     * @api
      */
-    public function getPriority()
+    public static function getPriority()
     {
-        return $this->priority;
+        return static::$priority;
     }
 
     /**

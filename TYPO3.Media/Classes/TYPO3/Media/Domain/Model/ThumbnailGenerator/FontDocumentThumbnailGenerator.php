@@ -29,14 +29,13 @@ use TYPO3\Media\Exception;
  */
 class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
 {
-
     /**
      * The priority for this thumbnail generator.
      *
      * @var integer
      * @api
      */
-    protected $priority = 5;
+    protected static $priority = 5;
 
     /**
      * @param Thumbnail $thumbnail

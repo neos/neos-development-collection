@@ -67,7 +67,7 @@ class ThumbnailGeneratorStrategy
             /** @var ThumbnailGeneratorInterface $generator */
             $generator = $objectManager->get($generatorClassName);
             $generators[] = array(
-                'priority' => (integer)$generator->getPriority(),
+                'priority' => (integer)$generatorClassName::getPriority(),
                 'className' => $generatorClassName
             );
         }
