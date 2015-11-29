@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="km">
     <body>
@@ -133,6 +133,9 @@
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="km" state="translated">ផ្សាយរាល់ការផ្លាស់ប្តូរ</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+				<source>Publish all changes to {0}</source>
+			<target xml:lang="km" state="needs-translation">Publish all changes to {0}</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
 			<target xml:lang="km" state="translated">រឿងព្រេង</target></trans-unit>
@@ -151,12 +154,6 @@
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
 			<target xml:lang="km" state="translated">ត្រូវបានកែរប្រែរ</target></trans-unit>
-      <trans-unit id="workspaces.willPublishTo" xml:space="preserve">
-				<source>Changes will be published to the "{0}" workspace.</source>
-			<target xml:lang="km" state="needs-translation">Changes will be published to the "{0}" workspace.</target></trans-unit>
-      <trans-unit id="workspaces.noLivePublishPermission" xml:space="preserve">
-				<source>You have no permission to publish to the "live" workspace.</source>
-			<target xml:lang="km" state="needs-translation">You have no permission to publish to the "live" workspace.</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="km" state="translated">មិនមានការផ្លាស់ប្តូរដែលត្រូវផ្សាយទេនៅក្នុងកន្លែធ្វើការនេះ</target></trans-unit>

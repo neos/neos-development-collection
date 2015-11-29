@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
@@ -132,6 +132,9 @@
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="la-LA">crwdns249:0crwdne249:0</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+				<source>Publish all changes to {0}</source>
+			<target xml:lang="la-LA">crwdns628:0{0}crwdne628:0</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve">
 				<source>Legend</source>
 			<target xml:lang="la-LA">crwdns250:0crwdne250:0</target></trans-unit>
@@ -150,12 +153,6 @@
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
 			<target xml:lang="la-LA">crwdns255:0crwdne255:0</target></trans-unit>
-      <trans-unit id="workspaces.willPublishTo" xml:space="preserve">
-				<source>Changes will be published to the "{0}" workspace.</source>
-			<target xml:lang="la-LA">crwdns612:0{0}crwdne612:0</target></trans-unit>
-      <trans-unit id="workspaces.noLivePublishPermission" xml:space="preserve">
-				<source>You have no permission to publish to the "live" workspace.</source>
-			<target xml:lang="la-LA">crwdns613:0crwdne613:0</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="la-LA">crwdns256:0crwdne256:0</target></trans-unit>
