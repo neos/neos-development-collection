@@ -70,7 +70,7 @@ class RouteCacheAspect
             $node = $node->getParent();
 
             $values['node-parent-identifier'] = array();
-            while ($node !== NULL) {
+            while ($node !== null) {
                 $values['node-parent-identifier'][] = $node->getIdentifier();
                 $node = $node->getParent();
             }
