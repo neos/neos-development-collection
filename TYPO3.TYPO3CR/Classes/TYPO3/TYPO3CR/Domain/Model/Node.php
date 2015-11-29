@@ -231,18 +231,68 @@ class Node implements NodeInterface, CacheAwareInterface
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
 
         $changedNodePathsCollection = array_map(function ($nodeData) use ($destinationPath, $originalPath, $recursiveCall) {
-            $recursiveCall = $recursiveCall || ($this->nodeData !== $nodeData);
-            $nodeVariant = $this->createNodeForVariant($nodeData);
-
-            $moveVariantResult = $nodeVariant === null ? null : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
-            if ($moveVariantResult !== null) {
-                array_push($moveVariantResult, $recursiveCall);
-            }
-
-            return $moveVariantResult;
+           return $this->moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall);
         }, $nodeDataVariantsAndChildren);
 
         return array_filter($changedNodePathsCollection);
+    }
+
+    /**
+     * Moves a NodeData object that is either a variant or child node to the given destination path.
+     *
+     * @param NodeData $nodeData
+     * @param string $originalPath
+     * @param string $destinationPath
+     * @param boolean $recursiveCall
+     * @return array|null
+     */
+    protected function moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall)
+    {
+        $recursiveCall = $recursiveCall || ($this->nodeData !== $nodeData);
+        $nodeVariant = null;
+        // $nodeData at this point could contain *our own NodeData reference* ($this->nodeData), as we find all NodeData objects
+        // (across all dimensions) with the same path.
+        //
+        // We need to ensure that our own Node object's nodeData reference ($this->nodeData) is also updated correctly if a new NodeData object
+        // is returned; as we rely on the fact that $this->getPath() will return the new node path in all circumstances.
+        //
+        // However, $this->createNodeForVariant() only returns $this if the Context object is the same as $this->context; which is not
+        // the case if $this->context contains dimension fallbacks such as "Language: EN, DE".
+        //
+        // The "if" statement below is actually a workaround to ensure that if the NodeData object is our own one, we update *ourselves* correctly,
+        // and thus return the correct (new) Node Path when calling $this->getPath() afterwards.
+        // FIXME: This is dangerous and probably the NodeFactory should take care of globally tracking usage of NodeData objects and replacing them in Node objects
+
+        if ($this->nodeData === $nodeData) {
+            $nodeVariant = $this;
+        }
+
+        if ($nodeVariant === null) {
+            $nodeVariant = $this->createNodeForVariant($nodeData);
+        }
+
+        $moveVariantResult = $nodeVariant === null ? null : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
+        if ($moveVariantResult !== null) {
+            array_push($moveVariantResult, $recursiveCall);
+        }
+
+        return $moveVariantResult;
+    }
+
+    /**
+     * Create a node for the given NodeData, given that it is a variant of the current node
+     *
+     * @param NodeData $nodeData
+     * @return Node
+     */
+    protected function createNodeForVariant($nodeData)
+    {
+        $contextProperties = $this->context->getProperties();
+        $contextProperties['dimensions'] = $nodeData->getDimensionValues();
+        unset($contextProperties['targetDimensions']);
+        $adjustedContext = $this->contextFactory->create($contextProperties);
+
+        return $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
     }
 
     /**
@@ -675,7 +725,8 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * @Flow\Signal
-     * @param NodeInterface $node
+     * @param NodeInterface $sourceNode
+     * @param NodeInterface $targetParentNode
      * @return void
      */
     protected function emitBeforeNodeCopy(NodeInterface $sourceNode, NodeInterface $targetParentNode)
@@ -684,7 +735,8 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * @Flow\Signal
-     * @param NodeInterface $node
+     * @param NodeInterface $copiedNode
+     * @param NodeInterface $targetParentNode
      * @return void
      */
     protected function emitAfterNodeCopy(NodeInterface $copiedNode, NodeInterface $targetParentNode)
@@ -1698,6 +1750,8 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * NOTE: This is internal only and should not be used outside of the TYPO3CR.
      *
+     * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
+     *
      * @param NodeData $nodeData
      * @return void
      */
@@ -1753,22 +1807,6 @@ class Node implements NodeInterface, CacheAwareInterface
     public function setNodeDataIsMatchingContext($status)
     {
         $this->nodeDataIsMatchingContext = $status;
-    }
-
-    /**
-     * Create a node for the given NodeData, given that it is a variant of the current node
-     *
-     * @param NodeData $nodeData
-     * @return Node
-     */
-    protected function createNodeForVariant($nodeData)
-    {
-        $contextProperties = $this->context->getProperties();
-        $contextProperties['dimensions'] = $nodeData->getDimensionValues();
-        unset($contextProperties['targetDimensions']);
-        $adjustedContext = $this->contextFactory->create($contextProperties);
-
-        return $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
     }
 
     /**
