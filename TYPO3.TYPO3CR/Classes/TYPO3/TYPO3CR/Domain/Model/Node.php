@@ -1153,7 +1153,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $name The node name to check.
      * @return boolean TRUE if the given nodeName is configured as auto-created child node.
      */
-    public function willChildNodeBeAutoCreated($name)
+    protected function willChildNodeBeAutoCreated($name)
     {
         $autoCreatedChildNodes = $this->getNodeType()->getAutoCreatedChildNodes();
 
