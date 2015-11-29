@@ -30,7 +30,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
      * @var integer
      * @api
      */
-    protected $priority = 5;
+    protected static $priority = 5;
 
     /**
      * @var ImageService
