@@ -30,7 +30,7 @@ TYPO3:
         # Image quality, from 0 to 100
         'quality': 90
 
-    thumbnailGenerator:
+    thumbnailGenerators:
 
       'TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
         resolution: 120

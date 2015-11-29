@@ -55,7 +55,7 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
     protected static $priority = 1;
 
     /**
-     * @Flow\InjectConfiguration(path="thumbnailGenerator", package="TYPO3.Media")
+     * @Flow\InjectConfiguration(path="thumbnailGenerators", package="TYPO3.Media")
      * @var array
      */
     protected $options;
