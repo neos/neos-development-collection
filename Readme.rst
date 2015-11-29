@@ -10,8 +10,8 @@
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://packagist.org/packages/neos/neos-development-collection
-.. |API| image:: https://img.shields.io/badge/API%20docs-1.2-blue.svg
-   :target: http://neos.github.io/neos/1.2/
+.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
+   :target: http://neos.github.io/neos/master/
    :alt: API Docs
 
 ---------------------------
