@@ -258,9 +258,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $workspaceName = 'live';
         $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($requestPath);
 
-        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
+        // This is a workaround as NodePaths::explodeContextPath() (correctly)
+        // expects a context path to have something before the '@', but the requestPath
+        // could potentially contain only the context information.
+        $contextPath = $requestPath;
+        if (strpos($contextPath, '@') === 0) {
+            $contextPath = '/' . $contextPath;
+        }
+
+        if ($contextPath !== '' && NodePaths::isContextPath($contextPath)) {
             try {
-                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
+                $nodePathAndContext = NodePaths::explodeContextPath($contextPath);
                 $workspaceName = $nodePathAndContext['workspaceName'];
             } catch (\InvalidArgumentException $exception) {
             }
