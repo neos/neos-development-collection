@@ -27,7 +27,7 @@ interface ThumbnailGeneratorInterface
      * @return integer
      * @api
      */
-    public function getPriority();
+    public static function getPriority();
 
     /**
      * @param Thumbnail $thumbnail
