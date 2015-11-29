@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="de">
     <body>
@@ -8,7 +8,7 @@
 			<target xml:lang="de">Automatisch Veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="de" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="de" state="translated">Automatisch auf {0} veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch nach {0} veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
@@ -26,7 +26,7 @@
 			<target xml:lang="de">Bitte auswählen</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target xml:lang="de">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Lostippen, um zu suchen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans><alt-trans><target xml:lang="de">Lostippen, um zu suchen</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
@@ -119,16 +119,16 @@
 			<target xml:lang="de">Veröffentlichen</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="de" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="de" state="translated">Auf {0} veröffentlichen</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="de" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="de" state="translated">Veröffentliche alle Änderungen für die aktuelle Seite</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="de" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="de" state="translated">Konnte nicht veröffentlichen, weil der Zielarbeitsbereich nur lesbar ist</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="de" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="de" state="translated">Veröffentliche</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="de">Veröffentlicht</target></trans-unit>
@@ -137,7 +137,7 @@
 			<target xml:lang="de">Zielarbeitsbereich</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="de" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="de" state="translated">Aktueller Arbeitsbereich</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="de">Entfernen</target></trans-unit>
@@ -146,7 +146,7 @@
 			<target xml:lang="de">Aktualisieren</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="de" state="translated">Speichert...</target><alt-trans><target xml:lang="de">Speichern...</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Speichern...</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="de">Gespeichert</target></trans-unit>
@@ -168,9 +168,9 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="de">Bezeichnung</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node Type</source>
-			<target xml:lang="de">Inhaltstyp</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Content Type</source>
+			<target xml:lang="de" state="translated">Knotentyp</target><alt-trans><target xml:lang="de">Inhaltstyp</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="de">Pfad</target></trans-unit>
