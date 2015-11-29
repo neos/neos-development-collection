@@ -30,7 +30,7 @@ class RouteCacheAspect
     protected $contextFactory;
 
     /**
-     * Add the current node identifier to be used for cache entry tagging
+     * Add the current node and all parent identifiers to be used for cache entry tagging
      *
      * @Flow\Before("method(TYPO3\Flow\Mvc\Routing\RouterCachingService->extractUuids())")
      * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
@@ -45,10 +45,20 @@ class RouteCacheAspect
         list($nodePath, $contextArguments) = explode('@', $values['node']);
         $context = $this->getContext($contextArguments);
         $node = $context->getNode($nodePath);
-        if ($node instanceof NodeInterface) {
-            $values['node-identifier'] = $node->getIdentifier();
-            $joinPoint->setMethodArgument('values', $values);
+        if (!$node instanceof NodeInterface) {
+            return;
         }
+
+        $values['node-identifier'] = $node->getIdentifier();
+        $node = $node->getParent();
+
+        $values['node-parent-identifier'] = [];
+        while ($node !== null) {
+            $values['node-parent-identifier'][] = $node->getIdentifier();
+            $node = $node->getParent();
+        }
+
+        $joinPoint->setMethodArgument('values', $values);
     }
 
     /**

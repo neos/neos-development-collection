@@ -35,13 +35,25 @@ class RouteCacheFlusher
     protected $tagsToFlush = array();
 
     /**
-     * Schedules flushing of the routing cache entry for the given $nodeData
-     * Note: This is not done recursively because the nodePathChanged signal is triggered for any affected node data instance
+     * Schedules flushing of the routing cache entries for the given $node
+     * Note that child nodes are flushed automatically because they are tagged with all parents.
      *
-     * @param NodeData $nodeData The affected node data instance
+     * @param NodeInterface $node
      * @return void
      */
-    public function registerNodePathChange(NodeData $nodeData)
+    public function registerNodeChange(NodeInterface $node)
+    {
+        $this->registerNodeDataChange($node->getNodeData());
+    }
+
+    /**
+     * Schedules flushing of the routing cache entries for the given $nodeData
+     * Note that child nodes are flushed automatically because they are tagged with all parents.
+     *
+     * @param NodeData $nodeData The node which has changed in some way
+     * @return void
+     */
+    public function registerNodeDataChange(NodeData $nodeData)
     {
         if (in_array($nodeData->getIdentifier(), $this->tagsToFlush)) {
             return;
@@ -50,21 +62,6 @@ class RouteCacheFlusher
             return;
         }
         $this->tagsToFlush[] = $nodeData->getIdentifier();
-    }
-
-    /**
-     * Schedules recursive flushing of the routing cache entries for the given $node
-     *
-     * @param NodeInterface $node The node which has changed in some way
-     * @return void
-     */
-    public function registerNodeChange(NodeInterface $node)
-    {
-        $this->registerNodePathChange($node->getNodeData());
-        /** @var NodeInterface $childNode */
-        foreach ($node->getChildNodes('TYPO3.Neos:Document') as $childNode) {
-            $this->registerNodeChange($childNode);
-        }
     }
 
     /**
