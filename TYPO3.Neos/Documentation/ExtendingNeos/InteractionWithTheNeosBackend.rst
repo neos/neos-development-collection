@@ -40,7 +40,7 @@ events occur:
 * **Neos.ContentModuleLoaded** When the content module is loaded (i.e. when a user is logged in).
 * **Neos.NodeCreated** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
 * **Neos.NodeRemoved** When a new node was removed from the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
-* **Neos.NodeSelected** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element`` and the node model object in ``event.detail.node``. Additional information can be fetched through the node model.
+* **Neos.NodeSelected** When a node existing on the page is selected. The event has a reference to the DOM element in ``event.detail.element`` and the node model object in ``event.detail.node``. Additional information can be fetched through the node model.
 * **Neos.LayoutChanged** When the content window layout changes (when panels that alter the body margin are opened/closed).
 * **Neos.NavigatePanelOpened** When the navigate panel is opened.
 * **Neos.NavigatePanelClosed** When the inspector panel is closed.
