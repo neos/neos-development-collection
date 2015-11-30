@@ -177,7 +177,7 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByAssetCollection(AssetCollection $assetCollection = null)
+    public function countByAssetCollection(AssetCollection $assetCollection)
     {
         $query = $this->createQuery();
         $this->addImageVariantFilterClause($query);
