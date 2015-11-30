@@ -93,19 +93,19 @@
 				</li>
 				<f:for each="{assetCollections}" as="assetCollection">
 					<li>
-						<f:link.action action="index" title="{assetCollection.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection} == {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection}" data="{assetcollection-identifier: '{assetCollection -> f:format.identifier()}'}">
-							{assetCollection.title}
-							<span class="count">{assetCollection.assets -> f:count()}</span>
+						<f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} == {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object}" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
+							{assetCollection.object.title}
+							<span class="count">{assetCollection.count}</span>
 						</f:link.action>
 						<div class="neos-sidelist-edit-actions">
-							<f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection}" title="{neos:backend.translate(id: 'media.editCollection', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-							<button type="submit" class="neos-button-danger" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#collection-{assetCollection -> f:format.identifier()}"><i class="icon-trash"></i></button>
+							<f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection.object}" title="{neos:backend.translate(id: 'media.editCollection', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
+							<button type="submit" class="neos-button-danger" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#collection-{assetCollection.object -> f:format.identifier()}"><i class="icon-trash"></i></button>
 						</div>
-						<div class="neos-hide" id="collection-{assetCollection -> f:format.identifier()}">
+						<div class="neos-hide" id="collection-{assetCollection.object -> f:format.identifier()}">
 							<div class="neos-modal">
 								<div class="neos-modal-header">
 									<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-									<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteCollection', arguments: {0: '{assetCollection.title}'}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+									<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteCollection', arguments: {0: '{assetCollection.object.title}'}, source: 'Modules', package: 'TYPO3.Neos')}</div>
 									<div>
 										<div class="neos-subheader">
 											<p>
@@ -117,7 +117,7 @@
 								</div>
 								<div class="neos-modal-footer">
 									<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-									<f:form action="deleteAssetCollection" arguments="{assetCollection: assetCollection}" class="neos-inline">
+									<f:form action="deleteAssetCollection" arguments="{assetCollection: assetCollection.object}" class="neos-inline">
 										<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'TYPO3.Neos')}">
 											{neos:backend.translate(id: 'media.message.confirmDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}
 										</button>
@@ -158,19 +158,19 @@
 			</li>
 			<f:for each="{tags}" as="tag">
 				<li>
-					<f:link.action action="index" title="{tag.tag.label}" class="droppable-tag{f:if(condition: '{tag.tag} == {activeTag}', then: ' neos-active')}" arguments="{tag: tag.tag}" data="{tag-identifier: '{tag.tag -> f:format.identifier()}'}">
-						{tag.tag.label}
+					<f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} == {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object}" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
+						{tag.object.label}
 						<span class="count">{tag.count}</span>
 					</f:link.action>
 					<div class="neos-sidelist-edit-actions">
-						<f:link.action class="neos-button" action="editTag" arguments="{tag: tag.tag}" title="{neos:backend.translate(id: 'media.editTag', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-						<button class="neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
+						<f:link.action class="neos-button" action="editTag" arguments="{tag: tag.object}" title="{neos:backend.translate(id: 'media.editTag', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
+						<button class="neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#tag-{tag.object -> f:format.identifier()}"><i class="icon-trash"></i></button>
 					</div>
-					<div class="neos-hide" id="tag-{tag.tag -> f:format.identifier()}">
+					<div class="neos-hide" id="tag-{tag.object -> f:format.identifier()}">
 						<div class="neos-modal">
 							<div class="neos-modal-header">
 								<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-								<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteTag', arguments: {0: '{tag.tag.label}'}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+								<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteTag', arguments: {0: '{tag.object.label}'}, source: 'Modules', package: 'TYPO3.Neos')}</div>
 								<div>
 									<div class="neos-subheader">
 										<p>
@@ -182,7 +182,7 @@
 							</div>
 							<div class="neos-modal-footer">
 								<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-								<f:form action="deleteTag" arguments="{tag: tag.tag}" class="neos-inline">
+								<f:form action="deleteTag" arguments="{tag: tag.object}" class="neos-inline">
 									<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}">
 										{neos:backend.translate(id: 'media.message.confirmDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}
 									</button>
