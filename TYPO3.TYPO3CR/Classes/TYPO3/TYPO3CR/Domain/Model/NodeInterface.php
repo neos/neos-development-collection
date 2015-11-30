@@ -29,8 +29,11 @@ interface NodeInterface
      */
     const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
 		(?>(?P<NodePath>                       # 1) a NODE PATH
-			\/?                             #    A node Path starts with optional slash
-			[a-z0-9\-]+                     #    followed by a path part
+			(?>
+			\/ [a-z0-9\-]+ |                # Which either starts with a slash followed by a node name
+			\/ |                            # OR just a slash (the root node)
+			[a-z0-9\-]+                     # OR only a node name (if it is a relative path)
+			)
 			(?:                             #    and (optionally) more path-parts)
 				\/
 				[a-z0-9\-]+
