@@ -61,6 +61,7 @@ class AssetRepository extends Repository
             $constraints[] = $query->contains('tags', $tag);
         }
         $query->matching($query->logicalOr($constraints));
+        $this->addImageVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
