@@ -247,7 +247,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	          position: 5
 	  properties:
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: TRUE
