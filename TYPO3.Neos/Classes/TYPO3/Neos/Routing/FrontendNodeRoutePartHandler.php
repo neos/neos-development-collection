@@ -261,19 +261,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // This is a workaround as NodePaths::explodeContextPath() (correctly)
         // expects a context path to have something before the '@', but the requestPath
         // could potentially contain only the context information.
-        $contextPath = $requestPath;
-        if (strpos($contextPath, '@') === 0) {
-            $contextPath = '/' . $contextPath;
+        if (strpos($requestPath, '@') === 0) {
+            $requestPath = '/' . $requestPath;
         }
 
-        if ($contextPath !== '' && NodePaths::isContextPath($contextPath)) {
+        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
             try {
-                $nodePathAndContext = NodePaths::explodeContextPath($contextPath);
+                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
                 $workspaceName = $nodePathAndContext['workspaceName'];
             } catch (\InvalidArgumentException $exception) {
             }
         }
-
         return $this->buildContextFromWorkspaceNameAndDimensions($workspaceName, $dimensionsAndDimensionValues);
     }
 
@@ -339,8 +337,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
         try {
             $nodePathAndContext = NodePaths::explodeContextPath($path);
-
-            return $nodePathAndContext['nodePath'];
+            // This is a workaround as we potentially prepend the context path with "/" in buildContextFromRequestPath to create a valid context path,
+            // the code in this class expects an empty nodePath though for the site node, so we remove it again at this point.
+            return $nodePathAndContext['nodePath'] === '/' ? '' : $nodePathAndContext['nodePath'];
         } catch (\InvalidArgumentException $exception) {
         }
 
