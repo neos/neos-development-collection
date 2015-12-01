@@ -392,7 +392,7 @@ TYPO3:
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
 
-    actionsOnNodeCreation:
+    nodeActions:
       defaultContext:
         String: 'TYPO3\Eel\Helper\StringHelper'
         Array: 'TYPO3\Eel\Helper\ArrayHelper'
@@ -637,4 +637,3 @@ TYPO3:
           classNamePattern: '/^.*Helper$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\EelHelperClassParser'
-

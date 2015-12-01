@@ -18,6 +18,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Utility;
+use TYPO3\Neos\Service\NodeActionsService;
 
 /**
  * Centralizes common operations like moving and copying of Nodes with Neos specific additional handling.
@@ -40,9 +41,9 @@ class NodeOperations
 
     /**
      * @Flow\Inject
-     * @var ActionsOnNodeCreationService
+     * @var NodeActionsService
      */
-    protected $actionsOnNodeCreationService;
+    protected $nodeActionsService;
 
     /**
      * Helper method for creating a new node.
@@ -87,7 +88,7 @@ class NodeOperations
             }
         }
 
-        $this->actionsOnNodeCreationService->processActions($newNode, $actionData);
+        $this->nodeActionsService->processActions($newNode, $actionData);
 
         return $newNode;
     }
