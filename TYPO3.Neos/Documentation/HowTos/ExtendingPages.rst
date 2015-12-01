@@ -16,7 +16,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 	          position: 900
 	  properties:
 	    backgroundImage:
-	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadPageIfChanged: TRUE
