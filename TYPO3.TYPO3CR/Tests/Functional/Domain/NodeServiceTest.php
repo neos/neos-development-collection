@@ -64,7 +64,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
         $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $this->contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-        $this->nodeService = $this->objectManager->get(NodeService::class);
+        $this->nodeService = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeService');
     }
 
     /**
