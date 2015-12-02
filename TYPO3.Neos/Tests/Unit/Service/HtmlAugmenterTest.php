@@ -160,13 +160,13 @@ class HtmlAugmenterTest extends UnitTestCase
             // invalid attributes
             array(
                 'html' => '',
-                'attributes' => array('data-foo' => []),
+                'attributes' => array('data-foo' => array()),
                 'fallbackTagName' => null,
                 'expectedResult' => '<root>array value ignored</root>',
             ),
             array(
                 'html' => '',
-                'attributes' => array('data-foo' => (object)[]),
+                'attributes' => array('data-foo' => (object)array()),
                 'fallbackTagName' => null,
                 'expectedResult' => '<root>array value ignored</root>',
             ),

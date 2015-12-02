@@ -27,7 +27,7 @@ class Version20141001000000 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplace('TYPO3.Neos/Inspector/Editors/HtmlEditor', 'TYPO3.Neos/Inspector/Editors/CodeEditor', ['yaml']);
+        $this->searchAndReplace('TYPO3.Neos/Inspector/Editors/HtmlEditor', 'TYPO3.Neos/Inspector/Editors/CodeEditor', array('yaml'));
     }
 
     /**
@@ -40,6 +40,6 @@ class Version20141001000000 extends AbstractMigration
      */
     public function down()
     {
-        $this->searchAndReplace('TYPO3.Neos/Inspector/Editors/CodeEditor', 'TYPO3.Neos/Inspector/Editors/HtmlEditor', ['yaml']);
+        $this->searchAndReplace('TYPO3.Neos/Inspector/Editors/CodeEditor', 'TYPO3.Neos/Inspector/Editors/HtmlEditor', array('yaml'));
     }
 }
