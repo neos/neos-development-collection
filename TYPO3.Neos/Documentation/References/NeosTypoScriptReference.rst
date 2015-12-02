@@ -203,7 +203,7 @@ Evaluate any value as a TypoScript object
 
 Example::
 
-	myValue = Value {
+	myValue = TYPO3.TypoScript:Value {
 		value = 'Hello World'
 	}
 
