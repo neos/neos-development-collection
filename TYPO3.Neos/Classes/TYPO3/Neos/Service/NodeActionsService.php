@@ -28,44 +28,15 @@ class NodeActionsService
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
-     */
-    protected $configurationManager;
-
-    /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject(lazy=FALSE)
-     * @var \TYPO3\Eel\CompilingEvaluator
-     */
-    protected $eelEvaluator;
 
     /**
      * @Flow\Inject
      * @var \TYPO3\TYPO3CR\Migration\Service\NodeTransformation
      */
     protected $nodeTransformationService;
-
-    /**
-     * Called by the Flow object framework after creating the object and resolving all dependencies.
-     *
-     * @param integer $cause Creation cause
-     */
-    public function initializeObject($cause)
-    {
-        if ($cause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-            $this->settings = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Neos.nodeActions');
-        }
-    }
 
     /**
      * @param NodeInterface $node
@@ -75,49 +46,10 @@ class NodeActionsService
     public function processActions(NodeInterface $node, array $actionData)
     {
         $actionConfigurations = $this->getActionConfigurations($node);
-        $contextVariables = $this->getContextVariables($node, $actionData);
-        foreach ($actionConfigurations as &$actionConfiguration) {
-            if (isset($actionConfiguration['settings'])) {
-                $actionConfiguration['settings'] = $this->parseSettings($actionConfiguration['settings'], $contextVariables);
-            }
+        if ($actionConfigurations !== null) {
+            $contextVariables['data'] = $actionData;
+            $this->nodeTransformationService->execute($node->getNodeData(), $actionConfigurations, $contextVariables);
         }
-        $this->nodeTransformationService->execute($node->getNodeData(), $actionConfigurations);
-    }
-
-    /**
-     * @param NodeInterface $node
-     * @param array $actionData
-     * @return array
-     */
-    protected function getContextVariables(NodeInterface $node, array $actionData)
-    {
-        $contextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
-        $contextVariables['data'] = $actionData;
-        $contextVariables['node'] = $node;
-
-        $flowQuery = new FlowQuery(array($node));
-        $contextVariables['documentNode'] = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-
-        return $contextVariables;
-    }
-
-    /**
-     * @param array $settings
-     * @param array $contextVariables
-     * @return array
-     */
-    protected function parseSettings(array $settings, array $contextVariables)
-    {
-        foreach ($settings as &$setting) {
-            if (is_array($setting)) {
-                $setting = $this->parseSettings($setting, $contextVariables);
-            } elseif (is_string($setting)) {
-                if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $setting)) {
-                    $setting = EelUtility::evaluateEelExpression($setting, $this->eelEvaluator, $contextVariables);
-                }
-            }
-        }
-        return $settings;
     }
 
     /**
@@ -126,7 +58,7 @@ class NodeActionsService
      */
     protected function getActionConfigurations(NodeInterface $node)
     {
-        $actionConfigurations = [];
+        $actionConfigurations = null;
         if ($node->getNodeType()->hasConfiguration('options.actions.onCreate')) {
             $actionConfigurations = $node->getNodeType()->getConfiguration('options.actions.onCreate');
         }
