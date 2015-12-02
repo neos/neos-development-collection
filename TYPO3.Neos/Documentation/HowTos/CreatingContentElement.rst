@@ -37,7 +37,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	        label: 'Text'
 	        reloadIfChanged: TRUE
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: TRUE
