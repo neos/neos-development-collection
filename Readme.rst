@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |API|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=2.0
    :target: https://travis-ci.org/neos/neos-development-collection
@@ -10,6 +10,9 @@
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://packagist.org/packages/neos/neos-development-collection
+.. |Docs| image:: https://img.shields.io/badge/documentation-2.0-blue.svg
+   :target: https://neos.readthedocs.org/en/2.0/
+   :alt: Documentation
 .. |API| image:: https://img.shields.io/badge/API%20docs-2.0-blue.svg
    :target: http://neos.github.io/neos/2.0/
    :alt: API Docs
