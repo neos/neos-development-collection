@@ -170,12 +170,13 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $i = 0;
         $generatedIdentifiers = array();
+        $that = $this;
         $node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('createSingleNode'), array($mockNodeData, $mockContext));
-        $node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
-            $newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-            $newNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-' . $i++));
+        $node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType, $that) {
+            $newNode = $that->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+            $newNode->expects($that->any())->method('getIdentifier')->will($that->returnValue('node-' . $i++));
 
-            $newNode->expects($this->once())->method('createNode')->with('subnode1', $mockSubNodeType, $this->callback(function ($identifier) use (&$generatedIdentifiers, $i) {
+            $newNode->expects($that->once())->method('createNode')->with('subnode1', $mockSubNodeType, $that->callback(function ($identifier) use (&$generatedIdentifiers, $i) {
                 $generatedIdentifiers[$i] = $identifier;
                 return true;
             }));

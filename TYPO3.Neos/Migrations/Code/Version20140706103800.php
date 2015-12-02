@@ -33,17 +33,18 @@ class Version20140706103800 extends AbstractMigration
      */
     public function up()
     {
+        $that = $this;
         $dateDataTypes = array();
         $this->processConfiguration(
             \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            function (&$configuration) use (&$dateDataTypes) {
+            function (&$configuration) use (&$dateDataTypes, $that) {
                 if (isset($configuration['TYPO3']['Neos']['userInterface']['inspector']['dataTypes'])) {
                     foreach ($configuration['TYPO3']['Neos']['userInterface']['inspector']['dataTypes'] as $dataType => &$dataTypeConfiguration) {
                         if ($dataTypeConfiguration['editor'] === 'TYPO3.Neos/Inspector/Editors/DateTimeEditor') {
                             $dateDataTypes[] = $dataType;
 
                             if (isset($dataTypeConfiguration['editorOptions']['format'])) {
-                                $dataTypeConfiguration['editorOptions']['format'] = $this->transformFormat($dataTypeConfiguration['editorOptions']['format']);
+                                $dataTypeConfiguration['editorOptions']['format'] = $that->transformFormat($dataTypeConfiguration['editorOptions']['format']);
                             }
                         }
                     }
@@ -54,14 +55,14 @@ class Version20140706103800 extends AbstractMigration
 
         $this->processConfiguration(
             'NodeTypes',
-            function (&$configuration) use ($dateDataTypes) {
+            function (&$configuration) use ($dateDataTypes, $that) {
                 foreach ($configuration as &$nodeType) {
                     if (isset($nodeType['properties'])) {
                         foreach ($nodeType['properties'] as &$propertyConfiguration) {
                             if ((isset($propertyConfiguration['type']) && in_array($propertyConfiguration['type'], $dateDataTypes))
                                 || (isset($propertyConfiguration['ui']['inspector']['editor']) && $propertyConfiguration['ui']['inspector']['editor'] === 'TYPO3.Neos/Inspector/Editors/DateTimeEditor')) {
                                 if (isset($propertyConfiguration['ui']['inspector']['editorOptions']['format'])) {
-                                    $propertyConfiguration['ui']['inspector']['editorOptions']['format'] = $this->transformFormat($propertyConfiguration['ui']['inspector']['editorOptions']['format']);
+                                    $propertyConfiguration['ui']['inspector']['editorOptions']['format'] = $that->transformFormat($propertyConfiguration['ui']['inspector']['editorOptions']['format']);
                                 }
                             }
                         }

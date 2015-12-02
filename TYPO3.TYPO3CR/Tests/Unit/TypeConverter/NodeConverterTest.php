@@ -239,8 +239,9 @@ class NodeConverterTest extends UnitTestCase
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
         // Simulate context properties by returning the same properties that were given to the ContextFactory
-        $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function ($contextProperties) use ($mockContext) {
-            $mockContext->expects($this->any())->method('getProperties')->will($this->returnValue($contextProperties));
+        $that = $this;
+        $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function ($contextProperties) use ($mockContext, $that) {
+            $mockContext->expects($that->any())->method('getProperties')->will($that->returnValue($contextProperties));
             return $mockContext;
         }));
 
