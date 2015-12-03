@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\TypoScript;
  * source code.
  */
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Functional test case which tests the rendering
@@ -239,7 +240,55 @@ class RenderingTest extends AbstractNodeTest
         if ($message === '') {
             $message = $selector . ' did not match: ' . $actual;
         }
-        parent::assertSelectEquals($selector, $content, $count, $actual, $message, $isHtml);
+
+        $crawler = new Crawler;
+        if ($actual instanceof DOMDocument) {
+            $crawler->addDocument($actual);
+        } else if ($isHtml) {
+            $crawler->addHtmlContent($actual);
+        } else {
+            $crawler->addXmlContent($actual);
+        }
+        $crawler = $crawler->filter($selector);
+
+        if (is_string($content)) {
+            $crawler = $crawler->reduce(function (Crawler $node, $i) use ($content) {
+                if ($content === '') {
+                    return $node->text() === '';
+                }
+                if (preg_match('/^regexp\s*:\s*(.*)/i', $content, $matches)) {
+                    return (bool) preg_match($matches[1], $node->text());
+                }
+                return strstr($node->text(), $content) !== false;
+            });
+        }
+
+        $found = count($crawler);
+        if (is_numeric($count)) {
+            self::assertEquals($count, $found, $message);
+        } else if (is_bool($count)) {
+            $found = $found > 0;
+            if ($count) {
+                self::assertTrue($found, $message);
+            } else {
+                self::assertFalse($found, $message);
+            }
+        } else if (is_array($count) && (isset($count['>']) || isset($count['<']) || isset($count['>=']) || isset($count['<=']))) {
+            if (isset($count['>'])) {
+                self::assertTrue($found > $count['>'], $message);
+            }
+            if (isset($count['>='])) {
+                self::assertTrue($found >= $count['>='], $message);
+            }
+            if (isset($count['<'])) {
+                self::assertTrue($found < $count['<'], $message);
+            }
+            if (isset($count['<='])) {
+                self::assertTrue($found <= $count['<='], $message);
+            }
+        } else {
+            throw new PHPUnit_Framework_Exception('Invalid count format');
+        }
     }
 
     /**
