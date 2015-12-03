@@ -242,9 +242,9 @@ class RenderingTest extends AbstractNodeTest
         }
 
         $crawler = new Crawler;
-        if ($actual instanceof DOMDocument) {
+        if ($actual instanceof \DOMDocument) {
             $crawler->addDocument($actual);
-        } else if ($isHtml) {
+        } elseif ($isHtml) {
             $crawler->addHtmlContent($actual);
         } else {
             $crawler->addXmlContent($actual);
@@ -266,14 +266,14 @@ class RenderingTest extends AbstractNodeTest
         $found = count($crawler);
         if (is_numeric($count)) {
             self::assertEquals($count, $found, $message);
-        } else if (is_bool($count)) {
+        } elseif (is_bool($count)) {
             $found = $found > 0;
             if ($count) {
                 self::assertTrue($found, $message);
             } else {
                 self::assertFalse($found, $message);
             }
-        } else if (is_array($count) && (isset($count['>']) || isset($count['<']) || isset($count['>=']) || isset($count['<=']))) {
+        } elseif (is_array($count) && (isset($count['>']) || isset($count['<']) || isset($count['>=']) || isset($count['<=']))) {
             if (isset($count['>'])) {
                 self::assertTrue($found > $count['>'], $message);
             }
@@ -287,7 +287,7 @@ class RenderingTest extends AbstractNodeTest
                 self::assertTrue($found <= $count['<='], $message);
             }
         } else {
-            throw new PHPUnit_Framework_Exception('Invalid count format');
+            throw new \PHPUnit_Framework_Exception('Invalid count format');
         }
     }
 
@@ -351,12 +351,14 @@ class RenderingTest extends AbstractNodeTest
         $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
         $request = $httpRequest->createActionRequest();
         $response = new \TYPO3\Flow\Http\Response();
+        /** @var \TYPO3\Flow\Mvc\Controller\Arguments $mockArguments */
+        $mockArguments = $this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', false);
         $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 
         $controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
             $request,
             $response,
-            $this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', false),
+            $mockArguments,
             $uriBuilder,
             $this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
         );
