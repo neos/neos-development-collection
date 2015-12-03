@@ -122,13 +122,13 @@
 			<target xml:lang="km" state="needs-translation">Publish to {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="km" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="km" state="translated">ចុះផ្សាយរាល់ការផ្លាស់ប្ដូរសម្រាប់ទំព័រនេះ</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="km" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="km" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="km" state="translated">កំពុងចុះផ្សាយ</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="km" state="translated">បានចុះផ្សាយ</target></trans-unit>

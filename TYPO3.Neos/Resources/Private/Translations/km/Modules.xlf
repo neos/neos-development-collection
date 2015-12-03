@@ -68,7 +68,7 @@
 			<target xml:lang="km" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="km" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="km" state="translated">ម្ចាស់</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="km" state="translated">
@@ -87,7 +87,7 @@
 			<target xml:lang="km" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="km" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្លាស់ប្ដូរ</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="km" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
