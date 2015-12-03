@@ -84,13 +84,12 @@ class UserService
     {
         $currentUser = $this->userDomainService->getCurrentUser();
 
-        if ($currentUser instanceof User) {
-            $username = $this->userDomainService->getUsername($currentUser);
-
-            return 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
-        } else {
+        if (!$currentUser instanceof User) {
             return null;
         }
+
+        $username = $this->userDomainService->getUsername($currentUser);
+        return 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
     }
 
     /**

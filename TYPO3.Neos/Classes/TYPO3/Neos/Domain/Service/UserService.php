@@ -130,6 +130,11 @@ class UserService
     protected $now;
 
     /**
+     * @var array
+     */
+    protected $runtimeUserCache = [];
+
+    /**
      * Retrieves a list of all existing users
      *
      * @return array<User> The users
@@ -151,6 +156,11 @@ class UserService
      */
     public function getUser($username, $authenticationProviderName = null)
     {
+        if ($authenticationProviderName !== null && isset($this->runtimeUserCache['a_' . $authenticationProviderName][$username])) {
+            return $this->runtimeUserCache['a_' . $authenticationProviderName][$username];
+        } elseif (isset($this->runtimeUserCache['u_' . $username])) {
+            return $this->runtimeUserCache['u_' . $username];
+        }
         $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
         if (!$account instanceof Account) {
             return null;
@@ -159,7 +169,14 @@ class UserService
         if (!$user instanceof User) {
             throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
         }
-
+        if ($authenticationProviderName !== null) {
+            if (!isset($this->runtimeUserCache['a_' . $authenticationProviderName])) {
+                $this->runtimeUserCache['a_' . $authenticationProviderName] = [];
+            }
+            $this->runtimeUserCache['a_' . $authenticationProviderName][$username] = $user;
+        } else {
+            $this->runtimeUserCache['u_' . $username] = $user;
+        }
         return $user;
     }
 
@@ -182,7 +199,6 @@ class UserService
                 return $account->getAccountIdentifier();
             }
         }
-
         return null;
     }
 
