@@ -250,6 +250,34 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
+``options``
+  Misc. configuration options for node type.
+
+  ``actions``
+    A list of actions that happen at particular moments of node lifecycle. For now `onCreate` is the only supported option.
+
+    ``onCreate``
+      Array of actions that get triggered when the node is being created. Each action represents a node transformation that may have a type and a set of settings.
+
+      ``type``
+        A type of the transformation. TYPO3CR package provides a set of default transformations: ``AddDimesnions``, ``AddNewProperty``, ``ChangeNodeType``, ``ChangePropertyValue``, ``RemoveNode``, ``RemoveProperty``, ``RenameDimension``, ``RenameNode``, ``RenameProperty``, ``SetDimensions`` and ``StripTagsOnProperty``.
+        But it is possible to define a custom transformation by providing a class that implements a ``TransformationInterface``.
+
+      ``settings``
+        A set of settings for the given transformation. Consult the source code to see which transformation accepts what settings. Each setting key is parsed with EEL, and has the ``node`` context variable set to current created node.
+
+      Example that prepends some suffix to page title when the page is created::
+
+        'TYPO3.Neos.NodeTypes:Page':
+          options:
+            actions:
+              onCreate:
+                -
+                  type: 'ChangePropertyValue'
+                  settings:
+                    property: 'title'
+                    newValue: '${q(node).property("title") + " - this suffix is set in an action"}'
+
 .. tip:: Unset a property by setting the property configuration to null (~).
 
 Here is one of the standard Neos node types (slightly shortened)::
@@ -316,5 +344,3 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      defaultValue: '<p>Enter caption here</p>'
 	      ui:
 	        inlineEditable: TRUE
-
-
