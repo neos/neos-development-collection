@@ -13,8 +13,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Transformations;
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Migration\Transformations\SetDimensions;
 
 /**
@@ -93,7 +91,7 @@ class SetDimensionsTest extends UnitTestCase
                 $configuredDimensionObjects[] = new ContentDimension($dimensionIdentifier, $dimensionDefault);
             }
 
-            $mockContentDimensionRepository = $this->getMockBuilder(ContentDimensionRepository::class)->getMock();
+            $mockContentDimensionRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository')->getMock();
             $mockContentDimensionRepository->expects($this->atLeastOnce())->method('findAll')->will($this->returnValue($configuredDimensionObjects));
             $this->inject($transformation, 'contentDimensionRepository', $mockContentDimensionRepository);
         }
@@ -103,7 +101,7 @@ class SetDimensionsTest extends UnitTestCase
             'dimensions' => $expectedValues
         );
 
-        $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->once())->method('setDimensions')->with($this->callback(function (array $dimensions) use ($expected) {
             if (count($dimensions) === $expected['count']) {
                 $simplifiedDimensions = array();
