@@ -10,6 +10,7 @@ namespace TYPO3\Neos\Tests\Functional\TypoScript;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -252,7 +253,7 @@ class RenderingTest extends AbstractNodeTest
         }
 
         $crawler = new Crawler;
-        if ($actual instanceof DOMDocument) {
+        if ($actual instanceof \DOMDocument) {
             $crawler->addDocument($actual);
         } elseif ($isHtml) {
             $crawler->addHtmlContent($actual);
@@ -297,7 +298,7 @@ class RenderingTest extends AbstractNodeTest
                 self::assertTrue($found <= $count['<='], $message);
             }
         } else {
-            throw new PHPUnit_Framework_Exception('Invalid count format');
+            throw new \PHPUnit_Framework_Exception('Invalid count format');
         }
     }
 
@@ -361,12 +362,14 @@ class RenderingTest extends AbstractNodeTest
         $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
         $request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
         $response = new \TYPO3\Flow\Http\Response();
+        /** @var \TYPO3\Flow\Mvc\Controller\Arguments $mockArguments */
+        $mockArguments = $this->getMock(\TYPO3\Flow\Mvc\Controller\Arguments::class, array(), array(), '', false);
         $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 
         $controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
             $request,
             $response,
-            $this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', false),
+            $mockArguments,
             $uriBuilder,
             $this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
         );
