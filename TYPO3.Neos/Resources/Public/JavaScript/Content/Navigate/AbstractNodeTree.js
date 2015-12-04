@@ -7,11 +7,11 @@ define(
 		'Library/jquery-with-dependencies',
 		'../Application',
 		'Content/Model/Node',
-		'vie',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
 		'Shared/NodeTypeService',
 		'Shared/Notification',
+		'Shared/EventDispatcher',
 		'../Inspector/InspectorController',
 		'./DeleteNodeDialog',
 		'./InsertNodePanel',
@@ -22,11 +22,11 @@ define(
 		$,
 		ContentModule,
 		EntityWrapper,
-		vieInstance,
 		NodeSelection,
 		Configuration,
 		NodeTypeService,
 		Notification,
+		EventDispatcher,
 		InspectorController,
 		DeleteNodeDialog,
 		InsertNodePanel,
@@ -608,8 +608,10 @@ define(
 					} else {
 						classes = $.trim(classes.replace(/neos-hiddenInIndex/g, ''));
 					}
+					node.data.isHidden = attributes._hidden;
 					node.data.addClass = classes;
 					node.render();
+					this.notifyPropertyChange('activeNode');
 				}
 			},
 
@@ -862,8 +864,9 @@ define(
 					Notification.info('You have to select a node');
 				}
 				var value = !node.data.isHidden;
-				this.set('currentFocusedNodeIsHidden', value);
 				node.data.isHidden = value;
+				// Trigger update of ``currentFocusedNodeIsHidden``
+				this.notifyPropertyChange('activeNode');
 				if (value === true) {
 					node.data.addClass = node.data.addClass += ' neos-hidden';
 				} else {
@@ -880,15 +883,17 @@ define(
 					}
 				).then(
 					function(result) {
-						var selectedNode = NodeSelection.get('selectedNode'),
-							entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-						if (entity) {
-							entity.set('typo3:_hidden', value);
+						var nodeEntity = NodeSelection.getNode(node.data.key),
+							selectedNodeEntity = NodeSelection.get('selectedNode');
+						if (nodeEntity) {
+							nodeEntity.setAttribute('_hidden', value);
+							nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+							if (nodeEntity === selectedNodeEntity) {
+								InspectorController.set('cleanProperties._hidden', value);
+								InspectorController.set('nodeProperties._hidden', value);
+							}
 						}
-						if (node.data.key === selectedNode.$element.attr('about')) {
-							InspectorController.set('cleanProperties._hidden', value);
-							InspectorController.set('nodeProperties._hidden', value);
-						}
+						EventDispatcher.trigger('nodeUpdated');
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						that.afterToggleHidden(node);
 					},
