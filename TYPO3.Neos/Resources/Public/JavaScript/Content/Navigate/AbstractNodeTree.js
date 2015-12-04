@@ -611,6 +611,7 @@ define(
 					node.data.isHidden = attributes._hidden;
 					node.data.addClass = classes;
 					node.render();
+					this.notifyPropertyChange('activeNode');
 				}
 			},
 
