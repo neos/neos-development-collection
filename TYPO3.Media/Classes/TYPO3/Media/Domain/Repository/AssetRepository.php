@@ -95,9 +95,9 @@ class AssetRepository extends Repository
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_tag = ? AND a.dtype != "typo3_media_imagevariant"';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_tag = ? AND a.dtype != 'typo3_media_imagevariant'";
         } else {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ? AND a.dtype != "typo3_media_imagevariant"';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
         }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
@@ -127,7 +127,7 @@ class AssetRepository extends Repository
         $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
-        $queryString = 'SELECT count(persistence_object_identifier) c FROM typo3_media_domain_model_asset WHERE dtype != "typo3_media_imagevariant"';
+        $queryString = "SELECT count(persistence_object_identifier) c FROM typo3_media_domain_model_asset WHERE dtype != 'typo3_media_imagevariant'";
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         return $query->getSingleScalarResult();
@@ -160,9 +160,9 @@ class AssetRepository extends Repository
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_asset IS NULL AND a.dtype != "typo3_media_imagevariant"';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_asset IS NULL AND a.dtype != 'typo3_media_imagevariant'";
         } else {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_asset IS NULL AND collectionmm.media_assetcollection = ? AND a.dtype != "typo3_media_imagevariant"';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_asset IS NULL AND collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
         }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
@@ -195,7 +195,7 @@ class AssetRepository extends Repository
         $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
-        $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND a.dtype != "typo3_media_imagevariant"';
+        $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         $query->setParameter(1, $assetCollection);
