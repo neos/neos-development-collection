@@ -323,6 +323,10 @@ define(
 			this._createEntityWrapper($element, true);
 		},
 
+		getNode: function(contextPath) {
+			return this._entitiesBySubject['<' + contextPath + '>'];
+		},
+
 		selectedNode: function() {
 			var nodes = this.get('nodes');
 			return nodes.length > 0 ? _.last(nodes) : null;
