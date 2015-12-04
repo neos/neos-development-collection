@@ -25,6 +25,7 @@ before_install:
   - cd neos-development-distribution
 install:
   - composer install --no-progress --no-interaction
+  - composer update --no-progress --no-interaction
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
