@@ -65,15 +65,13 @@ class ParentsUntilOperation extends AbstractOperation
             $parentNodes = $this->getParents($contextNode, $siteNode);
 
             if (isset($arguments[0]) && !empty($arguments[0])) {
-                $untilQuery = new FlowQuery($parentNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
-
+                $untilQuery = new FlowQuery(array($contextNode));
+                $untilQuery->pushOperation('closest', array($arguments[0]));
                 $until = $untilQuery->get();
             }
 
-            if (isset($until) && !empty($until)) {
-                $until = end($until);
-                $parentNodes = $this->getNodesUntil($parentNodes, $until);
+            if (isset($until[0]) && !empty($until)) {
+                $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
             }
 
             if (is_array($parentNodes)) {
