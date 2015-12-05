@@ -31,6 +31,8 @@ interface DataSourceInterface
     /**
      * Get data
      *
+     * The return value must be JSON serializable data structure.
+     *
      * @param NodeInterface $node The node that is currently edited (optional)
      * @param array $arguments Additional arguments (key / value)
      * @return mixed JSON serializable data

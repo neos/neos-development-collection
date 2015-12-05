@@ -11,16 +11,14 @@ namespace TYPO3\Neos\Controller\Service;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -34,24 +32,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
-
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contextFactory;
+    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject
@@ -196,39 +177,6 @@ class NodesController extends ActionController
     }
 
     /**
-     * Create a ContentContext based on the given workspace name
-     *
-     * @param string $workspaceName Name of the workspace to set for the context
-     * @param array $dimensions Optional list of dimensions and their values which should be set
-     * @return ContentContext
-     */
-    protected function createContentContext($workspaceName, array $dimensions = array())
-    {
-        $contextProperties = array(
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
-        );
-
-        if ($dimensions !== array()) {
-            $contextProperties['dimensions'] = $dimensions;
-            $contextProperties['targetDimensions'] = array_map(function ($dimensionValues) {
-                return array_shift($dimensionValues);
-            }, $dimensions);
-        }
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
-
-        return $this->contextFactory->create($contextProperties);
-    }
-
-    /**
      * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
      *
      * @param $identifier
@@ -273,7 +221,7 @@ class NodesController extends ActionController
         $parentNode = $node;
         while ($parentNode = $parentNode->getParent()) {
             $visibleInContext = $contentContext->getNodeByIdentifier($parentNode->getIdentifier()) !== null;
-            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== '/sites' && !$visibleInContext) {
+            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== SiteService::SITES_ROOT_PATH && !$visibleInContext) {
                 $contentContext->adoptNode($parentNode, $copyContent);
             }
         }

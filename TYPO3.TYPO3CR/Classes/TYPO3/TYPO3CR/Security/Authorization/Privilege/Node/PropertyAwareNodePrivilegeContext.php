@@ -25,7 +25,7 @@ class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
     protected $propertyNames = array();
 
     /**
-     * @param array $propertyNames
+     * @param string|array $propertyNames
      * @return boolean
      */
     public function nodePropertyIsIn($propertyNames)

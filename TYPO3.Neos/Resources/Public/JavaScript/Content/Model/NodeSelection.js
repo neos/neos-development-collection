@@ -195,6 +195,16 @@ define(
 						if (activeEditable) {
 							Aloha.getActiveEditable().blur();
 						}
+
+						if (options.selectFirstEditable === true) {
+							// Activate first editable & select all text
+							var firstEditableElement = $element.find('.neos-inline-editable').first();
+							var firstEditable = Aloha.getEditableHost(firstEditableElement);
+							if (firstEditable) {
+								firstEditable.activate();
+								selection._nativeSelection.selectAllChildren(firstEditableElement.get(0));
+							}
+						}
 					});
 				}
 			} else {
@@ -311,6 +321,10 @@ define(
 				});
 			}
 			this._createEntityWrapper($element, true);
+		},
+
+		getNode: function(contextPath) {
+			return this._entitiesBySubject['<' + contextPath + '>'];
 		},
 
 		selectedNode: function() {

@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
 			<target xml:lang="el" state="needs-translation">Auto-Publish</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="el" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="el" state="needs-translation">Apply</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="el" state="needs-translation">Cancel</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			<target xml:lang="el" state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target xml:lang="el" state="needs-translation">Choose</target></trans-unit>
@@ -111,12 +117,27 @@
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			<target xml:lang="el" state="needs-translation">Publish</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			<target xml:lang="el" state="needs-translation">Publish to {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="el" state="needs-translation">Publish all changes for current page</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="el" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			<target xml:lang="el" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="el" state="needs-translation">Published</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="el" state="needs-translation">Target workspace</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			<target xml:lang="el" state="needs-translation">Current workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="el" state="needs-translation">Remove</target></trans-unit>
@@ -124,8 +145,8 @@
 				<source>Refresh</source>
 			<target xml:lang="el" state="needs-translation">Refresh</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
-				<source>Saving...</source>
-			<target xml:lang="el" state="needs-translation">Saving...</target></trans-unit>
+				<source>Saving</source>
+			<target xml:lang="el" state="needs-translation">Saving</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 			<target xml:lang="el" state="needs-translation">Saved</target></trans-unit>
@@ -148,14 +169,14 @@
 				<source>Label</source>
 			<target xml:lang="el" state="needs-translation">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
-				<source>Node type</source>
-			<target xml:lang="el" state="needs-translation">Node type</target></trans-unit>
+				<source>Content Type</source>
+			<target xml:lang="el" state="needs-translation">Content Type</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			<target xml:lang="el" state="needs-translation">Path</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
-				<source>Relative path</source>
-			<target xml:lang="el" state="needs-translation">Relative path</target></trans-unit>
+				<source>Relative Path</source>
+			<target xml:lang="el" state="needs-translation">Relative Path</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
