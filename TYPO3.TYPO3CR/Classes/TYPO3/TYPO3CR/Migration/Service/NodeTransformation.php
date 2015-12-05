@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Migration\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\Utility as EelUtility;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Service that executes a series of configured transformations on a node.
@@ -52,6 +53,11 @@ class NodeTransformation
     protected $defaultContextConfiguration;
 
     /**
+     * @var array
+     */
+    protected $contextVariables;
+
+    /**
      * @return void
      */
     public function initializeObject()
@@ -64,15 +70,15 @@ class NodeTransformation
     /**
      * Executes all configured transformations starting on the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     * @param NodeData $nodeData
      * @param array $transformationConfigurations
      * @param array $additionalContextVariables
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, array $transformationConfigurations, array $additionalContextVariables = [])
+    public function execute(NodeData $nodeData, array $transformationConfigurations, array $additionalContextVariables = [])
     {
-        $contextVariables = $this->getContextVariables($nodeData, $additionalContextVariables);
-        $transformationConjunction = $this->buildTransformationConjunction($transformationConfigurations, $contextVariables);
+        $this->setContextVariables($nodeData, $additionalContextVariables);
+        $transformationConjunction = $this->buildTransformationConjunction($transformationConfigurations);
         foreach ($transformationConjunction as $transformation) {
             if ($transformation->isTransformable($nodeData)) {
                 $transformation->execute($nodeData);
@@ -82,10 +88,9 @@ class NodeTransformation
 
     /**
      * @param array $transformationConfigurations
-     * @param array $contextVariables
      * @return array<\TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface>
      */
-    protected function buildTransformationConjunction(array $transformationConfigurations, array $contextVariables)
+    protected function buildTransformationConjunction(array $transformationConfigurations)
     {
         $conjunctionIdentifier = md5(serialize($transformationConfigurations));
         if (isset($this->transformationConjunctions[$conjunctionIdentifier])) {
@@ -94,7 +99,7 @@ class NodeTransformation
 
         $conjunction = array();
         foreach ($transformationConfigurations as $transformationConfiguration) {
-            $conjunction[] = $this->buildTransformationObject($transformationConfiguration, $contextVariables);
+            $conjunction[] = $this->buildTransformationObject($transformationConfiguration);
         }
         $this->transformationConjunctions[$conjunctionIdentifier] = $conjunction;
 
@@ -105,19 +110,16 @@ class NodeTransformation
      * Builds a transformation object from the given configuration.
      *
      * @param array $transformationConfiguration
-     * @param array $contextVariables
      * @return \TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface
      * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException if a given setting is not supported
      */
-    protected function buildTransformationObject($transformationConfiguration, $contextVariables)
+    protected function buildTransformationObject($transformationConfiguration)
     {
         $transformationClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformation = new $transformationClassName();
 
         foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {
-            if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $settingValue)) {
-                $settingValue = EelUtility::evaluateEelExpression($settingValue, $this->eelEvaluator, $contextVariables);
-            }
+            $settingValue = $this->parseSetting($settingValue);
             if (!\TYPO3\Flow\Reflection\ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
                 throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
             }
@@ -127,17 +129,35 @@ class NodeTransformation
     }
 
     /**
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
-     * @param array $additionalContextVariables
-     * @return array
+     * @param mixed $setting
+     * @return mxied
      */
-    protected function getContextVariables(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, $additionalContextVariables)
+    protected function parseSetting($setting)
+    {
+        if (is_array($setting)) {
+            foreach ($setting as $subSettingName => $subSettingValue) {
+                $setting[$subSettingName] = $this->parseSetting($subSettingValue);
+            }
+        } elseif (is_string($setting)) {
+            if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $setting)) {
+                $setting = EelUtility::evaluateEelExpression($setting, $this->eelEvaluator, $this->contextVariables);
+            }
+        }
+        return $setting;
+    }
+
+    /**
+     * @param NodeData $nodeData
+     * @param array $additionalContextVariables
+     * @return void
+     */
+    protected function setContextVariables(NodeData $nodeData, $additionalContextVariables)
     {
         $context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
         $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
         $contextVariables = $this->defaultContextConfiguration;
         $contextVariables['node'] = $node;
-        return array_merge($contextVariables, $additionalContextVariables);
+        $this->contextVariables = array_merge($contextVariables, $additionalContextVariables);
     }
 
     /**
