@@ -214,7 +214,7 @@ class PluginService
             if ($pluginViewNode->isRemoved()) {
                 continue;
             }
-            if ($pluginViewNode->getProperty('plugin') === $node->getPath()
+            if ($pluginViewNode->getProperty('plugin') === $node->getIdentifier()
                 && $pluginViewNode->getProperty('view') === $viewName) {
                 return $pluginViewNode;
             }

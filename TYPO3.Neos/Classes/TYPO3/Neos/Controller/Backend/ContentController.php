@@ -26,6 +26,7 @@ use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
@@ -38,6 +39,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject
@@ -336,14 +338,18 @@ class ContentController extends ActionController
     /**
      * Fetch the configured views for the given master plugin
      *
-     * @param NodeInterface $node
+     * @param string $identifier Specifies the node to look up
+     * @param string $workspaceName Name of the workspace to use for querying the node
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string
-     *
-     * @Flow\IgnoreValidation("node")
      */
-    public function pluginViewsAction(NodeInterface $node = null)
+    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = array())
     {
         $this->response->setHeader('Content-Type', 'application/json');
+
+        $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        /** @var $node NodeInterface */
+        $node = $contentContext->getNodeByIdentifier($identifier);
 
         $views = array();
         if ($node !== null) {
@@ -379,14 +385,17 @@ class ContentController extends ActionController
      * Fetch all master plugins that are available in the current
      * workspace.
      *
-     * @param NodeInterface $node
+     * @param string $workspaceName Name of the workspace to use for querying the node
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      */
-    public function masterPluginsAction(NodeInterface $node)
+    public function masterPluginsAction($workspaceName = 'live', array $dimensions = array())
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($node->getContext());
+        $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
+
         $masterPlugins = array();
         if (is_array($pluginNodes)) {
             /** @var $pluginNode NodeInterface */
@@ -400,7 +409,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $translationHelper = new TranslationHelper();
-                $masterPlugins[$pluginNode->getPath()] = $translationHelper->translate(
+                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
                     'masterPlugins.nodeTypeOnPageLabel',
                     null,
                     ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
