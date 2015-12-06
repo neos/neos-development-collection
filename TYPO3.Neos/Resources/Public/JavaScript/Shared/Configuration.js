@@ -49,7 +49,7 @@ function(Ember, $) {
 						return this._data[key];
 
 					case 'ContentDimensionsUri':
-						this._data[key] = $('link[rel="neos-service-contentdimensions-index"]').attr('href');
+						this._data[key] = $('link[rel="neos-service-contentdimensions"]').attr('href');
 						return this._data[key];
 				}
 			}
