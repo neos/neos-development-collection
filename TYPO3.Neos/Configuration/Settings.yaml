@@ -108,6 +108,10 @@ TYPO3:
         'TYPO3.TypoScript': TRUE
         'TYPO3.Neos': TRUE
 
+    routing:
+      # Setting this to TRUE would allow to set empty uriPreset for default dimensions.
+      # The only limitation is that all segments must be unique across all dimenions.
+      supportEmptySegmentForDimensions: TRUE
     nodeTypes:
       groups:
         general:
@@ -631,4 +635,3 @@ TYPO3:
           classNamePattern: '/^.*Helper$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\EelHelperClassParser'
-

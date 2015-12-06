@@ -722,7 +722,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => '',
                     2 => ''
@@ -733,7 +733,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global@user-admin',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => '@user-admin',
                     2 => '@user-admin'
@@ -744,7 +744,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global/foo/bar?baz=foo[]',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => 'foo/bar?baz=foo[]',
                     2 => 'foo/bar?baz=foo[]'
@@ -755,7 +755,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global/foo/bar@user-admin',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => 'foo/bar@user-admin',
                     2 => 'foo/bar@user-admin'
