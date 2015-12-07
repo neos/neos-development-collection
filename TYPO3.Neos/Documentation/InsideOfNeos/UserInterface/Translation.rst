@@ -4,13 +4,13 @@ Translating the user interface
 
 Default Language
 ================
-The `availableLanguages` are defined in `Packages/Application/TYPO3.Neos/Configuration/Settings.yaml`.
+The ``availableLanguages`` are defined in ``Packages/Application/TYPO3.Neos/Configuration/Settings.yaml``.
 
-You may override the default language of your installation in `Configuration/Settings.yaml`:
+You may override the default language of your installation in ``Configuration/Settings.yaml``:
 
 .. code-block:: yaml
 
-  TYPO3
+  TYPO3:
     Neos: 
       userInterface: 
         defaultLanguage: 'en'
