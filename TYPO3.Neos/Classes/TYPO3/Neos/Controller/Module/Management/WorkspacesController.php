@@ -295,14 +295,16 @@ class WorkspacesController extends AbstractModuleController
         $personalWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
         /** @var Workspace $personalWorkspace */
 
-        if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
-            $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', [], null, null, 'Modules', 'TYPO3.Neos');
-            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
-            $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
-        }
+        if ($personalWorkspace !== $targetWorkspace) {
+            if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
+                $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', [], null, null, 'Modules', 'TYPO3.Neos');
+                $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
+                $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
+            }
 
-        $personalWorkspace->setBaseWorkspace($targetWorkspace);
-        $this->workspaceRepository->update($personalWorkspace);
+            $personalWorkspace->setBaseWorkspace($targetWorkspace);
+            $this->workspaceRepository->update($personalWorkspace);
+        }
 
         $contextProperties = $targetNode->getContext()->getProperties();
         $contextProperties['workspaceName'] = $personalWorkspace->getName();
