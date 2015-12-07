@@ -70,7 +70,7 @@ class ParentsUntilOperation extends AbstractOperation
                 $until = $untilQuery->get();
             }
 
-            if ((is_array($until) && !empty($until)) && isset($until[0])) {
+            if ($until !== null && is_array($until) && !empty($until) && isset($until[0])) {
                 $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
             }
 
