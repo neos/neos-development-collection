@@ -178,7 +178,7 @@ A TypoScript object wrapper for an arbitrary (simple) value.
 
 Example::
 
-	myValue = Value {
+	myValue = TYPO3.TypoScript:Value {
 		myValue.value = 'Hello World'
 	}
 
