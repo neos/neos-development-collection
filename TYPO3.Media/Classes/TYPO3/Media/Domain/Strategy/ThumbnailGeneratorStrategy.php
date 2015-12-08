@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Strategy;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\PositionalArraySorter;
@@ -60,9 +61,9 @@ class ThumbnailGeneratorStrategy
     protected static function getThumbnailGeneratorClassNames($objectManager)
     {
         /** @var ReflectionService $reflectionService */
-        $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
-        $generatorClassNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Model\ThumbnailGenerator\ThumbnailGeneratorInterface');
-        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
+        $generatorClassNames = $reflectionService->getAllImplementationClassNamesForInterface(ThumbnailGeneratorInterface::class);
+        $configurationManager = $objectManager->get(ConfigurationManager::class);
         $generatorOptions = $configurationManager->getConfiguration('Settings', 'TYPO3.Media.thumbnailGenerators');
         $generators = array();
         foreach ($generatorClassNames as $generatorClassName) {
