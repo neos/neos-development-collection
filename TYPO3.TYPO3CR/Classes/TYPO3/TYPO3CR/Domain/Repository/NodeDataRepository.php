@@ -463,28 +463,27 @@ class NodeDataRepository extends Repository
      */
     protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes, $recursive)
     {
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
+
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, $recursive);
         if ($nodeTypeFilter !== null) {
             $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
         }
 
-        $query = $queryBuilder->getQuery();
-        $nodes = $query->getResult();
+        $innerDQL = $queryBuilder->getDQL();
+        $queryBuilder->resetDQLParts();
+        $queryBuilder->select('nodes')->from(NodeData::class, 'nodes')->where('nodes IN (' . $innerDQL . ')');
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+        if (is_bool($removedNodes)) {
+            $queryBuilder->andWhere('nodes.removed = :removed')->setParameter('removed', $removedNodes);
+        }
+//        var_dump($queryBuilder->getQuery()->getSQL(), $removedNodes);
+        $foundNodes = $queryBuilder->getQuery()->getResult();
+
+        //        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+//        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
 
         return $foundNodes;
     }
@@ -501,11 +500,7 @@ class NodeDataRepository extends Repository
     public function findByParentWithoutReduce($parentPath, Workspace $workspace)
     {
         $parentPath = strtolower($parentPath);
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath);
@@ -541,11 +536,7 @@ class NodeDataRepository extends Repository
      */
     public function findByIdentifierWithoutReduce($identifier, Workspace $workspace)
     {
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
@@ -595,7 +586,48 @@ class NodeDataRepository extends Repository
      */
     public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
     {
-        return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
+        $originalWorkspace = $workspace;
+        $workspaces = $workspace->getBaseWorkspaces();
+
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
+
+        $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, false);
+        if ($nodeTypeFilter !== null) {
+            $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+        }
+
+        $innerDQL = $queryBuilder->getDQL();
+        $queryBuilder->resetDQLParts();
+        $queryBuilder->select('COUNT(nodes.Persistence_Object_Identifier)')->from(NodeData::class, 'nodes')->where('nodes IN (' . $innerDQL . ')');
+        $queryBuilder->andWhere('nodes.removed = :removed')->setParameter('removed', $includeRemovedNodes);
+
+        $nodeCount = $queryBuilder->getQuery()->getSingleScalarResult();
+
+        $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        $unpersistedNodeCount = 0;
+
+        /** @var $addedNode NodeData */
+        foreach ($this->addedNodes as $addedNode) {
+            if (
+                $addedNode->getDepth() === $childNodeDepth &&
+                NodePaths::getParentPath($addedNode->getPath()) === $parentPath &&
+                $addedNode->matchesWorkspaceAndDimensions($originalWorkspace, $dimensions)
+            ) {
+                $unpersistedNodeCount++;
+            }
+        }
+        /** @var $removedNode NodeData */
+        foreach ($this->removedNodes as $removedNode) {
+            if (
+                $removedNode->getDepth() === $childNodeDepth &&
+                NodePaths::getParentPath($removedNode->getPath()) === $parentPath &&
+                $removedNode->matchesWorkspaceAndDimensions($originalWorkspace, $dimensions)
+            ) {
+                $unpersistedNodeCount--;
+            }
+        }
+
+        return $nodeCount + $unpersistedNodeCount;
     }
 
     /**
@@ -847,25 +879,14 @@ class NodeDataRepository extends Repository
             throw new \InvalidArgumentException('Invalid paths: path of starting point must be first part of end point path.', 1284391181);
         }
 
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
-
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
 
         if ($nodeTypeFilter !== null) {
             $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
         }
 
-        $pathConstraints = array();
+        $pathConstraints = [];
         $constraintPath = $pathStartingPoint;
         $pathConstraints[] = md5($constraintPath);
         $pathSegments = explode('/', NodePaths::getRelativePathBetween($pathStartingPoint, $pathEndPoint));
@@ -878,21 +899,13 @@ class NodeDataRepository extends Repository
                 ->setParameter('paths', $pathConstraints);
         }
 
-        $query = $queryBuilder->getQuery();
-        $foundNodes = $query->getResult();
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
+        $innerDQL = $queryBuilder->getDQL();
+        $queryBuilder->resetDQLParts();
+        $queryBuilder->select('nodes')->from(NodeData::class, 'nodes')->where('nodes IN (' . $innerDQL . ')');
+        $queryBuilder->andWhere('nodes.removed = :removed')->setParameter('removed', $includeRemovedNodes);
+        $queryBuilder->orderBy('nodes.path', 'ASC');
 
-        if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
-        }
-
-        $nodesByDepth = array();
-        /** @var NodeData $node */
-        foreach ($foundNodes as $node) {
-            $nodesByDepth[$node->getDepth()] = $node;
-        }
-        ksort($nodesByDepth);
-        return array_values($nodesByDepth);
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -913,11 +926,7 @@ class NodeDataRepository extends Repository
         if (strlen($term) === 0) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
@@ -1298,11 +1307,7 @@ class NodeDataRepository extends Repository
     public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = false, $recursive = false)
     {
         $path = strtolower($path);
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $workspace->getBaseWorkspaces();
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
@@ -1448,5 +1453,108 @@ class NodeDataRepository extends Repository
     {
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
+    }
+
+    /**
+     * @param array $workspaces
+     * @param $dimensions
+     * @return QueryBuilder
+     */
+    protected function prepareQueryWith(array $workspaces, array $dimensions = [])
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $workspaceNames = array_map(function (Workspace $workspace) {
+            return $workspace->getName();
+        }, $workspaces);
+
+        $caseCombinations = $this->prepareWorkspacesAndDimensionCombinations($workspaceNames, $dimensions, $combinationLength);
+
+        $case = "
+        SUBSTRING(
+            MIN(
+                CONCAT(
+                    CASE " . implode("\n", $caseCombinations) . " ELSE '" . str_pad('', ($combinationLength + 1), '9') . "' END, '~', n.Persistence_Object_Identifier
+                )
+            ), " . ($combinationLength + 2) . ', 36
+        )';
+
+        $queryBuilder->select($case)
+            ->from(NodeData::class, 'n')
+            ->andWhere('n.workspace IN (\'' . implode('\', \'', $workspaceNames) . '\')')
+            ->groupBy('n.identifier');
+
+        foreach (array_keys($dimensions) as $counter => $dimensionName) {
+            $joinCounter = ($counter + 1);
+            $queryBuilder->join('n.dimensions', 'd' . $joinCounter, 'd' . $joinCounter . ".name = '" . $dimensionName . "'");
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param array $workspaceNames
+     * @param array $dimensions
+     * @param int $combinationLength
+     * @return array
+     */
+    protected function prepareWorkspacesAndDimensionCombinations(array $workspaceNames, array $dimensions = [], &$combinationLength = 0)
+    {
+        $dimensionsAndWorkspaces = [];
+        $dimensionsAndWorkspaces['_workspaces'] = $workspaceNames;
+        foreach ($dimensions as $dimensionName => $dimensionValues) {
+            $dimensionsAndWorkspaces[$dimensionName] = $dimensionValues;
+        }
+
+        $dimensionPriorityMultiplier = [];
+        $priorityMultiplier = 1;
+        $dimensionNames = [];
+        foreach (array_reverse($dimensionsAndWorkspaces, true) as $dimensionName => $dimensionValues) {
+            array_unshift($dimensionNames, $dimensionName);
+            reset($dimensionsAndWorkspaces[$dimensionName]);
+
+            $dimensionPriorityMultiplier[$dimensionName] = $priorityMultiplier;
+            $count = count($dimensionValues);
+            $priorityMultiplier = $priorityMultiplier * (pow(10, (int)log10($count)) * 10);
+        }
+
+        $combinationLength = (log10($priorityMultiplier) + 1);
+        $combinations = [];
+        while (true) {
+            $combinationPriority = 0;
+            $condition = 'WHEN ';
+
+            $i = 0;
+            foreach ($dimensionNames as $dimensionName) {
+                $priorityForDimension = key($dimensionsAndWorkspaces[$dimensionName]);
+                $valueForDimension = current($dimensionsAndWorkspaces[$dimensionName]);
+                $priorityValue = $priorityForDimension * $dimensionPriorityMultiplier[$dimensionName];
+                $combinationPriority += $priorityValue;
+                if ($dimensionName === '_workspaces') {
+                    $condition .= "n.workspace = '" . $valueForDimension . "'";
+                } else {
+                    $condition .= " AND d" . $i . ".name = '" . $dimensionName . "' AND d" . $i . ".value = '" . $valueForDimension . "'";
+                }
+
+                $i++;
+            }
+
+            $condition .= " THEN '" . str_pad($combinationPriority, $combinationLength, '0', STR_PAD_LEFT) . "'";
+
+            $combinations[] = $condition;
+
+            $nextDimension = 0;
+            $hasValue = next($dimensionsAndWorkspaces[$dimensionNames[$nextDimension]]);
+            while ($hasValue === false) {
+                reset($dimensionsAndWorkspaces[$dimensionNames[$nextDimension]]);
+                $nextDimension++;
+                if (!isset($dimensionNames[$nextDimension])) {
+                    // we have gone through all dimension combinations now.
+                    return $combinations;
+                }
+                $hasValue = next($dimensionsAndWorkspaces[$dimensionNames[$nextDimension]]);
+            }
+        }
     }
 }
