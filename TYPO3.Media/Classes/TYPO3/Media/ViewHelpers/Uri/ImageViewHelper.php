@@ -66,7 +66,7 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        // @deprecated since 2.1 use the "asset" argument instead
+        // @deprecated since 2.1 use "asset" argument instead
         $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
     }
 
