@@ -80,7 +80,7 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
         if ($key === '') {
             throw new Exception('Please provide a non empty option key', 1447766457);
         }
-        $className = get_called_class();
+        $className = static::class;
         $options = isset($this->options[$className]) ? $this->options[$className] : [];
         if (!isset($options[$key])) {
             throw new Exception(sprintf('Option "%s" is not defined for "%s"', $key, $className), 1447766458);
