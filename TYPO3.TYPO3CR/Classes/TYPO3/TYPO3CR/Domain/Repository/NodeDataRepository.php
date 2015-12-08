@@ -18,6 +18,7 @@ use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -91,6 +92,12 @@ class NodeDataRepository extends Repository
      * @var \TYPO3\Flow\Security\Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionRepository
+     */
+    protected $contentDimensionRepository;
 
     /**
      * @var array
@@ -198,22 +205,15 @@ class NodeDataRepository extends Repository
             $workspaces[] = $workspace;
             $workspace = $workspace->getBaseWorkspace();
         }
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path);
 
-        $query = $queryBuilder->getQuery();
+        $query = $this->wrapVariantFilterQuery($queryBuilder, $removedNodes)->getQuery();
         $nodes = $query->getResult();
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
-
-        if ($foundNodes !== array()) {
-            return reset($foundNodes);
+        if ($nodes !== array()) {
+            return reset($nodes);
         }
         return null;
     }
@@ -279,22 +279,14 @@ class NodeDataRepository extends Repository
             $workspace = $workspace->getBaseWorkspace();
         }
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
         $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
 
-        $query = $queryBuilder->getQuery();
-        $nodes = $query->getResult();
+        $queryBuilder = $this->wrapVariantFilterQuery($queryBuilder, false);
+        $nodes = $queryBuilder->getQuery()->getResult();
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
-
-        if ($foundNodes !== array()) {
-            return reset($foundNodes);
+        if ($nodes !== array()) {
+            return reset($nodes);
         }
         return null;
     }
@@ -463,28 +455,15 @@ class NodeDataRepository extends Repository
      */
     protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes, $recursive)
     {
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
-
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, $recursive);
         if ($nodeTypeFilter !== null) {
             $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
         }
 
-        $query = $queryBuilder->getQuery();
-        $nodes = $query->getResult();
-
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+        $queryBuilder = $this->wrapVariantFilterQuery($queryBuilder, $removedNodes);
+        $foundNodes = $queryBuilder->getQuery()->getResult();
 
         return $foundNodes;
     }
@@ -501,11 +480,7 @@ class NodeDataRepository extends Repository
     public function findByParentWithoutReduce($parentPath, Workspace $workspace)
     {
         $parentPath = strtolower($parentPath);
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath);
@@ -541,11 +516,7 @@ class NodeDataRepository extends Repository
      */
     public function findByIdentifierWithoutReduce($identifier, Workspace $workspace)
     {
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
@@ -595,7 +566,49 @@ class NodeDataRepository extends Repository
      */
     public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
     {
-        return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
+        $originalWorkspace = $workspace;
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
+
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
+
+        $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath, false);
+        if ($nodeTypeFilter !== null) {
+            $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+        }
+
+        $queryBuilder = $this->wrapVariantFilterQuery($queryBuilder, $includeRemovedNodes);
+        $queryBuilder->select('COUNT(n)');
+        if (!$queryBuilder->getDQLPart('distinct')) {
+            $queryBuilder->select('COUNT(nodes)');
+        }
+        $queryBuilder->resetDQLPart('distinct');
+        $nodeCount = $queryBuilder->getQuery()->getSingleScalarResult();
+
+        $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        $unpersistedNodeCount = 0;
+
+        /** @var $addedNode NodeData */
+        foreach ($this->addedNodes as $addedNode) {
+            if (
+                $addedNode->getDepth() === $childNodeDepth &&
+                NodePaths::getParentPath($addedNode->getPath()) === $parentPath &&
+                $addedNode->matchesWorkspaceAndDimensions($originalWorkspace, $dimensions)
+            ) {
+                $unpersistedNodeCount++;
+            }
+        }
+        /** @var $removedNode NodeData */
+        foreach ($this->removedNodes as $removedNode) {
+            if (
+                $removedNode->getDepth() === $childNodeDepth &&
+                NodePaths::getParentPath($removedNode->getPath()) === $parentPath &&
+                $removedNode->matchesWorkspaceAndDimensions($originalWorkspace, $dimensions)
+            ) {
+                $unpersistedNodeCount--;
+            }
+        }
+
+        return $nodeCount + $unpersistedNodeCount;
     }
 
     /**
@@ -847,25 +860,14 @@ class NodeDataRepository extends Repository
             throw new \InvalidArgumentException('Invalid paths: path of starting point must be first part of end point path.', 1284391181);
         }
 
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
-
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-
-        if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        } else {
-            $dimensions = array();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
 
         if ($nodeTypeFilter !== null) {
             $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
         }
 
-        $pathConstraints = array();
+        $pathConstraints = [];
         $constraintPath = $pathStartingPoint;
         $pathConstraints[] = md5($constraintPath);
         $pathSegments = explode('/', NodePaths::getRelativePathBetween($pathStartingPoint, $pathEndPoint));
@@ -878,21 +880,10 @@ class NodeDataRepository extends Repository
                 ->setParameter('paths', $pathConstraints);
         }
 
-        $query = $queryBuilder->getQuery();
-        $foundNodes = $query->getResult();
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-
-        if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
-        }
-
-        $nodesByDepth = array();
-        /** @var NodeData $node */
-        foreach ($foundNodes as $node) {
-            $nodesByDepth[$node->getDepth()] = $node;
-        }
-        ksort($nodesByDepth);
-        return array_values($nodesByDepth);
+        $queryBuilder = $this->wrapVariantFilterQuery($queryBuilder, $includeRemovedNodes);
+        $rootEntityAlias = $queryBuilder->getDQLParts('distinct') ? 'n' : 'nodes';
+        $queryBuilder->orderBy($rootEntityAlias . '.path', 'ASC');
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -913,15 +904,11 @@ class NodeDataRepository extends Repository
         if (strlen($term) === 0) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+        $queryBuilder = $this->prepareQueryWith($workspaces, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+
         // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
         $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
         $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
@@ -936,10 +923,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->getDQLPart('where')->add($pathConstraint);
         }
 
-        $query = $queryBuilder->getQuery();
+        $query = $this->wrapVariantFilterQuery($queryBuilder, false)->getQuery();
         $foundNodes = $query->getResult();
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
 
         return $foundNodes;
     }
@@ -1137,76 +1122,6 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * If $dimensions is not empty, adds join constraints to the given $queryBuilder
-     * limiting the query result to matching hits.
-     *
-     * @param QueryBuilder $queryBuilder
-     * @param array $dimensions
-     * @return void
-     */
-    protected function addDimensionJoinConstraintsToQueryBuilder(QueryBuilder $queryBuilder, array $dimensions)
-    {
-        $count = 0;
-        foreach ($dimensions as $dimensionName => $dimensionValues) {
-            $dimensionAlias = 'd' . $count;
-            $queryBuilder->andWhere('n IN (SELECT IDENTITY(' . $dimensionAlias . '.nodeData) FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . '))');
-            $queryBuilder->setParameter($dimensionAlias, $dimensionValues);
-            $count++;
-        }
-    }
-
-    /**
-     * Given an array with duplicate nodes (from different workspaces and dimensions) those are reduced to uniqueness (by node identifier)
-     *
-     * @param array $nodes NodeData result with multiple and duplicate identifiers (different nodes and redundant results for node variants with different dimensions)
-     * @param array $workspaces
-     * @param array $dimensions
-     * @return array Array of unique node results indexed by identifier
-     */
-    protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
-    {
-        $foundNodes = array();
-
-        $minimalDimensionPositionsByIdentifier = array();
-        foreach ($nodes as $node) {
-            /** @var NodeData $node */
-            $nodeDimensions = $node->getDimensionValues();
-
-            // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
-            if ($workspacePosition === false) {
-                throw new Exception\NodeException('Node workspace not found in allowed workspaces, this could result from a detached workspace entity in the context.', 1413902143);
-            }
-
-            // Find positions in dimensions, add workspace in front for highest priority
-            $dimensionPositions = array();
-
-            // Special case for no dimensions
-            if ($dimensions === array()) {
-                // We can just decide if the given node has no dimensions.
-                $dimensionPositions[] = ($nodeDimensions === array()) ? 0 : 1;
-            }
-
-            foreach ($dimensions as $dimensionName => $dimensionValues) {
-                foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
-                    $position = array_search($nodeDimensionValue, $dimensionValues);
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName], $position) : $position;
-                }
-            }
-            $dimensionPositions[] = $workspacePosition;
-
-            $identifier = $node->getIdentifier();
-            // Yes, it seems to work comparing arrays that way!
-            if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
-                $foundNodes[$identifier] = $node;
-                $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
-            }
-        }
-
-        return $foundNodes;
-    }
-
-    /**
      * Given an array with duplicate nodes (from different workspaces) those are reduced to uniqueness (by node identifier and dimensions hash)
      *
      * @param array $nodes NodeData
@@ -1298,11 +1213,7 @@ class NodeDataRepository extends Repository
     public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = false, $recursive = false)
     {
         $path = strtolower($path);
-        $workspaces = array();
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
+        $workspaces = $this->getWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
@@ -1448,5 +1359,201 @@ class NodeDataRepository extends Repository
     {
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
+    }
+
+    /**
+     * Returns an array with the given workspace and all it's base workspaces in order
+     *
+     * @param Workspace $workspace
+     * @return Workspace[]
+     */
+    protected function getWorkspaceAndAllBaseWorkspaces(Workspace $workspace)
+    {
+        $workspaces = [$workspace];
+        foreach ($workspace->getBaseWorkspaces() as $workspace) {
+            $workspaces[] = $workspace;
+        }
+        return $workspaces;
+    }
+
+    /**
+     * Wraps the variant filter query to return the actual nodes.
+     * To the resulting QueryBuilder sorting may be added.
+     *
+     * @param QueryBuilder $queryBuilder
+     * @param boolean $removedNodes If this is set to true it will return ONLY removed Nodes, if set to false ONLY not removed nodes, by default (null) returns all NodeData objects.
+     * @return QueryBuilder
+     */
+    protected function wrapVariantFilterQuery(QueryBuilder $queryBuilder, $removedNodes = null)
+    {
+        $entityAlias = 'n';
+        if (!$queryBuilder->getDQLPart('distinct')) {
+            $entityAlias = 'nodes';
+            $innerDQL = $queryBuilder->getDQL();
+            $queryBuilder->resetDQLParts();
+            $queryBuilder->select($entityAlias)->from(NodeData::class, $entityAlias)->where($entityAlias . ' IN (' . $innerDQL . ')');
+        }
+
+        if ($removedNodes !== null) {
+            $queryBuilder->andWhere($entityAlias . '.removed = :removed')->setParameter('removed', $removedNodes);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Prepare a query with the given workspace and dimension constraints.
+     * To the resulting QueryBuilder additional constraints to filter the result set can be added. Sorting should NOT be added to this query.
+     * To actually get node objects from a query prepared with this method you call wrapVariantFilterQuery after applying custom filters/constraints.
+     *
+     * @param Workspace[] $workspaces
+     * @param array $dimensions
+     * @return QueryBuilder
+     * @see wrapVariantFilterQuery
+     */
+    protected function prepareQueryWith(array $workspaces, array $dimensions = [])
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $caseCombinations = $this->prepareWorkspacesAndDimensionCombinations($workspaces, $dimensions);
+        // little hack here to transfer this information
+        $queryBuilder->add('distinct', true);
+        $case = 'n';
+
+        if ($caseCombinations['fullOptimizationPossible'] === false) {
+            $queryBuilder->add('distinct', false);
+            // This should use an alias and HAVING clause to filter invalid variants.
+            // Aliases for subquery fields are currently broken in doctrine, see also https://github.com/doctrine/doctrine2/issues/5536
+            $case = "
+                SUBSTRING(
+                    MIN(
+                        CONCAT(
+                            " . implode(",\n", $caseCombinations['combinations']) . ", n.Persistence_Object_Identifier
+                        )
+                    ), " . ($caseCombinations['combinationLength'] + 1) . ', 36
+                )';
+        }
+
+        $queryBuilder->select($case)
+            ->from(NodeData::class, 'n')
+            ->andWhere('n.workspace IN (:workspaces)')
+            ->setParameter('workspaces', $workspaces);
+
+        if ($caseCombinations['fullOptimizationPossible'] === false) {
+            $queryBuilder->groupBy('n.identifier');
+        }
+
+        $joinCounter = 0;
+        foreach ($caseCombinations['dimensions'] as $dimensionName => $dimensionValues) {
+            $queryBuilder
+                ->leftJoin('n.dimensions', 'd' . $joinCounter, \Doctrine\ORM\Query\Expr\Join::WITH, 'd' . $joinCounter . ".name = '" . $dimensionName . "'")
+                ->andWhere("d" . $joinCounter . ".value IN (:dvalues" . $joinCounter . ") OR d" . $joinCounter . ".value IS NULL")
+                ->setParameter('dvalues' . $joinCounter, $dimensionValues);
+            $joinCounter++;
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Prepares DQL CASE statements for workspaces and dimensions to order variants, basically the lowest resulting value of these conditions is the best match node.
+     *
+     * @param Workspace[] $workspaces
+     * @param array $dimensions
+     * @return array
+     */
+    protected function prepareWorkspacesAndDimensionCombinations(array $workspaces, array $dimensions = [])
+    {
+        $combinationConfiguration = [
+            'dimensions' => [],
+            'combinations' => [],
+            'combinationLength' => 0,
+            'fullOptimizationPossible' => true
+        ];
+
+        $configuredDimensions = $this->contentDimensionRepository->findAll();
+        $allDimensions = [];
+        /** @var ContentDimension $dimension */
+        foreach ($configuredDimensions as $dimension) {
+            $allDimensions[$dimension->getIdentifier()] = isset($dimensions[$dimension->getIdentifier()]) ? $dimensions[$dimension->getIdentifier()] : [null];
+        }
+
+        $combinationConfiguration['dimensions'] = $allDimensions;
+
+        $casePrefix = 'CASE ';
+        // "ELSE NULL" is not accepted by the doctrine parser so we workaround by using NULLIF
+        // Adding NULL if no case matches will result in the full concat (see "prepareQueryWith") being NULL,
+        // which is nice for the outer query to match against.
+        $casePostfix = ' ELSE NULLIF(1, 1) END';
+
+        $joinCounter = 0;
+        foreach ($allDimensions as $name => $values) {
+            $conditionValueSpace = $this->calculateConditionValueSpace($values);
+            $combinationConfiguration['combinationLength'] += $conditionValueSpace !== null ? $conditionValueSpace : 1;
+
+            if ($conditionValueSpace === null) {
+                $combinationConfiguration['combinations'][] = "'1'";
+                continue;
+            }
+            $combinationConfiguration['fullOptimizationPossible'] = false;
+            $combinationConfiguration['combinations'][] = $casePrefix . implode(' ', $this->prepareWhenConditionsForDimension($values, $joinCounter, $conditionValueSpace)) . $casePostfix;
+            $joinCounter++;
+        }
+
+        $conditionValueSpace = $this->calculateConditionValueSpace($workspaces);
+        $combinationConfiguration['combinationLength'] += $conditionValueSpace !== null ? $conditionValueSpace : 1;
+        if ($conditionValueSpace === null) {
+            $combinationConfiguration['combinations'][] = "'1'";
+        } else {
+            $combinationConfiguration['combinations'][] = $casePrefix . implode(' ', $this->prepareWhenConditionsForWorkspace($workspaces, $conditionValueSpace)) . $casePostfix;
+            $combinationConfiguration['fullOptimizationPossible'] = false;
+        }
+
+        return $combinationConfiguration;
+    }
+
+    /**
+     * @param array $values
+     * @return int|null
+     */
+    protected function calculateConditionValueSpace($values)
+    {
+        $valueCount = count($values);
+        return ($valueCount === 1) ? NULL : strlen($valueCount);
+    }
+
+    /**
+     * Prepares all allowed DQL WHEN conditions for a certain dimension associating increasing values to it
+     *
+     * @param array $dimensionValues
+     * @param integer $joinCounter
+     * @param integer $conditionValueSpace
+     * @return array
+     */
+    protected function prepareWhenConditionsForDimension(array $dimensionValues, $joinCounter, $conditionValueSpace)
+    {
+        $whenStatements = [];
+        foreach ($dimensionValues as $valuePriority => $value) {
+            $whenStatements[] = "WHEN d" . $joinCounter . ".value " . ($value === null ? 'IS NULL' : "= '" . $value . "'") . " THEN '" . str_pad($valuePriority, $conditionValueSpace, '0', STR_PAD_LEFT) . "'";
+        }
+
+        return $whenStatements;
+    }
+
+    /**
+     * Prepares all allowed DQL WHEN conditions for workspaces associating increasing values to it
+     *
+     * @param Workspace[] $workspaces
+     * @param integer $conditionValueSpace
+     * @return array
+     */
+    protected function prepareWhenConditionsForWorkspace(array $workspaces, $conditionValueSpace)
+    {
+        $whenStatements = [];
+        foreach ($workspaces as $valuePriority => $workspace) {
+            $whenStatements[] = "WHEN n.workspace = '" . $workspace->getName() . "' THEN '" . str_pad($valuePriority, $conditionValueSpace, '0', STR_PAD_LEFT) . "'";
+        }
+
+        return $whenStatements;
     }
 }

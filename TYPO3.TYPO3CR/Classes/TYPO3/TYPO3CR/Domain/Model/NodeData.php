@@ -39,7 +39,10 @@ use TYPO3\TYPO3CR\Utility;
  * 	indexes={
  * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
  * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
- * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"})
+ * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"}),
+ * 		@ORM\Index(name="parentpath_workspace_idindex",columns={"parentpathhash", "workspace", "identifier"}),
+ * 		@ORM\Index(name="path_workspace_idindex",columns={"pathhash", "workspace", "identifier"}),
+ * 		@ORM\Index(name="workspace_idindex",columns={"workspace", "identifier"})
  * 	}
  * )
  */
@@ -106,6 +109,7 @@ class NodeData extends AbstractNodeData
      * Identifier of this node which is unique within its workspace
      *
      * @var string
+     * @ORM\Column(length=36)
      */
     protected $identifier;
 
