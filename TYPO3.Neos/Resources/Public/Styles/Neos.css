@@ -3864,7 +3864,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1010;
+  z-index: 10030;
   display: none;
   width: 236px;
   background-color: #222;
@@ -3892,18 +3892,93 @@
   margin: 0;
   padding: 8px;
   font-size: 14px;
-  font-weight: normal;
+  font-weight: bold;
+  color: #fff;
   line-height: 18px;
-  background-color: #323232;
+  background-color: #141414;
+  border-bottom: 1px solid #3f3f3f;
 }
 .neos .neos-popover-title:empty {
   display: none;
 }
 .neos .neos-popover-content {
   padding: 8px;
+  max-height: 236px;
+  overflow-y: auto;
+  white-space: normal;
 }
 .neos .neos-popover-content p, .neos .neos-popover-content ul, .neos .neos-popover-content ol {
+  margin-bottom: 0.4rem;
+  font-size: inherit;
+}
+.neos .neos-popover-content p:last-child, .neos .neos-popover-content ul:last-child, .neos .neos-popover-content ol:last-child {
   margin-bottom: 0;
+}
+.neos .neos-popover-content ul, .neos .neos-popover-content ol {
+  margin-left: 1.1rem;
+}
+.neos .neos-popover-content ul li, .neos .neos-popover-content ol li {
+  list-style-type: inherit;
+}
+.neos .neos-popover-content ul {
+  list-style-type: disc;
+}
+.neos .neos-popover-content ol {
+  list-style-type: decimal;
+}
+.neos .neos-popover-content h1, .neos .neos-popover-content h2, .neos .neos-popover-content h3, .neos .neos-popover-content h4, .neos .neos-popover-content h5, .neos .neos-popover-content h6 {
+  color: inherit;
+  font-weight: bold;
+}
+.neos .neos-popover-content h1 {
+  font-size: 1.6em;
+}
+.neos .neos-popover-content h2 {
+  font-size: 1.4em;
+}
+.neos .neos-popover-content h3 {
+  font-size: 1.3em;
+}
+.neos .neos-popover-content h4 {
+  font-size: 1.2em;
+}
+.neos .neos-popover-content h5 {
+  font-size: 1em;
+}
+.neos .neos-popover-content h6 {
+  font-size: 0.9em;
+}
+.neos .neos-popover-content a {
+  color: #39c6ff;
+}
+.neos .neos-popover-content a:hover, .neos .neos-popover-content a:focus, .neos .neos-popover-content a:active {
+  color: #00b5ff;
+}
+.neos .neos-popover-content strong {
+  font-weight: bold;
+}
+.neos .neos-popover-content em {
+  font-style: italic;
+}
+.neos .neos-popover-content code {
+  color: inherit;
+  background-color: #323232;
+  border: 0 none;
+}
+.neos .neos-popover-content pre {
+  margin: 0.4rem 0;
+  padding: 0.4rem;
+  line-height: 1.5;
+  background-color: #323232;
+}
+.neos .neos-popover-content pre code {
+  padding: 0;
+}
+.neos .neos-popover-content hr {
+  border-color: #3f3f3f;
+}
+.neos .neos-popover-content img {
+  margin: auto auto 0.4rem auto;
 }
 .neos .neos-popover .neos-arrow,
 .neos .neos-popover .neos-arrow:after {
@@ -6539,6 +6614,15 @@
 }
 .neos #neos-inspector .widget .neos-widget-error i {
   color: #ff460d;
+}
+.neos #neos-inspector .neos-help-message-button {
+  margin-left: -5px;
+}
+.neos #neos-inspector .neos-help-message-button .neos-help-message-icon {
+  margin-left: 10px;
+}
+.neos #neos-inspector .neos-popover {
+  width: 366px;
 }
 .neos #neos-inspector .neos-columnview-columns-3 .neos-columnview-column {
   width: 33%;
@@ -10395,10 +10479,8 @@
   max-height: 480px;
   overflow-y: auto;
 }
-.neos .neos-insert-node-panel ul {
-  font-size: 0;
-}
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button {
+  position: relative;
   float: left;
   margin: 0;
   width: 33.33333%;
@@ -10417,19 +10499,38 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button button:focus, .neos .neos-insert-node-panel .neos-content-new-selecttype-button button:hover {
-  background-color: #00b5ff;
-  outline: none;
-}
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button button:focus i, .neos .neos-insert-node-panel .neos-content-new-selecttype-button button:hover i {
-  color: #fff;
-}
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button button i {
   width: 14px;
   padding-right: 8px;
   color: #00b5ff;
   text-align: center;
   vertical-align: baseline;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover {
+  background-color: #00b5ff;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus button, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover button {
+  outline: none;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus i, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover i {
+  color: #fff;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus .neos-help-message-button, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover .neos-help-message-button {
+  display: inline-block;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 9px;
+  cursor: pointer;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button:focus {
+  display: inline-block;
+}
+.neos .neos-insert-node-panel .neos-popover {
+  width: 366px;
 }
 .neos #neos-nprogress {
   background-color: #323232;
@@ -11762,6 +11863,17 @@
 .neos .neos-position-selector-position .neos-button:hover:not(.neos-disabled) {
   color: #00b5ff;
   background-color: inherit;
+}
+.neos .neos-help-message-button:active, .neos .neos-help-message-button:focus {
+  outline: none;
+}
+.neos .neos-help-message-icon {
+  color: #fff;
+  font-size: 1rem;
+  position: relative;
+  top: 4px;
+  cursor: pointer;
+  text-decoration: none;
 }
 .neos .page-navigation ul {
   border-top: 1px solid #3f3f3f;
