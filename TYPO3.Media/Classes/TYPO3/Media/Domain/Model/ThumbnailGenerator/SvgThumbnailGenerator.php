@@ -31,7 +31,7 @@ class SvgThumbnailGenerator extends AbstractThumbnailGenerator
      * @var integer
      * @api
      */
-    protected $priority = 10;
+    protected static $priority = 10;
 
     /**
      * @var ImageService

@@ -52,24 +52,25 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
      * @var integer
      * @api
      */
-    protected $priority = 1;
+    protected static $priority = 1;
 
     /**
-     * @Flow\InjectConfiguration(path="thumbnailGenerator", package="TYPO3.Media")
+     * @Flow\InjectConfiguration(path="thumbnailGenerators", package="TYPO3.Media")
      * @var array
      */
     protected $options;
 
     /**
      * @return integer
+     * @api
      */
-    public function getPriority()
+    public static function getPriority()
     {
-        return $this->priority;
+        return static::$priority;
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @return mixed
      * @throws Exception
      */
@@ -79,12 +80,12 @@ abstract class AbstractThumbnailGenerator implements ThumbnailGeneratorInterface
         if ($key === '') {
             throw new Exception('Please provide a non empty option key', 1447766457);
         }
-        $options = is_array($this->options) ? $this->options : [];
-        $value = Arrays::getValueByPath($options, [get_called_class(), $key]);
-        if ($value === null) {
-            throw new Exception(sprintf('Option "%s" is not defined for "%s"', $key, get_called_class()), 1447766458);
+        $className = get_called_class();
+        $options = isset($this->options[$className]) ? $this->options[$className] : [];
+        if (!isset($options[$key])) {
+            throw new Exception(sprintf('Option "%s" is not defined for "%s"', $key, $className), 1447766458);
         }
-        return $value;
+        return $options[$key];
     }
 
     /**
