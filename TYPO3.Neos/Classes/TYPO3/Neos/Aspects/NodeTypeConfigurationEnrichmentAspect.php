@@ -369,9 +369,37 @@ class NodeTypeConfigurationEnrichmentAspect
 
             if ($helpMessage !== '') {
                 $helpMessage = $this->markdownConverter->convertToHtml($helpMessage);
+                $helpMessage = $this->addTargetAttribute($helpMessage);
             }
         }
         $configuration['ui']['help']['message'] = $helpMessage;
+    }
+
+    /**
+     * Adds _blank as target to all a tags not having a target attribute.
+     *
+     * @param string $htmlString
+     * @return string
+     */
+    protected function addTargetAttribute($htmlString)
+    {
+        $document = new \DOMDocument();
+        $document->loadHTML($htmlString);
+        $links = $document->getElementsByTagName('a');
+        /** @var \DOMElement $item */
+        foreach ($links as $item) {
+            if (!$item->hasAttribute('target')) {
+                $item->setAttribute('target', '_blank');
+            }
+        }
+
+        $output = '';
+        $body = $document->getElementsByTagName('body')->item(0);
+        foreach ($body->childNodes as $node) {
+            $output .= $document->saveHTML($node);
+        }
+
+        return $output;
     }
 
     /**
