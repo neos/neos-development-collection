@@ -104,7 +104,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
-        // @deprecated since 2.1 use the "asset" argument instead
+        // @deprecated since 2.1 use "asset" argument instead
         $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "asset" argument instead', false);
     }
 
