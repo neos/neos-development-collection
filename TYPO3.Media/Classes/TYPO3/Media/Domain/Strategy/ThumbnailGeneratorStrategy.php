@@ -70,8 +70,6 @@ class ThumbnailGeneratorStrategy
             if (isset($generatorOptions[$generatorClassName]['disable']) && $generatorOptions[$generatorClassName]['disable'] === true) {
                 continue;
             }
-            /** @var ThumbnailGeneratorInterface $generator */
-            $generator = $objectManager->get($generatorClassName);
             if (isset($generatorOptions[$generatorClassName]['priority'])) {
                 $priority = $generatorOptions[$generatorClassName]['priority'];
             } else {
