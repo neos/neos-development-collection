@@ -328,8 +328,12 @@ define(
 		},
 
 		selectedNode: function() {
-			var nodes = this.get('nodes');
-			return nodes.length > 0 ? _.last(nodes) : null;
+			var nodes = this.get('nodes'),
+				selectedNode = nodes.length > 0 ? _.last(nodes) : null;
+			if (selectedNode) {
+				EventDispatcher.triggerExternalEvent('Neos.NodeSelected', 'Node was selected.', {element: selectedNode.$element.get(0), node: selectedNode});
+			}
+			return selectedNode;
 		}.property('nodes'),
 
 		selectedNodeSchema: function() {
