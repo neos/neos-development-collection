@@ -251,22 +251,31 @@ The following options are allowed:
     can be given. See below for more information.
 
 ``options``
-  Misc. configuration options for node type.
+  Miscellaneous configuration options for node types can be given under this key.
+
+  .. _options-node-actions:
 
   ``actions``
-    A list of actions that happen at particular moments of node lifecycle. For now `onCreate` is the only supported option.
+    A list of actions that happen at particular moments of the node lifecycle. For now `onCreate` is the only supported option.
 
     ``onCreate``
-      Array of actions that get triggered when the node is being created. Each action represents a node transformation that may have a type and a set of settings.
+      Array of actions that get triggered when the node is being created. Each action represents a node transformation
+      that may have a type and a set of settings. See :ref:`node-migrations` for details.
 
       ``type``
-        A type of the transformation. TYPO3CR package provides a set of default transformations: ``AddDimesnions``, ``AddNewProperty``, ``ChangeNodeType``, ``ChangePropertyValue``, ``RemoveNode``, ``RemoveProperty``, ``RenameDimension``, ``RenameNode``, ``RenameProperty``, ``SetDimensions`` and ``StripTagsOnProperty``.
-        But it is possible to define a custom transformation by providing a class that implements a ``TransformationInterface``.
+        The type of the transformation. The Content Repository provides a set of default transformations, all of which
+        can be used (but some are not really useful on new nodes).
+
+        In addition it is possible to define a custom transformation by providing a class that implements the
+        ``TransformationInterface``.
 
       ``settings``
-        A set of settings for the given transformation. Consult the source code to see which transformation accepts what settings. Each setting key is parsed with EEL, and has the ``node`` context variable set to current created node.
+        A set of settings for the given transformation. Each setting is parsed with Eel, and has the ``node`` context
+        variable set to current created node.
 
-      Example that prepends some suffix to page title when the page is created::
+      Example that prepends a suffix to the title property when a Page node is created:
+
+      .. code-block: yaml
 
         'TYPO3.Neos.NodeTypes:Page':
           options:
