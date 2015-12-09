@@ -183,9 +183,14 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $this->browserState->set('tagMode', self::TAG_ALL);
         }
 
+        $assetCollections = array();
+        foreach ($this->assetCollectionRepository->findAll() as $assetCollection) {
+            $assetCollections[] = array('object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection));
+        }
+
         $tags = array();
         foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $tag) {
-            $tags[] = array('tag' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection));
+            $tags[] = array('object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection));
         }
 
         if ($searchTerm !== null) {
@@ -208,7 +213,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             'allCount' => $activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount,
             'untaggedCount' => $this->assetRepository->countUntagged($activeAssetCollection),
             'tagMode' => $this->browserState->get('tagMode'),
-            'assetCollections' => $this->assetCollectionRepository->findAll(),
+            'assetCollections' => $assetCollections,
             'argumentNamespace' => $this->request->getArgumentNamespace(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
