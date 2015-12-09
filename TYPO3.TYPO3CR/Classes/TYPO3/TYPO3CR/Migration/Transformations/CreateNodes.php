@@ -18,16 +18,17 @@ use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
- * Create nodes.
- *
  * This transformation can create single or multiple nodes.
  *
- * If dynamicProperty and dynamicPropertySource are set, this tranformation would create a new node for each element in `dynamicPropertySource` array, setting its property specified by `dynamicProperty` to the related value of `dynamicPropertySource`.
- * Else it would create the number of identical nodes specified by `amount` setting, defaults to 1.
+ * If 'dynamicProperty' and 'dynamicPropertySource' are set, this transformation will create a new node for each element
+ * in the 'dynamicPropertySource' array, setting the property specified by 'dynamicProperty' to the related value of
+ * 'dynamicPropertySource'.
  *
- * `path` specifies on what path relative to current node should the new nodes be created, defaults to the node itself.
- * `type` specifies the type of nodes to be created.
- * `properties` array specifies the default properties for the created nodes.
+ * Else it will create the number of identical nodes specified by the 'amount' setting (defaults to 1).
+ *
+ * 'path' specifies on what path relative to current node should the new nodes be created, defaults to the node itself.
+ * 'type' specifies the type of nodes to be created.
+ * 'properties' array specifies the default properties for the created nodes.
  */
 class CreateNodes extends AbstractTransformation
 {
@@ -112,7 +113,7 @@ class CreateNodes extends AbstractTransformation
      * @param array $properties
      * @return void
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
     }
@@ -134,27 +135,26 @@ class CreateNodes extends AbstractTransformation
      * @param array $dynamicPropertySource
      * @return void
      */
-    public function setDynamicPropertySource($dynamicPropertySource)
+    public function setDynamicPropertySource(array $dynamicPropertySource)
     {
         $this->dynamicPropertySource = $dynamicPropertySource;
     }
 
     /**
-     * If the given node has the property this transformation should work on, this
-     * returns TRUE.
+     * All NodeData instances can be transformed by this.
      *
      * @param NodeData $node
      * @return boolean
      */
     public function isTransformable(NodeData $node)
     {
-        return ($node instanceof NodeData);
+        return true;
     }
 
     /**
-     * Change the property on the given node.
+     * Create nodes as configured.
      *
-     * @param NodeData $node
+     * @param NodeData $nodeData
      * @return void
      */
     public function execute(NodeData $nodeData)
@@ -166,6 +166,7 @@ class CreateNodes extends AbstractTransformation
         } else {
             $referenceNode = $node;
         }
+
         $nodeType = $this->nodeTypeManager->getNodeType($this->type);
         $nodeTemplate = new NodeTemplate();
         $nodeTemplate->setNodeType($nodeType);
@@ -174,6 +175,7 @@ class CreateNodes extends AbstractTransformation
                 $nodeTemplate->setProperty($propertyName, $propertyValue);
             }
         }
+
         if (is_string($this->dynamicProperty) && is_array($this->dynamicPropertySource)) {
             foreach ($this->dynamicPropertySource as $dynamicPropertyValue) {
                 $nodeTemplate->setProperty($this->dynamicProperty, $dynamicPropertyValue);

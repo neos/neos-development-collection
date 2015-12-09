@@ -79,6 +79,7 @@ class NodeTransformation
     {
         $this->setContextVariables($nodeData, $additionalContextVariables);
         $transformationConjunction = $this->buildTransformationConjunction($transformationConfigurations);
+        /** @var \TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface $transformation */
         foreach ($transformationConjunction as $transformation) {
             if ($transformation->isTransformable($nodeData)) {
                 $transformation->execute($nodeData);
@@ -113,7 +114,7 @@ class NodeTransformation
      * @return \TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface
      * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException if a given setting is not supported
      */
-    protected function buildTransformationObject($transformationConfiguration)
+    protected function buildTransformationObject(array $transformationConfiguration)
     {
         $transformationClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformation = new $transformationClassName();
@@ -129,8 +130,11 @@ class NodeTransformation
     }
 
     /**
-     * @param mixed $setting
-     * @return mxied
+     * Parse the given transformation setting (recursively if given an array)
+     * and evaluate any Eel expressions in it.
+     *
+     * @param array|string $setting
+     * @return array|string
      */
     protected function parseSetting($setting)
     {
@@ -147,11 +151,14 @@ class NodeTransformation
     }
 
     /**
+     * Sets the contextVariables to the defaultContextConfiguration amended with a node built from the given $nodeData
+     * and merges the $additionalContextVariables in as well.
+     *
      * @param NodeData $nodeData
      * @param array $additionalContextVariables
      * @return void
      */
-    protected function setContextVariables(NodeData $nodeData, $additionalContextVariables)
+    protected function setContextVariables(NodeData $nodeData, array $additionalContextVariables)
     {
         $context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
         $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
