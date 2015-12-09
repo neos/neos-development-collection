@@ -76,8 +76,8 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @throws \TYPO3\Flow\I18n\Exception
      * @return \TYPO3\Flow\Error\Result
+     * @throws \TYPO3\Flow\I18n\Exception
      */
     public function getCachedJson(Locale $locale)
     {
@@ -125,8 +125,9 @@ class XliffService
      * @param string $xliffPathAndFilename The file to read
      * @param string $packageKey
      * @param string $sourceName
-     * @todo remove the override handling once Flow takes care of that, see FLOW-61
      * @return array
+     *
+     * @todo remove the override handling once Flow takes care of that, see FLOW-61
      */
     public function parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName)
     {
@@ -144,6 +145,19 @@ class XliffService
         }
 
         return $arrayData;
+    }
+
+    /**
+     * @return integer The current cache version identifier
+     */
+    public function getCacheVersion()
+    {
+        $version = $this->xliffToJsonTranslationsCache->get('ConfigurationVersion');
+        if ($version === false) {
+            $version = time();
+            $this->xliffToJsonTranslationsCache->set('ConfigurationVersion', (string)$version);
+        }
+        return $version;
     }
 
     /**
