@@ -30,6 +30,9 @@
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>
+			<trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			</trans-unit>
 			<trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			</trans-unit>
@@ -494,6 +497,20 @@
 			<!-- Miscellaneous -->
 			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			</trans-unit>
+
+			<!-- Service output -->
+			<trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
 			</trans-unit>
 		</body>
 	</file>
