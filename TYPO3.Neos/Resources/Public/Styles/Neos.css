@@ -11874,12 +11874,21 @@
   outline: 2px solid rgba(0, 0, 0, 0.2);
   outline-offset: 6px;
 }
+.neos-contentelement.neos-contentelement-hover .neos-inline-editable:hover {
+  outline: 2px dashed rgba(0, 0, 0, 0.2) !important;
+}
+.neos-contentelement.neos-contentelement-hover > .neos-inline-editable:hover {
+  outline: none !important;
+}
 .neos-contentelement.neos-contentelement-hover.neos-contentelement-shine-through {
   outline: 2px solid #ff8700;
 }
 .neos-contentelement.neos-contentelement-active {
   outline: 2px solid #00b5ff !important;
   outline-offset: 6px;
+}
+.neos-contentelement.neos-contentelement-active .neos-inline-editable:hover {
+  outline: 2px dashed #00b5ff !important;
 }
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
