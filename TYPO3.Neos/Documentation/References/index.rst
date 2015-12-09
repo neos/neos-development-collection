@@ -17,4 +17,4 @@ all Packages that are in a default (Demo Package) setup.
    Signals/index
    CodingGuideLines/index
    Configuration/index
-
+   NodeMigrations
