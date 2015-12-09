@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace TYPO3\Neos\Domain\Service;
 
 /*
  * This file is part of the TYPO3.Neos package.

@@ -12,13 +12,13 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Service\NodeActionsService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Utility;
-use TYPO3\Neos\Service\NodeActionsService;
 
 /**
  * Centralizes common operations like moving and copying of Nodes with Neos specific additional handling.
