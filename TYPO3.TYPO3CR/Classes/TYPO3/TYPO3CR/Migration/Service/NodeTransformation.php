@@ -35,7 +35,7 @@ class NodeTransformation
     protected $transformationConjunctions = array();
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var \TYPO3\Eel\EelEvaluatorInterface
      */
     protected $eelEvaluator;
@@ -56,16 +56,6 @@ class NodeTransformation
      * @var array
      */
     protected $contextVariables;
-
-    /**
-     * @return void
-     */
-    public function initializeObject()
-    {
-        if ($this->eelEvaluator instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
-            $this->eelEvaluator->_activateDependency();
-        }
-    }
 
     /**
      * Executes all configured transformations starting on the given node.
