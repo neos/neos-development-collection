@@ -215,7 +215,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         if (is_string($node)) {
             $nodeContextPath = $node;
-            $contentContext = $this->buildContextFromContextPath($nodeContextPath);
+            $contentContext = $this->buildContextFromPath($nodeContextPath, true);
             if ($contentContext->getWorkspace() === null) {
                 return false;
             }
@@ -242,15 +242,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $this->value = $routePath;
 
         return true;
-    }
-
-    /**
-     * @param string $contextPath
-     * @return ContentContext
-     */
-    protected function buildContextFromContextPath($contextPath)
-    {
-        return $this->buildContextFromPath($contextPath, true);
     }
 
     /**
