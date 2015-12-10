@@ -256,7 +256,10 @@ The following options are allowed:
   .. _options-node-actions:
 
   ``actions``
-    A list of actions that happen at particular moments of the node lifecycle. For now `onCreate` is the only supported option.
+    A list of actions that happen at particular moments of node editing. For now `onCreate` is the only supported option.
+    Please note: Node actions are only executed when working with the Neos backend (or the Neos specific ``NodeOperations``
+    service). If you need to trigger general lifecycle actions that are not bound to editing, you can use the signals
+    emitted by the ``Node`` class.
 
     ``onCreate``
       Array of actions that get triggered when the node is being created. Each action represents a node transformation
