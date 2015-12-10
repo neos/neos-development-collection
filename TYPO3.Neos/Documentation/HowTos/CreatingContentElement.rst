@@ -3,7 +3,7 @@ Creating a simple Content Element
 =================================
 
 If you need some specific content element, you can easly create a new Node Type with an attached HTML template. To add
-a new Node Type, follow this exemple, just replace "Vendor" by your own vendor prefix:
+a new Node Type, follow this example, just replace "Vendor" by your own vendor prefix:
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
