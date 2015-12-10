@@ -76,8 +76,9 @@ that are marked as removed and applies the ``RemoveNode`` transformation on them
   down:
     comments: 'No down migration available'
 
-Like all migrations the file should be placed in a package inside the ``Migrations/TYPO3CR`` folder where it will be picked
-up by the CLI tools provided with the content repository:
+The file name has to follow the format ``Version<YmdHis>.yaml``, where the time is the time the migration is created.
+Like all migrations the file should be placed in a package inside the ``Migrations/TYPO3CR`` folder where it will be
+picked up by the CLI tools provided with the content repository:
 
 - ``./flow node:migrationstatus``
 - ``./flow node:migrate``
