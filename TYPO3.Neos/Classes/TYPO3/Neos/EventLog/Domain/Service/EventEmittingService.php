@@ -178,23 +178,4 @@ class EventEmittingService
     {
         $this->currentAccountIdentifier = $accountIdentifier;
     }
-
-    /**
-     * Disable the event log temporarily when executing $callback
-     *
-     * @param callable $callback
-     * @return void
-     */
-    public function withoutEventLog($callback)
-    {
-        $previouslyEnabled = $this->isEnabled();
-        $this->enabled = false;
-        try {
-            $callback();
-            $this->enabled = $previouslyEnabled;
-        } catch (\Exception $exception) {
-            $this->enabled = $previouslyEnabled;
-            throw $exception;
-        }
-    }
 }
