@@ -17,6 +17,7 @@ use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use \TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Exception\AssetServiceException;
 
@@ -48,34 +49,57 @@ class AssetService
      * @param ThumbnailConfiguration $configuration
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param ActionRequest $request Request argument must be provided for asynchronous thumbnails
-     * @return array with keys "width", "height" and "src"
+     * @return array|null Array with keys "width", "height" and "src" if the thumbnail generation work or null
      * @throws AssetServiceException
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, $async = false, ActionRequest $request = null)
     {
-        if ($asset instanceof ImageInterface) {
-            $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration, $async);
-            if ($async === true && $thumbnailImage->getResource() === null) {
-                if ($request === null) {
-                    throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
-                }
-                $this->uriBuilder->setRequest($request->getMainRequest());
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->setCreateAbsoluteUri(true)
-                    ->uriFor('thumbnail', array('thumbnail' => $thumbnailImage), 'Thumbnail', 'TYPO3.Media');
+        $thumbnailImage = $this->getImageThumbnail($asset, $configuration, $async);
+        if (!$thumbnailImage instanceof ImageInterface) {
+            return null;
+        }
+        if ($async === true && $thumbnailImage->getResource() === null && !$thumbnailImage->isTransient()) {
+            if ($request === null) {
+                throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
+            }
+            $this->uriBuilder->setRequest($request->getMainRequest());
+            $uri = $this->uriBuilder
+                ->reset()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('thumbnail', array('thumbnail' => $thumbnailImage), 'Thumbnail', 'TYPO3.Media');
+        } else {
+            if ($thumbnailImage instanceof Thumbnail && $thumbnailImage->isTransient()) {
+                $uri = $thumbnailImage->getStaticResource();
             } else {
                 $uri = $this->resourceManager->getPublicPersistentResourceUri($thumbnailImage->getResource());
             }
-            $thumbnailData = array(
-                'width' => $thumbnailImage->getWidth(),
-                'height' => $thumbnailImage->getHeight(),
-                'src' => $uri
-            );
-        } else {
-            $thumbnailData = $this->thumbnailService->getStaticThumbnailForAsset($asset, $configuration->getWidth() ?: $configuration->getMaximumWidth(), $configuration->getHeight() ?: $configuration->getMaximumHeight());
+        }
+        return array(
+            'width' => $thumbnailImage->getWidth(),
+            'height' => $thumbnailImage->getHeight(),
+            'src' => $uri
+        );
+    }
+
+    /**
+     * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
+     * differ from the specified image dimensions, otherwise the original image is returned.
+     *
+     * @param AssetInterface $asset
+     * @param ThumbnailConfiguration $configuration
+     * @param boolean $async
+     * @return ImageInterface
+     */
+    protected function getImageThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration, $async)
+    {
+        if ($configuration->isUpScalingAllowed() === false && $asset instanceof ImageInterface) {
+            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
+            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
+            if ($maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
+                return $asset;
+            }
         }
 
-        return $thumbnailData;
+        return $this->thumbnailService->getThumbnail($asset, $configuration, $async);
     }
 }

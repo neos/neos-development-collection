@@ -13,7 +13,7 @@ namespace TYPO3\Media\ViewHelpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
@@ -22,7 +22,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * = Examples =
  *
  * <code title="Rendering an image as-is">
- * <typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+ * <typo3.media:image asset="{imageObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the image, no scaling applied)
@@ -31,7 +31,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+ * <typo3.media:image asset="{imageObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -40,7 +40,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <typo3.media:image asset="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -49,7 +49,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <typo3.media:image asset="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -57,7 +57,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <typo3.media:image asset="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled up or down to a width 5000 pixels, keeping aspect ratio)
@@ -102,14 +102,14 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
-        // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
+        // @deprecated since 2.1 use "asset" argument instead
+        $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "asset" argument instead', false);
     }
 
     /**
      * Renders an HTML img tag with a thumbnail image, created from a given asset.
      *
-     * @param ImageInterface $image The image to be rendered as an image
+     * @param AssetInterface $asset The asset to be rendered as an image
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
      * @param integer $height Desired height of the image
@@ -120,17 +120,22 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * @param string $preset Preset used to determine image configuration
      * @return string an <img...> html tag
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        if ($image === null && $this->hasArgument('asset')) {
-            $image = $this->arguments['asset'];
+        if ($asset === null && $this->hasArgument('image')) {
+            $asset = $this->arguments['image'];
         }
+
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
         }
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $async, $this->controllerContext->getRequest());
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $async, $this->controllerContext->getRequest());
+
+        if ($thumbnailData === null) {
+            return '';
+        }
 
         $this->tag->addAttribute('src', $thumbnailData['src']);
 

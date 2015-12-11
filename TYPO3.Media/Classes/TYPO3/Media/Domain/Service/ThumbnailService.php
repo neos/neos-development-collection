@@ -98,14 +98,27 @@ class ThumbnailService
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         }
         if ($thumbnail === null) {
-            if (!$asset instanceof ImageInterface) {
-                throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
-            }
-            $thumbnail = new Thumbnail($asset, $configuration, $async);
-            $this->thumbnailRepository->add($thumbnail);
-            $asset->addThumbnail($thumbnail);
+            try {
+                $thumbnail = new Thumbnail($asset, $configuration, false, $async);
 
-            // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
+                if ($thumbnail->isTransient() === false) {
+                    // If the thumbnail strategy failed to generate a valid thumbnail
+                    if ($async === false && $thumbnail->getResource() === null) {
+                        $this->thumbnailRepository->remove($thumbnail);
+                        return null;
+                    }
+
+                    $this->thumbnailRepository->add($thumbnail);
+                    $asset->addThumbnail($thumbnail);
+
+                    // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
+                    $this->persistenceManager->whiteListObject($thumbnail);
+                    $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+                }
+            } catch (NoThumbnailAvailableException $exception) {
+                $this->systemLogger->logException($exception);
+                return null;
+            }
             $this->persistenceManager->whiteListObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($thumbnail->getResource() === null && $async === false) {
@@ -113,31 +126,6 @@ class ThumbnailService
         }
 
         return $thumbnail;
-    }
-
-    /**
-     * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
-     */
-    public function getStaticThumbnailForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight)
-    {
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
-        }
-
-        $icon = $this->resourceManager->getPublicPackageResourceUri('TYPO3.Media', $icon);
-
-        return array(
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'src' => $icon
-        );
     }
 
     /**
@@ -176,22 +164,4 @@ class ThumbnailService
         $this->thumbnailRepository->update($thumbnail);
     }
 
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
-    }
 }

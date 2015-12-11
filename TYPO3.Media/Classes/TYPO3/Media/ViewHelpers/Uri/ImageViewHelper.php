@@ -12,6 +12,7 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
@@ -65,14 +66,14 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
+        // @deprecated since 2.1 use "asset" argument instead
+        $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
     }
 
     /**
      * Renders the path to a thumbnail image, created from a given asset.
      *
-     * @param ImageInterface $image
+     * @param AssetInterface $asset
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
      * @param integer $height Desired height of the image
@@ -83,16 +84,16 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
      * @param string $preset Preset used to determine image configuration
      * @return string the relative image path, to be used as src attribute for <img /> tags
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        if ($image === null && $this->hasArgument('asset')) {
-            $image = $this->arguments['asset'];
+        if ($asset === null && $this->hasArgument('image')) {
+            $asset = $this->arguments['image'];
         }
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
         }
-        return $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $async, $this->controllerContext->getRequest())['src'];
+        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $async, $this->controllerContext->getRequest())['src'];
     }
 }

@@ -6,10 +6,12 @@ TYPO3:
           'TYPO3\Media\Domain\EventListener\ImageEventListener':
             events: ['postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
+
     mvc:
       routes:
         'TYPO3.Media':
           position: 'before TYPO3.Neos'
+
   Media:
     # This setting simulates how Neos 1.2 handled image cropping with "maximumWidth" and "maximumHeight".
     # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
@@ -21,6 +23,7 @@ TYPO3:
     thumbnailPresets: []
     # Automatically generate preset thumbnails when adding images
     autoGenerateThumbnailPresets: true
+
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document
@@ -31,10 +34,21 @@ TYPO3:
             className: TYPO3\Media\Domain\Model\Audio
           '[video/.*]':
             className: TYPO3\Media\Domain\Model\Video
+
     image:
       defaultOptions:
         # Image quality, from 0 to 100
         'quality': 90
+
+    thumbnailGenerators:
+      'TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
+        resolution: 120
+        supportedExtensions: [ 'pdf', 'eps', 'ai' ]
+        paginableDocuments: [ 'pdf' ]
+
+      'TYPO3\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator':
+        supportedExtensions: [ 'ttf', 'otf' ]
+
     bodyClasses: 'media-browser'
     scripts:
       - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.10.1.min.js

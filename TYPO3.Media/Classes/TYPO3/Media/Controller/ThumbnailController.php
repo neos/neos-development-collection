@@ -48,6 +48,11 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
         if ($thumbnail->getResource() === null) {
             $this->thumbnailService->refreshThumbnail($thumbnail);
         }
-        $this->redirectToUri($this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()), 0, 302);
+        if ($thumbnail->isTransient()) {
+            $uri = $thumbnail->getStaticResource();
+        } else {
+            $uri = $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource());
+        }
+        $this->redirectToUri($uri, 0, 302);
     }
 }
