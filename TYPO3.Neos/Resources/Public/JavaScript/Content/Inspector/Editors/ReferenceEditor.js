@@ -50,7 +50,7 @@ define(
 						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
 
-						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
 						}
@@ -64,7 +64,7 @@ define(
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
-							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
 							if (iconClass) {
 								$itemContent.prepend('<i class="' + iconClass + '"></i>');
 							}
@@ -77,12 +77,14 @@ define(
 							window.clearTimeout(currentQueryTimer);
 						}
 						currentQueryTimer = window.setTimeout(function() {
+							var parameters;
+							var $metadata = $('#neos-document-metadata');
 							currentQueryTimer = null;
 
-							var parameters = {
+							parameters = {
 								searchTerm: query.term,
-								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-								dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
+								workspaceName: $metadata.data('neos-context-workspace-name'),
+								dimensions: $metadata.data('neos-context-dimensions'),
 								contextNode: that.get('startingPoint'),
 								nodeTypes: that.get('nodeTypes')
 							};
@@ -128,6 +130,8 @@ define(
 			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
 			value: function(key, value) {
 				var that = this;
+				var parameters;
+				var $metadata = $('#neos-document-metadata');
 
 				if (value && value !== this.get('content.id')) {
 					var item = Ember.Object.extend({
@@ -138,9 +142,9 @@ define(
 					}).create();
 					that.set('content', item);
 
-					var parameters = {
-						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					parameters = {
+						workspaceName: $metadata.data('neos-context-workspace-name'),
+						dimensions: $metadata.data('neos-context-dimensions')
 					};
 					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text().trim());
