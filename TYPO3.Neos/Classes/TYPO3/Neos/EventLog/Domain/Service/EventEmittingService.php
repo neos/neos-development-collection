@@ -72,6 +72,7 @@ class EventEmittingService
      * @param string $eventType
      * @param array $data
      * @param string $eventClassName
+     * @throws Exception
      * @return Event
      */
     public function emit($eventType, array $data, $eventClassName = 'TYPO3\Neos\EventLog\Domain\Model\Event')
@@ -112,6 +113,7 @@ class EventEmittingService
      * together with the parent.
      *
      * @param Event $nodeEvent
+     * @throws Exception
      * @return void
      * @see emit()
      */
