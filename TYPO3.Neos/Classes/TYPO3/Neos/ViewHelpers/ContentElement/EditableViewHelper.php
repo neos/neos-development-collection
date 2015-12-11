@@ -100,6 +100,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
 
         $this->tag->addAttribute('property', 'typo3:' . $property);
+        $this->tag->addAttribute('data-neos-node-type', $node->getNodeType()->getName());
         $this->tag->addAttribute('class', $this->tag->hasAttribute('class') ? 'neos-inline-editable ' . $this->tag->getAttribute('class') : 'neos-inline-editable');
         return $this->tag->render();
     }

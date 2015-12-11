@@ -59,9 +59,7 @@ class EventRepository extends Repository
         $classMetaData = $this->entityManager->getClassMetadata($this->getEntityClassName());
         $connection = $this->entityManager->getConnection();
         $databasePlatform = $connection->getDatabasePlatform();
-        $connection->query('SET FOREIGN_KEY_CHECKS=0');
         $truncateTableQuery = $databasePlatform->getTruncateTableSql($classMetaData->getTableName());
         $connection->executeUpdate($truncateTableQuery);
-        $connection->query('SET FOREIGN_KEY_CHECKS=1');
     }
 }

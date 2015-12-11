@@ -10,6 +10,7 @@
           position: 10
           icon: 'icon-pencil'
         meta:
+          label: i18n
           position: 20
           icon: 'icon-cog'
       groups:
