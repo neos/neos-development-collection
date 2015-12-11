@@ -1,0 +1,284 @@
+`2.0.5 (2015-12-11) <https://github.com/neos/neos-development-collection/releases/tag/2.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[TASK] Cache backend interface labels client side <https://github.com/neos/neos-development-collection/pull/256>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Makes the backend interface labels cacheable by storing the version
+XLIFF cache and generating a URI using that version. When a label is
+changed or the selected language is changed, the URI is automatically
+updated.
+
+* Packages: ``Neos``
+
+`BUGFIX: Change column type to flow_json_array on NodeData <https://github.com/neos/neos-development-collection/pull/123>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This changes the type of the properties `AbstractNodeData.accessRoles`
+and the `NodeData.dimensionValues` from `json_array` to the Flow type
+`flow_json_array`.
+
+While those properties only hold plain arrays and can be stored just fine
+with the Doctrine `json_array` type, Neos uses distinct in a query on
+the NodeData table which leads to errors due to the `json` type in
+PostgreSQL not being comparable. The Flow type uses `jsonb` instead,
+which can be compared and makes the query work as expected.
+
+NEOS-1726 #comment Fixes exporting on PostgreSQL
+
+`[BUGFIX] Fix parentsUntil operation <https://github.com/neos/neos-development-collection/pull/241>`_
+-----------------------------------------------------------------------------------------------------
+
+Since the current parentsUntil operation does not return the correct parent nodes, this will fix the behaviour. `$until` did not return the first matched parent node.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Improve slow aloha settings selector  <https://github.com/neos/neos-development-collection/pull/255>`_
+---------------------------------------------------------------------------------------------------------------
+
+Current selector to match property editor of given node type is
+extremely slow, because it has to use very inefficient selector.
+
+Add additional `data-neos-node-type` attribute to editable property wrap
+to simplify the selector.
+
+This brings a huge performance improvement on pages with a lot of
+editable properties.
+
+* Packages: ``Neos``
+
+`BUGFIX: Re-add missing inspector tab label for 'metadata' <https://github.com/neos/neos-development-collection/pull/253>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+During the change to add translation support to the inspector tabs/groups, this appears to have been missed.
+
+See: https://github.com/neos/neos-development-collection/commit/`421c8218f54627a175bba3af1f7aa08150b56ac4 <https://github.com/neos/neos-development-collection/commit/421c8218f54627a175bba3af1f7aa08150b56ac4>`_#diff-3b7b31a90bfc18f8fbbdec4e8f83424f
+
+* Packages: ``Neos``
+
+`[TASK] Fix spelling mistake in CreatingContentElement.rst <https://github.com/neos/neos-development-collection/pull/252>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Fix spelling mistake in the first paragraph
+
+* Packages: ``Neos``
+
+`TASK: Mark editable content on hover <https://github.com/neos/neos-development-collection/pull/144>`_
+------------------------------------------------------------------------------------------------------
+
+This change adds a dashed border around inline-editable elements when
+hovering over them. This it becomes easier to see what exactly can be
+edited in an element with multiple editable parts.
+
+* Packages: ``Neos``
+
+`[TASK] Media browser performance improvements <https://github.com/neos/neos-development-collection/pull/230>`_
+---------------------------------------------------------------------------------------------------------------
+
+Optimizes rendering performance of the media browser/module by
+re-using modals, optimizing and using count queries.
+
+Brings 0,5x-3x+ speed improvement depending on the selected view
+and amount of assets and tags/asset collections visible.
+
+No functional difference.
+
+Additionally fixes a couple of bugs in the asset repository.
+
+* Resolves: `NEOS-1698 <https://jira.neos.io/browse/NEOS-1698>`_
+* Packages: ``Media``
+
+`[BUGFIX] Prevent fetching unmanaged entity in \`\`WorkspacesTest\`\` <https://github.com/neos/neos-development-collection/pull/251>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Needed for ``doctrine/orm`` 2.4 compatibility (already done in 2.0)
+
+* Packages: ``TYPO3CR``
+
+`[TASK] Also change wrong \`\`value\`\` object bug in example code for 1.2 <https://github.com/neos/neos-development-collection/pull/248>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Remove autofocus from search field on condensed media library layout <https://github.com/neos/neos-development-collection/pull/247>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+When the condensed aside media library layout is shown (more than 25 tags),
+the search field is automatically focussed causing the view to jump down to
+the search field. This is annoying and unexpected and thus disabled for that view.
+
+* Packages: ``Neos``
+
+`[TASK] Document default language configuration for user interface translation <https://github.com/neos/neos-development-collection/pull/245>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`Fix AbstractViewHelper FQCN <https://github.com/neos/neos-development-collection/pull/243>`_
+---------------------------------------------------------------------------------------------
+
+Was missing “ViewHelper\\” part
+
+* Packages: ``Neos``
+
+`[BUGFIX] Loading content dimensions for dimensions selector <https://github.com/neos/neos-development-collection/pull/242>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Regression introduced with `c8ee304082e4b5bea28beec33f1f7bd8f7730225 <https://github.com/neos/neos-development-collection/commit/c8ee304082e4b5bea28beec33f1f7bd8f7730225>`_
+
+* Resolves: `NEOS-1722 <https://jira.neos.io/browse/NEOS-1722>`_
+* Packages: ``Neos``
+
+`[TASK] Adjust Travis tests <https://github.com/neos/neos-development-collection/pull/238>`_
+--------------------------------------------------------------------------------------------
+
+This makes sure the travis tests run as planned by using a github
+API token to circumvent the bandwith limit and additionally run
+composer update after composer install to make sure the latest
+package versions get installed for testing.
+
+`[TASK] Enable PHP 7 testing on Travis CI <https://github.com/neos/neos-development-collection/pull/237>`_
+----------------------------------------------------------------------------------------------------------
+
+`[BUGFIX] Node tree state out of sync with other components <https://github.com/neos/neos-development-collection/pull/186>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When using the hide button and editing the title in the node trees, the state of other components like the publish menu wasn't updated accordingly. Additionally the node trees weren't updated when nodes were altered outside the trees. Several fixes are included in this change:
+
+- Publish menu updated when modifying nodes in the tree (hidden/title)
+- Context structure tree nodes updated when changed on the page
+- Hidden button in trees updated correctly for active node
+- Incorrect entity updated when modifying nodes in the tree
+
+* Resolves: `NEOS-1474 <https://jira.neos.io/browse/NEOS-1474>`_
+* Resolves: `NEOS-1129 <https://jira.neos.io/browse/NEOS-1129>`_
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix PHP 5.3 compatibility issues <https://github.com/neos/neos-development-collection/pull/236>`_
+-----------------------------------------------------------------------------------------------------------
+
+The 1.2 branch should be compatible to PHP 5.3, but since we did not have automated
+testing in place on that version of PHP, some incompatibilties have crept in.
+
+This fixes those issues and enables the unit and functional tests to be run on PHP 5.3
+on Travis CI.
+
+* Packages: ``Neos``
+
+`[TASK] Adjust default label for nodes <https://github.com/neos/neos-development-collection/pull/161>`_
+-------------------------------------------------------------------------------------------------------
+
+The label inherited from the Node nodetype included the node name, which
+is not very helpful for content nodes and can be confusing.
+
+With this change, the (default) label for nodes no longer includes the
+node name unless the node has been auto-created. That means that for
+ContentCollection nodes it will still be shown like before in most cases.
+
+* Packages: ``Neos``
+
+`[TASK] Use runtime cache in user service <https://github.com/neos/neos-development-collection/pull/229>`_
+----------------------------------------------------------------------------------------------------------
+
+To prevent making a database lookup every time a user is requested
+through the ``UserService`` a runtime cache is used. This prevents
+lots of lookups since the user is requested many times in the backend,
+e.g. once for every translate view helper.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix example code for \`\`TYPO3.TypoScript:Value\`\` <https://github.com/neos/neos-development-collection/pull/233>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Change ImageVariant to ImageInterface in documentation <https://github.com/neos/neos-development-collection/pull/232>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent exception when tag already exists in the active or another asset collection <https://github.com/neos/neos-development-collection/pull/213>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `NEOS-1694 <https://jira.neos.io/browse/NEOS-1694>`_
+* Packages: ``Media``
+
+`[BUGFIX] Hidden before/after properties breaks site import <https://github.com/neos/neos-development-collection/pull/225>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The closing tags for the ``hiddenBeforeDateTime`` and ``hiddenAfterDateTime``
+properties were not handled in the node import service.
+
+* Resolves: `NEOS-990 <https://jira.neos.io/browse/NEOS-990>`_
+* Resolves: `NEOS-1554 <https://jira.neos.io/browse/NEOS-1554>`_
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Allow moving of inaccessible nodes <https://github.com/neos/neos-development-collection/pull/210>`_
+-------------------------------------------------------------------------------------------------------------
+
+If a node is inaccessible (hidden) an exception is thrown
+when trying to move it.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Route cache flush shouldn't load all documents <https://github.com/neos/neos-development-collection/pull/196>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+To avoid loading all documents in a Neos instance the route cache
+for a node will be tagged will all parent node identifiers so that
+flushing the cache for a particular node identifier will automatically
+flush all child node entries as well.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix a PostgreSQL down migration <https://github.com/neos/neos-development-collection/pull/220>`_
+----------------------------------------------------------------------------------------------------------
+
+In `cb89c7a053b00a0dd3b2b538fdb5c41c668ef226 <https://github.com/neos/neos-development-collection/commit/cb89c7a053b00a0dd3b2b538fdb5c41c668ef226>`_ a missing migration was
+added. That migration works fine when migrating up, but in the down
+migration one line too much causes it to break.
+
+* Packages: ``Media`` ``Neos`` ``NodeTypes``
+
+`[BUGFIX] Fix documentation typo: Image{Variant => Interface} <https://github.com/neos/neos-development-collection/pull/215>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Using `ImageVariant` as node property type as suggested in this section of the documentation results in errors in the Neos backend:
+
+> Couldn't create editor for property "image" (no editor configured). Please check your NodeTypes.yaml configuration.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Add a missing PostgreSQL migration <https://github.com/neos/neos-development-collection/pull/204>`_
+-------------------------------------------------------------------------------------------------------------
+
+A schema migration allowing NULL values for image dimensions was missing
+for PostgreSQL.
+
+* Packages: ``Media``
+
+`[TASK] Cache content dimensions backend request client side <https://github.com/neos/neos-development-collection/pull/199>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Instead of fetching the content dimensions every time the backend is loaded,
+the request is cached using the ``ResourceCache``. This eliminates a request
+for something that rarely changes and is automatically updated when the
+configuration changes.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix selecting master view option in plugin view <https://github.com/neos/neos-development-collection/pull/208>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Regression introduced in `8c87918e41cd0d445869f5acc77ece01b0a0764a <https://github.com/neos/neos-development-collection/commit/8c87918e41cd0d445869f5acc77ece01b0a0764a>`_
+causing the selection of master view to cause a fatal error in plugin views.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.4...2.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
