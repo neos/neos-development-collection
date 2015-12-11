@@ -284,6 +284,46 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
+``options``
+  Miscellaneous configuration options for node types can be given under this key.
+
+  .. _options-node-actions:
+
+  ``actions``
+    A list of actions that happen at particular moments of node editing. For now `onCreate` is the only supported option.
+    Please note: Node actions are only executed when working with the Neos backend (or the Neos specific ``NodeOperations``
+    service). If you need to trigger general lifecycle actions that are not bound to editing, you can use the signals
+    emitted by the ``Node`` class.
+
+    ``onCreate``
+      Array of actions that get triggered when the node is being created. Each action represents a node transformation
+      that may have a type and a set of settings. See :ref:`node-migrations` for details.
+
+      ``type``
+        The type of the transformation. The Content Repository provides a set of default transformations, all of which
+        can be used (but some are not really useful on new nodes).
+
+        In addition it is possible to define a custom transformation by providing a class that implements the
+        ``TransformationInterface``.
+
+      ``settings``
+        A set of settings for the given transformation. Each setting is parsed with Eel, and has the ``node`` context
+        variable set to current created node.
+
+      Example that prepends a suffix to the title property when a Page node is created:
+
+      .. code-block: yaml
+
+        'TYPO3.Neos.NodeTypes:Page':
+          options:
+            actions:
+              onCreate:
+                -
+                  type: 'ChangePropertyValue'
+                  settings:
+                    property: 'title'
+                    newValue: '${q(node).property("title") + " - this suffix is set in an action"}'
+
 .. tip:: Unset a property by setting the property configuration to null (~).
 
 Here is one of the standard Neos node types (slightly shortened)::
@@ -350,5 +390,3 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      defaultValue: '<p>Enter caption here</p>'
 	      ui:
 	        inlineEditable: TRUE
-
-

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Service\NodeActionsService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -39,15 +40,22 @@ class NodeOperations
     protected $nodeService;
 
     /**
+     * @Flow\Inject
+     * @var NodeActionsService
+     */
+    protected $nodeActionsService;
+
+    /**
      * Helper method for creating a new node.
      *
      * @param NodeInterface $referenceNode
      * @param array $nodeData
      * @param string $position
+     * @param array $actionData
      * @return NodeInterface
      * @throws \InvalidArgumentException
      */
-    public function create(NodeInterface $referenceNode, array $nodeData, $position)
+    public function create(NodeInterface $referenceNode, array $nodeData, $position, array $actionData = [])
     {
         if (!in_array($position, array('before', 'into', 'after'), true)) {
             throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
@@ -79,6 +87,8 @@ class NodeOperations
                 $newNode->setProperty($propertyName, $propertyValue);
             }
         }
+
+        $this->nodeActionsService->processActions($newNode, $actionData);
 
         return $newNode;
     }
