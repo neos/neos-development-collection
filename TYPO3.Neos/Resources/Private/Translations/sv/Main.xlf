@@ -30,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="sv-SE" state="needs-translation">Content</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="sv-SE" state="needs-translation">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="sv-SE" state="needs-translation">Content View</target></trans-unit>
@@ -484,6 +487,19 @@
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
 			<target xml:lang="sv-SE" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="sv-SE" state="needs-translation">Nodes</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="sv-SE" state="needs-translation">Show</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="sv-SE" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="sv-SE" state="needs-translation">Node Properties</target></trans-unit>
     </body>
   </file>
 </xliff>
