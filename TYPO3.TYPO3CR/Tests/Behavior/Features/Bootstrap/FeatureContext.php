@@ -442,6 +442,19 @@ class FeatureContext extends Behat\Behat\Context\BehatContext
     }
 
     /**
+     * @Then /^the node should (not |)have a property "([^"]*)"$/
+     */
+    public function theNodeShouldHaveAProperty($not, $propertyName)
+    {
+        $currentNode = $this->iShouldHaveOneNode();
+        $expected = false;
+        if (empty($not)) {
+            $expected = true;
+        }
+        Assert::assertEquals($expected, $currentNode->hasProperty($propertyName));
+    }
+
+    /**
      * @Then /^the node should be hidden in index$/
      */
     public function theNodeShouldBeHiddenInIndex()

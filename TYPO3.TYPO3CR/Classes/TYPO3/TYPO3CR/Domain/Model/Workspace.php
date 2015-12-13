@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
@@ -70,6 +71,12 @@ class Workspace
      * @var \TYPO3\TYPO3CR\Service\PublishingServiceInterface
      */
     protected $publishingService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\TYPO3CR\Domain\Service\NodeService
+     */
+    protected $nodeService;
 
     /**
      * Constructs a new workspace
@@ -232,6 +239,7 @@ class Workspace
                 $targetNodeData->setPath($node->getPath(), false);
             }
             $node->setNodeData($targetNodeData);
+            $this->nodeService->cleanUpProperties($node);
         }
         $this->nodeDataRepository->remove($sourceNodeData);
     }
@@ -259,6 +267,7 @@ class Workspace
             $this->nodeDataRepository->remove($nodeData);
         } else {
             $nodeData->setWorkspace($targetWorkspace);
+            $this->nodeService->cleanUpProperties($node);
         }
         $node->setNodeDataIsMatchingContext(null);
     }
@@ -342,4 +351,5 @@ class Workspace
     protected function emitAfterNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
     {
     }
+
 }

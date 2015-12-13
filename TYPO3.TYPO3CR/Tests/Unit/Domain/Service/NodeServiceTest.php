@@ -227,8 +227,13 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeService = $this->createNodeService();
 
         $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
-
+        $mockNodeData = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
+
+        $mockNodeData->expects($this->once())
+            ->method('removeProperty')
+            ->with('invalidProperty');
+
         $mockNodeType->expects($this->once())
             ->method('getProperties')
             ->will($this->returnValue(array(
@@ -237,12 +242,16 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
             )));
 
         $mockNode->expects($this->once())
-            ->method('getNodeType')
-            ->will($this->returnValue($mockNodeType));
+            ->method('isRemoved')
+            ->will($this->returnValue(false));
 
         $mockNode->expects($this->once())
-            ->method('removeProperty')
-            ->with('invalidProperty');
+            ->method('getNodeData')
+            ->will($this->returnValue($mockNodeData));
+
+        $mockNode->expects($this->once())
+            ->method('getNodeType')
+            ->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->once())
             ->method('getProperties')
