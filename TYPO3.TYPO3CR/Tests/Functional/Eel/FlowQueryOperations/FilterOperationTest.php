@@ -161,7 +161,8 @@ class FilterOperationTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function notInstanceofFilterUsingNodeTypeIsSupported() {
+    public function notInstanceofFilterUsingNodeTypeIsSupported()
+    {
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
@@ -240,7 +241,8 @@ class FilterOperationTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function doubleNegatedInstanceofFilterUsingNodeTypeIsSupported() {
+    public function doubleNegatedInstanceofFilterUsingNodeTypeIsSupported()
+    {
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
