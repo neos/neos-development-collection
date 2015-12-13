@@ -90,7 +90,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
         $this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
-        $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
+        $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', array(), array())));
 
         $this->mockTsContext = array('node' => $this->mockNode);
         $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));

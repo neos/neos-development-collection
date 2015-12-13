@@ -24,7 +24,6 @@ require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Beha
  */
 class FeatureContext extends MinkContext
 {
-
     /**
      * @var \TYPO3\Flow\Object\ObjectManagerInterface
      */
