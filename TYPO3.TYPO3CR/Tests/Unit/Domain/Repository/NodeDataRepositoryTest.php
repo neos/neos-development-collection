@@ -25,7 +25,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $this->nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace'));
+        $this->nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql'));
         $this->nodeDataRepository->expects($this->any())->method('filterNodesOverlaidInBaseWorkspace')->will($this->returnCallback(function (array $foundNodes, Workspace $baseWorkspace, $dimensions) {
             return $foundNodes;
         }));
@@ -132,6 +132,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $recursiveFlag = true;
 
         $this->nodeDataRepository->expects($this->once())->method('getNodeDataForParentAndNodeType')->with($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, $removedNodesFlag, $recursiveFlag)->will($this->returnValue(array()));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->with($nodeTypeFilter)->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array($nodeTypeFilter))));
 
         $this->nodeDataRepository->findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, true);
     }
@@ -155,6 +156,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
         $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue(array()));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array())));
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 
