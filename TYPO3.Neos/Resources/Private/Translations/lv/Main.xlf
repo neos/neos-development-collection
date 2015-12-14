@@ -8,7 +8,7 @@
 			<target xml:lang="lv">Automātiska publicēšana</target><alt-trans><target xml:lang="lv">Automātiski publicēt</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="lv" state="translated">Publicēt automātiski</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="lv">Apstiprināt</target></trans-unit>
@@ -496,7 +496,7 @@
 			<target xml:lang="lv">Rādīt</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="lv" state="translated">Šim mezglam nevar piekļūt caur publisko URL</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šim mezglam nevar piekļūt ar publisko URL</target><alt-trans><target xml:lang="lv">Šim mezglam nevar piekļūt caur publisko URL</target></alt-trans></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
 			<target xml:lang="lv" state="translated">Mezgla iestatījumi</target></trans-unit>
