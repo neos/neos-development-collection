@@ -8,7 +8,7 @@
 			<target xml:lang="lv">Automātiska publicēšana</target><alt-trans><target xml:lang="lv">Automātiski publicēt</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="lv" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="lv">Apstiprināt</target></trans-unit>
@@ -30,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="lv">Saturs</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="lv" state="translated">Mezgls</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="lv" state="translated">Satura skats</target></trans-unit>
@@ -119,16 +122,16 @@
 			<target xml:lang="lv">Publicēt</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="lv" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">{0} publicēt</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="lv" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="lv" state="translated">Publicēt visas izmaiņas esošajā lapā</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="lv" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nevar publicēt, jo izvēlētā darba virsma ļauj tikai lasīt</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="lv" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="lv" state="translated">Publicēšana</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="lv">Publicēts</target></trans-unit>
@@ -137,7 +140,7 @@
 			<target xml:lang="lv">Mērķa darbavieta</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="lv" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pašreizējā darba virsma</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="lv">Noņemt</target></trans-unit>
@@ -483,7 +486,20 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="lv" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">"{nodeTypeName}" lapā "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="lv" state="translated">Mezgli</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="lv">Rādīt</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="lv" state="translated">Šim mezglam nevar piekļūt ar publisko URL</target><alt-trans><target xml:lang="lv">Šim mezglam nevar piekļūt caur publisko URL</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="lv" state="translated">Mezgla iestatījumi</target></trans-unit>
     </body>
   </file>
 </xliff>

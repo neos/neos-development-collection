@@ -267,7 +267,7 @@ class UserService
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
-        $user->addAccount($account);
+        $this->partyService->assignAccountToParty($account, $user);
 
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
