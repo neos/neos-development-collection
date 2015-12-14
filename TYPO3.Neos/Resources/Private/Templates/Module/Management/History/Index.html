@@ -39,9 +39,8 @@
 </f:section>
 
 <f:if condition="{nextPage}">
-	<button class="loadMore">Load more</button>
+	<button class="loadMore" data-neos-history-nextpage="{nextPage}">Load more</button>
 </f:if>
-<div class="neos-history-nextpage">{nextPage}</div>
 
 <script>
 	$(function() {
@@ -55,8 +54,8 @@
 				type: 'GET'
 			}).done(function(data) {
 
-				nextPage = $(data).find('.neos-history-nextpage').html();
-				if (nextPage == '') {
+				nextPage = $(data).find('button.loadMore').data('neos-history-nextpage');
+				if (typeof nextPage === 'undefined') {
 					$('.loadMore').hide();
 				}
 
