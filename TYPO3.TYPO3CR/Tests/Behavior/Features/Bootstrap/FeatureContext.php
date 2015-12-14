@@ -24,7 +24,6 @@ use TYPO3\TYPO3CR\Service\PublishingServiceInterface;
  */
 class FeatureContext extends Behat\Behat\Context\BehatContext
 {
-
     /**
      * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
      */

@@ -351,5 +351,4 @@ class Workspace
     protected function emitAfterNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
     {
     }
-
 }

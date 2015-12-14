@@ -90,7 +90,7 @@ class NodeService
      */
     public function cleanUpProperties(NodeInterface $node)
     {
-        if ($node->isRemoved() === FALSE) {
+        if ($node->isRemoved() === false) {
             $nodeData = $node->getNodeData();
             $nodeTypeProperties = $node->getNodeType()->getProperties();
             foreach ($node->getProperties() as $name => $value) {
