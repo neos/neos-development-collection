@@ -176,13 +176,6 @@ class SiteImportService
         if ($this->workspaceRepository->findOneByName('live') === null) {
             $this->workspaceRepository->add(new Workspace('live'));
         }
-        $rootNode = $this->contextFactory->create()->getRootNode();
-        $this->persistenceManager->persistAll();
-
-        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
-        if ($sitesNode === null) {
-            $sitesNode = $rootNode->createSingleNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-        }
 
         while ($xmlReader->read()) {
             if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
@@ -190,8 +183,7 @@ class SiteImportService
             }
             $isLegacyFormat = $xmlReader->getAttribute('nodeName') !== null && $xmlReader->getAttribute('state') === null && $xmlReader->getAttribute('siteResourcesPackageKey') === null;
             if ($isLegacyFormat) {
-                $site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
-                return;
+                return $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
             }
 
             $site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
