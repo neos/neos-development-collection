@@ -438,9 +438,24 @@ class NodeDataRepository extends Repository
         } else {
             $childNodeDepth = substr_count($parentPath, '/') + 1;
             /** @var $addedNode NodeData */
+            $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
             foreach ($this->addedNodes as $addedNode) {
                 if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/') && $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)) {
-                    $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                    $nodeType = $addedNode->getNodeType();
+                    $disallowed = false;
+                    foreach ($constraints['includeNodeTypes'] as $includeNodeType) {
+                        if (!$nodeType->isOfType($includeNodeType)) {
+                            $disallowed = true;
+                        }
+                    }
+                    foreach ($constraints['excludeNodeTypes'] as $excludeNodeTypes) {
+                        if ($nodeType->isOfType($excludeNodeTypes)) {
+                            $disallowed = true;
+                        }
+                    }
+                    if ($disallowed === false) {
+                        $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                    }
                 }
             }
             /** @var $removedNode NodeData */
