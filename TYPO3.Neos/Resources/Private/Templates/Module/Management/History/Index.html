@@ -39,7 +39,9 @@
 </f:section>
 
 <f:if condition="{nextPage}">
-	<button class="loadMore" data-neos-history-nextpage="{nextPage}">Load more</button>
+  <div class="loadMore" data-neos-history-nextpage="{nextPage}">
+	  <button>Load more</button>
+  </div>
 </f:if>
 
 <script>
@@ -47,14 +49,14 @@
 
 		var nextPage = '{nextPage}';
 		var historyContainer = $('.neos-history');
-		$('.loadMore').click(function() {
+		$('.loadMore button').click(function() {
 
 			$.ajax({
 				url: nextPage,
 				type: 'GET'
 			}).done(function(data) {
 
-				nextPage = $(data).find('button.loadMore').data('neos-history-nextpage');
+				nextPage = $(data).find('div.loadMore').data('neos-history-nextpage');
 				if (typeof nextPage === 'undefined') {
 					$('.loadMore').hide();
 				}

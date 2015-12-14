@@ -122,7 +122,11 @@
 	}
 
 	.loadMore {
-		margin-top: 25px;
-		margin-bottom: 25px;
+		text-align: center;
+
+		button {
+			margin-top: 25px;
+			margin-bottom: 25px;
+		}
 	}
 }
