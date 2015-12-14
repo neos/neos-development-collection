@@ -64,12 +64,11 @@
 				var days = $(data).find('.neos-history-day');
 				days.each(function(index, day) {
 					var date = $(day).data('date');
+					var $existingDay = $('[data-date="' + date + '"]');
 
-					if ($('[data-date="' + date + '"]').length > 0) {
-						var existingDay = $('[data-date="' + date + '"]');
-
+					if ($existingDay.length > 0) {
 						$(day).find('.neos-history-event').each(function(index, event) {
-							existingDay.find('.neos-history-events').append(event);
+							$existingDay.find('.neos-history-events').append(event);
 						});
 
 					} else {
