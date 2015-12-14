@@ -791,7 +791,7 @@ class UserService
     {
         /** @var Workspace $workspace */
         foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
-            $workspace->setOwner();
+            $workspace->setOwner(null);
             $this->workspaceRepository->update($workspace);
         }
     }
