@@ -11,4 +11,7 @@ This version of the documentation covering Neos Media |release| has been rendere
 .. toctree::
    :maxdepth: 2
 
+   Commands/index
+   ThumbnailPresets
+   AsynchronousThumbnails
    ThumbnailGenerator/index

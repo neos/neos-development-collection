@@ -12,12 +12,6 @@ method. The ``refresh`` method receives a ``Thumbnail`` object, based on this ob
 generate a thumbnail. In most cases the Thumbnail can be persisted by attaching the new resource to the ``Thumbnail``
 object.
 
-Transient Thumbnail
--------------------
-
-Sometimes, the persistence is not required, in this case you can mark the Thumbnail as transient, by calling the
-method ``Thumbnail::setTransient(true)``, check the SVG or Icon Generator for examples of transient Thumbnails.
-
 Determine if a Generator can handle the current Thumbnail
 ---------------------------------------------------------
 

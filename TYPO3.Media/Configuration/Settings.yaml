@@ -58,3 +58,41 @@ TYPO3:
       - resource://TYPO3.Twitter.Bootstrap/Public/2/css/bootstrap.min.css
       - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
       - resource://TYPO3.Media/Public/Libraries/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.css
+
+  DocTools:
+    collections:
+      'Media':
+        commandReferences:
+          - 'Media:Commands'
+        references:
+          - 'Media:ViewHelpers'
+          - 'Media:Validators'
+
+    commandReferences:
+      'Media:Commands':
+        title: 'Media Command Reference'
+        packageKeys:
+          - 'TYPO3.Media'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/Commands.rst'
+
+    references:
+      'Media:Validators':
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/Validators.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+
+      'Media:ViewHelpers':
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/ViewHelpers.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              'typo3.media': 'TYPO3\Media\ViewHelpers'
