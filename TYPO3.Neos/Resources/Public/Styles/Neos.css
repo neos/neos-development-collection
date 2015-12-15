@@ -9518,9 +9518,6 @@
   line-height: 20px;
   padding: 10px 0 5px 0;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type {
-  white-space: nowrap;
-}
 .neos.neos-module.neos-module-management-workspaces td.node-type img {
   vertical-align: baseline;
 }
@@ -9535,40 +9532,75 @@
   -o-user-select: none;
   user-select: none;
 }
-.neos.neos-module.neos-module-management-workspaces th {
-  white-space: nowrap;
+.neos.neos-module.neos-module-management-workspaces td.neos-content-change {
+  border-top: 1px solid #ddd;
+  background-color: #eee;
+  color: #252525;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-workspace-type {
-  width: 46px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff {
+  line-height: 23.52941px;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-action {
-  width: 90px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table {
+  table-layout: fixed;
+  width: 100%;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-changes {
-  width: 120px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff td, .neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff th {
+  height: auto;
+  width: 50%;
+  vertical-align: top;
+  line-height: 20px;
+  padding: 10px 20px 10px 10px !important;
+  border-top: none;
+  white-space: normal;
+  background-color: #eee;
+  color: #252525;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type,
-.neos.neos-module.neos-module-management-workspaces td.relpath {
-  color: #5b5b5b;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff td img, .neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff th img {
+  max-width: 100%;
+  min-width: 50%;
+  max-height: 500px;
+  border: 20px solid #fff;
+  box-sizing: border-box;
 }
-.neos.neos-module.neos-module-management-workspaces i[class*="icon-"],
-.neos.neos-module.neos-module-management-workspaces i.legend {
+.neos.neos-module.neos-module-management-workspaces i[class*="icon-"] {
   vertical-align: baseline;
   text-align: center;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type i {
+.neos.neos-module.neos-module-management-workspaces td.neos-folder i[class*='icon'] {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 16px;
+  margin: 0;
   text-align: center;
-  padding-right: 4px;
+  font-size: 10px;
+  vertical-align: middle;
+}
+.neos.neos-module.neos-module-management-workspaces td.neos-folder i[class*='icon']:hover {
+  background: #00b5ff;
+}
+.neos.neos-module.neos-module-management-workspaces .path-caption {
+  padding-left: 15px !important;
+  padding-right: 0;
 }
 .neos.neos-module.neos-module-management-workspaces .fold-toggle {
   cursor: pointer;
   margin-top: -1px;
   margin-right: 11px;
 }
-.neos.neos-module.neos-module-management-workspaces td.legend,
-.neos.neos-module.neos-module-management-workspaces th.legend {
-  width: 14px;
-  padding: 0 10px;
+.neos.neos-module.neos-module-management-workspaces .legend-edited {
+  border-left: 8px solid #ff8700;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-deleted {
+  border-left: 8px solid #ff460d;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-created {
+  border-left: 8px solid #00a338;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-moved {
+  border-left: 8px solid #00b5ff;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-hidden {
+  border-left: 8px solid #fff;
 }
 .neos.neos-module.neos-module-management-workspaces td.actions {
   width: 144px;
@@ -9587,7 +9619,6 @@
 }
 .neos.neos-module.neos-module-management-workspaces .neos-change {
   box-sizing: border-box;
-  white-space: nowrap;
   letter-spacing: 1px;
   font-size: 16px;
 }
@@ -9602,6 +9633,14 @@
 }
 .neos.neos-module.neos-module-management-workspaces .neos-change-unchanged {
   color: #3f3f3f;
+}
+.neos.neos-module.neos-module-management-workspaces ins {
+  color: #00a338;
+  text-decoration: none;
+}
+.neos.neos-module.neos-module-management-workspaces del {
+  color: #9d261d;
+  text-decoration: none;
 }
 .neos.neos-module.neos-module-management-history .neos-history-events-divider {
   margin: 0;

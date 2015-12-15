@@ -137,8 +137,8 @@
 			<trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			</trans-unit>
-			<trans-unit id="workspaces.legendCaption" xml:space="preserve">
-				<source>Legend</source>
+			<trans-unit id="changedContentCaption" xml:space="preserve">
+				<source>Changed Content</source>
 			</trans-unit>
 			<trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
