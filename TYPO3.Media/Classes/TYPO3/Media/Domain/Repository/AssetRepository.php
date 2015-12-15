@@ -275,6 +275,7 @@ class AssetRepository extends Repository
         return $queryBuilder
             ->select('a')
             ->from($this->getEntityClassName(), 'a')
+            ->where('a NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant')
             ->getQuery()->iterate();
     }
 }
