@@ -140,9 +140,6 @@
 			<trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
 			</trans-unit>
-			<trans-unit id="workspaces.legendCaption" xml:space="preserve">
-				<source>Legend</source>
-			</trans-unit>
 			<trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			</trans-unit>
