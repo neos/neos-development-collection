@@ -120,7 +120,6 @@ class Asset implements AssetInterface
         $this->resource = $resource;
         $this->lastModified = new \DateTime();
         $this->assetCollections = new ArrayCollection();
-        $this->emitAssetCreated($this);
     }
 
     /**
@@ -132,6 +131,9 @@ class Asset implements AssetInterface
         // FIXME: This is a workaround for after the resource management changes that introduced the property.
         if ($this->thumbnails === null) {
             $this->thumbnails = new ArrayCollection();
+        }
+        if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+            $this->emitAssetCreated($this);
         }
     }
 

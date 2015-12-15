@@ -87,7 +87,6 @@ class Thumbnail implements ImageInterface
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
         $this->async = $configuration->isAsync();
-        $this->emitThumbnailCreated($this);
     }
 
     /**
@@ -98,8 +97,11 @@ class Thumbnail implements ImageInterface
      */
     public function initializeObject($initializationCause)
     {
-        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED && $this->async === false) {
-            $this->refresh();
+        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+            if ($this->async === false) {
+                $this->refresh();
+            }
+            $this->emitThumbnailCreated($this);
         }
     }
 
