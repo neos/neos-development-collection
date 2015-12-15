@@ -14,6 +14,7 @@ namespace TYPO3\Neos\EventLog\Domain\Repository;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Doctrine\Repository;
 use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**
  * The repository for events
@@ -30,13 +31,49 @@ class EventRepository extends Repository
     );
 
     /**
+     * Find all events which are "top-level" and in a given workspace (or are not NodeEvents)
+     *
+     * @param integer $offset
+     * @param integer $limit
+     * @param string $workspaceName
+     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     */
+    public function findRelevantEventsByWorkspace($offset, $limit, $workspaceName)
+    {
+        $query = $this->prepareRelevantEventsQuery();
+        $query->getQueryBuilder()->select('DISTINCT e');
+        $query->getQueryBuilder()
+            ->andWhere('e NOT INSTANCE OF ' . NodeEvent::class . ' OR e IN (SELECT nodeevent.uid FROM ' . NodeEvent::class . ' nodeevent WHERE nodeevent.workspaceName = :workspaceName AND nodeevent.parentEvent IS NULL)')
+            ->setParameter('workspaceName', $workspaceName);
+        $query->getQueryBuilder()->setFirstResult($offset);
+        $query->getQueryBuilder()->setMaxResults($limit);
+
+        return $query->execute();
+    }
+
+    /**
      * Find all events which are "top-level", i.e. do not have a parent event.
+     *
      * @param integer $offset
      * @param integer $limit
      * @return \TYPO3\Flow\Persistence\QueryResultInterface
      * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
      */
     public function findRelevantEvents($offset, $limit)
+    {
+        $query = $this->prepareRelevantEventsQuery();
+
+        $query->getQueryBuilder()->setFirstResult($offset);
+        $query->getQueryBuilder()->setMaxResults($limit);
+
+        return $query->execute();
+    }
+
+    /**
+     * @return \TYPO3\Flow\Persistence\Doctrine\Query
+     */
+    protected function prepareRelevantEventsQuery()
     {
         $query = $this->createQuery();
         $queryBuilder = $query->getQueryBuilder();
@@ -47,10 +84,7 @@ class EventRepository extends Repository
 
         $queryBuilder->orderBy('e.uid', 'DESC');
 
-        $queryBuilder->setFirstResult($offset);
-        $queryBuilder->setMaxResults($limit);
-
-        return $query->execute();
+        return $query;
     }
 
     /**
