@@ -89,7 +89,7 @@ class ThumbnailService
         // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
         // dimensions differ from the specified image dimensions, otherwise the original image is returned.
         if ($asset instanceof ImageInterface) {
-            if ($asset->getWidth() === NULL && $asset->getHeight() === NULL) {
+            if ($asset->getWidth() === null && $asset->getHeight() === null) {
                 return $asset;
             }
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
@@ -189,7 +189,8 @@ class ThumbnailService
      * @param Thumbnail $thumbnail
      * @return string
      */
-    public function getUriForThumbnail(Thumbnail $thumbnail) {
+    public function getUriForThumbnail(Thumbnail $thumbnail)
+    {
         $resource = $thumbnail->getResource();
         if ($resource) {
             return $this->resourceManager->getPublicPersistentResourceUri($resource);
@@ -212,5 +213,4 @@ class ThumbnailService
         }
         return $this->resourceManager->getPublicPackageResourceUri($matches[1], $matches[2]);
     }
-
 }

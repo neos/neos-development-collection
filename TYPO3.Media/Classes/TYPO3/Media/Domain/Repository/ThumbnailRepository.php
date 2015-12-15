@@ -101,7 +101,7 @@ class ThumbnailRepository extends Repository
     public function countUngenerated()
     {
         $query = $this->createQuery();
-        $query->matching($query->logicalAnd($query->equals('resource', NULL), $query->equals('staticResource', NULL)));
+        $query->matching($query->logicalAnd($query->equals('resource', null), $query->equals('staticResource', null)));
         return $query->count();
     }
 
