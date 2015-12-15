@@ -23,10 +23,10 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
 class ThumbnailGenerator
 {
     /**
-     * @Flow\InjectConfiguration("autoGenerateThumbnailPresets")
+     * @Flow\InjectConfiguration("autoCreateThumbnailPresets")
      * @var boolean
      */
-    protected $autoGenerateThumbnailPresets;
+    protected $autoCreateThumbnailPresets;
 
     /**
      * If enabled
@@ -45,9 +45,9 @@ class ThumbnailGenerator
      * @param AssetInterface $image
      * @return void
      */
-    public function generateThumbnails(AssetInterface $image)
+    public function createThumbnails(AssetInterface $image)
     {
-        if ($this->autoGenerateThumbnailPresets) {
+        if ($this->autoCreateThumbnailPresets) {
             foreach ($this->thumbnailService->getPresets() as $preset => $presetConfiguration) {
                 $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $this->asyncThumbnails);
                 $this->thumbnailService->getThumbnail($image, $thumbnailConfiguration);

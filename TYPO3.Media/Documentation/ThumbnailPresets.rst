@@ -5,7 +5,7 @@ Thumbnail Presets
 Introduction
 ------------
 
-Thumbnail presets allows thumbnails to be easily reused to reduce the amount of generated thumbnails.
+Thumbnail presets allows thumbnails to be easily reused to reduce the amount of rendered thumbnails.
 
 Configuration
 -------------
@@ -26,9 +26,9 @@ Optimization
 ------------
 
 When new assets are uploaded, thumbnails for the configured presets are automatically created, unless disabled using the
-configuration setting ``TYPO3.Media.autoGenerateThumbnailPresets``.
+configuration setting ``TYPO3.Media.autoCreateThumbnailPresets``.
 
-If :ref:`Asynchronous Thumbnail Generation` is disabled, the thumbnails will be generated immediately making
+If :ref:`Asynchronous Thumbnail Generation` is disabled, the thumbnails will be rendered immediately making
 uploading slower.
 
 Utilities

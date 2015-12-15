@@ -124,7 +124,12 @@ class MediaCommandController extends CommandController
     }
 
     /**
-     * Generate thumbnails for thumbnail presets
+     * Create thumbnails
+     *
+     * Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
+     * thumbnails for a specific thumbnail preset configuration.
+     *
+     * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string $preset Preset name, if not provided thumbnails are created for all presets
      * @param boolean $async Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
@@ -151,7 +156,10 @@ class MediaCommandController extends CommandController
     }
 
     /**
-     * Remove all thumbnail objects and resources
+     * Remove thumbnails
+     *
+     * Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
+     * matching a specific thumbnail preset configuration.
      *
      * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
      * @return void
@@ -175,12 +183,15 @@ class MediaCommandController extends CommandController
     }
 
     /**
-     * Generate uninitialized asynchronous thumbnails
+     * Render ungenerated thumbnails
      *
-     * @param integer $limit
+     * Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
+     * thumbnails to be rendered to avoid memory exhaustion.
+     *
+     * @param integer $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
      * @return void
      */
-    public function generateThumbnailsCommand($limit = null)
+    public function renderThumbnailsCommand($limit = null)
     {
         $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();

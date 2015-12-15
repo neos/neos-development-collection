@@ -33,9 +33,10 @@ Package *TYPO3.MEDIA*
 ``typo3.media:media:clearthumbnails``
 *************************************
 
-**Remove all thumbnail objects and resources**
+**Remove thumbnails**
 
-
+Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
+matching a specific thumbnail preset configuration.
 
 
 
@@ -54,9 +55,12 @@ Options
 ``typo3.media:media:createthumbnails``
 **************************************
 
-**Generate thumbnails for thumbnail presets**
+**Create thumbnails**
 
+Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
+thumbnails for a specific thumbnail preset configuration.
 
+Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
 
 
 
@@ -67,27 +71,6 @@ Options
   Preset name, if not provided thumbnails are created for all presets
 ``--async``
   Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
-
-
-
-
-
-.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:generatethumbnails`:
-
-``typo3.media:media:generatethumbnails``
-****************************************
-
-**Generate uninitialized asynchronous thumbnails**
-
-
-
-
-
-Options
-^^^^^^^
-
-``--limit``
-  
 
 
 
@@ -111,6 +94,28 @@ Options
 
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
+
+
+
+
+
+.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:renderthumbnails`:
+
+``typo3.media:media:renderthumbnails``
+**************************************
+
+**Render ungenerated thumbnails**
+
+Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
+thumbnails to be rendered to avoid memory exhaustion.
+
+
+
+Options
+^^^^^^^
+
+``--limit``
+  Limit the amount of thumbnails to be rendered to avoid memory exhaustion
 
 
 
