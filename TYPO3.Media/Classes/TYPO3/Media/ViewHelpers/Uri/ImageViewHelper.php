@@ -17,7 +17,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
- * Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
+ * Renders the src path of a thumbnail image of a given TYPO3.Media image instance
  *
  * = Examples =
  *
@@ -31,7 +31,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image path with scaling at a given width only">
- * {typo3.media:uri.image(image: assetObject, maximumWidth: 80)}
+ * {typo3.media:uri.image(image: imageObject, maximumWidth: 80)}
  * </code>
  * <output>
  * (depending on the image; has scaled keeping the aspect ratio)
@@ -60,12 +60,12 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        // @deprecated since 2.1 use "asset" argument instead
-        $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
+        // @deprecated since 2.0 use the "image" argument instead
+        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
-     * Renders the path to a thumbnail image, created from a given asset.
+     * Renders the path to a thumbnail image, created from a given image.
      *
      * @param AssetInterface $asset
      * @param integer $width Desired width of the image

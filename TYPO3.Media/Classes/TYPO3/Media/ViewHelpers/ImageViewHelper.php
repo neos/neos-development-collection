@@ -13,11 +13,11 @@ namespace TYPO3\Media\ViewHelpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
- * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+ * Renders an <img> HTML tag from a given TYPO3.Media's image instance
  *
  * = Examples =
  *
@@ -96,12 +96,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
-        // @deprecated since 2.1 use "asset" argument instead
-        $this->registerArgument('image', 'TYPO3\Media\Domain\Model\ImageInterface', 'The image to be rendered - DEPRECATED, use "asset" argument instead', false);
+        // @deprecated since 2.0 use the "image" argument instead
+        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
-     * Renders an HTML img tag with a thumbnail image, created from a given asset.
+     * Renders an HTML img tag with a thumbnail image, created from a given image.
      *
      * @param AssetInterface $asset The asset to be rendered as an image
      * @param integer $width Desired width of the image

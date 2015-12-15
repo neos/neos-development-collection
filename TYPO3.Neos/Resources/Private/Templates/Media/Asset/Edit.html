@@ -107,7 +107,7 @@
 	<label>{neos:backend.translate(id: 'media.preview', source: 'Modules', package: 'TYPO3.Neos')}</label>
 	<div class="neos-preview-image">
 		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-			<m:image asset="{asset}" preset="TYPO3.Neos:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
+			<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
 		</a>
 	</div>
 </f:section>
