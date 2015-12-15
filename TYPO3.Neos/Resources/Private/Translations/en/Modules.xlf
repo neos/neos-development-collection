@@ -335,6 +335,9 @@
 			<trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
 			</trans-unit>
+			<trans-unit id="userSettings.usermenu" xml:space="preserve">
+				<source>User Menu</source>
+			</trans-unit>
 			<trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
 			</trans-unit>
