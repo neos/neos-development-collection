@@ -1,7 +1,7 @@
 Thumbnail Generator
 ===================
 
-.. Thumbnail Genertors give developpers a lots of flexibility on how to generate Thumbnail from any kind of Assets.
+.. Thumbnail Generators allows generating thumbnails for different kinds of assets.
 
 
 .. toctree::

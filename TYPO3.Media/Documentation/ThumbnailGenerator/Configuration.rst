@@ -2,8 +2,8 @@
 Configuration
 =============
 
-How to configuration Generator Priority
-=======================================
+How to configure Generator Priority
+===================================
 
 In some cases, you need to replace the current Generator by your own implementation or for exemple to replace
 the PDF Thumbnail Generator by the Icon Generator for a specific project.
