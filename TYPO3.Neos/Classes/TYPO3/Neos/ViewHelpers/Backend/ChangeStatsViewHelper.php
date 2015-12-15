@@ -35,18 +35,24 @@ class ChangeStatsViewHelper extends AbstractViewHelper
     public function render(array $changeCounts)
     {
         if ($changeCounts['total'] === 0) {
-            return str_repeat('<span class="neos-change neos-change-unchanged">■</span>', 10);
+            return '
+            <div class="neos-change-stats">
+                <span class="unchanged" style="width: 100%"></span>
+            </div>
+        ';
         }
 
         $changeCountRatios = [
-            'new' => round($changeCounts['new'] / $changeCounts['total'] * 10),
-            'changed' => round($changeCounts['changed'] / $changeCounts['total'] * 10),
-            'removed' => round($changeCounts['removed'] / $changeCounts['total'] * 10)
+            'new' => ($changeCounts['new'] / $changeCounts['total'] * 100),
+            'changed' => ($changeCounts['changed'] / $changeCounts['total'] * 100),
+            'removed' => ($changeCounts['removed'] / $changeCounts['total'] * 100)
         ];
 
-        return
-            str_repeat('<span class="neos-change neos-change-new">■</span>', $changeCountRatios['new']) .
-            str_repeat('<span class="neos-change neos-change-changed">■</span>', $changeCountRatios['changed']) .
-            str_repeat('<span class="neos-change neos-change-removed">■</span>', $changeCountRatios['removed']);
+        return '
+            <div class="neos-change-stats">
+                <span class="new" style="width: ' . $changeCountRatios['new'] . '%"></span><span class="changed" style="width: ' . $changeCountRatios['changed'] . '%"></span><span class="removed" style="width: ' . $changeCountRatios['removed'] . '%"></span>
+            </div>
+        ';
+
     }
 }

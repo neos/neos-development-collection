@@ -141,26 +141,34 @@
 		}
 	}
 
-	.neos-change {
-		box-sizing: border-box;
-		letter-spacing: 1px;
-		font-size: 16px;
-	}
+	.neos-change-stats {
+		width: 100px;
+		height: 40px;
+		position: relative;
+		display: inline-block;
 
-	.neos-change-new {
-		color: $green;
-	}
+		span {
+			display: inline-block;
+			height: 8px;
+			position: relative;
+			overflow: hidden;
+		}
 
-	.neos-change-changed {
-		color: $orange;
-	}
+		.new {
+			background-color: $green;
+		}
 
-	.neos-change-removed {
-		color: $warning;
-  	}
+		.changed {
+			background-color: $orange;
+		}
 
-	.neos-change-unchanged {
-		color: $grayLight;
+		.removed {
+			background-color: $warning;
+		}
+
+		.unchanged {
+			background-color: $grayLight;
+		}
 	}
 
 	ins {
