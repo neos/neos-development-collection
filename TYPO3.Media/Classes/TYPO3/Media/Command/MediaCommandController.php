@@ -13,7 +13,6 @@ namespace TYPO3\Media\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -47,12 +46,6 @@ class MediaCommandController extends CommandController
      * @var AssetRepository
      */
     protected $assetRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ImageRepository
-     */
-    protected $imageRepository;
 
     /**
      * @Flow\Inject
@@ -145,10 +138,10 @@ class MediaCommandController extends CommandController
         foreach ($presets as $preset) {
             $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         }
-        $iterator = $this->imageRepository->findAllIterator();
-        $imageCount = $this->imageRepository->countAll();
+        $iterator = $this->assetRepository->findAllIterator();
+        $imageCount = $this->assetRepository->countAll();
         $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
-        foreach ($this->imageRepository->iterate($iterator) as $image) {
+        foreach ($this->assetRepository->iterate($iterator) as $image) {
             foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
                 $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
                 $this->persistenceManager->persistAll();
