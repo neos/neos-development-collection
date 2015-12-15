@@ -32,13 +32,13 @@
 				<td>
 					<f:if condition="{asset.width}">
 						<f:then>
-							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:image(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: asset.label) -> f:format.htmlentities()}">
-								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}" />
+							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:thumbnail(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: asset.label) -> f:format.htmlentities()}">
+								<m:thumbnail asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}" />
 							</div>
 						</f:then>
 						<f:else>
 							<div class="neos-list-thumbnail">
-								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}" />
+								<m:thumbnail asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}" />
 							</div>
 						</f:else>
 					</f:if>
