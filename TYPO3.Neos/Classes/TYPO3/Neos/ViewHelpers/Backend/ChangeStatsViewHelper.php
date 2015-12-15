@@ -53,6 +53,5 @@ class ChangeStatsViewHelper extends AbstractViewHelper
                 <span class="new" style="width: ' . $changeCountRatios['new'] . '%"></span><span class="changed" style="width: ' . $changeCountRatios['changed'] . '%"></span><span class="removed" style="width: ' . $changeCountRatios['removed'] . '%"></span>
             </div>
         ';
-
     }
 }
