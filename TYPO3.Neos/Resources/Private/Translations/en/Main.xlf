@@ -455,6 +455,9 @@
 			<trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			</trans-unit>
+			<trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			</trans-unit>
 
 			<!-- Error handlers -->
 			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
