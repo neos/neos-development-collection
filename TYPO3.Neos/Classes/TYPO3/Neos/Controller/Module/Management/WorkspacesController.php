@@ -25,7 +25,6 @@ use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Domain\Service\SiteService;
@@ -33,6 +32,7 @@ use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 use TYPO3\TYPO3CR\Utility;
 
 /**
@@ -80,13 +80,6 @@ class WorkspacesController extends AbstractModuleController
     protected $contextFactory;
 
     /**
-     * A cache for already built content contexts, indexed by workspace name
-     *
-     * @var ContentContext[]
-     */
-    protected $contextContexts = [];
-
-    /**
      * @Flow\Inject
      * @var PropertyMappingConfigurationBuilder
      */
@@ -110,10 +103,10 @@ class WorkspacesController extends AbstractModuleController
     protected function initializeAction()
     {
         if ($this->arguments->hasArgument('node')) {
-            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         if ($this->arguments->hasArgument('nodes')) {
-            $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->forProperty('*')->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->forProperty('*')->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         parent::initializeAction();
     }
@@ -368,7 +361,7 @@ class WorkspacesController extends AbstractModuleController
     public function publishOrDiscardNodesAction(array $nodes, $action, Workspace $selectedWorkspace = null)
     {
         $propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
-        $propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, true);
+        $propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
         foreach ($nodes as $key => $node) {
             $nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
         }
@@ -464,7 +457,8 @@ class WorkspacesController extends AbstractModuleController
                     $siteNodeName = $pathParts[2];
                     $q = new FlowQuery([$node]);
                     $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-                    // FIXME: $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
+
+                    // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
                         $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
@@ -515,51 +509,53 @@ class WorkspacesController extends AbstractModuleController
     protected function getOriginalNode(NodeInterface $modifiedNode)
     {
         $baseWorkspaceName = $modifiedNode->getWorkspace()->getBaseWorkspace()->getName();
-        if (!isset($this->contextContexts[$baseWorkspaceName])) {
-            $contextProperties = $modifiedNode->getContext()->getProperties();
-            $contextProperties['workspaceName'] = $baseWorkspaceName;
-            $this->contextContexts[$baseWorkspaceName] = $this->contextFactory->create($contextProperties);
-        }
-        return $this->contextContexts[$baseWorkspaceName]->getNodeByIdentifier($modifiedNode->getIdentifier());
+        $contextProperties = $modifiedNode->getContext()->getProperties();
+        $contextProperties['workspaceName'] = $baseWorkspaceName;
+        $contentContext = $this->contextFactory->create($contextProperties);
+
+        return $contentContext->getNodeByIdentifier($modifiedNode->getIdentifier());
     }
 
     /**
-     *
+     * Renders the difference between the original and the changed content of the given node and returns it, along
+     * with meta information, in an array.
      *
      * @param NodeInterface $changedNode
      * @return array
-     * @see renderSlimmedDownContentForNodeProperty()
      */
     protected function renderContentChanges(NodeInterface $changedNode)
     {
         $contentChanges = [];
         $originalNode = $this->getOriginalNode($changedNode);
+        $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties($changedNode);
 
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {
-            if ($originalNode === null && empty($changedPropertyValue)) {
+            if ($originalNode === null && empty($changedPropertyValue) || (isset($changeNodePropertiesDefaults[$propertyName]) && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName])) {
                 continue;
             }
 
             $originalPropertyValue = ($originalNode === null ? null : $originalNode->getProperty($propertyName));
-            if ($changedPropertyValue === $originalPropertyValue) {
+
+            if ($changedPropertyValue === $originalPropertyValue && !$changedNode->isRemoved()) {
                 continue;
             }
 
             if (!is_object($originalPropertyValue) && !is_object($changedPropertyValue)) {
                 $originalSlimmedDownContent = $this->renderSlimmedDownContent($originalPropertyValue);
-                $changedSlimmedDownContent = $this->renderSlimmedDownContent($changedPropertyValue);
+                $changedSlimmedDownContent = $changedNode->isRemoved() ? '' : $this->renderSlimmedDownContent($changedPropertyValue);
 
-                $diff = new Diff(explode("\n", $originalSlimmedDownContent), explode("\n", $changedSlimmedDownContent),
-                    ['context' => 1]);
+                $diff = new Diff(explode("\n", $originalSlimmedDownContent), explode("\n", $changedSlimmedDownContent), ['context' => 1]);
                 $diffArray = $diff->render($renderer);
                 $this->postProcessDiffArray($diffArray);
 
-                $contentChanges[$propertyName] = [
-                    'type' => 'text',
-                    'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
-                    'diff' => $diffArray
-                ];
+                if (count($diffArray) > 0) {
+                    $contentChanges[$propertyName] = [
+                        'type' => 'text',
+                        'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                        'diff' => $diffArray
+                    ];
+                }
             } elseif ($originalPropertyValue instanceof AssetInterface || $changedPropertyValue instanceof AssetInterface) {
                 $contentChanges[$propertyName] = [
                     'type' => 'asset',

@@ -152,7 +152,7 @@ class HtmlArrayRenderer extends AbstractRenderer
         $lines = array_map(array($this, 'HtmlSafe'), $lines);
         foreach ($lines as &$line) {
             $line = preg_replace_callback('# ( +)|^ #', function(array $matches) {
-                return (isset($matches[1]) ? $this->fixSpaces($matches[1]) : '');
+                return (isset($matches[1]) ? $matches[1] : '');
             }, $line);
         }
         return $lines;

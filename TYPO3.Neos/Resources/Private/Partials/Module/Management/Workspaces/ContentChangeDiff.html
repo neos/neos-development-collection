@@ -23,12 +23,12 @@
                                     <tr>
                                         <td>
                                             <f:for each="{block.base.lines}" as="line">
-                                                <p>{line -> f:format.raw()}</p>
+                                                {line -> f:format.raw()}
                                             </f:for>
                                         </td>
                                         <td>
                                             <f:for each="{block.changed.lines}" as="line">
-                                                <p>{line -> f:format.raw()}</p>
+                                                {line -> f:format.raw()}
                                             </f:for>
                                         </td>
                                     </tr>
