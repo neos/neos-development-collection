@@ -82,7 +82,7 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
         return [
             'width' => $iconSize,
             'height' => $iconSize,
-            'src' => $this->resourceManager->getPublicPackageResourceUri($iconPackage, $icon)
+            'src' => 'resource://' . $iconPackage . '/Public/' . $icon
         ];
     }
 

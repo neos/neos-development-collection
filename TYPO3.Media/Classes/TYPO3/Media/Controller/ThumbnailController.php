@@ -12,7 +12,6 @@ namespace TYPO3\Media\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
@@ -30,12 +29,6 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected $thumbnailService;
 
     /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
      * Generate thumbnail and redirect to resource URI
      *
      * @param Thumbnail $thumbnail
@@ -43,14 +36,9 @@ class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     public function thumbnailAction(Thumbnail $thumbnail)
     {
-        if ($thumbnail->getResource() === null) {
+        if ($thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
             $this->thumbnailService->refreshThumbnail($thumbnail);
         }
-        if ($thumbnail->isTransient()) {
-            $uri = $thumbnail->getStaticResource();
-        } else {
-            $uri = $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource());
-        }
-        $this->redirectToUri($uri, 0, 302);
+        $this->redirectToUri($this->thumbnailService->getUriForThumbnail($thumbnail), 0, 302);
     }
 }

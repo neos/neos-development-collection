@@ -57,8 +57,8 @@ class Thumbnail implements ImageInterface
     protected $resource;
 
     /**
-     * @var string
-     * @Flow\Transient
+     * @var string Supports the 'resource://Package.Key/Public/File' format
+     * @ORM\Column(nullable=true)
      */
     protected $staticResource;
 
@@ -73,12 +73,6 @@ class Thumbnail implements ImageInterface
      * @ORM\Column(length=32)
      */
     protected $configurationHash;
-
-    /**
-     * @var boolean
-     * @Flow\Transient
-     */
-    protected $isTransient = false;
 
     /**
      * Constructs a new Thumbnail
@@ -120,16 +114,6 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * Resource of this thumbnail
-     *
-     * @return Resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
      * @param ThumbnailConfiguration $configuration
      * @return void
      */
@@ -149,12 +133,39 @@ class Thumbnail implements ImageInterface
     }
 
     /**
+     * Resource of this thumbnail
+     *
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
      * @param Resource $resource
      * @return void
      */
     public function setResource(Resource $resource)
     {
         $this->resource = $resource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStaticResource()
+    {
+        return $this->staticResource;
+    }
+
+    /**
+     * @param string $staticResource
+     * @return void
+     */
+    public function setStaticResource($staticResource)
+    {
+        $this->staticResource = $staticResource;
     }
 
     /**
@@ -173,32 +184,6 @@ class Thumbnail implements ImageInterface
     public function setHeight($height)
     {
         $this->height = (integer)$height;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isTransient()
-    {
-        return $this->isTransient === true;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStaticResource()
-    {
-        return $this->staticResource;
-    }
-
-    /**
-     * @param string $staticResource
-     * @return void
-     */
-    public function setStaticResource($staticResource)
-    {
-        $this->staticResource = $staticResource;
-        $this->isTransient = true;
     }
 
     /**

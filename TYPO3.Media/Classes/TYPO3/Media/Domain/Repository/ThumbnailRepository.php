@@ -89,7 +89,7 @@ class ThumbnailRepository extends Repository
         $queryBuilder
             ->select('t')
             ->from($this->getEntityClassName(), 't')
-            ->where('t.resource IS NULL');
+            ->where('t.resource IS NULL AND t.staticResource IS NULL');
         return $queryBuilder->getQuery()->iterate();
     }
 
