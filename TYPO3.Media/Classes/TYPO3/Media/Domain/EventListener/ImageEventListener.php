@@ -13,7 +13,6 @@ namespace TYPO3\Media\Domain\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**

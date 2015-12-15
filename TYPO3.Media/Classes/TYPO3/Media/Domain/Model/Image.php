@@ -64,6 +64,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
         if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->calculateDimensionsFromResource($this->resource);
         }
+        parent::initializeObject($initializationCause);
     }
 
     /**

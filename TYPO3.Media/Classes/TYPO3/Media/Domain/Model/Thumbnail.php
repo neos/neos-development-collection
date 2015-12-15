@@ -24,9 +24,9 @@ use TYPO3\Media\Exception;
  *
  * @Flow\Entity
  * @ORM\Table(
- *    indexes={
- * 		@ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
- *    }
+ *  uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
+ *  }
  * )
  */
 class Thumbnail implements ImageInterface
@@ -49,14 +49,13 @@ class Thumbnail implements ImageInterface
     /**
      * @var Resource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
-     * @Flow\Validate(type = "NotEmpty")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $resource;
 
     /**
-     * @var string
-     * @Flow\Transient
+     * @var string Supports the 'resource://Package.Key/Public/File' format
+     * @ORM\Column(nullable=true)
      */
     protected $staticResource;
 
@@ -73,33 +72,33 @@ class Thumbnail implements ImageInterface
     protected $configurationHash;
 
     /**
-     * @var boolean
-     * @Flow\Transient
-     */
-    protected $transient = false;
-
-    /**
      * Constructs a new Thumbnail
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
      * @param ThumbnailConfiguration $configuration
+     * @param boolean $async
      * @throws \TYPO3\Media\Exception
      */
     public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
     {
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
+        $this->async = $configuration->isAsync();
     }
 
     /**
      * Initializes this thumbnail
      *
      * @param integer $initializationCause
+     * @return void
      */
     public function initializeObject($initializationCause)
     {
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-            $this->refresh();
+            if ($this->async === false) {
+                $this->refresh();
+            }
+            $this->emitThumbnailCreated($this);
         }
     }
 
@@ -114,17 +113,8 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * Resource of this thumbnail
-     *
-     * @return Resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
      * @param ThumbnailConfiguration $configuration
+     * @return void
      */
     protected function setConfiguration(ThumbnailConfiguration $configuration)
     {
@@ -142,12 +132,39 @@ class Thumbnail implements ImageInterface
     }
 
     /**
+     * Resource of this thumbnail
+     *
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
      * @param Resource $resource
      * @return void
      */
     public function setResource(Resource $resource)
     {
         $this->resource = $resource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStaticResource()
+    {
+        return $this->staticResource;
+    }
+
+    /**
+     * @param string $staticResource
+     * @return void
+     */
+    public function setStaticResource($staticResource)
+    {
+        $this->staticResource = $staticResource;
     }
 
     /**
@@ -169,32 +186,6 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * @return boolean
-     */
-    public function isTransient()
-    {
-        return $this->transient;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStaticResource()
-    {
-        return $this->staticResource;
-    }
-
-    /**
-     * @param string $staticResource
-     * @return void
-     */
-    public function setStaticResource($staticResource)
-    {
-        $this->staticResource = $staticResource;
-        $this->transient = true;
-    }
-
-    /**
      * Refreshes this asset after the Resource has been modified
      *
      * @return void
@@ -202,5 +193,16 @@ class Thumbnail implements ImageInterface
     public function refresh()
     {
         $this->generatorStrategy->refresh($this);
+    }
+
+    /**
+     * Signals that a thumbnail was created.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    {
     }
 }

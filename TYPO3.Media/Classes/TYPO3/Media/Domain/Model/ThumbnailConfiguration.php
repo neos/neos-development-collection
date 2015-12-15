@@ -51,6 +51,11 @@ class ThumbnailConfiguration
     protected $allowUpScaling;
 
     /**
+     * @var boolean
+     */
+    protected $async;
+
+    /**
      * @Flow\InjectConfiguration("behaviourFlag")
      * @var string
      */
@@ -74,8 +79,9 @@ class ThumbnailConfiguration
      * @param integer $maximumHeight Desired maximum height of the image
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Whether the thumbnail can be generated asynchronously
      */
-    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false)
     {
         $this->width = $width ? (integer)$width : null;
         $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;
@@ -83,6 +89,7 @@ class ThumbnailConfiguration
         $this->maximumHeight = $maximumHeight ? (integer)$maximumHeight : null;
         $this->allowCropping = $allowCropping ? (boolean)$allowCropping : false;
         $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
+        $this->async = $async ? (boolean)$async : false;
     }
 
     /**
@@ -159,6 +166,14 @@ class ThumbnailConfiguration
     public function isUpScalingAllowed()
     {
         return $this->allowUpScaling;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAsync()
+    {
+        return $this->async;
     }
 
     /**
