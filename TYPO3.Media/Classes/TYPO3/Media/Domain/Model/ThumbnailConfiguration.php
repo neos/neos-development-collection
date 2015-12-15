@@ -68,12 +68,12 @@ class ThumbnailConfiguration
     protected static $loggedDeprecation = false;
 
     /**
-     * @param integer $width
-     * @param integer $maximumWidth
-     * @param integer $height
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
+     * @param integer $width Desired width of the image
+     * @param integer $maximumWidth Desired maximum width of the image
+     * @param integer $height Desired height of the image
+     * @param integer $maximumHeight Desired maximum height of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      */
     public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
     {
