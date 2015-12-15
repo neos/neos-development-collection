@@ -31,11 +31,12 @@ class EventRepository extends Repository
 
     /**
      * Find all events which are "top-level", i.e. do not have a parent event.
-     *
+     * @param integer $offset
+     * @param integer $limit
      * @return \TYPO3\Flow\Persistence\QueryResultInterface
      * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
      */
-    public function findRelevantEvents()
+    public function findRelevantEvents($offset, $limit)
     {
         $query = $this->createQuery();
         $queryBuilder = $query->getQueryBuilder();
@@ -45,6 +46,9 @@ class EventRepository extends Repository
         );
 
         $queryBuilder->orderBy('e.uid', 'DESC');
+
+        $queryBuilder->setFirstResult($offset);
+        $queryBuilder->setMaxResults($limit);
 
         return $query->execute();
     }
