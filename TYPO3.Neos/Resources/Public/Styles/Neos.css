@@ -9617,22 +9617,29 @@
   text-align: center;
   padding-right: 4px;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change {
-  box-sizing: border-box;
-  letter-spacing: 1px;
-  font-size: 16px;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats {
+  width: 100px;
+  height: 40px;
+  position: relative;
+  display: inline-block;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-new {
-  color: #00a338;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats span {
+  display: inline-block;
+  height: 8px;
+  position: relative;
+  overflow: hidden;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-changed {
-  color: #ff8700;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .new {
+  background-color: #00a338;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-removed {
-  color: #ff460d;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .changed {
+  background-color: #ff8700;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-unchanged {
-  color: #3f3f3f;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .removed {
+  background-color: #ff460d;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .unchanged {
+  background-color: #3f3f3f;
 }
 .neos.neos-module.neos-module-management-workspaces ins {
   color: #00a338;
