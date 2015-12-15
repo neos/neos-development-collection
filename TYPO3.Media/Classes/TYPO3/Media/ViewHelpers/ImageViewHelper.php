@@ -22,7 +22,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * = Examples =
  *
  * <code title="Rendering an image as-is">
- * <typo3.media:image asset="{imageObject}" alt="a sample image without scaling" />
+ * <typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the image, no scaling applied)
@@ -31,7 +31,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <typo3.media:image asset="{imageObject}" maximumWidth="80" alt="sample" />
+ * <typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -40,7 +40,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:image asset="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -49,7 +49,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <typo3.media:image asset="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -57,7 +57,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <typo3.media:image asset="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled up or down to a width 5000 pixels, keeping aspect ratio)
@@ -103,7 +103,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     /**
      * Renders an HTML img tag with a thumbnail image, created from a given image.
      *
-     * @param AssetInterface $asset The asset to be rendered as an image
+     * @param ImageInterface $image The image to be rendered as an image
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
      * @param integer $height Desired height of the image
@@ -114,10 +114,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * @param string $preset Preset used to determine image configuration
      * @return string an <img...> html tag
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        if ($asset === null && $this->hasArgument('image')) {
-            $asset = $this->arguments['image'];
+        if ($image === null && $this->hasArgument('asset')) {
+            $image = $this->arguments['asset'];
         }
 
         if ($preset) {
@@ -125,7 +125,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
         }
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest());
 
         if ($thumbnailData === null) {
             return '';
