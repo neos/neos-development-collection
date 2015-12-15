@@ -54,7 +54,7 @@ class Diff
      * @param array $b Array containing the lines for the second string to compare.
      * @param array $options Options (see $defaultOptions in this class)
      */
-    public function __construct($a, $b, array $options = [])
+    public function __construct(array $a, array $b, array $options = [])
     {
         $this->a = $a;
         $this->b = $b;
@@ -66,7 +66,7 @@ class Diff
      * Render a diff using the supplied rendering class and return it.
      *
      * @param Renderer\AbstractRenderer $renderer An instance of the rendering object to use for generating the diff.
-     * @return mixed The generated diff. Exact return value depends on the rendered.
+     * @return mixed The generated diff. Exact return value depends on the renderer used.
      */
     public function render(Renderer\AbstractRenderer $renderer)
     {

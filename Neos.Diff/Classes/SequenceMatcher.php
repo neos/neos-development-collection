@@ -57,6 +57,21 @@ class SequenceMatcher
     ];
 
     /**
+     * @var array
+     */
+    private $matchingBlocks;
+
+    /**
+     * @var array
+     */
+    private $opCodes;
+
+    /**
+     * @var array
+     */
+    private $fullBCount;
+
+    /**
      * The constructor. With the sequences being passed, they'll be set for the
      * sequence matcher and it will perform a basic cleanup & calculate junk
      * elements.
@@ -74,7 +89,13 @@ class SequenceMatcher
         $this->setSequences($a, $b);
     }
 
-    public function setOptions($options)
+    /**
+     * Set options for the matcher.
+     *
+     * @param array $options
+     * @return void
+     */
+    public function setOptions(array $options)
     {
         $this->options = array_merge($this->defaultOptions, $options);
     }
@@ -84,6 +105,7 @@ class SequenceMatcher
      *
      * @param string|array $a A string or array containing the lines to compare against.
      * @param string|array $b A string or array containing the lines to compare.
+     * @return void
      */
     public function setSequences($a, $b)
     {
@@ -96,6 +118,7 @@ class SequenceMatcher
      * when calling the calculation methods, we need to recalculate them.
      *
      * @param string|array $a The sequence to set as the first sequence.
+     * @return void
      */
     public function setSeq1($a)
     {
@@ -116,6 +139,7 @@ class SequenceMatcher
      * when calling the calculation methods, we need to recalculate them.
      *
      * @param string|array $b The sequence to set as the second sequence.
+     * @return void
      */
     public function setSeq2($b)
     {
@@ -136,6 +160,8 @@ class SequenceMatcher
     /**
      * Generate the internal arrays containing the list of junk and non-junk
      * characters for the second ($b) sequence.
+     *
+     * @return void
      */
     private function chainB()
     {
@@ -186,11 +212,12 @@ class SequenceMatcher
      * Checks if a particular character is in the junk dictionary
      * for the list of junk characters.
      *
+     * @param string $b
      * @return boolean $b True if the character is considered junk. False if not.
      */
     private function isBJunk($b)
     {
-        if (isset($this->juncDict[$b])) {
+        if (isset($this->junkDict[$b])) {
             return true;
         }
 
@@ -266,7 +293,7 @@ class SequenceMatcher
         }
 
         while ($bestI > $alo && $bestJ > $blo && $this->isBJunk($b[$bestJ - 1]) &&
-            !$this->isLineDifferent($bestI - 1, $bestJ - 1)) {
+            !$this->linesAreDifferent($bestI - 1, $bestJ - 1)) {
             --$bestI;
             --$bestJ;
             ++$bestSize;
@@ -586,7 +613,7 @@ class SequenceMatcher
      *
      * @return float The calculated ratio.
      */
-    public function Ratio()
+    public function ratio()
     {
         $matches = array_reduce($this->getMatchingBlocks(), array($this, 'ratioReduce'), 0);
         return $this->calculateRatio($matches, count($this->a) + count($this->b));
@@ -599,7 +626,7 @@ class SequenceMatcher
      * @param array $triple Array containing the matching block triple to add to the running total.
      * @return int The new running total for the number of matches.
      */
-    private function ratioReduce($sum, $triple)
+    private function ratioReduce($sum, array $triple)
     {
         return $sum + ($triple[count($triple) - 1]);
     }
@@ -609,12 +636,13 @@ class SequenceMatcher
      * This is quicker to compute than Ratio().
      *
      * @return float The calculated ratio.
+     * @todo throw away or make public
      */
     private function quickRatio()
     {
         if ($this->fullBCount === null) {
             $this->fullBCount = [];
-            $bLength = count($b);
+            $bLength = count($this->b);
             for ($i = 0; $i < $bLength; ++$i) {
                 $char = $this->b[$i];
                 $this->fullBCount[$char] = $this->arrayGetDefault($this->fullBCount, $char, 0) + 1;
@@ -645,6 +673,7 @@ class SequenceMatcher
      * This is quicker to compute than Ratio() and quickRatio().
      *
      * @return float The calculated ratio.
+     * @todo throw away or make public
      */
     private function realquickRatio()
     {
@@ -681,7 +710,7 @@ class SequenceMatcher
      * @param mixed $default The value to return as the default value if the key doesn't exist.
      * @return mixed The value from the array if the key exists or otherwise the default.
      */
-    private function arrayGetDefault($array, $key, $default)
+    private function arrayGetDefault(array $array, $key, $default)
     {
         if (isset($array[$key])) {
             return $array[$key];
@@ -697,7 +726,7 @@ class SequenceMatcher
      * @param array $b Second array to compare.
      * @return int -1, 0 or 1, as expected by the usort function.
      */
-    private function tupleSort($a, $b)
+    private function tupleSort(array $a, array $b)
     {
         $max = max(count($a), count($b));
         for ($i = 0; $i < $max; ++$i) {

@@ -2,7 +2,7 @@
   "name": "neos/diff",
   "type": "typo3-flow-package",
   "license": "BSD-3-Clause",
-  "description": "Diff Library",
+  "description": "This is a comprehensive library for generating differences between two strings or arrays",
   "require": {
     "php": ">=5.5.0"
   },
