@@ -8,26 +8,26 @@ Implement your own generator
 To implement your own Generator, first check the code of the Generators included in the Media package.
 
 Basically, you need to extend ``AbstractThumbnailGenerator`` and implement the ``ThumbnailGeneratorInterface::refresh()``
-method. The ``refresh`` method receive a ``Thumbnail`` object, based on this object do the required processing to
-generate a thumbnail. In most case the Thumbnail can be persisted by attaching the new resource to the ``Thumbnail``
+method. The ``refresh`` method receives a ``Thumbnail`` object, based on this object do the required processing to
+generate a thumbnail. In most cases the Thumbnail can be persisted by attaching the new resource to the ``Thumbnail``
 object.
 
-Transiant Thumbnail
+Transient Thumbnail
 -------------------
 
 Sometimes, the persistence is not required, in this case you can mark the Thumbnail as transient, by calling the
-method ``Thumbnail::setTransiant(true)``, check the SVG or Icon Generator for example of Transiant Thumbnail.
+method ``Thumbnail::setTransient(true)``, check the SVG or Icon Generator for examples of transient Thumbnails.
 
-Programmatically check if a Generator can handle the current Thumbnail
-----------------------------------------------------------------------
+Determine if a Generator can handle the current Thumbnail
+---------------------------------------------------------
 
 You can also implement the ``ThumbnailGeneratorInterface::canRefresh()`` if your Generator has some specific
-requirements (like maximum file size, mime type, check external service availability, ...).
+requirements (like maximum file size, MIME type, external service availability, etc.).
 
 Priority
 --------
 
-The ``ThumbnailGeneratorStrategy`` choose the Generator by two factor the value of the static property ``priority`` and
+The ``ThumbnailGeneratorStrategy`` choose the Generator by two factors, the value of the static property ``priority`` and
 the return value of the method ``ThumbnailGeneratorInterface::canRefresh()``. For priority value, higher is better::
 
     class YourOwnThumbnailGenerator extends AbstractThumbnailGenerator
@@ -37,7 +37,6 @@ the return value of the method ``ThumbnailGeneratorInterface::canRefresh()``. Fo
          * @api
          */
         protected static $priority = 100;
-
     }
 
 You can always override this priority in your ``Settings.yaml``.
@@ -45,7 +44,7 @@ You can always override this priority in your ``Settings.yaml``.
 Configuration
 -------------
 
-In your generator class use the ``AbstractThumbnailGenerator::getOption()`` to access you settings::
+In your generator class use the ``AbstractThumbnailGenerator::getOption()`` to access your settings::
 
     TYPO3:
       Media:
@@ -55,7 +54,7 @@ In your generator class use the ``AbstractThumbnailGenerator::getOption()`` to a
             parameterOne: 100
             parameterTwo: 200
 
-Don't forget to add the Media Package in your package ``composer.json``` to load the Media package before your own::
+Remember to add the Media Package in your package ``composer.json``` to load the Media package before your own::
 
     {
         ...
@@ -66,6 +65,17 @@ Don't forget to add the Media Package in your package ``composer.json``` to load
         ...
     }
 
+Disabling
+---------
+
+To disable an existing Generator use the ``disable`` configuration option for the desired Generator::
+
+    TYPO3:
+      Media:
+        thumbnailGenerators:
+          'TYPO3\Media\Domain\Model\ThumbnailGenerator\IconThumbnailGenerator':
+            disable: true
+
 Community supported Generators
 ==============================
 
@@ -74,5 +84,4 @@ Community supported Generators
     Can be use to integrate the service from `filepreviews.io <http://filepreviews.io/>`_ in your project and generate
     thumbnail for Office or Audio documents.
 
-Feel free to contact us at hello@neos.io if you publish some Generators under opensource licences.
-
+Feel free to contact us at hello@neos.io, if you publish some Generators under an open-source licence.
