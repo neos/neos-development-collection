@@ -13,8 +13,6 @@ namespace TYPO3\Media\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
-use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
@@ -44,10 +42,10 @@ class ThumbnailGenerator
     protected $thumbnailService;
 
     /**
-     * @param ImageInterface $image
+     * @param AssetInterface $image
      * @return void
      */
-    public function generateThumbnails(ImageInterface $image)
+    public function generateThumbnails(AssetInterface $image)
     {
         if ($this->autoGenerateThumbnailPresets) {
             foreach ($this->thumbnailService->getPresets() as $preset => $presetConfiguration) {
