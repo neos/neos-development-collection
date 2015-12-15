@@ -24,102 +24,102 @@
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="fi">Työtilat</target></trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target xml:lang="fi" state="needs-translation">Details for "{0}"</target></trans-unit>
-      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
+			<target xml:lang="fi">"{0}":n tiedot</target><alt-trans><target xml:lang="fi">"{0}" tiedot</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
-			<target xml:lang="fi" state="needs-translation">Create new workspace</target></trans-unit>
-      <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Luo uusi työtila</target></trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
 				<source>Create workspace</source>
-			<target xml:lang="fi" state="needs-translation">Create workspace</target></trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Luo työtila</target></trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Delete workspace</source>
-			<target xml:lang="fi" state="needs-translation">Delete workspace</target></trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Poista työtila</target></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace</source>
-			<target xml:lang="fi" state="needs-translation">Edit workspace</target></trans-unit>
-      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Muokkaa työtilaa</target></trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="fi" state="needs-translation">Yes, delete the workspace</target></trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Kyllä, poista työtila</target></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="fi" state="needs-translation">Edit workspace</target></trans-unit>
-      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Muokkaa työtilaa</target></trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
-			<target xml:lang="fi" state="needs-translation">Personal workspace</target></trans-unit>
-      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Henkilökohtainen työtila</target></trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target xml:lang="fi" state="needs-translation">Private workspace</target></trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Yksityinen työtila</target></trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
 				<source>Internal workspace</source>
-			<target xml:lang="fi" state="needs-translation">Internal workspace</target></trans-unit>
-      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Sisäinen työtila</target></trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
 				<source>Read-only workspace</source>
-			<target xml:lang="fi" state="needs-translation">Read-only workspace</target></trans-unit>
+			<target xml:lang="fi">Vain luku-työtila</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="fi">Otsikko</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="fi">Kuvaus</target></trans-unit>
-      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
 				<source>Base workspace</source>
-			<target xml:lang="fi" state="needs-translation">Base workspace</target></trans-unit>
-      <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
+			<target xml:lang="fi">Päätyötila</target></trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
-			<target xml:lang="fi" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="fi">Omistaja</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
 			<target xml:lang="fi">Näkyvyys</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
 				<source>Private</source>
-			<target xml:lang="fi" state="needs-translation">Private</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
+			<target xml:lang="fi">Yksityinen</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="fi" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+			<target xml:lang="fi">Ainoastaan arvioijat ja pääkäyttäjät voivat käyttää ja muokata tätä työtilaa</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
-			<target xml:lang="fi" state="needs-translation">Internal</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+			<target xml:lang="fi">Sisäinen</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="fi" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
-      <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
+			<target xml:lang="fi">Kaikki sisäänkirjautuneet julkaisijat näkevät tämän työtilan ja voivat muokata sitä.</target></trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
-			<target xml:lang="fi" state="needs-translation">Changes</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Muutokset</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="fi" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
-      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="fi">Tämä on henkilökohtainen työtilasi, jota et voi poistaa.</target></trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="fi" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="fi">Työtila sisältää muutoksia. Jos haluat poistaa sen, hylkää muutokset ensin.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="fi" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
+			<target xml:lang="fi">Työtilaa ei voida asettaa pohjautumaan toiseen työtilaan, koska se sisältää muutoksia.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="fi" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+			<target xml:lang="fi">Työtilaa ei voida poistaa, koska on muita työtiloja jotka pohjautuvat siihen.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="fi" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
-      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
+			<target xml:lang="fi">Sinulla ei ole riittävästi oikeuksia poistaa tätä työtilaa.</target></trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target xml:lang="fi" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
-      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
+			<target xml:lang="fi">Haluatko todella poistaa työtilan "{0}"?</target></trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="fi" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="fi">Tämä poistaa työtilan ja kaiken sen julkaisemattoman sisällön. Tätä toimintoa ei voi peruuttaa.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="fi">Tämä moduuli sisältää näkymän kaikista elementeistä nykyisessä työtilassa ja mahdollistaa niiden julkaisuprosessin tarkastelun.</target></trans-unit>
-      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target xml:lang="fi" state="translated">Julkaisematomat muutokset</target></trans-unit>
-      <trans-unit id="workspaces.changesCounts" xml:space="preserve">
+			<target xml:lang="fi">Julkaisematomat muutokset</target></trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target xml:lang="fi" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
-      <trans-unit id="workspaces.review" xml:space="preserve">
+			<target xml:lang="fi">lisäykset: {new}, muutokset: {changed}, poistot: {removed}</target></trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
 				<source>Review</source>
-			<target xml:lang="fi" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="fi">Arviointi</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
 			<target xml:lang="fi">Hylkää valitut muutokset</target></trans-unit>
@@ -132,9 +132,9 @@
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="fi">Julkaise kaikki muutokset</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="fi" state="needs-translation">Publish all changes to {0}</target></trans-unit>
+			<target xml:lang="fi">Julkaise kaikki muutokset kohteeseen {0}</target></trans-unit>
       <trans-unit id="workspaces.legendCaption" xml:space="preserve" approved="yes">
 				<source>Legend</source>
 			<target xml:lang="fi">Selite</target></trans-unit>
@@ -159,63 +159,66 @@
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target xml:lang="fi">Halutako varmasti hylätä kaikki muutokset työtilassa "{0}"?</target></trans-unit>
-      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
-        <target xml:lang="fi" state="needs-translation">A workspace with this title already exists.</target>
+        <target xml:lang="fi">Samanniminen työtila on jo olemassa.</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspaceHasBeenUpdated">
+      <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
         <source>The workspace "{0}" has been updated.</source>
-        <target xml:lang="fi" state="needs-translation">The workspace "{0}" has been updated.</target>
+        <target xml:lang="fi">Työtila "{0}" päivitetty.</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target xml:lang="fi" state="needs-translation">Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</target>
+        <target xml:lang="fi">Työtilaa "{0}" ei voida poistaa koska työtila "{1}" pohjautuu siihen</target>
       </trans-unit>
-      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
-        <target xml:lang="fi" state="needs-translation">An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</target>
+        <target xml:lang="fi">Virhe haettassa julkaisemattomia muutoksia työtilalle "{0}"; mitään ei poistettu.</target>
       </trans-unit>
-      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target xml:lang="fi" state="needs-translation">Your personal workspace contains changes, please publish or discard them first.</target>
+        <target xml:lang="fi">Henkilökohtainen työtilasi sisältää muutoksia, julkaise tai hylkää ne ensin.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmun.</target>
+          <alt-trans>
+            <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää solmun {1}.</target>
+          </alt-trans>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmua.</target>
         </trans-unit>
       </group>
-      <trans-unit id="workspaces.workspaceHasBeenRemoved">
+      <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
         <source>The workspace "{0}" has been removed.</source>
-        <target xml:lang="fi" state="needs-translation">The workspace "{0}" has been removed.</target>
+        <target xml:lang="fi">Työtila "{0}" poistettu.</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectedChangeHasBeenPublished">
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
         <source>The selected change has been published.</source>
-        <target xml:lang="fi" state="needs-translation">The selected change has been published.</target>
+        <target xml:lang="fi">Valitut muutokset julkaistu.</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded">
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
         <source>The selected change has been discarded.</source>
-        <target xml:lang="fi" state="needs-translation">The selected change has been discarded.</target>
+        <target xml:lang="fi">Valitut muutokset hylätty.</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished" approved="yes">
         <source>The selected changes have been published.</source>
-        <target xml:lang="fi" state="needs-translation">The selected changes have been published.</target>
+        <target xml:lang="fi">Valitut muutokset julkaistu.</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded" approved="yes">
         <source>The selected changes have been discarded.</source>
-        <target xml:lang="fi" state="needs-translation">The selected changes have been discarded.</target>
+        <target xml:lang="fi">Valitut muutokset hylätty.</target>
       </trans-unit>
-      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished" approved="yes">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
-        <target xml:lang="fi" state="needs-translation">All changes from workspace "{0}" have been published to {1}.</target>
+        <target xml:lang="fi">Kaikki työtilan "{0}" muutokset on julkaistu kohteessa {1}.</target>
       </trans-unit>
-      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
-        <target xml:lang="fi" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
+        <target xml:lang="fi">Kaikki työtilan "{0}" muutokset on hylätty.</target>
       </trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
