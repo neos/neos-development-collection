@@ -26,9 +26,6 @@ use TYPO3\Media\Exception;
  * @ORM\Table(
  *  uniqueConstraints={
  *      @ORM\UniqueConstraint(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
- *  },
- *  indexes={
- *      @ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
  *  }
  * )
  */

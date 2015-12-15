@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Add constraint to thumbnail table to prevent duplicates.
+ * Add static resource property to thumbnail table.
  */
 class Version20151118143756 extends AbstractMigration
 {
@@ -17,7 +17,7 @@ class Version20151118143756 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("CREATE UNIQUE INDEX UNIQ_B7CE141455FF41717F7CBA1A ON typo3_media_domain_model_thumbnail (originalasset, configurationhash)");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD staticresource VARCHAR(255) DEFAULT NULL");
     }
 
     /**
@@ -28,6 +28,6 @@ class Version20151118143756 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("DROP INDEX UNIQ_B7CE141455FF41717F7CBA1A ON typo3_media_domain_model_thumbnail");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail DROP staticresource");
     }
 }
