@@ -35,4 +35,4 @@ Utilities
 ---------
 
 To create or clear thumbnails for configured presets use the ``typo3.media:media:createthumbnails`` and
-``typo3.media:media:createthumbnails`` commands, see :ref:`Media Command Reference`.
+``typo3.media:media:clearthumbnails`` commands, see :ref:`Media Command Reference`.
