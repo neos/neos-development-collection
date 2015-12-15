@@ -83,7 +83,7 @@ class ThumbnailService
      * @return Thumbnail
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration, $async = false)
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $configurationHash = $configuration->getHash();
@@ -96,6 +96,7 @@ class ThumbnailService
             $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         }
+        $async = $configuration->isAsync();
         if ($thumbnail === null) {
             try {
                 $thumbnail = new Thumbnail($asset, $configuration, $async);
@@ -137,16 +138,25 @@ class ThumbnailService
 
     /**
      * @param string $preset The preset identifier
+     * @param boolean $async
      * @return ThumbnailConfiguration
      * @throws ThumbnailServiceException
      */
-    public function getThumbnailConfigurationForPreset($preset)
+    public function getThumbnailConfigurationForPreset($preset, $async = false)
     {
         if (!isset($this->presets[$preset])) {
             throw new ThumbnailServiceException(sprintf('Thumbnail preset configuration for "%s" not found.', $preset), 1447664950);
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration;
-        call_user_func_array(array($thumbnailConfiguration, '__construct'), $this->presets[$preset]);
+        $presetConfiguration = $this->presets[$preset];
+        $thumbnailConfiguration = new ThumbnailConfiguration(
+            isset($presetConfiguration['width']) ? $presetConfiguration['width'] : null,
+            isset($presetConfiguration['maximumWidth']) ? $presetConfiguration['maximumWidth'] : null,
+            isset($presetConfiguration['height']) ? $presetConfiguration['height'] : null,
+            isset($presetConfiguration['maximumHeight']) ? $presetConfiguration['maximumHeight'] : null,
+            isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
+            isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
+            $async
+        );
         return $thumbnailConfiguration;
     }
 

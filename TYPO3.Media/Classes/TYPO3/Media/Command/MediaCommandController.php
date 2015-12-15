@@ -143,14 +143,14 @@ class MediaCommandController extends CommandController
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
         $presetThumbnailConfigurations = [];
         foreach ($presets as $preset) {
-            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         }
         $iterator = $this->imageRepository->findAllIterator();
         $imageCount = $this->imageRepository->countAll();
         $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
         foreach ($this->imageRepository->iterate($iterator) as $image) {
             foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
-                $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration, $async);
+                $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
                 $this->persistenceManager->persistAll();
                 $this->output->progressAdvance(1);
             }

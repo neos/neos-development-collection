@@ -91,10 +91,10 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
         }
 
         if ($preset) {
-            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
         }
-        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $async, $this->controllerContext->getRequest())['src'];
+        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest())['src'];
     }
 }

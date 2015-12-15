@@ -81,12 +81,6 @@ class Thumbnail implements ImageInterface
     protected $isTransient = false;
 
     /**
-     * @var boolean
-     * @Flow\Transient
-     */
-    protected $async;
-
-    /**
      * Constructs a new Thumbnail
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
@@ -94,11 +88,11 @@ class Thumbnail implements ImageInterface
      * @param boolean $async
      * @throws \TYPO3\Media\Exception
      */
-    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration, $async = false)
+    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
     {
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
-        $this->async = $async;
+        $this->async = $configuration->isAsync();
         $this->emitThumbnailCreated($this);
     }
 

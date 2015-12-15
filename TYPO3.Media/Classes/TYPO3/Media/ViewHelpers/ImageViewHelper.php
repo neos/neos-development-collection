@@ -127,11 +127,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         }
 
         if ($preset) {
-            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
         }
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $async, $this->controllerContext->getRequest());
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
 
         if ($thumbnailData === null) {
             return '';

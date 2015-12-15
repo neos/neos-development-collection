@@ -47,18 +47,17 @@ class AssetService
      *
      * @param AssetInterface $asset
      * @param ThumbnailConfiguration $configuration
-     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param ActionRequest $request Request argument must be provided for asynchronous thumbnails
      * @return array|null Array with keys "width", "height" and "src" if the thumbnail generation work or null
      * @throws AssetServiceException
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, $async = false, ActionRequest $request = null)
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null)
     {
-        $thumbnailImage = $this->getImageThumbnail($asset, $configuration, $async);
+        $thumbnailImage = $this->getImageThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {
             return null;
         }
-        if ($async === true && $thumbnailImage->getResource() === null && !$thumbnailImage->isTransient()) {
+        if ($configuration->isAsync() === true && $thumbnailImage->getResource() === null && !$thumbnailImage->isTransient()) {
             if ($request === null) {
                 throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
             }
@@ -87,10 +86,9 @@ class AssetService
      *
      * @param AssetInterface $asset
      * @param ThumbnailConfiguration $configuration
-     * @param boolean $async
      * @return ImageInterface
      */
-    protected function getImageThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration, $async)
+    protected function getImageThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         if ($configuration->isUpScalingAllowed() === false && $asset instanceof ImageInterface) {
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
@@ -100,6 +98,6 @@ class AssetService
             }
         }
 
-        return $this->thumbnailService->getThumbnail($asset, $configuration, $async);
+        return $this->thumbnailService->getThumbnail($asset, $configuration);
     }
 }

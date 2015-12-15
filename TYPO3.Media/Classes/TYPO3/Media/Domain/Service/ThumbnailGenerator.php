@@ -51,8 +51,8 @@ class ThumbnailGenerator
     {
         if ($this->autoGenerateThumbnailPresets) {
             foreach ($this->thumbnailService->getPresets() as $preset => $presetConfiguration) {
-                $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
-                $this->thumbnailService->getThumbnail($image, $thumbnailConfiguration, $this->asyncThumbnails);
+                $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $this->asyncThumbnails);
+                $this->thumbnailService->getThumbnail($image, $thumbnailConfiguration);
             }
         }
     }
