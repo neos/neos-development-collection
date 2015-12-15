@@ -94,6 +94,18 @@ class ThumbnailRepository extends Repository
     }
 
     /**
+     * Count ungenerated objects
+     *
+     * @return integer
+     */
+    public function countUngenerated()
+    {
+        $query = $this->createQuery();
+        $query->matching($query->logicalAnd($query->equals('resource', NULL), $query->equals('staticResource', NULL)));
+        return $query->count();
+    }
+
+    /**
      * Returns a thumbnail of the given asset with the specified dimensions.
      *
      * @param AssetInterface $asset The asset to render a thumbnail for

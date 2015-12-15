@@ -182,7 +182,7 @@ class MediaCommandController extends CommandController
      */
     public function generateThumbnailsCommand($limit = null)
     {
-        $thumbnailCount = $this->thumbnailRepository->countByResource(null);
+        $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();
         $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
         $iteration = 0;
