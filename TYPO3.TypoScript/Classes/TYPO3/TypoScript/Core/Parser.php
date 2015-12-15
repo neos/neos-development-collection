@@ -149,7 +149,7 @@ class Parser implements ParserInterface
 		)
 		\s*
 		(?P<OpeningConfinement>
-			[^\${]\{              # optionally followed by an opening confinement
+			(?<![${])\{           # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';

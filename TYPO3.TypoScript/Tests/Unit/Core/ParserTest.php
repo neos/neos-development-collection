@@ -308,6 +308,12 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                 '__eelExpression' => null,
                 'value' => 'Overridden value'
             ),
+            'firstObject4' => array(
+                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__value' => null,
+                '__eelExpression' => null,
+                'value' => 'Ugly syntax with no space works!'
+            ),
             'secondObject' => array(
                 'subObject' => array(
                     '__objectType' => 'TYPO3.TypoScript:Text',
