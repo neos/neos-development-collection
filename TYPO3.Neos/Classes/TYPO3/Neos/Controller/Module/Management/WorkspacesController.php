@@ -11,6 +11,8 @@ namespace TYPO3\Neos\Controller\Module\Management;
  * source code.
  */
 
+use Neos\Diff\Diff;
+use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
@@ -19,9 +21,11 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Domain\Service\SiteService;
@@ -74,6 +78,13 @@ class WorkspacesController extends AbstractModuleController
      * @var ContentContextFactory
      */
     protected $contextFactory;
+
+    /**
+     * A cache for already built content contexts, indexed by workspace name
+     *
+     * @var ContentContext[]
+     */
+    protected $contextContexts = [];
 
     /**
      * @Flow\Inject
@@ -461,7 +472,11 @@ class WorkspacesController extends AbstractModuleController
                             $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
                         }
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
-                        $change = ['node' => $node];
+
+                        $change = [
+                            'node' => $node,
+                            'contentChanges' => $this->renderContentChanges($node),
+                        ];
                         if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
                         }
@@ -488,6 +503,144 @@ class WorkspacesController extends AbstractModuleController
         }
 
         return $siteChanges;
+    }
+
+    /**
+     * Retrieves the given node's corresponding node in the base workspace (that is, which would be overwritten if the
+     * given node would be published)
+     *
+     * @param NodeInterface $modifiedNode
+     * @return NodeInterface
+     */
+    protected function getOriginalNode(NodeInterface $modifiedNode)
+    {
+        $baseWorkspaceName = $modifiedNode->getWorkspace()->getBaseWorkspace()->getName();
+        if (!isset($this->contextContexts[$baseWorkspaceName])) {
+            $contextProperties = $modifiedNode->getContext()->getProperties();
+            $contextProperties['workspaceName'] = $baseWorkspaceName;
+            $this->contextContexts[$baseWorkspaceName] = $this->contextFactory->create($contextProperties);
+        }
+        return $this->contextContexts[$baseWorkspaceName]->getNodeByIdentifier($modifiedNode->getIdentifier());
+    }
+
+    /**
+     *
+     *
+     * @param NodeInterface $changedNode
+     * @return array
+     * @see renderSlimmedDownContentForNodeProperty()
+     */
+    protected function renderContentChanges(NodeInterface $changedNode)
+    {
+        $contentChanges = [];
+        $originalNode = $this->getOriginalNode($changedNode);
+
+        $renderer = new HtmlArrayRenderer();
+        foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {
+            if ($originalNode === null && empty($changedPropertyValue)) {
+                continue;
+            }
+
+            $originalPropertyValue = ($originalNode === null ? null : $originalNode->getProperty($propertyName));
+            if ($changedPropertyValue === $originalPropertyValue) {
+                continue;
+            }
+
+            if (!is_object($originalPropertyValue) && !is_object($changedPropertyValue)) {
+                $originalSlimmedDownContent = $this->renderSlimmedDownContent($originalPropertyValue);
+                $changedSlimmedDownContent = $this->renderSlimmedDownContent($changedPropertyValue);
+
+                $diff = new Diff(explode("\n", $originalSlimmedDownContent), explode("\n", $changedSlimmedDownContent),
+                    ['context' => 1]);
+                $diffArray = $diff->render($renderer);
+                $this->postProcessDiffArray($diffArray);
+
+                $contentChanges[$propertyName] = [
+                    'type' => 'text',
+                    'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                    'diff' => $diffArray
+                ];
+            } elseif ($originalPropertyValue instanceof AssetInterface || $changedPropertyValue instanceof AssetInterface) {
+                $contentChanges[$propertyName] = [
+                    'type' => 'asset',
+                    'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                    'original' => $originalPropertyValue,
+                    'changed' => $changedPropertyValue
+                ];
+            }
+        }
+        return $contentChanges;
+    }
+
+    /**
+     * Renders a slimmed down representation of a property of the given node. The output will be HTML, but does not
+     * contain any markup from the original content.
+     *
+     * Note: It's clear that this method needs to be extracted and moved to a more universal service at some point.
+     * However, since we only implemented diff-view support for this particular controller at the moment, it stays
+     * here for the time being. Once we start displaying diffs elsewhere, we should refactor the diff rendering part.
+     *
+     * @param mixed $propertyValue
+     * @return string
+     */
+    protected function renderSlimmedDownContent($propertyValue)
+    {
+        $content = '';
+        if (is_string($propertyValue)) {
+            $contentSnippet = preg_replace('/<br[^>]*>/', "\n", $propertyValue);
+            $contentSnippet = preg_replace('/<[^>]*>/', ' ', $contentSnippet);
+            $contentSnippet = str_replace('&nbsp;', ' ', $contentSnippet);
+            $content = trim(preg_replace('/ {2,}/', ' ', $contentSnippet));
+        }
+        return $content;
+    }
+
+    /**
+     * Tries to determine a label for the specified property
+     *
+     * @param string $propertyName
+     * @param NodeInterface $changedNode
+     * @return string
+     */
+    protected function getPropertyLabel($propertyName, NodeInterface $changedNode)
+    {
+        $properties = $changedNode->getNodeType()->getProperties();
+        if (!isset($properties[$propertyName]) ||
+            !isset($properties[$propertyName]['ui']['label'])
+        ) {
+            return $propertyName;
+        }
+        return $properties[$propertyName]['ui']['label'];
+    }
+
+    /**
+     * A workaround for some missing functionality in the Diff Renderer:
+     *
+     * This method will check if content in the given diff array is either completely new or has been completely
+     * removed and wraps the respective part in <ins> or <del> tags, because the Diff Renderer currently does not
+     * do that in these cases.
+     *
+     * @param array $diffArray
+     * @return void
+     */
+    protected function postProcessDiffArray(array &$diffArray)
+    {
+        foreach ($diffArray as $index => $blocks) {
+            foreach ($blocks as $blockIndex => $block) {
+                $baseLines = trim(implode('', $block['base']['lines']), " \t\n\r\0\xC2\xA0");
+                $changedLines = trim(implode('', $block['changed']['lines']), " \t\n\r\0\xC2\xA0");
+                if ($baseLines === '') {
+                    foreach ($block['changed']['lines'] as $lineIndex => $line) {
+                        $diffArray[$index][$blockIndex]['changed']['lines'][$lineIndex] = '<ins>' . $line . '</ins>';
+                    }
+                }
+                if ($changedLines === '') {
+                    foreach ($block['base']['lines'] as $lineIndex => $line) {
+                        $diffArray[$index][$blockIndex]['base']['lines'][$lineIndex] = '<del>' . $line . '</del>';
+                    }
+                }
+            }
+        }
     }
 
     /**

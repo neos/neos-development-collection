@@ -1,0 +1,51 @@
+{namespace m=TYPO3\Media\ViewHelpers}
+<div class="neos-content-diff">
+    <table class="neos-content-changes">
+        <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
+            <tr>
+                <th>{contentChanges.propertyLabel}</th>
+            </tr>
+            <tr>
+                <td>
+                    <f:if condition="{contentChanges.type} == 'text'">
+                        <table>
+                            <f:for each="{contentChanges.diff}" key="index" as="blocks">
+                                <f:for each="{blocks}" as="block">
+                                    <tr>
+                                        <td>
+                                            <f:for each="{block.base.lines}" as="line">
+                                                <p>{line -> f:format.raw()}</p>
+                                            </f:for>
+                                        </td>
+                                        <td>
+                                            <f:for each="{block.changed.lines}" as="line">
+                                                <p>{line -> f:format.raw()}</p>
+                                            </f:for>
+                                        </td>
+                                    </tr>
+                                </f:for>
+                            </f:for>
+                        </table>
+                    </f:if>
+                    <f:if condition="{contentChanges.type} == 'asset'">
+                        <table>
+                            <tr>
+                                <td>
+                                    <h3>{block.tag}</h3>
+                                    <f:if condition="{contentChanges.original}">
+                                        <m:image asset="{contentChanges.original}" allowCropping="false" maximumWidth="250" maximumHeight="250" alt="" class="img-polaroid"/>
+                                    </f:if>
+                                </td>
+                                <td>
+                                    <f:if condition="{contentChanges.changed}">
+                                        <m:image asset="{contentChanges.changed}" allowCropping="false" maximumWidth="250" maximumHeight="250" alt="" class="img-polaroid"/>
+                                    </f:if>
+                                </td>
+                            </tr>
+                        </table>
+                    </f:if>
+                </td>
+            </tr>
+        </f:for>
+    </table>
+</div>

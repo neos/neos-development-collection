@@ -22,9 +22,8 @@
 								</label>
 							</th>
 							<th class="legend neos-priority1"></th>
-							<th class="label neos-priority1">{neos:backend.translate(id: 'labelCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
-							<th class="nodetype neos-priority3">{neos:backend.translate(id: 'nodeTypeCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
-							<th class="relpath neos-priority4">{neos:backend.translate(id: 'relativePathCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
+							<th class="neos-nodetype neos-priority3">{neos:backend.translate(id: 'nodeTypeCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
+							<th class="neos-priority4">{neos:backend.translate(id: 'changedContentCaption', source: 'Modules', package: 'TYPO3.Neos')}</th>
 							<th class="neos-action neos-priority1"></th>
 						</tr>
 						</thead>
@@ -32,7 +31,7 @@
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="documentPath" as="document">
 								<tr class="neos-folder">
-									<td colspan="5" class="neos-priority1">
+									<td colspan="4" class="neos-priority1">
 										<f:if condition="{siteChanges -> f:count()} > 1">
 											<div class="neos-pull-right">
 												<strong>{neos:backend.translate(id: 'site', value: 'Site')}: {f:if(condition: site.siteNode.name, then: '{site.siteNode.name}', else: '{site.siteNode.nodeName}')}</strong>
@@ -59,32 +58,9 @@
 										</td>
 										<td class="legend neos-priority1">
 											<label for="{change.node.identifier}">
-												<f:if condition="{change.node.removed}">
-													<f:then><i class="legend icon-trash icon-white" title="{neos:backend.translate(id: 'workspaces.legend.deleted', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-													<f:else>
-														<f:if condition="{change.isNew}">
-															<f:then><i class="legend icon-star icon-white" title="{neos:backend.translate(id: 'workspaces.legend.created', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-															<f:else>
-																<f:if condition="{change.isMoved}">
-																	<f:then><i class="legend icon-move icon-white" title="{neos:backend.translate(id: 'workspaces.legend.moved', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-																	<f:else>
-																		<f:if condition="{change.node.hidden}">
-																			<f:then>
-																				<i class="legend icon-eye-close icon-white" title="{neos:backend.translate(id: 'workspaces.legend.hidden', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																			</f:then>
-																			<f:else>
-																				<i class="legend icon-pencil icon-white" title="{neos:backend.translate(id: 'workspaces.legend.edited', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																			</f:else>
-																		</f:if>
-																	</f:else>
-																</f:if>
-															</f:else>
-														</f:if>
-													</f:else>
-												</f:if>
+												<f:render partial="Module/Management/Workspaces/ChangeLegendIcon" arguments="{change: change}"/>
 											</label>
 										</td>
-										<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: '{change.node.label}', else: '<em>{neos:backend.translate(id: "noTitle", source: "Main", package: "TYPO3.Neos")}</em>')}</label></td>
 										<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
 											<label for="{change.node.identifier}">
 												<f:if condition="{change.configuration.ui.icon}">
@@ -93,7 +69,10 @@
 												{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
 											</label>
 										</td>
-										<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: '{relativePath}', else: '&nbsp;')}</label></td>
+
+										<td class="neos-content-change neos-priority4" id="change-{change.node.identifier}">
+											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change}"/>
+										</td>
 										<td class="neos-action neos-aRight neos-priority1">
 											<f:if condition="{canPublishToBaseWorkspace}">
 												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}">

@@ -52,8 +52,47 @@
 	}
 
 	td.node-type,
-	td.relpath {
+	td.neos-content-change {
 		color: $textSubtle;
+	}
+
+	td.neos-content-change {
+		white-space: normal;
+
+	}
+
+	.neos-content-diff {
+		line-height: $unit / 1.7;
+		overflow: hidden;
+
+		table.neos-content-changes {
+			table-layout: fixed;
+			width: 100%;
+			table {
+				width: 100%;
+			}
+			tbody th {
+				border-top: none;
+				padding-left: 0 !important;
+			}
+			tbody tr {
+				td {
+					height: auto;
+					width: 50%;
+					vertical-align: top;
+					line-height: 20px;
+					padding: 10px 20px 10px 0 !important;
+					border-top: none;
+					white-space: normal;
+					color: $textSubtle;
+
+					img {
+						width: 100%;
+					}
+
+				}
+			}
+		}
 	}
 
 	i[class*="icon-"],
@@ -121,4 +160,12 @@
 		color: $grayLight;
 	}
 
+	ins {
+		color: $green;
+		text-decoration: none;
+	}
+
+	del {
+		color: $red;
+	}
 }
