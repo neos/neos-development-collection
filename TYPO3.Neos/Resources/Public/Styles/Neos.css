@@ -9612,9 +9612,6 @@
   max-width: 1000px;
   margin: 0 auto;
 }
-.neos.neos-module.neos-module-management-history .neos-history-nextpage {
-  display: none;
-}
 .neos.neos-module.neos-module-management-history .neos-history-day .neos-history-date {
   margin-left: 50%;
 }
@@ -9692,6 +9689,9 @@
   text-align: left;
 }
 .neos.neos-module.neos-module-management-history .loadMore {
+  text-align: center;
+}
+.neos.neos-module.neos-module-management-history .loadMore button {
   margin-top: 25px;
   margin-bottom: 25px;
 }
