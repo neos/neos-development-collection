@@ -117,7 +117,7 @@ define(
           }
 
           if (this.get('_label')) {
-            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="badge">' + this.get('_numberOfChanges') + '</span>');
+            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="neos-badge">' + this.get('_numberOfChanges') + '</span>');
           } else {
             return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
           }
