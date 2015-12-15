@@ -43,12 +43,6 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
 {
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
-     * @Flow\Inject
-     */
-    protected $resourceManager;
-
-    /**
      * @Flow\Inject
      * @var \TYPO3\Media\Domain\Service\ThumbnailService
      */

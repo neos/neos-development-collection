@@ -12,10 +12,8 @@ namespace TYPO3\Media\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\Thumbnail;
-use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**

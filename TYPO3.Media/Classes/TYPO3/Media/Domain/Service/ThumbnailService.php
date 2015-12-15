@@ -55,12 +55,6 @@ class ThumbnailService
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
      * @Flow\InjectConfiguration("thumbnailPresets")
      * @var boolean
      */
