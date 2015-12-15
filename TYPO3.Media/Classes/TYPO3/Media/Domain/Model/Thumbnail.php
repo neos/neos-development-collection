@@ -91,14 +91,12 @@ class Thumbnail implements ImageInterface
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
      * @param ThumbnailConfiguration $configuration
-     * @param boolean $transient
      * @param boolean $async
      * @throws \TYPO3\Media\Exception
      */
-    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration, $transient = false, $async = false)
+    public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration, $async = false)
     {
         $this->originalAsset = $originalAsset;
-        $this->setTransient($transient);
         $this->setConfiguration($configuration);
         $this->async = $async;
         $this->emitThumbnailCreated($this);
@@ -192,15 +190,6 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * @param boolean $isTransient
-     * @return void
-     */
-    public function setTransient($isTransient)
-    {
-        $this->isTransient = (boolean)$isTransient;
-    }
-
-    /**
      * @return string
      */
     public function getStaticResource()
@@ -215,6 +204,7 @@ class Thumbnail implements ImageInterface
     public function setStaticResource($staticResource)
     {
         $this->staticResource = $staticResource;
+        $this->isTransient = true;
     }
 
     /**

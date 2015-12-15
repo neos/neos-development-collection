@@ -67,35 +67,7 @@ function(
 		 */
 		_loadConfiguration: function() {
 			var that = this;
-			ResourceCache.getItem(Configuration.get('ContentDimensionsUri')).then(function(result) {
-				var configuration = {};
-
-				$.each($('.contentdimensions', result.resource).children('li'), function(key, contentDimensionSnippet) {
-
-					var presets = {};
-					$.each($('.contentdimension-preset', contentDimensionSnippet), function(key, contentDimensionPresetSnippet) {
-
-						var values = [];
-						$.each($('.contentdimension-preset-values li', contentDimensionPresetSnippet), function(key, contentDimensionPresetValuesSnippet) {
-							values.push($(contentDimensionPresetValuesSnippet).text());
-						});
-
-						var presetIdentifier = $('.contentdimension-preset-identifier', contentDimensionPresetSnippet).text();
-						presets[presetIdentifier] = {
-							label: $('.contentdimension-preset-label', contentDimensionPresetSnippet).text(),
-							values: values,
-							disabled: false
-						};
-					});
-
-					var dimensionIdentifier = $('.contentdimension-identifier', contentDimensionSnippet).text();
-					configuration[dimensionIdentifier] = {
-						label: $('.contentdimension-label', contentDimensionSnippet).text(),
-						icon: $('.contentdimension-icon', contentDimensionSnippet).text(),
-						defaultPreset: $('.contentdimension-defaultpreset .contentdimension-preset-identifier', contentDimensionSnippet).text(),
-						presets: presets
-					};
-				});
+			ResourceCache.getItem(Configuration.get('ContentDimensionsUri')).then(function(configuration) {
 				that.set('configuration', configuration);
 			}, function(error) {
 				console.error('Failed loading dimension presets data.', error);

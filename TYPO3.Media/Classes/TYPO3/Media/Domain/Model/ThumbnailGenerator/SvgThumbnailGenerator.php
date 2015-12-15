@@ -13,9 +13,7 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception;
@@ -60,7 +58,6 @@ class SvgThumbnailGenerator extends AbstractThumbnailGenerator
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
             $thumbnail->setStaticResource($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
-            $thumbnail->setTransient(true);
         } catch (\Exception $exception) {
             $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
             $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();

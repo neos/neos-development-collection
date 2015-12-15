@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
@@ -99,7 +98,7 @@ class ThumbnailService
         }
         if ($thumbnail === null) {
             try {
-                $thumbnail = new Thumbnail($asset, $configuration, false, $async);
+                $thumbnail = new Thumbnail($asset, $configuration, $async);
 
                 if ($thumbnail->isTransient() === false) {
                     // If the thumbnail strategy failed to generate a valid thumbnail

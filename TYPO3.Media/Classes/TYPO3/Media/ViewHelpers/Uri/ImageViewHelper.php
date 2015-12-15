@@ -89,6 +89,7 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
         if ($asset === null && $this->hasArgument('image')) {
             $asset = $this->arguments['image'];
         }
+
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {

@@ -30,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="la-LA">crwdns7:0crwdne7:0</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="la-LA">crwdns629:0crwdne629:0</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="la-LA">crwdns571:0crwdne571:0</target></trans-unit>
@@ -484,6 +487,19 @@
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
 			<target xml:lang="la-LA">crwdns574:0{nodeTypeName}crwdnd574:0{pageLabel}crwdne574:0</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="la-LA">crwdns630:0crwdne630:0</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="la-LA">crwdns631:0crwdne631:0</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="la-LA">crwdns632:0crwdne632:0</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="la-LA">crwdns633:0crwdne633:0</target></trans-unit>
     </body>
   </file>
 </xliff>

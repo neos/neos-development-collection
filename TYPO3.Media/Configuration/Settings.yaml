@@ -41,6 +41,7 @@ TYPO3:
         'quality': 90
 
     thumbnailGenerators:
+
       'TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
         resolution: 120
         supportedExtensions: [ 'pdf', 'eps', 'ai' ]

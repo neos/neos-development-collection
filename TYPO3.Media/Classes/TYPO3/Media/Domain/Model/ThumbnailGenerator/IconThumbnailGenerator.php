@@ -13,9 +13,7 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception;
@@ -54,7 +52,6 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
             $asset = $thumbnail->getOriginalAsset();
             $icon = $this->getAssetIcon($asset, $width, $height);
             $thumbnail->setStaticResource($icon['src']);
-            $thumbnail->setTransient(true);
             $thumbnail->setWidth($icon['width']);
             $thumbnail->setHeight($icon['height']);
         } catch (\Exception $exception) {
