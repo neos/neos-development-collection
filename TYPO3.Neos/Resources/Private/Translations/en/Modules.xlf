@@ -255,7 +255,9 @@
 			<trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			</trans-unit>
-
+			<trans-unit id="history.loadMore.label" xml:space="preserve">
+				<source>Load More</source>
+			</trans-unit>
 
 			<!-- Administration -->
 			<trans-unit id="administration.label" xml:space="preserve">

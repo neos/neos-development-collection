@@ -13,12 +13,16 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
+/**
+ * Controller for the history module of Neos, displaying the timeline of changes.
+ */
 class HistoryController extends AbstractModuleController
 {
     /**
@@ -40,9 +44,10 @@ class HistoryController extends AbstractModuleController
      */
     public function indexAction($offset = 0, $limit = 10)
     {
-        $events = $this->eventRepository->findRelevantEvents($offset, $limit + 1)->toArray();
+        $events = $this->eventRepository->findRelevantEventsByWorkspace($offset, $limit + 1, 'live')->toArray();
 
-        if (count($events) == $limit + 1) {
+        $nextPage = null;
+        if (count($events) > $limit) {
             $events = array_slice($events, 0, $limit);
 
             $nextPage = $this
@@ -50,16 +55,10 @@ class HistoryController extends AbstractModuleController
                 ->getUriBuilder()
                 ->setCreateAbsoluteUri(true)
                 ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
-        } else {
-            $nextPage = null;
         }
 
         $eventsByDate = array();
         foreach ($events as $event) {
-            if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
-                continue;
-            }
-
             /* @var $event Event */
             $day = $event->getTimestamp()->format('Y-m-d');
             if (!isset($eventsByDate[$day])) {

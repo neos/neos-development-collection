@@ -200,7 +200,7 @@ class NodeEvent extends Event
             $context = $this->contextFactory->create(array(
                 'workspaceName' => $this->userService->getUserWorkspace()->getName(),
                 'dimensions' => $this->dimension,
-                'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
+                'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
             ));
             return $context->getNodeByIdentifier($this->documentNodeIdentifier);
@@ -224,13 +224,27 @@ class NodeEvent extends Event
             $context = $this->contextFactory->create(array(
                 'workspaceName' => $this->userService->getUserWorkspace()->getName(),
                 'dimensions' => $this->dimension,
-                'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
+                'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
             ));
             return $context->getNodeByIdentifier($this->nodeIdentifier);
         } catch (EntityNotFoundException $e) {
             return null;
         }
+    }
+
+    /**
+     * Prevents invalid calls to the site respository in case the site data property is not available.
+     *
+     * @return null|object
+     */
+    protected function getCurrentSite()
+    {
+        if (!isset($this->data['site']) || $this->data['site'] === null) {
+            return null;
+        }
+
+        return $this->siteRepository->findByIdentifier($this->data['site']);
     }
 
     /**
