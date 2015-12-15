@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Allow thumbnails without resources for asynchronous thumbnail generation.
  */
-class Version20151116054040 extends AbstractMigration
+class Version20151216054040 extends AbstractMigration
 {
     /**
      * @param Schema $schema

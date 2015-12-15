@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Add constraint to thumbnail table to prevent duplicates.
  */
-class Version20151215144435 extends AbstractMigration
+class Version20151216144408 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -15,9 +15,9 @@ class Version20151215144435 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("DROP INDEX originalasset_configurationhash");
+        $this->addSql("DROP INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail");
         $this->addSql("CREATE UNIQUE INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail (originalasset, configurationhash)");
     }
 
@@ -27,10 +27,9 @@ class Version20151215144435 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("DROP INDEX originalasset_configurationhash");
+        $this->addSql("DROP INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail");
         $this->addSql("CREATE INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail (originalasset, configurationhash)");
-
     }
 }

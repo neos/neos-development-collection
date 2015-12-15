@@ -5,9 +5,9 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Allow thumbnails without resources for asynchronous thumbnail generation.
+ * Add static resource property to thumbnail table.
  */
-class Version20151116052338 extends AbstractMigration
+class Version20151216143756 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -17,7 +17,7 @@ class Version20151116052338 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail CHANGE resource resource VARCHAR(40) DEFAULT NULL");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD staticresource VARCHAR(255) DEFAULT NULL");
     }
 
     /**
@@ -28,6 +28,6 @@ class Version20151116052338 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail CHANGE resource resource VARCHAR(40) NOT NULL COLLATE utf8_unicode_ci");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail DROP staticresource");
     }
 }
