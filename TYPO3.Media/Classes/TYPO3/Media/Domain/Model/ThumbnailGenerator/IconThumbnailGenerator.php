@@ -52,7 +52,6 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
             $asset = $thumbnail->getOriginalAsset();
             $icon = $this->getAssetIcon($asset, $width, $height);
             $thumbnail->setStaticResource($icon['src']);
-            $thumbnail->setTransient(true);
             $thumbnail->setWidth($icon['width']);
             $thumbnail->setHeight($icon['height']);
         } catch (\Exception $exception) {

@@ -58,7 +58,6 @@ class SvgThumbnailGenerator extends AbstractThumbnailGenerator
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
             $thumbnail->setStaticResource($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
-            $thumbnail->setTransient(true);
         } catch (\Exception $exception) {
             $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
             $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
