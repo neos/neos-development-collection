@@ -17,6 +17,7 @@ class Version20151216144408 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
+        $this->addSql("TRUNCATE TABLE typo3_media_domain_model_thumbnail");
         $this->addSql("DROP INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail");
         $this->addSql("CREATE UNIQUE INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail (originalasset, configurationhash)");
     }
