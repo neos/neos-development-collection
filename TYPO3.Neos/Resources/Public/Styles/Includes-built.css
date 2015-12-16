@@ -7754,7 +7754,7 @@
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .icon-lock {
   line-height: 19px;
 }
-.neos #neos-publish-menu.neos-button-group .neos-publish-button .badge {
+.neos #neos-publish-menu.neos-button-group .neos-publish-button .neos-badge {
   background-color: #fff;
   color: #ff8700;
   position: relative;
