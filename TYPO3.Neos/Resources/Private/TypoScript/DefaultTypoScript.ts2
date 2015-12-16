@@ -9,6 +9,7 @@ include: Prototypes/Shortcut.ts2
 include: Prototypes/Breadcrumb.ts2
 include: Prototypes/BreadcrumbMenu.ts2
 include: Prototypes/DimensionMenu.ts2
+include: Prototypes/VariantMenu.ts2
 include: Prototypes/Menu.ts2
 include: Prototypes/Plugin.ts2
 include: Prototypes/PluginView.ts2
