@@ -449,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="fi">Varmennetaan</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="fi">Kirjaudu ulos</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>

@@ -173,7 +173,7 @@
 			<target xml:lang="de">Bezeichnung</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="de" state="translated">Knotentyp</target><alt-trans><target xml:lang="de">Inhaltstyp</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Inhaltstyp</target><alt-trans><target xml:lang="de">Knotentyp</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="de">Pfad</target></trans-unit>
@@ -449,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="de">Authentifiziere</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="de">Abmelden</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
