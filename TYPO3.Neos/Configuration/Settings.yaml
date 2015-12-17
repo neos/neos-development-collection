@@ -397,6 +397,10 @@ TYPO3:
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
 
+    backendLoginForm:
+      stylesheets:
+        'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
+
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:
