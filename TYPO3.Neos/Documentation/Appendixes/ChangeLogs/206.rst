@@ -1,0 +1,74 @@
+`2.0.6 (2015-12-17) <https://github.com/neos/neos-development-collection/releases/tag/2.0.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent core migration from damaging badly formatted superTypes <https://github.com/neos/neos-development-collection/pull/279>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+If superTypes were defined using string representation of true or false, the
+nodetypes file would get corrupted.
+
+E.g. this:
+
+    superTypes:
+      'Some:NodeTypes': "TRUE"
+
+Would be transformed into::
+
+    superTypes:
+      1: true
+
+* Related: `NEOS-1253 <https://jira.neos.io/browse/NEOS-1253>`_
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Fix missing labels used in UserMenu.html <https://github.com/neos/neos-development-collection/pull/273>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Loading content dimensions for dimensions selector <https://github.com/neos/neos-development-collection/pull/267>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The request returns JSON instead of HTML and thus doesn't need to be parsed
+
+NEOS-1722
+
+* Packages: ``Neos``
+
+`BUGFIX: \`\`Node->getChildNodes\`\` bypasses node type filter for newly added nodes <https://github.com/neos/neos-development-collection/pull/261>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+When inserting a node inside another node in the document node tree, non-document nodes were displayed as children incorrectly.
+
+NEOS-1469 #close
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Correctly assign account to party in UserService <https://github.com/neos/neos-development-collection/pull/259>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+When a user is created, the corresponding account was added directly.
+This lead to the party not being found when asking the account for it,
+unless changes were persisted in between.
+
+This uses the PartyService method assignAccountToParty() now.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Allow publishing of nodes with modified schema <https://github.com/neos/neos-development-collection/pull/260>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When changing node types on existing nodes, the following publication would
+fail under certain circumstances (see issue NEOS-1172 for details). This
+change fixes those problems.
+
+Adds a behat test as well: "When changing the node type of a node in my
+workspace to one that has fewer properties it is still possible to publish it"
+
+* Resolves: `NEOS-1172 <https://jira.neos.io/browse/NEOS-1172>`_
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.5...2.0.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
