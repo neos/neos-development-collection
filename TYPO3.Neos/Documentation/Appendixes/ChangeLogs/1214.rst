@@ -1,0 +1,150 @@
+`1.2.14 (2015-12-17) <https://github.com/neos/neos-development-collection/releases/tag/1.2.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Loading content dimensions for dimensions selector <https://github.com/neos/neos-development-collection/pull/267>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The request returns JSON instead of HTML and thus doesn't need to be parsed
+
+NEOS-1722
+
+* Packages: ``Neos``
+
+`BUGFIX: \`\`Node->getChildNodes\`\` bypasses node type filter for newly added nodes <https://github.com/neos/neos-development-collection/pull/261>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+When inserting a node inside another node in the document node tree, non-document nodes were displayed as children incorrectly.
+
+NEOS-1469 #close
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Allow publishing of nodes with modified schema <https://github.com/neos/neos-development-collection/pull/260>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When changing node types on existing nodes, the following publication would
+fail under certain circumstances (see issue NEOS-1172 for details). This
+change fixes those problems.
+
+Adds a behat test as well: "When changing the node type of a node in my
+workspace to one that has fewer properties it is still possible to publish it"
+
+* Resolves: `NEOS-1172 <https://jira.neos.io/browse/NEOS-1172>`_
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Improve slow aloha settings selector  <https://github.com/neos/neos-development-collection/pull/255>`_
+---------------------------------------------------------------------------------------------------------------
+
+Current selector to match property editor of given node type is
+extremely slow, because it has to use very inefficient selector.
+
+Add additional `data-neos-node-type` attribute to editable property wrap
+to simplify the selector.
+
+This brings a huge performance improvement on pages with a lot of
+editable properties.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Prevent fetching unmanaged entity in \`\`WorkspacesTest\`\` <https://github.com/neos/neos-development-collection/pull/251>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Needed for ``doctrine/orm`` 2.4 compatibility (already done in 2.0)
+
+* Packages: ``TYPO3CR``
+
+`[TASK] Also change wrong \`\`value\`\` object bug in example code for 1.2 <https://github.com/neos/neos-development-collection/pull/248>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[BUGFIX] Loading content dimensions for dimensions selector <https://github.com/neos/neos-development-collection/pull/242>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Regression introduced with `c8ee304082e4b5bea28beec33f1f7bd8f7730225 <https://github.com/neos/neos-development-collection/commit/c8ee304082e4b5bea28beec33f1f7bd8f7730225>`_
+
+* Resolves: `NEOS-1722 <https://jira.neos.io/browse/NEOS-1722>`_
+* Packages: ``Neos``
+
+`[BUGFIX] Node tree state out of sync with other components <https://github.com/neos/neos-development-collection/pull/186>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When using the hide button and editing the title in the node trees, the state of other components like the publish menu wasn't updated accordingly. Additionally the node trees weren't updated when nodes were altered outside the trees. Several fixes are included in this change:
+
+- Publish menu updated when modifying nodes in the tree (hidden/title)
+- Context structure tree nodes updated when changed on the page
+- Hidden button in trees updated correctly for active node
+- Incorrect entity updated when modifying nodes in the tree
+
+* Resolves: `NEOS-1474 <https://jira.neos.io/browse/NEOS-1474>`_
+* Resolves: `NEOS-1129 <https://jira.neos.io/browse/NEOS-1129>`_
+
+* Packages: ``Neos``
+
+`[BUGFIX] Fix PHP 5.3 compatibility issues <https://github.com/neos/neos-development-collection/pull/236>`_
+-----------------------------------------------------------------------------------------------------------
+
+The 1.2 branch should be compatible to PHP 5.3, but since we did not have automated
+testing in place on that version of PHP, some incompatibilties have crept in.
+
+This fixes those issues and enables the unit and functional tests to be run on PHP 5.3
+on Travis CI.
+
+* Packages: ``Neos``
+
+`[TASK] Adjust default label for nodes <https://github.com/neos/neos-development-collection/pull/161>`_
+-------------------------------------------------------------------------------------------------------
+
+The label inherited from the Node nodetype included the node name, which
+is not very helpful for content nodes and can be confusing.
+
+With this change, the (default) label for nodes no longer includes the
+node name unless the node has been auto-created. That means that for
+ContentCollection nodes it will still be shown like before in most cases.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Hidden before/after properties breaks site import <https://github.com/neos/neos-development-collection/pull/225>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The closing tags for the ``hiddenBeforeDateTime`` and ``hiddenAfterDateTime``
+properties were not handled in the node import service.
+
+* Resolves: `NEOS-990 <https://jira.neos.io/browse/NEOS-990>`_
+* Resolves: `NEOS-1554 <https://jira.neos.io/browse/NEOS-1554>`_
+
+* Packages: ``TYPO3CR``
+
+`[BUGFIX] Allow moving of inaccessible nodes <https://github.com/neos/neos-development-collection/pull/210>`_
+-------------------------------------------------------------------------------------------------------------
+
+If a node is inaccessible (hidden) an exception is thrown
+when trying to move it.
+
+* Packages: ``Neos``
+
+`[BUGFIX] Route cache flush shouldn't load all documents <https://github.com/neos/neos-development-collection/pull/196>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+To avoid loading all documents in a Neos instance the route cache
+for a node will be tagged will all parent node identifiers so that
+flushing the cache for a particular node identifier will automatically
+flush all child node entries as well.
+
+* Packages: ``Neos``
+
+`[TASK] Cache content dimensions backend request client side <https://github.com/neos/neos-development-collection/pull/199>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Instead of fetching the content dimensions every time the backend is loaded,
+the request is cached using the ``ResourceCache``. This eliminates a request
+for something that rarely changes and is automatically updated when the
+configuration changes.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/1.2.13...1.2.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
