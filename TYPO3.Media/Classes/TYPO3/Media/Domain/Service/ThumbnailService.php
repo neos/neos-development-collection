@@ -14,6 +14,7 @@ namespace TYPO3\Media\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
@@ -188,6 +189,7 @@ class ThumbnailService
     /**
      * @param Thumbnail $thumbnail
      * @return string
+     * @throws ThumbnailServiceException
      */
     public function getUriForThumbnail(Thumbnail $thumbnail)
     {
@@ -204,13 +206,15 @@ class ThumbnailService
             ), 1450178437);
         }
 
-        if (preg_match('#^resource://([^/]+)/Public/(.*)#', $staticResource, $matches) !== 1) {
+        try {
+            list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($staticResource);
+            return $this->resourceManager->getPublicPackageResourceUri($package, $path);
+        } catch (Exception $exception) {
             throw new ThumbnailServiceException(sprintf(
                 'Invalid static resource path "%s" for static thumbnail "%s".',
                 $staticResource,
                 $this->persistenceManager->getIdentifierByObject($thumbnail)
-            ), 1450188242);
+            ), 1450188242, $exception);
         }
-        return $this->resourceManager->getPublicPackageResourceUri($matches[1], $matches[2]);
     }
 }
