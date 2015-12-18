@@ -135,9 +135,9 @@
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="da">Publicér alle ændringer til {0}</target></trans-unit>
-      <trans-unit id="changedContentCaption" xml:space="preserve">
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
 				<source>Changed Content</source>
-			<target xml:lang="da" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="da">Ændret indhold</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
 			<target xml:lang="da">slettet</target></trans-unit>

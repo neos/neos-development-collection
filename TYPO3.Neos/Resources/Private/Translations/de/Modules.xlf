@@ -137,7 +137,7 @@
 			<target xml:lang="de" state="translated">Alle Änderungen in {0} veröffentlichen</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="de" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="de" state="translated">Geänderter Inhalt</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
 			<target xml:lang="de">gelöscht</target></trans-unit>
@@ -267,7 +267,7 @@
 			<target xml:lang="de">{0} hat den Benutzer "{1}" von {2} gelöscht.</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
-			<target xml:lang="de" state="needs-translation">Load More</target></trans-unit>
+			<target xml:lang="de" state="translated">Mehr Laden</target><alt-trans><target xml:lang="de">Mehr laden</target></alt-trans></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -479,7 +479,7 @@
 			<target xml:lang="de">Benutzerdaten</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve">
 				<source>User Menu</source>
-			<target xml:lang="de" state="needs-translation">User Menu</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzermenü</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="de">Benutzereinstellungen</target></trans-unit>
