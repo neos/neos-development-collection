@@ -121,7 +121,9 @@ class ThumbnailService
                     return null;
                 }
 
-                $this->thumbnailRepository->add($thumbnail);
+                if (!$this->persistenceManager->isNewObject($asset)) {
+                    $this->thumbnailRepository->add($thumbnail);
+                }
                 $asset->addThumbnail($thumbnail);
 
                 // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
