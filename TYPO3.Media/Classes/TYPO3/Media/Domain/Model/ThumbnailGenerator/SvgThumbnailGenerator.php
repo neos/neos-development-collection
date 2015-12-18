@@ -55,9 +55,14 @@ class SvgThumbnailGenerator extends AbstractThumbnailGenerator
     public function refresh(Thumbnail $thumbnail)
     {
         try {
+            $width = $thumbnail->getConfigurationValue('width') ?: $thumbnail->getConfigurationValue('maximumWidth');
+            $height = $thumbnail->getConfigurationValue('height') ?: $thumbnail->getConfigurationValue('maximumHeight');
+
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
             $thumbnail->setStaticResource($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
+            $thumbnail->setWidth($width);
+            $thumbnail->setHeight($height);
         } catch (\Exception $exception) {
             $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
             $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
