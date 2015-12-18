@@ -1,6 +1,6 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=2.1
    :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
@@ -10,11 +10,11 @@
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://packagist.org/packages/neos/neos-development-collection
-.. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
-   :target: https://neos.readthedocs.org/en/latest/
+.. |Docs| image:: https://img.shields.io/badge/documentation-2.1-blue.svg
+   :target: https://neos.readthedocs.org/en/2.1/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
-   :target: http://neos.github.io/neos/master/
+.. |API| image:: https://img.shields.io/badge/API%20docs-2.1-blue.svg
+   :target: http://neos.github.io/neos/2.1/
    :alt: API Docs
 
 ---------------------------
