@@ -86,6 +86,19 @@ class ThumbnailService
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
+        // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
+        // dimensions differ from the specified image dimensions, otherwise the original image is returned.
+        if ($asset instanceof ImageInterface) {
+            if ($asset->getWidth() === null && $asset->getHeight() === null) {
+                return $asset;
+            }
+            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
+            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
+            if ($configuration->isUpScalingAllowed() === false && $maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
+                return $asset;
+            }
+        }
+
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $configurationHash = $configuration->getHash();
         if (!isset($this->thumbnailCache[$assetIdentifier])) {
