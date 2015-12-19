@@ -5585,26 +5585,85 @@
 .neos #neos-inspector .neos-inspector-file {
   min-width: 288px;
 }
-.neos #neos-inspector .neos-inspector-file .neos-button {
+.neos #neos-inspector .neos-inspector-file ul {
+  padding-bottom: 16px;
+}
+.neos #neos-inspector .neos-inspector-file ul li {
+  padding-right: 49px;
+  height: 40px;
+  line-height: 40px;
+  background-color: #323232;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.neos #neos-inspector .neos-inspector-file ul li + li {
+  border-top: 1px solid #222;
+}
+.neos #neos-inspector .neos-inspector-file ul li span:first-child {
+  background-color: #141414;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+  position: relative;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  float: left;
+}
+.neos #neos-inspector .neos-inspector-file ul li span:first-child img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #141414;
+  outline: 3px solid #141414;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove {
+  width: 40px;
+  height: 40px;
+  right: 0;
+  position: absolute;
+  background-color: #323232;
+  border-left: 1px solid #222;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove:hover, .neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove:active {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
+  margin-left: -2px;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove i {
+  line-height: 40px;
+  margin-top: 0;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload {
+  padding-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-button {
   padding: 0 8px;
   height: 32px;
   line-height: 32px;
   font-size: 13px;
 }
-.neos #neos-inspector .neos-inspector-file ul {
-  padding-bottom: 5px;
-}
-.neos #neos-inspector .neos-inspector-file ul li {
-  padding: 5px 0;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
-  padding-bottom: 12px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-crop-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-crop-button {
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button {
   float: right;
   margin-left: 4px;
 }
