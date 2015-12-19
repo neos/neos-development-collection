@@ -75,7 +75,7 @@ class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $red = imagecolorallocate($im, 0xFF, 0xFF, 0xFF);
             $black = imagecolorallocate($im, 0x00, 0x00, 0x00);
 
-            imagefilledrectangle($im, 0, 0, 1000, 1000, $red);
+            imagefilledrectangle($im, 0, 0, $width, $height, $red);
             imagefttext($im, 48, 0, 80, 150, $black, $temporaryLocalCopyFilename, 'Neos Font Preview');
             imagefttext($im, 32, 0, 80, 280, $black, $temporaryLocalCopyFilename, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             imagefttext($im, 32, 0, 80, 360, $black, $temporaryLocalCopyFilename, 'abcdefghijklmopqrstuvwxyz');

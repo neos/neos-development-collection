@@ -299,7 +299,7 @@ class ContentController extends ActionController
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
             'filename' => $asset->getResource()->getFilename()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:IconPreview'));
+        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Thumbnail'));
         if ($thumbnail !== null) {
             $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];

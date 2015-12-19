@@ -34,7 +34,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			// Create new instance per asset editor to avoid side effects
 			this.set('_mediaBrowserView', Ember.View.extend({
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
-			})),
+			}));
 
 			this.set('assets', Ember.A());
 			this.set('_assetMetadataEndpointUri', $('link[rel="neos-asset-metadata"]').attr('href'));
@@ -59,7 +59,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		assetView: Ember.CollectionView.extend({
 			tagName: 'ul',
 			itemViewClass: Ember.View.extend({
-				template: Ember.Handlebars.compile('<img src="{{unbound view.content.previewImageResourceUri}}" alt="" />{{view.content.filename}} <i class="icon-remove neos-pull-right" {{action remove target="view"}}> </i>'),
+				template: Ember.Handlebars.compile('<span><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
+				attributeBindings: ['title'],
+				titleBinding: 'content.filename',
 				actions: {
 					remove: function() {
 						this.get('_parentView._parentView').removeAsset(this.get('content'));
