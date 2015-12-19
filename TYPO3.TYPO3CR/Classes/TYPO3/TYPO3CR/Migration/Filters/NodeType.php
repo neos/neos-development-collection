@@ -66,7 +66,7 @@ class NodeType implements FilterInterface
     }
 
     /**
-     * Wether the filter should exclude the given NodeType instead of including only this node type.
+     * Whether the filter should exclude the given NodeType instead of including only this node type.
      *
      * @param boolean $exclude
      */

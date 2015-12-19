@@ -14,9 +14,9 @@ namespace TYPO3\Media\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
@@ -86,19 +86,6 @@ class ThumbnailService
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
-        // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
-        // dimensions differ from the specified image dimensions, otherwise the original image is returned.
-        if ($asset instanceof ImageInterface) {
-            if ($asset->getWidth() === null && $asset->getHeight() === null) {
-                return $asset;
-            }
-            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
-            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
-            if ($configuration->isUpScalingAllowed() === false && $maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
-                return $asset;
-            }
-        }
-
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $configurationHash = $configuration->getHash();
         if (!isset($this->thumbnailCache[$assetIdentifier])) {
@@ -121,7 +108,9 @@ class ThumbnailService
                     return null;
                 }
 
-                $this->thumbnailRepository->add($thumbnail);
+                if (!$this->persistenceManager->isNewObject($asset)) {
+                    $this->thumbnailRepository->add($thumbnail);
+                }
                 $asset->addThumbnail($thumbnail);
 
                 // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
@@ -188,6 +177,7 @@ class ThumbnailService
     /**
      * @param Thumbnail $thumbnail
      * @return string
+     * @throws ThumbnailServiceException
      */
     public function getUriForThumbnail(Thumbnail $thumbnail)
     {
@@ -204,13 +194,11 @@ class ThumbnailService
             ), 1450178437);
         }
 
-        if (preg_match('#^resource://([^/]+)/Public/(.*)#', $staticResource, $matches) !== 1) {
-            throw new ThumbnailServiceException(sprintf(
-                'Invalid static resource path "%s" for static thumbnail "%s".',
-                $staticResource,
-                $this->persistenceManager->getIdentifierByObject($thumbnail)
-            ), 1450188242);
+        try {
+            list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($staticResource);
+            return $this->resourceManager->getPublicPackageResourceUri($package, $path);
+        } catch (Exception $exception) {
+            return $staticResource;
         }
-        return $this->resourceManager->getPublicPackageResourceUri($matches[1], $matches[2]);
     }
 }

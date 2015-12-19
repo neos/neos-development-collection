@@ -449,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="pt-PT" state="translated">Autenticando</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="pt-PT" state="needs-translation">Logout</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
