@@ -140,6 +140,9 @@ The following options are allowed:
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 
+  .. note:: Your own property names should never start with an underscore ``_`` as that is used for internal
+            properties or as an internal prefix.
+
   ``type``
     Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
     these three special types: ``DateTime``, ``references``, or ``reference``. Use ``DateTime`` to store dates / time as a
