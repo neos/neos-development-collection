@@ -6,9 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="ru">Автоматическая публикация</target></trans-unit>
-      <trans-unit id="autoPublishTo" xml:space="preserve">
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="ru" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="ru">Автоматическая публикация в {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="ru">Применить</target></trans-unit>
@@ -30,9 +30,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="ru">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
-      <trans-unit id="node" xml:space="preserve">
+      <trans-unit id="node" xml:space="preserve" approved="yes">
 				<source>Node</source>
-			<target xml:lang="ru" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="ru">Узел</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="ru">Просмотр содержимого</target></trans-unit>
@@ -120,36 +120,36 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="ru">Опубликовать</target></trans-unit>
-      <trans-unit id="publishTo" xml:space="preserve">
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
 				<source>Publish to {0}</source>
-			<target xml:lang="ru" state="needs-translation">Publish to {0}</target></trans-unit>
-      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+			<target xml:lang="ru">Опубликовать в {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="ru" state="needs-translation">Publish all changes for current page</target></trans-unit>
-      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+			<target xml:lang="ru">Опубликовать все изменения для текущей страницы</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="ru" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
-      <trans-unit id="publishing" xml:space="preserve">
+			<target xml:lang="ru">Не удается опубликовать, потому что целевая рабочая область является неизменяемой</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
-			<target xml:lang="ru" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="ru">Oпубликовать</target><alt-trans><target xml:lang="ru">Публикация</target></alt-trans></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="ru">Опубликовано</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="ru">Целевой Workspace</target><alt-trans><target xml:lang="ru">Целевая рабочее место</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее место</target></alt-trans><alt-trans><target xml:lang="ru">Целевая рабочее пространство</target></alt-trans></trans-unit>
-      <trans-unit id="currentWorkspace" xml:space="preserve">
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
 				<source>Current workspace</source>
-			<target xml:lang="ru" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="ru">Текущая рабочая область</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="ru">Удалить</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="ru">Обновить</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving</source>
-			<target xml:lang="ru" state="translated">Сохранение...</target></trans-unit>
+			<target xml:lang="ru">Сохранение</target><alt-trans><target xml:lang="ru">Сохранение...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="ru">Сохранено</target></trans-unit>
@@ -171,15 +171,15 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="ru">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target xml:lang="ru" state="translated">Тип узла</target></trans-unit>
+			<target xml:lang="ru">Тип содержимого</target><alt-trans><target xml:lang="ru">Тип узла</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="ru">Путь</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
-			<target xml:lang="ru" state="translated">Относительный путь</target></trans-unit>
+			<target xml:lang="ru">Относительный путь</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -449,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="ru">Аутентификация</target><alt-trans><target xml:lang="ru">Авторизация</target></alt-trans></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="ru">Выйти из системы</target><alt-trans><target xml:lang="ru">Выйти из профиля</target></alt-trans></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -484,22 +487,22 @@
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="ru">Настройка типа элемента, который должен отображаться здесь не доступен. Вероятно вы переименовали тип элемента и не выполнили миграцию или просто допустили опечатку.</target></trans-unit>
       <!-- Miscellaneous -->
-      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="ru" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="ru">"{nodeTypeName}" на странице "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
-      <trans-unit id="service.nodes.title" xml:space="preserve">
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
 				<source>Nodes</source>
-			<target xml:lang="ru" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="ru">Узлы</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target xml:lang="ru">Показать</target></trans-unit>
-      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="ru" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
-      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+			<target xml:lang="ru">Этот узел не может быть доступным через общедоступный URL-адрес</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
 				<source>Node Properties</source>
-			<target xml:lang="ru" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="ru">Свойства узла</target></trans-unit>
     </body>
   </file>
 </xliff>

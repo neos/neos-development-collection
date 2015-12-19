@@ -8,7 +8,7 @@
 			<target xml:lang="de">Automatisch Veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="de" state="translated">Automatisch auf {0} veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch nach {0} veröffentlichen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Automatisch nach {0} veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch auf {0} veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
@@ -32,7 +32,7 @@
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="de" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="de" state="translated">Knoten</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="de">Inhaltsansicht</target></trans-unit>
@@ -125,7 +125,7 @@
 			<target xml:lang="de" state="translated">Auf {0} veröffentlichen</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="de" state="translated">Veröffentliche alle Änderungen für die aktuelle Seite</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle Änderungen für die aktuelle Seite veröffentlichen</target><alt-trans><target xml:lang="de">Veröffentliche alle Änderungen für die aktuelle Seite</target></alt-trans></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="de" state="translated">Konnte nicht veröffentlichen, weil der Zielarbeitsbereich nur lesbar ist</target></trans-unit>
@@ -149,7 +149,7 @@
 			<target xml:lang="de">Aktualisieren</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="de" state="translated">Speichern...</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Speichert...</target><alt-trans><target xml:lang="de">Speichern...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="de">Gespeichert</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target xml:lang="de">Bezeichnung</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="de" state="translated">Knotentyp</target><alt-trans><target xml:lang="de">Inhaltstyp</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Inhaltstyp</target><alt-trans><target xml:lang="de">Knotentyp</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="de">Pfad</target></trans-unit>
@@ -449,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="de">Authentifiziere</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="de">Abmelden</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -490,16 +493,16 @@
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="de" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="de" state="translated">Knoten</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target xml:lang="de">Anzeigen</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="de" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieser Knoten kann nicht über eine öffentliche URL aufgerufen werden</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="de" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="de" state="translated">Knoteneigenschaften</target></trans-unit>
     </body>
   </file>
 </xliff>

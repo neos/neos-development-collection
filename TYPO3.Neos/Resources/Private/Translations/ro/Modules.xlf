@@ -135,9 +135,9 @@
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="ro" state="needs-translation">Publish all changes to {0}</target></trans-unit>
-      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
-				<source>Legend</source>
-			<target xml:lang="ro" state="needs-translation">Legend</target></trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve">
+				<source>Changed Content</source>
+			<target xml:lang="ro" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="ro" state="needs-translation">deleted</target></trans-unit>
@@ -265,6 +265,9 @@
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="ro" state="needs-translation">{0} deleted the account "{1}" of {2}.</target></trans-unit>
+      <trans-unit id="history.loadMore.label" xml:space="preserve">
+				<source>Load More</source>
+			<target xml:lang="ro" state="needs-translation">Load More</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -474,6 +477,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="ro" state="needs-translation">User Data</target></trans-unit>
+      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+				<source>User Menu</source>
+			<target xml:lang="ro" state="needs-translation">User Menu</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="ro" state="needs-translation">User Preferences</target></trans-unit>
