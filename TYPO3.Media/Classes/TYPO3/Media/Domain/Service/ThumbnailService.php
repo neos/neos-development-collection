@@ -207,11 +207,6 @@ class ThumbnailService
             ), 1450178437);
         }
 
-        try {
-            list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($staticResource);
-            return $this->resourceManager->getPublicPackageResourceUri($package, $path);
-        } catch (Exception $exception) {
-            return $staticResource;
-        }
+        return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
     }
 }
