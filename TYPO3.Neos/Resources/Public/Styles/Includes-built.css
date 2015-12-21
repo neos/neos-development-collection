@@ -3867,7 +3867,7 @@
   z-index: 10030;
   display: none;
   width: 236px;
-  background-color: #222;
+  background-color: #323232;
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;
   background-clip: padding-box;
@@ -3890,22 +3890,23 @@
 }
 .neos .neos-popover-title {
   margin: 0;
-  padding: 8px;
+  padding: 13px 12px;
   font-size: 14px;
+  line-height: 14px;
   font-weight: bold;
   color: #fff;
-  line-height: 18px;
-  background-color: #141414;
+  background-color: #222;
   border-bottom: 1px solid #3f3f3f;
 }
 .neos .neos-popover-title:empty {
   display: none;
 }
 .neos .neos-popover-content {
-  padding: 8px;
+  padding: 8px 12px;
   max-height: 236px;
   overflow-y: auto;
   white-space: normal;
+  line-height: 1.2;
 }
 .neos .neos-popover-content p, .neos .neos-popover-content ul, .neos .neos-popover-content ol {
   margin-bottom: 0.4rem;
@@ -3998,7 +3999,7 @@
   left: 50%;
   margin-left: -10px;
   border-width: 10px 10px 0;
-  border-top-color: #222;
+  border-top-color: #323232;
 }
 .neos .neos-popover.neos-top .neos-arrow:after {
   border-width: 11px 11px 0;
@@ -4011,7 +4012,7 @@
   left: -10px;
   margin-top: -10px;
   border-width: 10px 10px 10px 0;
-  border-right-color: #222;
+  border-right-color: #323232;
 }
 .neos .neos-popover.neos-right .neos-arrow:after {
   border-width: 11px 11px 11px 0;
@@ -4037,7 +4038,7 @@
   right: -10px;
   margin-top: -10px;
   border-width: 10px 0 10px 10px;
-  border-left-color: #222;
+  border-left-color: #323232;
 }
 .neos .neos-popover.neos-left .neos-arrow:after {
   border-width: 11px 0 11px 11px;
@@ -6675,10 +6676,10 @@
   color: #ff460d;
 }
 .neos #neos-inspector .neos-help-message-button {
-  margin-left: -5px;
+  margin-left: -10px;
 }
 .neos #neos-inspector .neos-help-message-button .neos-help-message-icon {
-  margin-left: 10px;
+  margin-left: 12px;
 }
 .neos #neos-inspector .neos-popover {
   width: 366px;
@@ -10638,7 +10639,9 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: 9px;
+  padding-right: 12px;
+  line-height: 40px;
+  vertical-align: middle;
   cursor: pointer;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button:focus {
@@ -11575,6 +11578,10 @@
 .neos.media-browser table.neos-table .neos-popover {
   width: auto;
   height: auto;
+  border-color: #323232;
+}
+.neos.media-browser table.neos-table .neos-popover .neos-popover-title {
+  border-color: #323232;
 }
 .neos.media-browser table.neos-table .neos-popover .neos-popover-content {
   width: 250px;
@@ -11585,6 +11592,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   overflow: hidden;
+  background-color: #141414;
 }
 .neos.media-browser table.neos-table .neos-popover .neos-popover-content img {
   position: absolute;
@@ -11599,8 +11607,14 @@
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  background-color: #222;
-  outline: 3px solid #222;
+  background-color: #141414;
+  outline: 3px solid #141414;
+}
+.neos.media-browser table.neos-table .neos-popover.neos-top .neos-arrow {
+  border-top-color: #141414;
+}
+.neos.media-browser table.neos-table .neos-popover.neos-bottom .neos-arrow {
+  border-bottom-color: #222;
 }
 .neos.media-browser table.neos-table .icon-move, .neos.media-browser table.neos-table #neos-aloha-topmenu .aloha .ui-button .aloha-icon-toggledragdrop, .neos.media-browser #neos-aloha-topmenu .aloha .ui-button table.neos-table .aloha-icon-toggledragdrop {
   float: left;
@@ -12017,9 +12031,8 @@
 }
 .neos .neos-help-message-icon {
   color: #fff;
-  font-size: 1rem;
+  vertical-align: baseline;
   position: relative;
-  top: 4px;
   cursor: pointer;
   text-decoration: none;
 }
