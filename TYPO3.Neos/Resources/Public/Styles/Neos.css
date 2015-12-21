@@ -10360,8 +10360,8 @@
 }
 .neos.neos-module table td > .neos-button,
 .neos.neos-module table td > form > .neos-button,
-.neos.neos-module table td > div.neos-pull-right > .neos-button,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button {
+.neos.neos-module table td div.neos-pull-right > .neos-button,
+.neos.neos-module table td div.neos-pull-right > form .neos-button {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button:not([disabled]):hover, .neos.neos-module table td > .neos-button:not([disabled]):active, .neos.neos-module table td > .neos-button:not([disabled]).neos-active, .neos.neos-module table td > .neos-button:not([disabled]).neos-pressed, .neos.neos-module table td > .neos-button:not(.neos-disabled):hover, .neos.neos-module table td > .neos-button:not(.neos-disabled):active, .neos.neos-module table td > .neos-button:not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button:not(.neos-disabled).neos-pressed,
@@ -10373,37 +10373,37 @@
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-pressed {
   background-color: #00b5ff;
 }
 .neos.neos-module table td > .neos-button.neos-button-success,
 .neos.neos-module table td > form > .neos-button.neos-button-success,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-success:hover, .neos.neos-module table td > .neos-button.neos-button-success:active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-success:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10411,29 +10411,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #00a338;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning,
 .neos.neos-module table td > form > .neos-button.neos-button-warning,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning:hover, .neos.neos-module table td > .neos-button.neos-button-warning:active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10441,29 +10441,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #ff8700;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger,
 .neos.neos-module table td > form > .neos-button.neos-button-danger,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger:hover, .neos.neos-module table td > .neos-button.neos-button-danger:active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10471,29 +10471,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #ff460d;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary,
 .neos.neos-module table td > form > .neos-button.neos-button-primary,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary:hover, .neos.neos-module table td > .neos-button.neos-button-primary:active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10501,14 +10501,14 @@
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #00b5ff;
 }
 .neos.neos-module legend + table,

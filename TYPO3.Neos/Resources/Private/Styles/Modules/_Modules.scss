@@ -486,8 +486,8 @@
 
 		td > .neos-button,
 		td > form > .neos-button,
-		td > div.neos-pull-right > .neos-button,
-		td > div.neos-pull-right > form .neos-button {
+		td div.neos-pull-right > .neos-button,
+		td div.neos-pull-right > form .neos-button {
 			background-color: $grayMedium;
 
 			&:not([disabled]),
