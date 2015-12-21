@@ -9572,6 +9572,9 @@
   font-size: 11.9px;
   margin-right: 8px;
 }
+.neos.neos-module.neos-module-management-workspaces tr.neos-change + tr.neos-change td.neos-content-change {
+  border-top: 1px solid #ddd;
+}
 .neos.neos-module.neos-module-management-workspaces td {
   white-space: nowrap;
 }
@@ -9598,7 +9601,6 @@
   user-select: none;
 }
 .neos.neos-module.neos-module-management-workspaces td.neos-content-change {
-  border-top: 1px solid #ddd;
   background-color: #eee;
   color: #252525;
 }

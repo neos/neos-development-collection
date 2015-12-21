@@ -12,6 +12,10 @@
 		margin-right: 8px;
 	}
 
+	tr.neos-change + tr.neos-change td.neos-content-change {
+		border-top: 1px solid #ddd;
+	}
+
 	td {
 		white-space: nowrap;
 
@@ -41,7 +45,6 @@
 	}
 
 	td.neos-content-change {
-		border-top: 1px solid #ddd;
 		background-color: $grayLighter;
 		color: $textOnWhite;
 	}
