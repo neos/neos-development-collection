@@ -284,7 +284,7 @@
 
 	.neos-footer {
 		position: sticky;
-		height: $unit;
+		height: $unit + ($defaultMargin * 2);
 		background-color: $grayDarker;
 		margin: $unit (-$menuButtonWidth) (-$unit);
 		border-top: 1px solid $grayLight;
@@ -292,6 +292,9 @@
 		font-size: 0;
 		bottom: 0;
 		z-index: 100;
+		overflow: hidden;
+		@include box-sizing(border-box);
+		@include clearfix;
 
 		&.fixedsticky-on {
 			width: 100%;

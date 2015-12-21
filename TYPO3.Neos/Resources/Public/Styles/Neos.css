@@ -10093,7 +10093,7 @@
 }
 .neos.neos-module .neos-footer {
   position: sticky;
-  height: 40px;
+  height: 72px;
   background-color: #141414;
   margin: 40px -54px -40px;
   border-top: 1px solid #3f3f3f;
@@ -10101,7 +10101,20 @@
   font-size: 0;
   bottom: 0;
   z-index: 100;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  *zoom: 1;
   /* When position: sticky is supported but native behavior is ignored */
+}
+.neos.neos-module .neos-footer:before, .neos.neos-module .neos-footer:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos.neos-module .neos-footer:after {
+  clear: both;
 }
 .neos.neos-module .neos-footer.fixedsticky-on {
   width: 100%;
