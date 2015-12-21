@@ -188,11 +188,11 @@ class ThumbnailService
     }
 
     /**
-     * @param Thumbnail $thumbnail
+     * @param ImageInterface $thumbnail
      * @return string
      * @throws ThumbnailServiceException
      */
-    public function getUriForThumbnail(Thumbnail $thumbnail)
+    public function getUriForThumbnail(ImageInterface $thumbnail)
     {
         $resource = $thumbnail->getResource();
         if ($resource) {
