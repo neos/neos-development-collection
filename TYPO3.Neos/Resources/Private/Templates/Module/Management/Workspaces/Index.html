@@ -56,7 +56,18 @@
 						<td class="neos-changes">
 							<f:if condition="{workspace.baseWorkspace}">
 								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}">
-									<neos:backend.changeStats changeCounts="{changesCounts}" />
+									<div class="neos-change-stats">
+										<f:if condition="{changesCounts.total} != 0">
+											<f:then>
+												<neos:backend.changeStats changeCounts="{changesCounts}">
+													<span class="new" style="width: {newCountRatio}%"></span><span class="changed" style="width: {changedCountRatio}%"></span><span class="removed" style="width: {removedCountRatio}%"></span>
+												</neos:backend.changeStats>
+											</f:then>
+											<f:else>
+												<span class="unchanged"></span>
+											</f:else>
+										</f:if>
+									</div>
 								</span>
 								<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
 									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'TYPO3.Neos')}

@@ -9702,6 +9702,7 @@
 }
 .neos.neos-module.neos-module-management-workspaces .neos-change-stats .unchanged {
   background-color: #3f3f3f;
+  width: 100%;
 }
 .neos.neos-module.neos-module-management-workspaces ins {
   color: #00a338;
