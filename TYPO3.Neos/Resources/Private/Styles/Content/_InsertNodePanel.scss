@@ -60,7 +60,9 @@
 			position: absolute;
 			top: 0;
 			right: 0;
-			padding: 9px;
+			padding-right: $defaultMargin - $tightMargin;
+			line-height: $unit;
+			vertical-align: middle;
 			cursor: pointer;
 			&:focus {
 				display: inline-block; // so when the hover is gone, the popover doesn't disappear
