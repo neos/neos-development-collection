@@ -69,13 +69,12 @@
 										</f:if>
 									</div>
 								</span>
-								<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
+								<f:if condition="{changesCounts.total} != 0">
+									<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
 									<i class="icon-review"></i>
-									<f:if condition="{changesCounts.total} != 0">
-										<f:then>{neos:backend.translate(id: 'workspaces.reviewChanges', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: changesCounts.total})}</f:then>
-										<f:else>{neos:backend.translate(id: 'workspaces.noChanges', source: 'Modules', package: 'TYPO3.Neos')}</f:else>
-									</f:if>
-								</f:link.action>
+									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'TYPO3.Neos')}
+									</f:link.action>
+								</f:if>
 							</f:if>
 						</td>
 						<td class="neos-action">
