@@ -32,7 +32,7 @@
 									<td colspan="2" class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
-												<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}: <span title="{document.documentNode.path}"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"/></span></strong>
+												<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:<span title="{document.documentNode.path}"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"><f:for each="{documentNodes}" as="documentNode" iteration="{iterator}"> / {documentNode.label}</f:for></neos:backend.documentBreadcrumbPath></span></strong>
 											</div>
 
 											<div class="neos-span2 neos-pull-right neos-aRight">
