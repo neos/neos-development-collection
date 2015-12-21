@@ -8,7 +8,7 @@
 		bottom: 0;
 		overflow-y: auto;
 		background: $grayDark;
-		padding: 0 $defaultMargin $relatedMargin;
+		padding: 0;
 		width: $unit * 12 !important;
 		border: 1px solid $grayLight;
 		@include box-sizing(border-box);
@@ -28,15 +28,15 @@
 				border-bottom: 0;
 			}
 
-			a {
-				padding: $relatedMargin $tightMargin;
+			> a {
+				padding: $relatedMargin;
 
 				&.ui-state-focus {
 					border: 0;
 					background: $grayLight;
 				}
 
-				span:first-child {
+				span.neos-list-thumbnail {
 					background-color: $grayDarker;
 					height: $unit;
 					width: $unit;
@@ -63,7 +63,7 @@
 				}
 
 				i {
-					vertical-align: top;
+					vertical-align: baseline;
 					padding-right: $tightMargin;
 				}
 
