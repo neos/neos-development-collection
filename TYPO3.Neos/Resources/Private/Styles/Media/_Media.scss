@@ -803,6 +803,11 @@
 		.neos-popover {
 			width: auto;
 			height: auto;
+			border-color: $grayMedium;
+
+			.neos-popover-title {
+				border-color: $grayMedium;
+			}
 
 			.neos-popover-content {
 				width: 250px;
@@ -813,6 +818,7 @@
 				background-position: center center;
 				background-repeat: no-repeat;
 				overflow: hidden;
+				background-color: $grayDarker;
 
 				img {
 					position: absolute;
@@ -823,9 +829,16 @@
 					height: auto;
 					max-width: 100%;
 					max-height: 100%;
-					background-color: $grayDark;
-					outline: 3px solid $grayDark;
+					background-color: $grayDarker;
+					outline: 3px solid $grayDarker;
 				}
+			}
+
+			&.neos-top .neos-arrow {
+				border-top-color: $grayDarker;
+			}
+			&.neos-bottom .neos-arrow {
+				border-bottom-color: $grayDark;
 			}
 		}
 
