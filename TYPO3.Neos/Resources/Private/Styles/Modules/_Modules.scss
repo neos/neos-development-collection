@@ -9,6 +9,10 @@
 	color: #fff;
 	margin: 0;
 
+	&.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
+		width: calc(100% - #{$menuButtonWidth});
+	}
+
 	/* wrapper for dark background */
 	> .neos-module-wrap {
 		position: relative;

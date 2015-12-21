@@ -9804,6 +9804,9 @@
   margin-top: 25px;
   margin-bottom: 25px;
 }
+.neos.neos-module.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
+  width: calc(100% - 54px);
+}
 .neos.neos-module > .neos-module-wrap {
   position: relative;
   background: #222;
