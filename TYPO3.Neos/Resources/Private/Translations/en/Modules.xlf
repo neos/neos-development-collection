@@ -114,7 +114,7 @@
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			</trans-unit>
 			<trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
-				<source>Unpublished changes in workspace "{0}"</source>
+				<source>unpublished changes in workspace "{0}"</source>
 			</trans-unit>
 			<trans-unit id="workspaces.changesCounts" xml:space="preserve">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
