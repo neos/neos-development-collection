@@ -10,7 +10,7 @@
 		<f:then>
 			<f:form action="publishOrDiscardNodes">
 				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
-				<legend title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}">{changesCounts.total} {neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+				<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
 				<br />
 				<div class="neos-row-fluid">
 					<table class="neos-table">

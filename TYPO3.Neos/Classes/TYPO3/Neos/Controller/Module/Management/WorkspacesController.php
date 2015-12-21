@@ -160,7 +160,6 @@ class WorkspacesController extends AbstractModuleController
             'baseWorkspaceName' => $workspace->getBaseWorkspace()->getName(),
             'baseWorkspaceLabel' => $workspace->getBaseWorkspace()->getTitle() ?: $workspace->getBaseWorkspace()->getName(),
             'canPublishToBaseWorkspace' => $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
-            'changesCounts' => $this->computeChangesCount($workspace),
             'siteChanges' => $this->computeSiteChanges($workspace)
         ]);
     }
