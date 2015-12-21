@@ -184,7 +184,9 @@ class ThumbnailService
     {
         $thumbnail->refresh();
         $this->persistenceManager->whiteListObject($thumbnail);
-        $this->thumbnailRepository->update($thumbnail);
+        if (!$this->persistenceManager->isNewObject($thumbnail)) {
+            $this->thumbnailRepository->update($thumbnail);
+        }
     }
 
     /**
