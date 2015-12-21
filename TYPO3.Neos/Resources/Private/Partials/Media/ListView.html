@@ -36,18 +36,9 @@
 			<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
 				<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
 					<td>
-						<f:if condition="{asset.width}">
-							<f:then>
-								<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:thumbnail(asset: asset, preset: 'TYPO3.Neos:Thumbnail', alt: asset.label, async: settings.asyncThumbnails) -> f:format.htmlentities()}">
-									<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
-								</div>
-							</f:then>
-							<f:else>
-								<div class="neos-list-thumbnail">
-									<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail"  alt="{asset.label}" async="{settings.asyncThumbnails}" />
-								</div>
-							</f:else>
-						</f:if>
+						<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{f:if(condition: asset.width, then: '{asset.width} x {asset.height}')}" data-html="true" data-content="{m:thumbnail(asset: asset, preset: 'TYPO3.Neos:Thumbnail', alt: asset.label, async: settings.asyncThumbnails) -> f:format.htmlentities()}">
+							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+						</div>
 						<i class="icon-move" title="{dragAndDropOnTagOrCollectionLabel}" data-neos-toggle="tooltip"></i>
 					</td>
 					<td class="asset-label"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
