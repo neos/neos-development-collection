@@ -38,7 +38,7 @@
 											<div class="neos-span2 neos-pull-right neos-aRight">
 												<f:if condition="{document.documentNode.removed}">
 													<f:else>
-														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"><i class="icon-pencil icon-white" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"></i></button>
+														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'TYPO3.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"><i class="icon-pencil icon-white" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"></i></button>
 													</f:else>
 												</f:if>
 											</div>
