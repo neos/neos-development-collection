@@ -172,7 +172,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $linkedNode = $this->linkingService->getLastLinkedNode();
         $this->templateVariableContainer->add($nodeVariableName, $linkedNode);
         $content = $this->renderChildren();
-        $this->templateVariableContainer->remove($nodeVariableName, $linkedNode);
+        $this->templateVariableContainer->remove($nodeVariableName);
 
         if ($content === null && $linkedNode !== null) {
             $content = $linkedNode->getLabel();
