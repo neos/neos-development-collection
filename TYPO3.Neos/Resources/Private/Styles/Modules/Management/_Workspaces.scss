@@ -27,6 +27,10 @@
 			}
 		}
 
+		&.path-caption .neos-aRight {
+			border-right: 1px solid $grayDark;
+		}
+
 		label {
 			padding: 0;
 			margin-bottom: 0;

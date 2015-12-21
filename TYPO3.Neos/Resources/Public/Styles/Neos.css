@@ -9583,6 +9583,9 @@
 .neos.neos-module.neos-module-management-workspaces td.node-type img {
   vertical-align: baseline;
 }
+.neos.neos-module.neos-module-management-workspaces td.path-caption .neos-aRight {
+  border-right: 1px solid #222;
+}
 .neos.neos-module.neos-module-management-workspaces td label {
   padding: 0;
   margin-bottom: 0;
