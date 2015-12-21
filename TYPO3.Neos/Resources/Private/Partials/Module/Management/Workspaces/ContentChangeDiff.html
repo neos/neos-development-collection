@@ -12,7 +12,7 @@
         </tr>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
             <tr>
-                <th>{contentChanges.propertyLabel}</th>
+                <th>{neos:backend.translate(id: contentChanges.propertyLabel)}</th>
             </tr>
             <tr>
                 <td>
