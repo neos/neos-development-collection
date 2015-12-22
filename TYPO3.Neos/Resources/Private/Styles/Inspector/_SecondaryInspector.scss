@@ -86,6 +86,10 @@
 }
 
 .neos-secondary-inspector-image-crop {
+	> img {
+		visibility: hidden;
+	}
+
 	.jcrop-holder {
 		margin: $defaultMargin auto;
 	}

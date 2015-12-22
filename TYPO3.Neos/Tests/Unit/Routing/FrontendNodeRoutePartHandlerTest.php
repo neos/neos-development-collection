@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  */
 
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -100,6 +101,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
         $this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
+
+        $this->inject($this->routePartHandler, 'securityContext', new SecurityContext());
 
         $this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
         $this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);
@@ -719,7 +722,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => '',
                     2 => ''
@@ -730,7 +733,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global@user-admin',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => '@user-admin',
                     2 => '@user-admin'
@@ -741,7 +744,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global/foo/bar?baz=foo[]',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => 'foo/bar?baz=foo[]',
                     2 => 'foo/bar?baz=foo[]'
@@ -752,7 +755,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 'doesMatch' => true,
                 'expected' => array(
                     0 => 'de_global/foo/bar@user-admin',
-                    'dimensionPresetUriSegments' => 'de_global',
+                    'firstUriPart' => 'de_global',
                     1 => 'de_global',
                     'remainingRequestPath' => 'foo/bar@user-admin',
                     2 => 'foo/bar@user-admin'

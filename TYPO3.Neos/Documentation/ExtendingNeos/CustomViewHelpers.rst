@@ -14,13 +14,13 @@ Create A ViewHelper Class
 
 If you want to create a ViewHelper that you can call from your template (as a
 tag), you write a php class which has to inherit from
-``TYPO3\Fluid\Core\AbstractViewHelper`` (or its subclasses). You need to implement
+``\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
 
 	namespace Vendor\Site\ViewHelpers;
-	class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+	class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		public function render() {
 			return 'Hello World';
 		}
@@ -50,7 +50,7 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+		class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 			/**
 			 * Render the title and apply some magic
 			 *
@@ -75,7 +75,7 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends TYPO3\Fluid\Core\AbstractViewHelper {
+		class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 			/**
 			 * Initialize arguments
@@ -139,17 +139,17 @@ Further reading
 ---------------
 
 #. TagBased ViewHelpers - For the common case that a ViewHelper renders a single HTML-Tag as a result there
-	is a special base class. The TagBased ViewHelper contains automatic security measures, so if you use this,
-	the likelyhood of cross-site-scripting vulnerabilities is greatly reduced.
+   is a special base class. The TagBased ViewHelper contains automatic security measures, so if you use this,
+   the likelyhood of cross-site-scripting vulnerabilities is greatly reduced.
 
-	To find out more about that please lookup ``AbstractTagBasedViewHelper` in the `Flow documentation
-	<http://flowframework.readthedocs.org/en/stable/>`_
+   To find out more about that please lookup ``AbstractTagBasedViewHelper`` in the `Flow documentation
+   <http://flowframework.readthedocs.org/en/stable/>`_
 
 #. Condition ViewHelpers - To provide ViewHelpers that are doing either this or that there is a base class ``AbstractConditionViewHelper``.
-	This can be used in cases where you cannot express your condition via ``<f:if condition="..." >``.
-	To find out more about that please lookup ``AbstractTagBasedViewHelper`` in the Flow-Documentation.
+   This can be used in cases where you cannot express your condition via ``<f:if condition="..." >``.
+   To find out more about that please lookup ``AbstractTagBasedViewHelper`` in the Flow-Documentation.
 
 #. Widget ViewHelpers - If a view helper needs complex controller logic, has to interact with repositories to fetch data,
-	needs some ajax-interaction or needs a Fluid-Template for rendering, you can create a Fluid Widget.
-	It is possible to override the Fluid Template of a Widget in another package so this also provides a way to create
-	extensible ViewHelpers.
+   needs some ajax-interaction or needs a Fluid-Template for rendering, you can create a Fluid Widget.
+   It is possible to override the Fluid Template of a Widget in another package so this also provides a way to create
+   extensible ViewHelpers.

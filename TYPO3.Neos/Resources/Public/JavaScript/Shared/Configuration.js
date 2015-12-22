@@ -44,8 +44,16 @@ function(Ember, $) {
 						this._data[key] = $('link[rel="neos-menudata"]').attr('href');
 						return this._data[key];
 
+					case 'XliffUri':
+						this._data[key] = $('link[rel="neos-xliff"]').attr('href');
+						return this._data[key];
+
 					case 'EditPreviewDataUri':
 						this._data[key] = $('link[rel="neos-editpreviewdata"]').attr('href');
+						return this._data[key];
+
+					case 'ContentDimensionsUri':
+						this._data[key] = $('link[rel="neos-service-contentdimensions"]').attr('href');
 						return this._data[key];
 				}
 			}

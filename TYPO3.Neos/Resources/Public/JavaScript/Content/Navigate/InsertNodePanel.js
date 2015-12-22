@@ -40,10 +40,16 @@ define(
 							'nodeTypes': []
 						};
 					}
-
+					var helpMessage;
+					if (nodeType.ui.help && nodeType.ui.help.message) {
+						helpMessage = nodeType.ui.help.message;
+					} else {
+						helpMessage = '';
+					}
 					groupedNodeTypes[groupName].nodeTypes.push({
 						'nodeType': nodeTypeName,
 						'label': I18n.translate(nodeType.ui.label),
+						'helpMessage': helpMessage,
 						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file',
 						'position': nodeType.ui.position
 					});

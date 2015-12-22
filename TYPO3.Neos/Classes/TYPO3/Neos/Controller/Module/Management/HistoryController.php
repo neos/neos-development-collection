@@ -13,12 +13,16 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
+/**
+ * Controller for the history module of Neos, displaying the timeline of changes.
+ */
 class HistoryController extends AbstractModuleController
 {
     /**
@@ -34,18 +38,27 @@ class HistoryController extends AbstractModuleController
 
     /**
      * Show event overview.
-     *
+     * @param integer $offset
+     * @param integer $limit
      * @return void
      */
-    public function indexAction()
+    public function indexAction($offset = 0, $limit = 10)
     {
-        $events = $this->eventRepository->findRelevantEvents()->toArray();
+        $events = $this->eventRepository->findRelevantEventsByWorkspace($offset, $limit + 1, 'live')->toArray();
+
+        $nextPage = null;
+        if (count($events) > $limit) {
+            $events = array_slice($events, 0, $limit);
+
+            $nextPage = $this
+                ->controllerContext
+                ->getUriBuilder()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+        }
 
         $eventsByDate = array();
         foreach ($events as $event) {
-            if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
-                continue;
-            }
             /* @var $event Event */
             $day = $event->getTimestamp()->format('Y-m-d');
             if (!isset($eventsByDate[$day])) {
@@ -57,7 +70,10 @@ class HistoryController extends AbstractModuleController
             $eventsOnThisDay->add($event);
         }
 
-        $this->view->assign('eventsByDate', $eventsByDate);
+        $this->view->assignMultiple(array(
+            'eventsByDate' => $eventsByDate,
+            'nextPage' => $nextPage
+        ));
     }
 
     /**

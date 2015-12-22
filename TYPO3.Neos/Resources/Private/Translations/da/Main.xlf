@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="da">Publicér automatisk</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="da">Publicér automatisk til {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="da">Anvend</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="da">Tilbage</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="da">Vælg</target></trans-unit>
@@ -24,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="da">Indhold</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="da">Indholdselement</target><alt-trans><target xml:lang="da">Element</target></alt-trans><alt-trans><target xml:lang="da">Indhold</target></alt-trans></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="da">Indholdsvisning</target></trans-unit>
@@ -111,12 +120,27 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="da">Publicér</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
+				<source>Publish to {0}</source>
+			<target xml:lang="da">Publicér til {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="da">Publicér alle ændringer for aktuel side</target><alt-trans><target xml:lang="da">Publicér alle ændringer for siden</target></alt-trans></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="da">Kunne ikke publicére da destinationsarbejdsrummet er skrivebeskyttet</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
+				<source>Publishing</source>
+			<target xml:lang="da">Publicering</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="da">Publiceret</target><alt-trans><target xml:lang="da">Udgivet</target></alt-trans></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="da">Destinationsarbejdsrum</target><alt-trans><target xml:lang="da">Destinationsarbejdsområde</target></alt-trans><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
+				<source>Current workspace</source>
+			<target xml:lang="da">Nuværende arbejdsrum</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="da">Fjern</target></trans-unit>
@@ -124,7 +148,7 @@
 				<source>Refresh</source>
 			<target xml:lang="da">Opdatér</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
+				<source>Saving</source>
 			<target xml:lang="da">Gemmer…</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
@@ -148,13 +172,13 @@
 				<source>Label</source>
 			<target xml:lang="da">Etiket</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
+				<source>Content Type</source>
 			<target xml:lang="da">Indholdstype</target><alt-trans><target xml:lang="da">Nodetype</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="da">Sti</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			<target xml:lang="da">Relativ sti</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
@@ -218,7 +242,7 @@
 			<target xml:lang="da">Din personlige arbejdsrum indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsrum, skal ændringerne enten publiceres eller kasseres.</target><alt-trans><target xml:lang="da">Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsrum igen.</target><alt-trans><target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans><alt-trans><target xml:lang="da">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
+			<target xml:lang="da">Gennemse dine ændringer, publicér eller kassér dem, og vælg derefter et nyt arbejdsrum igen.</target><alt-trans><target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsrum igen.</target></alt-trans><alt-trans><target xml:lang="da">Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans><alt-trans><target xml:lang="da">Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target xml:lang="da">Redigeringmåder</target><alt-trans><target xml:lang="da">Redigering</target></alt-trans></trans-unit>
@@ -425,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="da">Autentificerer</target><alt-trans><target xml:lang="da">Verificerer</target></alt-trans></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="da">Log ud</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -459,6 +486,23 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="da">Indholdstypen som blev forsøgt vist, kunne ikke findes. Måske er indholdstypen blevet omdøbt og det mangler at blive rettet eller måske er der tale om en simpel stavefejl.</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="da">"{nodeTypeName}" på siden "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="da">Indholdselementer</target><alt-trans><target xml:lang="da">Elementer</target></alt-trans><alt-trans><target xml:lang="da">Indhold</target></alt-trans><alt-trans><target xml:lang="da">Indholdsegenskaber</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="da">Vis</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="da">Dette indholdselement kan ikke tilgås via en offentlig URL-adresse</target><alt-trans><target xml:lang="da">Dette element kan ikke tilgås via en offentlig URL-adresse</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="da">Indholdselement egenskaber</target><alt-trans><target xml:lang="da">Elementegenskaber</target></alt-trans><alt-trans><target xml:lang="da">Indholdsegenskaber</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

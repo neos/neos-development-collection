@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
+  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')))), 100, '...')}"
   abstract: TRUE
   ui:
     inspector:
@@ -10,6 +10,7 @@
           position: 10
           icon: 'icon-pencil'
         meta:
+          label: i18n
           position: 20
           icon: 'icon-cog'
       groups:
@@ -205,6 +206,10 @@
                 label: i18n
               selectedTarget:
                 label: i18n
+          editorListeners:
+            removeTargetIfNotUsed:
+              property: 'target'
+              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
     target:
       type: string
       ui:
@@ -213,6 +218,10 @@
         inspector:
           group: 'document'
           editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editorListeners:
+            setTargetModeIfNotEmpty:
+              property: 'targetMode'
+              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
 
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'TYPO3.Neos:Plugin':
@@ -252,7 +261,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'
-          position: 20
+          position: 10
           editor: 'TYPO3.Neos/Inspector/Editors/MasterPluginEditor'
     view:
       type: string

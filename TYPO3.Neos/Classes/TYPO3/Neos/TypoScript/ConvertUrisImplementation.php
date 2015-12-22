@@ -97,9 +97,11 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject
             switch ($matches[1]) {
                 case 'node':
                     $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
+                    $this->tsRuntime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+                    $this->tsRuntime->addCacheTag('asset', $matches[2]);
                     break;
                 default:
                     $resolvedUri = null;

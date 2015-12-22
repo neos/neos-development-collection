@@ -175,7 +175,23 @@ class Node implements NodeInterface, CacheAwareInterface
 
             /** @var NodeData $nodeData */
             foreach ($nodeDataVariantsAndChildren as $nodeData) {
-                $nodeVariant = $this->createNodeForVariant($nodeData);
+                // $nodeDataVariants at this point also contains *our own NodeData reference* ($this->nodeData), as we find all NodeData objects
+                // (across all dimensions) with the same path.
+                //
+                // We need to ensure that our own Node object's nodeData reference ($this->nodeData) is also updated correctly if a new NodeData object
+                // is returned; as we rely on the fact that $this->getPath() will return the new node path in all circumstances.
+                //
+                // However, $this->createNodeForVariant() only returns $this if the Context object is the same as $this->context; which is not
+                // the case if $this->context contains dimension fallbacks such as "Language: EN, DE".
+                //
+                // The "if" statement below is actually a workaround to ensure that if the NodeData object is our own one, we update *ourselves* correctly,
+                // and thus return the correct (new) Node Path when calling $this->getPath() afterwards.
+                if ($this->nodeData === $nodeData) {
+                    $nodeVariant = $this;
+                } else {
+                    $nodeVariant = $this->createNodeForVariant($nodeData);
+                }
+
                 if ($nodeVariant !== null) {
                     $relativePathSegment = NodePaths::getRelativePathBetween($originalPath, $nodeVariant->getPath());
                     $newNodeVariantPath = NodePaths::addNodePathSegment($path, $relativePathSegment);
@@ -216,7 +232,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getCreationDateTime()
     {
@@ -224,7 +240,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getLastModificationDateTime()
     {
@@ -232,10 +248,10 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @param \DateTime $lastModificationDateTime
+     * @param \DateTimeInterface $lastModificationDateTime
      * @return void
      */
-    public function setLastPublicationDateTime(\DateTime $lastModificationDateTime)
+    public function setLastPublicationDateTime(\DateTimeInterface $lastModificationDateTime)
     {
         $this->nodeData->setLastPublicationDateTime($lastModificationDateTime);
     }
@@ -1245,7 +1261,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
         }
-        if ($this->getHiddenAfterDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
+        if ($this->getHiddenAfterDateTime() instanceof \DateTimeInterface && $dateTime instanceof \DateTimeInterface && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
         $this->nodeData->setHiddenAfterDateTime($dateTime);

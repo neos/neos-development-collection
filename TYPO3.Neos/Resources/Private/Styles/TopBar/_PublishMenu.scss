@@ -55,6 +55,19 @@
 		&.neos-publish-menu-active[disabled] {
 			@include opacity(.75);
 		}
+
+		.icon-lock {
+			line-height: ($unit / 2) - 1;
+		}
+
+		.neos-badge {
+			background-color: $white;
+			color: $orange;
+			position: relative;
+			top: 0;
+			left: 5px;
+			margin-right: 5px;
+		}
 	}
 
 	.neos-dropdown-toggle {
@@ -109,4 +122,24 @@
 	li:not(.neos-select2-highlighted) {
 		background: $grayLight;
 	}
+
+	li {
+		.neos-select2-result-label {
+			padding-left: $unit / 2;
+		}
+		.neos-select2-result-label .icon {
+			margin-left: -($unit / 2);
+			line-height: ($unit / 2) - 1
+		}
+	}
+
 }
+
+#neos-target-workspace-selector .neos-select2-container .neos-select2-chosen {
+	.icon {
+		line-height: 20px;
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+}
+

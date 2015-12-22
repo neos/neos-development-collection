@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
 
 /**
- * The TYPO3 Backend controller
+ * The Neos Backend controller
  *
  * @Flow\Scope("singleton")
  */
@@ -34,12 +34,6 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected $xliffService;
 
     /**
-     * @Flow\Inject
-     * @var \TYPO3\Neos\Service\UserService
-     */
-    protected $userService;
-
-    /**
      * Default action of the backend controller.
      *
      * @return void
@@ -56,13 +50,12 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     /**
      * Returns the cached json array with the xliff labels
      *
+     * @param string $locale
      * @return string
      */
-    public function getXliffAsJsonAction()
+    public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
-        $locale = new Locale($this->userService->getInterfaceLanguage());
-
-        return $this->xliffService->getCachedJson($locale);
+        return $this->xliffService->getCachedJson(new Locale($locale));
     }
 }

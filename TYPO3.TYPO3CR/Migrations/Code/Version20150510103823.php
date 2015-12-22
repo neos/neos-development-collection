@@ -23,6 +23,14 @@ class Version20150510103823 extends AbstractMigration
                                 $superTypeConfiguration[$key] = $superType === null ? false : $superType;
                                 continue;
                             }
+                            if (is_string($key) && (strtolower($superType) === 'true' || $superType === '1' || $superType === 1)) {
+                                $superTypeConfiguration[$key] = true;
+                                continue;
+                            }
+                            if (is_string($key) && (strtolower($superType) === 'false' || $superType === '0' || $superType === 0)) {
+                                $superTypeConfiguration[$key] = false;
+                                continue;
+                            }
                             if (!is_string($superType)) {
                                 $this->showWarning(sprintf('The super type configuration for "%s" with the key "%s" could not be converted to the new super type configuration format', $nodeTypeName, $key));
                                 continue;

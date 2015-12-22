@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="fi">Julkaise automaattisesti</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="fi">Julkaise automaattisesti kohteeseen {0}</target><alt-trans><target xml:lang="fi">Julkaise automaatisesti kohteeseen {0}</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="fi">Käytä</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fi">Peruuta</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="fi">Takaisin</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="fi">Valitse</target></trans-unit>
@@ -24,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="fi">Sisältö</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="fi">Solmu</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="fi">Sisältönäkymä</target></trans-unit>
@@ -111,12 +120,27 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="fi">Julkaise</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
+				<source>Publish to {0}</source>
+			<target xml:lang="fi">Julkaise kohteeseen {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="fi">Julkaise nykyisen sivun kaikki muutokset</target><alt-trans><target xml:lang="fi">Julkaista nykyisen sivun kaikki muutokset</target></alt-trans></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="fi">Julkaisu ei onnistut koska kohdetyötila on vain luku-tilassa</target><alt-trans><target xml:lang="fi">Julkaisu ei onnistu koska kohdetyötila on "vain luku"-tilassa</target></alt-trans></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
+				<source>Publishing</source>
+			<target xml:lang="fi">Julkaisu</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="fi">Julkaistu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="fi">Kohdetyötila</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
+				<source>Current workspace</source>
+			<target xml:lang="fi">Nykyinen työtila</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="fi">Poista</target></trans-unit>
@@ -124,7 +148,7 @@
 				<source>Refresh</source>
 			<target xml:lang="fi">Päivitä</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
+				<source>Saving</source>
 			<target xml:lang="fi">Tallentaa...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
@@ -148,13 +172,13 @@
 				<source>Label</source>
 			<target xml:lang="fi">Nimike</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="fi">Solmutyyppi</target></trans-unit>
+				<source>Content Type</source>
+			<target xml:lang="fi">Sisältötyyppi</target><alt-trans><target xml:lang="fi">Solmutyyppi</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="fi">Polku</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			<target xml:lang="fi">Suhteellinen polku</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
@@ -425,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="fi">Varmennetaan</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="fi">Kirjaudu ulos</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -459,6 +486,23 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="fi">Tähän tulostettavan solmutyypin määrittely ei ole saatavailla. Olet ehkä nimennyt solmutyypin uudelleen tai kirjoittanut sen nimen väärin.</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="fi">"{nodeTypeName}" sivulla "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="fi">Solmut</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="fi">Näytä</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="fi">Tähän solmuun ei ole pääsyä julkisella URL-osoitteella</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="fi">Solmun ominaisuudet</target></trans-unit>
     </body>
   </file>
 </xliff>

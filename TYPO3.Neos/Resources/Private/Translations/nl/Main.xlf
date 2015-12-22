@@ -6,6 +6,9 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="nl">Automatisch publiceren</target><alt-trans><target xml:lang="nl">Auto-Publiceer</target></alt-trans></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="nl" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="nl">Pas Toe</target></trans-unit>
@@ -15,6 +18,9 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="nl">Annuleren</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="nl">Terug</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="nl">Kies</target></trans-unit>
@@ -24,6 +30,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="nl">Inhoud</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="nl" state="needs-translation">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="nl">Content Weergave</target></trans-unit>
@@ -53,7 +62,7 @@
 			<target xml:lang="nl">Element verwijderen</target><alt-trans><target xml:lang="nl">Verwijder het element</target></alt-trans></trans-unit>
       <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target xml:lang="nl">Annuleren</target></trans-unit>
+			<target xml:lang="nl">Verwerpen</target><alt-trans><target xml:lang="nl">Annuleren</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
 			<target xml:lang="nl">Wijzigingen negeren</target></trans-unit>
@@ -111,21 +120,36 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="nl">Publiceren</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			<target xml:lang="nl" state="needs-translation">Publish to {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="nl" state="needs-translation">Publish all changes for current page</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="nl" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			<target xml:lang="nl" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="nl">Gepubliceerd</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="nl">Doel workspace</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			<target xml:lang="nl" state="needs-translation">Current workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="nl">Verwijderen</target><alt-trans><target xml:lang="nl">Verwijder</target></alt-trans></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="nl">Vernieuwen</target><alt-trans><target xml:lang="nl">Vernieuw</target></alt-trans></trans-unit>
-      <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
-			<target xml:lang="nl">Opslaan...</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve">
+				<source>Saving</source>
+			<target xml:lang="nl" state="translated">Opslaan...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="nl">Opgeslagen</target></trans-unit>
@@ -147,15 +171,15 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="nl">Label</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="nl">Node type</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Content Type</source>
+			<target xml:lang="nl" state="translated">Node type</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="nl">Pad</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
-			<target xml:lang="nl">Relatief pad</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative Path</source>
+			<target xml:lang="nl" state="translated">Relatief pad</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -425,6 +449,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="nl">Verificatie</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="nl">Log uit</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -459,6 +486,23 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="nl">De configuratie van het NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is het NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target><alt-trans><target xml:lang="nl">De configuratie van het NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is de NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target></alt-trans><alt-trans><target xml:lang="nl">De configuratie van de NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is de NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target></alt-trans></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="nl" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="nl" state="needs-translation">Nodes</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="nl">Toon</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="nl" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="nl" state="needs-translation">Node Properties</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -22,6 +22,7 @@ define(
 		editorClassName: '',
 
 		_valueDidChange: function() {
+			this.get('inspector').registerPendingChange(this.get('propertyDefinition').key, this.get('value'));
 			if (this.get('inspector').isPropertyModified(this.get('propertyDefinition.key')) === true) {
 				this.set('isModified', true);
 			} else {
@@ -54,6 +55,7 @@ define(
 		init: function() {
 			this._super();
 			this._loadView();
+			this.get('inspector').registerPropertyEditor(this.get('propertyDefinition.key'), this);
 		},
 
 		_loadView: function() {
