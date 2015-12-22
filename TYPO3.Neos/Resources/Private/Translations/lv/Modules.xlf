@@ -24,102 +24,102 @@
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="lv">Darba virsmas</target></trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target xml:lang="lv" state="translated">Informācija par {0}</target></trans-unit>
-      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Informācija par {0}</target></trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
-			<target xml:lang="lv" state="translated">Izveidot jaunu darba virsmu</target></trans-unit>
-      <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Izveidot jaunu darba virsmu</target></trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
 				<source>Create workspace</source>
-			<target xml:lang="lv" state="translated">Izveidot darba virsmu</target></trans-unit>
-      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Izveidot darba virsmu</target></trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Delete workspace</source>
-			<target xml:lang="lv" state="translated">Dzēst darba virsmu</target></trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Dzēst darba virsmu</target></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace</source>
-			<target xml:lang="lv" state="translated">Rediģēt darba virsmu</target><alt-trans><target xml:lang="lv">rediģet darba virsmu</target></alt-trans></trans-unit>
-      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Rediģēt darba virsmu</target><alt-trans><target xml:lang="lv">rediģet darba virsmu</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="lv" state="translated">Jā, dzēst darba virsmu</target></trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Jā, dzēst darba virsmu</target></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="lv" state="translated">Rediģēt darba virsmu</target><alt-trans><target xml:lang="lv">rediģet darba virsmu</target></alt-trans></trans-unit>
-      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Rediģēt darba virsmu</target><alt-trans><target xml:lang="lv">rediģet darba virsmu</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
-			<target xml:lang="lv" state="translated">Personāla darba virsma</target></trans-unit>
-      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Personāla darba virsma</target></trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target xml:lang="lv" state="translated">Privāta darba virsma</target></trans-unit>
-      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Privāta darba virsma</target></trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
 				<source>Internal workspace</source>
-			<target xml:lang="lv" state="translated">Iekšējā darba virsma</target></trans-unit>
-      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Iekšējā darba virsma</target></trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
 				<source>Read-only workspace</source>
-			<target xml:lang="lv" state="translated">Tikai lasāma darba virsma</target></trans-unit>
+			<target xml:lang="lv">Tikai lasāma darba virsma</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="lv">Virsraksts</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="lv">Apraksts</target></trans-unit>
-      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
 				<source>Base workspace</source>
-			<target xml:lang="lv" state="translated">Pamata darba virsma</target></trans-unit>
-      <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
+			<target xml:lang="lv">Pamata darba virsma</target></trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
-			<target xml:lang="lv" state="translated">Īpašnieks</target></trans-unit>
+			<target xml:lang="lv">Īpašnieks</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
 			<target xml:lang="lv">Redzamība</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
 				<source>Private</source>
-			<target xml:lang="lv" state="translated">Privāts</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
+			<target xml:lang="lv">Privāts</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="lv" state="translated">Tikai recenzenti un administratori var piekļūt un modificēt šo darba virsmu</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+			<target xml:lang="lv">Tikai recenzenti un administratori var piekļūt un modificēt šo darba virsmu</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
-			<target xml:lang="lv" state="translated">Iekšēji</target></trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+			<target xml:lang="lv">Iekšēji</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="lv" state="translated">Autorizēts redaktors var redzēt un rediģēt šo darba virsmu.</target></trans-unit>
-      <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
+			<target xml:lang="lv">Autorizēts redaktors var redzēt un rediģēt šo darba virsmu.</target></trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
-			<target xml:lang="lv" state="translated">Izmaiņas</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Izmaiņas</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="lv" state="translated">Tā ir jūsu personīgā darba virsma, kuru nevar izdzēst.</target></trans-unit>
-      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="lv">Tā ir jūsu personīgā darba virsma, kuru nevar izdzēst.</target></trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="lv" state="translated">Darba virsma satur izmaiņas. Lai izdzēstu, vispirms atceļiet veiktās izmaiņas.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+			<target xml:lang="lv">Darba virsma satur izmaiņas. Lai izdzēstu, vispirms atceļiet veiktās izmaiņas.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="lv" state="translated">Darba virsmu nevar pārvietot uz citu, jo tajā vēl joprojām ir izmaiņas.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
+			<target xml:lang="lv">Darba virsmu nevar pārvietot uz citu, jo tajā vēl joprojām ir izmaiņas.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="lv" state="translated">Darba virsmu nevar izdzēst, jo citas darba virsmas ir atkarīgas no tās.</target></trans-unit>
-      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+			<target xml:lang="lv">Darba virsmu nevar izdzēst, jo citas darba virsmas ir atkarīgas no tās.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="lv" state="translated">Jums nav atļaujas dzēst šo darba virsmu.</target></trans-unit>
-      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
+			<target xml:lang="lv">Jums nav atļaujas dzēst šo darba virsmu.</target></trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target xml:lang="lv" state="translated">Vai tiešām vēlaties izdzēst darba virsmu, "{0}"?</target></trans-unit>
-      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
+			<target xml:lang="lv">Vai tiešām vēlaties izdzēst darba virsmu, "{0}"?</target></trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="lv" state="translated">Ar šo tiks izdzēsta darba virsma, ieskaitot visu nepublicētu saturu. Šo darbību nevar atsaukt.</target></trans-unit>
+			<target xml:lang="lv">Ar šo tiks izdzēsta darba virsma, ieskaitot visu nepublicētu saturu. Šo darbību nevar atsaukt.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="lv">Šis modulis ietver visu esošās darbav virsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target><alt-trans><target xml:lang="lv">Šis modulis ietver visu esošās darbavirsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target></alt-trans><alt-trans><target xml:lang="lv">Šis modulis ietver visu darbavirsmas elementu apskatu, dod iespēju tos komentēt un publicēt.</target></alt-trans></trans-unit>
-      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target xml:lang="lv" state="translated">Nepublicētās izmaiņas</target></trans-unit>
-      <trans-unit id="workspaces.changesCounts" xml:space="preserve">
+			<target xml:lang="lv">Nepublicētās izmaiņas darba vietā "{0}"</target><alt-trans><target xml:lang="lv">Nepublicētās izmaiņas</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target xml:lang="lv" state="translated">papildinājumi: {new}, izmaiņas: {changed}, noņemšana: {removed}</target></trans-unit>
-      <trans-unit id="workspaces.review" xml:space="preserve">
+			<target xml:lang="lv">papildinājumi: {new}, izmaiņas: {changed}, noņemšana: {removed}</target></trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
 				<source>Review</source>
-			<target xml:lang="lv" state="translated">Recenzija</target></trans-unit>
+			<target xml:lang="lv">Recenzija</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
 			<target xml:lang="lv">Atcelt iezīmētās izmaiņas</target></trans-unit>
@@ -132,12 +132,12 @@
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="lv">Publicēt visas izmaiņas</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="lv" state="translated">Publicētu visas izmaiņas {0}</target></trans-unit>
-      <trans-unit id="changedContentCaption" xml:space="preserve">
+			<target xml:lang="lv">Publicētu visas izmaiņas {0}</target></trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
 				<source>Changed Content</source>
-			<target xml:lang="lv" state="translated">Mainīts saturs</target></trans-unit>
+			<target xml:lang="lv">Mainīts saturs</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
 			<target xml:lang="lv">dzēsts</target></trans-unit>
@@ -516,9 +516,9 @@
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target xml:lang="lv">Pievienot elektronisko adresi</target><alt-trans><target xml:lang="lv">Elektroniskās adreses pievienošana</target></alt-trans></trans-unit>
-      <trans-unit id="userSettings.saveUser" xml:space="preserve">
+      <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
 				<source>Save User</source>
-			<target xml:lang="lv" state="translated">Saglabāt lietotāju</target></trans-unit>
+			<target xml:lang="lv">Saglabāt lietotāju</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="lv">Rediģēt lietotāju</target></trans-unit>
