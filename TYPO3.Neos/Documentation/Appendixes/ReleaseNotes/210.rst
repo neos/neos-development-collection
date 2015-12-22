@@ -33,9 +33,12 @@ See https://neos.io/develop/download/upgrade-instructions-2-1.html
 !!! Breaking changes
 ~~~~~~~~~~~~~~~~~~~~
 
-- is
-- there
-- anything?
+- `Use identifier instead of node path for PluginView reference <https://github.com/neos/neos-development-collection/pull/51>`_
+
+   Breaking if you use the node path in plugin view in custom code.
+- `Cache fully build NodeType configurations in production <https://github.com/neos/neos-development-collection/pull/179>`_
+
+   Breaking if you rely on post processors to be applied on each request.
 
 **Further details can be found in the commit messages of the changes**
 
