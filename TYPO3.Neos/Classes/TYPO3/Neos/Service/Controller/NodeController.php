@@ -251,7 +251,7 @@ class NodeController extends AbstractServiceController
     public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
     {
         $this->nodeOperations->move($node, $targetNode, $position);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $this->redirectToRenderNode($node, $typoScriptPath);
     }
 
     /**
