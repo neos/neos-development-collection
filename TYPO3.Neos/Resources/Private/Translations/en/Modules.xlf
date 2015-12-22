@@ -125,9 +125,6 @@
 			<trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
 			</trans-unit>
-			<trans-unit id="workspaces.noChanges" xml:space="preserve">
-				<source>No changes</source>
-			</trans-unit>
 			<trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			</trans-unit>
