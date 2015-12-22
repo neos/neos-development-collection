@@ -54,13 +54,21 @@ Further additions
 
 In addition to the larger features, lots of small improvements and bugfixes have been included in Neos 2.1:
 
-Allow "uriSegment" to be empty for default presets
-Contextual help messages for node types and node properties
-Allow property editors to listen to changes
-Make "SelectBoxEditor" search configurable
-"node:repair" sub command for removing broken entity references
+- `External event for node selection <https://github.com/neos/neos-development-collection/pull/226>`_
+- `Allow uriSegment to be empty for default presets <https://github.com/neos/neos-development-collection/pull/244>`_
+- `Support keys / paths with special characters in quoted keys <https://github.com/neos/neos-development-collection/pull/107>`_
+- `New FlowQuery filter operation "!instanceof"  <https://github.com/neos/neos-development-collection/pull/270>`_
+- `Contextual help messages for node types and node properties <https://github.com/neos/neos-development-collection/pull/25>`_
+- `Allow property editors to listen to changes <https://github.com/neos/neos-development-collection/pull/164>`_
+- `Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+- `Make reference starting point configurable <https://github.com/neos/neos-development-collection/pull/162>`_
+- `Nodetype option for collapsing inspector group by default <https://github.com/neos/neos-development-collection/pull/83>`_
+- `Make SelectBoxEditor search configurable <https://github.com/neos/neos-development-collection/pull/138>`_
+- `Support creating absolute node uris <https://github.com/neos/neos-development-collection/pull/82>`_
+- `node:repair sub command for removing broken entity references <https://github.com/neos/neos-development-collection/pull/26>`_
 
-See also the full release notes at https://jira.neos.io/jira/secure/ReleaseNote.jspa?projectId=10000&version=10714
+
+See also the full `release notes <https://jira.neos.io/jira/secure/ReleaseNote.jspa?projectId=10000&version=10714>`_ and `changelog <http://neos.readthedocs.org/en/2.1/Appendixes/ChangeLogs/210.html>`_
 
 ~~~~~~~~~~~~~~~~~~~~
 Upgrade instructions
@@ -80,8 +88,6 @@ See https://neos.io/develop/download/upgrade-instructions-2-1.html
    Breaking if you rely on post processors to be applied on each request.
 
 **Further details can be found in the commit messages of the changes**
-
-See http://neos.readthedocs.org/en/2.1/Appendixes/ChangeLogs/210.html
 
 .. note::
 
