@@ -4,12 +4,14 @@
 define(
   [
     'emberjs',
+    'Library/jquery-with-dependencies',
     'Content/Model/NodeSelection',
     './TargetWorkspaceController',
     'Content/Model/PublishableNodes',
     './DirtyWorkspaceDialog',
     'text!./TargetWorkspaceSelector.html'
   ], function (Ember,
+               $,
                NodeSelection,
                TargetWorkspaceController,
                PublishableNodes,
