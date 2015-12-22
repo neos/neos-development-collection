@@ -3,18 +3,24 @@
 =====
 
 
-Cloud-Capable Resource and Media Management
-===========================================
+Workspaces for Editorial Teams
+==============================
 
-…
+A major focus for Neos 2.1 have been "nested workspaces". Workspaces allow editors to collect and review content before publishing
+it to the live website. Now, with nested workspaces, it is possible to stack one workspace on another and prepare larger content
+changes in a team. Previously it was only possible for editors to make changes in their personal workspace which would only
+become visible to other editors once published to the live website.
 
+This new feature allows editors to jointly work on content for multiple content in parallel, and let all content be reviewed by
+our editors in charge before they are published to the live website.
 
-Media handling
-==============
+Side-by-side comparison of changes in Workspace Management
+==========================================================
+This change adds a side-by-side view of changes of a given workspace to the "Review" view of the Workspace Management module.
+It highlights inline text changes and displays thumbnails of changed assets.
 
-…
-
-
+This new feature relies on a third party diff library which has been modernized and comes packaged with the Neos distribution
+from now on. Further details are available on Github.
 
 Additional features
 ===================
