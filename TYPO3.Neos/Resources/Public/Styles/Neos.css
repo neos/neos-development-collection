@@ -2713,6 +2713,9 @@
   margin-top: 20px;
   -webkit-margin-top-collapse: separate;
 }
+.neos fieldset > .neos-control-group:first-child {
+  margin-top: 20px;
+}
 .neos .neos-form-horizontal .neos-control-group {
   margin-bottom: 20px;
   *zoom: 1;
