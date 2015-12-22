@@ -1,0 +1,47 @@
+=====
+2.1.0
+=====
+
+
+Cloud-Capable Resource and Media Management
+===========================================
+
+…
+
+
+Media handling
+==============
+
+…
+
+
+
+Additional features
+===================
+
+- some
+- more
+- things
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://neos.io/develop/download/upgrade-instructions-2-1.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- is
+- there
+- anything?
+
+**Further details can be found in the commit messages of the changes**
+
+See http://neos.readthedocs.org/en/2.1/Appendixes/ChangeLogs/210.html
+
+.. note::
+
+   Additionally all changes in Flow 3.1 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/3.1/TheDefinitiveGuide/PartV/ReleaseNotes/310.html
