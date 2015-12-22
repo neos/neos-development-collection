@@ -302,8 +302,8 @@ class NodeController extends AbstractServiceController
      */
     public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
     {
-        $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+        $this->redirectToRenderNode($copiedNode, $typoScriptPath);
     }
 
     /**
