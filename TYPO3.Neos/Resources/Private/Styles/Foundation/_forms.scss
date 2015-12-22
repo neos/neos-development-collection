@@ -636,6 +636,11 @@ legend + .neos-control-group {
   -webkit-margin-top-collapse: separate;
 }
 
+// Top margin for fieldset without legend
+fieldset > .neos-control-group:first-child {
+  margin-top: $baseLineHeight;
+}
+
 // Horizontal-specific styles
 // --------------------------
 

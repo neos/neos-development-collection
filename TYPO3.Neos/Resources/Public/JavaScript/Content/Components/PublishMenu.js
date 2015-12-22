@@ -58,6 +58,10 @@ define(
        */
       _workspacesManagementModuleUri: $('link[rel="neos-module-workspacesmanagement"]').attr('href'),
 
+      _currentWorkspaceManagementModuleUri: function() {
+        return $('link[rel="neos-module-workspacesmanagement-show"]').attr('href') + '?moduleArguments[workspace]=' + this.get('targetWorkspaceController.userWorkspace.name');
+      }.property('targetWorkspaceController.targetWorkspace'),
+
       _hasWorkspaceWideChanges: function () {
         return !this.get('_noWorkspaceWideChanges');
       }.property('_noWorkspaceWideChanges'),
