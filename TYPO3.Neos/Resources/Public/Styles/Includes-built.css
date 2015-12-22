@@ -2713,6 +2713,9 @@
   margin-top: 20px;
   -webkit-margin-top-collapse: separate;
 }
+.neos fieldset > .neos-control-group:first-child {
+  margin-top: 20px;
+}
 .neos .neos-form-horizontal .neos-control-group {
   margin-bottom: 20px;
   *zoom: 1;
@@ -7834,6 +7837,7 @@
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .neos-badge {
   background-color: #fff;
   color: #ff8700;
+  text-shadow: none;
   position: relative;
   top: 0;
   left: 5px;
@@ -7875,6 +7879,10 @@
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.disabled:hover {
   background-color: #323232;
+}
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .icon-review::after {
+  top: -5px;
+  left: 5px;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-checkbox {
   margin-top: 8px;
