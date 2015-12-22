@@ -265,9 +265,9 @@
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="da">{0} slettede kontoen "{1}" fra {2}.</target></trans-unit>
-      <trans-unit id="history.loadMore.label" xml:space="preserve">
+      <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
-			<target xml:lang="da" state="needs-translation">Load More</target></trans-unit>
+			<target xml:lang="da">Indlæs flere</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -477,9 +477,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="da">Brugerinformation</target><alt-trans><target xml:lang="da">Bruger information</target></alt-trans></trans-unit>
-      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+      <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
 				<source>User Menu</source>
-			<target xml:lang="da" state="needs-translation">User Menu</target></trans-unit>
+			<target xml:lang="da">Brugermenu</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="da">Brugerindstillinger</target></trans-unit>
