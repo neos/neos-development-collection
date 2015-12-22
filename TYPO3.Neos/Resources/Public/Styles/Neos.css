@@ -7837,6 +7837,7 @@
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .neos-badge {
   background-color: #fff;
   color: #ff8700;
+  text-shadow: none;
   position: relative;
   top: 0;
   left: 5px;
