@@ -477,9 +477,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="ru">Данные пользователя</target></trans-unit>
-      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+      <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
 				<source>User Menu</source>
-			<target xml:lang="ru" state="needs-translation">User Menu</target></trans-unit>
+			<target xml:lang="ru">Меню пользователя</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="ru">Настройки пользователя</target></trans-unit>
