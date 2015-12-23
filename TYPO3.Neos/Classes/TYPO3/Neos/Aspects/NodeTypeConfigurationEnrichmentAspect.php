@@ -382,7 +382,11 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function addTargetAttribute($htmlString)
     {
         $document = new \DOMDocument();
-        $document->loadHTML($htmlString);
+
+        // Force correct unicode handling
+        $document->loadHTML('<?xml encoding="UTF-8">' . $htmlString);
+        $document->encoding = 'UTF-8';
+
         $links = $document->getElementsByTagName('a');
         /** @var \DOMElement $item */
         foreach ($links as $item) {
