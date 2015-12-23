@@ -1,0 +1,33 @@
+`2.1.1 (2015-12-23) <https://github.com/neos/neos-development-collection/releases/tag/2.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: User workspace names should be deterministic <https://github.com/neos/neos-development-collection/pull/311>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This fixes some inconsistencies with the naming of user workspaces,
+which resulted in duplicate workspaces being created for users with
+special characters in their username.
+
+Additionally a migration that can correctly set the owner for users
+with usernames containing special characters was added.
+
+NEOS-1740 #close Fixes the issue with a new migration
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix unicode handling in help messages <https://github.com/neos/neos-development-collection/pull/310>`_
+---------------------------------------------------------------------------------------------------------------
+
+Currently help messages are broken with unicode strings, because
+`DOMDocument::loadHTML` needs correct encoding declaration to handle
+unicode correctly.
+
+Append the encoding declaration to fix this issue.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.0...2.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
