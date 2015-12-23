@@ -11,7 +11,7 @@
 			<target xml:lang="nl" state="translated">Automatisch publiceren naar {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="nl" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="nl" state="translated">Controleer wijzigingen</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="nl">Pas Toe</target></trans-unit>

@@ -5,10 +5,10 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="pl">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans></trans-unit>
+			<target xml:lang="pl">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans><alt-trans><target xml:lang="pl">Automatyczna publikacja</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="pl">Auto-publikacja do {0}</target></trans-unit>
+			<target xml:lang="pl">Automatyczna publikacja do {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
 				<source>Review changes</source>
 			<target xml:lang="pl">Przejrzyj zmiany</target></trans-unit>
