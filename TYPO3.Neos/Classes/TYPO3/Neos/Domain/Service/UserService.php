@@ -34,6 +34,7 @@ use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -749,7 +750,7 @@ class UserService
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
-        $userWorkspaceName = 'user-' . $account->getAccountIdentifier();
+        $userWorkspaceName = 'user-' . UserUtility::slugifyUsername($account->getAccountIdentifier());
         $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
@@ -774,7 +775,7 @@ class UserService
      */
     protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . UserUtility::slugifyUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
