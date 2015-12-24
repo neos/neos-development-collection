@@ -750,7 +750,7 @@ class UserService
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
-        $userWorkspaceName = 'user-' . UserUtility::slugifyUsername($account->getAccountIdentifier());
+        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
         $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
@@ -775,7 +775,7 @@ class UserService
      */
     protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . UserUtility::slugifyUsername($accountIdentifier));
+        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
