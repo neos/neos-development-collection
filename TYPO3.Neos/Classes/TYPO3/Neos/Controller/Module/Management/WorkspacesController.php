@@ -36,7 +36,6 @@ use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 use TYPO3\TYPO3CR\Utility;
 use TYPO3\Neos\Utility\User as UserUtility;
 
-
 /**
  * The Neos Workspaces module controller
  *
