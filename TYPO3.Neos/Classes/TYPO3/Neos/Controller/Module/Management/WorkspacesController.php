@@ -297,7 +297,7 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceRepository->findOneByName('user-'. UserUtility::slugifyUsername($currentAccount->getAccountIdentifier());
+        $personalWorkspace = $this->workspaceRepository->findOneByName('user-'. UserUtility::slugifyUsername($currentAccount->getAccountIdentifier()));
         /** @var Workspace $personalWorkspace */
 
         if ($personalWorkspace !== $targetWorkspace) {
