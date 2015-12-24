@@ -1,0 +1,25 @@
+`2.1.2 (2015-12-24) <https://github.com/neos/neos-development-collection/releases/tag/2.1.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Make personal workspace names explicit domain knowledge <https://github.com/neos/neos-development-collection/pull/314>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Just moves code around to avoid string concatentation all over
+the place. Also uses the ``isPersonalWorkspace()`` in appropriate
+places.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: WorkspacesController uses slugified usernames <https://github.com/neos/neos-development-collection/pull/313>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+NEOS-1740 #comment This PR is a follow up
+NEOS-1742 #close
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.1...2.1.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
