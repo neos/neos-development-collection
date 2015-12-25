@@ -25,8 +25,8 @@ define(
 			 * @return {void}
 			 */
 			isValid: function(value) {
-				var minimum = parseInt(this.get('options.minimum'), 0),
-					maximum = parseInt(this.get('options.maximum'), 10000);
+				var minimum = parseInt(this.get('options.minimum'), 10),
+					maximum = parseInt(this.get('options.maximum'), 10);
 				if (maximum < minimum) {
 					throw 'The maximum is less than the minimum.';
 				}

@@ -151,16 +151,38 @@ class Context
         }
 
         $this->workspace = $this->workspaceRepository->findByIdentifier($this->workspaceName);
-        if ($this->workspace !== null) {
-            return $this->workspace;
-        }
-
-        if ($createWorkspaceIfNecessary) {
+        if ($this->workspace === null && $createWorkspaceIfNecessary) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             $this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
             $this->workspaceRepository->add($this->workspace);
             $this->systemLogger->log(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.', __CLASS__, $this->workspaceName), LOG_NOTICE);
         }
+
+        if ($this->workspace !== null) {
+            $this->validateWorkspace($this->workspace);
+        }
+
+        return $this->workspace;
+    }
+
+    /**
+     * This method is called in order to check if a workspace is accessible.
+     *
+     * At the time of this writing, it is not possible in Flow to restrict access to Workspace through Entity Privileges
+     * because Workspaces are used at a very early stage during routing where the security context is not yet initialized.
+     * As a workaround, we use a Method Privilege which protects this validateWorkspace() method and thus prevents
+     * unauthorized access to a workspace when calling this context's getWorkspace() method.
+     *
+     * Since some privilege definitions check the "owner" property of a Workspace, we need a real Workspace object and
+     * not just the name - hence this method.
+     *
+     * @param Workspace $workspace The workspace to check
+     * @return void
+     */
+    public function validateWorkspace(Workspace $workspace)
+    {
+        // if access to validateWorkspace() is granted, everything is fine, otherwise the security framework will
+        // throw an exception
     }
 
     /**

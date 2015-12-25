@@ -6,11 +6,13 @@ define(
 	'emberjs',
 	'./PropertyEditor',
 	'./ViewView',
+	'Content/Components/HelpMessage',
 	'Content/Model/NodeSelection'
 ], function(
 	Ember,
 	PropertyEditor,
 	ViewView,
+	HelpMessage,
 	NodeSelection
 ) {
 	return Ember.View.extend({
@@ -26,6 +28,7 @@ define(
 		},
 		PropertyEditor: PropertyEditor,
 		ViewView: ViewView,
+		HelpMessage: HelpMessage,
 		_hasValidationErrors: false,
 		_collapsed: false,
 		_nodeType: '',

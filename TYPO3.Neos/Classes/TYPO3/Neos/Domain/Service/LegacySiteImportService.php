@@ -188,9 +188,9 @@ class LegacySiteImportService
 
             $rootNode = $contentContext->getRootNode();
 
-            $sitesNode = $rootNode->getNode('/sites');
+            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
-                $sitesNode = $rootNode->createSingleNode('sites');
+                $sitesNode = $rootNode->createSingleNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
             // We fetch the workspace to be sure it's known to the persistence manager and persist all
             // so the workspace and site node are persisted before we import any nodes to it.

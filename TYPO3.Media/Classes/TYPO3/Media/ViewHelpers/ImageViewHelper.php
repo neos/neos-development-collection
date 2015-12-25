@@ -13,13 +13,11 @@ namespace TYPO3\Media\ViewHelpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
-use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
 
 /**
- * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+ * Renders an <img> HTML tag from a given TYPO3.Media's image instance
  *
  * = Examples =
  *
@@ -70,12 +68,6 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
 class ImageViewHelper extends AbstractTagBasedViewHelper
 {
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
-     * @Flow\Inject
-     */
-    protected $resourceManager;
-
-    /**
      * @Flow\Inject
      * @var \TYPO3\Media\Domain\Service\ThumbnailService
      */
@@ -105,11 +97,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
         // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', false);
+        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
-     * Renders an HTML img tag with a thumbnail image, created from a given asset.
+     * Renders an HTML img tag with a thumbnail image, created from a given image.
      *
      * @param ImageInterface $image The image to be rendered as an image
      * @param integer $width Desired width of the image
@@ -118,21 +110,35 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * @param integer $maximumHeight Desired maximum height of the image
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
+     * @param string $preset Preset used to determine image configuration
      * @return string an <img...> html tag
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
         if ($image === null && $this->hasArgument('asset')) {
             $image = $this->arguments['asset'];
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration);
 
-        $this->tag->addAttributes(array(
-            'width' => $thumbnailData['width'],
-            'height' => $thumbnailData['height'],
-            'src' => $thumbnailData['src']
-        ));
+        if ($preset) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
+        }
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest());
+
+        if ($thumbnailData === null) {
+            return '';
+        }
+
+        $this->tag->addAttribute('src', $thumbnailData['src']);
+
+        if ($thumbnailData['width'] > 0 && $thumbnailData['height'] > 0) {
+            $this->tag->addAttributes(array(
+                'width' => $thumbnailData['width'],
+                'height' => $thumbnailData['height']
+            ));
+        }
 
         return $this->tag->render();
     }

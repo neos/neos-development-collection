@@ -70,6 +70,20 @@ The following options are allowed:
             'TYPO3.Neos.NodeTypes:Image': TRUE
             '*': FALSE
 
+  By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
+  An example may look like::
+
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        'someChild':
+          type: 'TYPO3.Neos:ContentCollection'
+          position: 'before main'
+
+  This adds a new ContentCollection called someChild to the default page.
+  It will be positioned before the main ContentCollection that the default page has.
+  The position setting follows the same sorting logic used in TypoScript
+  (see the :ref:`neos-typoscript-reference`).
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 
@@ -87,6 +101,32 @@ The following options are allowed:
 
     Currently it's only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
+
+  ``help``
+    Configuration of contextual help. Displays a message that is rendered as popover
+    when the user clicks the help icon in an insert node dialog.
+
+    ``message``
+      Help text for the node type. It supports markdown to format the help text and can
+      be translated (see :ref:`translate-nodetypes`).
+
+    ``thumbnail``
+      This is shown in the popover and can be supplied in two ways:
+
+      - as an absolute URL to an image (``http://static/acme.com/thumbnails/bar.png``)
+      - as a resource URI (``resource://AcmeCom.Website/NodeTypes/Thumbnails/foo.png``)
+
+      If the ``thumbnail`` setting is undefined but an image matching the nodetype name
+       is found, it will be used automatically. It will be looked for in
+       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
+       like this:
+
+       ``AcmeCom.Website:FooWithBar`` -> ``AcmeCom.Website`` and ``FooWithBar``
+
+       The image will be downscaled to a width of 342 pixels, so it should either be that
+       size to be placed above any further help text (if supplied) or be half that size for
+       the help text to flow around it.
 
   ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
@@ -129,6 +169,9 @@ The following options are allowed:
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 
+  .. note:: Your own property names should never start with an underscore ``_`` as that is used for internal
+            properties or as an internal prefix.
+
   ``type``
     Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
     these three special types: ``DateTime``, ``references``, or ``reference``. Use ``DateTime`` to store dates / time as a
@@ -143,6 +186,14 @@ The following options are allowed:
 
     ``label``
       The human-readable label of the property
+
+    ``help``
+      Configuration of contextual help. Displays a message that is rendered as popover
+      when the user clicks the help icon in the inspector.
+
+      ``message``
+        Help text for this property. It supports markdown to format the help text and can
+        be translated (see :ref:`translate-nodetypes`).
 
     ``reloadIfChanged``
       If TRUE, the whole content element needs to be re-rendered on the server side if the value
@@ -229,6 +280,9 @@ The following options are allowed:
       ``editorOptions``
         A set of options for the given editor, see the :ref:`property-editor-reference`.
 
+      ``editorListeners``
+        Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
+
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
@@ -250,7 +304,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	          position: 5
 	  properties:
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: TRUE

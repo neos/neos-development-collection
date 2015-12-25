@@ -423,6 +423,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
         $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
         /** @var $addedNode NodeData */
         foreach ($this->addedNodes as $addedNode) {
             if (
@@ -430,7 +431,21 @@ class NodeDataRepository extends Repository
                 (($recursive && NodePaths::isSubPathOf($addedNode->getPath(), $parentPath)) || NodePaths::getParentPath($addedNode->getPath()) === $parentPath) &&
                 $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
             ) {
-                $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                $nodeType = $addedNode->getNodeType();
+                $disallowed = false;
+                foreach ($constraints['includeNodeTypes'] as $includeNodeType) {
+                    if (!$nodeType->isOfType($includeNodeType)) {
+                        $disallowed = true;
+                    }
+                }
+                foreach ($constraints['excludeNodeTypes'] as $excludeNodeTypes) {
+                    if ($nodeType->isOfType($excludeNodeTypes)) {
+                        $disallowed = true;
+                    }
+                }
+                if ($disallowed === false) {
+                    $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                }
             }
         }
         /** @var $removedNode NodeData */

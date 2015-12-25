@@ -52,23 +52,57 @@ class ThumbnailRepository extends Repository
             if ($callback !== null) {
                 call_user_func($callback, $iteration, $object);
             }
-            ++$iteration;
+            $iteration++;
         }
     }
 
     /**
      * Find all objects and return an IterableResult
      *
+     * @param string $configurationHash Optional filtering by configuration hash (preset)
      * @return IterableResult
      */
-    public function findAllIterator()
+    public function findAllIterator($configurationHash = null)
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
-        return $queryBuilder
-            ->select('Thumbnail')
-            ->from($this->getEntityClassName(), 'Thumbnail')
-            ->getQuery()->iterate();
+        $queryBuilder
+            ->select('t')
+            ->from($this->getEntityClassName(), 't');
+        if ($configurationHash !== null) {
+            $queryBuilder
+                ->where('t.configurationHash = :configurationHash')
+                ->setParameter('configurationHash', $configurationHash);
+        }
+        return $queryBuilder->getQuery()->iterate();
+    }
+
+    /**
+     * Find ungenerated objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findUngeneratedIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder
+            ->select('t')
+            ->from($this->getEntityClassName(), 't')
+            ->where('t.resource IS NULL AND t.staticResource IS NULL');
+        return $queryBuilder->getQuery()->iterate();
+    }
+
+    /**
+     * Count ungenerated objects
+     *
+     * @return integer
+     */
+    public function countUngenerated()
+    {
+        $query = $this->createQuery();
+        $query->matching($query->logicalAnd($query->equals('resource', null), $query->equals('staticResource', null)));
+        return $query->count();
     }
 
     /**

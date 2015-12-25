@@ -3,6 +3,7 @@ include: resource://TYPO3.TypoScript/Private/TypoScript/Root.ts2
 TYPO3.Neos.Module.Management.HistoryController.index = Template {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/Module/Management/History/Index.html'
 	eventsByDate = ${eventsByDate}
+	nextPage = ${nextPage}
 
 	eventRenderer = TYPO3.Neos:History.EventRenderer
 }

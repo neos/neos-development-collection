@@ -68,7 +68,7 @@ A simple language menu can be displayed on the site by using the ``TYPO3.Neos:Di
 	    body {
 	        parts {
 	            languageMenu = TYPO3.Neos:DimensionMenu {
-                    dimension = 'language'
+	                dimension = 'language'
 	            }
 	        }
 	    }

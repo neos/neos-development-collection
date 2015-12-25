@@ -169,4 +169,16 @@ class WorkspaceTest extends UnitTestCase
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
     }
+
+    /**
+     * @test
+     */
+    public function isPersonalWorkspaceChecksIfTheWorkspaceNameStartsWithUser()
+    {
+        $liveWorkspace = new Workspace('live');
+        $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
+
+        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
+        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
+    }
 }

@@ -27,6 +27,7 @@
 	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'TYPO3.Neos', absolute: true) -> f:format.raw()}" />
 
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>

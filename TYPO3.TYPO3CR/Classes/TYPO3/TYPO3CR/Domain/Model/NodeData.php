@@ -190,7 +190,7 @@ class NodeData extends AbstractNodeData
     protected $hiddenAfterDateTime;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="flow_json_array")
      * @var array
      */
     protected $dimensionValues;

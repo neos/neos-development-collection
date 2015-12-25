@@ -124,6 +124,7 @@ class NodeController extends ActionController
      * This is used in out of band rendering for the backend.
      *
      * @return void
+     * @throws NodeNotFoundException
      */
     protected function overrideViewVariablesFromInternalArguments()
     {
@@ -159,7 +160,7 @@ class NodeController extends ActionController
         } elseif (is_string($resolvedNode)) {
             $this->redirectToUri($resolvedNode);
         } elseif ($resolvedNode instanceof NodeInterface) {
-            $this->redirect('show', null, null, array('node' => $resolvedNode));
+            $this->redirect('show', null, null, ['node' => $resolvedNode]);
         } else {
             throw new UnresolvableShortcutException(sprintf('The shortcut node target of node "%s" resolves to an unsupported type "%s"', $node->getPath(), is_object($resolvedNode) ? get_class($resolvedNode) : gettype($resolvedNode)), 1430218738);
         }

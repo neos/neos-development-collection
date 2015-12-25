@@ -192,6 +192,36 @@ dimension preset for all configured dimensions. This means URIs will not contain
 no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``uriSegment`` value
 must not include an underscore.
 
+The default preset can have an empty `uriSegment` value. The following example will lead to URLs that do not contain
+`en` if the `en_US` preset is active, but will show the `uriSegment` for other languages that are defined as well:
+
+.. code-block:: yaml
+
+  TYPO3:
+    TYPO3CR:
+      contentDimensions:
+
+        'language':
+          default: 'en'
+          defaultPreset: 'en_US'
+          label: 'Language'
+          icon: 'icon-language'
+          presets:
+            'en':
+              label: 'English (US)'
+              values: ['en_US']
+              uriSegment: ''
+
+The only limitation is that all segments must be unique across all dimensions. If you need non-unique segments, you can
+switch support for non-empty dimensions off:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos:
+      routing:
+        supportEmptySegmentForDimensions: FALSE
+
 Limitations
 ===========
 

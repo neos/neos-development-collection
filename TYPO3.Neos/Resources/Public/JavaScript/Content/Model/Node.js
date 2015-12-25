@@ -122,6 +122,17 @@ define([
 		},
 
 		/**
+		 * Get an attribute on the underlying VIE entity
+		 *
+		 * @param {string} key
+		 * @return {void}
+		 */
+		getAttribute: function(key) {
+			var attributeName = 'typo3:' + key;
+			return this.get('_vieEntity').get(attributeName);
+		},
+
+		/**
 		 * @return {string}
 		 */
 		nodePath: function() {

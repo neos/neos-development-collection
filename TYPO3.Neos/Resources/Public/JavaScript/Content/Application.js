@@ -115,7 +115,7 @@ function(
 				this._setPagePosition();
 			}
 
-			this._initializeDropdowns();
+			this._initializeTwitterBootstrap();
 
 			if (window.T3.isContentModule) {
 				this._initializeHistoryManagement();
@@ -235,8 +235,13 @@ function(
 			CreateJS.initialize();
 		},
 
-		_initializeDropdowns: function() {
+		_initializeTwitterBootstrap: function() {
 			$('.dropdown-toggle', this.rootElement).dropdown();
+			$('html').click(function(e) {
+				if ($(e.target).parents('.neos-popover').length === 0) {
+					$('.neos-popover-toggle').popover('hide');
+				}
+			});
 		},
 
 		_initializeHistoryManagement: function() {
@@ -303,6 +308,12 @@ function(
 				if (href.indexOf('#') !== -1 && href.replace(protocolAndHost, '').split('#')[0] === location.pathname + location.search) {
 					return;
 				}
+
+				// Check if the link is link to a static resource
+				if (href.match(/_Resources\/Persistent/)) {
+					return;
+				}
+
 				// Check if the parent content element is selected if so don't trigger the link
 				if ($this.parents('.neos-contentelement-active').length !== 0) {
 					e.preventDefault();

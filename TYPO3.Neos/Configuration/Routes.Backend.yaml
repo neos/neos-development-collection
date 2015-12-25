@@ -126,10 +126,10 @@
   appendExceedingArguments: TRUE
 
 -
-  name: 'Backend UI XLIFF configuration'
+  name: 'Backend UI XLIFF labels'
   uriPattern: 'xliff.json'
   defaults:
     '@package': 'TYPO3.Neos'
     '@controller': 'Backend\Backend'
-    '@action': 'getXliffAsJson'
+    '@action': 'xliffAsJson'
   appendExceedingArguments: TRUE

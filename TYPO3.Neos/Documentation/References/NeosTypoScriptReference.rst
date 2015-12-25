@@ -203,7 +203,7 @@ Evaluate any value as a TypoScript object
 
 Example::
 
-	myValue = Value {
+	myValue = TYPO3.TypoScript:Value {
 		value = 'Hello World'
 	}
 
@@ -704,7 +704,7 @@ ImageUri
 
 Get a URI to a (thumbnail) image for an asset.
 
-:asset: (Asset) An asset object (``Image``, ``ImageVariant`` or other ``AssetInterface``)
+:asset: (Asset) An asset object (``Image``, ``ImageInterface`` or other ``AssetInterface``)
 :maximumWidth: (integer) Desired maximum height of the image
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``

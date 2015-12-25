@@ -1,8 +1,10 @@
+.. _translate-nodetypes:
+
 Translate NodeTypes
 ===================
 
-To use the translations for NodeType labels you have to enable it for each label by
-setting the label to the predefined value "i18n".
+To use the translations for NodeType labels or help messages you have to enable it for each label
+or message by setting the value to the predefined value "i18n".
 
 *NodeTypes.yaml*
 
@@ -10,6 +12,8 @@ setting the label to the predefined value "i18n".
 
   Vendor.Site:YourContentElementName:
     ui:
+      help:
+        message: 'i18n'
       inspector:
         tabs:
           yourTab:
@@ -22,6 +26,8 @@ setting the label to the predefined value "i18n".
         type: string
           ui:
             label: 'i18n'
+            help:
+              message: 'i18n'
 
 That will instruct Neos to look for translations of these labels. To register an xliff file
 for this NodeTypes you have to add the following configuration to the Settings.yaml of your package:
@@ -37,7 +43,8 @@ for this NodeTypes you have to add the following configuration to the Settings.y
 
 
 Inside of the xliff file **Resources/Private/Translations/en/NodeTypes/YourContentElementName.xliff** the
-translated labels for ``properties``, ``groups``, ``tabs`` and ``views`` are defined in the xliff like as follows.
+translated labels for ``help``, ``properties``, ``groups``, ``tabs`` and ``views`` are defined in the xliff
+as follows:
 
 .. code-block:: xml
 
@@ -45,6 +52,9 @@ translated labels for ``properties``, ``groups``, ``tabs`` and ``views`` are def
 	<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 		<file original="" product-name="Vendor.Site" source-language="en" datatype="plaintext">
 			<body>
+				<trans-unit id="ui.help.message" xml:space="preserve">
+					<source>Your help message here</source>
+				</trans-uni>
 				<trans-unit id="tabs.myTab" xml:space="preserve">
 					<source>Your Tab Title</source>
 				</trans-unit>
@@ -54,6 +64,9 @@ translated labels for ``properties``, ``groups``, ``tabs`` and ``views`` are def
 				<trans-unit id="properties.myProperty" xml:space="preserve">
 					<source>Your Property Title</source>
 				</trans-unit>
+				<trans-unit id="properties.myProperty.ui.help.message" xml:space="preserve">
+					<source>Your help message here</source>
+				</trans-uni>
 			</body>
 		</file>
 	</xliff>

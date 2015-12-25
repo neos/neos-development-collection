@@ -78,8 +78,8 @@ define(
 				that.refresh();
 			});
 
-			this.on('afterPageLoaded', function(){
-				this._initializePropertyObservers($('#neos-document-metadata'));
+			this.on('afterPageLoaded', function() {
+				this._initializePropertyObservers($('[about]'));
 			});
 		},
 
@@ -185,7 +185,7 @@ define(
 
 			this._super();
 
-			this._initializePropertyObservers(documentMetadata);
+			this._initializePropertyObservers($('[about]'));
 		},
 
 		_selectNode: function(node) {
