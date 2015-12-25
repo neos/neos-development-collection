@@ -176,7 +176,7 @@ define(
 
 			valueDidChange: function() {
 				if (this.$()) {
-					this.$().select2('container').find('.neos-select2-input').css({'display': this.get('value').length > 0 ? 'none' : 'inline-block'});
+					this.$().select2('container').find('.neos-select2-input').css({'display': this.get('value') ? 'none' : 'inline-block'});
 					this._updateSelect2();
 				}
 			}.observes('value'),

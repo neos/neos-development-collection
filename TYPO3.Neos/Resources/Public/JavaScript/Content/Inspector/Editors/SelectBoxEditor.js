@@ -148,6 +148,9 @@ define([
 		}.property('values.[]'),
 
 		valueDidChange: function() {
+			if (this.isDestroyed) {
+				return;
+			}
 			var that = this,
 				content = this.get('content'),
 				value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value'),
