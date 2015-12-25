@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Twitter|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Translate| |Slack| |Forum| |Twitter|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
@@ -16,6 +16,9 @@
 .. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
    :target: http://neos.github.io/neos/master/
    :alt: API Docs
+.. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
+   :target: http://translate.neos.io/
+   :alt: Translation
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io
    :alt: Slack
