@@ -33,31 +33,7 @@ define([
 			});
 
 			return groupedContent;
-		}).property('optionGroupPath', 'content.[]'),
-
-		groupView: Ember.ContainerView.extend({
-			childViews: ['view'],
-			init: function() {
-				if (this.get('content')) {
-					this.set('view', Ember.SelectOptgroup.extend({
-						contentBinding: 'parentView.content',
-						labelBinding: 'parentView.label',
-						selectionBinding: 'parentView.parentView.selection',
-						multipleBinding: 'parentView.parentView.multiple',
-						optionLabelPathBinding: 'parentView.parentView.optionLabelPath',
-						optionValuePathBinding: 'parentView.parentView.optionValuePath',
-
-						itemViewClassBinding: 'parentView.parentView.optionView'
-					}));
-				} else {
-					this.set('view', Ember.SelectOption.extend({
-						content: this
-					}));
-				}
-
-				this._super();
-			}
-		})
+		}).property('optionGroupPath', 'content.[]')
 	});
 
 	/** Allow for disabled options */
