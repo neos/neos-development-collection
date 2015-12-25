@@ -6,7 +6,7 @@
 <div class="neos-content-dimension-selector-dimensions">
 	{{#each dimensions as |dimension|}}
 		<div class="neos-content-dimension-selector-dimension">
-			<label for="neos-content-dimension-{{unbound dimension.identifier}}"><i class="{{unbound dimension.icon}}"></i> {{boundTranslate idBinding="dimension.label"}}</label>
+			<label for="neos-content-dimension-{{unbound dimension.identifier}}"><i class="{{unbound dimension.icon}}"></i> {{boundTranslate id=dimension.label}}</label>
 			<select name="{{unbound dimension.identifier}}" id="neos-content-dimension-{{unbound dimension.identifier}}">
 				{{#each dimension.presets as |preset|}}
 					<option value="{{unbound preset.identifier}}" selected={{preset.selected}} disabled={{preset.disabled}}>{{unbound preset.label}}</option>
