@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
@@ -16,6 +16,9 @@
 .. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
    :target: http://neos.github.io/neos/master/
    :alt: API Docs
+.. |Slack| image:: http://slack.neos.io/badge.svg
+   :target: http://slack.neos.io
+   :alt: Slack
 
 ---------------------------
 Neos development collection
