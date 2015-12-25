@@ -21,28 +21,40 @@
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
 						<div class="neos-inspector-collapse {{if view._collapsed 'neos-collapsed' 'neos-open'}}" {{action "toggleCollapsed" target=view}}></div>
 					</div>
-					{{#collection tagName="div" classNames="neos-inspector-field" content=group.properties}}
-						{{#if isBoolean}}
-							<label for="{{unbound elementId}}" class="neos-checkbox">
-								{{view view.parentView.parentView.PropertyEditor propertyDefinition=view.content inspector=controller}}
-								{{unbound ui.label}}
-								{{#if ui.help.message}}
-									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
-								{{/if}}
-							</label>
-						{{else}}
-							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">
-								{{unbound ui.label}}
-								{{#if ui.help.message}}
-									{{view view.parentView.parentView.HelpMessage title=ui.label content=ui.help.message popoverContainer="#neos-inspector" placement="left"}}
-								{{/if}}
-							</label>
-							{{view view.parentView.parentView.PropertyEditor propertyDefinition=view.content inspector=controller}}
-						{{/if}}
-					{{/collection}}
-					{{#collection tagName="div" classNames="neos-inspector-view" content=group.views}}
-						{{view view.parentView.parentView.ViewView viewDefinition=view.content inspector=controller}}
-					{{/collection}}
+					{{#if group.properties}}
+						<div class="neos-inspector-field">
+							{{#each group.properties as |propertyDefinition|}}
+								<div>
+									{{#if propertyDefinition.isBoolean}}
+										<label for="{{unbound propertyDefinition.elementId}}" class="neos-checkbox">
+											{{view view.PropertyEditor propertyDefinition=propertyDefinition inspector=view.inspector}}
+											{{unbound propertyDefinition.ui.label}}
+											{{#if propertyDefinition.ui.help.message}}
+												{{view view.HelpMessage title=propertyDefinition.ui.label content=propertyDefinition.ui.help.message popoverContainer="#neos-inspector" placement="left"}}
+											{{/if}}
+										</label>
+									{{else}}
+										<label for="{{unbound propertyDefinition.elementId}}" title="{{unbound propertyDefinition.ui.label}}">
+											{{unbound propertyDefinition.ui.label}}
+											{{#if propertyDefinition.ui.help.message}}
+												{{view view.HelpMessage title=propertyDefinition.ui.label content=propertyDefinition.ui.help.message popoverContainer="#neos-inspector" placement="left"}}
+											{{/if}}
+										</label>
+										{{view view.PropertyEditor propertyDefinition=propertyDefinition inspector=view.inspector}}
+									{{/if}}
+								</div>
+							{{/each}}
+						</div>
+					{{/if}}
+					{{#if group.views}}
+						<div class="neos-inspector-view">
+							{{#each group.views as |viewDefinition|}}
+								<div>
+									{{view view.ViewView viewDefinition=viewDefinition inspector=view.inspector}}
+								</div>
+							{{/each}}
+						</div>
+					{{/if}}
 				{{/view}}
 			{{/each}}
 		</div>
