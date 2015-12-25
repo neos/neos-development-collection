@@ -36,7 +36,7 @@ define(
 		}.observes('value', 'inspector.cleanProperties'),
 
 		_validationErrorsDidChange: function() {
-			if (this.get('isDestroyed') === true) {
+			if (this.get('isDestroyed')) {
 				return;
 			}
 			var property = this.get('propertyDefinition.key'),
@@ -56,25 +56,30 @@ define(
 		},
 
 		init: function() {
-			this._super();
 			this._loadView();
+			this._super();
 			this.get('inspector').registerPropertyEditor(this.get('propertyDefinition.key'), this);
 		},
 
 		_loadView: function() {
 			var that = this,
 				propertyDefinition = this.get('propertyDefinition'),
-				editor;
+				editor = this.get('inspector').get('registeredEditors.' + propertyDefinition.key + '.editorView');
 
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
+
+			if (editor) {
+				this.set('editorClassName', this.get('inspector').get('registeredEditors.' + propertyDefinition.key + '.editorClassName'));
+				this.set('currentView', editor.create());
+				return;
+			}
 
 			var editorOptions = $.extend(true,
 				{
 					elementId: propertyDefinition.elementId,
 					property: propertyDefinition.key,
 					propertyType: propertyDefinition.type,
-					inspector: Ember.computed.alias('_propertyEditor.inspector'),
-					_propertyEditor: this,
+					inspector: this.get('inspector'),
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},
 				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
@@ -104,8 +109,11 @@ define(
 					if (!that.isDestroyed) {
 						// It might happen that the editor was deselected before the require() call completed; so we
 						// need to check again whether the view has been destroyed in the meantime.
-						var editor = editorClass.create(editorOptions);
-						that.set('currentView', editor);
+						var editor = editorClass.extend(editorOptions);
+						that.set('editorView', editor);
+						// Set current view to empty view to avoid creating editor view twice, which happens otherwise
+						// since setting currentView after init causes the whole container view to be recreated
+						that.set('currentView', Ember.View.create());
 					}
 				});
 			}, function(err) {
