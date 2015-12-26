@@ -5,7 +5,7 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Library/handlebars',
+	'Library/handlebars/handlebars',
 	'Library/toastr',
 	'text!./Notification.html'
 ],

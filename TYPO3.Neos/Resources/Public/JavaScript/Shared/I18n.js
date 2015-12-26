@@ -31,7 +31,7 @@ define(
 [
 	'emberjs',
 	'Library/underscore',
-	'Library/handlebars'
+	'Library/handlebars/handlebars'
 ], function(Ember, _, Handlebars) {
 
 	/**
