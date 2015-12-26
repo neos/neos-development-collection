@@ -12,9 +12,9 @@ function(
 		// Fallback if the value is undefined,
 		// since the Date Object requires a string/Datetime-Object as the first parameter.
 		if (typeof value === 'undefined') {
-			return new Date(value).toISOString().slice(0, 16).replace('T', ' ');
-		} else {
 			return '';
+		} else {
+			return new Date(value).toISOString().slice(0, 16).replace('T', ' ');
 		}
 	});
 	return Ember.View.extend({

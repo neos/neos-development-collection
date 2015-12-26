@@ -33,7 +33,7 @@ define(
 					key: viewDefinition.key,
 					label: I18n.translate(viewDefinition.label),
 					icon: viewDefinition.icon,
-					inspectorBinding: this.inspectorBinding
+					inspector: this.inspector
 				},
 				Ember.get(viewDefinition, 'viewOptions') || {}
 			);
