@@ -491,7 +491,7 @@ define(
 				if (valueOrPromise._propertyChangePromiseClosure) {
 					propertyPromise = valueOrPromise._propertyChangePromiseClosure();
 				} else {
-					propertyPromise = Ember.RSVP.Promise(function (resolve, reject) {
+					propertyPromise = new Ember.RSVP.Promise(function(resolve, reject) {
 						resolve(valueOrPromise);
 					});
 				}
@@ -566,9 +566,9 @@ define(
 
 				that.set('modified', false);
 
-				cleanProperties = this.get('selectedNode.attributes');
-				this.set('cleanProperties', cleanProperties);
-				this.set('nodeProperties', Ember.Object.create(cleanProperties));
+				cleanProperties = that.get('selectedNode.attributes');
+				that.set('cleanProperties', cleanProperties);
+				that.set('nodeProperties', Ember.Object.create(cleanProperties));
 				SecondaryInspectorController.hide();
 			});
 		},
