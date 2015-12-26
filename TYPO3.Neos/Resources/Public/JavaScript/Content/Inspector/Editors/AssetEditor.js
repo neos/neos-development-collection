@@ -16,7 +16,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		}.property(),
 		template: Ember.Handlebars.compile(template),
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
-		assets: [],
+		assets: Ember.Object.create({collection: null}),
 
 		actions: {
 			beforeMediaBrowserIsShown: function() {
@@ -34,6 +34,12 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 						that.set('mediaBrowserShown', false);
 					}
 				};
+			},
+
+			removeAsset: function(asset) {
+				var collection = this.get('assets.collection');
+				collection.removeObject(collection.findBy('assetUuid', asset.assetUuid));
+				this._updateValue();
 			}
 		},
 
@@ -53,14 +59,12 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this.set('_mediaBrowserView', Ember.View.extend({
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
 			}));
-
-			this.set('assets', Ember.A());
 			this.set('_assetMetadataEndpointUri', $('link[rel="neos-asset-metadata"]').attr('href'));
+			this._readAndDeserializeValue();
 		},
 
 		didInsertElement: function() {
 			this._super();
-			this._readAndDeserializeValue();
 
 			if (!this.get('loadingLabel')) {
 				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
@@ -76,15 +80,12 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		assetView: Ember.CollectionView.extend({
 			tagName: 'ul',
+			assetEditor: null,
 			itemViewClass: Ember.View.extend({
-				template: Ember.Handlebars.compile('<span><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
+				template: Ember.Handlebars.compile('<span><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action "removeAsset" view.content target=view.parentView.assetEditor}}></span>'),
+				assetEditor: null,
 				attributeBindings: ['title'],
-				titleBinding: 'content.filename',
-				actions: {
-					remove: function() {
-						this.get('_parentView._parentView').removeAsset(this.get('content'));
-					}
-				}
+				titleBinding: 'content.filename'
 			}),
 			emptyView: Ember.View.extend({
 				template: Ember.Handlebars.compile('{{view._parentView._parentView._loadingLabel}}'),
@@ -116,7 +117,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				this.set('_showLoadingIndicator', true);
 				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '?' + $.param({assets: assetIdentifiers})).then(
 					function(result) {
-						that.get('assets').addObjects(result);
+						that.set('assets.collection', result);
 						that.set('_showLoadingIndicator', false);
 					}
 				);
@@ -127,14 +128,6 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: null,
-
-		/****************************************
-		 * FILE REMOVE
-		 ***************************************/
-		removeAsset: function(asset) {
-			this.get('assets').removeObject(this.get('assets').findProperty('assetUuid', asset.assetUuid));
-			this._updateValue();
-		},
 
 		/**
 		 * Callback after file upload is complete
@@ -148,11 +141,12 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				asset = $.parseJSON(asset);
 			}
 
+			var collection = this.get('assets.collection');
 			// Replace existing assets if we don't allow editing of multiple assets
 			if (!this.multiple) {
-				this.get('assets').setObjects([]);
+				collection.setObjects([]);
 			}
-			this.get('assets').pushObject(asset);
+			collection.pushObject(asset);
 			this._updateValue();
 		},
 
@@ -168,7 +162,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * dependency.
 		 */
 		_updateValue: function() {
-			var collectedValues = this.get('assets').mapBy('assetUuid');
+			var collectedValues = this.get('assets.collection').mapBy('assetUuid');
 			if (this.multiple) {
 				this.set('value', JSON.stringify(collectedValues));
 			} else {

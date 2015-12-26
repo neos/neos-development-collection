@@ -396,7 +396,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		filesScheduledForUpload: function (files) {
 			if (files.length > 0) {
 				this._displayImageLoader();
-				this.upload();
+				this.send('upload');
 			}
 		},
 
@@ -749,6 +749,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			var that = this;
 			// Make sure the image has been updated before altering styles
 			Ember.run.next(function () {
+				if (that.isDestroyed) {
+					return;
+				}
 				var cropProperties = that.get('_cropProperties.full'),
 					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
 					image = container.find('img');
