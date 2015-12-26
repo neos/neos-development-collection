@@ -1,2 +1,4 @@
 <button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "hide"}}></button>
-{{view Ember.ContainerView currentView=view.contentView}}
+{{#each views as |viewClass|}}
+  {{view viewClass}}
+{{/each}}

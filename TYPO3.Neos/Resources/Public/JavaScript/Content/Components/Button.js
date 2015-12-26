@@ -18,6 +18,15 @@ define(
 			label: '',
 			title: '',
 			defaultTemplate: Ember.Handlebars.compile('{{view.translatedLabel}}'),
+			action: null,
+			target: null,
+
+			triggerAction: function() {
+				if (this.get('action')) {
+					this.get('target').send(this.get('action'));
+				}
+				this._super();
+			},
 
 			translatedLabel: function() {
 				return I18n.translate(this.get('label'));

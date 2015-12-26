@@ -25,6 +25,10 @@ function(Ember, Button) {
 			}
 		},
 
+		views: function() {
+			return [this.get('_viewClass')];
+		}.property('_viewClass'),
+
 		/**
 		 * Internal. The view class which is displayed in SecondaryInspectorView
 		 */
@@ -76,7 +80,6 @@ function(Ember, Button) {
 	 * the secondary inspector.
 	 */
 	SecondaryInspectorController.SecondaryInspectorButton = Button.extend({
-
 		/**
 		 * API: the class name which is
 		 */
