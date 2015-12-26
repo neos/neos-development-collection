@@ -13,7 +13,8 @@ define(
 	Configuration,
 	Notification
 ) {
-	return Ember.ContainerView.extend({
+	return Ember.View.extend({
+		template: Ember.Handlebars.compile('{{#if view.editor}}{{view view.editor}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
 		propertyDefinition: null,
 		value: null,
 		isModified: false,
@@ -64,28 +65,17 @@ define(
 		_loadView: function() {
 			var that = this,
 				propertyDefinition = this.get('propertyDefinition'),
-				editor = this.get('inspector').get('registeredEditors.' + propertyDefinition.key + '.editorView');
-
-			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
-
-			if (editor) {
-				this.set('editorClassName', this.get('inspector').get('registeredEditors.' + propertyDefinition.key + '.editorClassName'));
-				this.set('currentView', editor.create());
-				return;
-			}
-
-			var editorOptions = $.extend(true,
-				{
-					elementId: propertyDefinition.elementId,
-					property: propertyDefinition.key,
-					propertyType: propertyDefinition.type,
-					inspector: this.get('inspector'),
-					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
-				},
-				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
-			);
-
-			editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
+				editorOptions = $.extend(true,
+					{
+						elementId: propertyDefinition.elementId,
+						property: propertyDefinition.key,
+						propertyType: propertyDefinition.type,
+						inspector: this.get('inspector'),
+						valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
+					},
+					Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
+				),
+				editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
 
 			if (!editor) {
 				if (window.console && console.error) {
@@ -110,10 +100,7 @@ define(
 						// It might happen that the editor was deselected before the require() call completed; so we
 						// need to check again whether the view has been destroyed in the meantime.
 						var editor = editorClass.extend(editorOptions);
-						that.set('editorView', editor);
-						// Set current view to empty view to avoid creating editor view twice, which happens otherwise
-						// since setting currentView after init causes the whole container view to be recreated
-						that.set('currentView', Ember.View.create());
+						that.set('editor', editor);
 					}
 				});
 			}, function(err) {
@@ -122,6 +109,8 @@ define(
 				}
 				Notification.error('Error loading inspector', 'Inspector editor for property "' + propertyDefinition.key + '" could not be loaded. See console for further details.');
 			});
+
+			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
 		},
 
 		_addValidationObserver: function() {
