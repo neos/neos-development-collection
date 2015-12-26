@@ -43,7 +43,26 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				this.set('_finalImageDimensions.width', null);
 				this.set('_finalImageDimensions.height', null);
 				this.set('value', '');
-			}
+			},
+
+			beforeMediaBrowserIsShown: function () {
+				var that = this;
+				window.Typo3MediaBrowserCallbacks = {
+					assetChosen: function (assetIdentifier) {
+						that._displayImageLoader();
+
+						that.set('_loadPreviewImageHandler', HttpClient.getResource(
+							that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
+							{dataType: 'json'}
+						));
+						that.get('_loadPreviewImageHandler').then(function (result) {
+							that.fileUploaded(result);
+							that._hideImageLoader();
+						});
+						that.set('mediaBrowserShown', false);
+					}
+				};
+			},
 		},
 
 		/****************************************
@@ -323,25 +342,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: null,
-
-		_beforeMediaBrowserIsShown: function () {
-			var that = this;
-			window.Typo3MediaBrowserCallbacks = {
-				assetChosen: function (assetIdentifier) {
-					that._displayImageLoader();
-
-					that.set('_loadPreviewImageHandler', HttpClient.getResource(
-						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
-						{dataType: 'json'}
-					));
-					that.get('_loadPreviewImageHandler').then(function (result) {
-						that.fileUploaded(result);
-						that._hideImageLoader();
-					});
-					that.set('mediaBrowserShown', false);
-				}
-			};
-		},
 
 		_mediaBrowserEditView: null,
 

@@ -14,7 +14,7 @@
 	</div>
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
-		{{view view.SecondaryInspectorButton viewClass=view._mediaBrowserView label="Media" action="_beforeMediaBrowserIsShown" target=view}}
+		{{view view.SecondaryInspectorButton viewClass=view._mediaBrowserView label="Media" action="beforeMediaBrowserIsShown" target=view}}
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" disabled="{{if view._uploadInProgress 'neos-disabled'}}">
 			{{view._fileChooserLabel}}
 		</button>

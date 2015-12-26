@@ -10,7 +10,6 @@ define(
 	'Shared/I18n'
 ],
 function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n) {
-
 	return FileUpload.extend({
 		removeButtonLabel: function() {
 			return I18n.translate('TYPO3.Neos:Main:remove', 'Remove')
@@ -18,6 +17,25 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		template: Ember.Handlebars.compile(template),
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 		assets: [],
+
+		actions: {
+			beforeMediaBrowserIsShown: function() {
+				var that = this;
+				window.Typo3MediaBrowserCallbacks = {
+					assetChosen: function(assetIdentifier) {
+						// we hide the default upload preview image; as we only want the loading indicator to be visible
+						that.set('_loadPreviewImageHandler', HttpClient.getResource(
+							that.get('_assetMetadataEndpointUri') + '?assets[]=' + assetIdentifier,
+							{dataType: 'json'}
+						));
+						that.get('_loadPreviewImageHandler').then(function(result) {
+							that.fileUploaded(result[0]);
+						});
+						that.set('mediaBrowserShown', false);
+					}
+				};
+			}
+		},
 
 		/**
 		 * Whether to enable editing of multiple Assets
@@ -109,23 +127,6 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: null,
-
-		_beforeMediaBrowserIsShown: function() {
-			var that = this;
-			window.Typo3MediaBrowserCallbacks = {
-				assetChosen: function(assetIdentifier) {
-					// we hide the default upload preview image; as we only want the loading indicator to be visible
-					that.set('_loadPreviewImageHandler', HttpClient.getResource(
-						that.get('_assetMetadataEndpointUri') + '?assets[]=' + assetIdentifier,
-						{dataType: 'json'}
-					));
-					that.get('_loadPreviewImageHandler').then(function(result) {
-						that.fileUploaded(result[0]);
-					});
-					that.set('mediaBrowserShown', false);
-				}
-			};
-		},
 
 		/****************************************
 		 * FILE REMOVE
