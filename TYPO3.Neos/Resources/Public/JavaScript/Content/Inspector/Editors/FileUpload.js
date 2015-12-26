@@ -36,10 +36,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		_containerId: null,
 		_browseButtonId: null,
 		_fileDropZoneId: null,
-		_uploadButtonShown: false,
-		_uploadButtonNotShown: function() {
-			return !this.get('_uploadButtonShown');
-		}.property('_uploadButtonShown'),
 
 		template: Ember.Handlebars.compile(template),
 
@@ -97,7 +93,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 			this._uploader.bind('Error', function(uploader, error) {
 				that.set('_uploadInProgress', false);
-				that.set('_uploadButtonShown', false);
 				Notification.error(error.message);
 				uploader.splice();
 			});
@@ -130,7 +125,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 		fileUploaded: function() {
 			this.set('_uploadInProgress', false);
-			this.set('_uploadButtonShown', false);
 		}
 	});
 });

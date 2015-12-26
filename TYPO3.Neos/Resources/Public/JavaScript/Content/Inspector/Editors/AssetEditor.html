@@ -6,10 +6,5 @@
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-file-upload-files" disabled="{{if view._uploadInProgress 'neos-disabled'}}">
 			{{view._fileChooserLabel}}
 		</button>
-		{{#if view._uploadButtonShown}}
-			<button class="neos-button neos-inspector-file-upload-button" allowed-file-types="{{unbound view.allowedFileTypes}}" disabled={{view._uploadInProgress}} {{action "upload" target=view}}>
-				{{translate fallback=view.uploaderLabel id=view.uploaderLabel}}
-			</button>
-		{{/if}}
 	</div>
 </div>
