@@ -2,7 +2,7 @@
 namespace TYPO3\Neos\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
