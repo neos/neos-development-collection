@@ -83,7 +83,7 @@
 			<target xml:lang="pl">Wewnętrzny</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="pl">Każdy zalogowany redaktor można zobaczyć i modyfikować ten obszar roboczy.</target></trans-unit>
+			<target xml:lang="pl">Każdy zalogowany redaktor może zobaczyć i modyfikować ten obszar roboczy.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
 			<target xml:lang="pl">Zmiany</target></trans-unit>
