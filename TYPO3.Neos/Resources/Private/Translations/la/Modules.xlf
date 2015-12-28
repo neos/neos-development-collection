@@ -87,6 +87,9 @@
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target xml:lang="la-LA">crwdns602:0crwdne602:0</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="la-LA">crwdns639:0{0}crwdne639:0</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="la-LA">crwdns603:0crwdne603:0</target></trans-unit>

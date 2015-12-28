@@ -26,37 +26,37 @@
 			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Details for "{0}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Detalles de "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear un nuevo espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Create workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Yes, delete the workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sí, elimínalo</target><alt-trans><target xml:lang="es-ES">Sí, elimínal</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Personal workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo personal</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Private workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo privado</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Internal workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo interno</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Read-only workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo de solo lectura</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
@@ -65,28 +65,31 @@
 			<target xml:lang="es-ES" state="translated">Descripción</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Base workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo base</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="es-ES" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Dueño</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="es-ES" state="translated">Visibilidad</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="es-ES" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Privado</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Solo los revisores y administradores pueden acceder y modificar este espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="es-ES" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Interno</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="es-ES" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cambios</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="es-ES" state="translated">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="es-ES" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
@@ -119,7 +122,7 @@
 			<target xml:lang="es-ES" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target xml:lang="es-ES" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Revisar 	</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="es-ES" state="translated">Descartar los cambios seleccionados</target></trans-unit>
@@ -134,10 +137,10 @@
 			<target xml:lang="es-ES" state="translated">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="es-ES" state="needs-translation">Publish all changes to {0}</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Publicar todos los cambios en {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="es-ES" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Contenido cambiado</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="es-ES" state="translated">eliminado</target></trans-unit>
@@ -267,7 +270,7 @@
 			<target xml:lang="es-ES" state="translated">{0} borró la cuenta "{1}" de {2}.</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
-			<target xml:lang="es-ES" state="needs-translation">Load More</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cargar más</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -479,7 +482,7 @@
 			<target xml:lang="es-ES" state="translated">Datos de usuario</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve">
 				<source>User Menu</source>
-			<target xml:lang="es-ES" state="needs-translation">User Menu</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Menú de usuario</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="es-ES" state="translated">Preferencias de usuario</target></trans-unit>

@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="lv" state="translated">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="lv" state="translated">Izmaiņu pārskatīšana</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="lv">Apstiprināt</target></trans-unit>

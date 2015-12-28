@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="da">Publicér automatisk til {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
+				<source>Review changes</source>
+			<target xml:lang="da">Gennemse ændringer</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="da">Anvend</target></trans-unit>
