@@ -175,7 +175,9 @@ define(
 					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel),
 						tooltip = node.data.title;
 
-					if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
+					if (tooltip === null) {
+						tooltip = '';
+					} else if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
 						tooltip += ' (' + nodeTypeLabel + ')';
 					}
 					node.data.tooltip = tooltip;
