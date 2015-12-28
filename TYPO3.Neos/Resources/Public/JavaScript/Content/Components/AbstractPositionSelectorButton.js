@@ -37,6 +37,10 @@ function (
 
 		downTimer: null,
 
+		hoverTimer: null,
+
+		mouseInside: false,
+
 		toggleSelectorOption: function(newPosition) {
 			this.set('desiredPosition', newPosition);
 		},
@@ -67,7 +71,21 @@ function (
 			}
 		},
 
+		mouseEnter: function(event) {
+			if (this.get('isDisabled') === false) {
+				var that = this;
+				that.set('mouseInside', true);
+				clearTimeout(this.get('hoverTimer'));
+				this.set('hoverTimer', setTimeout(function() {
+					if (that.get('mouseInside') === true) {
+						that.set('isExpanded', true);
+					}
+				}, 700));
+			}
+		},
+
 		mouseLeave: function() {
+			this.set('mouseInside', false);
 			this.set('isExpanded', false);
 		},
 
