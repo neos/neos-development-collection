@@ -162,6 +162,29 @@ define(
 					);
 				},
 
+				createNode: function(activeNode, title, nodeType, iconClass, position) {
+					var data = {
+							title: title ? title : 'Loading ...',
+							nodeType: nodeType,
+							addClass: 'neos-matched',
+							iconClass: iconClass,
+							expand: true
+						},
+						newNode;
+
+					switch (position) {
+						case 'before':
+							newNode = activeNode.getParent().addChild(data, activeNode);
+						break;
+						case 'after':
+							newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
+						break;
+						case 'into':
+							newNode = activeNode.addChild(data);
+					}
+					this.persistNode(activeNode, newNode, nodeType, title, position);
+				},
+
 				deleteNode: function(node) {
 					node.setLazyNodeStatus(this.statusCodes.loading);
 					var that = this;
@@ -700,7 +723,7 @@ define(
 
 				if (nodeType !== '') {
 					nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-					this.createNode(activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
+					this.send('createNode', activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
 				} else {
 					this.showCreateNodeDialog(activeNode, position);
 				}
@@ -830,8 +853,8 @@ define(
 					actions: {
 						insertNode: function(nodeType, icon) {
 							that.set('insertNodePanelShown', false);
-							that.createNode(activeNode, null, nodeType, icon, position);
-							this.cancel();
+							that.send('createNode', activeNode, null, nodeType, icon, position);
+							this.send('cancel');
 						}
 					},
 					allowedNodeTypes: allowedNodeTypes,
@@ -839,29 +862,6 @@ define(
 						that.set('insertNodePanelShown', false);
 					}
 				}).create();
-			},
-
-			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var data = {
-						title: title ? title : 'Loading ...',
-						nodeType: nodeType,
-						addClass: 'neos-matched',
-						iconClass: iconClass,
-						expand: true
-					},
-					newNode;
-
-				switch (position) {
-					case 'before':
-						newNode = activeNode.getParent().addChild(data, activeNode);
-					break;
-					case 'after':
-						newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
-					break;
-					case 'into':
-						newNode = activeNode.addChild(data);
-				}
-				this.persistNode(activeNode, newNode, nodeType, title, position);
 			},
 
 			persistNode: function(activeNode, node, nodeType, title, position) {

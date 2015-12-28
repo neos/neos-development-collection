@@ -375,7 +375,7 @@ define(
 							var that = this;
 							setTimeout(function() {
 								that.isDblClick = false;
-								that.options.parent.editNode(node);
+								that.options.parent.send('editNode', node);
 							}, 300);
 						}
 					},
@@ -383,10 +383,10 @@ define(
 					onKeydown: function(node, event) {
 						switch (event.which) {
 							case 113: // [F2]
-								this.options.parent.editNode(node);
+								this.options.parent.send('editNode', node);
 								return false;
 							case 69: // [e]
-								this.options.parent.editNode(node);
+								this.options.parent.send('editNode', node);
 								return false;
 						}
 					},
