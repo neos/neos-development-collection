@@ -21,7 +21,7 @@ define(
 			didInsertElement: function() {
 				var that = this;
 				Mousetrap.bind('esc', function() {
-					that.cancel();
+					that.send('cancel');
 				});
 
 				this.focus();
