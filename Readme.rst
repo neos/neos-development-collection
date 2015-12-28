@@ -23,7 +23,7 @@
    :target: https://discuss.neos.io/
    :alt: Discussion Forum
 .. |Issues| image:: https://img.shields.io/badge/issues-Jira-39c6ff.svg
-   :target: https://jira.neos.io
+   :target: https://jira.neos.io/browse/NEOS
    :alt: Issues
 .. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
    :target: http://translate.neos.io/
