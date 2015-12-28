@@ -60,16 +60,16 @@ define(
 					}
 
 					var that = this;
-					DeleteNodeDialog.create({
+					DeleteNodeDialog.extend({
 						actions: {
 							deleteNode: function() {
-								that.deleteNode(activeNode);
-								this.cancel();
+								that.send('deleteNode', activeNode);
+								this.send('cancel');
 							}
 						},
 						title: activeNode.data.title,
 						numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0
-					});
+					}).create();
 				},
 
 				copy: function() {
