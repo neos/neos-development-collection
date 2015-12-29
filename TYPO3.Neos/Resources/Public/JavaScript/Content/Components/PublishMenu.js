@@ -80,7 +80,7 @@ define(
         targetWorkspaceController: TargetWorkspaceController,
         targetWorkspaceSelector: TargetWorkspaceSelector,
 
-        target: 'controller',
+        target: PublishableNodes,
         action: 'publishChanges',
 
         _nodeEndpoint: NodeEndpoint,
@@ -179,7 +179,7 @@ define(
         classNames: ['neos-discard-button'],
         controller: PublishableNodes,
 
-        target: 'controller',
+        target: PublishableNodes,
         action: 'discardChanges',
 
         _nodeEndpoint: NodeEndpoint,
