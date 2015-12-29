@@ -71,11 +71,12 @@ define(
 
 		init: function() {
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
-			var that = this;
-
-			EventDispatcher.on('contentChanged', function() {
-				that.refresh();
+			EventDispatcher.on('contentChanged', this, function() {
+				this.refresh();
 			});
 
 			this.on('afterPageLoaded', function() {

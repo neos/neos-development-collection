@@ -377,24 +377,34 @@ define(
 
 			init: function() {
 				this._super();
+				// If parent view is not the owner view, the view is being rendered for the first time
+				if (this.parentView !== this.ownerView) {
+					return;
+				}
+
 				this._updateMetaInformation();
 
-				var that = this;
-
 				ContentModule.on('pageLoaded', this, function() {
-					if (that.get('isDestroyed')) {
+					if (this.get('isDestroyed')) {
 						return;
 					}
-					that.set('pageNodePath', $('#neos-document-metadata').attr('about'));
+					this.set('pageNodePath', $('#neos-document-metadata').attr('about'));
 					this.trigger('afterPageLoaded');
 				});
+
+				this.set('initialized', true);
 			},
 
 			didInsertElement: function() {
-				var that = this;
+				if (!this.get('initialized')) {
+					Ember.run.schedule('afterRender', this, function() {
+						this.rerender();
+					});
+					return;
+				}
 				// TODO This fixes the deprecation warnings for property modification in a hook but we should calculate the active node before inserting the element (somehow)
-				Ember.run.next(that, function() {
-					that._initializeTree();
+				Ember.run.next(this, function() {
+					this._initializeTree();
 				});
 			},
 

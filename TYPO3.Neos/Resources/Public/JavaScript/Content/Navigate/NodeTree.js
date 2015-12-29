@@ -233,6 +233,9 @@ define(
 			latestFilterQuery: null,
 
 			markDirtyNodes: function() {
+				if (!this.get('initialized')) {
+					return;
+				}
 				$('.neos-dynatree-dirty', this.$nodeTree).removeClass('neos-dynatree-dirty');
 
 				var that = this;
@@ -273,25 +276,29 @@ define(
 
 			init: function() {
 				this._super();
+				if (!this.get('initialized')) {
+					return;
+				}
 
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
 				this.set('baseNodeType', Configuration.get('UserInterface.navigateComponent.nodeTree.presets.default.baseNodeType'));
 
-				this.on('afterPageLoaded', function(){
+				this.on('afterPageLoaded', function() {
 					this._initializePropertyObservers($('#neos-document-metadata'));
 				});
 
-				var that = this;
-				EventDispatcher.on('nodesInvalidated', function() {
-					that.refresh();
+				EventDispatcher.on('nodesInvalidated', this, function() {
+					this.refresh();
 				});
 			},
 
 			didInsertElement: function() {
 				this._super();
+				if (!this.get('initialized')) {
+					return;
+				}
 
-				var that = this,
-					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select'),
+				var $neosNodeTypeSelect = this.$().find('#neos-node-tree-filter select'),
 					availableNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType'));
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
 
@@ -301,13 +308,13 @@ define(
 				$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 
 				// Type filter
-				$neosNodeTypeSelect.change(function() {
-					that.set('nodeType', $neosNodeTypeSelect.val());
-					that.filterTree();
+				$neosNodeTypeSelect.change(this, function() {
+					this.set('nodeType', $neosNodeTypeSelect.val());
+					this.filterTree();
 				});
 
-				EventDispatcher.on('contentDimensionsSelectionChanged', function() {
-					that.refresh();
+				EventDispatcher.on('contentDimensionsSelectionChanged', this, function() {
+					this.refresh();
 				});
 			},
 
