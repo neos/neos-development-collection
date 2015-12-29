@@ -120,13 +120,10 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 		// The "files" is taken from the DOM event when a file changes
 		filesScheduledForUpload: function(files) {
-			this.send('upload');
+			this.upload();
 		},
 
 		fileUploaded: function() {
-			if (this.isDestroyed) {
-				return;
-			}
 			this.set('_uploadInProgress', false);
 		}
 	});
