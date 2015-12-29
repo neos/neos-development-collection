@@ -22,8 +22,14 @@ define(
 			target: null,
 
 			triggerAction: function() {
-				if (this.get('action')) {
-					this.get('target').send(this.get('action'));
+				var action = this.get('action');
+				if (action) {
+					var target = this.get('target');
+					if (target.send === 'function') {
+						target.send(action);
+					} else {
+						target[action]();
+					}
 				}
 				this._super();
 			},
