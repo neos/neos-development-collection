@@ -1,5 +1,19 @@
 <div class="neos-inspector-file">
-	<div>{{view view.assetView content=view.assets}}</div>
+	{{#if view._showLoadingIndicator}}
+		<span class="neos-ellipsis"></span><br /><br />
+	{{else}}
+		{{#if view.assets}}
+			<ul>
+				{{#each view.assets as |asset|}}
+					<li title="{{unbound asset.filename}}">
+						<span><img src="{{unbound asset.previewImageResourceUri}}" alt="{{unbound asset.filename}}" /></span>
+						{{asset.filename}}
+						<span class="neos-button neos-asset-editor-remove" {{action "removeAsset" asset target=view}}></span>
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+	{{/if}}
 
 	<div class="neos-inspector-file-upload" id="{{unbound view._containerId}}">
 		{{view view.SecondaryInspectorButton viewClass=view._mediaBrowserView label="Media" action="beforeMediaBrowserIsShown" target=view}}

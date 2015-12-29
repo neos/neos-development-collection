@@ -182,6 +182,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		init: function () {
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			var that = this;
 
@@ -313,8 +316,10 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * and reads the image if possible
 		 */
 		didInsertElement: function () {
-			var that = this;
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			this.$().find('.neos-inspector-image-thumbnail-inner').css({
 				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
@@ -396,7 +401,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		filesScheduledForUpload: function (files) {
 			if (files.length > 0) {
 				this._displayImageLoader();
-				this.upload();
+				this.send('upload');
 			}
 		},
 

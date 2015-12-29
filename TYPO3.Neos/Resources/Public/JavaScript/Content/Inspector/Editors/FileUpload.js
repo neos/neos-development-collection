@@ -41,14 +41,26 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 		init: function() {
 			this._super();
+			// If parent view is not the owner view, the view is being rendered for the first time
+			if (this.parentView !== this.ownerView) {
+				return;
+			}
 
 			var id = this.get('elementId');
 			this.set('_containerId', 'typo3-fileupload-' + id);
 			this.set('_browseButtonId', 'typo3-fileupload-browsebutton-' + id);
 			this.set('_fileDropZoneId', 'typo3-fileupload-dropzone-' + id);
+
+			this.set('initialized', true);
 		},
 
 		didInsertElement: function() {
+			if (!this.get('initialized')) {
+				Ember.run.schedule('afterRender', this, function() {
+					this.rerender();
+				});
+				return;
+			}
 			this._initializeUploader();
 		},
 
@@ -120,10 +132,13 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 		// The "files" is taken from the DOM event when a file changes
 		filesScheduledForUpload: function(files) {
-			this.upload();
+			this.send('upload');
 		},
 
 		fileUploaded: function() {
+			if (this.isDestroyed) {
+				return;
+			}
 			this.set('_uploadInProgress', false);
 		}
 	});

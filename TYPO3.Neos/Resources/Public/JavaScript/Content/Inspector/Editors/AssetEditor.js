@@ -34,7 +34,12 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 						that.set('mediaBrowserShown', false);
 					}
 				};
-			}
+			},
+
+			removeAsset: function(asset) {
+				this.get('assets').removeObject(this.get('assets').findBy('assetUuid', asset.assetUuid));
+				this._updateValue();
+			},
 		},
 
 		/**
@@ -48,6 +53,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		init: function() {
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			// Create new instance per asset editor to avoid side effects
 			this.set('_mediaBrowserView', Ember.View.extend({
@@ -56,42 +64,15 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			this.set('assets', Ember.A());
 			this.set('_assetMetadataEndpointUri', $('link[rel="neos-asset-metadata"]').attr('href'));
+			this._readAndDeserializeValue();
 		},
 
 		didInsertElement: function() {
 			this._super();
-			this._readAndDeserializeValue();
-
-			if (!this.get('loadingLabel')) {
-				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
+			if (!this.get('initialized')) {
+				return;
 			}
 		},
-
-		_loadingLabel: function() {
-			if (this.get('_showLoadingIndicator') === true) {
-				return this.get('loadingLabel');
-			}
-			return '';
-		}.property('_showLoadingIndicator'),
-
-		assetView: Ember.CollectionView.extend({
-			tagName: 'ul',
-			itemViewClass: Ember.View.extend({
-				template: Ember.Handlebars.compile('<span><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
-				attributeBindings: ['title'],
-				titleBinding: 'content.filename',
-				actions: {
-					remove: function() {
-						this.get('_parentView._parentView').removeAsset(this.get('content'));
-					}
-				}
-			}),
-			emptyView: Ember.View.extend({
-				template: Ember.Handlebars.compile('{{view._parentView._parentView._loadingLabel}}'),
-				tagName: 'span',
-				classNames: ['neos-inspector-file-loading']
-			})
-		}),
 
 		/**
 		 * On startup, we deserialize the JSON string and fill the "assets" property
@@ -127,14 +108,6 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: null,
-
-		/****************************************
-		 * FILE REMOVE
-		 ***************************************/
-		removeAsset: function(asset) {
-			this.get('assets').removeObject(this.get('assets').findProperty('assetUuid', asset.assetUuid));
-			this._updateValue();
-		},
 
 		/**
 		 * Callback after file upload is complete
