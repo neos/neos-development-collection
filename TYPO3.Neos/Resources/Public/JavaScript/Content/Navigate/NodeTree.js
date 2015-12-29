@@ -143,16 +143,15 @@ define(
 
 				createNode: function(activeNode, title, nodeType, iconClass, position) {
 					var that = this,
-						nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
 						data = {
 							title: title,
 							nodeType: nodeType,
-							nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 							addClass: 'typo3_neos-page neos-matched',
 							iconClass: iconClass,
 							expand: false
 						},
 						newNode;
+
 					switch (position) {
 						case 'before':
 							newNode = activeNode.getParent().addChild(data, activeNode);
