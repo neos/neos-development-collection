@@ -11,7 +11,8 @@ define(
 	'Shared/Notification',
 	'Shared/Utility',
 	'Shared/HttpClient',
-	'Shared/I18n'
+	'Shared/I18n',
+	'Shared/Helpers/EqualHelper'
 ],
 function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient, I18n) {
 	/**
@@ -20,12 +21,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 	 */
 	return FileUpload.extend({
 		actions: {
-			exchangeAspectRatio: function() {
-				var aspectRatioWidth = this.get('aspectRatioWidth'),
-					aspectRatioHeight = this.get('aspectRatioHeight');
-				this.setProperties({'aspectRatioWidth': aspectRatioHeight, 'aspectRatioHeight': aspectRatioWidth});
-			},
-
 			/****************************************
 			 * IMAGE REMOVE
 			 ***************************************/
@@ -550,9 +545,27 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					}
 				},
 
+				actions: {
+					selectAspectRatio: function(aspectRatio) {
+						if (this.get('selection') !== aspectRatio) {
+							this.set('selection', aspectRatio);
+						}
+					},
+
+					exchangeAspectRatio: function() {
+						var aspectRatioWidth = this.get('aspectRatioWidth'),
+							aspectRatioHeight = this.get('aspectRatioHeight');
+						this.setProperties({'aspectRatioWidth': aspectRatioHeight, 'aspectRatioHeight': aspectRatioWidth});
+					},
+				},
+
+				// Workaround for removed support for view lookup in input component
+				textField: Ember.TextField,
+
 				_selectionDidChange: function () {
 					var option = this.get('aspectRatioOptions').findBy('key', this.get('selection'));
 					if (!option) {
+						this.setProperties({'aspectRatioWidth': null, 'aspectRatioHeight': null});
 						return;
 					}
 					clearTimeout(this.get('customTimeout'));
@@ -613,16 +626,14 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					if (this.get('aspectRatioAllowCustom') && !this.get('originalAspectRatio') && !matchesOption && aspectRatioWidth > 0 && aspectRatioHeight > 0 && this.get('initialized')) {
 						options.findBy('label', 'Custom').set('active', true);
 					}
-					var activeOption = options.findBy('active', true);
-					if (activeOption) {
-						this.set('selection', activeOption.get('key'));
-					} else {
-						this.set('selection', null);
+					var activeOption = options.findBy('active', true),
+						selection = activeOption ? activeOption.get('key') : null;
+					if (this.get('selection') !== selection) {
+						this.set('selection', selection);
+						Ember.run.next(this, function() {
+							this.$().find('select').val(selection).trigger('change');
+						});
 					}
-					var that = this;
-					Ember.run.next(function () {
-						that.$().find('select').trigger('change');
-					});
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
 
 				_aspectRatioDidChange: function () {

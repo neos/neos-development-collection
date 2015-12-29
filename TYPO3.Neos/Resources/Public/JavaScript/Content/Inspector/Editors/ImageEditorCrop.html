@@ -9,14 +9,18 @@
 		{{/if}}
 	</span>
 	{{#unless view.aspectRatioLocked}}
-		{{view Ember.Select content=view.aspectRatioOptions optionLabelPath="content.label" optionValuePath="content.key" value=view.selection}}
+		<select onchange={{action "selectAspectRatio" value="target.value" target=view}}>
+			{{#each view.aspectRatioOptions as |aspectRatioOption|}}
+				<option value={{aspectRatioOption.key}} selected={{eq view.selection aspectRatioOption}}>{{aspectRatioOption.label}}</option>
+			{{/each}}
+		</select>
 		{{#if view.aspectRatioAllowCustom}}
-			{{input value=view.aspectRatioWidth type="number"}}
+			{{view view.textField value=view.aspectRatioWidth type="number"}}
 			<button {{action "exchangeAspectRatio" target=view}}><i class="icon-exchange"></i></button>
-			{{input value=view.aspectRatioHeight type="number"}}
+			{{view view.textField value=view.aspectRatioHeight type="number"}}
 		{{else}}
-			<input value={{view.aspectRatioWidth}} type="number" readonly="readonly" />
-			<input value={{view.aspectRatioHeight}} type="number" readonly="readonly" />
+			<input value="{{view.aspectRatioWidth}}" type="number" readonly="readonly" />
+			<input value="{{view.aspectRatioHeight}}" type="number" readonly="readonly" />
 		{{/if}}
 	{{/unless}}
 </div>
