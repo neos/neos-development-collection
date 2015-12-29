@@ -22,7 +22,7 @@ define(
       classNameBindings: ['open:neos-open'],
       template: Ember.Handlebars.compile(template),
 
-			_controller: TargetWorkspaceController,
+			controller: TargetWorkspaceController,
 			nodeSelection: NodeSelection,
 			publishableNodes: PublishableNodes,
 
@@ -34,7 +34,7 @@ define(
 			init: function() {
 				this._super();
 				this._initialize();
-				this.get('_controller').send('loadConfiguration');
+				this.get('controller').send('loadConfiguration');
 			},
 
       /**
@@ -55,7 +55,7 @@ define(
             }
           }).on('select2-selecting', function (event) {
             if (that.get('publishableNodes.numberOfWorkspaceWidePublishableNodes') > 0) {
-              if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').state === 'destroying') {
+              if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').isDestroyed) {
                 that.$('select').select2('close');
                 that.set('dirtyWorkspaceDialog', DirtyWorkspaceDialog.create());
               }
@@ -77,7 +77,6 @@ define(
           });
         });
       }.observes('controller.workspaces')
-
     });
   }
 );
