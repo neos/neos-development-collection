@@ -9,9 +9,10 @@ define(
 	function(Ember, $, PublishableNodes, AbstractModal, template) {
 		return AbstractModal.extend({
 			template: Ember.Handlebars.compile(template),
-
-			okay: function() {
-				this.destroy();
+			actions: {
+				okay: function() {
+					this.destroy();
+				}
 			}
 		});
 	}
