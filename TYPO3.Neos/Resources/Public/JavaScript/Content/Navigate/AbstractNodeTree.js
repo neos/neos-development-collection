@@ -39,7 +39,6 @@ define(
 	) {
 
 		return Ember.View.extend({
-			// TODO: the tree is redrawn too often (and we need to check why!)
 			actions: {
 				refresh: function() {
 					return this.refresh();
