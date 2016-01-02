@@ -61,14 +61,8 @@ define(
 
 				toggleCollapsed: function() {
 					var menuGroup = this.get('group');
-					console.log("MENU GROUP", menuGroup);
-					try {
-						var isCollapsed = MenuPanelController.toggleCollapsed(menuGroup);
-						console.log("isCollapsed", isCollapsed);
-						this.set('_collapsed', isCollapsed);
-					} catch (e) {
-						console.log(e);
-					}
+					var isCollapsed = MenuPanelController.toggleCollapsed(menuGroup);
+					this.set('_collapsed', isCollapsed);
 				},
 
 				_onCollapsedChange: function() {
