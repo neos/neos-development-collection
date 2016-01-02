@@ -11,7 +11,7 @@ define(
 	'Shared/ResourceCache',
 	'Shared/Configuration'
 ], function(Ember, $, LocalStorage, ResourceCache, Configuration) {
-	return Ember.Object.extend({
+	return Ember.Controller.extend({
 		actions: {
 			toggleCollapsed: function(menuGroup) {
 				return this.toggleCollapsed(menuGroup);
@@ -48,7 +48,7 @@ define(
 			});
 			if (this.get('configuration.menuPanelStickyMode') === true) {
 				this.toggleCollapsed();
-				this.toggleMenuPanelStickyMode();
+				this.send('toggleMenuPanelStickyMode');
 			}
 		},
 
