@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Neos\Routing\Exception;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -75,6 +76,7 @@ class NodeRedirectionService
      * @param NodeInterface $node The node that is about to be published
      * @param Workspace $targetWorkspace
      * @return void
+     * @throws Exception
      */
     public function createRedirectionsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace)
     {
@@ -96,7 +98,7 @@ class NodeRedirectionService
 
         $targetNodeUriPath = $this->buildUriPathForNodeContextPath($targetNode->getContextPath());
         if ($targetNodeUriPath === null) {
-            return;
+            throw new Exception('The target URI path of the node could not be resolved', 1451945358);
         }
 
         // The page has been removed
