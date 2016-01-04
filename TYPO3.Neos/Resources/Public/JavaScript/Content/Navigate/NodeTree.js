@@ -60,7 +60,7 @@ define(
 
 					// Skip editing site nodes
 					if (node.getLevel() < 2) {
-						Notification.info('The Root node cannot be deleted.');
+						Notification.info('The Root node cannot be edited.');
 						return;
 					}
 
