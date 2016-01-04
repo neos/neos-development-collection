@@ -14,14 +14,15 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Redirection\RedirectionService;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
  * Service that creates redirections for moved / deleted nodes.
@@ -63,6 +64,12 @@ class NodeRedirectionService
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
      * Creates a redirection for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
      *
      * @param NodeInterface $node The node that is about to be published
@@ -71,55 +78,56 @@ class NodeRedirectionService
      */
     public function createRedirectionsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace)
     {
-        // We only care about "live" workspace
-        if ($targetWorkspace->getName() !== 'live') {
-            return;
-        }
-        // skip nodes that are not of type "document" (pages)
         $nodeType = $node->getNodeType();
-        if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
+        if ($targetWorkspace->getName() !== 'live' || !$nodeType->isOfType('TYPO3.Neos:Document')) {
             return;
         }
 
-        $liveWorkspace = $node->getWorkspace()->getBaseWorkspace();
-        $targetNodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $liveWorkspace);
-        // The page has been added
-        if ($targetNodeData === null) {
+        $context = $this->contextFactory->create([
+            'workspaceName' => 'live',
+            'invisibleContentShown' => true,
+            'dimensions' => $node->getDimensions()
+        ]);
+        $targetNode = $context->getNodeByIdentifier($node->getIdentifier());
+        if ($targetNode === null) {
+            // The page has been added
             return;
         }
 
-        $targetNodeUriPath = $this->buildUriPathForNodeContextPath($targetNodeData->getContextPath());
-        // The target URI path of the node could not be resolved (this should never happen, if routes are correct)
+        $targetNodeUriPath = $this->buildUriPathForNodeContextPath($targetNode->getContextPath());
         if ($targetNodeUriPath === null) {
             return;
         }
 
         // The page has been removed
         if ($node->isRemoved()) {
-            $this->flushRoutingCacheForNodeData($targetNodeData);
+            $this->flushRoutingCacheForNode($targetNode);
             $this->redirectionService->addRedirection($targetNodeUriPath, '', 410);
             return;
         }
 
         // compare the "old" node URI to the new one
         $nodeUriPath = $this->buildUriPathForNodeContextPath($node->getContextPath());
+        // use the same regexp than the ContentContextBar Ember View
+        $nodeUriPath = preg_replace('/@[A-Za-z0-9;&,\-_=]+/', '', $nodeUriPath);
         if ($nodeUriPath === null || $nodeUriPath === $targetNodeUriPath) {
             // The page node path has not been changed
             return;
         }
 
-        $this->flushRoutingCacheForNodeData($targetNodeData);
+        $this->flushRoutingCacheForNode($targetNode);
         $this->redirectionService->addRedirection($targetNodeUriPath, $nodeUriPath);
     }
 
     /**
      * Removes all routing cache entries for the given $nodeData
      *
-     * @param NodeData $nodeData
+     * @param NodeInterface $node
      * @return void
      */
-    protected function flushRoutingCacheForNodeData(NodeData $nodeData)
+    protected function flushRoutingCacheForNode(NodeInterface $node)
     {
+        $nodeData = $node->getNodeData();
         $nodeDataIdentifier = $this->persistenceManager->getIdentifierByObject($nodeData);
         if ($nodeDataIdentifier === null) {
             return;
@@ -153,7 +161,7 @@ class NodeRedirectionService
     {
         if ($this->uriBuilder === null) {
             $httpRequest = Request::createFromEnvironment();
-            $actionRequest = $httpRequest->createActionRequest();
+            $actionRequest = new ActionRequest($httpRequest);
             $this->uriBuilder = new UriBuilder();
             $this->uriBuilder
                 ->setRequest($actionRequest);
