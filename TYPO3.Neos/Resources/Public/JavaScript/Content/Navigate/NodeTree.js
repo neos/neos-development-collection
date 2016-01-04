@@ -267,10 +267,15 @@ define(
 					this.set('_timeout', setTimeout(function() {
 						if (value !== that.get('_value')) {
 							that.set('_value', value);
-							that.get('parentView').filterTree();
+							var nodeTree = that.get('nodeTree');
+							nodeTree.set('searchTerm', value);
+							nodeTree.filterTree();
 						}
 					}, this._delay));
-				}
+				},
+				searchTermDidChange: function() {
+					this.set('value', this.get('nodeTree.searchTerm'));
+				}.observes('nodeTree.searchTerm')
 			}),
 
 			init: function() {
