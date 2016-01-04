@@ -7480,9 +7480,8 @@
 .neos-edit-preview-panel-open .neos .neos-secondary-inspector .neos-close {
   top: -1px;
 }
-.neos .neos-secondary-inspector > div > div {
-  height: 100%;
-}
+.neos .neos-secondary-inspector > div,
+.neos .neos-secondary-inspector > div > div,
 .neos .neos-secondary-inspector > div > div > div {
   height: 100%;
 }
