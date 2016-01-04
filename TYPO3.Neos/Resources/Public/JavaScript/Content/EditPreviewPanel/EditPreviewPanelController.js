@@ -44,17 +44,17 @@ define(
 		editingModes: [],
 		previewModes: [],
 
-		_deactivatePreviouslyActiveMode: function() {
-			if (this.get('currentlyActiveMode')) {
-				Ember.sendEvent(this.get('currentlyActiveMode'), 'deactivate');
-				this.set('currentlyActiveMode.active', false);
-				this.set('previousActiveMode', this.get('currentlyActiveMode'));
-			}
-		}.observes('currentlyActiveMode'),
-
 		_activateCurrentlyActiveMode: function() {
 			this.set('currentlyActiveMode.active', true);
 			Ember.sendEvent(this.get('currentlyActiveMode'), 'activate');
+		}.observes('currentlyActiveMode'),
+
+		_deactivatePreviouslyActiveMode: function() {
+			if (this.get('previousActiveMode')) {
+				Ember.sendEvent(this.get('currentlyActiveMode'), 'deactivate');
+				this.set('previousActiveMode.active', false);
+			}
+			this.set('previousActiveMode', this.get('currentlyActiveMode'));
 		}.observes('currentlyActiveMode'),
 
 		isEditingModeActive: function() {
