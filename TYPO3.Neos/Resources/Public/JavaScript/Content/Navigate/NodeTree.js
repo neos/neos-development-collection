@@ -312,9 +312,10 @@ define(
 				$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 
 				// Type filter
-				$neosNodeTypeSelect.change(this, function() {
-					this.set('nodeType', $neosNodeTypeSelect.val());
-					this.filterTree();
+				var that = this;
+				$neosNodeTypeSelect.change(function() {
+					that.set('nodeType', $neosNodeTypeSelect.val());
+					that.filterTree();
 				});
 
 				EventDispatcher.on('contentDimensionsSelectionChanged', this, function() {
@@ -484,7 +485,6 @@ define(
 					node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 				node.removeChildren();
 				node.setLazyNodeStatus(this.statusCodes.loading);
-
 				if (this.get('searchTerm') === '' && this.get('nodeType') === '') {
 					this.set('filtering', false);
 					this.$nodeTree.dynatree('option', 'autoFocus', true);
