@@ -25,7 +25,7 @@ define(
 				var action = this.get('action');
 				if (action) {
 					var target = this.get('target');
-					if (target.send === 'function') {
+					if (typeof target.send === 'function') {
 						target.send(action);
 					} else {
 						target[action]();
