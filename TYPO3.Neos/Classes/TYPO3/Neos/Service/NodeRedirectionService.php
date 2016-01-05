@@ -35,8 +35,6 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
  */
 class NodeRedirectionService
 {
-    const PATTERN_NODEURIPATH = '/^(?P<NodePath>(?:\/?[a-z0-9\-]+)(?:\/[a-z0-9\-]+)*)?(?:@(?P<WorkspaceName>[a-z0-9\-]+))?(?P<NodePathSuffix>\.[a-z0-9\-]*)?$/i';
-
     /**
      * @Flow\Inject
      * @var NodeDataRepository
@@ -159,12 +157,11 @@ class NodeRedirectionService
     protected function buildUriPathForNodeContextPath($nodeContextPath)
     {
         try {
-            $uri = $this->getUriBuilder()
+            return $this->getUriBuilder()
                 ->uriFor('show', ['node' => $nodeContextPath], 'Frontend\\Node', 'TYPO3.Neos');
         } catch (NoMatchingRouteException $exception) {
             return null;
         }
-        return preg_replace(self::PATTERN_NODEURIPATH, '$1$3', $uri);
     }
 
     /**
