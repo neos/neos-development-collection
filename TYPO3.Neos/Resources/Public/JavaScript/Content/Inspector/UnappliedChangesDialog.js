@@ -26,7 +26,7 @@ define(
 			}
 		},
 		classNames: ['inspector-dialog'],
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		controller: InspectorController
 	});
 });

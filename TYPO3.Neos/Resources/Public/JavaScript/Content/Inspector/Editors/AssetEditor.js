@@ -14,7 +14,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		removeButtonLabel: function() {
 			return I18n.translate('TYPO3.Neos:Main:remove', 'Remove')
 		}.property(),
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 		assets: [],
 
@@ -59,7 +59,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			// Create new instance per asset editor to avoid side effects
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
+				template: Ember.HTMLBars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
 			}));
 
 			this.set('assets', Ember.A());

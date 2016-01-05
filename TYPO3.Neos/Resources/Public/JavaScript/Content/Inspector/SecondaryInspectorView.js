@@ -11,7 +11,7 @@ function(Ember, SecondaryInspectorController, template) {
 	 * cropping, media browser or HTML editor. It is controlled through SecondaryInspectorController.
 	 */
 	var SecondaryInspectorView = Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		classNames: ['neos-secondary-inspector'],
 		classNameBindings: ['controller._visible:neos-secondary-inspector-open'],
 		controller: SecondaryInspectorController

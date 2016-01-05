@@ -39,7 +39,7 @@ define(
 
 	return AbstractNodeTree.extend({
 		elementId: 'neos-context-structure',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		controller: NavigatePanelController,
 		nodeSelection: NodeSelection,
 		baseNodeType: '!TYPO3.Neos:Document',

@@ -5,7 +5,7 @@ define(
 	function(Ember) {
 		return Ember.View.extend({
 			classNames: ['neos-contentelement-overlay'],
-			template: Ember.Handlebars.compile('<span></span>'),
+			template: Ember.HTMLBars.compile('<span></span>'),
 
 			init: function() {
 				this._super();

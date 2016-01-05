@@ -12,7 +12,7 @@ define(
 		return Ember.View.extend({
 			classNames: ['chart-time-series'],
 
-			template: Ember.Handlebars.compile('<svg {{bind-attr width="view.outerWidth" height="view.outerHeight"}}><g class="chart-viewport" {{ bind-attr transform="view.transformViewport" }}></g></svg>'),
+			template: Ember.HTMLBars.compile('<svg {{bind-attr width="view.outerWidth" height="view.outerHeight"}}><g class="chart-viewport" {{ bind-attr transform="view.transformViewport" }}></g></svg>'),
 
 			lineData: null,
 			ungroupedSeriesName: 'Other',

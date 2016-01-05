@@ -37,7 +37,7 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		_browseButtonId: null,
 		_fileDropZoneId: null,
 
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		init: function() {
 			this._super();

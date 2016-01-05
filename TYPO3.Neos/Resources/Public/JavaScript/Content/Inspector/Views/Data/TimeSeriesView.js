@@ -16,7 +16,7 @@ function(
 	TimeSeriesChart
 ) {
 	return Widget.extend(DataSourceLoader, {
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		classNames: ['neos-timeseriesview'],
 		TimeSeriesChart: TimeSeriesChart,
 

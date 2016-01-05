@@ -17,7 +17,7 @@ function(Ember, SecondaryInspectorController, CodeMirror, I18n) {
 
 			return Ember.View.extend({
 				classNames: ['neos-secondary-inspector-code-editor'],
-				template: Ember.Handlebars.compile('<textarea></textarea>'),
+				template: Ember.HTMLBars.compile('<textarea></textarea>'),
 
 				didInsertElement: function() {
 					var $editorContent = this.$().find('textarea'),

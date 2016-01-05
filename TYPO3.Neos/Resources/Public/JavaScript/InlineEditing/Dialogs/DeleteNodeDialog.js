@@ -21,7 +21,7 @@ define(
 					this.destroy();
 				}
 			},
-			template: Ember.Handlebars.compile(template),
+			template: Ember.HTMLBars.compile(template),
 			_node: null,
 
 			strippedLabel: function() {

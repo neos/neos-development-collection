@@ -25,7 +25,7 @@ function(
 	 * dimension with more than one preset.
 	 */
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		classNames: ['neos-content-dimension-selector'],
 		classNameBindings: ['isActive:active'],
 		isActiveBinding: 'controller.selectorIsActive',

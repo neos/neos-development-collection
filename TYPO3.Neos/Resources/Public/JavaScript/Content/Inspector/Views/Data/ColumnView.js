@@ -17,7 +17,7 @@ function(
 	 * Widget that displays data in columns with an optional large hero column
 	 */
 	return Widget.extend(DataSourceLoader, {
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		classNames: ['neos-columnview'],
 		classNameBindings: ['_columnsClass'],

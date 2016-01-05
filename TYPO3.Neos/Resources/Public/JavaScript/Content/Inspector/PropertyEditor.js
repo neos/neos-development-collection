@@ -14,7 +14,7 @@ define(
 	Notification
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile('{{#if view.editor}}{{view view.editor}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
+		template: Ember.HTMLBars.compile('{{#if view.editor}}{{view view.editor}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
 		propertyDefinition: null,
 		value: null,
 		isModified: false,
@@ -22,7 +22,7 @@ define(
 		classNameBindings: ['isModified:neos-modified', 'hasValidationErrors:neos-error', 'editorClassName'],
 		editorClassName: '',
 
-		// a reference to the InspectorController (set from the outside in the Handlebars template)
+		// a reference to the InspectorController (set from the outside in the HTMLBars template)
 		inspector: null,
 
 		_valueDidChange: function() {

@@ -18,7 +18,7 @@ define(
 ) {
 	return Ember.View.extend({
 		elementId: 'neos-navigate-panel',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		classNameBindings: ['controller.contextStructureMode:neos-navigate-panel-context-structure-open'],
 		NodeTree: NodeTree,
 		ContextStructureTree: ContextStructureTree,

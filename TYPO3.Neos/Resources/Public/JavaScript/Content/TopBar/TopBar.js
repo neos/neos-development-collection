@@ -18,7 +18,7 @@ define(
 	template
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		MenuPanel: MenuPanel,
 		MenuButton: MenuButton,
 		navigatePanelController: NavigatePanelController,

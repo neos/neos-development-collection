@@ -17,7 +17,7 @@ define(
 			isActive: false,
 			label: '',
 			title: '',
-			defaultTemplate: Ember.Handlebars.compile('{{view.translatedLabel}}'),
+			defaultTemplate: Ember.HTMLBars.compile('{{view.translatedLabel}}'),
 			action: null,
 			target: null,
 

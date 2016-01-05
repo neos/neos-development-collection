@@ -21,7 +21,7 @@ define(
 ) {
 	return ContextBar.extend({
 		classNames: 'neos-content-context-bar',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		ContentDimensionSelector: ContentDimensionSelector,
 		fullScreenController: FullScreenController,
 		Configuration: Configuration,

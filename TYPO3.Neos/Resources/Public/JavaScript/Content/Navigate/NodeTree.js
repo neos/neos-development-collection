@@ -218,7 +218,7 @@ define(
 			},
 			elementId: 'neos-node-tree',
 			classNameBindings: ['filtering:neos-node-tree-filtering'],
-			template: Ember.Handlebars.compile(template),
+			template: Ember.HTMLBars.compile(template),
 			treeSelector: '#neos-node-tree-tree',
 
 			controller: NavigatePanelController,

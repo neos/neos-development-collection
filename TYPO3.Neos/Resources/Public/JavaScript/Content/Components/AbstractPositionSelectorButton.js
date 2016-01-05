@@ -11,7 +11,7 @@ function (
 	template
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		// Private API: set when extending
 		desiredPosition: 'after',

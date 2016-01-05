@@ -17,7 +17,7 @@ define(
 			},
 
 			elementId: 'neos-menu-panel',
-			template: Ember.Handlebars.compile(template),
+			template: Ember.HTMLBars.compile(template),
 			controller: MenuPanelController,
 
 			ToggleMenuPanelHeadline: Ember.View.extend({

@@ -93,7 +93,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			resize: false
 		},
 
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		BooleanEditor: BooleanEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 
@@ -347,7 +347,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_initializeMediaBrowserEditView: function () {
 			this.set('_mediaBrowserEditView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
+				template: Ember.HTMLBars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
 			}));
 		},
 
@@ -471,7 +471,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 			return Ember.View.extend({
 				classNames: ['neos-secondary-inspector-image-crop'],
-				template: Ember.Handlebars.compile(cropTemplate),
+				template: Ember.HTMLBars.compile(cropTemplate),
 				aspectRatioWidth: null,
 				aspectRatioHeight: null,
 				aspectRatioReducedNumerator: 0,
@@ -1060,7 +1060,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_initializeMediaView: function () {
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+				template: Ember.HTMLBars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
 			}));
 		},
 

@@ -18,6 +18,6 @@ function(
 		}
 	});
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template)
+		template: Ember.HTMLBars.compile(template)
 	});
 });

@@ -41,7 +41,7 @@ function (Ember, $, I18n, template) {
 		hrValue: '',
 		_timeOnly: false,
 		isOpen: false,
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		/**
 		 * The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N, S, w, a, A, g, G, h, H, i, s.

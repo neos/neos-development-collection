@@ -30,7 +30,7 @@ define(
             I18n,
             template) {
     return Ember.View.extend({
-      template: Ember.Handlebars.compile(template),
+      template: Ember.HTMLBars.compile(template),
       elementId: 'neos-publish-menu',
       classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],
       autoPublish: function (key, value) {
@@ -99,7 +99,7 @@ define(
         _noChangesBinding: 'controller.noChanges',
         _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
-        defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
+        defaultTemplate: Ember.HTMLBars.compile('{{view.label}}'),
 
         _labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
         _targetWorkspaceReadOnlyBinding: 'targetWorkspaceController.targetWorkspace.readOnly',

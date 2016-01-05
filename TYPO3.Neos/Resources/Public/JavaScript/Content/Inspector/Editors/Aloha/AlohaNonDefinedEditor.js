@@ -4,6 +4,6 @@ define(
 ],
 function(Ember) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile('')
+		template: Ember.HTMLBars.compile('')
 	});
 });

@@ -16,7 +16,7 @@ define(
 ) {
 	return Ember.View.extend({
 		elementId: 'neos-edit-preview-panel',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		isVisibleBinding: 'controller.visible',
 
 		controller: EditPreviewPanelController,

@@ -56,7 +56,7 @@ function (
 			}
 		},
 		classNames: ['neos-handle-container'],
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		_node: null,
 

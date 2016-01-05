@@ -17,7 +17,7 @@ define(
 					location.reload();
 				}
 			},
-			template: Ember.Handlebars.compile(template)
+			template: Ember.HTMLBars.compile(template)
 		});
 	}
 );

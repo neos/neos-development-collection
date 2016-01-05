@@ -12,7 +12,7 @@ define(
     I18n
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile('{{#if view.view}}{{view view.view}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
+		template: Ember.HTMLBars.compile('{{#if view.view}}{{view view.view}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
 		viewDefinition: null,
 		classNameBindings: ['viewClassName'],
 		viewClassName: '',

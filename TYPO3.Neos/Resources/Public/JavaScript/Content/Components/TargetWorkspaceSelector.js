@@ -20,7 +20,7 @@ define(
     return Ember.View.extend({
       elementId: 'neos-target-workspace-selector',
       classNameBindings: ['open:neos-open'],
-      template: Ember.Handlebars.compile(template),
+      template: Ember.HTMLBars.compile(template),
 
 			controller: TargetWorkspaceController,
 			nodeSelection: NodeSelection,

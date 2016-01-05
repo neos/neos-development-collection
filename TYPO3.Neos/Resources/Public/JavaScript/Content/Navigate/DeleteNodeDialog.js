@@ -7,7 +7,7 @@ define(
 ],
 function(Ember, $, AbstractModal, template) {
 	return AbstractModal.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		title: '',
 		numberOfChildren: 0,
 		deleteNode: Ember.required
