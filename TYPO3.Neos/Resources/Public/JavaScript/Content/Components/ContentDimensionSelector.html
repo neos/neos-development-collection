@@ -16,10 +16,10 @@
 	{{/each}}
 
 	{{#if view.isMultiDimensionSelection}}
-	<div class="neos-content-dimension-selector-dimensions-footer neos-right">
-		<button class="neos-button" title="{{translate id='cancel'}}" {{action "cancelSelection" target=controller}}>{{translate id="cancel"}}</button>
-		<button class="neos-button neos-button-success" title="{{translate id='apply'}}" {{action "applySelection" target=controller}}>{{translate id="apply"}}</button>
-	</div>
+		<div class="neos-content-dimension-selector-dimensions-footer neos-right">
+			<button class="neos-button" title="{{translate id='cancel'}}" {{action "cancelSelection" target=controller}}>{{translate id="cancel"}}</button>
+			<button class="neos-button neos-button-success" title="{{translate id='apply'}}" {{action "applySelection" target=controller}}>{{translate id="apply"}}</button>
+		</div>
 	{{/if}}
 
 	<div class="neos-modal neos-content-dimension-selector-initial-translation-dialog {{if controller.showInitialTranslationDialog 'neos-show' 'neos-hide'}}">
@@ -51,5 +51,5 @@
 			<button class="neos-button" {{action "createDocumentAndCopyContentAction" target=controller}}>Create and copy</button>
 		</div>
 	</div>
-	<div {{bindAttr class=":neos-modal-backdrop :neos-in controller.showInitialTranslationDialog:neos-show:neos-hide"}}></div>
+	<div class="neos-modal-backdrop neos-in {{if controller.showInitialTranslationDialog 'neos-show' 'neos-hide'}}"></div>
 </div>
