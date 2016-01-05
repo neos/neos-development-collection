@@ -41,6 +41,7 @@ define(
       }.property(),
       controller: PublishableNodes,
       targetWorkspaceController: TargetWorkspaceController,
+      checkbox: Ember.Checkbox,
 
       /**
        * Only show the target workspace selector if more than one workspace can be selected
