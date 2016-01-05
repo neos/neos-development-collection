@@ -36,7 +36,7 @@ Neos offers inline editing for basically all data that is visible on the website
 website menus during editing. For metadata or mode abstract informations it has an extensible Inspector. By implementing
 a custom edit/preview mode the editing in Neos can be extended even further.
 
-.. note:: To get an understanding of the editigw workflow we recommend the section :ref:`user-interface-basics`.
+.. note:: To get an understanding of the editing workflow we recommend the section :ref:`user-interface-basics`.
 
 Content Dimensions and Languages
 ================================
@@ -86,6 +86,6 @@ Surf Deployment and Cloud Support
 =================================
 
 The developers of Neos also created "Surf" a professional tool for downtime free server-deployment that is optimzed for
-Neos. With Surf Neos can be easily deployed to all kinds of hosting environments beein it dedicated servers, virtual-machines
+Neos. With Surf Neos can be easily deployed to all kinds of hosting environments being it dedicated servers, virtual-machines
 or cloud solutions of different flavours. The media handling of Neos is "cloud ready" by design and can handle external
 resources exceptionally well.
