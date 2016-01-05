@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Functional\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Model\Site;
@@ -20,79 +20,83 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 /**
  * Tests for the SiteImportService & SiteExportService
  */
-class SiteImportExportServiceTest extends FunctionalTestCase {
+class SiteImportExportServiceTest extends FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @var boolean
+     */
+    protected $testableSecurityEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
+    /**
+     * @var string the Nodes fixture
+     */
+    protected $fixtureFileName = 'Fixtures/Sites.xml';
 
-	/**
-	 * @var string the Nodes fixture
-	 */
-	protected $fixtureFileName = 'Fixtures/Sites.xml';
+    /**
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
 
-	/**
-	 * @var ContextFactoryInterface
-	 */
-	protected $contextFactory;
+    /**
+     * @var Site
+     */
+    protected $importedSite;
 
-	/**
-	 * @var Site
-	 */
-	protected $importedSite;
+    /**
+     * @var SiteImportService
+     */
+    protected $siteImportService;
 
-	/**
-	 * @var SiteImportService
-	 */
-	protected $siteImportService;
+    /**
+     * @var SiteExportService
+     */
+    protected $siteExportService;
 
-	/**
-	 * @var SiteExportService
-	 */
-	protected $siteExportService;
+    public function setUp()
+    {
+        parent::setUp();
+        $this->markSkippedIfNodeTypesPackageIsNotInstalled();
+        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 
-	public function setUp() {
-		parent::setUp();
-		$this->markSkippedIfNodeTypesPackageIsNotInstalled();
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-		$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
 
-		$this->siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $this->siteExportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteExportService');
 
-		$this->siteExportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteExportService');
+        $this->importedSite = $this->siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
+        $this->persistenceManager->persistAll();
+    }
 
-		$this->importedSite = $this->siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
-		$this->persistenceManager->persistAll();
-	}
+    public function tearDown()
+    {
+        parent::tearDown();
 
-	public function tearDown() {
-		parent::tearDown();
+        $this->inject($this->contextFactory, 'contextInstances', array());
+    }
 
-		$this->inject($this->contextFactory, 'contextInstances', array());
-	}
+    /**
+     * @test
+     */
+    public function exportingAPreviouslyImportedSiteLeadsToTheSameStructure()
+    {
+        $expectedResult = file_get_contents(__DIR__ . '/Fixtures/Sites.xml');
+        $actualResult = $this->siteExportService->export(array($this->importedSite), true);
+        $this->assertEquals($expectedResult, $actualResult);
+    }
 
-	/**
-	 * @test
-	 */
-	public function exportingAPreviouslyImportedSiteLeadsToTheSameStructure() {
-		$expectedResult = file_get_contents(__DIR__ . '/Fixtures/Sites.xml');
-		$actualResult = $this->siteExportService->export(array($this->importedSite), TRUE);
-		$this->assertEquals($expectedResult, $actualResult);
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function markSkippedIfNodeTypesPackageIsNotInstalled() {
-		$packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
-		if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
-			$this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
-		}
-	}
+    /**
+     * @return void
+     */
+    protected function markSkippedIfNodeTypesPackageIsNotInstalled()
+    {
+        $packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+        if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
+            $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
+        }
+    }
 }

@@ -1,72 +1,90 @@
 <?php
 namespace TYPO3\Neos\Controller\Module\Management;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
-class HistoryController extends AbstractModuleController {
+/**
+ * Controller for the history module of Neos, displaying the timeline of changes.
+ */
+class HistoryController extends AbstractModuleController
+{
+    /**
+     * @Flow\Inject
+     * @var EventRepository
+     */
+    protected $eventRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var EventRepository
-	 */
-	protected $eventRepository;
+    /**
+     * @var string
+     */
+    protected $defaultViewObjectName = 'TYPO3\TypoScript\View\TypoScriptView';
 
-	/**
-	 * @var string
-	 */
-	protected $defaultViewObjectName = 'TYPO3\TypoScript\View\TypoScriptView';
+    /**
+     * Show event overview.
+     * @param integer $offset
+     * @param integer $limit
+     * @return void
+     */
+    public function indexAction($offset = 0, $limit = 10)
+    {
+        $events = $this->eventRepository->findRelevantEventsByWorkspace($offset, $limit + 1, 'live')->toArray();
 
-	/**
-	 * Show event overview.
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-		$events = $this->eventRepository->findRelevantEvents()->toArray();
+        $nextPage = null;
+        if (count($events) > $limit) {
+            $events = array_slice($events, 0, $limit);
 
-		$eventsByDate = array();
-		foreach ($events as $event) {
-			if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
-				continue;
-			}
-			/* @var $event Event */
-			$day = $event->getTimestamp()->format('Y-m-d');
-			if (!isset($eventsByDate[$day])) {
-				$eventsByDate[$day] = new EventsOnDate($event->getTimestamp());
-			}
+            $nextPage = $this
+                ->controllerContext
+                ->getUriBuilder()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+        }
 
-			/* @var $eventsOnThisDay EventsOnDate */
-			$eventsOnThisDay = $eventsByDate[$day];
-			$eventsOnThisDay->add($event);
-		}
+        $eventsByDate = array();
+        foreach ($events as $event) {
+            /* @var $event Event */
+            $day = $event->getTimestamp()->format('Y-m-d');
+            if (!isset($eventsByDate[$day])) {
+                $eventsByDate[$day] = new EventsOnDate($event->getTimestamp());
+            }
 
-		$this->view->assign('eventsByDate', $eventsByDate);
-	}
+            /* @var $eventsOnThisDay EventsOnDate */
+            $eventsOnThisDay = $eventsByDate[$day];
+            $eventsOnThisDay->add($event);
+        }
 
-	/**
-	 * Simply sets the TypoScript path pattern on the view.
-	 *
-	 * @param ViewInterface $view
-	 * @return void
-	 */
-	protected function initializeView(ViewInterface $view) {
-		parent::initializeView($view);
-		$view->setTypoScriptPathPattern('resource://TYPO3.Neos/Private/TypoScript/Backend');
-	}
+        $this->view->assignMultiple(array(
+            'eventsByDate' => $eventsByDate,
+            'nextPage' => $nextPage
+        ));
+    }
+
+    /**
+     * Simply sets the TypoScript path pattern on the view.
+     *
+     * @param ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        $view->setTypoScriptPathPattern('resource://TYPO3.Neos/Private/TypoScript/Backend');
+    }
 }

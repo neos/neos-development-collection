@@ -195,6 +195,16 @@ define(
 						if (activeEditable) {
 							Aloha.getActiveEditable().blur();
 						}
+
+						if (options.selectFirstEditable === true) {
+							// Activate first editable & select all text
+							var firstEditableElement = $element.find('.neos-inline-editable').first();
+							var firstEditable = Aloha.getEditableHost(firstEditableElement);
+							if (firstEditable) {
+								firstEditable.activate();
+								selection._nativeSelection.selectAllChildren(firstEditableElement.get(0));
+							}
+						}
 					});
 				}
 			} else {
@@ -313,9 +323,17 @@ define(
 			this._createEntityWrapper($element, true);
 		},
 
+		getNode: function(contextPath) {
+			return this._entitiesBySubject['<' + contextPath + '>'];
+		},
+
 		selectedNode: function() {
-			var nodes = this.get('nodes');
-			return nodes.length > 0 ? _.last(nodes) : null;
+			var nodes = this.get('nodes'),
+				selectedNode = nodes.length > 0 ? _.last(nodes) : null;
+			if (selectedNode) {
+				EventDispatcher.triggerExternalEvent('Neos.NodeSelected', 'Node was selected.', {element: selectedNode.$element.get(0), node: selectedNode});
+			}
+			return selectedNode;
 		}.property('nodes'),
 
 		selectedNodeSchema: function() {

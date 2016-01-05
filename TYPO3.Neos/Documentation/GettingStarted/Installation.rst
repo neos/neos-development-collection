@@ -15,8 +15,8 @@ Neos has at least the same system requirements as Flow. You can find them in the
 
 The most important requirements are:
 
-* A Webserver (Apache and Nginx are preferred but others work aswell)
-* A Database (Mysql and MariaDB are preferred but any `Database supported by Doctrine DBAL
+* A Webserver (Apache and Nginx are preferred but others work as well)
+* A Database (MySQL and MariaDB are preferred but any `Database supported by Doctrine DBAL
   <http://www.doctrine-project.org/projects/dbal.html>`_ should work).
 * PHP >= 5.5.0 (make sure the PHP CLI has the same version)
 
@@ -147,12 +147,17 @@ The Neos Setup Tool
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
+   
+   .. warning::
+      If you install the Neos demo site and it is publicly accessible, make sure the "Try me" page in
+      the page tree is not publicly accessible because it has a form allowing you to create backend
+      editor accounts with rights to edit website content.)
 
    .. figure:: Images/StartPage.png
       :alt: The Neos start page
       :class: screenshot-fullsize
 
-      The Neos start page
+      The Neos demo site start page
 
 .. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
 .. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html

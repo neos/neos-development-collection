@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-08-17
+This reference was automatically generated from code on 2015-10-09
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -177,6 +177,9 @@ $=
   Value contains operand (string-based)
 instanceof
   Checks if the value is an instance of the operand
+!instanceof
+  Checks if the value is not an instance of the operand
+
 
 For the latter the behavior is as follows: if the operand is one of the strings
 object, array, int(eger), float, double, bool(ean) or string the value is checked

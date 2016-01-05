@@ -8,7 +8,7 @@
 		bottom: 0;
 		overflow-y: auto;
 		background: $grayDark;
-		padding: 0 $defaultMargin $relatedMargin;
+		padding: 0;
 		width: $unit * 12 !important;
 		border: 1px solid $grayLight;
 		@include box-sizing(border-box);
@@ -28,25 +28,46 @@
 				border-bottom: 0;
 			}
 
-			a {
-				padding: $relatedMargin $tightMargin;
+			> a {
+				padding: $relatedMargin;
 
 				&.ui-state-focus {
 					border: 0;
 					background: $grayLight;
 				}
 
-				img {
+				span.neos-list-thumbnail {
+					background-color: $grayDarker;
+					height: $unit;
+					width: $unit;
+					position: relative;
 					float: left;
-					padding-right: $relatedMargin;
+					margin-right: $relatedMargin;
+					background-image: url('../Images/ajax-preloader-222222.gif');
+					background-position: center center;
+					background-repeat: no-repeat;
+					overflow: hidden;
+
+					img {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						@include translate(-50%, -50%);
+						width: auto;
+						height: auto;
+						max-width: 100%;
+						max-height: 100%;
+						background-color: $grayDarker;
+						outline: 3px solid $grayDarker;
+					}
 				}
 
 				i {
-					vertical-align: top;
+					vertical-align: baseline;
 					padding-right: $tightMargin;
 				}
 
-				span {
+				span:last-child {
 					font-size: 12px;
 					color: $textSubtleLight;
 

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -32,22 +32,22 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
-
-	/**
-	 * @param string $templatePathAndFilename Path and filename of the template to render
-	 * @param array $arguments Arguments to assign to the template before rendering
-	 * @return string
-	 */
-	public function render($templatePathAndFilename, $arguments = array()) {
-		$standaloneView = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
-		$standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
-		return $standaloneView->assignMultiple($arguments)->render();
-	}
-
+    /**
+     * @param string $templatePathAndFilename Path and filename of the template to render
+     * @param array $arguments Arguments to assign to the template before rendering
+     * @return string
+     */
+    public function render($templatePathAndFilename, $arguments = array())
+    {
+        $standaloneView = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
+        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
+        return $standaloneView->assignMultiple($arguments)->render();
+    }
 }

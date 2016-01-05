@@ -309,7 +309,7 @@ By default the following list of editors is available in Neos:
 * `TYPO3.Neos/Inspector/Editors/ImageEditor`
 
   An image editor with cropping and size support. By default configured for properties
-  of type `TYPO3\Media\Domain\Model\ImageVariant`.
+  of type `TYPO3\Media\Domain\Model\ImageInterface`.
 
 * `TYPO3.Neos/Inspector/Editors/ReferenceEditor`
 

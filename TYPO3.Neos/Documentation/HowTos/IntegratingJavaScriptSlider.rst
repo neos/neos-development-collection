@@ -35,7 +35,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.ts
 	prototype(Vendor.Site:Carousel) {
 		carouselItems = TYPO3.Neos:ContentCollection {
 			nodePath = 'carouselItems'
-			iterationName = 'carouselItemsIteration'
+			content.iterationName = 'carouselItemsIteration'
 			attributes.class = 'carousel-inner'
 		}
 

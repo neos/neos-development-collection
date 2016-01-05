@@ -32,63 +32,31 @@
 			</tr>
 		</thead>
 		<tbody>
-		<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
-			<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
-				<td>
-					<f:if condition="{asset.width}">
-						<f:then>
-							<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{asset.width} x {asset.height}" data-html="true" data-content="{m:image(asset: asset, maximumWidth: 250, maximumHeight: 250, alt: asset.label) -> f:format.htmlentities()}">
-								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
-							</div>
-						</f:then>
-						<f:else>
-							<div class="neos-list-thumbnail">
-								<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{asset.label}"/>
-							</div>
-						</f:else>
-					</f:if>
-					<i class="icon-move" title="{neos:backend.translate(id: 'media.tooltip.dragAndDropOnTagOrCollection', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
-				</td>
-				<td><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
-				<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
-				<td>{asset.resource.fileSize -> f:format.bytes()}</td>
-				<td>{asset.resource.mediatype}</td>
-				<td class="tags">
-					<f:for each="{asset.tags}" as="tag">
-						<span class="neos-label">{tag.label}</span>
-					</f:for>
-				</td>
-				<td class="neos-action">
-					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini" arguments="{asset: asset}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-					<button class="neos-button neos-button-mini neos-button-danger" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#asset-{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
-					<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
-						<div class="neos-modal">
-							<div class="neos-modal-header">
-								<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-								<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0:asset.label}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-								<div>
-									<div class="neos-subheader">
-										<p>
-											{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
-											{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-										</p>
-									</div>
-								</div>
-							</div>
-							<div class="neos-modal-footer">
-								<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-								<f:form action="delete" method="post" object="{asset}" objectName="asset" class="neos-inline">
-									<button type="submit" title="Delete asset" class="neos-button neos-button-mini neos-button-danger">
-										{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
-									</button>
-								</f:form>
-							</div>
+		<f:alias map="{'dragAndDropOnTagOrCollectionLabel': '{neos:backend.translate(id: \'media.tooltip.dragAndDropOnTagOrCollection\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'editAsset': '{neos:backend.translate(id: \'media.tooltip.editAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
+			<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
+				<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
+					<td>
+						<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{f:if(condition: asset.width, then: '{asset.width} x {asset.height}')}" data-html="true" data-content="{m:thumbnail(asset: asset, preset: 'TYPO3.Neos:Thumbnail', alt: asset.label, async: settings.asyncThumbnails) -> f:format.htmlentities()}">
+							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
-						<div class="neos-modal-backdrop neos-in"></div>
-					</div>
-				</td>
-			</tr>
-		</f:for>
+						<i class="icon-move" title="{dragAndDropOnTagOrCollectionLabel}" data-neos-toggle="tooltip"></i>
+					</td>
+					<td class="asset-label"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
+					<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
+					<td>{asset.resource.fileSize -> f:format.bytes()}</td>
+					<td>{asset.resource.mediatype}</td>
+					<td class="tags">
+						<f:for each="{asset.tags}" as="tag">
+							<span class="neos-label">{tag.label}</span>
+						</f:for>
+					</td>
+					<td class="neos-action">
+						<f:link.action action="edit" title="{editAsset}" class="neos-button neos-button-mini" arguments="{asset: asset}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
+						<button class="neos-button neos-button-mini neos-button-danger" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
+					</td>
+				</tr>
+			</f:for>
+		</f:alias>
 		</tbody>
 	</table>
 </f:widget.paginate>

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -26,52 +26,56 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * will result in the string: class="class1 class2" id="my-id"
  */
-class AttributesImplementation extends AbstractArrayTypoScriptObject {
+class AttributesImplementation extends AbstractArrayTypoScriptObject
+{
+    /**
+     * @return string
+     */
+    public function evaluate()
+    {
+        $allowEmpty = $this->getAllowEmpty();
 
-	/**
-	 * @return string
-	 */
-	public function evaluate() {
-		$allowEmpty = $this->getAllowEmpty();
+        $renderedAttributes = '';
+        foreach (array_keys($this->properties) as $attributeName) {
+            if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) {
+                continue;
+            }
 
-		$renderedAttributes = '';
-		foreach (array_keys($this->properties) as $attributeName) {
-			if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) continue;
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            $attributeValue = $this->tsValue($attributeName);
+            if ($attributeValue === null || $attributeValue === false) {
+                // No op
+            } elseif ($attributeValue === true || $attributeValue === '') {
+                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
+            } else {
+                if (is_array($attributeValue)) {
+                    $joinedAttributeValue = '';
+                    foreach ($attributeValue as $attributeValuePart) {
+                        if ((string)$attributeValuePart !== '') {
+                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
+                        }
+                    }
+                    $attributeValue = trim($joinedAttributeValue);
+                }
+                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+            }
+        }
+        return $renderedAttributes;
+    }
 
-			$encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', FALSE);
-			$attributeValue = $this->tsValue($attributeName);
-			if ($attributeValue === NULL || $attributeValue === FALSE) {
-				// No op
-			} elseif ($attributeValue === TRUE || $attributeValue === '') {
-				$renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
-			} else {
-				if (is_array($attributeValue)) {
-					$joinedAttributeValue = '';
-					foreach ($attributeValue as $attributeValuePart) {
-						if ((string)$attributeValuePart !== '') {
-							$joinedAttributeValue .= ' ' . trim($attributeValuePart);
-						}
-					}
-					$attributeValue = trim($joinedAttributeValue);
-				}
-				$encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', FALSE);
-				$renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
-			}
-		}
-		return $renderedAttributes;
-	}
-
-	/**
-	 * Whether empty attributes (HTML5 syntax) should be allowed
-	 *
-	 * @return boolean
-	 */
-	protected function getAllowEmpty() {
-		$allowEmpty = $this->tsValue('__meta/allowEmpty');
-		if ($allowEmpty === NULL) {
-			return TRUE;
-		} else {
-			return (boolean)$allowEmpty;
-		}
-	}
+    /**
+     * Whether empty attributes (HTML5 syntax) should be allowed
+     *
+     * @return boolean
+     */
+    protected function getAllowEmpty()
+    {
+        $allowEmpty = $this->tsValue('__meta/allowEmpty');
+        if ($allowEmpty === null) {
+            return true;
+        } else {
+            return (boolean)$allowEmpty;
+        }
+    }
 }

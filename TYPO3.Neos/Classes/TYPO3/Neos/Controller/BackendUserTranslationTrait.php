@@ -1,41 +1,42 @@
 <?php
 namespace TYPO3\Neos\Controller;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A trait to add backend translation based on the backend users settings
  */
-trait BackendUserTranslationTrait {
+trait BackendUserTranslationTrait
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\I18n\Service
+     */
+    protected $_localizationService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\I18n\Service
-	 */
-	protected $_localizationService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\UserService
+     */
+    protected $_userService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\UserService
-	 */
-	protected $_userService;
-
-	/**
-	 * Set the locale according to the user settings
-	 *
-	 * @return void
-	 */
-	protected function initializeObject() {
-		$this->_localizationService->getConfiguration()->setCurrentLocale(new \TYPO3\Flow\I18n\Locale($this->_userService->getInterfaceLanguage()));
-	}
+    /**
+     * Set the locale according to the user settings
+     *
+     * @return void
+     */
+    protected function initializeObject()
+    {
+        $this->_localizationService->getConfiguration()->setCurrentLocale(new \TYPO3\Flow\I18n\Locale($this->_userService->getInterfaceLanguage()));
+    }
 }

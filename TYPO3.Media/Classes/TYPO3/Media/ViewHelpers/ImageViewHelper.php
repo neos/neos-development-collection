@@ -1,23 +1,23 @@
 <?php
 namespace TYPO3\Media\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Media\Domain\Model\ImageInterface;
-use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
- * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+ * Renders an <img> HTML tag from a given TYPO3.Media's image instance
  *
  * = Examples =
  *
@@ -65,69 +65,81 @@ use TYPO3\Media\Domain\Model\ThumbnailSupportInterface;
  * </output>
  *
  */
-class ImageViewHelper extends AbstractTagBasedViewHelper {
+class ImageViewHelper extends AbstractTagBasedViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Service\ThumbnailService
+     */
+    protected $thumbnailService;
 
-	/**
-	 * @var \TYPO3\Flow\Resource\ResourceManager
-	 * @Flow\Inject
-	 */
-	protected $resourceManager;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Media\Domain\Service\AssetService
+     */
+    protected $assetService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Service\ThumbnailService
-	 */
-	protected $thumbnailService;
+    /**
+     * name of the tag to be created by this view helper
+     *
+     * @var string
+     */
+    protected $tagName = 'img';
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Service\AssetService
-	 */
-	protected $assetService;
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
+        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
+        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
+        // @deprecated since 2.0 use the "image" argument instead
+        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
+    }
 
-	/**
-	 * name of the tag to be created by this view helper
-	 *
-	 * @var string
-	 */
-	protected $tagName = 'img';
+    /**
+     * Renders an HTML img tag with a thumbnail image, created from a given image.
+     *
+     * @param ImageInterface $image The image to be rendered as an image
+     * @param integer $width Desired width of the image
+     * @param integer $maximumWidth Desired maximum width of the image
+     * @param integer $height Desired height of the image
+     * @param integer $maximumHeight Desired maximum height of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
+     * @param string $preset Preset used to determine image configuration
+     * @return string an <img...> html tag
+     */
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
+    {
+        if ($image === null && $this->hasArgument('asset')) {
+            $image = $this->arguments['asset'];
+        }
 
-	/**
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', TRUE);
-		$this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', FALSE);
-		$this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', FALSE);
-		// @deprecated since 2.0 use the "image" argument instead
-		$this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use "image" argument instead', FALSE);
-	}
+        if ($preset) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
+        }
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest());
 
-	/**
-	 * Renders an HTML img tag with a thumbnail image, created from a given asset.
-	 *
-	 * @param ImageInterface $image The image to be rendered as an image
-	 * @param integer $maximumWidth Desired maximum height of the image
-	 * @param integer $maximumHeight Desired maximum width of the image
-	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
-	 * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-	 *
-	 * @return string an <img...> html tag
-	 */
-	public function render(ImageInterface $image = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		if ($image === NULL && $this->hasArgument('asset')) {
-			$image = $this->arguments['asset'];
-		}
-		$thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+        if ($thumbnailData === null) {
+            return '';
+        }
 
-		$this->tag->addAttributes(array(
-			'width' => $thumbnailData['width'],
-			'height' => $thumbnailData['height'],
-			'src' => $thumbnailData['src']
-		));
+        $this->tag->addAttribute('src', $thumbnailData['src']);
 
-		return $this->tag->render();
-	}
+        if ($thumbnailData['width'] > 0 && $thumbnailData['height'] > 0) {
+            $this->tag->addAttributes(array(
+                'width' => $thumbnailData['width'],
+                'height' => $thumbnailData['height']
+            ));
+        }
+
+        return $this->tag->render();
+    }
 }

@@ -1,25 +1,27 @@
 <?php
 namespace TYPO3\Media\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Exception\NoThumbnailAvailableException;
+use TYPO3\Media\Exception\ThumbnailServiceException;
 
 /**
  * An internal thumbnail service.
@@ -28,118 +30,185 @@ use TYPO3\Media\Exception\NoThumbnailAvailableException;
  *
  * @Flow\Scope("singleton")
  */
-class ThumbnailService {
+class ThumbnailService
+{
+    /**
+     * @Flow\Inject
+     * @var ImageService
+     */
+    protected $imageService;
 
-	/**
-	 * @Flow\Inject
-	 * @var ImageService
-	 */
-	protected $imageService;
+    /**
+     * @Flow\Inject
+     * @var ThumbnailRepository
+     */
+    protected $thumbnailRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var ThumbnailRepository
-	 */
-	protected $thumbnailRepository;
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var Dispatcher
-	 */
-	protected $signalSlotDispatcher;
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
 
-	/**
-	 * @Flow\Inject
-	 * @var SystemLoggerInterface
-	 */
-	protected $systemLogger;
+    /**
+     * @Flow\InjectConfiguration("thumbnailPresets")
+     * @var boolean
+     */
+    protected $presets;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Resource\ResourceManager
-	 */
-	protected $resourceManager;
+    /**
+     * @var array
+     */
+    protected $thumbnailCache = [];
 
-	/**
-	 * Returns a thumbnail of the given asset
-	 *
-	 * If the maximum width / height is not specified or exceeds the original asset's dimensions, the width / height of
-	 * the original asset is used.
-	 *
-	 * @param AssetInterface $asset The asset to render a thumbnail for
-	 * @param integer $maximumWidth The thumbnail's maximum width in pixels
-	 * @param integer $maximumHeight The thumbnail's maximum height in pixels
-	 * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
-	 * @param boolean $allowUpScaling Whether the resulting image should be upscaled
-	 * @return Thumbnail
-	 * @throws \Exception
-	 */
-	public function getThumbnail(AssetInterface $asset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = NULL) {
-		$thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight, $allowUpScaling);
+    /**
+     * Returns a thumbnail of the given asset
+     *
+     * If the maximum width / height is not specified or exceeds the original asset's dimensions, the width / height of
+     * the original asset is used.
+     *
+     * @param AssetInterface $asset The asset to render a thumbnail for
+     * @param ThumbnailConfiguration $configuration
+     * @return ImageInterface
+     * @throws \Exception
+     */
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
+    {
+        // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
+        // dimensions differ from the specified image dimensions, otherwise the original image is returned.
+        if ($asset instanceof ImageInterface) {
+            if ($asset->getWidth() === null && $asset->getHeight() === null) {
+                return $asset;
+            }
+            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
+            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
+            if ($configuration->isUpScalingAllowed() === false && $maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
+                return $asset;
+            }
+        }
 
-		if ($thumbnail === NULL) {
-			if (!$asset instanceof ImageInterface) {
-				throw new NoThumbnailAvailableException(sprintf('ThumbnailService could not generate a thumbnail for asset of type "%s" because currently only Image assets are supported.', get_class($asset)), 1381493670);
-			}
+        $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+        $configurationHash = $configuration->getHash();
+        if (!isset($this->thumbnailCache[$assetIdentifier])) {
+            $this->thumbnailCache[$assetIdentifier] = [];
+        }
+        if (isset($this->thumbnailCache[$assetIdentifier][$configurationHash])) {
+            $thumbnail = $this->thumbnailCache[$assetIdentifier][$configurationHash];
+        } else {
+            $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
+            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+        }
+        $async = $configuration->isAsync();
+        if ($thumbnail === null) {
+            try {
+                $thumbnail = new Thumbnail($asset, $configuration, $async);
 
-			$thumbnail = new Thumbnail($asset, $maximumWidth, $maximumHeight, $ratioMode, $allowUpScaling);
-			$this->thumbnailRepository->add($thumbnail);
-			$asset->addThumbnail($thumbnail);
+                // If the thumbnail strategy failed to generate a valid thumbnail
+                if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
+                    $this->thumbnailRepository->remove($thumbnail);
+                    return null;
+                }
 
-			// Allow thumbnails to be persisted even if this is a "safe" HTTP request:
-			$this->persistenceManager->whiteListObject($thumbnail);
-			$this->persistenceManager->whiteListObject($thumbnail->getResource());
-		}
+                if (!$this->persistenceManager->isNewObject($asset)) {
+                    $this->thumbnailRepository->add($thumbnail);
+                }
+                $asset->addThumbnail($thumbnail);
 
-		return $thumbnail;
-	}
+                // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
+                $this->persistenceManager->whiteListObject($thumbnail);
+                $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+            } catch (NoThumbnailAvailableException $exception) {
+                $this->systemLogger->logException($exception);
+                return null;
+            }
+            $this->persistenceManager->whiteListObject($thumbnail);
+            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+        } elseif ($thumbnail->getResource() === null && $async === false) {
+            $this->refreshThumbnail($thumbnail);
+        }
 
-	/**
-	 * @param AssetInterface $asset
-	 * @param integer $maximumWidth
-	 * @param integer $maximumHeight
-	 * @return array
-	 */
-	public function getStaticThumbnailForAsset(AssetInterface $asset, $maximumWidth, $maximumHeight) {
-		$iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
+        return $thumbnail;
+    }
 
-		if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-			$icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-		} else {
-			$icon = sprintf('Icons/%spx/_blank.png', $iconSize);
-		}
+    /**
+     * @return array Returns preset configuration for all presets
+     */
+    public function getPresets()
+    {
+        return $this->presets;
+    }
 
-		$icon = $this->resourceManager->getPublicPackageResourceUri('TYPO3.Media', $icon);
+    /**
+     * @param string $preset The preset identifier
+     * @param boolean $async
+     * @return ThumbnailConfiguration
+     * @throws ThumbnailServiceException
+     */
+    public function getThumbnailConfigurationForPreset($preset, $async = false)
+    {
+        if (!isset($this->presets[$preset])) {
+            throw new ThumbnailServiceException(sprintf('Thumbnail preset configuration for "%s" not found.', $preset), 1447664950);
+        }
+        $presetConfiguration = $this->presets[$preset];
+        $thumbnailConfiguration = new ThumbnailConfiguration(
+            isset($presetConfiguration['width']) ? $presetConfiguration['width'] : null,
+            isset($presetConfiguration['maximumWidth']) ? $presetConfiguration['maximumWidth'] : null,
+            isset($presetConfiguration['height']) ? $presetConfiguration['height'] : null,
+            isset($presetConfiguration['maximumHeight']) ? $presetConfiguration['maximumHeight'] : null,
+            isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
+            isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
+            $async
+        );
+        return $thumbnailConfiguration;
+    }
 
-		return array(
-			'width' => $iconSize,
-			'height' => $iconSize,
-			'src' => $icon
-		);
-	}
+    /**
+     * Refreshes a thumbnail and persists the thumbnail
+     *
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function refreshThumbnail(Thumbnail $thumbnail)
+    {
+        $thumbnail->refresh();
+        $this->persistenceManager->whiteListObject($thumbnail);
+        if (!$this->persistenceManager->isNewObject($thumbnail)) {
+            $this->thumbnailRepository->update($thumbnail);
+        }
+    }
 
-	/**
-	 * @param integer $maximumWidth
-	 * @param integer $maximumHeight
-	 * @return integer
-	 */
-	protected function getDocumentIconSize($maximumWidth, $maximumHeight) {
-		$size = max($maximumWidth, $maximumHeight);
-		if ($size <= 16) {
-			return 16;
-		} elseif ($size <= 32) {
-			return 32;
-		} elseif ($size <= 48) {
-			return 48;
-		} else {
-			return 512;
-		}
-	}
+    /**
+     * @param ImageInterface $thumbnail
+     * @return string
+     * @throws ThumbnailServiceException
+     */
+    public function getUriForThumbnail(ImageInterface $thumbnail)
+    {
+        $resource = $thumbnail->getResource();
+        if ($resource) {
+            return $this->resourceManager->getPublicPersistentResourceUri($resource);
+        }
 
+        $staticResource = $thumbnail->getStaticResource();
+        if ($staticResource === null) {
+            throw new ThumbnailServiceException(sprintf(
+                'Could not generate URI for static thumbnail "%s".',
+                $this->persistenceManager->getIdentifierByObject($thumbnail)
+            ), 1450178437);
+        }
+
+        return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
+    }
 }

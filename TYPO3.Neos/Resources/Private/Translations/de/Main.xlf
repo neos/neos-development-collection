@@ -6,6 +6,12 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="de">Automatisch Veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch veröffentlichen</target></alt-trans></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="de">Automatisch nach {0} veröffentlichen</target><alt-trans><target xml:lang="de">Automatisch auf {0} veröffentlichen</target></alt-trans></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="de" state="translated">Änderungen überprüfen</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
@@ -15,15 +21,21 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="de">Abbrechen</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="de">Zurück</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
 			<target xml:lang="de">Bitte auswählen</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target xml:lang="de">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Lostippen, um zu suchen</target></alt-trans></trans-unit>
+			<target xml:lang="de">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans><alt-trans><target xml:lang="de">Lostippen, um zu suchen</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="de">Knoten</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="de">Inhaltsansicht</target></trans-unit>
@@ -111,12 +123,27 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="de">Veröffentlichen</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
+				<source>Publish to {0}</source>
+			<target xml:lang="de">Nach {0} veröffentlichen</target><alt-trans><target xml:lang="de">Auf {0} veröffentlichen</target></alt-trans></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="de">Alle Änderungen für die aktuelle Seite veröffentlichen</target><alt-trans><target xml:lang="de">Veröffentliche alle Änderungen für die aktuelle Seite</target></alt-trans></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="de">Kann nicht veröffentlicht werden, da der Ziel-Arbeitsbereich schreibgeschützt ist</target><alt-trans><target xml:lang="de">Konnte nicht veröffentlichen, weil der Zielarbeitsbereich nur lesbar ist</target></alt-trans></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
+				<source>Publishing</source>
+			<target xml:lang="de">Veröffentliche</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="de">Veröffentlicht</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="de">Zielarbeitsbereich</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
+				<source>Current workspace</source>
+			<target xml:lang="de">Aktueller Arbeitsbereich</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="de">Entfernen</target></trans-unit>
@@ -124,8 +151,8 @@
 				<source>Refresh</source>
 			<target xml:lang="de">Aktualisieren</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
-				<source>Saving...</source>
-			<target xml:lang="de">Speichern...</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans></trans-unit>
+				<source>Saving</source>
+			<target xml:lang="de">Speichert</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans><alt-trans><target xml:lang="de">Speichern...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="de">Gespeichert</target></trans-unit>
@@ -148,13 +175,13 @@
 				<source>Label</source>
 			<target xml:lang="de">Bezeichnung</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
-				<source>Node type</source>
-			<target xml:lang="de">Knotentyp</target></trans-unit>
+				<source>Content Type</source>
+			<target xml:lang="de">Inhaltstyp</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="de">Pfad</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			<target xml:lang="de">Relativer Pfad</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
@@ -425,6 +452,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="de">Authentifiziere</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="de">Abmelden</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -459,6 +489,23 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="de">Die Konfiguration des Kontentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target><alt-trans><target xml:lang="de">Die Konfiguration des Knotentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target></alt-trans></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="de">"{nodeTypeName}" auf Seite "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="de">Knoten</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="de">Anzeigen</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="de">Dieses Element kann nicht über eine öffentliche URL aufgerufen werden</target><alt-trans><target xml:lang="de">Dieser Knoten kann nicht über eine öffentliche URL aufgerufen werden</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="de">Element-Eigenschaften</target><alt-trans><target xml:lang="de">Knoteneigenschaften</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

@@ -19,13 +19,21 @@ function(
 		tagName: 'ul',
 		classNames: ['neos-inspector-list-stacked'],
 		content: null,
+
 		init: function() {
 			var that = this,
-				nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
+				nodeIdentifier = InspectorController.get('nodeProperties._identifier');
 
 			HttpClient.getResource(
-				$('link[rel="neos-pluginviews"]').attr('href') + '?node=' + nodePath,
-				{dataType: 'json'}
+				$('link[rel="neos-pluginviews"]').attr('href'),
+				{
+					data: {
+						identifier: nodeIdentifier,
+						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					},
+					dataType: 'json'
+				}
 			).then(
 				function(views) {
 					var viewsArray = [];
@@ -38,9 +46,11 @@ function(
 			);
 			return this._super();
 		},
+
 		emptyView: Ember.View.extend({
-			template: Ember.Handlebars.compile(I18n.translate('TYPO3.Neos:Main:loading', 'Loading ...'))
+			template: Ember.Handlebars.compile(I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...')
 		}),
+
 		itemViewClass: Ember.View.extend({
 			template: Ember.Handlebars.compile(template)
 		})

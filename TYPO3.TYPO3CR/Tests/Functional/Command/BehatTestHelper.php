@@ -1,20 +1,25 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional\Command;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-require_once(__DIR__ . '/../../Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
+    require_once(FLOW_PATH_PACKAGES . '/Neos/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+    require_once(FLOW_PATH_PACKAGES . '/Neos/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+} else {
+    require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+    require_once(FLOW_PATH_PACKAGES . '/Application/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+}
 
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
@@ -37,73 +42,75 @@ use TYPO3\Flow\Utility\Environment;
  *
  * @Flow\Scope("singleton")
  */
-class BehatTestHelper {
+class BehatTestHelper
+{
+    use IsolatedBehatStepsTrait;
+    use SecurityOperationsTrait;
+    use NodeOperationsTrait;
+    use NodeAuthorizationTrait;
 
-	use IsolatedBehatStepsTrait;
-	use SecurityOperationsTrait;
-	use NodeOperationsTrait;
-	use NodeAuthorizationTrait;
+    /**
+     * @var Bootstrap
+     */
+    protected static $bootstrap;
 
-	/**
-	 * @var Bootstrap
-	 */
-	protected static $bootstrap;
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $objectManager;
+    /**
+     * @var Environment
+     * @Flow\Inject
+     */
+    protected $environment;
 
-	/**
-	 * @var Environment
-	 * @Flow\Inject
-	 */
-	protected $environment;
+    /**
+     * @var ActionRequest
+     */
+    protected $mockActionRequest;
 
-	/**
-	 * @var ActionRequest
-	 */
-	protected $mockActionRequest;
+    /**
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
+    /**
+     * @var PolicyService
+     * @Flow\Inject
+     */
+    protected $policyService;
 
-	/**
-	 * @var PolicyService
-	 * @Flow\Inject
-	 */
-	protected $policyService;
+    /**
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
-	/**
-	 * @var AuthenticationManagerInterface
-	 */
-	protected $authenticationManager;
+    /**
+     * @var TestingProvider
+     */
+    protected $testingProvider;
 
-	/**
-	 * @var TestingProvider
-	 */
-	protected $testingProvider;
+    /**
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        $this->isolated = false;
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
-		$this->isolated = FALSE;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	protected function getObjectManager() {
-		return $this->objectManager;
-	}
+    /**
+     * @return mixed
+     */
+    protected function getObjectManager()
+    {
+        return $this->objectManager;
+    }
 }
