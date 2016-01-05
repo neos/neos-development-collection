@@ -30,9 +30,8 @@
 define(
 [
 	'emberjs',
-	'Library/underscore',
-	'Library/handlebars/handlebars'
-], function(Ember, _, Handlebars) {
+	'Library/underscore'
+], function(Ember, _) {
 
 	/**
 	 * @singleton
