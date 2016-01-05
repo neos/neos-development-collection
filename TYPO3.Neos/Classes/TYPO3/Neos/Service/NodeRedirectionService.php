@@ -11,9 +11,11 @@ namespace TYPO3\Neos\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Redirection\RedirectionService;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
@@ -71,6 +73,12 @@ class NodeRedirectionService
     protected $contextFactory;
 
     /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
+
+    /**
      * Creates a redirection for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
      *
      * @param NodeInterface $node The node that is about to be published
@@ -119,6 +127,11 @@ class NodeRedirectionService
 
         $this->flushRoutingCacheForNode($targetNode);
         $this->redirectionService->addRedirection($targetNodeUriPath, $nodeUriPath);
+
+        $q = new FlowQuery([$node]);
+        foreach ($q->children('[instanceof TYPO3.Neos:Document]') as $childrenNode) {
+            $this->createRedirectionsForPublishedNode($childrenNode, $targetWorkspace);
+        }
     }
 
     /**
