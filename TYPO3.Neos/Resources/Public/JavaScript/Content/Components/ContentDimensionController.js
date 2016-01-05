@@ -82,7 +82,7 @@ function(
 				this.set('showInitialTranslationDialog', false);
 				HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 					that.set('selectorIsActive', false);
-					ContentModule.loadPage($('link[rel="node-frontend"]', result.resource).attr('href'), false, function() {
+					ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
 						EventDispatcher.trigger('contentDimensionsSelectionChanged');
 
 						that._updateSelectedDimensionsFromCurrentDocument();
@@ -94,7 +94,6 @@ function(
 					} else {
 						Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
 					}
-
 				});
 			},
 
