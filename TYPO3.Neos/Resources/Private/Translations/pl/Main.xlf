@@ -5,10 +5,13 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="pl">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans></trans-unit>
-      <trans-unit id="autoPublishTo" xml:space="preserve">
+			<target xml:lang="pl">Auto-publikacja</target><alt-trans><target xml:lang="pl">Publikacja automatyczna</target></alt-trans><alt-trans><target xml:lang="pl">Automatyczna publikacja</target></alt-trans></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="pl" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="pl">Automatyczna publikacja do {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
+				<source>Review changes</source>
+			<target xml:lang="pl">Przejrzyj zmiany</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="pl">Zastosuj</target></trans-unit>
@@ -30,9 +33,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="pl">Treść</target><alt-trans><target xml:lang="pl">Zawartość</target></alt-trans></trans-unit>
-      <trans-unit id="node" xml:space="preserve">
+      <trans-unit id="node" xml:space="preserve" approved="yes">
 				<source>Node</source>
-			<target xml:lang="pl" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="pl">Węzeł</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="pl">Widok treści</target></trans-unit>
@@ -120,36 +123,36 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="pl">Publikuj</target></trans-unit>
-      <trans-unit id="publishTo" xml:space="preserve">
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
 				<source>Publish to {0}</source>
-			<target xml:lang="pl" state="needs-translation">Publish to {0}</target></trans-unit>
-      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+			<target xml:lang="pl">Publikuj do {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="pl" state="needs-translation">Publish all changes for current page</target></trans-unit>
-      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+			<target xml:lang="pl">Publikuj wszystkie zmiany dla bieżącej strony</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="pl" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
-      <trans-unit id="publishing" xml:space="preserve">
+			<target xml:lang="pl">Nie można opublikować, ponieważ docelowy obszar roboczy jest tylko do odczytu</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
-			<target xml:lang="pl" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="pl">Publikowanie</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="pl">Opublikowano</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="pl">Docelowy obszar roboczy</target><alt-trans><target xml:lang="pl">Przestrzeń robocza</target></alt-trans></trans-unit>
-      <trans-unit id="currentWorkspace" xml:space="preserve">
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
 				<source>Current workspace</source>
-			<target xml:lang="pl" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="pl">Bieżący obszar roboczy</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="pl">Usuń</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="pl">Odśwież</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving</source>
-			<target xml:lang="pl" state="translated">Zapisywanie...</target></trans-unit>
+			<target xml:lang="pl">Zapisywanie...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="pl">Zapisano</target></trans-unit>
@@ -171,15 +174,15 @@
       <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
 				<source>Label</source>
 			<target xml:lang="pl">Etykieta</target></trans-unit>
-      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target xml:lang="pl" state="translated">Typ węzła</target><alt-trans><target xml:lang="pl">Węzeł</target></alt-trans></trans-unit>
+			<target xml:lang="pl">Typ zawartości</target><alt-trans><target xml:lang="pl">Typ węzła</target></alt-trans><alt-trans><target xml:lang="pl">Węzeł</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="pl">Ścieżka</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
-			<target xml:lang="pl" state="translated">Ścieżka względna</target></trans-unit>
+			<target xml:lang="pl">Ścieżka względna</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -487,22 +490,22 @@
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target><alt-trans><target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę NodeType i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></alt-trans></trans-unit>
       <!-- Miscellaneous -->
-      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="pl" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="pl">"{nodeTypeName}" na stronie "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
-      <trans-unit id="service.nodes.title" xml:space="preserve">
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
 				<source>Nodes</source>
-			<target xml:lang="pl" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="pl">Węzły</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target xml:lang="pl">Pokaż</target></trans-unit>
-      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="pl" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
-      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+			<target xml:lang="pl">Ten węzeł nie może być udostępniiony za pośrednictwem publicznego adresu URL</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
 				<source>Node Properties</source>
-			<target xml:lang="pl" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="pl">Właściwości węzła</target></trans-unit>
     </body>
   </file>
 </xliff>

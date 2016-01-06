@@ -77,7 +77,7 @@
 			<target xml:lang="nl" state="translated">Privé</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="nl" state="translated">Alleen reviewers en administrators hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target><alt-trans><target xml:lang="nl">Alleen recensenten en administrators hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target></alt-trans></trans-unit>
+			<target xml:lang="nl" state="translated">Alleen reviewers en administrators hebben toegang en kunnen wijzigingen aanbrengen in deze workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
 			<target xml:lang="nl" state="translated">Intern</target></trans-unit>
@@ -87,6 +87,9 @@
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target xml:lang="nl" state="translated">Wijzigingen</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="nl" state="translated">Open pagina in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="nl" state="translated">Dit is uw persoonlijke workspace die u niet kunt verwijderen.</target></trans-unit>

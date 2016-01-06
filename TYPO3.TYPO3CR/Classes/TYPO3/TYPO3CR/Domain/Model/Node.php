@@ -773,7 +773,7 @@ class Node implements NodeInterface, CacheAwareInterface
             if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
                 $expectedPropertyType = $nodeType->getPropertyType($propertyName);
                 switch ($expectedPropertyType) {
-                    case 'references' :
+                    case 'references':
                         if ($returnNodesAsIdentifiers === false) {
                             $nodes = array();
                             foreach ($value as $nodeIdentifier) {
@@ -786,7 +786,7 @@ class Node implements NodeInterface, CacheAwareInterface
                             $value = $nodes;
                         }
                         break;
-                    case 'reference' :
+                    case 'reference':
                         if ($returnNodesAsIdentifiers === false) {
                             $value = $this->context->getNodeByIdentifier($value);
                         }
