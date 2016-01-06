@@ -340,19 +340,19 @@ class Parser implements ParserInterface
     {
         if (preg_match(self::SPLIT_PATTERN_COMMENTTYPE, $typoScriptLine, $matches, PREG_OFFSET_CAPTURE) === 1) {
             switch ($matches[1][0]) {
-                case '/*' :
+                case '/*':
                     $this->currentBlockCommentState = true;
                     break;
-                case '*/' :
+                case '*/':
                     if ($this->currentBlockCommentState !== true) {
                         throw new Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
                     }
                     $this->currentBlockCommentState = false;
                     $this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
                     break;
-                case '#' :
-                case '//' :
-                default :
+                case '#':
+                case '//':
+                default:
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
@@ -396,10 +396,10 @@ class Parser implements ParserInterface
         }
 
         switch ($matches[1]) {
-            case 'namespace' :
+            case 'namespace':
                 $this->parseNamespaceDeclaration($matches[2]);
                 break;
-            case 'include' :
+            case 'include':
                 $this->parseInclude($matches[2]);
                 break;
         }
@@ -421,13 +421,13 @@ class Parser implements ParserInterface
 
         $objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
         switch ($matches['Operator']) {
-            case '=' :
+            case '=':
                 $this->parseValueAssignment($objectPath, $matches['Value']);
                 break;
-            case '>' :
+            case '>':
                 $this->parseValueUnAssignment($objectPath);
                 break;
-            case '<' :
+            case '<':
                 $this->parseValueCopy($matches['Value'], $objectPath);
                 break;
         }

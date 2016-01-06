@@ -183,7 +183,7 @@ abstract class AbstractNodeData
                 $dimensions = $context !== null ? $context->getDimensions() : array();
                 $workspace = $context !== null ? $context->getWorkspace() : $this->getWorkspace();
                 switch ($this->getNodeType()->getPropertyType($propertyName)) {
-                    case 'references' :
+                    case 'references':
                         $nodeDatas = array();
                         if (!is_array($value)) {
                             $value = array();
@@ -218,7 +218,7 @@ abstract class AbstractNodeData
                         }
                         $value = $nodeDatas;
                         break;
-                    case 'reference' :
+                    case 'reference':
                         // in cases where a reference is a NodeData instance, fix this
                         if ($value instanceof NodeData) {
                             $value = $value->getIdentifier();
