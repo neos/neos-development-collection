@@ -1,4 +1,4 @@
-<div class="neos-notification-content{{if message 'expandable'}}">
+<div class="neos-notification-content{{#if message}} expandable{{/if}}">
 	<i class="icon-{{type}}"></i>
 	<div class="neos-notification-heading">{{title}}</div>
 	{{#if message}}
