@@ -151,7 +151,7 @@ class HtmlArrayRenderer extends AbstractRenderer
         $lines = array_map(array($this, 'ExpandTabs'), $lines);
         $lines = array_map(array($this, 'HtmlSafe'), $lines);
         foreach ($lines as &$line) {
-            $line = preg_replace_callback('# ( +)|^ #', function(array $matches) {
+            $line = preg_replace_callback('# ( +)|^ #', function (array $matches) {
                 return (isset($matches[1]) ? $matches[1] : '');
             }, $line);
         }
@@ -164,7 +164,7 @@ class HtmlArrayRenderer extends AbstractRenderer
      * @param string $spaces The string of spaces.
      * @return string The HTML representation of the string.
      */
-    function fixSpaces($spaces = '')
+    public function fixSpaces($spaces = '')
     {
         $count = strlen($spaces);
         if ($count == 0) {

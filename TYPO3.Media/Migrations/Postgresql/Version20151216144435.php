@@ -32,6 +32,5 @@ class Version20151216144435 extends AbstractMigration
 
         $this->addSql("DROP INDEX originalasset_configurationhash");
         $this->addSql("CREATE INDEX originalasset_configurationhash ON typo3_media_domain_model_thumbnail (originalasset, configurationhash)");
-
     }
 }

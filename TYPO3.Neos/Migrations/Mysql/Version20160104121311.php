@@ -1,8 +1,8 @@
 <?php
 namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
-    Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
