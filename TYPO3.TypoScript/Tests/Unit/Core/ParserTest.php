@@ -65,16 +65,16 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
         $arguments = array_merge(func_get_args(), array($this->mockObjectManager));
         $objectName = array_shift($arguments);
         switch ($objectName) {
-            case 'TYPO3\TypoScript\Fixtures\Text' :
-            case 'TYPO3\TypoScript\Fixtures\Page' :
-            case 'TYPO3\TypoScript\Fixtures\ContentArray' :
-            case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty' :
-            case 'TYPO3\TypoScript\Processors\WrapProcessor' :
-            case 'TYPO3\TypoScript\Processors\SubstringProcessor' :
-            case 'TYPO3\TypoScript\Processors\MultiplyProcessor' :
-            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor' :
+            case 'TYPO3\TypoScript\Fixtures\Text':
+            case 'TYPO3\TypoScript\Fixtures\Page':
+            case 'TYPO3\TypoScript\Fixtures\ContentArray':
+            case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty':
+            case 'TYPO3\TypoScript\Processors\WrapProcessor':
+            case 'TYPO3\TypoScript\Processors\SubstringProcessor':
+            case 'TYPO3\TypoScript\Processors\MultiplyProcessor':
+            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor':
                 return true;
-            default :
+            default:
                 return false;
         }
     }

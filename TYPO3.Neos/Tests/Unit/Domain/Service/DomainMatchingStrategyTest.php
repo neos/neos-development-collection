@@ -23,11 +23,11 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = array($this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', false));
-        $mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.typo3.org'));
+        $mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.neos.io'));
         $expectedDomains = array($mockDomains[0]);
 
         $strategy = new \TYPO3\Neos\Domain\Service\DomainMatchingStrategy();
-        $actualDomains = $strategy->getSortedMatches('www.typo3.org', $mockDomains);
+        $actualDomains = $strategy->getSortedMatches('www.neos.io', $mockDomains);
         $this->assertSame($expectedDomains, $actualDomains);
     }
 
