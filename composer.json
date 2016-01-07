@@ -18,6 +18,7 @@
     },
     "replace": {
         "neos/diff": "self.version",
+        "neos/redirecthandler-neosadapter": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -30,7 +31,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\Diff\\": "Neos.Diff/Classes"
+            "Neos\\Diff\\": "Neos.Diff/Classes",
+            "Neos\\RedirectHandler\\NeosAdapter\\": "Neos.RedirectHandler.NeosAdapter/Classes"
         },
         "psr-0": {
             "TYPO3\\Media": "TYPO3.Media/Classes",
