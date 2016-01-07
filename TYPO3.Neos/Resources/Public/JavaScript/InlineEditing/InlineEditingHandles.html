@@ -8,10 +8,10 @@
 			<button title="{{view._hideToggleTitle}}" class="neos-button action-toggle-hidden {{if view._hidden 'neos-active'}}" disabled="{{if view.currentFocusedNodeCanBeModified null true}}" {{action "toggleHidden" target=view}} tabindex="-1">
 				<i class="icon-eye-close"></i>
 			</button>
-			<button class="neos-button action-cut" class="{{if view._thisElementStartedCut 'neos-active'}}" disabled="{{if view.currentFocusedNodeCanBeModified null true}}" title="{{translate id='cut' fallback='Cut'}}" {{action "cut" target=view}} tabindex="-1">
+			<button class="neos-button action-cut {{if view._thisElementStartedCut 'neos-active'}}" disabled="{{if view.currentFocusedNodeCanBeModified null true}}" title="{{translate id='cut' fallback='Cut'}}" {{action "cut" target=view}} tabindex="-1">
 				<i class="icon-cut"></i>
 			</button>
-			<button class="neos-button action-copy" class="{{if view._thisElementStartedCopy 'neos-active'}}" disabled="{{if view.currentFocusedNodeCanBeModified null true}}" title="{{translate id='copy' fallback='Copy'}}" {{action "copy" target=view}} tabindex="-1">
+			<button class="neos-button action-copy {{if view._thisElementStartedCopy 'neos-active'}}" disabled="{{if view.currentFocusedNodeCanBeModified null true}}" title="{{translate id='copy' fallback='Copy'}}" {{action "copy" target=view}} tabindex="-1">
 				<i class="icon-copy"></i>
 			</button>
 
