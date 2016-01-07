@@ -13,7 +13,6 @@ namespace Neos\RedirectHandler\NeosAdapter\Service;
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
-use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -21,6 +20,8 @@ use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Routing\Exception;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -107,10 +108,12 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
             throw new Exception('The target URI path of the node could not be resolved', 1451945358);
         }
 
+        $hostPatterns = $this->getHostPatterns($node->getContext());
+
         // The page has been removed
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
-            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', 410);
+            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', 410, $hostPatterns);
             return;
         }
 
@@ -123,13 +126,33 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
             return;
         }
 
+
         $this->flushRoutingCacheForNode($targetNode);
-        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath);
+        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, 301, $hostPatterns);
+        /** @var ContentContext $contentContext */
+
 
         $q = new FlowQuery([$node]);
         foreach ($q->children('[instanceof TYPO3.Neos:Document]') as $childrenNode) {
             $this->createRedirectionsForPublishedNode($childrenNode, $targetWorkspace);
         }
+    }
+
+    /**
+     * @param ContentContext $contentContext
+     * @return array
+     */
+    protected function getHostPatterns(ContentContext $contentContext)
+    {
+        $site = $contentContext->getCurrentSite();
+        $domains = [];
+        if ($site !== null) {
+            foreach ($site->getDomains() as $domain) {
+                /** @var Domain $domain */
+                $domains[] = $domain->getHostPattern();
+            }
+        }
+        return $domains;
     }
 
     /**
