@@ -120,15 +120,10 @@ function (
 		}.observes('nodeSelection.selectedNode'),
 
 		currentFocusedNodeCanBeModified: function() {
-			if (this.get('nodeSelection.selectedNode')) {
-				if (this.get('nodeSelection.selectedNode').$element.data('node-_is-autocreated')) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
+			if (this.get('nodeSelection.selectedNode') && !this.get('nodeSelection.selectedNode').$element.data('node-_is-autocreated')) {
+				return true;
 			}
+			return false;
 		}.property('nodeSelection.selectedNode'),
 
 		allowedNewPositions: function() {
