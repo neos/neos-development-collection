@@ -1,0 +1,14 @@
+{
+    "name": "neos/redirecthandler-neosadapter",
+    "type": "typo3-flow-package",
+    "description": "Neos Redirect Handler",
+    "license": "GPL-3.0+",
+    "require": {
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\NeosAdapter\\": "Classes"
+        }
+    }
+}

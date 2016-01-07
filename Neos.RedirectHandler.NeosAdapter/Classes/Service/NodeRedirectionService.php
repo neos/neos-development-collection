@@ -1,19 +1,19 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\RedirectHandler\NeosAdapter\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the Neos.RedirectHandler.NeosAdapter package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Redirection\RedirectionService;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -48,9 +48,9 @@ class NodeRedirectionService
 
     /**
      * @Flow\Inject
-     * @var RedirectionService
+     * @var \Neos\RedirectHandler\Storage\RedirectionStorageInterface
      */
-    protected $redirectionService;
+    protected $redirectionStorage;
 
     /**
      * @Flow\Inject
@@ -110,7 +110,7 @@ class NodeRedirectionService
         // The page has been removed
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
-            $this->redirectionService->addRedirection($targetNodeUriPath, '', 410);
+            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', 410);
             return;
         }
 
@@ -124,7 +124,7 @@ class NodeRedirectionService
         }
 
         $this->flushRoutingCacheForNode($targetNode);
-        $this->redirectionService->addRedirection($targetNodeUriPath, $nodeUriPath);
+        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath);
 
         $q = new FlowQuery([$node]);
         foreach ($q->children('[instanceof TYPO3.Neos:Document]') as $childrenNode) {
