@@ -11,6 +11,7 @@ namespace Neos\RedirectHandler\NeosAdapter\Service;
  * source code.
  */
 
+use Neos\RedirectHandler\Service\SettingsService;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
@@ -36,6 +37,12 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
  */
 class NodeRedirectionService implements NodeRedirectionServiceInterface
 {
+    /**
+     * @Flow\Inject
+     * @var SettingsService
+     */
+    protected $settingsService;
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
@@ -113,7 +120,8 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
         // The page has been removed
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
-            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', 410, $hostPatterns);
+            $statusCode = $this->settingsService->getGoneStatusCode();
+            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hostPatterns);
             return;
         }
 
