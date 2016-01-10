@@ -27,8 +27,8 @@ function (Ember, $, I18n, template) {
 			 */
 			reset: function() {
 				this.close();
-				this.set('hrValue', '');
-				this.$('.neos-editor-datetimepicker').datetimepicker('update', null);
+				this.get('$datetimepicker').datetimepicker('showMode', this.get('viewSettings.startView'));
+				this.get('$datetimepicker').datetimepicker('update', new Date());
 				this.set('value', '');
 			},
 
@@ -38,10 +38,10 @@ function (Ember, $, I18n, template) {
 		},
 		attributeBindings: ['name', 'value'],
 		value: '',
-		hrValue: '',
 		_timeOnly: false,
 		isOpen: false,
 		template: Ember.HTMLBars.compile(template),
+		textField: Ember.TextField,
 
 		/**
 		 * The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N, S, w, a, A, g, G, h, H, i, s.
@@ -148,14 +148,13 @@ function (Ember, $, I18n, template) {
 		/**
 		 * @return {void}
 		 */
-		onValueChanged: function() {
+		hrValue: function() {
 			if (this.get('value') && !/Invalid|NaN/.test(new Date(this.get('value')).toString())) {
 				var d = new Date(this.get('value'));
-				this.set('hrValue', this.formatDate(new Date(d.getTime() - (d.getTimezoneOffset() * 60000)), this.get('format')));
-			} else {
-				this.set('hrValue', '');
+				return this.formatDate(new Date(d.getTime() - (d.getTimezoneOffset() * 60000)), this.get('format'));
 			}
-		}.observes('value'),
+			return '';
+		}.property('value'),
 
 		/**
 		 * @return {void}
@@ -163,7 +162,7 @@ function (Ember, $, I18n, template) {
 		didInsertElement: function() {
 			var that = this,
 				$datetimepicker = this.$('.neos-editor-datetimepicker'),
-				viewSettings = this.calculateViewSettings(),
+				viewSettings = this.get('_viewSettings'),
 				todayBtn = 'linked';
 
 			this.set('$datetimepicker', $datetimepicker);
@@ -212,18 +211,7 @@ function (Ember, $, I18n, template) {
 		 */
 		toggle: function() {
 			this.set('isOpen', !this.get('isOpen'));
-			this.$('.neos-editor-datetimepicker').slideToggle();
-		},
-
-		/**
-		 * @return {void}
-		 */
-		reset: function() {
-			this.close();
-			this.set('hrValue', '');
-			this.$('.neos-editor-datetimepicker').datetimepicker('update', new Date());
-			this.$('.neos-editor-datetimepicker').datetimepicker('showMode', 2);
-			this.set('value', '');
+			this.get('$datetimepicker').slideToggle();
 		},
 
 		/**
@@ -235,7 +223,7 @@ function (Ember, $, I18n, template) {
 		 *
 		 * @return {object}
 		 */
-		calculateViewSettings: function() {
+		_viewSettings: function() {
 			var format = this.get('format'),
 				minView = 0,
 				maxView = 4,
@@ -276,7 +264,7 @@ function (Ember, $, I18n, template) {
 			}
 
 			return {minView: minView, maxView: maxView, startView: startView};
-		},
+		}.property('format'),
 
 		/**
 		 * @return {void}
