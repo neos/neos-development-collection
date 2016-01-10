@@ -28,6 +28,10 @@ use TYPO3\TYPO3CR\Exception\WorkspaceException;
  */
 class Workspace
 {
+    /**
+     * This prefix determines if a given workspace (name) is a user workspace.
+     */
+    const PERSONAL_WORKSPACE_PREFIX = 'user-';
 
     /**
      * @var string
@@ -267,7 +271,7 @@ class Workspace
      */
     public function isPersonalWorkspace()
     {
-        return strpos($this->name, 'user-') === 0;
+        return strpos($this->name, static::PERSONAL_WORKSPACE_PREFIX) === 0;
     }
 
     /**

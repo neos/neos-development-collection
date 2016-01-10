@@ -55,27 +55,36 @@ class ParentsUntilOperationTest extends AbstractNodeTest
                 'expectedNodePaths' => array('/a'),
                 'unexpectedNodePaths' => array('/a/a5','/a/a3','/a/a2,')
             ),
+            array(
+                'currentNodePaths' => array('/b/b4/b4b/b4bb/b4bba'),
+                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'expectedNodePaths' => array('/b/b4/b4b/b4bb'),
+                'unexpectedNodePaths' => array('b/b4','b/b4/b4b','/b/b3','/b')
+            ),
         );
     }
 
     /**
      * Tests on a tree:
      *
-     * a (testNodeType)
-     *   a1 (testNodeType)
+     * a (Testing:NodeType)
+     *   a1 (Testing:NodeType)
      *   a2
-     *   a3 (testNodeType)
+     *   a3 (Testing:NodeType)
      *   a4
      *   a5
-     * b (testNodeType3)
+     * b (Testing:NodeType)
      *   b1
-     *   b2 (testNodeType3)
+     *   b2 (Testing:NodeType)
      *   b3
-     *      b3a
-     *      b3b
-     *   b4
-     *
-     *
+     *     b3a
+     *     b3b
+     *   b4 (Testing:NodeType)
+     *     b4a
+     *     b4b (Testing:NodeType)
+     *       b4ba (Testing:NodeType)
+     *       b4bb
+     *         b4bba
      *
      * @test
      * @dataProvider parentsUntilOperationDataProvider()
@@ -99,7 +108,12 @@ class ParentsUntilOperationTest extends AbstractNodeTest
         $nodeB3 = $nodeB->createNode('b3');
         $nodeB3->createNode('b3a');
         $nodeB3->createNode('b3b');
-        $nodeB->createNode('b4');
+        $nodeB4 = $nodeB->createNode('b4', $testNodeType);
+        $nodeB4->createNode('b4a');
+        $nodeB4B = $nodeB4->createNode('b4b', $testNodeType);
+        $nodeB4B->createNode('b4ba', $testNodeType);
+        $nodeB4BB = $nodeB4B->createNode('b4bb');
+        $nodeB4BB->createNode('b4bba');
 
 
         $currentNodes = array();

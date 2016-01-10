@@ -60,9 +60,10 @@
 			line-height: ($unit / 2) - 1;
 		}
 
-		.badge {
+		.neos-badge {
 			background-color: $white;
 			color: $orange;
+			text-shadow: none;
 			position: relative;
 			top: 0;
 			left: 5px;
@@ -103,6 +104,11 @@
 					background-color: $grayMedium;
 				}
 			}
+		}
+
+		.icon-review::after {
+			top: -5px;
+			left: 5px;
 		}
 
 		.neos-checkbox {

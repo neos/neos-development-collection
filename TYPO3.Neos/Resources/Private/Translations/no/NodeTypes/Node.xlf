@@ -7,10 +7,10 @@
 			<target xml:lang="no" state="translated">Generelt</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="no" state="translated">Metainformasjon</target></trans-unit>
+			<target xml:lang="no" state="translated">Metadata</target><alt-trans><target xml:lang="no">Metainformasjon</target></alt-trans></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="no" state="translated">Metainformasjon</target></trans-unit>
+			<target xml:lang="no" state="translated">Metadata</target><alt-trans><target xml:lang="no">Metainformasjon</target></alt-trans></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="no" state="translated">Ytterligere info</target></trans-unit>

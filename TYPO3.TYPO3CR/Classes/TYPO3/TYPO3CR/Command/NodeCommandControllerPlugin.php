@@ -358,6 +358,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     continue;
                 }
                 foreach ($defaultValues as $propertyName => $defaultValue) {
+                    if ($propertyName[0] === '_') {
+                        continue;
+                    }
+
                     if (!$node->hasProperty($propertyName)) {
                         $addedMissingDefaultValuesCount++;
                         if (!$dryRun) {

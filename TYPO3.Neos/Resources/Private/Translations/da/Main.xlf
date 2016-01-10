@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="da">Publicér automatisk til {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
+				<source>Review changes</source>
+			<target xml:lang="da">Gennemse ændringer</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="da">Anvend</target></trans-unit>
@@ -30,6 +33,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="da">Indhold</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="da">Indholdselement</target><alt-trans><target xml:lang="da">Element</target></alt-trans><alt-trans><target xml:lang="da">Indhold</target></alt-trans></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="da">Indholdsvisning</target></trans-unit>
@@ -446,6 +452,9 @@
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target xml:lang="da">Autentificerer</target><alt-trans><target xml:lang="da">Verificerer</target></alt-trans></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="da">Log ud</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -484,6 +493,19 @@
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
 			<target xml:lang="da">"{nodeTypeName}" på siden "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="da">Indholdselementer</target><alt-trans><target xml:lang="da">Elementer</target></alt-trans><alt-trans><target xml:lang="da">Indhold</target></alt-trans><alt-trans><target xml:lang="da">Indholdsegenskaber</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="da">Vis</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="da">Dette indholdselement kan ikke tilgås via en offentlig URL-adresse</target><alt-trans><target xml:lang="da">Dette element kan ikke tilgås via en offentlig URL-adresse</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="da">Indholdselement egenskaber</target><alt-trans><target xml:lang="da">Elementegenskaber</target></alt-trans><alt-trans><target xml:lang="da">Indholdsegenskaber</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

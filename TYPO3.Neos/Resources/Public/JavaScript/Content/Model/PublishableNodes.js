@@ -62,8 +62,11 @@ define(
         EventDispatcher
           .on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
           .on('nodeDeleted', this, 'getWorkspaceWideUnpublishedNodes')
+          .on('nodeUpdated', this, 'getWorkspaceWideUnpublishedNodes')
           .on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes')
-          .on('contentChanged', this, '_updatePublishableEntities');
+          .on('contentChanged', this, '_updatePublishableEntities')
+          .on('nodeUpdated', this, '_updatePublishableEntities')
+          .on('nodesUpdated', this, '_updatePublishableEntities');
         ContentModule.on('pageLoaded', this, '_updatePublishableEntities');
       },
 

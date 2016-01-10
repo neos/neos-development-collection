@@ -103,7 +103,7 @@ class NodeType
      * @param array $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, array $declaredSuperTypes, array $configuration)
+    public function __construct($name, array $declaredSuperTypes, array $configuration, array $fullConfiguration = null)
     {
         $this->name = $name;
 
@@ -125,6 +125,11 @@ class NodeType
         }
 
         $this->localConfiguration = $configuration;
+
+        $this->fullConfiguration = $fullConfiguration;
+        if ($fullConfiguration !== null) {
+            $this->initialized = true;
+        }
     }
 
     /**

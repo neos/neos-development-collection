@@ -9,7 +9,7 @@
 			<div class="node">
 				<label class="node-label">{node.label}</label>
 				<table class="node-properties">
-					<caption>{neos:backend.translate(id: 'nodes.properties', value: 'Node Properties')}</caption>
+					<caption>{neos:backend.translate(id: 'service.nodes.nodeProperties', value: 'Node Properties')}</caption>
 					<tr><th>_identifier</th><td class="node-identifier">{node.identifier}</td></tr>
 					<tr><th>_path</th><td class="node-path">{node.path}</td></tr>
 					<tr><th>_type</th><td class="node-type">{node.nodeType.name}</td></tr>
@@ -18,11 +18,20 @@
 					</f:for>
 				</table>
 				<f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
-					<neos:link.node node="{documentNode}" absolute="true" resolveShortcuts="false" class="node-frontend-uri">
-						<neos:uri.node node="{documentNode}" absolute="false" resolveShortcuts="false" />
-					</neos:link.node>
+					<f:if condition="{documentNode}">
+						<f:then>
+							<neos:link.node node="{documentNode}" absolute="true" resolveShortcuts="false" class="node-frontend-uri">
+								<neos:uri.node node="{documentNode}" absolute="false" resolveShortcuts="false" />
+							</neos:link.node>
+						</f:then>
+						<f:else>
+							<a class="node-frontend-uri">
+								{neos:backend.translate(id: 'service.nodes.noPublicUrl', value: 'This node cannot be accessed through a public URL')}
+							</a>
+						</f:else>
+					</f:if>
 				</f:alias>
-				<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'Show')}</f:link.action>
+				<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
 			</div>
 		</div>
 	</body>

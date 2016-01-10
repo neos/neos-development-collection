@@ -9,6 +9,9 @@
 			<trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			</trans-unit>
+			<trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			</trans-unit>
 			<trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
@@ -29,6 +32,9 @@
 			</trans-unit>
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
 			</trans-unit>
 			<trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
@@ -452,6 +458,9 @@
 			<trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			</trans-unit>
+			<trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			</trans-unit>
 
 			<!-- Error handlers -->
 			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
@@ -494,6 +503,20 @@
 			<!-- Miscellaneous -->
 			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			</trans-unit>
+
+			<!-- Service output -->
+			<trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
 			</trans-unit>
 		</body>
 	</file>

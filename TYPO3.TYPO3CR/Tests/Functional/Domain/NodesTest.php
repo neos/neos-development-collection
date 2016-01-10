@@ -1502,4 +1502,20 @@ class NodesTest extends FunctionalTestCase
 
         $this->assertEquals('bar claps hands!', $happyNode->clapsHands());
     }
+
+
+    /**
+     * @test
+     */
+    public function getChildNodesWithNodeTypeFilterWorks()
+    {
+        $documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document');
+        $headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
+        $imageNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Image');
+
+        $node = $this->context->getRootNode()->createNode('node-with-child-node', $documentNodeType);
+        $node->createNode('headline', $headlineNodeType);
+        $node->createNode('text', $imageNodeType);
+        $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
+    }
 }

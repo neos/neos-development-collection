@@ -161,6 +161,31 @@ class FilterOperationTest extends AbstractNodeTest
     /**
      * @test
      */
+    public function notInstanceofFilterUsingNodeTypeIsSupported()
+    {
+        $productsNode = $this->node->getNode('products');
+        $teaserNode = $this->node->getNode('teaser');
+        $sidebarNode = $this->node->getNode('sidebar');
+        $dummy = $sidebarNode->getNode('dummy43');
+        $q = new FlowQuery(array($this->node, $dummy, $productsNode, $teaserNode, $sidebarNode));
+        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:Html]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($productsNode, $foundNodes[1]);
+        $this->assertSame($teaserNode, $foundNodes[2]);
+        $this->assertSame($sidebarNode, $foundNodes[3]);
+        $this->assertEquals(4, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($dummy, $foundNodes[1]);
+        $this->assertSame($productsNode, $foundNodes[2]);
+        $this->assertEquals(3, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof X]')->get();
+        $this->assertEquals(5, count($foundNodes));
+    }
+
+    /**
+     * @test
+     */
     public function twoInstanceofFiltersUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -211,5 +236,26 @@ class FilterOperationTest extends AbstractNodeTest
         $this->assertEquals(2, count($foundNodes));
         $foundNodes = $q->filter('[instanceof !X]')->get();
         $this->assertEquals(4, count($foundNodes));
+    }
+
+    /**
+     * @test
+     */
+    public function doubleNegatedInstanceofFilterUsingNodeTypeIsSupported()
+    {
+        $productsNode = $this->node->getNode('products');
+        $teaserNode = $this->node->getNode('teaser');
+        $sidebarNode = $this->node->getNode('sidebar');
+        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:Page]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($productsNode, $foundNodes[1]);
+        $this->assertEquals(2, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $this->assertSame($teaserNode, $foundNodes[0]);
+        $this->assertSame($sidebarNode, $foundNodes[1]);
+        $this->assertEquals(2, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof !X]')->get();
+        $this->assertEquals(0, count($foundNodes));
     }
 }

@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * The user service provides general context information about the currently
@@ -84,13 +85,12 @@ class UserService
     {
         $currentUser = $this->userDomainService->getCurrentUser();
 
-        if ($currentUser instanceof User) {
-            $username = $this->userDomainService->getUsername($currentUser);
-
-            return 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
-        } else {
+        if (!$currentUser instanceof User) {
             return null;
         }
+
+        $username = $this->userDomainService->getUsername($currentUser);
+        return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
     }
 
     /**

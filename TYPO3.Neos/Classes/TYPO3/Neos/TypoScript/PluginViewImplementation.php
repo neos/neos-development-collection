@@ -25,16 +25,15 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class PluginViewImplementation extends PluginImplementation
 {
     /**
-     * @var \TYPO3\Flow\Property\PropertyMapper
-     * @Flow\Inject
-     */
-    protected $propertyMapper;
-
-    /**
      * @var PluginService
      * @Flow\Inject
      */
     protected $pluginService;
+
+    /**
+     * @var NodeInterface
+     */
+    protected $pluginViewNode;
 
     /**
      * Build the proper pluginRequest to render the PluginView
@@ -48,7 +47,7 @@ class PluginViewImplementation extends PluginImplementation
         $parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
         $pluginRequest = new ActionRequest($parentRequest);
 
-        if (!$this->node instanceof NodeInterface) {
+        if (!$this->pluginViewNode instanceof NodeInterface) {
             $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
             $this->passArgumentsToPluginRequest($pluginRequest);
             $pluginRequest->setControllerPackageKey($this->getPackage());
@@ -58,14 +57,17 @@ class PluginViewImplementation extends PluginImplementation
             return $pluginRequest;
         }
 
-        $pluginNodePath = $this->node->getProperty('plugin');
-        if (strlen($pluginNodePath) === 0) {
+        $pluginNodeIdentifier = $this->pluginViewNode->getProperty('plugin');
+        if (strlen($pluginNodeIdentifier) === 0) {
             return $pluginRequest;
         }
-        $pluginViewName = $this->node->getProperty('view');
 
-        // Set the node to render this to the masterPlugin node
-        $this->node = $this->propertyMapper->convert($pluginNodePath, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        // Set the node to render this to the master plugin node
+        $this->node = $this->pluginViewNode->getContext()->getNodeByIdentifier($pluginNodeIdentifier);
+        if ($this->node === null) {
+            return $pluginRequest;
+        }
+
         $pluginRequest->setArgument('__node', $this->node);
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);
@@ -75,8 +77,8 @@ class PluginViewImplementation extends PluginImplementation
         }
 
         $controllerObjectPairs = array();
+        $pluginViewName = $this->pluginViewNode->getProperty('view');
         foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
-
             /** @var PluginViewDefinition $pluginViewDefinition */
             if ($pluginViewDefinition->getName() !== $pluginViewName) {
                 continue;
@@ -106,7 +108,7 @@ class PluginViewImplementation extends PluginImplementation
     public function evaluate()
     {
         $currentContext = $this->tsRuntime->getCurrentContext();
-        $this->node = $currentContext['node'];
+        $this->pluginViewNode = $currentContext['node'];
         /** @var $parentResponse Response */
         $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
         $pluginResponse = new Response($parentResponse);
@@ -114,13 +116,13 @@ class PluginViewImplementation extends PluginImplementation
         $pluginRequest = $this->buildPluginRequest();
         if ($pluginRequest->getControllerObjectName() === '') {
             $message = 'Master View not selected';
-            if ($this->node->getProperty('plugin')) {
+            if ($this->pluginViewNode->getProperty('plugin')) {
                 $message = 'Plugin View not selected';
             }
-            if ($this->node->getProperty('view')) {
+            if ($this->pluginViewNode->getProperty('view')) {
                 $message ='Master View or Plugin View not found';
             }
-            return $this->node->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
+            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
         return $pluginResponse->getContent();

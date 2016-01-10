@@ -16,16 +16,17 @@ use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
-use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
@@ -38,6 +39,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject
@@ -94,6 +96,12 @@ class ContentController extends ActionController
      * @var EntityToIdentityConverter
      */
     protected $entityToIdentityConverter;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -169,7 +177,9 @@ class ContentController extends ActionController
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
-        $this->assetRepository->add($asset);
+        if ($this->persistenceManager->isNewObject($asset)) {
+            $this->assetRepository->add($asset);
+        }
 
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         // This will not be sent as "application/json" as we need the JSON string and not the single variables.
@@ -224,14 +234,23 @@ class ContentController extends ActionController
      */
     protected function getImagePreviewData(Image $image)
     {
-        $thumbnail = $image->getThumbnail(600, 600);
-        $imageProperties = array(
+        $imageProperties = [
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
-            'previewImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()),
-            'originalDimensions' => array('width' => $image->getWidth(), 'height' => $image->getHeight(), 'aspectRatio' => $image->getAspectRatio()),
-            'previewDimensions' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight()),
+            'originalDimensions' => [
+                'width' => $image->getWidth(),
+                'height' => $image->getHeight(),
+                'aspectRatio' => $image->getAspectRatio()
+            ],
             'mediaType' => $image->getResource()->getMediaType()
-        );
+        ];
+        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Preview'));
+        if ($thumbnail !== null) {
+            $imageProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
+            $imageProperties['previewDimensions'] = [
+                'width' => $thumbnail->getWidth(),
+                'height' => $thumbnail->getHeight()
+            ];
+        }
         return $imageProperties;
     }
 
@@ -278,72 +297,34 @@ class ContentController extends ActionController
      */
     protected function getAssetProperties(Asset $asset)
     {
-        $thumbnail = $this->getAssetThumbnailImage($asset, 16, 16);
-        $assetProperties = array(
+        $assetProperties = [
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
-            'filename' => $asset->getResource()->getFilename(),
-            'previewImageResourceUri' => $this->resourceManager->getPublicPackageResourceUri($thumbnail['package'], $thumbnail['src']),
-            'previewSize' => array('w' => $thumbnail['width'], 'h' => $thumbnail['height'])
-        );
+            'filename' => $asset->getResource()->getFilename()
+        ];
+        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Thumbnail'));
+        if ($thumbnail !== null) {
+            $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
+            $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];
+        }
+
         return $assetProperties;
-    }
-
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
-    }
-
-    /**
-     * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
-     */
-    protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight)
-    {
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        $iconPackage = 'TYPO3.Media';
-
-        if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon =  sprintf('Icons/%spx/_blank.png', $iconSize);
-        }
-
-        return array(
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'package' => $iconPackage,
-            'src' => $icon
-        );
     }
 
     /**
      * Fetch the configured views for the given master plugin
      *
-     * @param NodeInterface $node
+     * @param string $identifier Specifies the node to look up
+     * @param string $workspaceName Name of the workspace to use for querying the node
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string
-     *
-     * @Flow\IgnoreValidation("node")
      */
-    public function pluginViewsAction(NodeInterface $node = null)
+    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = array())
     {
         $this->response->setHeader('Content-Type', 'application/json');
+
+        $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        /** @var $node NodeInterface */
+        $node = $contentContext->getNodeByIdentifier($identifier);
 
         $views = array();
         if ($node !== null) {
@@ -379,14 +360,17 @@ class ContentController extends ActionController
      * Fetch all master plugins that are available in the current
      * workspace.
      *
-     * @param NodeInterface $node
+     * @param string $workspaceName Name of the workspace to use for querying the node
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      */
-    public function masterPluginsAction(NodeInterface $node)
+    public function masterPluginsAction($workspaceName = 'live', array $dimensions = array())
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($node->getContext());
+        $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
+
         $masterPlugins = array();
         if (is_array($pluginNodes)) {
             /** @var $pluginNode NodeInterface */
@@ -400,7 +384,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $translationHelper = new TranslationHelper();
-                $masterPlugins[$pluginNode->getPath()] = $translationHelper->translate(
+                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
                     'masterPlugins.nodeTypeOnPageLabel',
                     null,
                     ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],

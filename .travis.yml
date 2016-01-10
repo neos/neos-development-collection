@@ -1,15 +1,21 @@
 language: php
+addons:
+  postgresql: "9.4"
+services:
+  - postgresql
 matrix:
   fast_finish: true
   include:
+    - php: 7.0
+      env: DB=mysql
+    - php: 7.0
+      env: DB=pgsql
+    - php: 7.0
+      env: DB=mysql BEHAT=true
+    - php: 7.0
+      env: DB=pgsql BEHAT=true
     - php: 5.6
       env: DB=sqlite
-    - php: 5.6
-      env: DB=mysql
-    - php: 5.6
-      env: DB=mysql BEHAT=true
-#    - php: 5.6
-#      env: DB=pgsql
     - php: 5.5
       env: DB=sqlite
 cache:
@@ -20,11 +26,20 @@ before_install:
   - git clone https://github.com/neos/neos-development-distribution.git -b master
   - cd neos-development-distribution
 install:
+  - composer self-update -q
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --no-progress --no-interaction
+  - composer update --no-progress --no-interaction
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
-  - echo 'date.timezone = "Europe/Berlin"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - phpenv config-rm xdebug.ini
+  - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'zend.enable_gc = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'report_zend_debug = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'report_memleaks = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
@@ -42,3 +57,4 @@ notifications:
     on_success: change
     on_failure: change
     on_start: never
+    on_pull_requests: false

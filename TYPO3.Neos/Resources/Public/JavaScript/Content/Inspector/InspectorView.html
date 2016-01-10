@@ -26,9 +26,17 @@
 							<label for="{{unbound elementId}}" class="neos-checkbox">
 								{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
 								{{unbound ui.label}}
+								{{#if ui.help.message}}
+									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
+								{{/if}}
 							</label>
 						{{else}}
-							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">{{unbound ui.label}}</label>
+							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">
+								{{unbound ui.label}}
+								{{#if ui.help.message}}
+									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
+								{{/if}}
+							</label>
 							{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
 						{{/if}}
 					{{/collection}}

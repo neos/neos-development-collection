@@ -13,9 +13,11 @@ namespace TYPO3\Media\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * @Flow\Scope("singleton")
@@ -41,7 +43,7 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
@@ -50,6 +52,19 @@ class MediaCommandController extends CommandController
      * @var ThumbnailRepository
      */
     protected $thumbnailRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
+
+    /**
+     * If enabled
+     * @Flow\InjectConfiguration("asyncThumbnails")
+     * @var boolean
+     */
+    protected $asyncThumbnails;
 
     /**
      * Import resources to asset management
@@ -109,16 +124,89 @@ class MediaCommandController extends CommandController
     }
 
     /**
-     * Remove all thumbnail objects and resources
+     * Create thumbnails
+     *
+     * Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
+     * thumbnails for a specific thumbnail preset configuration.
+     *
+     * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+     *
+     * @param string $preset Preset name, if not provided thumbnails are created for all presets
+     * @param boolean $async Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
+     * @return void
      */
-    public function clearThumbnailsCommand()
+    public function createThumbnailsCommand($preset = null, $async = null)
     {
-        $thumbnailCount = $this->thumbnailRepository->countAll();
+        $async = $async !== null ? $async : $this->asyncThumbnails;
+        $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
+        $presetThumbnailConfigurations = [];
+        foreach ($presets as $preset) {
+            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        }
+        $iterator = $this->assetRepository->findAllIterator();
+        $imageCount = $this->assetRepository->countAll();
+        $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
+        foreach ($this->assetRepository->iterate($iterator) as $image) {
+            foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
+                $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
+                $this->persistenceManager->persistAll();
+                $this->output->progressAdvance(1);
+            }
+        }
+    }
+
+    /**
+     * Remove thumbnails
+     *
+     * Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
+     * matching a specific thumbnail preset configuration.
+     *
+     * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
+     * @return void
+     */
+    public function clearThumbnailsCommand($preset = null)
+    {
+        if ($preset !== null) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+            $thumbnailConfigurationHash = $thumbnailConfiguration->getHash();
+            $thumbnailCount = $this->thumbnailRepository->countByConfigurationHash($thumbnailConfigurationHash);
+            $iterator = $this->thumbnailRepository->findAllIterator($thumbnailConfigurationHash);
+        } else {
+            $thumbnailCount = $this->thumbnailRepository->countAll();
+            $iterator = $this->thumbnailRepository->findAllIterator();
+        }
         $this->output->progressStart($thumbnailCount);
-        $iterator = $this->thumbnailRepository->findAllIterator();
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
             $this->output->progressAdvance(1);
+        }
+    }
+
+    /**
+     * Render ungenerated thumbnails
+     *
+     * Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
+     * thumbnails to be rendered to avoid memory exhaustion.
+     *
+     * @param integer $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+     * @return void
+     */
+    public function renderThumbnailsCommand($limit = null)
+    {
+        $thumbnailCount = $this->thumbnailRepository->countUngenerated();
+        $iterator = $this->thumbnailRepository->findUngeneratedIterator();
+        $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
+        $iteration = 0;
+        foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+            if ($thumbnail->getResource() === null) {
+                $this->thumbnailService->refreshThumbnail($thumbnail);
+                $this->persistenceManager->persistAll();
+            }
+            $this->output->progressAdvance(1);
+            $iteration++;
+            if ($iteration === $limit) {
+                break;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
+  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')))), 100, '...')}"
   abstract: TRUE
   ui:
     inspector:
@@ -10,6 +10,7 @@
           position: 10
           icon: 'icon-pencil'
         meta:
+          label: i18n
           position: 20
           icon: 'icon-cog'
       groups:

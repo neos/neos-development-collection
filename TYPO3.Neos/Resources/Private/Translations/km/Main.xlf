@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="km" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="km" state="needs-translation">Review changes</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="km" state="translated">អនុវត្ត</target></trans-unit>
@@ -30,6 +33,9 @@
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="km" state="needs-translation">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="km" state="translated">មើលអត្ថបទ</target></trans-unit>
@@ -122,13 +128,13 @@
 			<target xml:lang="km" state="needs-translation">Publish to {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="km" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="km" state="translated">ចុះផ្សាយរាល់ការផ្លាស់ប្ដូរសម្រាប់ទំព័រនេះ</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="km" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="km" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="km" state="translated">កំពុងចុះផ្សាយ</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="km" state="translated">បានចុះផ្សាយ</target></trans-unit>
@@ -448,6 +454,9 @@
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="km" state="translated">កំពង់ផ្តល់សិទ្ធ</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="km" state="translated">ចាកចេញ</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -486,6 +495,19 @@
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
 			<target xml:lang="km" state="translated">"{nodeTypeName}" នៅលើទំព័រ "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="km" state="needs-translation">Nodes</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="km" state="translated">បង្ហាញ</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="km" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="km" state="needs-translation">Node Properties</target></trans-unit>
     </body>
   </file>
 </xliff>

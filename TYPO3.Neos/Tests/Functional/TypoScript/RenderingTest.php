@@ -10,7 +10,9 @@ namespace TYPO3\Neos\Tests\Functional\TypoScript;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Functional test case which tests the rendering
@@ -249,7 +251,55 @@ class RenderingTest extends AbstractNodeTest
         if ($message === '') {
             $message = $selector . ' did not match: ' . $actual;
         }
-        parent::assertSelectEquals($selector, $content, $count, $actual, $message, $isHtml);
+
+        $crawler = new Crawler;
+        if ($actual instanceof \DOMDocument) {
+            $crawler->addDocument($actual);
+        } elseif ($isHtml) {
+            $crawler->addHtmlContent($actual);
+        } else {
+            $crawler->addXmlContent($actual);
+        }
+        $crawler = $crawler->filter($selector);
+
+        if (is_string($content)) {
+            $crawler = $crawler->reduce(function (Crawler $node, $i) use ($content) {
+                if ($content === '') {
+                    return $node->text() === '';
+                }
+                if (preg_match('/^regexp\s*:\s*(.*)/i', $content, $matches)) {
+                    return (bool) preg_match($matches[1], $node->text());
+                }
+                return strstr($node->text(), $content) !== false;
+            });
+        }
+
+        $found = count($crawler);
+        if (is_numeric($count)) {
+            self::assertEquals($count, $found, $message);
+        } elseif (is_bool($count)) {
+            $found = $found > 0;
+            if ($count) {
+                self::assertTrue($found, $message);
+            } else {
+                self::assertFalse($found, $message);
+            }
+        } elseif (is_array($count) && (isset($count['>']) || isset($count['<']) || isset($count['>=']) || isset($count['<=']))) {
+            if (isset($count['>'])) {
+                self::assertTrue($found > $count['>'], $message);
+            }
+            if (isset($count['>='])) {
+                self::assertTrue($found >= $count['>='], $message);
+            }
+            if (isset($count['<'])) {
+                self::assertTrue($found < $count['<'], $message);
+            }
+            if (isset($count['<='])) {
+                self::assertTrue($found <= $count['<='], $message);
+            }
+        } else {
+            throw new \PHPUnit_Framework_Exception('Invalid count format');
+        }
     }
 
     /**
@@ -312,12 +362,14 @@ class RenderingTest extends AbstractNodeTest
         $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
         $request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
         $response = new \TYPO3\Flow\Http\Response();
+        /** @var \TYPO3\Flow\Mvc\Controller\Arguments $mockArguments */
+        $mockArguments = $this->getMock(\TYPO3\Flow\Mvc\Controller\Arguments::class, array(), array(), '', false);
         $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 
         $controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
             $request,
             $response,
-            $this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', false),
+            $mockArguments,
             $uriBuilder,
             $this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
         );

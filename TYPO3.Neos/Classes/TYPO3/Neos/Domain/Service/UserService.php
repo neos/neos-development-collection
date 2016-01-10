@@ -34,6 +34,7 @@ use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -130,6 +131,11 @@ class UserService
     protected $now;
 
     /**
+     * @var array
+     */
+    protected $runtimeUserCache = [];
+
+    /**
      * Retrieves a list of all existing users
      *
      * @return array<User> The users
@@ -151,6 +157,11 @@ class UserService
      */
     public function getUser($username, $authenticationProviderName = null)
     {
+        if ($authenticationProviderName !== null && isset($this->runtimeUserCache['a_' . $authenticationProviderName][$username])) {
+            return $this->runtimeUserCache['a_' . $authenticationProviderName][$username];
+        } elseif (isset($this->runtimeUserCache['u_' . $username])) {
+            return $this->runtimeUserCache['u_' . $username];
+        }
         $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
         if (!$account instanceof Account) {
             return null;
@@ -159,7 +170,14 @@ class UserService
         if (!$user instanceof User) {
             throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
         }
-
+        if ($authenticationProviderName !== null) {
+            if (!isset($this->runtimeUserCache['a_' . $authenticationProviderName])) {
+                $this->runtimeUserCache['a_' . $authenticationProviderName] = [];
+            }
+            $this->runtimeUserCache['a_' . $authenticationProviderName][$username] = $user;
+        } else {
+            $this->runtimeUserCache['u_' . $username] = $user;
+        }
         return $user;
     }
 
@@ -182,7 +200,6 @@ class UserService
                 return $account->getAccountIdentifier();
             }
         }
-
         return null;
     }
 
@@ -251,7 +268,7 @@ class UserService
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
-        $user->addAccount($account);
+        $this->partyService->assignAccountToParty($account, $user);
 
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
@@ -733,7 +750,7 @@ class UserService
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
-        $userWorkspaceName = 'user-' . $account->getAccountIdentifier();
+        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
         $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
@@ -758,7 +775,7 @@ class UserService
      */
     protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
@@ -775,7 +792,7 @@ class UserService
     {
         /** @var Workspace $workspace */
         foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
-            $workspace->setOwner();
+            $workspace->setOwner(null);
             $this->workspaceRepository->update($workspace);
         }
     }

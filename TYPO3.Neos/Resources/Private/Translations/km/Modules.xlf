@@ -68,7 +68,7 @@
 			<target xml:lang="km" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="km" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="km" state="translated">ម្ចាស់</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="km" state="translated">
@@ -87,7 +87,10 @@
 			<target xml:lang="km" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="km" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្លាស់ប្ដូរ</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="km" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="km" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
@@ -136,9 +139,9 @@
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="km" state="needs-translation">Publish all changes to {0}</target></trans-unit>
-      <trans-unit id="workspaces.legendCaption" xml:space="preserve">
-				<source>Legend</source>
-			<target xml:lang="km" state="translated">រឿងព្រេង</target></trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve">
+				<source>Changed Content</source>
+			<target xml:lang="km" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="km" state="translated">ត្រូវបានលប់</target><alt-trans><target xml:lang="km">ការលប់</target></alt-trans><alt-trans><target xml:lang="km">លប់</target></alt-trans></trans-unit>
@@ -266,6 +269,9 @@
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="km" state="translated">{0} បាន​លុប​គណនី "{1}" នៃ {2}។</target></trans-unit>
+      <trans-unit id="history.loadMore.label" xml:space="preserve">
+				<source>Load More</source>
+			<target xml:lang="km" state="needs-translation">Load More</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -476,6 +482,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="km" state="translated">ទិន្នន័យរប​ស់​អ្នក​ប្រើ​ប្រាស់</target></trans-unit>
+      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+				<source>User Menu</source>
+			<target xml:lang="km" state="needs-translation">User Menu</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="km" state="translated">ជម្រើស​ការប្រើប្រាស់​របស់​អ្នក​​ប្រើ​ប្រាស់​</target></trans-unit>
