@@ -323,6 +323,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param NodeInterface $node
      * @param string $destinationPath
+     * @return void
      */
     protected function moveNodeToDestinationPath(NodeInterface $node, $destinationPath)
     {
@@ -895,7 +896,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $expectedPropertyType = $nodeType->getPropertyType($propertyName);
         if ($expectedPropertyType === 'references') {
-            return $this->resolvePropertyReferences($returnNodesAsIdentifiers, $value);
+            return ($returnNodesAsIdentifiers ? $value : $this->resolvePropertyReferences($value));
         }
 
         if ($expectedPropertyType === 'reference') {
@@ -908,16 +909,11 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Maps the property value (an array of node identifiers) to the Node objects if needed.
      *
-     * @param boolean $returnNodesAsIdentifiers
      * @param array $value
      * @return array
      */
-    protected function resolvePropertyReferences($returnNodesAsIdentifiers, $value = [])
+    protected function resolvePropertyReferences($value = [])
     {
-        if ($returnNodesAsIdentifiers) {
-            return $value;
-        }
-
         $nodes = array_map(function ($nodeIdentifier) {
             return $this->context->getNodeByIdentifier($nodeIdentifier);
         }, $value);
