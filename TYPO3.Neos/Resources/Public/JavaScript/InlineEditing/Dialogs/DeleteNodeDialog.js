@@ -14,18 +14,19 @@ define(
 		template
 	) {
 		return AbstractModal.extend({
-			template: Ember.Handlebars.compile(template),
+			actions: {
+				'delete': function() {
+					this.get('_node').$element.remove();
+					NodeActions.remove(this.get('_node'));
+					this.destroy();
+				}
+			},
+			template: Ember.HTMLBars.compile(template),
 			_node: null,
 
 			strippedLabel: function() {
 				return $('<span>' + this.get('_node.nodeLabel') + '</span>').text().trim();
-			}.property('_node.nodeLabel'),
-
-			'delete': function() {
-				this.get('_node').$element.remove();
-				NodeActions.remove(this.get('_node'));
-				this.destroy();
-			}
+			}.property('_node.nodeLabel')
 		});
 	}
 );

@@ -31,7 +31,7 @@ define(
 	return Ember.View.extend({
 		elementId: 'neos-inspector',
 
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		Button: Button,
 		Section: Section,
 		Breadcrumb: Breadcrumb,
@@ -70,7 +70,8 @@ define(
 		 */
 		keyDown: function(event) {
 			if (event.keyCode === 13) {
-				this.get('controller').apply();
+				InspectorController.apply();
+
 				return false;
 			}
 		},

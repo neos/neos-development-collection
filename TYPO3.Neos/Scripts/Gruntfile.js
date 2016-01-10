@@ -217,30 +217,19 @@ module.exports = function (grunt) {
 				}
 			},
 
-			handlebars: {
-				src: [
-					libraryPath + 'handlebars/handlebars-1.0.0.js'
-				],
-				dest: libraryPath + 'handlebars.js',
-				options: {
-					banner: 'define(function() {',
-					footer: '  return Handlebars;' +
-					'});'
-				}
-			},
-
 			// This file needs jQueryWithDependencies first
 			ember: {
 				src: [
-					libraryPath + 'emberjs/ember-1.0.0.js',
+					libraryPath + 'emberjs/ember-template-compiler.js',
+					libraryPath + 'emberjs/ember.js',
 					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',
 				options: {
-					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
+					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
 					'  CLDR.defaultLocale = window.T3Configuration.locale;' + // TODO: make configurable, as this is only used for plurals this is not highest prio (same behavior in cldr for most languages)
 					'  var Ember = {exports: {}};' +
-					'  var ENV = {LOG_VERSION: false};' +
+					'  var EmberENV = {LOG_VERSION: false, _ENABLE_LEGACY_VIEW_SUPPORT: true, _ENABLE_LEGACY_CONTROLLER_SUPPORT: true};' +
 					'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
 						// TODO: window.T3 can be removed!
 					'  Ember.lookup = { Ember: Ember, T3: window.T3};' +
@@ -251,6 +240,9 @@ module.exports = function (grunt) {
 						src = src.replace('I18n.t(', 'I18n.translate(');
 						src = src.replace("Handlebars.registerHelper('t'", "Handlebars.registerHelper('translate'");
 						src = src.replace('t: function(key, context)', 'translate: function(key, context)');
+
+						// Expose HTMLBars helpers to register helpers that cannot be loaded
+						src = src.replace(/(DOMHelper\: \_emberHtmlbarsSystemDomHelper\.default)/g, '$1, helpers: _emberHtmlbarsHelpers');
 
 						return src;
 					}

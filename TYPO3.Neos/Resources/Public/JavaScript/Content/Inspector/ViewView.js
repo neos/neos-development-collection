@@ -11,7 +11,8 @@ define(
 	$,
     I18n
 ) {
-	return Ember.ContainerView.extend({
+	return Ember.View.extend({
+		template: Ember.HTMLBars.compile('{{#if view.view}}{{view view.view}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
 		viewDefinition: null,
 		classNameBindings: ['viewClassName'],
 		viewClassName: '',
@@ -32,7 +33,7 @@ define(
 					key: viewDefinition.key,
 					label: I18n.translate(viewDefinition.label),
 					icon: viewDefinition.icon,
-					inspectorBinding: this.inspectorBinding
+					inspector: this.inspector
 				},
 				Ember.get(viewDefinition, 'viewOptions') || {}
 			);
@@ -49,8 +50,8 @@ define(
 					if (!that.isDestroyed) {
 						// It might happen that the editor was deselected before the require() call completed; so we
 						// need to check again whether the view has been destroyed in the meantime.
-						var view = viewClass.create(viewOptions);
-						that.set('currentView', view);
+						var view = viewClass.extend(viewOptions);
+						that.set('view', view);
 					}
 				});
 			});

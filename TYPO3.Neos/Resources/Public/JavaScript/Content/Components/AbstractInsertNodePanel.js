@@ -10,7 +10,7 @@ define([
 	template
 ) {
 	return AbstractModal.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		nodeTypeGroups: Ember.required,
 		insertNode: Ember.required,
 		HelpMessage: HelpMessage

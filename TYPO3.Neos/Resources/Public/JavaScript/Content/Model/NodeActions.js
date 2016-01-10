@@ -177,8 +177,7 @@ define(
 					}
 
 					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, clipboard.type === 'cut');
-				}
-			).fail(
+				},
 				function(error) {
 					Notification.error('Failed to perform node action');
 					console.error('Failed to perform node action', error);
@@ -245,6 +244,7 @@ define(
 				localXhr = this._prepareXhr();
 
 			LoadingIndicator.start();
+
 			NodeEndpoint.createAndRender(
 				referenceNode.get('nodePath'),
 				typoScriptPath,
@@ -261,8 +261,7 @@ define(
 			).then(
 				function(result) {
 					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, false);
-				}
-			).fail(
+				},
 				function(error) {
 					Notification.error('Failed to perform node action');
 					console.error('Failed to perform node action', error);

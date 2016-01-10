@@ -30,7 +30,7 @@ define(
             I18n,
             template) {
     return Ember.View.extend({
-      template: Ember.Handlebars.compile(template),
+      template: Ember.HTMLBars.compile(template),
       elementId: 'neos-publish-menu',
       classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],
       autoPublish: function (key, value) {
@@ -41,6 +41,7 @@ define(
       }.property(),
       controller: PublishableNodes,
       targetWorkspaceController: TargetWorkspaceController,
+      checkbox: Ember.Checkbox,
 
       /**
        * Only show the target workspace selector if more than one workspace can be selected
@@ -80,7 +81,7 @@ define(
         targetWorkspaceController: TargetWorkspaceController,
         targetWorkspaceSelector: TargetWorkspaceSelector,
 
-        target: 'controller',
+        target: PublishableNodes,
         action: 'publishChanges',
 
         _nodeEndpoint: NodeEndpoint,
@@ -98,7 +99,7 @@ define(
         _noChangesBinding: 'controller.noChanges',
         _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
-        defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
+        defaultTemplate: Ember.HTMLBars.compile('{{view.label}}'),
 
         _labelBinding: 'targetWorkspaceController.targetWorkspaceLabel',
         _targetWorkspaceReadOnlyBinding: 'targetWorkspaceController.targetWorkspace.readOnly',
@@ -117,11 +118,11 @@ define(
           }
 
           if (this.get('_noChanges')) {
-            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
+            return new Ember.String.htmlSafe(I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
           }
 
           if (this.get('_label')) {
-            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="neos-badge">' + this.get('_numberOfChanges') + '</span>');
+            return new Ember.String.htmlSafe(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="neos-badge">' + this.get('_numberOfChanges') + '</span>');
           } else {
             return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
           }
@@ -179,7 +180,7 @@ define(
         classNames: ['neos-discard-button'],
         controller: PublishableNodes,
 
-        target: 'controller',
+        target: PublishableNodes,
         action: 'discardChanges',
 
         _nodeEndpoint: NodeEndpoint,

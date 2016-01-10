@@ -11,11 +11,11 @@ function (
 	template
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		// Private API: set when extending
 		desiredPosition: 'after',
-		allowedPositions: null,
+		allowedPositions: [],
 		title: null,
 		iconClass: null,
 		mouseUp: function(event) {},
@@ -42,7 +42,7 @@ function (
 		},
 
 		position: function() {
-			var allowedPositions = this.get('allowedPositions'),
+			var allowedPositions = this.get('allowedPositions') || [],
 				desiredPosition = this.get('desiredPosition');
 			return allowedPositions.indexOf(desiredPosition) !== -1 ? desiredPosition : allowedPositions[allowedPositions.length - 1];
 		}.property('allowedPositions', 'desiredPosition'),
@@ -52,7 +52,8 @@ function (
 		}.property('position'),
 
 		isDisabled: function() {
-			return this.get('allowedPositions').length === 0;
+			var allowedPositions = this.get('allowedPositions') || [];
+			return allowedPositions.length === 0;
 		}.property('allowedPositions'),
 
 		mouseDown: function(event) {
@@ -73,7 +74,7 @@ function (
 
 		PositionSelectorOption: Ember.View.extend({
 			// Set position to either `into`, `before` or `after` when using
-			position: Ember.required(),
+			position: null,
 
 			tagName: 'button',
 
@@ -111,7 +112,7 @@ function (
 				} else {
 					return false;
 				}
-			}.property('allowedPositions.@each'),
+			}.property('allowedPositions.[]'),
 
 			mouseDown: function(event) {
 				if (!this.get('isDisabled')) {

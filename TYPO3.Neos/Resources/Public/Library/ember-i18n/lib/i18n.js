@@ -54,15 +54,15 @@
   };
 
   runAfterRender = (function() {
-    if (Em.run.queues.indexOf('afterRender') === -1) {
+    if (Ember.run.queues.indexOf('afterRender') === -1) {
       // Ember 0.9 doesn't have an afterRender queue.
       return function runAfterRender(callback) {
-        return Em.run.once(callback);
+        return Ember.run.once(callback);
       };
     }
 
     return function runAfterRender(callback) {
-      return Em.run.scheduleOnce('afterRender', callback);
+      return Ember.run.scheduleOnce('afterRender', callback);
     };
   }());
 
@@ -121,7 +121,7 @@
 
     exists: keyExists,
 
-    TranslateableProperties: Em.Mixin.create({
+    TranslateableProperties: Ember.Mixin.create({
       init: function() {
         var result = this._super.apply(this, arguments);
         eachTranslatedAttribute(this, function(attribute, translation) {
@@ -135,7 +135,7 @@
       }
     }),
 
-    TranslateableAttributes: Em.Mixin.create({
+    TranslateableAttributes: Ember.Mixin.create({
       didInsertElement: function() {
         var result = this._super.apply(this, arguments);
         eachTranslatedAttribute(this, function(attribute, translation) {
@@ -170,7 +170,7 @@
     delete attrs.tagName;
     elementID = uniqueElementId();
 
-    Em.keys(attrs).forEach(function(property) {
+    Ember.keys(attrs).forEach(function(property) {
       var bindPath, currentValue, invoker, isBindingMatch, normalized, normalizedPath, observer, propertyName, root, _ref;
       isBindingMatch = property.match(isBinding);
 
@@ -186,20 +186,20 @@
         observer = function() {
           var elem, newValue;
           if (view.get('state') !== 'inDOM') {
-            Em.removeObserver(root, normalizedPath, invoker);
+            Ember.removeObserver(root, normalizedPath, invoker);
             return;
           }
           newValue = get(context, bindPath, options);
           elem = view.$("#" + elementID);
           attrs[propertyName] = newValue;
-          return elem.html(I18n.t(key, attrs));
+          return elEmber.html(I18n.t(key, attrs));
         };
 
         invoker = function() {
           return runAfterRender(observer);
         };
 
-        return Em.addObserver(root, normalizedPath, invoker);
+        return Ember.addObserver(root, normalizedPath, invoker);
       }
     });
 
@@ -212,7 +212,7 @@
     attrs = options.hash;
     result = [];
 
-    Em.keys(attrs).forEach(function(property) {
+    Ember.keys(attrs).forEach(function(property) {
       var translatedValue;
       translatedValue = I18n.t(attrs[property]);
       return result.push('%@="%@"'.fmt(property, translatedValue));

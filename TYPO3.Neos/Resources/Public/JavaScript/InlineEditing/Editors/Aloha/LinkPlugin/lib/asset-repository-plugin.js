@@ -9,6 +9,8 @@ define( [
 	 */
 	return Plugin.create('asset-repository-plugin', {
 		init: function () {
+			this._super();
+
 			new AssetRepository();
 		},
 

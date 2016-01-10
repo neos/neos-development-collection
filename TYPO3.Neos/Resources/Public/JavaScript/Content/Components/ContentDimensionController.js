@@ -27,11 +27,11 @@ function(
 	 * Helper class for a Content Dimension
 	 */
 	Dimension = Ember.Object.extend({
-		identifier: Ember.required(),
-		defaultPreset: Ember.required(),
-		label: Ember.required(),
-		icon: Ember.required(),
-		options: Ember.required(),
+		identifier: null,
+		defaultPreset: null,
+		label: null,
+		icon: null,
+		options: null,
 		selected: null,
 		_presetsDidChange: function() {
 			this.set('selected', this.get('presets').findBy('selected', true));
@@ -42,16 +42,73 @@ function(
 	 * Helper class for a Dimension Preset
 	 */
 	Preset = Ember.Object.extend({
-		identifier: Ember.required(),
-		label: Ember.required(),
+		identifier: null,
+		label: null,
 		disabled: false,
-		values: Ember.required()
+		values: null
 	});
 
 	/**
 	 * Controller displaying the dimension selector
 	 */
 	return Ember.Controller.extend({
+		actions: {
+			/**
+			 * Revert the selected dimension values to those stored in the current document and close the dimension selector
+			 */
+			cancelSelection: function () {
+				this._updateSelectedDimensionsFromCurrentDocument();
+				this.set('selectorIsActive', false);
+			},
+
+			/**
+			 * Apply the currently selected dimensions and reload the document to reflect these changes
+			 *
+			 * This method sends an AJAX request for querying the Nodes service to check if the current node already exists
+			 * in the newly selected dimensions. If it does, the document is reloaded with the new dimension values, if such
+			 * a combination does not exist yet, a dialog is shown asking the user if such a variant should be created.
+			 *
+			 * Also triggers "contentDimensionsSelectionChanged" if the document could be reloaded.
+			 */
+			applySelection: function () {
+				var that = this,
+					$documentMetadata = $('#neos-document-metadata'),
+					nodeIdentifier = $documentMetadata.data('node-_identifier'),
+					parameters = {
+						dimensions: this.get('dimensionValues'),
+						workspaceName: $documentMetadata.data('neos-context-workspace-name')
+					};
+
+				this.set('showInitialTranslationDialog', false);
+				HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
+					that.set('selectorIsActive', false);
+					ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
+						EventDispatcher.trigger('contentDimensionsSelectionChanged');
+
+						that._updateSelectedDimensionsFromCurrentDocument();
+						that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
+					});
+				}, function(error) {
+					if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
+						that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
+					} else {
+						Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
+					}
+				});
+			},
+
+			cancelCreateAction: function() {
+				this.set('showInitialTranslationDialog', false);
+			},
+
+			createEmptyDocumentAction: function() {
+				this._createDocumentAndOptionallyCopy('adoptFromAnotherDimension');
+			},
+
+			createDocumentAndCopyContentAction: function() {
+				this._createDocumentAndOptionallyCopy('adoptFromAnotherDimensionAndCopyContent');
+			}
+		},
 		classNames: 'neos-dimension-selector',
 		selectedDimensions: {},
 		disableOverlayButtons: false,
@@ -67,6 +124,7 @@ function(
 		 */
 		_loadConfiguration: function() {
 			var that = this;
+
 			ResourceCache.getItem(Configuration.get('ContentDimensionsUri')).then(function(configuration) {
 				that.set('configuration', configuration);
 			}, function(error) {
@@ -185,7 +243,7 @@ function(
 				dimensions[dimension.get('identifier')] = dimension.get('selected.values');
 			});
 			return dimensions;
-		}.property('dimensions.@each.selected'),
+		}.property('dimensions.[].selected'),
 
 		currentDimensionChoiceText: function() {
 			var dimensionText = [];
@@ -193,7 +251,7 @@ function(
 				dimensionText.push(dimension.get('label') + ' ' + dimension.get('selected.label'));
 			});
 			return dimensionText.join(', ');
-		}.property('dimensions.@each.selected'),
+		}.property('dimensions.[].selected'),
 
 		currentDocumentDimensionChoiceText: '',
 
@@ -202,62 +260,6 @@ function(
 				this.set('currentDocumentDimensionChoiceText', this.get('currentDimensionChoiceText'));
 			}
 		}.observes('currentDimensionChoiceText'),
-
-		/**
-		 * Revert the selected dimension values to those stored in the current document and close the dimension selector
-		 */
-		cancelSelection: function () {
-			this._updateSelectedDimensionsFromCurrentDocument();
-			this.set('selectorIsActive', false);
-		},
-
-		/**
-		 * Apply the currently selected dimensions and reload the document to reflect these changes
-		 *
-		 * This method sends an AJAX request for querying the Nodes service to check if the current node already exists
-		 * in the newly selected dimensions. If it does, the document is reloaded with the new dimension values, if such
-		 * a combination does not exist yet, a dialog is shown asking the user if such a variant should be created.
-		 *
-		 * Also triggers "contentDimensionsSelectionChanged" if the document could be reloaded.
-		 */
-		applySelection: function () {
-			var that = this,
-				$documentMetadata = $('#neos-document-metadata'),
-				nodeIdentifier = $documentMetadata.data('node-_identifier'),
-				parameters = {
-					dimensions: this.get('dimensionValues'),
-					workspaceName: $documentMetadata.data('neos-context-workspace-name')
-				};
-
-			this.set('showInitialTranslationDialog', false);
-			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-				that.set('selectorIsActive', false);
-				ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
-					EventDispatcher.trigger('contentDimensionsSelectionChanged');
-
-					that._updateSelectedDimensionsFromCurrentDocument();
-					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
-				});
-			}, function(error) {
-				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
-					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
-				} else {
-					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
-				}
-			});
-		},
-
-		cancelCreateAction: function() {
-			this.set('showInitialTranslationDialog', false);
-		},
-
-		createEmptyDocumentAction: function() {
-			this._createDocumentAndOptionallyCopy('adoptFromAnotherDimension');
-		},
-
-		createDocumentAndCopyContentAction: function() {
-			this._createDocumentAndOptionallyCopy('adoptFromAnotherDimensionAndCopyContent');
-		},
 
 		_createDocumentAndOptionallyCopy: function(mode) {
 			var that = this,

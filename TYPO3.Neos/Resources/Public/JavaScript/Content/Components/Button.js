@@ -17,7 +17,22 @@ define(
 			isActive: false,
 			label: '',
 			title: '',
-			defaultTemplate: Ember.Handlebars.compile('{{view.translatedLabel}}'),
+			defaultTemplate: Ember.HTMLBars.compile('{{view.translatedLabel}}'),
+			action: null,
+			target: null,
+
+			triggerAction: function() {
+				var action = this.get('action');
+				if (action) {
+					var target = this.get('target');
+					if (typeof target.send === 'function') {
+						target.send(action);
+					} else {
+						target[action]();
+					}
+				}
+				this._super();
+			},
 
 			translatedLabel: function() {
 				return I18n.translate(this.get('label'));
@@ -28,22 +43,6 @@ define(
 				var icon = this.get('icon');
 				return icon !== '' ? 'icon-' + icon : '';
 			}.property('icon'),
-
-			/**
-			 * @private
-			 * Overrides `TargetActionSupport`'s `targetObject` computed
-			 * property to use Handlebars-specific path resolution.
-			 * @property targetObject
-			 */
-			targetObject: Ember.computed(function() {
-				var target = this.get('target'),
-					root = this.get('context'),
-					data = this.get('templateData');
-
-				if (typeof target !== 'string') { return target; }
-
-				return Ember.Handlebars.get(root, target, { data: data });
-			}).property('target'),
 
 			mouseDown: function() {
 				if (!this.get('disabled')) {

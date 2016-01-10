@@ -67,6 +67,10 @@ define(
 							// deselecting the current node.
 							return;
 						}
+						// Skip click events from elements not in DOM (removed in Ember)
+						if (!document.body.contains(e.target)) {
+							return;
+						}
 						// Deselect any other active element
 						if (NodeSelection.get('selectedNode') !== null) {
 							NodeSelection.updateSelection();

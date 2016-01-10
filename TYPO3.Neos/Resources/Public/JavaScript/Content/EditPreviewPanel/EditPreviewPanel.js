@@ -16,7 +16,7 @@ define(
 ) {
 	return Ember.View.extend({
 		elementId: 'neos-edit-preview-panel',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		isVisibleBinding: 'controller.visible',
 
 		controller: EditPreviewPanelController,
@@ -25,7 +25,7 @@ define(
 			if (this.$()) {
 				var that = this;
 				this.$().one('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
-					if (that.get('controller.editPreviewPanelMode') === true) {
+					if (EditPreviewPanelController.get('editPreviewPanelMode') === true) {
 						EventDispatcher.triggerExternalEvent('Neos.EditPreviewPanelOpened');
 					} else {
 						EventDispatcher.triggerExternalEvent('Neos.EditPreviewPanelClosed');
@@ -33,7 +33,7 @@ define(
 					EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
 				});
 			}
-			if (this.get('controller.editPreviewPanelMode') === true) {
+			if (EditPreviewPanelController.get('editPreviewPanelMode') === true) {
 				$('body').addClass('neos-edit-preview-panel-open');
 			} else {
 				$('body').removeClass('neos-edit-preview-panel-open');
@@ -41,12 +41,13 @@ define(
 		}.observes('controller.editPreviewPanelMode').on('init'),
 
 		didInsertElement: function() {
-			var editModes = this.get('controller.editingModes'),
-				previewModes = this.get('controller.previewModes'),
-				activeItems = [
-					Math.max(0, editModes.indexOf(editModes.findProperty('active'))),
-					Math.max(0, previewModes.indexOf(previewModes.findProperty('active')))
-				];
+			var editModes = EditPreviewPanelController.get('editingModes');
+			var previewModes = EditPreviewPanelController.get('previewModes');
+			var activeItems = [
+				Math.max(0, editModes.indexOf(editModes.findBy('active'))),
+				Math.max(0, previewModes.indexOf(previewModes.findBy('active')))
+			];
+
 			this.$('.neos-scroll-container > .neos-frame').each(function(index) {
 				$(this).sly({
 					horizontal: 1,
@@ -81,7 +82,7 @@ define(
 		},
 
 		_reloadSliders: function() {
-			if (this.get('controller.editingModes').length > 0 || this.get('controller.previewModes').length > 0) {
+			if (EditPreviewPanelController.get('editingModes').length > 0 || EditPreviewPanelController.get('previewModes').length > 0) {
 				this.$('.neos-scroll-container > .neos-frame').sly('reload');
 			}
 		}

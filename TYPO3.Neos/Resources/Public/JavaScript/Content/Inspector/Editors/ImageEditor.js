@@ -11,7 +11,8 @@ define(
 	'Shared/Notification',
 	'Shared/Utility',
 	'Shared/HttpClient',
-	'Shared/I18n'
+	'Shared/I18n',
+	'Shared/Helpers/EqualHelper'
 ],
 function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient, I18n) {
 	/**
@@ -19,6 +20,45 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 	 * error messages otherwise.
 	 */
 	return FileUpload.extend({
+		actions: {
+			/****************************************
+			 * IMAGE REMOVE
+			 ***************************************/
+			remove: function() {
+				if (this.get('_mediaBrowserEditView')) {
+					SecondaryInspectorController.hide(this.get('_mediaBrowserEditView'));
+					this.set('_mediaBrowserEditView', null);
+				}
+				if (this.get('_mediaBrowserView')) {
+					SecondaryInspectorController.hide(this.get('_mediaBrowserView'));
+				}
+				this.set('_object', null);
+				this.set('_originalImageUri', null);
+				this.set('_previewImageUri', null);
+				this.set('_finalImageDimensions.width', null);
+				this.set('_finalImageDimensions.height', null);
+				this.set('value', '');
+			},
+
+			beforeMediaBrowserIsShown: function () {
+				var that = this;
+				window.Typo3MediaBrowserCallbacks = {
+					assetChosen: function (assetIdentifier) {
+						that._displayImageLoader();
+
+						that.set('_loadPreviewImageHandler', HttpClient.getResource(
+							that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
+							{dataType: 'json'}
+						));
+						that.get('_loadPreviewImageHandler').then(function (result) {
+							that.fileUploaded(result);
+							that._hideImageLoader();
+						});
+						that.set('mediaBrowserShown', false);
+					}
+				};
+			},
+		},
 
 		/****************************************
 		 * GENERAL SETUP
@@ -53,7 +93,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			resize: false
 		},
 
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		BooleanEditor: BooleanEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 
@@ -136,8 +176,12 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		loadingIndicator: null,
 
 		init: function () {
-			var that = this;
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
+
+			var that = this;
 
 			// Create new instance per image editor to avoid side effects
 			this._initializeMediaView();
@@ -267,8 +311,10 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * and reads the image if possible
 		 */
 		didInsertElement: function () {
-			var that = this;
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			this.$().find('.neos-inspector-image-thumbnail-inner').css({
 				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
@@ -297,30 +343,11 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 ***************************************/
 		_mediaBrowserView: null,
 
-		_beforeMediaBrowserIsShown: function () {
-			var that = this;
-			window.Typo3MediaBrowserCallbacks = {
-				assetChosen: function (assetIdentifier) {
-					that._displayImageLoader();
-
-					that.set('_loadPreviewImageHandler', HttpClient.getResource(
-						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
-						{dataType: 'json'}
-					));
-					that.get('_loadPreviewImageHandler').then(function (result) {
-						that.fileUploaded(result);
-						that._hideImageLoader();
-					});
-					that.set('mediaBrowserShown', false);
-				}
-			};
-		},
-
 		_mediaBrowserEditView: null,
 
 		_initializeMediaBrowserEditView: function () {
 			this.set('_mediaBrowserEditView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
+				template: Ember.HTMLBars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
 			}));
 		},
 
@@ -369,7 +396,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		filesScheduledForUpload: function (files) {
 			if (files.length > 0) {
 				this._displayImageLoader();
-				this.upload();
+				this.send('upload');
 			}
 		},
 
@@ -444,7 +471,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 			return Ember.View.extend({
 				classNames: ['neos-secondary-inspector-image-crop'],
-				template: Ember.Handlebars.compile(cropTemplate),
+				template: Ember.HTMLBars.compile(cropTemplate),
 				aspectRatioWidth: null,
 				aspectRatioHeight: null,
 				aspectRatioReducedNumerator: 0,
@@ -459,6 +486,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 				init: function () {
 					this._super();
+
 					var that = this,
 						configuration = parent.get('crop');
 					if (configuration.aspectRatio) {
@@ -517,9 +545,27 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					}
 				},
 
+				actions: {
+					selectAspectRatio: function(aspectRatio) {
+						if (this.get('selection') !== aspectRatio) {
+							this.set('selection', aspectRatio);
+						}
+					},
+
+					exchangeAspectRatio: function() {
+						var aspectRatioWidth = this.get('aspectRatioWidth'),
+							aspectRatioHeight = this.get('aspectRatioHeight');
+						this.setProperties({'aspectRatioWidth': aspectRatioHeight, 'aspectRatioHeight': aspectRatioWidth});
+					},
+				},
+
+				// Workaround for removed support for view lookup in input component
+				textField: Ember.TextField,
+
 				_selectionDidChange: function () {
 					var option = this.get('aspectRatioOptions').findBy('key', this.get('selection'));
 					if (!option) {
+						this.setProperties({'aspectRatioWidth': null, 'aspectRatioHeight': null});
 						return;
 					}
 					clearTimeout(this.get('customTimeout'));
@@ -580,16 +626,14 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					if (this.get('aspectRatioAllowCustom') && !this.get('originalAspectRatio') && !matchesOption && aspectRatioWidth > 0 && aspectRatioHeight > 0 && this.get('initialized')) {
 						options.findBy('label', 'Custom').set('active', true);
 					}
-					var activeOption = options.findBy('active', true);
-					if (activeOption) {
-						this.set('selection', activeOption.get('key'));
-					} else {
-						this.set('selection', null);
+					var activeOption = options.findBy('active', true),
+						selection = activeOption ? activeOption.get('key') : null;
+					if (this.get('selection') !== selection) {
+						this.set('selection', selection);
+						Ember.run.next(this, function() {
+							this.$().find('select').val(selection).trigger('change');
+						});
 					}
-					var that = this;
-					Ember.run.next(function () {
-						that.$().find('select').trigger('change');
-					});
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
 
 				_aspectRatioDidChange: function () {
@@ -606,17 +650,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					this.set('aspectRatioReducedNumerator', reducedRatio ? reducedRatio[0] : null);
 					this.set('aspectRatioReducedDenominator', reducedRatio ? reducedRatio[1] : null);
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
-
-				actions: {
-					exchangeAspectRatio: function () {
-						var aspectRatioWidth = this.get('aspectRatioWidth'),
-							aspectRatioHeight = this.get('aspectRatioHeight');
-						this.setProperties({
-							'aspectRatioWidth': aspectRatioHeight,
-							'aspectRatioHeight': aspectRatioWidth
-						});
-					}
-				},
 
 				/**
 				 * Reduce a numerator and denominator to it's smallest, integer ratio using Euclid's Algorithm
@@ -1027,7 +1060,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_initializeMediaView: function () {
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+				template: Ember.HTMLBars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
 			}));
 		},
 

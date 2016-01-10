@@ -31,7 +31,7 @@ function(
 	EventDispatcher
 ) {
 	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		_isContentModule: window.T3.isContentModule,
 		ContentContextBar: ContentContextBar,
 		MenuPanel: MenuPanel,
@@ -40,11 +40,12 @@ function(
 		InspectorView: InspectorView,
 
 		// We cannot name the property in UpperCamelCase, as we can not
-		// use it in a binding in Handlebars then (because of some weird Ember naming convention...)
+		// use it in a binding in HTMLBars then (because of some weird Ember naming convention...)
 		inspectorController: InspectorController,
 
 		SecondaryInspectorView: SecondaryInspectorView,
 		InlineEditingHandles: InlineEditingHandles,
+
 
 		didInsertElement: function() {
 			// Make sure to create the top bar *after* the DOM is loaded completely,

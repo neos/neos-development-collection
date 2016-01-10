@@ -21,7 +21,7 @@ define(
 
 		dialog: Ember.View.extend({
 			classNames: ['neos-login-dialog'],
-			template: Ember.Handlebars.compile(template),
+			template: Ember.HTMLBars.compile(template),
 			failed: false,
 			authenticating: false,
 
@@ -42,6 +42,7 @@ define(
 
 			init: function() {
 				this._super();
+
 				this.appendTo('#neos-application');
 			},
 

@@ -12,11 +12,12 @@ define(
 		template
 	) {
 		return AbstractModal.extend({
-			template: Ember.Handlebars.compile(template),
-
-			'reload': function() {
-				location.reload();
-			}
+			actions: {
+				'reload': function() {
+					location.reload();
+				}
+			},
+			template: Ember.HTMLBars.compile(template)
 		});
 	}
 );

@@ -10,6 +10,8 @@ define([
 	// We patch this class to remove jQuery UI tooltip, replacing it by native browser titles.
 	return OriginalButton.extend({
 		init: function () {
+			this._super();
+
 			this.createButtonElement();
 			Utils.makeButton(this.buttonElement, this)
 				.uibutton('widget')

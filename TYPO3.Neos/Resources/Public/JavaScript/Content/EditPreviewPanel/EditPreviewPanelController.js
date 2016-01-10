@@ -28,6 +28,14 @@ define(
 	UserPreferenceEndpoint
 ) {
 	return Ember.Controller.extend({
+		actions: {
+			activateMode: function(mode) {
+				this.set('currentlyActiveMode', mode);
+			},
+			toggleEditPreviewPanelMode: function() {
+				return this.toggleEditPreviewPanelMode();
+			}
+		},
 		editPreviewPanelMode: false,
 		currentlyActiveMode: null,
 		previousActiveMode: null,
@@ -36,17 +44,17 @@ define(
 		editingModes: [],
 		previewModes: [],
 
-		_deactivatePreviouslyActiveMode: function() {
-			if (this.get('currentlyActiveMode')) {
-				Ember.sendEvent(this.get('currentlyActiveMode'), 'deactivate');
-				this.set('currentlyActiveMode.active', false);
-				this.set('previousActiveMode', this.get('currentlyActiveMode'));
-			}
-		}.observesBefore('currentlyActiveMode'),
-
 		_activateCurrentlyActiveMode: function() {
 			this.set('currentlyActiveMode.active', true);
 			Ember.sendEvent(this.get('currentlyActiveMode'), 'activate');
+		}.observes('currentlyActiveMode'),
+
+		_deactivatePreviouslyActiveMode: function() {
+			if (this.get('previousActiveMode')) {
+				Ember.sendEvent(this.get('currentlyActiveMode'), 'deactivate');
+				this.set('previousActiveMode.active', false);
+			}
+			this.set('previousActiveMode', this.get('currentlyActiveMode'));
 		}.observes('currentlyActiveMode'),
 
 		isEditingModeActive: function() {
@@ -82,6 +90,7 @@ define(
 
 		init: function() {
 			var that = this;
+
 			ResourceCache.getItem(Configuration.get('EditPreviewDataUri')).then(
 				function(data) {
 					that.set('configuration', data);
@@ -142,12 +151,6 @@ define(
 
 		_editPreviewPanelModeChanged: function() {
 			LocalStorage.setItem('editPreviewPanelMode', this.get('editPreviewPanelMode'));
-		}.observes('editPreviewPanelMode'),
-
-		actions: {
-			activateMode: function(mode) {
-				this.set('currentlyActiveMode', mode);
-			}
-		}
+		}.observes('editPreviewPanelMode')
 	}).create();
 });

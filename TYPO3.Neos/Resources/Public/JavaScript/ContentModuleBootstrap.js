@@ -50,7 +50,7 @@ require(
 		/**
 		 * Load all translations, and then bootstrap the Neos interface
 		 */
-		Ember.RSVP.Promise(function (resolve, reject) {
+		var promiseInstance = new Ember.RSVP.Promise(function(resolve) {
 			// Get all translations and merge them
 			ResourceCache.getItem(Configuration.get('XliffUri')).then(function(labels) {
 				try {
@@ -62,22 +62,23 @@ require(
 				}
 				resolve();
 			});
-		}).then(function () {
+		}).then(function() {
 			// Bootstrap the content module
-			Ember.$(document).ready(function () {
-				ContentModule.bootstrap();
-				ContentModule.advanceReadiness();
+			Ember.$(document).ready(function() {
+				 ContentModule.bootstrap();
+				 ContentModule.advanceReadiness();
 
 				// Wait until the NodeTypeService is usable by resolving the promise
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function () {
+				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
 					ApplicationView.create().appendTo('#neos-application');
+
 					if (window.T3.isContentModule) {
 						PublishMenu.create().appendTo('#neos-top-bar-right');
 					}
 				});
 			});
-		}, function (reason) {
-			console.log('Neos failed to initialize', reason);
+		}).catch(function(reason) {
+			console.error('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API

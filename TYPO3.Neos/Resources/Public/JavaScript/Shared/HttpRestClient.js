@@ -13,7 +13,7 @@ define([
 	HttpClient,
 	$
 ) {
-	return Ember.Object.extend(HttpClient, {
+	return Ember.Object.extend(Ember.Evented, HttpClient, {
 		/**
 		 * Retrieve a resource from the REST service
 		 *

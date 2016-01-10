@@ -23,6 +23,12 @@ define(
 	EventDispatcher
 ) {
 	return Ember.Object.extend({
+		actions: {
+
+			selectNode: function(node) {
+				return this.selectNode(node);
+			}
+		},
 		_nodes: [],
 
 		/**
@@ -36,7 +42,6 @@ define(
 		 * Identity map "RDFa Subject" -> "Entity" instances
 		 */
 		_entitiesBySubject: {},
-
 		nodes: function() {
 			if (this.get('currentlyShownSecondaryAlohaTabs')) {
 				// we show secondary aloha tabs currently, so we *replace* the inspector contents.
@@ -112,7 +117,7 @@ define(
 			} else {
 				return this.get('_nodes');
 			}
-		}.property('_nodes.@each', 'currentlyShownSecondaryAlohaTabs.@each'),
+		}.property('_nodes.[]', 'currentlyShownSecondaryAlohaTabs.[]'),
 
 		/**
 		 *
@@ -137,13 +142,13 @@ define(
 		 */
 		updateSelection: function($element, options) {
 			var activeClass = 'neos-contentelement-active';
+			var that = this;
+			var nodes = [];
+
 			// Do not update the selection if the element is already selected
 			if ($element && $element.hasClass(activeClass)) {
 				return;
 			}
-
-			var nodes = [],
-				that = this;
 
 			// Remove active class from all previously active nodes (content elements and contentcollection)
 			$('.' + activeClass).removeClass(activeClass);
@@ -152,6 +157,7 @@ define(
 			if (this._updating) {
 				return;
 			}
+
 			this._updating = true;
 			this.set('currentlyShownSecondaryAlohaTabs', false);
 
@@ -217,6 +223,7 @@ define(
 			}
 
 			nodes = nodes.reverse();
+
 			if (nodes.length > 0 && _.last(nodes) !== _.last(this.get('_nodes'))) {
 				this.set('_nodes', nodes);
 			}
@@ -233,15 +240,19 @@ define(
 		_addNodeByElement: function(nodes, $element) {
 			if ($element !== undefined) {
 				var nodeProxy = this._createEntityWrapper($element);
+
 				if (nodeProxy) {
 					var entity = nodeProxy.get('_vieEntity'),
 						properties = nodeProxy.get('nodeTypeSchema.properties'),
 						propertyValidators = {};
+
 					_.each(properties, function(propertyConfiguration, propertyName) {
 						if (typeof propertyConfiguration.validation !== 'undefined') {
 							var validators = [];
+
 							_.each(propertyConfiguration.validation, function(validatorOptions, validator) {
 								var validatorClassName = validator;
+
 								if (validatorClassName.indexOf('/') === -1) {
 									validatorClassName = 'TYPO3.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
 								}
@@ -252,12 +263,15 @@ define(
 									});
 								});
 							});
+
 							propertyValidators[propertyName] = validators;
 						}
 					});
+
 					if (!_.isEmpty(propertyValidators)) {
 						nodeProxy.set('validators', propertyValidators);
 					}
+
 					_.extend(entity, {
 						validate: function(attrs, opts) {
 							if (opts && opts.validate === false || typeof nodeProxy.get('validators') === 'undefined') {
@@ -291,6 +305,7 @@ define(
 							return results;
 						}
 					});
+
 					nodes.push(nodeProxy);
 				}
 			}

@@ -13,13 +13,17 @@ define(
 	Configuration,
 	Notification
 ) {
-	return Ember.ContainerView.extend({
+	return Ember.View.extend({
+		template: Ember.HTMLBars.compile('{{#if view.editor}}{{view view.editor}}{{else}}<span class="neos-ellipsis"></span>{{/if}}'),
 		propertyDefinition: null,
 		value: null,
 		isModified: false,
 		hasValidationErrors: false,
 		classNameBindings: ['isModified:neos-modified', 'hasValidationErrors:neos-error', 'editorClassName'],
 		editorClassName: '',
+
+		// a reference to the InspectorController (set from the outside in the HTMLBars template)
+		inspector: null,
 
 		_valueDidChange: function() {
 			this.get('inspector').registerPendingChange(this.get('propertyDefinition').key, this.get('value'));
@@ -33,7 +37,7 @@ define(
 		}.observes('value', 'inspector.cleanProperties'),
 
 		_validationErrorsDidChange: function() {
-			if (this.get('isDestroyed') === true) {
+			if (this.get('isDestroyed')) {
 				return;
 			}
 			var property = this.get('propertyDefinition.key'),
@@ -53,30 +57,25 @@ define(
 		},
 
 		init: function() {
-			this._super();
 			this._loadView();
+			this._super();
 			this.get('inspector').registerPropertyEditor(this.get('propertyDefinition.key'), this);
 		},
 
 		_loadView: function() {
 			var that = this,
 				propertyDefinition = this.get('propertyDefinition'),
-				editor;
-
-			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
-
-			var editorOptions = $.extend(true,
-				{
-					elementId: propertyDefinition.elementId,
-					property: propertyDefinition.key,
-					propertyType: propertyDefinition.type,
-					inspectorBinding: this.inspectorBinding,
-					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
-				},
-				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
-			);
-
-			editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
+				editorOptions = $.extend(true,
+					{
+						elementId: propertyDefinition.elementId,
+						property: propertyDefinition.key,
+						propertyType: propertyDefinition.type,
+						inspector: this.get('inspector'),
+						valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
+					},
+					Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
+				),
+				editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
 
 			if (!editor) {
 				if (window.console && console.error) {
@@ -100,20 +99,25 @@ define(
 					if (!that.isDestroyed) {
 						// It might happen that the editor was deselected before the require() call completed; so we
 						// need to check again whether the view has been destroyed in the meantime.
-						var editor = editorClass.create(editorOptions);
-						that.set('currentView', editor);
+						var editor = editorClass.extend(editorOptions);
+						that.set('editor', editor);
 					}
 				});
-			}, function() {
+			}, function(err) {
 				if (window.console && window.console.error) {
-					window.console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '". The editor "' + editor + '" not found! Please check your configuration.');
+					window.console.error('Couldn\'t create editor for property "' + propertyDefinition.key + '" Message: ' + err.message);
 				}
 				Notification.error('Error loading inspector', 'Inspector editor for property "' + propertyDefinition.key + '" could not be loaded. See console for further details.');
 			});
+
+			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
 		},
 
-		didInsertElement: function() {
+		_addValidationObserver: function() {
+			if (!this.get('inspector.validationErrors')) {
+				return;
+			}
 			this.get('inspector.validationErrors').addObserver(this.get('propertyDefinition.key'), this, '_validationErrorsDidChange');
-		}
+		}.observes('inspector.validationErrors')
 	});
 });

@@ -1,8 +1,8 @@
 <div class="neos-toolbar">
 	<div class="neos-inspector-tabs">
-		{{#each tab in groupedViews}}
-			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}}>
-				<i {{bindAttr class="tab.icon"}}></i>
+		{{#each groupedViews as |tab|}}
+			<button {{action "toggleCurrentInspectorTab" tab}} class="neos-button {{if tab.isActive 'is-active'}}" title="{{tab.label}}">
+				<i class={{tab.icon}}></i>
 			</button>
 		{{/each}}
 	</div>
@@ -12,37 +12,49 @@
 		<label for="neos-content-breadcrumb">{{translate id="content-inspector-inspectorView-selectedElement" fallback="Selected element"}}</label>
 		{{view view.Breadcrumb}}
 	</div>
-	{{#each tab in groupedViews}}
-		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
-			{{#each group in tab.groups}}
-				{{#view view.Section classNames="neos-inspector-section" groupBinding="group" groupNameBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
-					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
+	{{#each groupedViews as |tab|}}
+		<div class="{{if tab.isActive 'is-visible'}} neos-inspector-tab-content">
+			{{#each tab.groups as |group|}}
+				{{#view view.Section classNames="neos-inspector-section" group=group groupName=group.group properties=group.properties views=group.views inspector=controller}}
+					<div class="neos-inspector-headline {{if view._hasValidationErrors 'neos-validation-error'}}">
 						<span>{{unbound group.label}}</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
-						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}}></div>
+						<div class="neos-inspector-collapse {{if view._collapsed 'neos-collapsed' 'neos-open'}}" {{action "toggleCollapsed" target=view}}></div>
 					</div>
-					{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="group.properties"}}
-						{{#if isBoolean}}
-							<label for="{{unbound elementId}}" class="neos-checkbox">
-								{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
-								{{unbound ui.label}}
-								{{#if ui.help.message}}
-									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
-								{{/if}}
-							</label>
-						{{else}}
-							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">
-								{{unbound ui.label}}
-								{{#if ui.help.message}}
-									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
-								{{/if}}
-							</label>
-							{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
-						{{/if}}
-					{{/collection}}
-					{{#collection tagName="div" classNames="neos-inspector-view" contentBinding="group.views"}}
-						{{view view.parentView.parentView.ViewView viewDefinitionBinding="view.content" inspectorBinding="controller"}}
-					{{/collection}}
+					{{#if group.properties}}
+						<div class="neos-inspector-field">
+							{{#each group.properties as |propertyDefinition|}}
+								<div>
+									{{#if propertyDefinition.isBoolean}}
+										<label for="{{unbound propertyDefinition.elementId}}" class="neos-checkbox">
+											{{view view.PropertyEditor propertyDefinition=propertyDefinition inspector=view.inspector}}
+											{{unbound propertyDefinition.ui.label}}
+											{{#if propertyDefinition.ui.help.message}}
+												{{view view.HelpMessage title=propertyDefinition.ui.label content=propertyDefinition.ui.help.message popoverContainer="#neos-inspector" placement="left"}}
+											{{/if}}
+										</label>
+									{{else}}
+										<label for="{{unbound propertyDefinition.elementId}}" title="{{unbound propertyDefinition.ui.label}}">
+											{{unbound propertyDefinition.ui.label}}
+											{{#if propertyDefinition.ui.help.message}}
+												{{view view.HelpMessage title=propertyDefinition.ui.label content=propertyDefinition.ui.help.message popoverContainer="#neos-inspector" placement="left"}}
+											{{/if}}
+										</label>
+										{{view view.PropertyEditor propertyDefinition=propertyDefinition inspector=view.inspector}}
+									{{/if}}
+								</div>
+							{{/each}}
+						</div>
+					{{/if}}
+					{{#if group.views}}
+						<div class="neos-inspector-view">
+							{{#each group.views as |viewDefinition|}}
+								<div>
+									{{view view.ViewView viewDefinition=viewDefinition inspector=view.inspector}}
+								</div>
+							{{/each}}
+						</div>
+					{{/if}}
 				{{/view}}
 			{{/each}}
 		</div>
@@ -50,13 +62,13 @@
 </div>
 {{#if _enableTransactionalInspector}}
 	<div class="neos-actions">
-		<button class="neos-inspector-cancel" title="{{translate id='discardChanges' value='Discard changes'}}" {{bindAttr disabled="unmodified"}} {{action "revert"}}>{{translate id="discardChanges" value="Discard changes"}}</button>
+		<button class="neos-inspector-cancel" title="{{translate id='discardChanges' value='Discard changes'}}" disabled={{unmodified}} {{action "revert" target=controller}}>{{translate id="discardChanges" value="Discard changes"}}</button>
 		{{#if hasValidationErrors}}
 			<button class="neos-button neos-inspector-apply neos-disabled" title="{{translate id='content-inspector-inspectorView-selectedElement' value='There are fields that are not correctly filled in.'}}">
 				<i class="icon-warning-sign"></i> {{translate id='okay' fallback='OK'}}
 			</button>
 		{{else}}
-			<button class="neos-inspector-apply" title="{{translate id='applyChanges' value='Apply changes'}}" {{bindAttr disabled="unmodified"}} {{action "apply"}}>{{translate id="apply" value="Apply"}}</button>
+			<button class="neos-inspector-apply" title="{{translate id='applyChanges' value='Apply changes'}}" disabled={{unmodified}} {{action "apply" target=controller}}>{{translate id="apply" value="Apply"}}</button>
 		{{/if}}
 	</div>
 {{/if}}

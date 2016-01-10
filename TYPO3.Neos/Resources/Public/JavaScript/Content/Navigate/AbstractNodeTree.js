@@ -39,7 +39,168 @@ define(
 	) {
 
 		return Ember.View.extend({
-			template: Ember.required(),
+			actions: {
+				refresh: function() {
+					return this.refresh();
+				},
+
+				/**
+				 * When clicking the delete node, we show a dialog
+				 */
+				showDeleteNodeDialog: function() {
+					var activeNode = this.get('activeNode');
+					if (activeNode === null) {
+						Notification.info('You have to select a node');
+						return;
+					}
+					if (activeNode.getLevel() === 1) {
+						Notification.info('The Root node cannot be deleted.');
+						return;
+					}
+
+					var that = this;
+					DeleteNodeDialog.extend({
+						actions: {
+							deleteNode: function() {
+								that.send('deleteNode', activeNode);
+								this.send('cancel');
+							}
+						},
+						title: activeNode.data.title,
+						numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0
+					}).create();
+				},
+
+				copy: function() {
+					var node = this.get('activeNode');
+					if (!node) {
+						Notification.info('You have to select a node');
+						return;
+					}
+					if (node.data.unselectable) {
+						Notification.info('You cannot copy this node');
+						return;
+					}
+					if (this.get('copiedNode') === node) {
+						this.set('copiedNode', null);
+					} else {
+						this.set('copiedNode', node);
+						this.set('cutNode', null);
+					}
+				},
+
+				cut: function() {
+					var node = this.get('activeNode');
+					if (!node) {
+						Notification.info('You have to select a node');
+						return;
+					}
+					if (node.data.unselectable) {
+						Notification.info('You cannot cut this node');
+						return;
+					}
+					if (this.get('cutNode') === node) {
+						this.set('cutNode', null);
+					} else {
+						this.set('cutNode', node);
+						this.set('copiedNode', null);
+					}
+				},
+
+				paste: function(position) {
+					this.paste.apply(this, arguments);
+				},
+
+				move: function() {
+					this.move.apply(this, arguments);
+				},
+
+				toggleHidden: function() {
+					var node = this.get('activeNode');
+					if (!node) {
+						Notification.info('You have to select a node');
+					}
+					var value = !node.data.isHidden;
+					node.data.isHidden = value;
+					// Trigger update of ``currentFocusedNodeIsHidden``
+					this.notifyPropertyChange('activeNode');
+					if (value === true) {
+						node.data.addClass = node.data.addClass += ' neos-hidden';
+					} else {
+						node.data.addClass = node.data.addClass.replace('neos-hidden', '');
+					}
+					node.data.addClass = node.data.addClass.replace('  ', ' ');
+					node.render();
+					node.setLazyNodeStatus(this.statusCodes.loading);
+					var that = this;
+					NodeEndpoint.update(
+						{
+							__contextNodePath: node.data.key,
+							_hidden: value
+						}
+					).then(
+						function(result) {
+							var nodeEntity = NodeSelection.getNode(node.data.key),
+								selectedNodeEntity = NodeSelection.get('selectedNode');
+							if (nodeEntity) {
+								nodeEntity.setAttribute('_hidden', value);
+								nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+								if (nodeEntity === selectedNodeEntity) {
+									InspectorController.set('cleanProperties._hidden', value);
+									InspectorController.set('nodeProperties._hidden', value);
+								}
+							}
+							EventDispatcher.trigger('nodeUpdated');
+							node.setLazyNodeStatus(that.statusCodes.ok);
+							that.afterToggleHidden(node);
+						},
+						function(error) {
+							node.setLazyNodeStatus(that.statusCodes.error);
+							Notification.error('Unexpected error while updating node: ' + JSON.stringify(error));
+						}
+					);
+				},
+
+				createNode: function(activeNode, title, nodeType, iconClass, position) {
+					var data = {
+							title: title ? title : 'Loading ...',
+							nodeType: nodeType,
+							addClass: 'neos-matched',
+							iconClass: iconClass,
+							expand: true
+						},
+						newNode;
+
+					switch (position) {
+						case 'before':
+							newNode = activeNode.getParent().addChild(data, activeNode);
+						break;
+						case 'after':
+							newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
+						break;
+						case 'into':
+							newNode = activeNode.addChild(data);
+					}
+					this.persistNode(activeNode, newNode, nodeType, title, position);
+				},
+
+				deleteNode: function(node) {
+					node.setLazyNodeStatus(this.statusCodes.loading);
+					var that = this;
+					NodeEndpoint['delete'](node.data.key).then(
+						function() {
+							var parentNode = node.getParent();
+							parentNode.activate();
+							node.remove();
+							that.afterDeleteNode(node);
+						},
+						function(error) {
+							Notification.error('Unexpected error while deleting node: ' + JSON.stringify(error));
+						}
+					);
+				},
+			},
+			template: null,
 
 			/**
 			 * DOM node which is the container for the dynatree
@@ -199,33 +360,50 @@ define(
 			}.property('activeNode', 'copiedNode'),
 
 			currentFocusedNodeCantBeModified: function() {
-				if (this.get('activeNode')) {
-					if ((this.get('activeNode').data.isAutoCreated === true) ||
-						(typeof this.get('activeNode').parent.data.nodeType === 'undefined')) {
-						// AutoCreated node or root site node
-						return true;
-					} else {
-						return false;
-					}
+				var activeNode = this.get('activeNode');
+				if (!activeNode) {
+					return false;
 				}
+
+				if ((activeNode.data.isAutoCreated === true) ||
+						(typeof activeNode.parent.data.nodeType === 'undefined')) {
+					// AutoCreated node or root site node
+					return true;
+				}
+
+				return false;
 			}.property('activeNode'),
 
 			init: function() {
 				this._super();
+				// If parent view is not the owner view, the view is being rendered for the first time
+				if (this.parentView !== this.ownerView) {
+					return;
+				}
+
 				this._updateMetaInformation();
 
-				var that = this;
-
 				ContentModule.on('pageLoaded', this, function() {
-					that.set('pageNodePath', $('#neos-document-metadata').attr('about'));
+					if (this.get('isDestroyed')) {
+						return;
+					}
+					this.set('pageNodePath', $('#neos-document-metadata').attr('about'));
 					this.trigger('afterPageLoaded');
 				});
+
+				this.set('initialized', true);
 			},
 
 			didInsertElement: function() {
-				var that = this;
-				$(document).ready(function() {
-					that._initializeTree();
+				if (!this.get('initialized')) {
+					Ember.run.schedule('afterRender', this, function() {
+						this.rerender();
+					});
+					return;
+				}
+				// TODO This fixes the deprecation warnings for property modification in a hook but we should calculate the active node before inserting the element (somehow)
+				Ember.run.next(this, function() {
+					this._initializeTree();
 				});
 			},
 
@@ -536,6 +714,12 @@ define(
 				return null;
 			},
 
+			refresh: function() {
+				var node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
+				node.removeChildren();
+				this.loadNode(node, 0);
+			},
+
 			create: function(position) {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
@@ -548,9 +732,102 @@ define(
 
 				if (nodeType !== '') {
 					nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-					this.createNode(activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
+					this.send('createNode', activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
 				} else {
 					this.showCreateNodeDialog(activeNode, position);
+				}
+			},
+
+			move: function(sourceNode, targetNode, position) {
+				if (sourceNode === targetNode) {
+					return;
+				}
+				var that = this;
+				try {
+					sourceNode.move(targetNode, position === 'into' ? 'over' : position);
+					sourceNode.activate();
+					sourceNode.setLazyNodeStatus(this.statusCodes.loading);
+					NodeEndpoint.move(
+						sourceNode.data.key,
+						targetNode.data.key,
+						position
+					).then(
+						function(result) {
+							// Update the pageNodePath if we moved the current page
+							if (that.get('pageNodePath') === sourceNode.data.key) {
+								that.set('pageNodePath', result.data.newNodePath);
+							}
+							// after we finished moving, update the node path/url
+							sourceNode.data.href = result.data.nextUri;
+							sourceNode.data.key = result.data.newNodePath;
+							sourceNode.render();
+							sourceNode.setLazyNodeStatus(that.statusCodes.ok);
+							if (typeof sourceNode.data.children !== 'undefined') {
+								sourceNode.removeChildren();
+								sourceNode.setLazyNodeStatus(that.statusCodes.loading);
+								that.loadNode(sourceNode, 1);
+							}
+							that.afterMove(sourceNode);
+						},
+						function(error) {
+							sourceNode.setLazyNodeStatus(that.statusCodes.error);
+							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+						}
+					);
+				} catch(e) {
+					Notification.error('Unexpected error while moving node: ' + e.toString());
+				}
+			},
+
+			paste: function (position) {
+				var targetNode = this.get('activeNode'),
+						cutNode = this.get('cutNode'),
+						copiedNode = this.get('copiedNode');
+				if (!targetNode) {
+					Notification.info('You have to select a node');
+				}
+				if (cutNode) {
+					this.set('cutNode', null);
+					this.move(cutNode, targetNode, position);
+				}
+				if (copiedNode) {
+					var that = this,
+							newNode;
+					switch (position) {
+						case 'before':
+							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode);
+							break;
+						case 'after':
+							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode.getNextSibling());
+							break;
+						case 'into':
+							newNode = targetNode.addChild(copiedNode.data);
+					}
+					newNode.setLazyNodeStatus(this.statusCodes.loading);
+					NodeEndpoint.copy(
+							copiedNode.data.key,
+							targetNode.data.key,
+							position,
+							copiedNode.data.name
+					).then(
+							function (result) {
+								// after we finished moving, update the node path/url
+								newNode.data.href = result.data.nodeUri;
+								newNode.data.key = result.data.newNodePath;
+								newNode.render();
+								newNode.setLazyNodeStatus(that.statusCodes.ok);
+								if (typeof newNode.data.children !== 'undefined') {
+									newNode.removeChildren();
+									newNode.setLazyNodeStatus(that.statusCodes.loading);
+									that.loadNode(newNode, 1);
+								}
+								that.afterPaste(newNode);
+							},
+							function (error) {
+								newNode.setLazyNodeStatus(that.statusCodes.error);
+								Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							}
+					);
 				}
 			},
 
@@ -581,65 +858,19 @@ define(
 					});
 				});
 
-				InsertNodePanel.create({
-					allowedNodeTypes: allowedNodeTypes,
-					insertNode: function(nodeType, icon) {
-						that.set('insertNodePanelShown', false);
-						that.createNode(activeNode, null, nodeType, icon, position);
-						this.cancel();
+				InsertNodePanel.extend({
+					actions: {
+						insertNode: function(nodeType, icon) {
+							that.set('insertNodePanelShown', false);
+							that.send('createNode', activeNode, null, nodeType, icon, position);
+							this.send('cancel');
+						}
 					},
+					allowedNodeTypes: allowedNodeTypes,
 					willDestroyElement: function() {
 						that.set('insertNodePanelShown', false);
 					}
-				});
-			},
-
-			/**
-			 * When clicking the delete node, we show a dialog
-			 */
-			showDeleteNodeDialog: function() {
-				var activeNode = this.get('activeNode');
-				if (activeNode === null) {
-					Notification.info('You have to select a node');
-					return;
-				}
-				if (activeNode.getLevel() === 1) {
-					Notification.info('The Root node cannot be deleted.');
-					return;
-				}
-
-				var that = this;
-				DeleteNodeDialog.create({
-					title: activeNode.data.title,
-					numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
-					deleteNode: function() {
-						that.deleteNode(activeNode);
-						this.cancel();
-					}
-				});
-			},
-
-			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var data = {
-						title: title ? title : 'Loading ...',
-						nodeType: nodeType,
-						addClass: 'neos-matched',
-						iconClass: iconClass,
-						expand: true
-					},
-					newNode;
-
-				switch (position) {
-					case 'before':
-						newNode = activeNode.getParent().addChild(data, activeNode);
-					break;
-					case 'after':
-						newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
-					break;
-					case 'into':
-						newNode = activeNode.addChild(data);
-				}
-				this.persistNode(activeNode, newNode, nodeType, title, position);
+				}).create();
 			},
 
 			persistNode: function(activeNode, node, nodeType, title, position) {
@@ -691,211 +922,13 @@ define(
 			},
 
 			afterPersistNode: Ember.K,
-
-			deleteNode: function(node) {
-				node.setLazyNodeStatus(this.statusCodes.loading);
-				var that = this;
-				NodeEndpoint['delete'](node.data.key).then(
-					function() {
-						var parentNode = node.getParent();
-						parentNode.activate();
-						node.remove();
-						that.afterDeleteNode(node);
-					},
-					function(error) {
-						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(error));
-					}
-				);
-			},
-
 			afterDeleteNode: Ember.K,
 
-			toggleHidden: function() {
-				var node = this.get('activeNode');
-				if (!node) {
-					Notification.info('You have to select a node');
-				}
-				var value = !node.data.isHidden;
-				node.data.isHidden = value;
-				// Trigger update of ``currentFocusedNodeIsHidden``
-				this.notifyPropertyChange('activeNode');
-				if (value === true) {
-					node.data.addClass = node.data.addClass += ' neos-hidden';
-				} else {
-					node.data.addClass = node.data.addClass.replace('neos-hidden', '');
-				}
-				node.data.addClass = node.data.addClass.replace('  ', ' ');
-				node.render();
-				node.setLazyNodeStatus(this.statusCodes.loading);
-				var that = this;
-				NodeEndpoint.update(
-					{
-						__contextNodePath: node.data.key,
-						_hidden: value
-					}
-				).then(
-					function(result) {
-						var nodeEntity = NodeSelection.getNode(node.data.key),
-							selectedNodeEntity = NodeSelection.get('selectedNode');
-						if (nodeEntity) {
-							nodeEntity.setAttribute('_hidden', value);
-							nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
-							if (nodeEntity === selectedNodeEntity) {
-								InspectorController.set('cleanProperties._hidden', value);
-								InspectorController.set('nodeProperties._hidden', value);
-							}
-						}
-						EventDispatcher.trigger('nodeUpdated');
-						node.setLazyNodeStatus(that.statusCodes.ok);
-						that.afterToggleHidden(node);
-					},
-					function(error) {
-						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Unexpected error while updating node: ' + JSON.stringify(error));
-					}
-				);
-			},
-
 			afterToggleHidden: Ember.K,
-
-			copy: function() {
-				var node = this.get('activeNode');
-				if (!node) {
-					Notification.info('You have to select a node');
-					return;
-				}
-				if (node.data.unselectable) {
-					Notification.info('You cannot copy this node');
-					return;
-				}
-				if (this.get('copiedNode') === node) {
-					this.set('copiedNode', null);
-				} else {
-					this.set('copiedNode', node);
-					this.set('cutNode', null);
-				}
-			},
-
-			cut: function() {
-				var node = this.get('activeNode');
-				if (!node) {
-					Notification.info('You have to select a node');
-					return;
-				}
-				if (node.data.unselectable) {
-					Notification.info('You cannot cut this node');
-					return;
-				}
-				if (this.get('cutNode') === node) {
-					this.set('cutNode', null);
-				} else {
-					this.set('cutNode', node);
-					this.set('copiedNode', null);
-				}
-			},
-
-			paste: function(position) {
-				var targetNode = this.get('activeNode'),
-					cutNode = this.get('cutNode'),
-					copiedNode = this.get('copiedNode');
-				if (!targetNode) {
-					Notification.info('You have to select a node');
-				}
-				if (cutNode) {
-					this.set('cutNode', null);
-					this.move(cutNode, targetNode, position);
-				}
-				if (copiedNode) {
-					var that = this,
-						newNode;
-					switch (position) {
-						case 'before':
-							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode);
-						break;
-						case 'after':
-							newNode = targetNode.getParent().addChild(copiedNode.data, targetNode.getNextSibling());
-						break;
-						case 'into':
-							newNode = targetNode.addChild(copiedNode.data);
-					}
-					newNode.setLazyNodeStatus(this.statusCodes.loading);
-					NodeEndpoint.copy(
-						copiedNode.data.key,
-						targetNode.data.key,
-						position,
-						copiedNode.data.name
-					).then(
-						function(result) {
-							// after we finished moving, update the node path/url
-							newNode.data.href = result.data.nodeUri;
-							newNode.data.key = result.data.newNodePath;
-							newNode.render();
-							newNode.setLazyNodeStatus(that.statusCodes.ok);
-							if (typeof newNode.data.children !== 'undefined') {
-								newNode.removeChildren();
-								newNode.setLazyNodeStatus(that.statusCodes.loading);
-								that.loadNode(newNode, 1);
-							}
-							that.afterPaste(newNode);
-						},
-						function(error) {
-							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
-						}
-					);
-				}
-			},
-
 			afterPaste: Ember.K,
 
-			move: function(sourceNode, targetNode, position) {
-				if (sourceNode === targetNode) {
-					return;
-				}
-				var that = this;
-				try {
-					sourceNode.move(targetNode, position === 'into' ? 'over' : position);
-					sourceNode.activate();
-					sourceNode.setLazyNodeStatus(this.statusCodes.loading);
-					NodeEndpoint.move(
-						sourceNode.data.key,
-						targetNode.data.key,
-						position
-					).then(
-						function(result) {
-							// Update the pageNodePath if we moved the current page
-							if (that.get('pageNodePath') === sourceNode.data.key) {
-								that.set('pageNodePath', result.data.newNodePath);
-							}
-							// after we finished moving, update the node path/url
-							sourceNode.data.href = result.data.nextUri;
-							sourceNode.data.key = result.data.newNodePath;
-							sourceNode.render();
-							sourceNode.setLazyNodeStatus(that.statusCodes.ok);
-							if (typeof sourceNode.data.children !== 'undefined') {
-								sourceNode.removeChildren();
-								sourceNode.setLazyNodeStatus(that.statusCodes.loading);
-								that.loadNode(sourceNode, 1);
-							}
-							that.afterMove(sourceNode);
-						},
-						function(error) {
-							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
-						}
-					);
-				} catch(e) {
-					Notification.error('Unexpected error while moving node: ' + e.toString());
-				}
-			},
 
 			afterMove: Ember.K,
-
-			refresh: function() {
-				var node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
-				node.removeChildren();
-				this.loadNode(node, 0);
-			},
 
 			/**
 			 * Loads the children of the given node

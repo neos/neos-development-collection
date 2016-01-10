@@ -25,6 +25,26 @@ function(
 	I18n
 ) {
 	return AbstractInsertNodePanel.extend({
+		actions: {
+			/**
+			 * @param {string} nodeType
+			 */
+			insertNode: function(nodeType) {
+				var referenceNode = this.get('_node');
+				switch (this.get('_position')) {
+					case 'before':
+						NodeActions.addAbove(nodeType, referenceNode);
+						break;
+					case 'after':
+						NodeActions.addBelow(nodeType, referenceNode);
+						break;
+					case 'into':
+						NodeActions.addInside(nodeType, referenceNode);
+						break;
+				}
+				this.destroy();
+			}
+		},
 		_node: null,
 		_position: null,
 
@@ -95,25 +115,6 @@ function(
 			});
 
 			return data;
-		}.property(),
-
-		/**
-		 * @param {string} nodeType
-		 */
-		insertNode: function(nodeType) {
-			var referenceNode = this.get('_node');
-			switch (this.get('_position')) {
-				case 'before':
-					NodeActions.addAbove(nodeType, referenceNode);
-				break;
-				case 'after':
-					NodeActions.addBelow(nodeType, referenceNode);
-				break;
-				case 'into':
-					NodeActions.addInside(nodeType, referenceNode);
-				break;
-			}
-			this.destroy();
-		}
+		}.property()
 	});
 });

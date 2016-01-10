@@ -3,10 +3,10 @@
 	<div class="neos-scroll-container">
 		<div class="neos-frame">
 			<ul class="neos-edit-preview-modes">
-				{{#each editingMode in editingModes}}
+				{{#each editingModes as |editingMode|}}
 					<li>
-						<button {{bindAttr class=":neos-button editingMode.active:neos-pressed"}} {{action activateMode editingMode}}>
-							{{boundTranslate idBinding="editingMode.title"}}
+						<button class="neos-button {{if editingMode.active 'neos-pressed'}}" {{action "activateMode" editingMode}}>
+						    {{boundTranslate id=editingMode.title}}
 						</button>
 					</li>
 				{{/each}}
@@ -22,10 +22,10 @@
 	<div class="neos-scroll-container">
 		<div class="neos-frame">
 			<ul class="neos-edit-preview-modes">
-				{{#each previewMode in previewModes}}
+				{{#each previewModes as |previewMode|}}
 					<li>
-						<button {{bindAttr class=":neos-button previewMode.active:neos-pressed"}} {{action activateMode previewMode}}>
-							{{boundTranslate idBinding="previewMode.title"}}
+						<button class="neos-button {{if previewMode.active 'neos-pressed'}}" {{action "activateMode" previewMode}}>
+						    {{boundTranslate id=previewMode.title}}
 						</button>
 					</li>
 				{{/each}}

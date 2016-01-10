@@ -9,6 +9,8 @@ define([
 	 */
 	return Plugin.create('node-repository-plugin', {
 		init: function () {
+			this._super();
+
 			var $metaInformation = $('#neos-document-metadata');
 			new NodeRepository(
 				$metaInformation.data('neos-context-workspace-name'),

@@ -12,7 +12,7 @@ define(
 		return Ember.View.extend({
 			classNames: ['chart-time-series'],
 
-			template: Ember.Handlebars.compile('<svg {{bind-attr width="view.outerWidth" height="view.outerHeight"}}><g class="chart-viewport" {{ bind-attr transform="view.transformViewport" }}></g></svg>'),
+			template: Ember.HTMLBars.compile('<svg width="{{view.outerWidth}}" height="{{view.outerHeight}}"><g class="chart-viewport" transform="{{view.transformViewport}}"></g></svg>'),
 
 			lineData: null,
 			ungroupedSeriesName: 'Other',
@@ -294,7 +294,7 @@ define(
 					values: lineData
 				}];
 				return _results;
-			}).property('lineData.@each', 'ungroupedSeriesName'),
+			}).property('lineData.[]', 'ungroupedSeriesName'),
 
 			lineSeriesNames: Ember.computed(function() {
 				var data;
@@ -325,7 +325,7 @@ define(
 						return e[1];
 					})
 				];
-			}).property('_groupedLineData.@each.values'),
+			}).property('_groupedLineData.[].values'),
 
 			_advanceMiddle: function(time, interval, count) {
 				return new Date((time = time.getTime() / 2 + d3.time[interval].offset(time, count) / 2));

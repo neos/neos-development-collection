@@ -10,8 +10,14 @@ define(
 	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, I18n, template) {
 
 		return Ember.View.extend({
+			actions: {
+				toggleCollapsed: function() {
+					return this.toggleCollapsed();
+				}
+			},
+
 			elementId: 'neos-menu-panel',
-			template: Ember.Handlebars.compile(template),
+			template: Ember.HTMLBars.compile(template),
 			controller: MenuPanelController,
 
 			ToggleMenuPanelHeadline: Ember.View.extend({
@@ -30,15 +36,22 @@ define(
 				// bound in handlebar
 				group: undefined,
 
-				didInsertElement: function() {
+				init: function() {
+					this._super();
+
 					var menuGroup = this.get('group'),
 						collapsed = this.get('controller.configuration.' + menuGroup);
 
 					if (typeof menuGroup !== 'undefined') {
 						if (collapsed) {
-							this.$().next().hide();
 							this.set('_collapsed', true);
 						}
+					}
+				},
+
+				didInsertElement: function() {
+					if (this.get('_collapsed')) {
+						this.$().next().hide();
 					}
 				},
 
@@ -47,8 +60,8 @@ define(
 				},
 
 				toggleCollapsed: function() {
-					var menuGroup = this.get('group'),
-						isCollapsed = this.get('controller').toggleCollapsed(menuGroup);
+					var menuGroup = this.get('group');
+					var isCollapsed = MenuPanelController.toggleCollapsed(menuGroup);
 					this.set('_collapsed', isCollapsed);
 				},
 

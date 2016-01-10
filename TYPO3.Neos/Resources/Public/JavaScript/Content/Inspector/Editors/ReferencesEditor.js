@@ -158,7 +158,7 @@ define(
 					that._updateSelect2();
 				}
 				return currentValue;
-			}.property('content.@each')
+			}.property('content.[]')
 		});
 	}
 );

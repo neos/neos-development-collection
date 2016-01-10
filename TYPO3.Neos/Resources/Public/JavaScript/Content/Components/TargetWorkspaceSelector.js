@@ -20,22 +20,22 @@ define(
     return Ember.View.extend({
       elementId: 'neos-target-workspace-selector',
       classNameBindings: ['open:neos-open'],
-      template: Ember.Handlebars.compile(template),
+      template: Ember.HTMLBars.compile(template),
 
-      controller: TargetWorkspaceController,
-      nodeSelection: NodeSelection,
-      publishableNodes: PublishableNodes,
+			controller: TargetWorkspaceController,
+			nodeSelection: NodeSelection,
+			publishableNodes: PublishableNodes,
 
       dirtyWorkspaceDialog: null,
 
-      /**
-       * General initialization of this view
-       */
-      init: function () {
-        this._super();
-        this._initialize();
-        this.get('controller')._loadConfiguration();
-      },
+			/**
+			 * General initialization of this view
+			 */
+			init: function() {
+				this._super();
+				this._initialize();
+				this.get('controller').send('loadConfiguration');
+			},
 
       /**
        * (Re-)initialize the target workspace selector
@@ -55,7 +55,7 @@ define(
             }
           }).on('select2-selecting', function (event) {
             if (that.get('publishableNodes.numberOfWorkspaceWidePublishableNodes') > 0) {
-              if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').state === 'destroying') {
+              if (!that.get('dirtyWorkspaceDialog') || that.get('dirtyWorkspaceDialog').isDestroyed) {
                 that.$('select').select2('close');
                 that.set('dirtyWorkspaceDialog', DirtyWorkspaceDialog.create());
               }
@@ -77,7 +77,6 @@ define(
           });
         });
       }.observes('controller.workspaces')
-
     });
   }
 );

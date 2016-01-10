@@ -14,7 +14,7 @@ function(
 	 */
 	return Ember.View.extend({
 		template: null,
-		layout: Ember.Handlebars.compile(template),
+		layout: Ember.HTMLBars.compile(template),
 
 		classNames: ['widget'],
 

@@ -16,6 +16,7 @@ function(
 
 		init: function() {
 			this._super();
+
 			var that = this;
 
 			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');

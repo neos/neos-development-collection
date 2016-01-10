@@ -6,6 +6,11 @@ define(
 	],
 	function (Ember, $, Mousetrap) {
 		return Ember.View.extend({
+			actions: {
+				cancel: function() {
+					this.destroy();
+				}
+			},
 			classNames: ['neos-overlay-component'],
 
 			init: function() {
@@ -16,7 +21,7 @@ define(
 			didInsertElement: function() {
 				var that = this;
 				Mousetrap.bind('esc', function() {
-					that.cancel();
+					that.send('cancel');
 				});
 
 				this.focus();
@@ -31,9 +36,6 @@ define(
 				Mousetrap.unbind('esc');
 			},
 
-			cancel: function() {
-				this.destroy();
-			}
 		});
 	}
 );

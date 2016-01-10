@@ -9,7 +9,7 @@ define([
 		$
 	) {
 		return Ember.View.extend({
-			defaultTemplate: Ember.Handlebars.compile('{{{view.anchorContent}}}'),
+			defaultTemplate: Ember.HTMLBars.compile('{{{view.anchorContent}}}'),
 			classNames: ['neos-popover-toggle'],
 
 			anchorContent: Ember.required,

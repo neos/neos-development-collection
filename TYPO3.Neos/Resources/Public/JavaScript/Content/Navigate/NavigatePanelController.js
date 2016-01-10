@@ -12,6 +12,14 @@ define(
 	LocalStorage
 ) {
 	return Ember.Object.extend({
+		actions: {
+			toggleNavigatePanelMode: function() {
+				return this.toggleNavigatePanelMode();
+			},
+			toggleContextStructureMode: function() {
+				return this.toggleContextStructureMode();
+			}
+		},
 		navigatePanelMode: false,
 		contextStructureMode: false,
 
@@ -23,6 +31,7 @@ define(
 				this.toggleContextStructureMode();
 			}
 		},
+
 
 		toggleNavigatePanelMode: function() {
 			this.toggleProperty('navigatePanelMode');

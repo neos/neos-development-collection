@@ -19,7 +19,7 @@ function(
 	 * Widget that displays data in a table with support for icons
 	 */
 	return Widget.extend(DataSourceLoader, {
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		classNames: ['neos-tableview'],
 

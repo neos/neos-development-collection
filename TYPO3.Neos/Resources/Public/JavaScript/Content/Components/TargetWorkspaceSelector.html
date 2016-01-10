@@ -1,3 +1,7 @@
 <li>
-	{{view Ember.Select contentBinding="targetWorkspaces" optionLabelPath="content.label" optionValuePath="content.name"}}
+	<select>
+		{{#each targetWorkspaces as |targetWorkspace|}}
+			<option value={{targetWorkspace.name}}>{{targetWorkspace.label}}</option>
+		{{/each}}
+	</select>
 </li>

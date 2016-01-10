@@ -14,18 +14,19 @@ define(
 	template
 ) {
 	return AbstractModal.extend({
-		classNames: ['inspector-dialog'],
-		template: Ember.Handlebars.compile(template),
-		controller: InspectorController,
+		actions: {
+			apply: function() {
+				this.get('controller').apply();
+				this.destroy();
+			},
 
-		apply: function() {
-			this.get('controller').apply();
-			this.destroy();
+			revert: function() {
+				this.get('controller').revert();
+				this.destroy();
+			}
 		},
-
-		revert: function() {
-			this.get('controller').revert();
-			this.destroy();
-		}
+		classNames: ['inspector-dialog'],
+		template: Ember.HTMLBars.compile(template),
+		controller: InspectorController
 	});
 });

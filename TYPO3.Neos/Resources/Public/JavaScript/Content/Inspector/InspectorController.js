@@ -50,7 +50,29 @@ define(
 	 *
 	 * Furthermore, it contains *Editors*
 	 */
-	return Ember.Object.extend({
+	return Ember.Controller.extend({
+		actions: {
+			toggleInspectorMode: function() {
+				return this.toggleInspectorMode();
+			},
+			toggleCurrentInspectorTab: function(tab) {
+				return this.toggleCurrentInspectorTab(tab);
+			},
+
+			/**
+			 * Revert all changed properties
+			 */
+			revert: function() {
+				this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
+				this.set('modified', false);
+				SecondaryInspectorController.hide();
+				this._somePropertyChanged();
+			},
+
+			apply: function() {
+				return this.apply();
+			}
+		},
 		nodeSelection: NodeSelection,
 
 		inspectorMode: false,
@@ -73,24 +95,20 @@ define(
 
 		activeTab: 'default',
 
+
 		init: function() {
 			if (LocalStorage.getItem('inspectorMode') !== false) {
 				this.set('inspectorMode', true);
 			}
+
 			this.set('configuration', LocalStorage.getItem('inspectorConfiguration') || {});
 
 			var activeTab = LocalStorage.getItem('activeInspectorTab');
+
 			if (activeTab) {
 				this.set('activeTab', activeTab);
 			}
 		},
-
-		onConfigurationChanged: function() {
-			var configuration = this.get('configuration');
-			if ($.isEmptyObject(configuration) === false) {
-				LocalStorage.setItem('inspectorConfiguration', configuration);
-			}
-		}.observes('configuration'),
 
 		toggleInspectorMode: function() {
 			var state = !this.get('inspectorMode');
@@ -102,6 +120,13 @@ define(
 			this.set('activeTab', tab.get('tab'));
 			LocalStorage.setItem('activeInspectorTab', tab.get('tab'));
 		},
+
+		onConfigurationChanged: function() {
+			var configuration = this.get('configuration');
+			if ($.isEmptyObject(configuration) === false) {
+				LocalStorage.setItem('inspectorConfiguration', configuration);
+			}
+		}.observes('configuration'),
 
 		/**
 		 * This is a computed property which builds up a nested array powering the Inspector.
@@ -466,7 +491,7 @@ define(
 				if (valueOrPromise._propertyChangePromiseClosure) {
 					propertyPromise = valueOrPromise._propertyChangePromiseClosure();
 				} else {
-					propertyPromise = Ember.RSVP.Promise(function (resolve, reject) {
+					propertyPromise = new Ember.RSVP.Promise(function(resolve, reject) {
 						resolve(valueOrPromise);
 					});
 				}

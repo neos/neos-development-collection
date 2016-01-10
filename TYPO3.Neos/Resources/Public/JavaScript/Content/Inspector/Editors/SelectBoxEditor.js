@@ -33,30 +33,7 @@ define([
 			});
 
 			return groupedContent;
-		}).property('optionGroupPath', 'content.@each'),
-
-		groupView: Ember.ContainerView.extend({
-			childViews: ['view'],
-			init: function() {
-				if (this.get('content')) {
-					this.set('view', Ember.SelectOptgroup.extend({
-						contentBinding: 'parentView.content',
-						labelBinding: 'parentView.label',
-						selectionBinding: 'parentView.parentView.selection',
-						multipleBinding: 'parentView.parentView.multiple',
-						optionLabelPathBinding: 'parentView.parentView.optionLabelPath',
-						optionValuePathBinding: 'parentView.parentView.optionValuePath',
-
-						itemViewClassBinding: 'parentView.parentView.optionView'
-					}));
-				} else {
-					this.set('view', Ember.SelectOption.extend({
-						content: this
-					}));
-				}
-				this._super();
-			}
-		})
+		}).property('optionGroupPath', 'content.[]')
 	});
 
 	/** Allow for disabled options */
@@ -97,8 +74,10 @@ define([
 
 		init: function() {
 			this._super();
+
 			this.set('dataSourceAdditionalData', MapObject.create(this.get('dataSourceAdditionalData')));
 			this.set('elementInserted', false);
+
 			this.off('didInsertElement', this, this._triggerChange);
 			this.on('change', function() {
 				this._change();
@@ -142,9 +121,12 @@ define([
 			});
 
 			return options;
-		}.property('values.@each'),
+		}.property('values.[]'),
 
 		valueDidChange: function() {
+			if (this.isDestroyed) {
+				return;
+			}
 			var that = this,
 				content = this.get('content'),
 				value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value'),
@@ -238,8 +220,12 @@ define([
 			}
 		},
 
+		willDestroyElement: function() {
+			this._removeSelect2();
+		},
+
 		_initializeSelect2: function() {
-			this.$().select2('destroy').select2({
+			this.$().select2({
 				maximumSelectionSize: this.get('multiple') ? 0 : 1,
 				minimumResultsForSearch: this.get('minimumResultsForSearch'),
 				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
@@ -276,8 +262,17 @@ define([
 			});
 		},
 
+		_removeSelect2: function() {
+			var $element = this.$();
+			if ($element) {
+				$element.off('select2-open').off('select2-close');
+				$element.select2('destroy');
+			}
+		},
+
 		_placeholderDidChange: function() {
 			if (this.$()) {
+				this._removeSelect2();
 				this._initializeSelect2();
 			}
 		}.observes('_placeholder'),

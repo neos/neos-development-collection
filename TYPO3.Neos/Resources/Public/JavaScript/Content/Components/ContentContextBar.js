@@ -21,13 +21,17 @@ define(
 ) {
 	return ContextBar.extend({
 		classNames: 'neos-content-context-bar',
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 		ContentDimensionSelector: ContentDimensionSelector,
 		fullScreenController: FullScreenController,
 		Configuration: Configuration,
 		init: function() {
-			this.updateCurrentUri();
+			this._super();
+
 			var that = this;
+
+			this.updateCurrentUri();
+
 			ContentModule.on('pageLoaded', function() {
 				that.updateCurrentUri();
 			});

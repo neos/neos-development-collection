@@ -17,8 +17,8 @@
  *
  * Data binding::
  *
- *   {{translate idBinding="view.label" fallback="Default label"}}
- *   {{translate idBinding="view.label" fallbackBinding="view.fallbackLabel"}}
+ *   {{translate id=view.label fallback="Default label"}}
+ *   {{translate id=view.label fallback=view.fallbackLabel}}
  *
  * All arguments are allowed to data bind.
  * Allowed identifier combinations::
@@ -47,14 +47,13 @@ define(
 			var self = this,
 				translateHelperClosure;
 
-			translateHelperClosure = function (options) {
+			translateHelperClosure = function (params, hash) {
 				var attrs;
-				attrs = options.hash;
+				attrs = hash;
 				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
 			};
-
-			Ember.Handlebars.registerHelper('translate', translateHelperClosure);
-			Ember.Handlebars.registerBoundHelper('boundTranslate', translateHelperClosure);
+			Ember.HTMLBars.helpers.registerHelper('translate', translateHelperClosure);
+			Ember.HTMLBars.helpers.registerHelper('boundTranslate', translateHelperClosure);
 		},
 
 		/**

@@ -28,7 +28,7 @@ define([
 		/**
 		 * The underlying VIE entity
 		 */
-		_vieEntity: Ember.required(),
+		_vieEntity: null,
 
 		/**
 		 * Triggered each time "publishable" and "modified" properties change.

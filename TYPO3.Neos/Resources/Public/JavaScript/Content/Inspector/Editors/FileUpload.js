@@ -10,6 +10,12 @@ define(
 ],
 function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 	return Ember.View.extend({
+		actions: {
+			upload: function() {
+				this.set('_uploadInProgress', true);
+				this._uploader.start();
+			}
+		},
 		value: '',
 
 		/**
@@ -30,22 +36,31 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		_containerId: null,
 		_browseButtonId: null,
 		_fileDropZoneId: null,
-		_uploadButtonShown: false,
-		_uploadButtonNotShown: function() {
-			return !this.get('_uploadButtonShown');
-		}.property('_uploadButtonShown'),
 
-		template: Ember.Handlebars.compile(template),
+		template: Ember.HTMLBars.compile(template),
 
 		init: function() {
+			this._super();
+			// If parent view is not the owner view, the view is being rendered for the first time
+			if (this.parentView !== this.ownerView) {
+				return;
+			}
+
 			var id = this.get('elementId');
 			this.set('_containerId', 'typo3-fileupload-' + id);
 			this.set('_browseButtonId', 'typo3-fileupload-browsebutton-' + id);
 			this.set('_fileDropZoneId', 'typo3-fileupload-dropzone-' + id);
-			return this._super();
+
+			this.set('initialized', true);
 		},
 
 		didInsertElement: function() {
+			if (!this.get('initialized')) {
+				Ember.run.schedule('afterRender', this, function() {
+					this.rerender();
+				});
+				return;
+			}
 			this._initializeUploader();
 		},
 
@@ -90,7 +105,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 			this._uploader.bind('Error', function(uploader, error) {
 				that.set('_uploadInProgress', false);
-				that.set('_uploadButtonShown', false);
 				Notification.error(error.message);
 				uploader.splice();
 			});
@@ -118,18 +132,14 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 
 		// The "files" is taken from the DOM event when a file changes
 		filesScheduledForUpload: function(files) {
-			this.upload();
+			this.send('upload');
 		},
 
 		fileUploaded: function() {
+			if (this.isDestroyed) {
+				return;
+			}
 			this.set('_uploadInProgress', false);
-			this.set('_uploadButtonShown', false);
-		},
-
-		upload: function() {
-			this.set('_uploadInProgress', true);
-			this._uploader.start();
 		}
-
 	});
 });

@@ -25,20 +25,22 @@ function(Ember, SessionStorage, HttpClient) {
 			}
 
 			var data = SessionStorage.getItem(resourceUri);
-			resourceRequests[resourceUri] = Ember.Deferred.create();
-			if (data === null) {
-				HttpClient.getResource(resourceUri, {dataType: 'json'}).then(
-					function(data) {
-						SessionStorage.setItem(resourceUri, data);
-						resourceRequests[resourceUri].resolve(data);
-					},
-					function() {
-						resourceRequests[resourceUri].reject(arguments);
-					}
-				);
-			} else {
-				resourceRequests[resourceUri].resolve(data);
-			}
+
+			resourceRequests[resourceUri] = new Ember.RSVP.Promise(function(resolve, reject) {
+				if (data === null) {
+					HttpClient.getResource(resourceUri, {dataType: 'json'}).then(
+						function(data) {
+							SessionStorage.setItem(resourceUri, data);
+							resolve(data);
+						},
+						function() {
+							reject(arguments);
+						}
+					);
+				} else {
+					resolve(data);
+				}
+			});
 		},
 
 		/**
