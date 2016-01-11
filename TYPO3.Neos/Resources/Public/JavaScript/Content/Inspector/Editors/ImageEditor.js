@@ -267,7 +267,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * and reads the image if possible
 		 */
 		didInsertElement: function () {
-			var that = this;
 			this._super();
 
 			this.$().find('.neos-inspector-image-thumbnail-inner').css({
@@ -311,7 +310,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 						that.fileUploaded(result);
 						that._hideImageLoader();
 					});
-					that.set('mediaBrowserShown', false);
+
+					SecondaryInspectorController.hide(that.get('_mediaBrowserEditView'));
+					that._initializeMediaBrowserEditView();
 				}
 			};
 		},
@@ -713,6 +714,12 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 						allowClear: true,
 						placeholder: 'Aspect ratio',
 						dropdownCssClass: 'neos-select2-large'
+					});
+
+					this.$('.neos-footer .neos-button-primary').bind('click', function(event) {
+						event.preventDefault();
+						SecondaryInspectorController.hide(parent.get('_mediaBrowserEditView'));
+						parent._initializeMediaBrowserEditView();
 					});
 
 					this.set('initialized', true);
