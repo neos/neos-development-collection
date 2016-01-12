@@ -6415,7 +6415,7 @@
   top: 2px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close {
-  width: 38px;
+  right: 39px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
   top: 10px;
@@ -8252,27 +8252,23 @@
   background-image: none !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr {
-  background: #fff !important;
-  top: 11px;
-  right: 48px;
-  width: 18px;
-  height: 18px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  top: 12px;
+  right: 52px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr:hover {
-  background-color: #00b5ff;
+  color: #00b5ff;
 }
-.neos #neos-context-bar .chosen-container .chosen-single abbr:before {
-  display: block;
-  width: 18px;
-  text-align: center;
-  content: "×";
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #222;
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
   border: none;
@@ -8931,27 +8927,23 @@
   background-image: none !important;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr {
-  background: #fff !important;
-  top: 11px;
-  right: 48px;
-  width: 18px;
-  height: 18px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  top: 12px;
+  right: 52px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr:hover {
-  background-color: #00b5ff;
+  color: #00b5ff;
 }
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr:before {
-  display: block;
-  width: 18px;
-  text-align: center;
-  content: "×";
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #222;
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
   border: none;
@@ -9135,7 +9127,6 @@
 .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign {
   cursor: pointer;
   font-size: 16px;
-  top: 1px;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign:hover {
   color: #00b5ff;
@@ -9409,6 +9400,9 @@
 }
 .neos #neos-aloha-topmenu .aloha .ui-button .ui-button-icon-only {
   width: 32px;
+}
+.neos #neos-aloha-topmenu .aloha .ui-button .ui-button-text {
+  display: none;
 }
 .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon {
   background: none;
@@ -13626,7 +13620,7 @@ disabled look for disabled choices in the results dropdown
   text-decoration: none;
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close {
-  right: 0px;
+  right: 41px;
   left: auto;
   top: 0;
   height: 40px;
@@ -13636,7 +13630,6 @@ disabled look for disabled choices in the results dropdown
   border-left: 1px solid #222;
   color: white;
   text-decoration: none;
-  right: 41px;
   border-radius: 0;
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:hover {
@@ -13644,7 +13637,7 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
   position: absolute;
-  left: 14px;
+  left: 15px;
   top: 12px;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-chosen {

@@ -61,7 +61,7 @@
     inspector:
       groups:
         visibility:
-          label: 'i18n:TYPO3.Neos:Inspector:groups.visibility'
+          label: 'TYPO3.Neos:Inspector:groups.visibility'
           position: 100
           tab: meta
   properties:
