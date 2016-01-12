@@ -9199,6 +9199,9 @@
 .neos #neos-aloha-topmenu .aloha .ui-button .ui-button-icon-only {
   width: 32px;
 }
+.neos #neos-aloha-topmenu .aloha .ui-button .ui-button-text {
+  display: none;
+}
 .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon {
   background: none;
   -webkit-font-smoothing: antialiased;
