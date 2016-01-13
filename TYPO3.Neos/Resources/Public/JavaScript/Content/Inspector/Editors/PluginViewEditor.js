@@ -30,7 +30,7 @@ function(
 			var that = this,
 				nodeIdentifier = InspectorController.get('nodeProperties.plugin');
 
-			if (!Ember.empty(nodeIdentifier)) {
+			if (!Ember.isEmpty(nodeIdentifier)) {
 				HttpClient.getResource(
 					$('link[rel="neos-pluginviews"]').attr('href'),
 					{
