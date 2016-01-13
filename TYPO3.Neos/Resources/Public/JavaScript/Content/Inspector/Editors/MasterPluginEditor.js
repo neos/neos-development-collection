@@ -16,6 +16,9 @@ function(
 
 		init: function() {
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			var that = this;
 

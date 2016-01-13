@@ -21,6 +21,11 @@ function(
 		content: null,
 
 		init: function() {
+			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
+
 			var that = this,
 				nodeIdentifier = InspectorController.get('nodeProperties._identifier');
 
@@ -44,7 +49,6 @@ function(
 					that.rerender();
 				}
 			);
-			return this._super();
 		},
 
 		emptyView: Ember.View.extend({

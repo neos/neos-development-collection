@@ -20,6 +20,9 @@ function(
 
 		init: function() {
 			this._super();
+			if (!this.get('initialized')) {
+				return;
+			}
 
 			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			this._loadOptionsOnChange();

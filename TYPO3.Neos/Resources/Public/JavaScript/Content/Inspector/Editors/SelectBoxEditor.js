@@ -74,6 +74,10 @@ define([
 
 		init: function() {
 			this._super();
+			// If parent view is not the owner view, the view is being rendered for the first time
+			if (this.parentView !== this.ownerView) {
+				return;
+			}
 
 			this.set('dataSourceAdditionalData', MapObject.create(this.get('dataSourceAdditionalData')));
 			this.set('elementInserted', false);
@@ -83,6 +87,8 @@ define([
 				this._change();
 				this._updateValue();
 			});
+
+			this.set('initialized', true);
 		},
 
 		content: function() {
@@ -164,6 +170,13 @@ define([
 		},
 
 		didInsertElement: function() {
+			if (!this.get('initialized')) {
+				Ember.run.schedule('afterRender', this, function() {
+					this.rerender();
+				});
+				return;
+			}
+
 			this._initializeSelect2();
 			this.set('elementInserted', true);
 		},
