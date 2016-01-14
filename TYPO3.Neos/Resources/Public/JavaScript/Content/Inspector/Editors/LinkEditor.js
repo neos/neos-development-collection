@@ -174,33 +174,35 @@ define(
 				});
 			},
 
-			valueDidChange: function() {
-				if (this.$()) {
-					this.$().select2('container').find('.neos-select2-input').css({'display': this.get('value') ? 'none' : 'inline-block'});
-					this._updateSelect2();
+			_contentDidChange: function() {
+				this.set('value', this.get('content.id') || '');
+			}.observes('content'),
+
+			_valueDidChange: function() {
+				var value = this.get('value');
+				if (value === this.get('content.id')) {
+					return;
 				}
-			}.observes('value'),
 
-			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
-			value: function(key, value) {
-				var parameters, nodeIdentifier, item, that, protocol;
-
-				if (value) {
-					that = this;
-					item = Ember.Object.extend({
+				if (value === '') {
+					this.set('content', null);
+				} else if (value) {
+					var item = Ember.Object.extend({
 						id: value,
 						text: function() {
 							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
 						}.property(),
 						data: {}
 					}).create();
-					that.set('content', item);
+					this.set('content', item);
+					this._updateSelect2();
 
-					protocol = value.split(':', 1)[0];
-
+					var protocol = value.split(':', 1)[0],
+						that = this,
+						parameters
 					switch (protocol) {
 						case 'node':
-							nodeIdentifier = value.substr(7, 36);
+							var nodeIdentifier = value.substr(7, 36);
 							parameters = {
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
@@ -239,11 +241,9 @@ define(
 							item.set('data', {icon: 'icon-link'});
 						break;
 					}
-				} else if (value === '') {
-					this.set('content', null);
 				}
-				return this.get('content.id') || '';
-			}.property('content', 'content.id'),
+				this._updateSelect2();
+			}.observes('value').on('init'),
 
 			_updateSelect2: function() {
 				if (!this.$()) {
@@ -254,6 +254,7 @@ define(
 				} else {
 					this.$().select2('data', []);
 				}
+				this.$().select2('container').find('.neos-select2-input').css({'display': this.get('value') ? 'none' : 'inline-block'});
 			}
 		});
 	}
