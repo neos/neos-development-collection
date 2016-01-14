@@ -51,8 +51,10 @@ define(
 						Utility.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
 						$itemContent = $('<span>' + markup.join('') + '</span>');
 
-						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
-						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
+						if (info) {
+							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+							$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
+						}
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
@@ -68,7 +70,9 @@ define(
 						var info = item.data.path ? item.data.path : item.data.identifier;
 						var $itemContent = $('<span>' + item.text + '</span>');
 
-						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						if (info) {
+							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
+						}
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
