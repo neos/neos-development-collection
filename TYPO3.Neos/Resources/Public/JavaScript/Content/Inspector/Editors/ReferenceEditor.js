@@ -127,12 +127,12 @@ define(
 				});
 			},
 
-			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
-			value: function(key, value) {
-				var that = this;
-				var parameters;
-				var $metadata = $('#neos-document-metadata');
+			_contentDidChange: function() {
+				this.set('value', this.get('content.id') || '');
+			}.observes('content'),
 
+			_valueDidChange: function() {
+				var value = this.get('value');
 				if (value && value !== this.get('content.id')) {
 					var item = Ember.Object.extend({
 						id: value,
@@ -140,22 +140,22 @@ define(
 							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
 						}.property()
 					}).create();
-					that.set('content', item);
+					this.set('content', item);
+					this._updateSelect2();
 
-					parameters = {
+					var $metadata = $('#neos-document-metadata');
+					var parameters = {
 						workspaceName: $metadata.data('neos-context-workspace-name'),
 						dimensions: $metadata.data('neos-context-dimensions')
 					};
+					var that = this;
 					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text().trim());
 						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
 						that._updateSelect2();
 					});
-
-					that._updateSelect2();
 				}
-				return this.get('content.id') || '';
-			}.property('content', 'content.id'),
+			}.observes('value').on('init'),
 
 			_updateSelect2: function() {
 				if (!this.$()) {

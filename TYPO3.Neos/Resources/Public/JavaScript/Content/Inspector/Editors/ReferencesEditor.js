@@ -120,21 +120,29 @@ define(
 				this.$().select2('data', this.get('content'));
 			},
 
-			// actual value used and expected by the inspector:
-			value: function(key, value) {
-				var that = this,
-					currentValue = JSON.stringify(this.get('content').map(function(item) {
+			_contentDidChange: function() {
+				var value = this.get('value'),
+				  contentValue = JSON.stringify(this.get('content').map(function(item) {
+						return item.id;
+					}));
+				if (value !== contentValue) {
+					this.set('value', contentValue);
+				}
+			}.observes('content'),
+
+			_valueDidChange: function() {
+				var value = this.get('value'),
+				  contentValue = JSON.stringify(this.get('content').map(function(item) {
 						return item.id;
 					}));
 
-				if (value && value !== currentValue) {
+				if (value && value !== contentValue) {
 					// Remove all items so they don't appear multiple times.
 					// TODO: cache already found items and load multiple node records at once
-					that.set('content', []);
+					var that = this,
+						items = [];
 					// load names of already selected nodes via the Node REST service:
 					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
-						var parameters;
-						var $metadata = $('#neos-document-metadata');
 						var item = Ember.Object.extend({
 							id: nodeIdentifier,
 							text: function() {
@@ -142,9 +150,10 @@ define(
 							}.property()
 						}).create();
 
-						that.get('content').pushObject(item);
+						items.pushObject(item);
 
-						parameters = {
+						var $metadata = $('#neos-document-metadata');
+						var parameters = {
 							workspaceName: $metadata.data('neos-context-workspace-name'),
 							dimensions: $metadata.data('neos-context-dimensions')
 						};
@@ -153,12 +162,11 @@ define(
 							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
 							that._updateSelect2();
 						});
-
 					});
-					that._updateSelect2();
+					this.set('content', items);
+					this._updateSelect2();
 				}
-				return currentValue;
-			}.property('content.[]')
+			}.observes('value').on('init')
 		});
 	}
 );
