@@ -1,0 +1,124 @@
+`2.0.7 (2016-01-14) <https://github.com/neos/neos-development-collection/releases/tag/2.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Wrong label visibility inspector group <https://github.com/neos/neos-development-collection/pull/333>`_
+----------------------------------------------------------------------------------------------------------------
+
+This change remove the 'i18n' prefix from the inspector group label.
+
+* Packages: ``Neos``
+
+`TASK: Aloha update and fix <https://github.com/neos/neos-development-collection/pull/332>`_
+--------------------------------------------------------------------------------------------
+
+Updates Aloha Editor to closest maintained version (1.1.5 to 1.2.42)
+
+No new features used (only bugfixes)
+
+Additionally fixes a bug with the toolbar buttons overflowing
+
+* Packages: ``Neos``
+
+`BUGFIX: Export resources as BASE64 if no export path defined <https://github.com/neos/neos-development-collection/pull/335>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: Select editor unset button styling <https://github.com/neos/neos-development-collection/pull/326>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Load moved page if moving parent page <https://github.com/neos/neos-development-collection/pull/331>`_
+---------------------------------------------------------------------------------------------------------------
+
+If you move a parent node of the node in the NodeTree you are currently on the node tree
+will break because the pageNodePath for your current node is not set to the new path.
+
+NEOS-1752 #close
+
+* Packages: ``Neos``
+
+`TASK: Streamline styling of clear buttons in node tree <https://github.com/neos/neos-development-collection/pull/327>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Replace visible occurrences of www.typo3.org with www.neos.io <https://github.com/neos/neos-development-collection/pull/321>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces www.typo3.org which is given as an example in the
+"add new domain" dialog by www.neos.io, and also replaces it in a couple
+of unit tests. The VIE namespace is not modified by this change.
+
+* Packages: ``Neos``
+
+`BUGFIX: Show content element after copy paste inline <https://github.com/neos/neos-development-collection/pull/309>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Fixes copy pasting of content elements where the new element wouldn't be displayed until
+reloading the page.
+
+Additionally fixes an issue where cutting an element caused a page reload.
+
+NEOS-1506 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow translation of dimension label <https://github.com/neos/neos-development-collection/pull/303>`_
+--------------------------------------------------------------------------------------------------------------
+
+The dimension label could not be translated, because the translate
+helper was used incorrect.
+
+* Packages: ``Neos``
+
+`[TASK] Add section about the \`\`DefaultPage\`\` prototype approach <https://github.com/neos/neos-development-collection/pull/189>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+source: https://discuss.neos.io/t/document-node-type-best-practices/242
+The credit for this approach goes to Christopher Hlubek.
+
+* Packages: ``Neos``
+
+`TASK: node:repair doesn't mix internal node properties <https://github.com/neos/neos-development-collection/pull/288>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The ``node:repair`` command would currently apply any configured default
+value as node property value if the property did not exist. This is
+wrong for properties prefixed with an underscore as we use this
+prefix for internal properties.
+This is now changed so that any property starting with underscore
+is ignored.
+
+As this prefix is currently implicit knowledge a small note was added
+to the documentation, stating that property names should not start
+with underscores as we use them internally.
+
+NEOS-1721 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: RenameNode Transformation uses existing method <https://github.com/neos/neos-development-collection/pull/287>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The ``RenameNode`` transformation for node migrations used
+the non existing method ``setName`` on the ``NodeData`` object.
+It now uses ``setPath`` instead which exists.
+
+NEOS-1727 #close fixed with this change
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Documentation for node migrations <https://github.com/neos/neos-development-collection/pull/292>`_
+---------------------------------------------------------------------------------------------------------
+
+This adds documentation for node migrations (filters and transformations).
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.6...2.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
