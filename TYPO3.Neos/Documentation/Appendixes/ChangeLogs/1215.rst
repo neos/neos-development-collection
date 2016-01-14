@@ -1,0 +1,33 @@
+`1.2.15 (2016-01-14) <https://github.com/neos/neos-development-collection/releases/tag/1.2.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Export resources as BASE64 if no export path defined <https://github.com/neos/neos-development-collection/pull/335>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR`` ``TypoScript``
+
+`TASK: Replace visible occurrences of www.typo3.org with www.neos.io <https://github.com/neos/neos-development-collection/pull/321>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces www.typo3.org which is given as an example in the
+"add new domain" dialog by www.neos.io, and also replaces it in a couple
+of unit tests. The VIE namespace is not modified by this change.
+
+* Packages: ``Neos``
+
+`BUGFIX: RenameNode Transformation uses existing method <https://github.com/neos/neos-development-collection/pull/287>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The ``RenameNode`` transformation for node migrations used
+the non existing method ``setName`` on the ``NodeData`` object.
+It now uses ``setPath`` instead which exists.
+
+NEOS-1727 #close fixed with this change
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/1.2.14...1.2.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
