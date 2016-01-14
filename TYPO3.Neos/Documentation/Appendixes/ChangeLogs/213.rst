@@ -1,0 +1,110 @@
+`2.1.3 (2016-01-14) <https://github.com/neos/neos-development-collection/releases/tag/2.1.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Refresh NodeTree if Workspace is switched <https://github.com/neos/neos-development-collection/pull/334>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If you switch the workspace the NodeTree will be reloaded.
+
+NEOS-1753 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Wrong label visibility inspector group <https://github.com/neos/neos-development-collection/pull/333>`_
+----------------------------------------------------------------------------------------------------------------
+
+This change remove the 'i18n' prefix from the inspector group label.
+
+* Packages: ``Neos``
+
+`TASK: Aloha update and fix <https://github.com/neos/neos-development-collection/pull/332>`_
+--------------------------------------------------------------------------------------------
+
+Updates Aloha Editor to closest maintained version (1.1.5 to 1.2.42)
+
+No new features used (only bugfixes)
+
+Additionally fixes a bug with the toolbar buttons overflowing
+
+* Packages: ``Neos``
+
+`BUGFIX: Export resources as BASE64 if no export path defined <https://github.com/neos/neos-development-collection/pull/335>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: Select editor unset button styling <https://github.com/neos/neos-development-collection/pull/326>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Load moved page if moving parent page <https://github.com/neos/neos-development-collection/pull/331>`_
+---------------------------------------------------------------------------------------------------------------
+
+If you move a parent node of the node in the NodeTree you are currently on the node tree
+will break because the pageNodePath for your current node is not set to the new path.
+
+NEOS-1752 #close
+
+* Packages: ``Neos``
+
+`TASK: Streamline styling of clear buttons in node tree <https://github.com/neos/neos-development-collection/pull/327>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Document missing \`\`ConvertUris\`\` property \`\`absolute\`\` <https://github.com/neos/neos-development-collection/pull/330>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Documents a missing property ``absolute`` for the ``ConvertUris`` TypoScript object
+
+* Packages: ``Neos``
+
+`TASK: Fix spelling mistakes in \`\`FeatureList\`\` documentation <https://github.com/neos/neos-development-collection/pull/329>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This fixes some spellings in the FeatureList
+
+* Packages: ``Diff`` ``Media`` ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Migration for workspaces with empty owners <https://github.com/neos/neos-development-collection/pull/322>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The fixes issued for NEOS-1740 didn't consider the case of an installation
+were previous migrations ran and set the owner of workspaces to an
+empty string instead of NULL which made the first bugfix migration ignore
+those workspaces. This migration now targets those specifically, together
+migrating all workspaces to having the correct ownership.
+
+NEOS-1740 #close
+
+* Packages: ``Neos``
+
+`TASK: Replace visible occurrences of www.typo3.org with www.neos.io <https://github.com/neos/neos-development-collection/pull/321>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces www.typo3.org which is given as an example in the
+"add new domain" dialog by www.neos.io, and also replaces it in a couple
+of unit tests. The VIE namespace is not modified by this change.
+
+* Packages: ``Neos``
+
+`TASK: Reintroduce PublishingService <https://github.com/neos/neos-development-collection/pull/315>`_
+-----------------------------------------------------------------------------------------------------
+
+The PublishingService was moved from TYPO3\\TYPO3CR\\Service to
+the TYPO3\\TYPO3CR\\Domain\\Service namespace in commit
+`23b162fa737cd56eb065b71e76a11ee823cdec7a <https://github.com/neos/neos-development-collection/commit/23b162fa737cd56eb065b71e76a11ee823cdec7a>`_. As the class was annotated
+with @api that change was actually breaking and should not have been
+released in a minor release.
+
+This change introduces the class again and immediately deprecates it
+to be removed in a later version.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.2...2.1.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
