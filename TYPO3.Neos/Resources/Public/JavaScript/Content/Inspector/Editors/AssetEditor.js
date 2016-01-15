@@ -7,9 +7,10 @@ define(
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Utility',
 	'Shared/HttpClient',
-	'Shared/I18n'
+	'Shared/I18n',
+	'Library/sortable/Sortable'
 ],
-function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n) {
+function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable) {
 
 	return FileUpload.extend({
 		removeButtonLabel: function() {
@@ -47,6 +48,33 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			if (!this.get('loadingLabel')) {
 				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			}
+
+			if (this.get('multiple') === true) {
+				this._makeSortable();
+			}
+		},
+
+		_makeSortable: function() {
+			var itemList, sortable, that = this;
+			itemList = this.$().find('ul.neos-inspector-file-list').first();
+			sortable = Sortable.create(itemList.get(0), {
+				onUpdate: function (event) {
+					var data = [];
+					itemList.find('li').each(function () {
+						var currentIdentifier = $(this).find('[data-neos-identifier]').data('neos-identifier');
+						$(that.get('assets')).each(function () {
+							if (!this.assetUuid) {
+								return;
+							}
+							if (this.assetUuid == currentIdentifier) {
+								data.push(this);
+							}
+						});
+					});
+					that.set('assets', data);
+					that._updateValue();
+				}
+			});
 		},
 
 		_loadingLabel: function() {
@@ -58,8 +86,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		assetView: Ember.CollectionView.extend({
 			tagName: 'ul',
+			classNames: ['neos-inspector-file-list'],
 			itemViewClass: Ember.View.extend({
-				template: Ember.Handlebars.compile('<span><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
+				template: Ember.Handlebars.compile('<span data-neos-identifier="{{unbound view.content.assetUuid}}"><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
 				attributeBindings: ['title'],
 				titleBinding: 'content.filename',
 				actions: {

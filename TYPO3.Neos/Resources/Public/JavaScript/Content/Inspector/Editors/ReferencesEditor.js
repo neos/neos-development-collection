@@ -5,9 +5,10 @@ define(
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
 		'Shared/I18n',
-		'Shared/Utility'
+		'Shared/Utility',
+		'Library/sortable/Sortable'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility, Sortable) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -31,7 +32,8 @@ define(
 
 			didInsertElement: function() {
 				var that = this,
-					currentQueryTimer = null;
+					currentQueryTimer = null,
+					select2Ul = null;
 
 				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
 					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
@@ -58,15 +60,16 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span>' + item.text + '</span>');
+						var $itemContent = $('<span><em>' + I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...' + '</em></span>');
 
 						if (item.data) {
+							$itemContent = $('<span data-neos-identifier="' + item.data.identifier + '">' + item.text + '</span>');
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
-							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : 'icon-file-text';
 							if (iconClass) {
-								$itemContent.prepend('<i class="' + iconClass + '"></i>');
+								$itemContent.prepend('<i class="neos-ui-drag-handle ' + iconClass + '"></i>');
 							}
 						}
 
@@ -106,11 +109,8 @@ define(
 					}
 				});
 
+				this._makeSortable();
 				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
-
-				this.$().on('change', function() {
-					that.set('content', $(this).select2('data'));
-				});
 			},
 
 			_updateSelect2: function() {
@@ -118,6 +118,37 @@ define(
 					return;
 				}
 				this.$().select2('data', this.get('content'));
+			},
+
+			_makeSortable: function() {
+				var select2Ul, sortable, that = this;
+				select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first();
+				sortable = Sortable.create(select2Ul.get(0), {
+					filter: '.neos-select2-search-field',
+					onUpdate: function (event) {
+						var data = [];
+						select2Ul.find('.neos-select2-search-choice').each(function () {
+							var currentIdentifier = $(this).find('[data-neos-identifier]').data('neos-identifier');
+							$(that.$().select2('data')).each(function () {
+								if (!this.data) {
+									return;
+								}
+								if (this.data.identifier == currentIdentifier) {
+									data.push(this);
+								}
+							});
+						});
+						that.$().select2('data', data);
+						that.set('content', that.$().select2('data'));
+					},
+					onStart: function (event) {
+						that.$().select2('onSortStart');
+					},
+					// dragging ended
+					onEnd: function (event) {
+						that.$().select2('onSortEnd');
+					}
+				});
 			},
 
 			// actual value used and expected by the inspector:
