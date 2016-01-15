@@ -11,7 +11,8 @@ namespace Neos\RedirectHandler\NeosAdapter\Service;
  * source code.
  */
 
-use Neos\RedirectHandler\Service\SettingsService;
+use Neos\RedirectHandler\Redirection;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
@@ -39,12 +40,6 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 {
     /**
      * @Flow\Inject
-     * @var SettingsService
-     */
-    protected $settingsService;
-
-    /**
-     * @Flow\Inject
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
@@ -56,7 +51,7 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 
     /**
      * @Flow\Inject
-     * @var \Neos\RedirectHandler\Storage\RedirectionStorageInterface
+     * @var RedirectionStorageInterface
      */
     protected $redirectionStorage;
 
@@ -83,6 +78,12 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\InjectConfiguration(path="statusCode", package="Neos.RedirectHandler")
+     * @var array
+     */
+    protected $defaultStatusCode;
 
     /**
      * Creates a redirection for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
@@ -120,8 +121,8 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
         // The page has been removed
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
-            $statusCode = $this->settingsService->getGoneStatusCode();
             $this->redirectionStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hostPatterns);
+            $statusCode = (integer)$this->defaultStatusCode['gone'];
             return;
         }
 
