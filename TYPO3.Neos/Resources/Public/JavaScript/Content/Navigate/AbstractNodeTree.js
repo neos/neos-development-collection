@@ -156,7 +156,7 @@ define(
 
 			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: 'Create (hold to select position)',
+				title: 'Create (hover to select position)',
 				iconClass: 'icon-plus',
 
 				mouseUp: function(event) {
@@ -172,7 +172,7 @@ define(
 
 			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: 'Paste (hold to select position)',
+				title: 'Paste (hover to select position)',
 				iconClass: 'icon-paste',
 
 				mouseUp: function(event) {
