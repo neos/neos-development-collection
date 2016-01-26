@@ -307,7 +307,7 @@ target is then granted for the "Editor" role.
         matcher: 'isInDimensionPreset("language", "de")'
 
   roles:
-    ‘TYPO3.Neos:Editor’:
+    'TYPO3.Neos:Editor':
       privileges:
         -
           privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
