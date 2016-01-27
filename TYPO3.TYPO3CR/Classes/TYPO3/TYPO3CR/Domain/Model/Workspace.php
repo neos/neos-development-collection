@@ -414,7 +414,7 @@ class Workspace
             return;
         }
         // Might happen if a node which has been published during an earlier call of publishNode() is attempted to
-        // publish again:
+        // be published again:
         if ($node->getWorkspace() === $targetWorkspace) {
             return;
         }
