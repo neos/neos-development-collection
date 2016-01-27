@@ -413,6 +413,11 @@ class Workspace
         if ($node->getWorkspace() !== $this) {
             return;
         }
+        // Might happen if a node which has been published during an earlier call of publishNode() is attempted to
+        // publish again:
+        if ($node->getWorkspace() === $targetWorkspace) {
+            return;
+        }
         $this->verifyPublishingTargetWorkspace($targetWorkspace);
         $this->emitBeforeNodePublishing($node, $targetWorkspace);
         if ($node->getPath() === '/') {
@@ -560,7 +565,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace, Workspace $newBaseWorkspace)
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
     {
     }
 
