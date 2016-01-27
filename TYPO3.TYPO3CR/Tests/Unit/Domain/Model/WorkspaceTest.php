@@ -81,6 +81,27 @@ class WorkspaceTest extends UnitTestCase
     }
 
     /**
+     * Bug NEOS-1769: Content Collections disappear when publishing to other workspace than "live"
+     *
+     * Under certain circumstances, content collection nodes will be deleted when publishing a document to a workspace which is based on another workspace.
+     *
+     * @test
+     */
+    public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
+    {
+        $liveWorkspace = new Workspace('live');
+        $workspace = new Workspace('some-campaign');
+        $workspace->setBaseWorkspace($liveWorkspace);
+
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+        $mockNode->expects($this->never())->method('emitBeforeNodePublishing');
+
+        $workspace->publishNode($mockNode, $workspace);
+    }
+
+    /**
      * @test
      */
     public function verifyPublishingTargetWorkspaceDoesNotThrowAnExceptionIfTargetWorkspaceIsABaseWorkspace()
