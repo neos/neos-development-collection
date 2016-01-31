@@ -200,7 +200,6 @@
 
 			i {
 				margin-right: $tightMargin;
-				line-height: $unit;
 				vertical-align: middle;
 			}
 		}
@@ -395,8 +394,8 @@
 								}
 
 								&::after {
-									@include icon-FontAwesome();
-									content: $arrow-down;
+									@include fa-icon();
+									content: $fa-var-arrow-down;
 									position: absolute;
 									right: $relatedMargin + $tightMargin;
 								}
@@ -591,8 +590,8 @@
 					}
 
 					&::after {
-						@include icon-FontAwesome();
-						content: $move;
+						@include fa-icon();
+						content: $fa-var-arrows;
 						display: block;
 						position: absolute;
 						left: 0;
