@@ -184,7 +184,9 @@ class SiteImportService
             }
             $isLegacyFormat = $xmlReader->getAttribute('nodeName') !== null && $xmlReader->getAttribute('state') === null && $xmlReader->getAttribute('siteResourcesPackageKey') === null;
             if ($isLegacyFormat) {
-                return $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
+                $site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
+                $this->emitSiteImported($site);
+                return $site;
             }
 
             $site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
