@@ -175,6 +175,7 @@ class SiteImportService
 
         if ($this->workspaceRepository->findOneByName('live') === null) {
             $this->workspaceRepository->add(new Workspace('live'));
+            $this->persistenceManager->persistAll();
         }
 
         while ($xmlReader->read()) {
