@@ -26,8 +26,3 @@ The Neos Media package contains the following generators:
 * Image Thumbnail Generator (``ImageThumbnailGenerator``)
 
     Generates a Thumbnail for any image types supported by ``GD``, ``Imagick`` or ``Gmagick``.
-
-* SVG Thumbnail Generator  (``SvgThumbnailGenerator``)
-
-    Special case to handle SVG (Scalable Vector Graphic), which returns the SVG file directly since it
-    doesn't need a generated thumbnail.

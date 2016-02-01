@@ -332,7 +332,6 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null)
     {
         $helpMessage = '';
-
         if (isset($configuration['ui']['help'])) {
             // message handling
             if (isset($configuration['ui']['help']['message'])) {
@@ -349,16 +348,16 @@ class NodeTypeConfigurationEnrichmentAspect
                 $thumbnailUrl = '';
                 if (isset($configuration['ui']['help']['thumbnail'])) {
                     $thumbnailUrl = $configuration['ui']['help']['thumbnail'];
-                    $matches = [];
-                    if (preg_match('/resource:\/\/(?P<packageKey>[^\/]+)\/(?P<relativePathAndFilename>.+)/', $thumbnailUrl, $matches) === 1) {
-                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($matches['packageKey'], $matches['relativePathAndFilename']);
+                    if (strpos($thumbnailUrl, 'resource://') === 0) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
                     }
                 } else {
                     # look in well know location
                     $splitPrefix = $this->splitIdentifier($nodeTypeName);
                     $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
-                    if (file_exists('resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename)) {
-                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($splitPrefix['packageKey'], $relativePathAndFilename);
+                    $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+                    if (file_exists($resourcePath)) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
                     }
                 }
 
@@ -366,7 +365,6 @@ class NodeTypeConfigurationEnrichmentAspect
                     $helpMessage = '![alt text](' . $thumbnailUrl . ') ' . $helpMessage;
                 }
             }
-
             if ($helpMessage !== '') {
                 $helpMessage = $this->markdownConverter->convertToHtml($helpMessage);
                 $helpMessage = $this->addTargetAttribute($helpMessage);
@@ -384,7 +382,11 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function addTargetAttribute($htmlString)
     {
         $document = new \DOMDocument();
-        $document->loadHTML($htmlString);
+
+        // Force correct unicode handling
+        $document->loadHTML('<?xml encoding="UTF-8">' . $htmlString);
+        $document->encoding = 'UTF-8';
+
         $links = $document->getElementsByTagName('a');
         /** @var \DOMElement $item */
         foreach ($links as $item) {
@@ -419,12 +421,12 @@ class NodeTypeConfigurationEnrichmentAspect
             case 2:
                 $packageKey = $idParts[0];
                 $id = $idParts[1];
-            break;
+                break;
             case 3:
                 $packageKey = $idParts[0];
                 $source = str_replace('.', '/', $idParts[1]);
                 $id = $idParts[2];
-            break;
+                break;
         }
 
         return [

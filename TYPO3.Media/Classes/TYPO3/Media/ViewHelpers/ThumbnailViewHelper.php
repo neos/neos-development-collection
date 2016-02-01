@@ -112,12 +112,18 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
      * @param integer $maximumHeight Desired maximum height of the thumbnail
      * @param boolean $allowCropping Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting thumbnail size might exceed the size of the original asset
+     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
+     * @param string $preset Preset used to determine image configuration
      * @return string an <img...> html tag
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration);
+        if ($preset) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
+        }
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
 
         if ($thumbnailData === null) {
             return '';

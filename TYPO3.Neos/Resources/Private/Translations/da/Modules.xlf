@@ -87,6 +87,9 @@
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
 			<target xml:lang="da">Ændringer</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="da">Åbn side i arbejdsrummet "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="da">Dette er dit personlige arbejdsrum, som du ikke kan slette.</target></trans-unit>
@@ -132,12 +135,12 @@
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target xml:lang="da">Publicér alle ændringer</target></trans-unit>
-      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="da" state="needs-translation">Publish all changes to {0}</target></trans-unit>
-      <trans-unit id="workspaces.legendCaption" xml:space="preserve" approved="yes">
-				<source>Legend</source>
-			<target xml:lang="da">Forklaring</target></trans-unit>
+			<target xml:lang="da">Publicér alle ændringer til {0}</target></trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
+				<source>Changed Content</source>
+			<target xml:lang="da">Ændret indhold</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
 			<target xml:lang="da">slettet</target></trans-unit>
@@ -265,6 +268,9 @@
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
 			<target xml:lang="da">{0} slettede kontoen "{1}" fra {2}.</target></trans-unit>
+      <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
+				<source>Load More</source>
+			<target xml:lang="da">Indlæs flere</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -474,6 +480,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="da">Brugerinformation</target><alt-trans><target xml:lang="da">Bruger information</target></alt-trans></trans-unit>
+      <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
+				<source>User Menu</source>
+			<target xml:lang="da">Brugermenu</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="da">Brugerindstillinger</target></trans-unit>

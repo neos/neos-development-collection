@@ -659,7 +659,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					$image.attr('src', parent.get('_previewImageUri'));
 
 					var update = function (previewImageCoordinates) {
-
 							var imageWidthBeforeChange = parent.get('_finalImageDimensions.width');
 							var imageWidthScalingFactor = previewImageCoordinates.w / parent.get('_cropProperties.width');
 							Ember.beginPropertyChanges();
@@ -675,6 +674,8 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 							parent._updateValue();
 						},
 						settings = {
+							boxWidth: 600,
+							boxHeight: 600,
 							// Triggered when the selection is finished or updated
 							onSelect: update,
 							onChange: update

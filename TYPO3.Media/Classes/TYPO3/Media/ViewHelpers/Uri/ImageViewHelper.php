@@ -42,12 +42,6 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
 {
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
-     * @Flow\Inject
-     */
-    protected $resourceManager;
-
-    /**
      * @Flow\Inject
      * @var \TYPO3\Media\Domain\Service\ThumbnailService
      */
@@ -79,14 +73,21 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
      * @param integer $maximumHeight Desired maximum height of the image
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
+     * @param string $preset Preset used to determine image configuration
      * @return string the relative image path, to be used as src attribute for <img /> tags
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
         if ($image === null && $this->hasArgument('asset')) {
             $image = $this->arguments['asset'];
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling);
-        return $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration)['src'];
+
+        if ($preset) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
+        }
+        return $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest())['src'];
     }
 }

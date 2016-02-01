@@ -62,26 +62,19 @@
 		}
 
 		abbr {
-			background: #fff !important;
-			top: 11px;
-			right: $unit + $relatedMargin;
-			width: 18px;
-			height: 18px;
-			@include border-radius(10px);
+			top: 12px;
+			right: $unit + $relatedMargin + $tightMargin;;
+			color: #fff;
+			font-size: 16px;
+			line-height: 1;
 
 			&:hover {
-				background-color: $blue;
+				color: $blue;
 			}
 
-			&:before {
-				display: block;
-				width: 18px;
-				text-align: center;
-				content: "×";
-				font-size: 17px;
-				font-weight: bold;
-				line-height: 18px;
-				color: $grayDark;
+			&::after {
+				@include icon-FontAwesome();
+				content: $remove-sign;
 			}
 		}
 	}

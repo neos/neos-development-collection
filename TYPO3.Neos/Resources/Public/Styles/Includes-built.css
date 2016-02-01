@@ -26,19 +26,6 @@
   font-weight: 700;
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url("../Fonts/NotoSans/NotoSans-BoldItalic.ttf") format("truetype");
 }
-@font-face {
-  font-family: 'neos-language';
-  src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggi/LYAAAC8AAAAYGNtYXAaVcxXAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zr9/DIIAAAFwAAABfGhlYWT/r6QdAAAC7AAAADZoaGVhA8QB5gAAAyQAAAAkaG10eAMAAB4AAANIAAAAFGxvY2EAKADSAAADXAAAAAxtYXhwAAoAfAAAA2gAAAAgbmFtZXu8lvUAAAOIAAABHnBvc3QAAwAAAAAEqAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADmAAHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIOYA//3//wAAAAAAIOYA//3//wAB/+MaBAADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAABAAe//sB4gHFAFMAVwBwAHkAABMOAwcnPgM3LgMnMx4DFz4DNyM1MzUzFTMVIw4DBx4DFz4DOwE+ATQ2NTQuAiMiDgIVFB4CMzoCNjM1LgMnFwczJzcjIg4CHQEUHgI7ATI+Aj0BNC4CIwcnIwcjNzMXI7AHERMVDQcLExEPBgcMCgYCFgIFCAoGCg4JBAGBThZOHAEEChANAQMDAwIBBAUFA2IBAQEXKDUeHjUoFxcoNR4DBQYFAwMGBQYCrBw3G3HkBAgFBAQFCATkBAgFBAQFCAQ9EkUSFj8YQBgBCAYLCwsFEwUJCgoFCBAPDQcFCwsMBgsUEw8FFRkZFQYSFhkNAQICAwECBAICAwcHCAMeNSgXFyg1Hh41KBYBVQIEBAQCRkxMRgMFCATkBQcGAwMGBwXkBAgFA9UxMaKiAAABAAAAAQAAdXvwoV8PPPUACwIAAAAAAM9XMbAAAAAAz1cxsAAA//sB4gHFAAAACAACAAAAAAAAAAEAAAHg/+AAAAIAAAAAAAHiAAEAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAQAAAAIAAB4AAAAAAAoAFAAeAL4AAQAAAAUAegAEAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA4ArgABAAAAAAABAAgAAAABAAAAAAACAA4AMgABAAAAAAADAAgAHgABAAAAAAAEAAgAQAABAAAAAAAFABYACAABAAAAAAAGAAQAJgABAAAAAAAKACgASAADAAEECQABAAgAAAADAAEECQACAA4AMgADAAEECQADAAgAHgADAAEECQAEAAgAQAADAAEECQAFABYACAADAAEECQAGAAgAKgADAAEECQAKACgASABuAGUAbwBzAFYAZQByAHMAaQBvAG4AIAAxAC4AMABuAGUAbwBzbmVvcwBuAGUAbwBzAFIAZQBnAHUAbABhAHIAbgBlAG8AcwBHAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format("truetype"), url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAATEAAoAAAAABHwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAWIAAAFi8ShyJk9TLzIAAAJYAAAAYAAAAGAIIvy2Y21hcAAAArgAAABMAAAATBpVzFdnYXNwAAADBAAAAAgAAAAIAAAAEGhlYWQAAAMMAAAANgAAADb/r6QdaGhlYQAAA0QAAAAkAAAAJAPEAeZobXR4AAADaAAAABQAAAAUAwAAHm1heHAAAAN8AAAABgAAAAYABVAAbmFtZQAAA4QAAAEeAAABHnu8lvVwb3N0AAAEpAAAACAAAAAgAAMAAAEABAQAAQEBBW5lb3MAAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAABtDx0AAAByER0AAAAJHQAAAVkSAAYBAQUJCw0QFW5lb3NuZW9zdTB1MXUyMHVFNjAwAAACAYkAAwAFAQEEBwoN3/yUDvyUDvyUDvuUDvdE95wVeHxye2p+CISeBaiXoZicmXeggKCFnAihiwWQfpV7m3unp5OnjZkI+xWLi6DZi4ukoYuLctmLi3ZviwWJe4NpaWmPiI+Ij4iPkZGPk4sI7YsFjZSMlIuVi9xKzDqLO4tJSos6izvNStuLk4uSi5KMCIvgBYOQg5GFkAj3QEUVbz/Ci3DXBfcF0RX7eIsFgIuBgouACIv7eAWLf5WClosI93iLBZaLlZSLlwiL93gFi5aBlICLCE77aRV5vEaLeVp1i8r3NqOLy/s2c4sFDviUFPiUFYsMCgAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA5gAB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDmAP/9//8AAAAAACDmAP/9//8AAf/jGgQAAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAABTxcwFXw889QALAgAAAAAAz1cxsAAAAADPVzGwAAD/+wHiAcUAAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAAeIAAQAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAABAAAAAgAAHgAAUAAABQAAAAAADgCuAAEAAAAAAAEACAAAAAEAAAAAAAIADgAyAAEAAAAAAAMACAAeAAEAAAAAAAQACABAAAEAAAAAAAUAFgAIAAEAAAAAAAYABAAmAAEAAAAAAAoAKABIAAMAAQQJAAEACAAAAAMAAQQJAAIADgAyAAMAAQQJAAMACAAeAAMAAQQJAAQACABAAAMAAQQJAAUAFgAIAAMAAQQJAAYACAAqAAMAAQQJAAoAKABIAG4AZQBvAHMAVgBlAHIAcwBpAG8AbgAgADEALgAwAG4AZQBvAHNuZW9zAG4AZQBvAHMAUgBlAGcAdQBsAGEAcgBuAGUAbwBzAEcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-.neos [class^="icon-"].icon-language:before {
-  font-size: 20px;
-  line-height: 20px;
-  font-family: 'neos-language';
-  content: "\e600";
-}
-
 /*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
@@ -1432,6 +1419,36 @@
   content: "";
 }
 
+@font-face {
+  font-family: 'neos-language';
+  src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggi/LYAAAC8AAAAYGNtYXAaVcxXAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zr9/DIIAAAFwAAABfGhlYWT/r6QdAAAC7AAAADZoaGVhA8QB5gAAAyQAAAAkaG10eAMAAB4AAANIAAAAFGxvY2EAKADSAAADXAAAAAxtYXhwAAoAfAAAA2gAAAAgbmFtZXu8lvUAAAOIAAABHnBvc3QAAwAAAAAEqAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADmAAHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIOYA//3//wAAAAAAIOYA//3//wAB/+MaBAADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAABAAe//sB4gHFAFMAVwBwAHkAABMOAwcnPgM3LgMnMx4DFz4DNyM1MzUzFTMVIw4DBx4DFz4DOwE+ATQ2NTQuAiMiDgIVFB4CMzoCNjM1LgMnFwczJzcjIg4CHQEUHgI7ATI+Aj0BNC4CIwcnIwcjNzMXI7AHERMVDQcLExEPBgcMCgYCFgIFCAoGCg4JBAGBThZOHAEEChANAQMDAwIBBAUFA2IBAQEXKDUeHjUoFxcoNR4DBQYFAwMGBQYCrBw3G3HkBAgFBAQFCATkBAgFBAQFCAQ9EkUSFj8YQBgBCAYLCwsFEwUJCgoFCBAPDQcFCwsMBgsUEw8FFRkZFQYSFhkNAQICAwECBAICAwcHCAMeNSgXFyg1Hh41KBYBVQIEBAQCRkxMRgMFCATkBQcGAwMGBwXkBAgFA9UxMaKiAAABAAAAAQAAdXvwoV8PPPUACwIAAAAAAM9XMbAAAAAAz1cxsAAA//sB4gHFAAAACAACAAAAAAAAAAEAAAHg/+AAAAIAAAAAAAHiAAEAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAQAAAAIAAB4AAAAAAAoAFAAeAL4AAQAAAAUAegAEAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA4ArgABAAAAAAABAAgAAAABAAAAAAACAA4AMgABAAAAAAADAAgAHgABAAAAAAAEAAgAQAABAAAAAAAFABYACAABAAAAAAAGAAQAJgABAAAAAAAKACgASAADAAEECQABAAgAAAADAAEECQACAA4AMgADAAEECQADAAgAHgADAAEECQAEAAgAQAADAAEECQAFABYACAADAAEECQAGAAgAKgADAAEECQAKACgASABuAGUAbwBzAFYAZQByAHMAaQBvAG4AIAAxAC4AMABuAGUAbwBzbmVvcwBuAGUAbwBzAFIAZQBnAHUAbABhAHIAbgBlAG8AcwBHAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format("truetype"), url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAATEAAoAAAAABHwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAWIAAAFi8ShyJk9TLzIAAAJYAAAAYAAAAGAIIvy2Y21hcAAAArgAAABMAAAATBpVzFdnYXNwAAADBAAAAAgAAAAIAAAAEGhlYWQAAAMMAAAANgAAADb/r6QdaGhlYQAAA0QAAAAkAAAAJAPEAeZobXR4AAADaAAAABQAAAAUAwAAHm1heHAAAAN8AAAABgAAAAYABVAAbmFtZQAAA4QAAAEeAAABHnu8lvVwb3N0AAAEpAAAACAAAAAgAAMAAAEABAQAAQEBBW5lb3MAAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAABtDx0AAAByER0AAAAJHQAAAVkSAAYBAQUJCw0QFW5lb3NuZW9zdTB1MXUyMHVFNjAwAAACAYkAAwAFAQEEBwoN3/yUDvyUDvyUDvuUDvdE95wVeHxye2p+CISeBaiXoZicmXeggKCFnAihiwWQfpV7m3unp5OnjZkI+xWLi6DZi4ukoYuLctmLi3ZviwWJe4NpaWmPiI+Ij4iPkZGPk4sI7YsFjZSMlIuVi9xKzDqLO4tJSos6izvNStuLk4uSi5KMCIvgBYOQg5GFkAj3QEUVbz/Ci3DXBfcF0RX7eIsFgIuBgouACIv7eAWLf5WClosI93iLBZaLlZSLlwiL93gFi5aBlICLCE77aRV5vEaLeVp1i8r3NqOLy/s2c4sFDviUFPiUFYsMCgAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA5gAB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDmAP/9//8AAAAAACDmAP/9//8AAf/jGgQAAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAABTxcwFXw889QALAgAAAAAAz1cxsAAAAADPVzGwAAD/+wHiAcUAAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAAeIAAQAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAABAAAAAgAAHgAAUAAABQAAAAAADgCuAAEAAAAAAAEACAAAAAEAAAAAAAIADgAyAAEAAAAAAAMACAAeAAEAAAAAAAQACABAAAEAAAAAAAUAFgAIAAEAAAAAAAYABAAmAAEAAAAAAAoAKABIAAMAAQQJAAEACAAAAAMAAQQJAAIADgAyAAMAAQQJAAMACAAeAAMAAQQJAAQACABAAAMAAQQJAAUAFgAIAAMAAQQJAAYACAAqAAMAAQQJAAoAKABIAG4AZQBvAHMAVgBlAHIAcwBpAG8AbgAgADEALgAwAG4AZQBvAHNuZW9zAG4AZQBvAHMAUgBlAGcAdQBsAGEAcgBuAGUAbwBzAEcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+.neos [class^="icon-"].icon-language:before {
+  font-size: 20px;
+  line-height: 20px;
+  font-family: 'neos-language';
+  content: "\e600";
+}
+.neos [class^="icon-"].icon-review {
+  position: relative;
+  padding-right: 4px;
+}
+.neos [class^="icon-"].icon-review:before {
+  content: "";
+}
+.neos [class^="icon-"].icon-review:after {
+  content: "";
+  text-decoration: inherit;
+  display: inline-block;
+  speak: none;
+  position: absolute;
+  font-size: 12px;
+  top: 8px;
+  left: 7px;
+}
+
 .neos {
   /* Allow for input prepend/append in search forms */
   font-size: 14px;
@@ -2696,6 +2713,9 @@
   margin-top: 20px;
   -webkit-margin-top-collapse: separate;
 }
+.neos fieldset > .neos-control-group:first-child {
+  margin-top: 20px;
+}
 .neos .neos-form-horizontal .neos-control-group {
   margin-bottom: 20px;
   *zoom: 1;
@@ -3867,7 +3887,7 @@
   z-index: 10030;
   display: none;
   width: 236px;
-  background-color: #222;
+  background-color: #323232;
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;
   background-clip: padding-box;
@@ -3890,22 +3910,23 @@
 }
 .neos .neos-popover-title {
   margin: 0;
-  padding: 8px;
+  padding: 13px 12px;
   font-size: 14px;
+  line-height: 14px;
   font-weight: bold;
   color: #fff;
-  line-height: 18px;
-  background-color: #141414;
+  background-color: #222;
   border-bottom: 1px solid #3f3f3f;
 }
 .neos .neos-popover-title:empty {
   display: none;
 }
 .neos .neos-popover-content {
-  padding: 8px;
+  padding: 8px 12px;
   max-height: 236px;
   overflow-y: auto;
   white-space: normal;
+  line-height: 1.2;
 }
 .neos .neos-popover-content p, .neos .neos-popover-content ul, .neos .neos-popover-content ol {
   margin-bottom: 0.4rem;
@@ -3998,7 +4019,7 @@
   left: 50%;
   margin-left: -10px;
   border-width: 10px 10px 0;
-  border-top-color: #222;
+  border-top-color: #323232;
 }
 .neos .neos-popover.neos-top .neos-arrow:after {
   border-width: 11px 11px 0;
@@ -4011,7 +4032,7 @@
   left: -10px;
   margin-top: -10px;
   border-width: 10px 10px 10px 0;
-  border-right-color: #222;
+  border-right-color: #323232;
 }
 .neos .neos-popover.neos-right .neos-arrow:after {
   border-width: 11px 11px 11px 0;
@@ -4037,7 +4058,7 @@
   right: -10px;
   margin-top: -10px;
   border-width: 10px 0 10px 10px;
-  border-left-color: #222;
+  border-left-color: #323232;
 }
 .neos .neos-popover.neos-left .neos-arrow:after {
   border-width: 11px 0 11px 11px;
@@ -5585,26 +5606,85 @@
 .neos #neos-inspector .neos-inspector-file {
   min-width: 288px;
 }
-.neos #neos-inspector .neos-inspector-file .neos-button {
+.neos #neos-inspector .neos-inspector-file ul {
+  padding-bottom: 16px;
+}
+.neos #neos-inspector .neos-inspector-file ul li {
+  padding-right: 49px;
+  height: 40px;
+  line-height: 40px;
+  background-color: #323232;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.neos #neos-inspector .neos-inspector-file ul li + li {
+  border-top: 1px solid #222;
+}
+.neos #neos-inspector .neos-inspector-file ul li span:first-child {
+  background-color: #141414;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+  position: relative;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  float: left;
+}
+.neos #neos-inspector .neos-inspector-file ul li span:first-child img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #141414;
+  outline: 3px solid #141414;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove {
+  width: 40px;
+  height: 40px;
+  right: 0;
+  position: absolute;
+  background-color: #323232;
+  border-left: 1px solid #222;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove:hover, .neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove:active {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
+  margin-left: -2px;
+}
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove i {
+  line-height: 40px;
+  margin-top: 0;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload {
+  padding-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-button {
   padding: 0 8px;
   height: 32px;
   line-height: 32px;
   font-size: 13px;
 }
-.neos #neos-inspector .neos-inspector-file ul {
-  padding-bottom: 5px;
-}
-.neos #neos-inspector .neos-inspector-file ul li {
-  padding: 5px 0;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
-  padding-bottom: 12px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-crop-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-crop-button {
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button {
   float: right;
   margin-left: 4px;
 }
@@ -6335,7 +6415,7 @@
   top: 2px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close {
-  width: 38px;
+  right: 39px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
   top: 10px;
@@ -6616,10 +6696,10 @@
   color: #ff460d;
 }
 .neos #neos-inspector .neos-help-message-button {
-  margin-left: -5px;
+  margin-left: -10px;
 }
 .neos #neos-inspector .neos-help-message-button .neos-help-message-icon {
-  margin-left: 10px;
+  margin-left: 12px;
 }
 .neos #neos-inspector .neos-popover {
   width: 366px;
@@ -7406,6 +7486,9 @@
 .neos .neos-secondary-inspector > div > div {
   height: 100%;
 }
+.neos .neos-secondary-inspector-image-crop > img {
+  visibility: hidden;
+}
 .neos .neos-secondary-inspector-image-crop .jcrop-holder {
   margin: 16px auto;
 }
@@ -7751,9 +7834,10 @@
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .icon-lock {
   line-height: 19px;
 }
-.neos #neos-publish-menu.neos-button-group .neos-publish-button .badge {
+.neos #neos-publish-menu.neos-button-group .neos-publish-button .neos-badge {
   background-color: #fff;
   color: #ff8700;
+  text-shadow: none;
   position: relative;
   top: 0;
   left: 5px;
@@ -7795,6 +7879,10 @@
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.disabled:hover {
   background-color: #323232;
+}
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .icon-review::after {
+  top: -5px;
+  left: 5px;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-checkbox {
   margin-top: 8px;
@@ -8164,27 +8252,23 @@
   background-image: none !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr {
-  background: #fff !important;
-  top: 11px;
-  right: 48px;
-  width: 18px;
-  height: 18px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  top: 12px;
+  right: 52px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr:hover {
-  background-color: #00b5ff;
+  color: #00b5ff;
 }
-.neos #neos-context-bar .chosen-container .chosen-single abbr:before {
-  display: block;
-  width: 18px;
-  text-align: center;
-  content: "×";
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #222;
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
   border: none;
@@ -8843,27 +8927,23 @@
   background-image: none !important;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr {
-  background: #fff !important;
-  top: 11px;
-  right: 48px;
-  width: 18px;
-  height: 18px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  top: 12px;
+  right: 52px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr:hover {
-  background-color: #00b5ff;
+  color: #00b5ff;
 }
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr:before {
-  display: block;
-  width: 18px;
-  text-align: center;
-  content: "×";
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #222;
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
   border: none;
@@ -9047,7 +9127,6 @@
 .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign {
   cursor: pointer;
   font-size: 16px;
-  top: 1px;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign:hover {
   color: #00b5ff;
@@ -9322,6 +9401,9 @@
 .neos #neos-aloha-topmenu .aloha .ui-button .ui-button-icon-only {
   width: 32px;
 }
+.neos #neos-aloha-topmenu .aloha .ui-button .ui-button-text {
+  display: none;
+}
 .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon {
   background: none;
   -webkit-font-smoothing: antialiased;
@@ -9510,6 +9592,9 @@
   font-size: 11.9px;
   margin-right: 8px;
 }
+.neos.neos-module.neos-module-management-workspaces tr.neos-change + tr.neos-change td.neos-content-change {
+  border-top: 1px solid #ddd;
+}
 .neos.neos-module.neos-module-management-workspaces td {
   white-space: nowrap;
 }
@@ -9518,11 +9603,11 @@
   line-height: 20px;
   padding: 10px 0 5px 0;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type {
-  white-space: nowrap;
-}
 .neos.neos-module.neos-module-management-workspaces td.node-type img {
   vertical-align: baseline;
+}
+.neos.neos-module.neos-module-management-workspaces td.path-caption .neos-aRight {
+  border-right: 1px solid #222;
 }
 .neos.neos-module.neos-module-management-workspaces td label {
   padding: 0;
@@ -9535,40 +9620,74 @@
   -o-user-select: none;
   user-select: none;
 }
-.neos.neos-module.neos-module-management-workspaces th {
-  white-space: nowrap;
+.neos.neos-module.neos-module-management-workspaces td.neos-content-change {
+  background-color: #eee;
+  color: #252525;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-workspace-type {
-  width: 46px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff {
+  line-height: 23.52941px;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-action {
-  width: 90px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table {
+  table-layout: fixed;
+  width: 100%;
 }
-.neos.neos-module.neos-module-management-workspaces td.neos-changes {
-  width: 120px;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff td, .neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff th {
+  height: auto;
+  width: 50%;
+  vertical-align: top;
+  line-height: 20px;
+  padding: 10px 20px 10px 10px !important;
+  border-top: none;
+  white-space: normal;
+  background-color: #eee;
+  color: #252525;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type,
-.neos.neos-module.neos-module-management-workspaces td.relpath {
-  color: #5b5b5b;
+.neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff td img, .neos.neos-module.neos-module-management-workspaces .neos-content-diff table.neos-content-diff th img {
+  max-width: 100%;
+  min-width: 50%;
+  max-height: 500px;
+  border: 20px solid #fff;
+  box-sizing: border-box;
 }
-.neos.neos-module.neos-module-management-workspaces i[class*="icon-"],
-.neos.neos-module.neos-module-management-workspaces i.legend {
+.neos.neos-module.neos-module-management-workspaces i[class*="icon-"] {
   vertical-align: baseline;
   text-align: center;
 }
-.neos.neos-module.neos-module-management-workspaces td.node-type i {
+.neos.neos-module.neos-module-management-workspaces td.neos-folder i[class*='icon'] {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 16px;
+  margin: 0;
   text-align: center;
-  padding-right: 4px;
+  font-size: 10px;
+  vertical-align: middle;
+}
+.neos.neos-module.neos-module-management-workspaces td.neos-folder i[class*='icon']:hover {
+  background: #00b5ff;
+}
+.neos.neos-module.neos-module-management-workspaces .path-caption {
+  padding-left: 15px !important;
+  padding-right: 0;
 }
 .neos.neos-module.neos-module-management-workspaces .fold-toggle {
   cursor: pointer;
   margin-top: -1px;
   margin-right: 11px;
 }
-.neos.neos-module.neos-module-management-workspaces td.legend,
-.neos.neos-module.neos-module-management-workspaces th.legend {
-  width: 14px;
-  padding: 0 10px;
+.neos.neos-module.neos-module-management-workspaces .legend-edited {
+  border-left: 8px solid #ff8700;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-deleted {
+  border-left: 8px solid #ff460d;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-created {
+  border-left: 8px solid #00a338;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-moved {
+  border-left: 8px solid #00b5ff;
+}
+.neos.neos-module.neos-module-management-workspaces .legend-hidden {
+  border-left: 8px solid #fff;
 }
 .neos.neos-module.neos-module-management-workspaces td.actions {
   width: 144px;
@@ -9585,23 +9704,38 @@
   text-align: center;
   padding-right: 4px;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change {
-  box-sizing: border-box;
-  white-space: nowrap;
-  letter-spacing: 1px;
-  font-size: 16px;
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats {
+  width: 100px;
+  height: 40px;
+  position: relative;
+  display: inline-block;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-new {
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats span {
+  display: inline-block;
+  height: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .new {
+  background-color: #00a338;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .changed {
+  background-color: #ff8700;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .removed {
+  background-color: #ff460d;
+}
+.neos.neos-module.neos-module-management-workspaces .neos-change-stats .unchanged {
+  background-color: #3f3f3f;
+  width: 100%;
+}
+.neos.neos-module.neos-module-management-workspaces ins {
   color: #00a338;
+  text-decoration: none;
 }
-.neos.neos-module.neos-module-management-workspaces .neos-change-changed {
-  color: #ff8700;
-}
-.neos.neos-module.neos-module-management-workspaces .neos-change-removed {
-  color: #ff460d;
-}
-.neos.neos-module.neos-module-management-workspaces .neos-change-unchanged {
-  color: #3f3f3f;
+.neos.neos-module.neos-module-management-workspaces del {
+  color: #9d261d;
+  text-decoration: none;
 }
 .neos.neos-module.neos-module-management-history .neos-history-events-divider {
   margin: 0;
@@ -9694,6 +9828,9 @@
 .neos.neos-module.neos-module-management-history .loadMore button {
   margin-top: 25px;
   margin-bottom: 25px;
+}
+.neos.neos-module.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
+  width: calc(100% - 54px);
 }
 .neos.neos-module > .neos-module-wrap {
   position: relative;
@@ -9984,7 +10121,7 @@
 }
 .neos.neos-module .neos-footer {
   position: sticky;
-  height: 40px;
+  height: 72px;
   background-color: #141414;
   margin: 40px -54px -40px;
   border-top: 1px solid #3f3f3f;
@@ -9992,7 +10129,20 @@
   font-size: 0;
   bottom: 0;
   z-index: 100;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  *zoom: 1;
   /* When position: sticky is supported but native behavior is ignored */
+}
+.neos.neos-module .neos-footer:before, .neos.neos-module .neos-footer:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos.neos-module .neos-footer:after {
+  clear: both;
 }
 .neos.neos-module .neos-footer.fixedsticky-on {
   width: 100%;
@@ -10235,8 +10385,8 @@
 }
 .neos.neos-module table td > .neos-button,
 .neos.neos-module table td > form > .neos-button,
-.neos.neos-module table td > div.neos-pull-right > .neos-button,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button {
+.neos.neos-module table td div.neos-pull-right > .neos-button,
+.neos.neos-module table td div.neos-pull-right > form .neos-button {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button:not([disabled]):hover, .neos.neos-module table td > .neos-button:not([disabled]):active, .neos.neos-module table td > .neos-button:not([disabled]).neos-active, .neos.neos-module table td > .neos-button:not([disabled]).neos-pressed, .neos.neos-module table td > .neos-button:not(.neos-disabled):hover, .neos.neos-module table td > .neos-button:not(.neos-disabled):active, .neos.neos-module table td > .neos-button:not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button:not(.neos-disabled).neos-pressed,
@@ -10248,37 +10398,37 @@
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button:not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not([disabled]).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button:not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not([disabled]).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not([disabled]).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button:not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not([disabled]).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button:not(.neos-disabled).neos-pressed {
   background-color: #00b5ff;
 }
 .neos.neos-module table td > .neos-button.neos-button-success,
 .neos.neos-module table td > form > .neos-button.neos-button-success,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-success:hover, .neos.neos-module table td > .neos-button.neos-button-success:active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-success:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10286,29 +10436,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-success:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #00a338;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning,
 .neos.neos-module table td > form > .neos-button.neos-button-warning,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning:hover, .neos.neos-module table td > .neos-button.neos-button-warning:active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10316,29 +10466,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-warning:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #ff8700;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger,
 .neos.neos-module table td > form > .neos-button.neos-button-danger,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger:hover, .neos.neos-module table td > .neos-button.neos-button-danger:active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10346,29 +10496,29 @@
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-danger:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #ff460d;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary,
 .neos.neos-module table td > form > .neos-button.neos-button-primary,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary:hover, .neos.neos-module table td > .neos-button.neos-button-primary:active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:hover,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:active {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:active {
   background-color: #323232;
 }
 .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active, .neos.neos-module table td > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
@@ -10376,14 +10526,14 @@
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
 .neos.neos-module table td > form > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
-.neos.neos-module table td > div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed {
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):hover,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled):active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-active,
+.neos.neos-module table td div.neos-pull-right > form .neos-button.neos-button-primary:not([disabled]):not(.neos-disabled).neos-pressed {
   background-color: #00b5ff;
 }
 .neos.neos-module legend + table,
@@ -10530,7 +10680,9 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: 9px;
+  padding-right: 12px;
+  line-height: 40px;
+  vertical-align: middle;
   cursor: pointer;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button:focus {
@@ -11237,10 +11389,14 @@
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container {
   position: relative;
-  background-color: #141414;
   padding-bottom: 100%;
   height: 0;
   margin-bottom: 12px;
+  background-color: #141414;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -11251,6 +11407,10 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container.ui-draggable-dragging {
   width: 250px;
   height: 250px;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container img {
+  background-color: #141414;
+  outline: 3px solid #141414;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container .neos-media-delete {
   position: absolute;
@@ -11380,28 +11540,33 @@
   }
 }
 .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image {
-  overflow: hidden;
   height: 0;
   padding-bottom: 100%;
-  background: #141414;
   position: relative;
+  background-color: #141414;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image img {
   float: none;
   position: absolute;
   top: 50%;
   left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   width: auto;
   height: auto;
   max-width: 100%;
   max-height: 100%;
   display: block;
   margin: 0 auto;
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  background-color: #141414;
+  outline: 3px solid #141414;
 }
 .neos.media-browser table.neos-table th {
   white-space: nowrap;
@@ -11427,6 +11592,10 @@
   position: relative;
   display: inline-block;
   float: left;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 .neos.media-browser table.neos-table .neos-list-thumbnail[data-content] {
   cursor: zoom-in;
@@ -11440,16 +11609,31 @@
   -ms-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #141414;
+  outline: 3px solid #141414;
 }
 .neos.media-browser table.neos-table .neos-popover {
   width: auto;
   height: auto;
+  border-color: #323232;
+}
+.neos.media-browser table.neos-table .neos-popover .neos-popover-title {
+  border-color: #323232;
 }
 .neos.media-browser table.neos-table .neos-popover .neos-popover-content {
   width: 250px;
   height: 250px;
   position: relative;
   padding: 0;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  background-color: #141414;
 }
 .neos.media-browser table.neos-table .neos-popover .neos-popover-content img {
   position: absolute;
@@ -11460,6 +11644,18 @@
   -ms-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #141414;
+  outline: 3px solid #141414;
+}
+.neos.media-browser table.neos-table .neos-popover.neos-top .neos-arrow {
+  border-top-color: #141414;
+}
+.neos.media-browser table.neos-table .neos-popover.neos-bottom .neos-arrow {
+  border-bottom-color: #222;
 }
 .neos.media-browser table.neos-table .icon-move, .neos.media-browser table.neos-table #neos-aloha-topmenu .aloha .ui-button .aloha-icon-toggledragdrop, .neos.media-browser #neos-aloha-topmenu .aloha .ui-button table.neos-table .aloha-icon-toggledragdrop {
   float: left;
@@ -11876,9 +12072,8 @@
 }
 .neos .neos-help-message-icon {
   color: #fff;
-  font-size: 1rem;
+  vertical-align: baseline;
   position: relative;
-  top: 4px;
   cursor: pointer;
   text-decoration: none;
 }
@@ -11970,7 +12165,7 @@
   bottom: 0;
   overflow-y: auto;
   background: #222;
-  padding: 0 16px 8px;
+  padding: 0;
   width: 480px !important;
   border: 1px solid #3f3f3f;
   -webkit-box-sizing: border-box;
@@ -11994,26 +12189,50 @@
 .neos #aloha-ui-context .ui-menu .ui-menu-item:last-child {
   border-bottom: 0;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a {
-  padding: 8px 4px;
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a {
+  padding: 8px;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a.ui-state-focus {
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a.ui-state-focus {
   border: 0;
   background: #3f3f3f;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a img {
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a span.neos-list-thumbnail {
+  background-color: #141414;
+  height: 40px;
+  width: 40px;
+  position: relative;
   float: left;
-  padding-right: 8px;
+  margin-right: 8px;
+  background-image: url("../Images/ajax-preloader-222222.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a i {
-  vertical-align: top;
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a span.neos-list-thumbnail img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #141414;
+  outline: 3px solid #141414;
+}
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a i {
+  vertical-align: baseline;
   padding-right: 4px;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a span {
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a span:last-child {
   font-size: 12px;
   color: #adadad;
 }
-.neos #aloha-ui-context .ui-menu .ui-menu-item a span b {
+.neos #aloha-ui-context .ui-menu .ui-menu-item > a span:last-child b {
   font-size: 14px;
   font-weight: 400;
   color: white;
@@ -13401,7 +13620,7 @@ disabled look for disabled choices in the results dropdown
   text-decoration: none;
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close {
-  right: 0px;
+  right: 41px;
   left: auto;
   top: 0;
   height: 40px;
@@ -13411,7 +13630,6 @@ disabled look for disabled choices in the results dropdown
   border-left: 1px solid #222;
   color: white;
   text-decoration: none;
-  right: 41px;
   border-radius: 0;
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:hover {
@@ -13419,7 +13637,7 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
   position: absolute;
-  left: 14px;
+  left: 15px;
   top: 12px;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-chosen {

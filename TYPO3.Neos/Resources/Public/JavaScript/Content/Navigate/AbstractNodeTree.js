@@ -156,7 +156,7 @@ define(
 
 			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: 'Create (hold to select position)',
+				title: 'Create (hover to select position)',
 				iconClass: 'icon-plus',
 
 				mouseUp: function(event) {
@@ -172,7 +172,7 @@ define(
 
 			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: 'Paste (hold to select position)',
+				title: 'Paste (hover to select position)',
 				iconClass: 'icon-paste',
 
 				mouseUp: function(event) {
@@ -866,7 +866,17 @@ define(
 							// Update the pageNodePath if we moved the current page
 							if (that.get('pageNodePath') === sourceNode.data.key) {
 								that.set('pageNodePath', result.data.newNodePath);
+							} else {
+								// handle pageNodePath if we moved a parent node
+								var explodedParentPath = sourceNode.data.key.split('@');
+
+								if (that.get('pageNodePath').indexOf(explodedParentPath[0]) === 0) {
+									var newExplodedPath = result.data.newNodePath.split('@');
+
+									that.set('pageNodePath', that.get('pageNodePath').replace(explodedParentPath[0], newExplodedPath[0]))
+								}
 							}
+
 							// after we finished moving, update the node path/url
 							sourceNode.data.href = result.data.nextUri;
 							sourceNode.data.key = result.data.newNodePath;

@@ -9,6 +9,9 @@
 			<trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			</trans-unit>
+			<trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			</trans-unit>
 			<trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
@@ -454,6 +457,9 @@
 			</trans-unit>
 			<trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
+			</trans-unit>
+			<trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
 			</trans-unit>
 
 			<!-- Error handlers -->

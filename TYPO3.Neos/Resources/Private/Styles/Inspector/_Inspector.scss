@@ -439,7 +439,7 @@
 					}
 
 					.neos-select2-search-choice-close {
-						width: $unit - 2px;
+						right: $unit - 1px;
 
 						i {
 							top: 10px;
@@ -681,9 +681,10 @@
 		// Popover positions itself automatically and it's relative to this element.
 		// We need to add some offset to make space for Popover arrow
 		// and then de-offset it so it's not too far away from the label text.
-		margin-left: -5px;
+		margin-left: -10px;
+
 		.neos-help-message-icon {
-			margin-left: 10px;
+			margin-left: 12px;
 		}
 	}
 

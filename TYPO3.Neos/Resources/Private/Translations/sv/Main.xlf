@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="sv-SE" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="sv-SE" state="needs-translation">Review changes</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="sv-SE" state="needs-translation">Apply</target></trans-unit>
@@ -449,6 +452,9 @@
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="sv-SE" state="needs-translation">Authenticating</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="sv-SE" state="translated">Logga ut</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>

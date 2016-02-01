@@ -10,7 +10,7 @@
 			<target xml:lang="ja" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="ja" state="needs-translation">Layout</target></trans-unit>
+			<target xml:lang="ja" state="translated">レイアウト</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout for this page only</source>
 			<target xml:lang="ja" state="needs-translation">Layout for this page only</target></trans-unit>
