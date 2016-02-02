@@ -199,7 +199,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (!$this->shouldGenerateLabel($elementConfiguration)) {
+                    if (!is_array($elementConfiguration) || !$this->shouldGenerateLabel($elementConfiguration)) {
                         continue;
                     }
 
