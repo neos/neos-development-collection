@@ -11,7 +11,6 @@ namespace Neos\RedirectHandler\NeosAdapter\Service;
  * source code.
  */
 
-use Neos\RedirectHandler\Redirection;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
@@ -116,13 +115,13 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
             throw new Exception('The target URI path of the node could not be resolved', 1451945358);
         }
 
-        $hostPatterns = $this->getHostPatterns($node->getContext());
+        $hosts = $this->getHostPatterns($node->getContext());
 
         // The page has been removed
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
-            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hostPatterns);
             $statusCode = (integer)$this->defaultStatusCode['gone'];
+            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hosts);
             return;
         }
 
@@ -137,7 +136,7 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 
 
         $this->flushRoutingCacheForNode($targetNode);
-        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, 301, $hostPatterns);
+        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, 301, $hosts);
         /** @var ContentContext $contentContext */
 
 
