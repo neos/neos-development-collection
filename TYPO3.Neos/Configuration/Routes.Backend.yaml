@@ -126,6 +126,14 @@
   appendExceedingArguments: TRUE
 
 -
+  name: 'Backend switch site'
+  uriPattern: 'switch/to/{hostname}'
+  defaults:
+    '@package': 'TYPO3.Neos'
+    '@controller': 'Backend\Backend'
+    '@action': 'switchSite'
+
+-
   name: 'Backend UI XLIFF labels'
   uriPattern: 'xliff.json'
   defaults:
