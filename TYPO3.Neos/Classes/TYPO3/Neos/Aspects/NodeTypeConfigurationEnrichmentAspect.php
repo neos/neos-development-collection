@@ -54,7 +54,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
 
@@ -73,7 +73,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @throws \TYPO3\Neos\Exception
      * @return void
      */
-    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -125,7 +125,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setPropertyLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
             if (!isset($propertyConfiguration['ui'])) {
@@ -152,7 +152,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $propertyConfiguration
      * @return void
      */
-    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, &$propertyConfiguration)
+    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
     {
         $editorName = $propertyConfiguration['ui']['inspector']['editor'];
 
@@ -189,7 +189,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
         if ($this->shouldGenerateLabel($configuration['ui'])) {
             $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
@@ -199,7 +199,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (!$this->shouldGenerateLabel($elementConfiguration)) {
+                    if (!is_array($elementConfiguration) || !$this->shouldGenerateLabel($elementConfiguration)) {
                         continue;
                     }
 
@@ -217,7 +217,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
-    protected function shouldGenerateLabel($parentConfiguration, $fieldName = 'label')
+    protected function shouldGenerateLabel(array $parentConfiguration, $fieldName = 'label')
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
