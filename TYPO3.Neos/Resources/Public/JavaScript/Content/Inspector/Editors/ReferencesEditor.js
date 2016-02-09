@@ -111,6 +111,10 @@ define(
 
 				this._makeSortable();
 				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
+
+				this.$().on('change', function () {
+					that.set('content', $(this).select2('data'));
+				});
 			},
 
 			_updateSelect2: function() {
