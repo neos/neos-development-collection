@@ -1238,10 +1238,10 @@ neos .icon-fw {
 .neos .icon-pull-right {
   float: right;
 }
-.neos .icon.icon-pull-left, .neos ul.neos-dynatree-container .neos-dynatree-node .icon-pull-left.neos-dynatree-expander {
+.neos .icon.icon-pull-left {
   margin-right: .3em;
 }
-.neos .icon.icon-pull-right, .neos ul.neos-dynatree-container .neos-dynatree-node .icon-pull-right.neos-dynatree-expander {
+.neos .icon.icon-pull-right {
   margin-left: .3em;
 }
 .neos .pull-right {
@@ -1250,10 +1250,10 @@ neos .icon-fw {
 .neos .pull-left {
   float: left;
 }
-.neos .icon.pull-left, .neos ul.neos-dynatree-container .neos-dynatree-node .pull-left.neos-dynatree-expander {
+.neos .icon.pull-left {
   margin-right: .3em;
 }
-.neos .icon.pull-right, .neos ul.neos-dynatree-container .neos-dynatree-node .pull-right.neos-dynatree-expander {
+.neos .icon.pull-right {
   margin-left: .3em;
 }
 
@@ -6955,6 +6955,12 @@ neos .icon-fw {
   color: #adadad;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -9737,11 +9743,11 @@ neos .icon-fw {
 .neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label {
   padding-left: 20px;
 }
-.neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label .icon, .neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label .neos-dynatree-expander {
+.neos .neos-target-workspace-selector ul.neos-select2-results li .neos-select2-result-label .icon {
   margin-left: -20px;
   line-height: 19px;
 }
-.neos #neos-target-workspace-selector .neos-select2-container .neos-select2-chosen .icon, .neos #neos-target-workspace-selector .neos-select2-container .neos-select2-chosen ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node #neos-target-workspace-selector .neos-select2-container .neos-select2-chosen .neos-dynatree-expander {
+.neos #neos-target-workspace-selector .neos-select2-container .neos-select2-chosen .icon {
   line-height: 20px;
   margin-left: 10px;
   margin-right: 10px;
