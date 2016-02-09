@@ -223,7 +223,7 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			</trans-unit>
 			<trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
+				<source>Here's what happened recently in Neos</source>
 			</trans-unit>
 			<trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>

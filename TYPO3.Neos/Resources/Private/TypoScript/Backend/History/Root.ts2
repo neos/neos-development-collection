@@ -14,15 +14,19 @@ prototype(TYPO3.Neos:History.EventRenderer) < prototype(Case) {
 		type = 'TYPO3.Neos:History.NodeEventRenderer'
 	}
 
-	userEvent {
+	accountCreatedEvent {
 		condition = ${event.eventType == 'Account.Created'}
 		type = 'TYPO3.Neos:History.AccountCreatedEvent'
 	}
-	userEvent {
+	accountDeletedEvent {
 		condition = ${event.eventType == 'Account.Deleted'}
 		type = 'TYPO3.Neos:History.AccountDeletedEvent'
 	}
 }
+
+#
+# Node events
+#
 
 prototype(TYPO3.Neos:History.NodeEventRenderer) < prototype(Array) {
 	@context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
@@ -107,6 +111,10 @@ prototype(TYPO3.Neos:History.PublishedNode.MissingEvent) < prototype(TYPO3.Neos:
 	descriptionTranslationArguments = ${[this.user]}
 }
 
+#
+# Account events
+#
+
 prototype(TYPO3.Neos:History.AbstractAccountEvent) < prototype(Template) {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/Module/Management/History/Index.html'
 	sectionName = 'eventElement'
@@ -117,7 +125,6 @@ prototype(TYPO3.Neos:History.AbstractAccountEvent) < prototype(Template) {
 	}
 
 	event = ${event}
-	descriptionTranslationId = 'history.eventDescription.account.created'
 	descriptionTranslationArguments = ${[this.user, event.data.accountIdentifier, event.data.name]}
 }
 
