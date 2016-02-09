@@ -155,7 +155,7 @@ class ContentContextFactory extends ContextFactory
             } elseif ($propertyValue instanceof Site) {
                 $stringValue = $propertyValue->getNodeName();
             } elseif ($propertyValue instanceof Domain) {
-                $stringValue = $propertyValue->getHostPattern();
+                $stringValue = $propertyValue->getHostname();
             } else {
                 $stringValue = (string)$propertyValue;
             }
