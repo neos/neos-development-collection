@@ -11,6 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+
 /**
  * Testcase for the "Domain" domain model
  *
@@ -22,9 +25,9 @@ class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain()
     {
-        $domain = new \TYPO3\Neos\Domain\Model\Domain();
-        $domain->setHostPattern('typo3.com');
-        $this->assertSame('typo3.com', $domain->getHostPattern());
+        $domain = new Domain();
+        $domain->setHostname('typo3.com');
+        $this->assertSame('typo3.com', $domain->getHostname());
     }
 
     /**
@@ -32,9 +35,10 @@ class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setSiteSetsTheSiteTheDomainIsPointingTo()
     {
-        $mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+        /** @var Site $mockSite */
+        $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
-        $domain = new \TYPO3\Neos\Domain\Model\Domain;
+        $domain = new Domain;
         $domain->setSite($mockSite);
         $this->assertSame($mockSite, $domain->getSite());
     }

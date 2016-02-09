@@ -39,36 +39,36 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository
      */
     protected $defaultOrderings = array(
         'site' => QueryInterface::ORDER_ASCENDING,
-        'hostPattern' => QueryInterface::ORDER_ASCENDING
+        'hostname' => QueryInterface::ORDER_ASCENDING
     );
 
     /**
-     * Finds all active domains matching the given host.
+     * Finds all active domains matching the given hostname.
      *
      * Their order is determined by how well they match, best match first.
      *
-     * @param string $host Host the domain should match with (eg. "localhost" or "www.neos.io")
+     * @param string $hostname Host the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
      * @return array An array of matching domains
      * @api
      */
-    public function findByHost($host, $onlyActive = false)
+    public function findByHost($hostname, $onlyActive = false)
     {
         $domains = $onlyActive === true ? $this->findByActive(true)->toArray() : $this->findAll()->toArray();
-        return $this->domainMatchingStrategy->getSortedMatches($host, $domains);
+        return $this->domainMatchingStrategy->getSortedMatches($hostname, $domains);
     }
 
     /**
-     * Find the best matching active domain for the given host.
+     * Find the best matching active domain for the given hostname.
      *
-     * @param string $host Host the domain should match with (eg. "localhost" or "www.neos.io")
+     * @param string $hostname Host the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
      * @return \TYPO3\Neos\Domain\Model\Domain
      * @api
      */
-    public function findOneByHost($host, $onlyActive = false)
+    public function findOneByHost($hostname, $onlyActive = false)
     {
-        $allMatchingDomains = $this->findByHost($host, $onlyActive);
+        $allMatchingDomains = $this->findByHost($hostname, $onlyActive);
         return count($allMatchingDomains) > 0 ? $allMatchingDomains[0] : null;
     }
 
