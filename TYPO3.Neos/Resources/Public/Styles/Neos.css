@@ -9263,7 +9263,7 @@
 .neos.neos-empty-contentcollection-overlay {
   height: 20px;
   outline: 2px solid rgba(0, 0, 0, 0.2);
-  inline-offset: 2px;
+  outline-offset: 2px;
 }
 .neos.neos-module {
   font-family: 'Noto Sans', sans-serif;
