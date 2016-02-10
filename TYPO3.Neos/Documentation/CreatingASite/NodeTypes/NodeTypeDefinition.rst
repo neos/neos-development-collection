@@ -84,6 +84,24 @@ The following options are allowed:
   The position setting follows the same sorting logic used in TypoScript
   (see the :ref:`neos-typoscript-reference`).
 
+``label``
+  When displaying a node inside the Neos UI (e.g. tree view, link editor, workspace module) the ``label`` option will
+  be used to generate a human readable text for a specific node instance (in contrast to the ``ui.label``
+  which is used for all nodes of that type).
+
+  The label option accepts an Eel expression that has access to the current node using the ``node`` context variable.
+  It is recommended to customize the `label` option for node types that do not yield a sufficient description
+  using the default configuration.
+
+  Example::
+
+    'TYPO3.NeosDemoTypo3Org:Flickr':
+      label: ${'Flickr plugin (' + q(node).property('tags') + ')'}
+
+  ``generatorClass``
+    Alternatively the class of a node label generator implementing
+    ``TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 
@@ -247,7 +265,7 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
-.. tip:: Unset a property by setting the property configuration to null (~).
+.. tip:: Unset a property by setting the property configuration to null (``~``).
 
 Here is one of the standard Neos node types (slightly shortened)::
 
