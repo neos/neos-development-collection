@@ -22,6 +22,7 @@ use TYPO3\Flow\Utility\Algorithms;
  */
 class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Neos\Service\BackendRedirectionService
@@ -66,7 +67,8 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @param string $hostname
      * @return void
      */
-    public function switchSiteAction($hostname) {
+    public function switchSiteAction($hostname)
+    {
         $token = Algorithms::generateRandomToken(32);
         $this->loginTokenCache->set($token, $this->currentSession->getId());
 
@@ -95,6 +97,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
+
         return $this->xliffService->getCachedJson(new Locale($locale));
     }
 }
