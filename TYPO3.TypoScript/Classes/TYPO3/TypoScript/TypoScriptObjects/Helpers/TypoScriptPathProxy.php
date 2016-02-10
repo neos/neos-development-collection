@@ -146,6 +146,8 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
             }
         } elseif (isset($this->partialTypoScriptTree['__eelExpression'])) {
             return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
+        } elseif (isset($this->partialTypoScriptTree['__value'])) {
+            return $this->partialTypoScriptTree['__value'];
         }
 
         return $this;
