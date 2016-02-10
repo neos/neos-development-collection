@@ -31,3 +31,10 @@ template.offsetAccessException = TYPO3.TypoScript:Template {
 		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}
 }
+
+template.overrideWithSimpleValueInTemplate = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'Templates/JsonEncodedValueTemplate.html'}
+	value = ${1 + 1}
+}
+// Overriding the expression with a simple value should still yield a number in the template
+template.overrideWithSimpleValueInTemplate.value = 3

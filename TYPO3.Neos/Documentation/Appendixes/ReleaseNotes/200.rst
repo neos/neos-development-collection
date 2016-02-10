@@ -224,6 +224,15 @@ By default, this feature is currently disabled, as the history grows quite quick
 history yet. We also imagine that the history can be used to enable functionality like more intelligent publishing or
 merging of changes.
 
+To enable this feature (at your own "risk"), put the following configuration in `Settings.yaml`:
+
+.. code-block:: yaml
+
+    TYPO3:
+      Neos:
+        eventLog:
+          enabled: TRUE
+
 
 Additional features
 ===================
