@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
+namespace TYPO3\Neos\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -36,7 +36,7 @@ class ParentsUntilOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 0;
+    protected static $priority = 100;
 
     /**
      * {@inheritdoc}
@@ -61,7 +61,8 @@ class ParentsUntilOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            $parentNodes = $this->getParents($contextNode);
+            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
+            $parentNodes = $this->getParents($contextNode, $siteNode);
             if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
                 $untilQuery = new FlowQuery(array($parentNodes[0]));
                 $untilQuery->pushOperation('closest', array($arguments[0]));
@@ -89,14 +90,10 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    /**
-     * @param NodeInterface $contextNode
-     * @return array
-     */
-    protected function getParents(NodeInterface $contextNode)
+    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
     {
         $parents = array();
-        while ($contextNode->getParent() !== null) {
+        while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;
         }

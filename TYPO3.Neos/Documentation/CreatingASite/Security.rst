@@ -39,7 +39,7 @@ As a quick example, a privilege target giving access to a specific part of the n
 
 .. code-block:: yaml
 
-  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\NodeTreePrivilege':
+  'TYPO3\TYPO3CR\Security\Authorization\Privilege\NodeTreePrivilege':
     'YourSite:EditWebsitePart':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -55,7 +55,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -67,7 +67,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
 
@@ -86,7 +86,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\Neos\\Security\\Authorization\\Privilege\\NodeTreePrivilege':
+    'TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -102,7 +102,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePropertyPrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -120,7 +120,7 @@ Usage example:
 
 .. code-block:: yaml
 
-  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\ReadNodePropertyPrivilege':
+  'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege':
     'Some.Package:SomeIdentifier':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -136,7 +136,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\RemoveNodePrivilege':
+   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege':
      'Some.Package:SomeIdentifier':
        matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -152,7 +152,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -171,7 +171,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePrivilege':
+   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -191,7 +191,7 @@ be hidden from the system unless explicitly granted to the current user (by assi
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\ReadNodePrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePrivilege':
       'Some.Package:MembersArea':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -307,7 +307,7 @@ target is then granted for the "Editor" role.
         matcher: 'isInDimensionPreset("language", "de")'
 
   roles:
-    ‘TYPO3.Neos:Editor’:
+    'TYPO3.Neos:Editor':
       privileges:
         -
           privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'

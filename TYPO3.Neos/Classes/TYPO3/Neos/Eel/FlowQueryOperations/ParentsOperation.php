@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
+namespace TYPO3\Neos\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -35,7 +35,7 @@ class ParentsOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 0;
+    protected static $priority = 100;
 
     /**
      * {@inheritdoc}
@@ -60,7 +60,8 @@ class ParentsOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            while ($contextNode->getParent() !== null) {
+            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
+            while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
                 $contextNode = $contextNode->getParent();
                 if (!isset($outputNodePaths[$contextNode->getPath()])) {
                     $output[] = $contextNode;
