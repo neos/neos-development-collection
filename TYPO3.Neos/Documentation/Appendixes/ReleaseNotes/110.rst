@@ -56,7 +56,7 @@ The structure tree will show changed nodes (content) like the node tree does for
 
 A feature that should have already been in the 1.0 but was postponed, is the possibility to switch an existing node to another node type. That works for document nodes as well as content nodes. The feature adds a new select box in the Inspector for node types to allow changing the current node type. If a node type is changed, all properties that are the same in the new node type will be kept.
 
-Switch a Node Type in TYPO3 Neos
+Switch a Node Type in Neos
 
 .. figure:: Images/110-change-nodetype.png
 	:alt: Node Type Switching
@@ -67,7 +67,7 @@ Using arbitrary files (Assets) from the media browser for a node property was a 
 
 The new AssetList node type in the TYPO3.Neos.NodeTypes package is a simple implementation of a file list to render links to multiple Assets.
 
-Asset editor in TYPO3 Neos
+Asset editor in Neos
 
 .. figure:: Images/110-asset-editor.png
 	:alt: Asset Editor
@@ -77,7 +77,7 @@ Asset editor in TYPO3 Neos
 Besides editing Asset properties in the inspector there’s also the need to link to Assets from any inline editable content. An extended link plugin for Aloha allows to search for Assets by tag or title and select them in the results.
 
 A new ConvertUris processor object is used to convert node:// and asset:// links via TypoScript. It’s already configured for the TYPO3.Neos:Content prototype, so no changes should be needed to use this feature.
-Linking to assets in TYPO3 Neos
+Linking to assets in Neos
 
 .. figure:: Images/110-asset-linking.png
 	:alt: Asset Linking
@@ -100,7 +100,7 @@ A new loading indicator in the content module replaces the page overlay with a s
 .. figure:: Images/110-loading-indicator.png
 	:alt: Loading indicator
 
-TYPO3 Neos Loading indicator
+Neos Loading indicator
 The CodeMirror editor for HTML content was updated to version 3 and some annoying styling issues were fixed
 
 The site JavaScript could break the editing UI if RequireJS was used for the website. By using a custom RequireJS context inside the Neos JavaScript this should no longer be a problem.
