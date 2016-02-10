@@ -256,7 +256,7 @@ abstract class AbstractNodeData
     public function removeProperty($propertyName)
     {
         if (!is_object($this->contentObjectProxy)) {
-            if (isset($this->properties[$propertyName])) {
+            if (array_key_exists($propertyName, $this->properties)) {
                 unset($this->properties[$propertyName]);
                 $this->addOrUpdate();
             } else {
