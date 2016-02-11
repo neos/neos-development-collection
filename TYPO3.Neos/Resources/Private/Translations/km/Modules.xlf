@@ -234,7 +234,7 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="km" state="translated">ម៉ូឌុលមួយនេះ ផ្តល់នូវទិដ្ឋភាពទូទៅនៃព្រឹត្តិការណ៍ពាក់ព័ន្ធទាំងអស់ប៉ះពាល់ពីការដំឡើង Neos។</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
+				<source>Here's what happened recently in Neos</source>
 			<target xml:lang="km" state="translated">នេះ​គឺ​ជា​អ្វី​ដែល​កើត​ឡើង​ថ្មីៗ​អំពី​ Neos</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
