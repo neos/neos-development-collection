@@ -62,7 +62,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
-     *
+     * Redirects to the Neos backend on the given hostname, passing a one-time login token
      *
      * @param string $hostname
      * @return void

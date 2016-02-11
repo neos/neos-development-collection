@@ -119,7 +119,7 @@ class LoginController extends AbstractAuthenticationController
     }
 
     /**
-     * Logs a use in if a session identifier is available under the given token in the token cache.
+     * Logs a user in if a session identifier is available under the given token in the token cache.
      *
      * @param string $token
      * @return void
