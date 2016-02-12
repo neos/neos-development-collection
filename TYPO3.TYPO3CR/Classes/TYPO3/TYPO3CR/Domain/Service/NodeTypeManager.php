@@ -189,6 +189,9 @@ class NodeTypeManager
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
 
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
+            if (!is_array($completeNodeTypeConfiguration[$nodeTypeName])) {
+                continue;
+            }
             $nodeType = $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration, (isset($this->fullNodeTypeConfigurations[$nodeTypeName]) ? $this->fullNodeTypeConfigurations[$nodeTypeName] : null));
             if ($fillFullConfigurationCache) {
                 $this->fullNodeTypeConfigurations[$nodeTypeName] = $nodeType->getFullConfiguration();
