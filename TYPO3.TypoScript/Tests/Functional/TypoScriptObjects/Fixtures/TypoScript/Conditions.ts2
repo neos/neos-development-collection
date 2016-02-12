@@ -102,3 +102,20 @@ conditions.supportForTypoScriptObjectWithSubEvaluationUsedInProcessor = Value {
 
 	@process.appendArray = ${value + this.theArray}
 }
+
+conditions.processorOnSimpleValueWithCondition = 'originalValue' {
+	@if.cond1 = FALSE
+	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+}
+
+conditions.processorOnExpressionWithCondition = ${'expressionValue'} {
+	@if.cond1 = FALSE
+	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+}
+
+conditions.processorOnObjectWithCondition = TYPO3.TypoScript:Value {
+	value = 'originalValue'
+	@if.cond1 = FALSE
+
+	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+}
