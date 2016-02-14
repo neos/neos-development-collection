@@ -1,18 +1,19 @@
 <?php
 namespace TYPO3\TypoScript\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Utility\Unicode\Functions;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
 
@@ -52,9 +53,14 @@ class RuntimeContentCache
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TypoScript\Core\Cache\ContentCache
+     * @var ContentCache
      */
     protected $contentCache;
+
+    /**
+     * @var array
+     */
+    protected $tags = [];
 
     /**
      * @param Runtime $runtime
@@ -62,6 +68,36 @@ class RuntimeContentCache
     public function __construct(Runtime $runtime)
     {
         $this->runtime = $runtime;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     * @return void
+     * @throws Exception
+     */
+    public function addTag($key, $value)
+    {
+        $key = trim($key);
+        if ($key === '') {
+            throw new Exception('Tag Key must not be empty', 1448264366);
+        }
+        $value = trim($value);
+        if ($value === '') {
+            throw new Exception('Tag Value must not be empty', 1448264367);
+        }
+        $tag = Functions::ucfirst($key) . 'DynamicTag_' . $value;
+        $this->tags[$tag] = true;
+    }
+
+    /**
+     * @return array
+     */
+    protected function flushTags()
+    {
+        $tags = array_keys($this->tags);
+        $this->tags = [];
+        return $tags;
     }
 
     /**
@@ -280,10 +316,13 @@ class RuntimeContentCache
                     $cacheTags[] = $tagValue;
                 }
             }
+            foreach ($this->flushTags() as $tagKey => $tagValue) {
+                $cacheTags[] = $tagValue;
+            }
         } else {
             $cacheTags = array(ContentCache::TAG_EVERYTHING);
         }
-        return $cacheTags;
+        return array_unique($cacheTags);
     }
 
     /**

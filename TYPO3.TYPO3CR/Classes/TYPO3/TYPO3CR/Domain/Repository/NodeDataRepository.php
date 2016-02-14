@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Repository;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -423,6 +423,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
         $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
+        $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
         /** @var $addedNode NodeData */
         foreach ($this->addedNodes as $addedNode) {
             if (
@@ -430,7 +431,21 @@ class NodeDataRepository extends Repository
                 (($recursive && NodePaths::isSubPathOf($addedNode->getPath(), $parentPath)) || NodePaths::getParentPath($addedNode->getPath()) === $parentPath) &&
                 $addedNode->matchesWorkspaceAndDimensions($workspace, $dimensions)
             ) {
-                $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                $nodeType = $addedNode->getNodeType();
+                $disallowed = false;
+                foreach ($constraints['includeNodeTypes'] as $includeNodeType) {
+                    if (!$nodeType->isOfType($includeNodeType)) {
+                        $disallowed = true;
+                    }
+                }
+                foreach ($constraints['excludeNodeTypes'] as $excludeNodeTypes) {
+                    if ($nodeType->isOfType($excludeNodeTypes)) {
+                        $disallowed = true;
+                    }
+                }
+                if ($disallowed === false) {
+                    $foundNodes[$addedNode->getIdentifier()] = $addedNode;
+                }
             }
         }
         /** @var $removedNode NodeData */
@@ -1380,7 +1395,7 @@ class NodeDataRepository extends Repository
     {
         $path = strtolower($path);
         $query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
-        $query->setParameter('path',  $path . '/%');
+        $query->setParameter('path', $path . '/%');
         $query->execute();
     }
 

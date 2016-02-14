@@ -1,18 +1,20 @@
 <?php
 namespace TYPO3\Neos\Aspects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
+use League\CommonMark\CommonMarkConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -21,6 +23,7 @@ use TYPO3\Flow\Utility\Arrays;
  */
 class NodeTypeConfigurationEnrichmentAspect
 {
+
     /**
      * @var array
      * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.dataTypes")
@@ -34,6 +37,24 @@ class NodeTypeConfigurationEnrichmentAspect
     protected $editorDefaultConfiguration;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\I18n\Translator
+     */
+    protected $translator;
+
+    /**
+     * @Flow\Inject
+     * @var CommonMarkConverter
+     */
+    protected $markdownConverter;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
      * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
      * @return void
      */
@@ -45,6 +66,8 @@ class NodeTypeConfigurationEnrichmentAspect
         $this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
         $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration);
 
+        $this->addHelpTextsToNodeTypeConfiguration($nodeTypeName, $configuration);
+
         $joinPoint->setMethodArgument('configuration', $configuration);
         $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
@@ -54,7 +77,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
 
@@ -73,7 +96,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @throws \TYPO3\Neos\Exception
      * @return void
      */
-    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -125,14 +148,14 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setPropertyLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
             if (!isset($propertyConfiguration['ui'])) {
                 continue;
             }
 
-            if ($this->shouldGenerateLabel($propertyConfiguration['ui'])) {
+            if ($this->shouldFetchTranslation($propertyConfiguration['ui'])) {
                 $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
             }
 
@@ -140,7 +163,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 $this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
             }
 
-            if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['aloha'], 'placeholder')) {
+            if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['aloha'], 'placeholder')) {
                 $propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
             }
         }
@@ -152,13 +175,13 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $propertyConfiguration
      * @return void
      */
-    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, &$propertyConfiguration)
+    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
     {
         $editorName = $propertyConfiguration['ui']['inspector']['editor'];
 
         switch ($editorName) {
             case 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
+                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
                 }
 
@@ -169,13 +192,13 @@ class NodeTypeConfigurationEnrichmentAspect
                     if ($optionConfiguration === null) {
                         continue;
                     }
-                    if ($this->shouldGenerateLabel($optionConfiguration)) {
+                    if ($this->shouldFetchTranslation($optionConfiguration)) {
                         $optionConfiguration['label'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.values.' . $value);
                     }
                 }
                 break;
             case 'TYPO3.Neos/Inspector/Editors/CodeEditor':
-                if ($this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
+                if ($this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
                 }
                 break;
@@ -189,9 +212,9 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
-        if ($this->shouldGenerateLabel($configuration['ui'])) {
+        if ($this->shouldFetchTranslation($configuration['ui'])) {
             $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
         }
 
@@ -199,7 +222,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (!$this->shouldGenerateLabel($elementConfiguration)) {
+                    if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration)) {
                         continue;
                     }
 
@@ -217,7 +240,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
-    protected function shouldGenerateLabel($parentConfiguration, $fieldName = 'label')
+    protected function shouldFetchTranslation(array $parentConfiguration, $fieldName = 'label')
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
@@ -276,5 +299,140 @@ class NodeTypeConfigurationEnrichmentAspect
         $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
 
         return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
+    }
+
+    /**
+     * Adds translated and converted help texts to the given $configuration.
+     *
+     * @param string $nodeTypeName
+     * @param array $configuration
+     * @return void
+     */
+    protected function addHelpTextsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
+    {
+        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
+
+        $this->translateAndConvertHelpMessage($configuration, $nodeTypeLabelIdPrefix, $nodeTypeName);
+
+        if (isset($configuration['properties'])) {
+            foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
+                $this->translateAndConvertHelpMessage($propertyConfiguration, $nodeTypeLabelIdPrefix . 'properties.' . $propertyName . '.');
+            }
+        }
+    }
+
+    /**
+     * If ui.help.message is set in $configuration, translate it if requested and then convert it from markdown to HTML.
+     *
+     * @param array $configuration
+     * @param string $idPrefix
+     * @param string $nodeTypeName
+     * @return void
+     */
+    protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null)
+    {
+        $helpMessage = '';
+        if (isset($configuration['ui']['help'])) {
+            // message handling
+            if (isset($configuration['ui']['help']['message'])) {
+                if ($this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
+                    $translationIdentifier = $this->splitIdentifier($idPrefix . 'ui.help.message');
+                    $helpMessage = $this->translator->translateById($translationIdentifier['id'], [], null, null, $translationIdentifier['source'], $translationIdentifier['packageKey']);
+                } else {
+                    $helpMessage = $configuration['ui']['help']['message'];
+                }
+            }
+
+            // prepare thumbnail
+            if ($nodeTypeName !== null) {
+                $thumbnailUrl = '';
+                if (isset($configuration['ui']['help']['thumbnail'])) {
+                    $thumbnailUrl = $configuration['ui']['help']['thumbnail'];
+                    if (strpos($thumbnailUrl, 'resource://') === 0) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
+                    }
+                } else {
+                    # look in well know location
+                    $splitPrefix = $this->splitIdentifier($nodeTypeName);
+                    $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+                    $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+                    if (file_exists($resourcePath)) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+                    }
+                }
+
+                if ($thumbnailUrl !== '') {
+                    $helpMessage = '![alt text](' . $thumbnailUrl . ') ' . $helpMessage;
+                }
+            }
+            if ($helpMessage !== '') {
+                $helpMessage = $this->markdownConverter->convertToHtml($helpMessage);
+                $helpMessage = $this->addTargetAttribute($helpMessage);
+            }
+        }
+        $configuration['ui']['help']['message'] = $helpMessage;
+    }
+
+    /**
+     * Adds _blank as target to all a tags not having a target attribute.
+     *
+     * @param string $htmlString
+     * @return string
+     */
+    protected function addTargetAttribute($htmlString)
+    {
+        $document = new \DOMDocument();
+
+        // Force correct unicode handling
+        $document->loadHTML('<?xml encoding="UTF-8">' . $htmlString);
+        $document->encoding = 'UTF-8';
+
+        $links = $document->getElementsByTagName('a');
+        /** @var \DOMElement $item */
+        foreach ($links as $item) {
+            if (!$item->hasAttribute('target')) {
+                $item->setAttribute('target', '_blank');
+            }
+        }
+
+        $output = '';
+        $body = $document->getElementsByTagName('body')->item(0);
+        foreach ($body->childNodes as $node) {
+            $output .= $document->saveHTML($node);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Splits an identifier string of the form PackageKey:id or PackageKey:Source:id into an array with the keys
+     * id, source and packageKey.
+     *
+     * @param string $id translation id with possible package and source parts
+     * @return array
+     */
+    protected function splitIdentifier($id)
+    {
+        $packageKey = 'TYPO3.Neos';
+        $source = 'Main';
+
+        $idParts = explode(':', $id, 3);
+        switch (count($idParts)) {
+            case 2:
+                $packageKey = $idParts[0];
+                $id = $idParts[1];
+                break;
+            case 3:
+                $packageKey = $idParts[0];
+                $source = str_replace('.', '/', $idParts[1]);
+                $id = $idParts[2];
+                break;
+        }
+
+        return [
+            'id' => $id,
+            'source' => $source,
+            'packageKey' => $packageKey
+        ];
     }
 }

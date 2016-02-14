@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -78,6 +78,27 @@ class WorkspaceTest extends UnitTestCase
         $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 
         $currentWorkspace->publishNode($mockNode, $targetWorkspace);
+    }
+
+    /**
+     * Bug NEOS-1769: Content Collections disappear when publishing to other workspace than "live"
+     *
+     * Under certain circumstances, content collection nodes will be deleted when publishing a document to a workspace which is based on another workspace.
+     *
+     * @test
+     */
+    public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
+    {
+        $liveWorkspace = new Workspace('live');
+        $workspace = new Workspace('some-campaign');
+        $workspace->setBaseWorkspace($liveWorkspace);
+
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+        $mockNode->expects($this->never())->method('emitBeforeNodePublishing');
+
+        $workspace->publishNode($mockNode, $workspace);
     }
 
     /**
@@ -168,5 +189,17 @@ class WorkspaceTest extends UnitTestCase
         $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
+    }
+
+    /**
+     * @test
+     */
+    public function isPersonalWorkspaceChecksIfTheWorkspaceNameStartsWithUser()
+    {
+        $liveWorkspace = new Workspace('live');
+        $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
+
+        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
+        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
     }
 }

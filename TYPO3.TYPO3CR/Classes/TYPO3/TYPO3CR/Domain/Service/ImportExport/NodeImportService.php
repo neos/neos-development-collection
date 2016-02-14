@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
@@ -298,10 +298,10 @@ class NodeImportService
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['dimensionValues'] = $this->parseDimensionsElement($xmlReader);
                 break;
             case 'properties':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['properties'] = $this->parsePropertiesElement($xmlReader);
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parsePropertiesElement($xmlReader);
                 break;
             case 'accessRoles':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parseArrayElements($xmlReader, 'accessRoles');
                 break;
             case 'hiddenBeforeDateTime':
             case 'hiddenAfterDateTime':
@@ -522,6 +522,8 @@ class NodeImportService
     protected function parseEndElement(\XMLReader $reader)
     {
         switch ($reader->name) {
+            case 'hiddenBeforeDateTime':
+            case 'hiddenAfterDateTime':
             case 'creationDateTime':
             case 'lastModificationDateTime':
             case 'lastPublicationDateTime':

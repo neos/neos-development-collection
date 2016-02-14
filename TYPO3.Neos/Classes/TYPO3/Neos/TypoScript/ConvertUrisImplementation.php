@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Exception;
@@ -97,9 +97,11 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject
             switch ($matches[1]) {
                 case 'node':
                     $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
+                    $this->tsRuntime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+                    $this->tsRuntime->addCacheTag('asset', $matches[2]);
                     break;
                 default:
                     $resolvedUri = null;

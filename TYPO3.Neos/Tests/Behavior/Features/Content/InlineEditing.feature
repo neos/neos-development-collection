@@ -1,3 +1,4 @@
+@browser
 Feature: Content module / Inline editing
   In order to edit content easily
   As an editor

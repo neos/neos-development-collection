@@ -41,7 +41,7 @@ that is called metaMenu. The options available in this example is:
 HTML template code::
 
     {namespace neos=TYPO3\Neos\ViewHelpers}
-    <nav class="nav" role="navigation">
+    <nav class="nav">
         <ul class="nav nav-pills">
             <f:for each="{items}" as="item" iteration="menuItemIterator">
                 <li class="{item.state}">

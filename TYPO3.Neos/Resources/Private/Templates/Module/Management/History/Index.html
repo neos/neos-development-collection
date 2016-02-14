@@ -1,16 +1,17 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
+
 <div class="neos-history">
 	<legend>{neos:backend.translate(id: 'history.messages.hereIsWhatHappenedRecentlyInNeos', source: 'Modules')}</legend>
 	<f:if condition="{eventsByDate}">
 		<f:then>
 			<f:for each="{eventsByDate}" as="eventsOnSingleDay" iteration="iteration">
-				<div class="neos-history-day">
+				<div class="neos-history-day" data-date="{eventsOnSingleDay.day -> f:format.date(format: 'dmy')}">
 					<div class="neos-history-date">
 						<div class="neos-history-date-inner">{eventsOnSingleDay.day -> f:format.date(format: 'M d')}
 						</div>
 					</div>
-					<div class="neos-history-events {f:if(condition: iteration.isOdd, then: 'neos-history-events-left', else: 'neos-history-events-right')}">
+					<div class="neos-history-events neos-history-alignment">
 						<hr class="neos-history-events-divider" />
 						<f:for each="{eventsOnSingleDay.events}" as="event">
 							<ts:render path="eventRenderer" context="{event: event}" />
@@ -20,7 +21,7 @@
 			</f:for>
 		</f:then>
 		<f:else>
-			<h4>{neos:backend.translate(id: 'history.messages.emptyHistory', source: 'Modules')}</h4>
+			<p>{neos:backend.translate(id: 'history.messages.emptyHistory', source: 'Modules')}</p>
 		</f:else>
 	</f:if>
 </div>
@@ -36,3 +37,46 @@
 		</div>
 	</div>
 </f:section>
+
+<f:if condition="{nextPage}">
+  <div class="loadMore" data-neos-history-nextpage="{nextPage}">
+	  <button>{neos:backend.translate(id: 'history.loadMore.label', source: 'Modules', package: 'TYPO3.Neos')}</button>
+  </div>
+</f:if>
+
+<script>
+	$(function() {
+
+		var nextPage = '{nextPage}';
+		var historyContainer = $('.neos-history');
+		$('.loadMore button').click(function() {
+
+			$.ajax({
+				url: nextPage,
+				type: 'GET'
+			}).done(function(data) {
+
+				nextPage = $(data).find('div.loadMore').data('neos-history-nextpage');
+				if (typeof nextPage === 'undefined') {
+					$('.loadMore').hide();
+				}
+
+				var days = $(data).find('.neos-history-day');
+				days.each(function(index, day) {
+					var date = $(day).data('date');
+					var $existingDay = $('[data-date="' + date + '"]');
+
+					if ($existingDay.length > 0) {
+						$(day).find('.neos-history-event').each(function(index, event) {
+							$existingDay.find('.neos-history-events').append(event);
+						});
+
+					} else {
+						historyContainer.append(day);
+					}
+				});
+
+			});
+		});
+	})
+</script>

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\TypeConverter;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
@@ -240,7 +240,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     protected function buildObject(array &$possibleConstructorArgumentValues, $objectType)
     {
         $className = $this->objectManager->getClassNameByObjectName($objectType) ?: static::$defaultNewAssetType;
-        return parent::buildObject($possibleConstructorArgumentValues, $className);
+        if (count($possibleConstructorArgumentValues)) {
+            return parent::buildObject($possibleConstructorArgumentValues, $className);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -254,7 +258,9 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {
-        if (is_string($identity)) {
+        if ($targetType === 'TYPO3\Media\Domain\Model\Thumbnail') {
+            $object = $this->persistenceManager->getObjectByIdentifier($identity, $targetType);
+        } elseif (is_string($identity)) {
             $object = $this->assetRepository->findByIdentifier($identity);
         } else {
             throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is not a string.', 1415817618);

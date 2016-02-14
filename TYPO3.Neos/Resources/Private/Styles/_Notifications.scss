@@ -35,7 +35,7 @@
 			background-color: $warning;
 
 			.icon-error {
-				@extend .icon-ban-circle;
+				@extend .#{$fa-css-prefix}-ban;
 			}
 		}
 
@@ -43,7 +43,7 @@
 			background-color: $green;
 
 			.icon-success {
-				@extend .icon-ok;
+				@extend .#{$fa-css-prefix}-check;
 			}
 		}
 
@@ -51,7 +51,7 @@
 			background-color: $orange;
 
 			.icon-warning {
-				@extend .icon-warning-sign;
+				@extend .#{$fa-css-prefix}-exclamation-triangle;
 			}
 		}
 
@@ -59,7 +59,7 @@
 			background-color: $blue;
 
 			.icon-info-circle {
-				@extend .icon-info-sign;
+				@extend .#{$fa-css-prefix}-info-circle;
 			}
 		}
 
@@ -69,7 +69,7 @@
 
 		i {
 			height: $unit;
-			line-height: $unit;
+			line-height: $unit !important;
 			width: $unit;
 			text-align: center;
 			font-size: 16px;
@@ -94,7 +94,7 @@
 				right: 0;
 				cursor: pointer;
 				font-size: 18px;
-				@extend .icon-remove-sign;
+				@extend .#{$fa-css-prefix}-times-circle;
 
 				&:hover {
 					background-color: rgba(255, 255, 255, .25);

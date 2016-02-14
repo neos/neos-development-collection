@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Command;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
@@ -358,6 +358,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     continue;
                 }
                 foreach ($defaultValues as $propertyName => $defaultValue) {
+                    if ($propertyName[0] === '_') {
+                        continue;
+                    }
+
                     if (!$node->hasProperty($propertyName)) {
                         $addedMissingDefaultValuesCount++;
                         if (!$dryRun) {
@@ -462,7 +466,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $nodes = array();
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount,$queryBuilder) {
+        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
             try {
                 foreach ($node->getChildNodes() as $childNode) {
                     /** @var $childNode NodeInterface */

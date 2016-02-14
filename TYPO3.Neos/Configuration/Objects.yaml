@@ -57,3 +57,6 @@ TYPO3\Neos\Service\XliffService:
         arguments:
           1:
             value: TYPO3_Neos_XliffToJsonTranslations
+
+League\CommonMark\CommonMarkConverter:
+  className: League\CommonMark\CommonMarkConverter

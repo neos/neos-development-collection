@@ -52,12 +52,12 @@
 		border: 1px solid $grayLight;
 		z-index: 10015;
 		@include opacity(1);
-		@include icon-FontAwesome();
+		@include fa-icon();
 		@include transition-property(top, right);
 		@include transition-duration(.2s);
 
 		&:before {
-			content: $remove;
+			content: $fa-var-times;
 		}
 
 		&:hover {
@@ -86,6 +86,10 @@
 }
 
 .neos-secondary-inspector-image-crop {
+	> img {
+		visibility: hidden;
+	}
+
 	.jcrop-holder {
 		margin: $defaultMargin auto;
 	}

@@ -1,23 +1,21 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Security\AccountRepository;
-use TYPO3\Flow\Security\Context;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Service\UserService;
 use TYPO3\Party\Domain\Model\Person;
 
 /**
@@ -35,21 +33,9 @@ class UserInitialsViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var Context
+     * @var UserService
      */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @Flow\InjectConfiguration("userInterface.defaultLanguage")
-     * @var string
-     */
-    protected $defaultLanguageIdentifier;
+    protected $userService;
 
     /**
      * Render user initials or an abbreviated name for a given username. If the account was deleted, use the username as fallback.
@@ -80,14 +66,11 @@ class UserInitialsViewHelper extends AbstractViewHelper
             return $accountIdentifier;
         }
 
-        if ($this->securityContext->canBeInitialized()) {
-            if ($this->securityContext->getAccount()) {
-                /** @var User $currentUser */
-                $currentUser = $this->securityContext->getAccount()->getParty();
-                if ($currentUser === $requestedUser) {
-                    $languageIdentifier = $currentUser->getPreferences()->get('interfaceLanguage') ? $currentUser->getPreferences()->get('interfaceLanguage') : $this->defaultLanguageIdentifier;
-                    $you = $translation = $this->translator->translateById('you', array(), 1, new Locale($languageIdentifier), 'Main', 'TYPO3.Neos');
-                }
+        $currentUser = $this->userService->getBackendUser();
+        if ($currentUser) {
+            if ($currentUser === $requestedUser) {
+                $translationHelper = new TranslationHelper();
+                $you = $translationHelper->translateById('you', 'TYPO3.Neos');
             }
         }
 
@@ -95,7 +78,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
             case 'initials':
                 return mb_substr($requestedUser->getName()->getFirstName(), 0, 1) . mb_substr($requestedUser->getName()->getLastName(), 0, 1);
             case 'fullFirstName':
-            return isset($you) ? $you : $requestedUser->getName()->getFirstName() . ' ' . mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.';
+                return isset($you) ? $you : $requestedUser->getName()->getFirstName() . ' ' . mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.';
             case 'fullName':
                 return isset($you) ? $you : $requestedUser->getName()->getFullName();
         }

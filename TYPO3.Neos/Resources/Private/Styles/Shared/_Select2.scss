@@ -179,7 +179,7 @@
 		}
 
 		.neos-select2-search-choice-close {
-			right: 0px;
+			right: $unit + 1px;
 			left: auto;
 			top: 0;
 			height: $unit;
@@ -189,7 +189,6 @@
 			border-left: 1px solid $grayDark;
 			color: white;
 			text-decoration: none;
-			right: $unit + 1px;
 			border-radius: 0;
 
 			&:hover {
@@ -198,7 +197,7 @@
 
 			i {
 				position: absolute;
-				left: 14px;
+				left: 15px;
 				top: 12px;
 			}
 		}
@@ -287,10 +286,10 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $search;
+				content: $fa-var-search;
 				line-height: 100%;
 				font-size: 14px;
-				@include icon-FontAwesome();
+				@include fa-icon();
 				cursor: pointer;
 			}
 		}
@@ -367,10 +366,10 @@
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;
-			content: $search;
+			content: $fa-var-search;
 			line-height: 100%;
 			font-size: 14px;
-			@include icon-FontAwesome();
+			@include fa-icon();
 			cursor: pointer;
 		}
 

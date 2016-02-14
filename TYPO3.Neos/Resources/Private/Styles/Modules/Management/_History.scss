@@ -12,6 +12,7 @@
 		max-width: 1000px;
 		margin: 0 auto;
 	}
+
 	.neos-history-day {
 
 		.neos-history-date {
@@ -41,31 +42,6 @@
 				content: "";
 				clear: both;
 			}
-
-			&.neos-history-events-left {
-				text-align: right;
-				border-right: 4px solid $grayMedium;
-
-				.neos-history-event-time {
-					float: right;
-					margin-right: 10px;
-					width: 65px;
-					text-align: right;
-				}
-			}
-			&.neos-history-events-right {
-				text-align: left;
-				margin-left: 50%;
-				border-left: 4px solid $grayMedium;
-
-				.neos-history-event-time {
-					float: left;
-					margin-left: 10px;
-					width: 65px;
-					text-align: left;
-				}
-			}
-
 			.neos-history-event {
 				text-align: left;
 				clear: both;
@@ -107,9 +83,50 @@
 		}
 	}
 
+	.neos-history-day:nth-child(even) {
+		.neos-history-events {
+			&.neos-history-alignment {
+				text-align: right;
+				border-right: 4px solid $grayMedium;
+
+				.neos-history-event-time {
+					float: right;
+					margin-right: 10px;
+					width: 65px;
+					text-align: right;
+				}
+			}
+		}
+	}
+	.neos-history-day:nth-child(odd) {
+		.neos-history-events {
+			&.neos-history-alignment {
+				text-align: left;
+				margin-left: 50%;
+				border-left: 4px solid $grayMedium;
+
+				.neos-history-event-time {
+					float: left;
+					margin-left: 10px;
+					width: 65px;
+					text-align: left;
+				}
+			}
+		}
+	}
+
 	.neos-history-group {
 		.neos-history-group-user {
 
+		}
+	}
+
+	.loadMore {
+		text-align: center;
+
+		button {
+			margin-top: 25px;
+			margin-bottom: 25px;
 		}
 	}
 }

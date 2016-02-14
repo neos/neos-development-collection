@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -18,6 +18,7 @@ use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Content Context
@@ -60,7 +61,7 @@ class ContentContext extends Context
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
      *
      * @param string $workspaceName Name of the current workspace
-     * @param \DateTime $currentDateTime The current date and time
+     * @param \DateTimeInterface $currentDateTime The current date and time
      * @param array $dimensions Array of dimensions with array of ordered values
      * @param array $targetDimensions Array of dimensions used when creating / modifying content
      * @param boolean $invisibleContentShown If invisible content should be returned in query results
@@ -70,7 +71,7 @@ class ContentContext extends Context
      * @param Domain $currentDomain The current Domain object
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
     {
         parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
         $this->currentSite = $currentSite;
@@ -107,7 +108,7 @@ class ContentContext extends Context
     public function getCurrentSiteNode()
     {
         if ($this->currentSite !== null && $this->currentSiteNode === null) {
-            $siteNodePath = '/sites/' . $this->currentSite->getNodeName();
+            $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $this->currentSite->getNodeName());
             $this->currentSiteNode = $this->getNode($siteNodePath);
             if (!($this->currentSiteNode instanceof NodeInterface)) {
                 $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);

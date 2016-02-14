@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -26,6 +26,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Site Import Service
@@ -169,57 +170,50 @@ class SiteImportService
     {
         /** @var Site $importedSite */
         $site = null;
-        $this->eventEmittingService->withoutEventLog(function () use ($pathAndFilename, &$site) {
-            $xmlReader = new \XMLReader();
-            $xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE);
+        $xmlReader = new \XMLReader();
+        $xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE);
 
-            if ($this->workspaceRepository->findOneByName('live') === null) {
-                $this->workspaceRepository->add(new Workspace('live'));
-            }
-            $rootNode = $this->contextFactory->create()->getRootNode();
+        if ($this->workspaceRepository->findOneByName('live') === null) {
+            $this->workspaceRepository->add(new Workspace('live'));
             $this->persistenceManager->persistAll();
+        }
 
-            $sitesNode = $rootNode->getNode('/sites');
+        while ($xmlReader->read()) {
+            if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
+                continue;
+            }
+            $isLegacyFormat = $xmlReader->getAttribute('nodeName') !== null && $xmlReader->getAttribute('state') === null && $xmlReader->getAttribute('siteResourcesPackageKey') === null;
+            if ($isLegacyFormat) {
+                $site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
+                $this->emitSiteImported($site);
+                return $site;
+            }
+
+            $site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
+            $site->setName($xmlReader->getAttribute('name'));
+            $site->setState((integer)$xmlReader->getAttribute('state'));
+
+            $siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
+            if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
+                throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
+            }
+            if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+                throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
+            }
+            $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
+
+            $rootNode = $this->contextFactory->create()->getRootNode();
+            // We fetch the workspace to be sure it's known to the persistence manager and persist all
+            // so the workspace and site node are persisted before we import any nodes to it.
+            $rootNode->getContext()->getWorkspace();
+            $this->persistenceManager->persistAll();
+            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
-                $sitesNode = $rootNode->createSingleNode('sites');
+                $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
 
-            while ($xmlReader->read()) {
-                if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
-                    continue;
-                }
-                $isLegacyFormat = $xmlReader->getAttribute('nodeName') !== null && $xmlReader->getAttribute('state') === null && $xmlReader->getAttribute('siteResourcesPackageKey') === null;
-                if ($isLegacyFormat) {
-                    $site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
-                    return;
-                }
-
-                $site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
-                $site->setName($xmlReader->getAttribute('name'));
-                $site->setState((integer)$xmlReader->getAttribute('state'));
-
-                $siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
-                if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-                    throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
-                }
-                if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
-                    throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
-                }
-                $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
-
-                $rootNode = $this->contextFactory->create()->getRootNode();
-                // We fetch the workspace to be sure it's known to the persistence manager and persist all
-                // so the workspace and site node are persisted before we import any nodes to it.
-                $rootNode->getContext()->getWorkspace();
-                $this->persistenceManager->persistAll();
-                $sitesNode = $rootNode->getNode('/sites');
-                if ($sitesNode === null) {
-                    $sitesNode = $rootNode->createNode('sites');
-                }
-
-                $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
-            }
-        });
+            $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
+        }
 
         if ($site === null) {
             throw new NeosException(sprintf('The XML file did not contain a valid site node.'), 1418999522);

@@ -1,19 +1,23 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Utility\Environment;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
+use TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
@@ -51,6 +55,17 @@ class NodeTypeManager
     protected $fallbackNodeTypeName;
 
     /**
+     * @Flow\Inject
+     * @var StringFrontend
+     */
+    protected $fullConfigurationCache;
+
+    /**
+     * @var array
+     */
+    protected $fullNodeTypeConfigurations;
+
+    /**
      * Return all registered node types.
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
@@ -64,15 +79,13 @@ class NodeTypeManager
         }
         if ($includeAbstractNodeTypes) {
             return $this->cachedNodeTypes;
-        } else {
-            $nonAbstractNodeTypes = array();
-            foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-                if (!$nodeType->isAbstract()) {
-                    $nonAbstractNodeTypes[$nodeTypeName] = $nodeType;
-                }
-            }
-            return $nonAbstractNodeTypes;
         }
+
+        $nonAbstractNodeTypes = array_filter($this->cachedNodeTypes, function ($nodeType) {
+            return !$nodeType->isAbstract();
+        });
+
+        return $nonAbstractNodeTypes;
     }
 
     /**
@@ -90,19 +103,21 @@ class NodeTypeManager
             $this->loadNodeTypes();
         }
 
-        if (!isset($this->cachedSubNodeTypes[$superTypeName])) {
-            $filteredNodeTypes = array();
-            /** @var NodeType $nodeType */
-            foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-                if ($includeAbstractNodeTypes === false && $nodeType->isAbstract()) {
-                    continue;
-                }
-                if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
-                    $filteredNodeTypes[$nodeTypeName] = $nodeType;
-                }
-            }
-            $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
+        if (isset($this->cachedSubNodeTypes[$superTypeName])) {
+            return $this->cachedSubNodeTypes[$superTypeName];
         }
+
+        $filteredNodeTypes = [];
+        /** @var NodeType $nodeType */
+        foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
+            if ($includeAbstractNodeTypes === false && $nodeType->isAbstract()) {
+                continue;
+            }
+            if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+                $filteredNodeTypes[$nodeTypeName] = $nodeType;
+            }
+        }
+        $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
 
         return $this->cachedSubNodeTypes[$superTypeName];
     }
@@ -168,10 +183,22 @@ class NodeTypeManager
      */
     protected function loadNodeTypes()
     {
+        $this->fullNodeTypeConfigurations = $this->fullConfigurationCache->get('fullNodeTypeConfigurations');
+        $fillFullConfigurationCache = !is_array($this->fullNodeTypeConfigurations);
+
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
+
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
-            $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
+            $nodeType = $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration, (isset($this->fullNodeTypeConfigurations[$nodeTypeName]) ? $this->fullNodeTypeConfigurations[$nodeTypeName] : null));
+            if ($fillFullConfigurationCache) {
+                $this->fullNodeTypeConfigurations[$nodeTypeName] = $nodeType->getFullConfiguration();
+            }
         }
+
+        if ($fillFullConfigurationCache) {
+            $this->fullConfigurationCache->set('fullNodeTypeConfigurations', $this->fullNodeTypeConfigurations);
+        }
+        $this->fullNodeTypeConfigurations = null;
     }
 
     /**
@@ -197,10 +224,13 @@ class NodeTypeManager
      *
      * @param string $nodeTypeName
      * @param array $completeNodeTypeConfiguration the full node type configuration for all node types
+     * @param array $fullNodeTypeConfigurationForType
      * @return NodeType
+     * @throws NodeConfigurationException
+     * @throws NodeTypeIsFinalException
      * @throws \TYPO3\TYPO3CR\Exception
      */
-    protected function loadNodeType($nodeTypeName, array $completeNodeTypeConfiguration)
+    protected function loadNodeType($nodeTypeName, array &$completeNodeTypeConfiguration, array $fullNodeTypeConfigurationForType = null)
     {
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];
@@ -211,50 +241,83 @@ class NodeTypeManager
         }
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];
-
-        $superTypes = array();
-        if (isset($nodeTypeConfiguration['superTypes'])) {
-            foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName => $enabled) {
-                // Skip unset node types
-                if ($enabled === false || $enabled === null) {
-                    $superTypes[$superTypeName] = null;
-                    continue;
-                }
-
-                // Make this setting backwards compatible with old array schema (deprecated since 2.0)
-                if (!is_bool($enabled)) {
-                    $superTypeName = $enabled;
-                }
-
-                // when removing super types by setting them to null, only string keys can be overridden
-                if ($superTypeName === null) {
-                    throw new \TYPO3\TYPO3CR\Exception\NodeConfigurationException('Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.', 1416578395);
-                }
-
-                $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
-                if ($superType->isFinal() === true) {
-                    throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a super type "' . $superType->getName() . '" which is final.', 1316452423);
-                }
-
-                $superTypes[$superTypeName] = $superType;
-            }
+        try {
+            $superTypes = isset($nodeTypeConfiguration['superTypes']) ? $this->evaluateSuperTypesConfiguration($nodeTypeConfiguration['superTypes'], $completeNodeTypeConfiguration) : [];
+        } catch (NodeConfigurationException $exception) {
+            throw new NodeConfigurationException('Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.', 1416578395);
+        } catch (NodeTypeIsFinalException $exception) {
+            throw new NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a super type "' . $exception->getMessage() . '" which is final.', 1316452423);
         }
 
         // Remove unset properties
-        if (isset($nodeTypeConfiguration['properties'])) {
-            foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {
-                if ($propertyConfiguration === null) {
-                    unset($nodeTypeConfiguration['properties'][$propertyName]);
-                }
-            }
-            if ($nodeTypeConfiguration['properties'] === array()) {
-                unset($nodeTypeConfiguration['properties']);
-            }
+        $properties = [];
+        if (isset($nodeTypeConfiguration['properties']) && is_array($nodeTypeConfiguration['properties'])) {
+            $properties = $nodeTypeConfiguration['properties'];
+        }
+
+        $nodeTypeConfiguration['properties'] = array_filter($properties, function ($propertyConfiguration) {
+            return $propertyConfiguration !== null;
+        });
+
+        if ($nodeTypeConfiguration['properties'] === []) {
+            unset($nodeTypeConfiguration['properties']);
         }
 
         $nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration);
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;
         return $nodeType;
+    }
+
+    /**
+     * Evaluates the given superTypes configuation and returns the array of effective superTypes.
+     *
+     * @param array $superTypesConfiguration
+     * @param array $completeNodeTypeConfiguration
+     * @return array
+     */
+    protected function evaluateSuperTypesConfiguration(array $superTypesConfiguration, &$completeNodeTypeConfiguration)
+    {
+        $superTypes = [];
+        foreach ($superTypesConfiguration as $superTypeName => $enabled) {
+            $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration($superTypeName, $enabled, $completeNodeTypeConfiguration);
+        }
+
+        return $superTypes;
+    }
+
+    /**
+     * Evaluates a single superType configuration and returns the NodeType if enabled.
+     *
+     * @param string $superTypeName
+     * @param boolean $enabled
+     * @param array $completeNodeTypeConfiguration
+     * @return NodeType
+     * @throws NodeConfigurationException
+     * @throws NodeTypeIsFinalException
+     */
+    protected function evaluateSuperTypeConfiguration($superTypeName, $enabled, &$completeNodeTypeConfiguration)
+    {
+        // Skip unset node types
+        if ($enabled === false || $enabled === null) {
+            return null;
+        }
+
+        // Make this setting backwards compatible with old array schema (deprecated since 2.0)
+        if (!is_bool($enabled)) {
+            $superTypeName = $enabled;
+        }
+
+        // when removing super types by setting them to null, only string keys can be overridden
+        if ($superTypeName === null) {
+            throw new NodeConfigurationException('Node type sets super type with a non-string key to NULL.', 1444944152);
+        }
+
+        $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
+        if ($superType->isFinal() === true) {
+            throw new NodeTypeIsFinalException($superType->getName(), 1444944148);
+        }
+
+        return $superType;
     }
 }

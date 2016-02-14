@@ -44,6 +44,7 @@ trait HistoryDefinitionsTrait
      */
     public function iShouldHaveTheFollowingHistoryEntries($ignoringOrder, TableNode $table)
     {
+        $this->getSubcontext('flow')->persistAll();
         $allEvents = $this->getEventRepository()->findAll()->toArray();
         $eventsByInternalId = array();
         $unmatchedParentEvents = array();
@@ -137,7 +138,7 @@ trait HistoryDefinitionsTrait
      */
     protected function getEventRepository()
     {
-        return $this->getObjectManager()->get('TYPO3\Neos\EventLog\Domain\Repository\EventRepository');
+        return $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Domain\Repository\EventRepository::class);
     }
 
     /**
@@ -145,7 +146,7 @@ trait HistoryDefinitionsTrait
      */
     protected function getTYPO3CRIntegrationService()
     {
-        return $this->getObjectManager()->get('TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService');
+        return $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService::class);
     }
 
     /**
@@ -155,7 +156,7 @@ trait HistoryDefinitionsTrait
     {
         $configuration = Yaml::parse($string->getRaw());
         /* @var $entityIntegrationService \TYPO3\Neos\EventLog\Integrations\EntityIntegrationService */
-        $entityIntegrationService = $this->getObjectManager()->get('TYPO3\Neos\EventLog\Integrations\EntityIntegrationService');
+        $entityIntegrationService = $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Integrations\EntityIntegrationService::class);
         $entityIntegrationService->setMonitorEntitiesSetting($configuration);
     }
 
@@ -165,7 +166,7 @@ trait HistoryDefinitionsTrait
     public function iCreateTheFollowingAccounts(TableNode $table)
     {
         foreach ($table->getHash() as $row) {
-            $user = $this->getObjectManager()->get('TYPO3\Neos\Domain\Service\UserService')->createUser(
+            $user = $this->getObjectManager()->get(\TYPO3\Neos\Domain\Service\UserService::class)->createUser(
                 $row['User'],
                 $row['Password'],
                 $row['First Name'],

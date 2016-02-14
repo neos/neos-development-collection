@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
@@ -81,7 +81,6 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
             'empty node path' => array(
                 'path' => '',
                 'expected' => array(
-                    0 => ''
                 )
             ),
             'node path starting with /' => array(
@@ -147,6 +146,31 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
         $this->assertSame($expected, $matches);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataSourceForInvalidContextPaths()
+    {
+        return [
+            'invalid dimension values' => [
+                'path' => 'features@user-admin;language=de_DE,mul_ZZ=something'
+            ],
+            'superfluous separator with more data' => [
+                'path' => 'features@user-admin;language=de_DE;mul_ZZ=multilanguage'
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataSourceForInvalidContextPaths
+     */
+    public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
+    {
+        $result = preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
+        $this->assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
     }
 
     /**

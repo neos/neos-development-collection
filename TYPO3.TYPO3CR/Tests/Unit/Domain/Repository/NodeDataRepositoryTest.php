@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -25,7 +25,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $this->nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace'));
+        $this->nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql'));
         $this->nodeDataRepository->expects($this->any())->method('filterNodesOverlaidInBaseWorkspace')->will($this->returnCallback(function (array $foundNodes, Workspace $baseWorkspace, $dimensions) {
             return $foundNodes;
         }));
@@ -132,6 +132,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $recursiveFlag = true;
 
         $this->nodeDataRepository->expects($this->once())->method('getNodeDataForParentAndNodeType')->with($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, $removedNodesFlag, $recursiveFlag)->will($this->returnValue(array()));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->with($nodeTypeFilter)->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array($nodeTypeFilter))));
 
         $this->nodeDataRepository->findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, true);
     }
@@ -155,6 +156,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
         $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue(array()));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array())));
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 

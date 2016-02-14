@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\EventLog\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\Table(
  *    indexes={
- * 		@ORM\Index(name="eventtype",columns={"eventtype"})
+ *        @ORM\Index(name="eventtype",columns={"eventtype"})
  *    }
  * )
  */
@@ -63,6 +63,7 @@ class Event
     /**
      * Payload of the event.
      *
+     * @ORM\Column(type="flow_json_array")
      * @var array
      */
     protected $data = array();
@@ -71,7 +72,7 @@ class Event
      * The parent event, if exists. E.g. if a "move node" operation triggered a bunch of other events, or a "publish"
      *
      * @var Event
-     * @ORM\ManyToOne
+     * @ORM\ManyToOne(inversedBy="childEvents")
      */
     protected $parentEvent;
 

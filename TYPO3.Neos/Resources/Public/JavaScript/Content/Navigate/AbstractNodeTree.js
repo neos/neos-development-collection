@@ -8,11 +8,11 @@ define(
 		'../Application',
 		'Content/Model/Node',
 		'Content/Components/AbstractPositionSelectorButton',
-		'vie',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
 		'Shared/NodeTypeService',
 		'Shared/Notification',
+		'Shared/EventDispatcher',
 		'../Inspector/InspectorController',
 		'./DeleteNodeDialog',
 		'./InsertNodePanel',
@@ -25,11 +25,11 @@ define(
 		ContentModule,
 		EntityWrapper,
 		AbstractPositionSelectorButton,
-		vieInstance,
 		NodeSelection,
 		Configuration,
 		NodeTypeService,
 		Notification,
+		EventDispatcher,
 		InspectorController,
 		DeleteNodeDialog,
 		InsertNodePanel,
@@ -156,7 +156,7 @@ define(
 
 			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: 'Create (hold to select position)',
+				title: 'Create (hover to select position)',
 				iconClass: 'icon-plus',
 
 				mouseUp: function(event) {
@@ -172,7 +172,7 @@ define(
 
 			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: 'Paste (hold to select position)',
+				title: 'Paste (hover to select position)',
 				iconClass: 'icon-paste',
 
 				mouseUp: function(event) {
@@ -464,8 +464,10 @@ define(
 					} else {
 						classes = $.trim(classes.replace(/neos-hiddenInIndex/g, ''));
 					}
+					node.data.isHidden = attributes._hidden;
 					node.data.addClass = classes;
 					node.render();
+					this.notifyPropertyChange('activeNode');
 				}
 			},
 
@@ -714,8 +716,9 @@ define(
 					Notification.info('You have to select a node');
 				}
 				var value = !node.data.isHidden;
-				this.set('currentFocusedNodeIsHidden', value);
 				node.data.isHidden = value;
+				// Trigger update of ``currentFocusedNodeIsHidden``
+				this.notifyPropertyChange('activeNode');
 				if (value === true) {
 					node.data.addClass = node.data.addClass += ' neos-hidden';
 				} else {
@@ -732,15 +735,17 @@ define(
 					}
 				).then(
 					function(result) {
-						var selectedNode = NodeSelection.get('selectedNode'),
-							entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-						if (entity) {
-							entity.set('typo3:_hidden', value);
+						var nodeEntity = NodeSelection.getNode(node.data.key),
+							selectedNodeEntity = NodeSelection.get('selectedNode');
+						if (nodeEntity) {
+							nodeEntity.setAttribute('_hidden', value);
+							nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+							if (nodeEntity === selectedNodeEntity) {
+								InspectorController.set('cleanProperties._hidden', value);
+								InspectorController.set('nodeProperties._hidden', value);
+							}
 						}
-						if (node.data.key === selectedNode.$element.attr('about')) {
-							InspectorController.set('cleanProperties._hidden', value);
-							InspectorController.set('nodeProperties._hidden', value);
-						}
+						EventDispatcher.trigger('nodeUpdated');
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						that.afterToggleHidden(node);
 					},
@@ -861,7 +866,17 @@ define(
 							// Update the pageNodePath if we moved the current page
 							if (that.get('pageNodePath') === sourceNode.data.key) {
 								that.set('pageNodePath', result.data.newNodePath);
+							} else {
+								// handle pageNodePath if we moved a parent node
+								var explodedParentPath = sourceNode.data.key.split('@');
+
+								if (that.get('pageNodePath').indexOf(explodedParentPath[0]) === 0) {
+									var newExplodedPath = result.data.newNodePath.split('@');
+
+									that.set('pageNodePath', that.get('pageNodePath').replace(explodedParentPath[0], newExplodedPath[0]))
+								}
 							}
+
 							// after we finished moving, update the node path/url
 							sourceNode.data.href = result.data.nextUri;
 							sourceNode.data.key = result.data.newNodePath;

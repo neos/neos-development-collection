@@ -23,28 +23,28 @@
 	}
 
 	&::after {
-		@include icon-FontAwesome();
+		@include fa-icon();
 		position: absolute;
 		font-size: 14px;
 		color: $blue;
 	}
 
 	&.neos-position-selector-node-into::after {
-		content: $long-arrow-right;
+		content: $fa-var-long-arrow-right;
 		left: 18px;
-		top: 9px;
+		bottom: 4px;
 	}
 
 	&.neos-position-selector-node-before::after {
-		content: $level-up;
+		content: $fa-var-level-up;
 		left: 24px;
-		top: 6px;
+		bottom: 7px;
 	}
 
 	&.neos-position-selector-node-after::after {
-		content: $level-down;
+		content: $fa-var-level-down;
 		left: 24px;
-		top: 7px;
+		bottom: 6px;
 	}
 
 	&.neos-expanded {

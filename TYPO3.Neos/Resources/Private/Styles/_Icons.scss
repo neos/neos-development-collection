@@ -13,4 +13,24 @@
 		font-family: 'neos-language';
 		content: "\e600";
 	}
+
+	&.icon-review {
+		position: relative;
+		padding-right: 4px;
+
+		&:before {
+			content: $fa-var-file-text-o;
+		}
+
+		&:after {
+			content: $fa-var-check-circle;
+			text-decoration: inherit;
+			display: inline-block;
+			speak: none;
+			position: absolute;
+			font-size: 12px;
+			top: 8px;
+			left: 7px;
+		}
+	}
 }

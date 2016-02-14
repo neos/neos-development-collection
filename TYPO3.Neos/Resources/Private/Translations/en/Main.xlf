@@ -6,6 +6,12 @@
 			<trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
 			</trans-unit>
+			<trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			</trans-unit>
+			<trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			</trans-unit>
 			<trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
@@ -15,6 +21,9 @@
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+			<trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			</trans-unit>
 			<trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			</trans-unit>
@@ -23,6 +32,9 @@
 			</trans-unit>
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
 			</trans-unit>
 			<trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
@@ -111,11 +123,26 @@
 			<trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			</trans-unit>
+			<trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			</trans-unit>
+			<trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			</trans-unit>
+			<trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			</trans-unit>
+			<trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			</trans-unit>
 			<trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			</trans-unit>
 			<trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
+			</trans-unit>
+			<trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
 			</trans-unit>
 			<trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
@@ -124,7 +151,7 @@
 				<source>Refresh</source>
 			</trans-unit>
 			<trans-unit id="saving" xml:space="preserve">
-				<source>Saving...</source>
+				<source>Saving</source>
 			</trans-unit>
 			<trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
@@ -148,13 +175,13 @@
 				<source>Label</source>
 			</trans-unit>
 			<trans-unit id="nodeTypeCaption" xml:space="preserve">
-				<source>Node type</source>
+				<source>Content Type</source>
 			</trans-unit>
 			<trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			</trans-unit>
 			<trans-unit id="relativePathCaption" xml:space="preserve">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			</trans-unit>
 
 			<!-- node types -->
@@ -431,6 +458,9 @@
 			<trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			</trans-unit>
+			<trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			</trans-unit>
 
 			<!-- Error handlers -->
 			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
@@ -468,6 +498,25 @@
 			</trans-unit>
 			<trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			</trans-unit>
+
+			<!-- Miscellaneous -->
+			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			</trans-unit>
+
+			<!-- Service output -->
+			<trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
 			</trans-unit>
 		</body>
 	</file>

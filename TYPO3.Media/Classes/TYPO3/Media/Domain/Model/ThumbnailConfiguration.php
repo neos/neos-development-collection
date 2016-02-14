@@ -1,13 +1,15 @@
 <?php
 namespace TYPO3\Media\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -49,6 +51,11 @@ class ThumbnailConfiguration
     protected $allowUpScaling;
 
     /**
+     * @var boolean
+     */
+    protected $async;
+
+    /**
      * @Flow\InjectConfiguration("behaviourFlag")
      * @var string
      */
@@ -63,17 +70,18 @@ class ThumbnailConfiguration
     /**
      * @var boolean
      */
-    static protected $loggedDeprecation = false;
+    protected static $loggedDeprecation = false;
 
     /**
-     * @param integer $width
-     * @param integer $maximumWidth
-     * @param integer $height
-     * @param integer $maximumHeight
-     * @param boolean $allowCropping
-     * @param boolean $allowUpScaling
+     * @param integer $width Desired width of the image
+     * @param integer $maximumWidth Desired maximum width of the image
+     * @param integer $height Desired height of the image
+     * @param integer $maximumHeight Desired maximum height of the image
+     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
+     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Whether the thumbnail can be generated asynchronously
      */
-    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false)
+    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false)
     {
         $this->width = $width ? (integer)$width : null;
         $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;
@@ -81,6 +89,7 @@ class ThumbnailConfiguration
         $this->maximumHeight = $maximumHeight ? (integer)$maximumHeight : null;
         $this->allowCropping = $allowCropping ? (boolean)$allowCropping : false;
         $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
+        $this->async = $async ? (boolean)$async : false;
     }
 
     /**
@@ -157,6 +166,14 @@ class ThumbnailConfiguration
     public function isUpScalingAllowed()
     {
         return $this->allowUpScaling;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAsync()
+    {
+        return $this->async;
     }
 
     /**

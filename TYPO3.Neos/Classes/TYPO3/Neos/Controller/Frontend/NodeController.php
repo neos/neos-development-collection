@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Controller\Frontend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
@@ -124,6 +124,7 @@ class NodeController extends ActionController
      * This is used in out of band rendering for the backend.
      *
      * @return void
+     * @throws NodeNotFoundException
      */
     protected function overrideViewVariablesFromInternalArguments()
     {
@@ -159,7 +160,7 @@ class NodeController extends ActionController
         } elseif (is_string($resolvedNode)) {
             $this->redirectToUri($resolvedNode);
         } elseif ($resolvedNode instanceof NodeInterface) {
-            $this->redirect('show', null, null, array('node' => $resolvedNode));
+            $this->redirect('show', null, null, ['node' => $resolvedNode]);
         } else {
             throw new UnresolvableShortcutException(sprintf('The shortcut node target of node "%s" resolves to an unsupported type "%s"', $node->getPath(), is_object($resolvedNode) ? get_class($resolvedNode) : gettype($resolvedNode)), 1430218738);
         }

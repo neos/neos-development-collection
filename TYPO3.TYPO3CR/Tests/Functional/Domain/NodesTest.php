@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -86,7 +86,7 @@ class NodesTest extends FunctionalTestCase
         }
 
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $this->contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
     }
@@ -97,8 +97,8 @@ class NodesTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->contentDimensionRepository->setDimensionsConfiguration(array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
+        $this->contentDimensionRepository->setDimensionsConfiguration([]);
     }
 
     /**
@@ -113,14 +113,14 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function setPathWorksRecursively()
+    public function setNameWorksRecursively()
     {
         $rootNode = $this->context->getRootNode();
 
         $fooNode = $rootNode->createNode('foo');
         $bazNode = $fooNode->createNode('bar')->createNode('baz');
 
-        $fooNode->setPath('/quux');
+        $fooNode->setName('quux');
 
         $this->assertEquals('/quux/bar/baz', $bazNode->getPath());
     }
@@ -221,7 +221,7 @@ class NodesTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
         $rootNode->getNode('baz')->remove();
         $bazNode = $rootNode->getNode('baz');
-            // workaround for PHPUnit trying to "render" the result *if* not NULL
+        // workaround for PHPUnit trying to "render" the result *if* not NULL
         $bazNodeResult = $bazNode === null ? null : 'instance-of-' . get_class($bazNode);
         $this->assertNull($bazNodeResult);
     }
@@ -242,7 +242,7 @@ class NodesTest extends FunctionalTestCase
 
         $this->assertTrue($rootNode->hasChildNodes(), 'Second check.');
 
-        $context = $this->contextFactory->create(array('workspaceName' => 'user-admin'));
+        $context = $this->contextFactory->create(['workspaceName' => 'user-admin']);
         $rootNode = $context->getRootNode();
 
         $rootNode->getNode('bar')->remove();
@@ -287,13 +287,13 @@ class NodesTest extends FunctionalTestCase
 
         $this->assertTrue($parentNode->hasChildNodes());
         $childNodes = $parentNode->getChildNodes();
-        $this->assertSameOrder(array($node1, $node2, $node3), $childNodes);
+        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
 
         $this->persistenceManager->persistAll();
 
         $this->assertTrue($parentNode->hasChildNodes());
         $childNodes = $parentNode->getChildNodes();
-        $this->assertSameOrder(array($node1, $node2, $node3), $childNodes);
+        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
     /**
@@ -309,13 +309,13 @@ class NodesTest extends FunctionalTestCase
 
         $this->assertTrue($rootNode->hasChildNodes(), 'child node check before persistAll()');
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder(array($node1, $node2, $node3), $childNodes);
+        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
 
         $this->persistenceManager->persistAll();
 
         $this->assertTrue($rootNode->hasChildNodes(), 'child node check after persistAll()');
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder(array($node1, $node2, $node3), $childNodes);
+        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
     /**
@@ -333,12 +333,12 @@ class NodesTest extends FunctionalTestCase
         $node6 = $rootNode->createNode('node6');
 
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder(array($node1, $node2, $node3, $node4, $node5, $node6), $childNodes);
+        $this->assertSameOrder([$node1, $node2, $node3, $node4, $node5, $node6], $childNodes);
 
         $this->persistenceManager->persistAll();
 
         $childNodes = $rootNode->getChildNodes(null, 3, 2);
-        $this->assertSameOrder(array($node3, $node4, $node5), $childNodes);
+        $this->assertSameOrder([$node3, $node4, $node5], $childNodes);
     }
 
     /**
@@ -372,7 +372,15 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeC->moveBefore($childNodeD);
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
         $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
@@ -416,7 +424,7 @@ class NodesTest extends FunctionalTestCase
         $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
         $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
-        $expectedChildNodes = array($childNodeB, $childNodeC1);
+        $expectedChildNodes = [$childNodeB, $childNodeC1];
         $actualChildNodes = $childNodeC->getChildNodes();
         $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
@@ -441,7 +449,7 @@ class NodesTest extends FunctionalTestCase
         $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
         $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
-        $expectedChildNodes = array($childNodeC1, $childNodeB);
+        $expectedChildNodes = [$childNodeC1, $childNodeB];
         $actualChildNodes = $childNodeC->getChildNodes();
         $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
@@ -469,7 +477,15 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -498,7 +514,15 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -523,7 +547,15 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeF->moveBefore($childNodeG);
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -548,7 +580,15 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeC->moveAfter($childNodeB);
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -601,7 +641,7 @@ class NodesTest extends FunctionalTestCase
         $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
         $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
-        $expectedChildNodes = array($childNodeB, $childNodeC1);
+        $expectedChildNodes = [$childNodeB, $childNodeC1];
         $actualChildNodes = $childNodeC->getChildNodes();
         $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
@@ -630,7 +670,7 @@ class NodesTest extends FunctionalTestCase
         $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
         $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
-        $expectedChildNodes = array($childNodeC1, $childNodeB);
+        $expectedChildNodes = [$childNodeC1, $childNodeB];
         $actualChildNodes = $childNodeC->getChildNodes();
         $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
@@ -658,7 +698,15 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -687,7 +735,15 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -711,7 +767,15 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeF->moveAfter($childNodeE);
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $parentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -733,7 +797,7 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $userContext = $this->contextFactory->create(array('workspaceName' => 'live2'));
+        $userContext = $this->contextFactory->create(['workspaceName' => 'live2']);
         $userParentNode = $userContext->getNode('/parent-node');
 
         $childNodeB = $userParentNode->createNode('child-node-b');
@@ -744,7 +808,15 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $expectedChildNodes = array($childNodeA, $childNodeB, $childNodeC, $childNodeD, $childNodeE, $childNodeF, $childNodeG);
+        $expectedChildNodes = [
+            $childNodeA,
+            $childNodeB,
+            $childNodeC,
+            $childNodeD,
+            $childNodeE,
+            $childNodeF,
+            $childNodeG
+        ];
         $actualChildNodes = $userParentNode->getChildNodes();
 
         $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
@@ -813,7 +885,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
 
         $liveParentNode = $rootNode->createNode('parent-node');
-        $nodes = array();
+        $nodes = [];
         $nodes[1] = $liveParentNode->createNode('node001');
         $nodes[1]->setIndex(1);
         $nodes[2] = $liveParentNode->createNode('node002');
@@ -832,12 +904,12 @@ class NodesTest extends FunctionalTestCase
 
         $actualChildNodes = $liveParentNode->getChildNodes();
 
-        $newNodeOrder = array(
+        $newNodeOrder = [
             $nodes[2],
             $nodes[3],
             $nodes[1],
             $nodes[4]
-        );
+        ];
         $this->assertSameOrder($newNodeOrder, $actualChildNodes);
     }
 
@@ -849,7 +921,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
 
         $liveParentNode = $rootNode->createNode('parent-node');
-        $nodes = array();
+        $nodes = [];
         $nodes[0] = $liveParentNode->createNode('node000');
         $nodes[150] = $liveParentNode->createNode('node150');
 
@@ -940,9 +1012,9 @@ class NodesTest extends FunctionalTestCase
 
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
-        $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
-        $this->assertSame(array('fluss', 'baz', 'flux'), $names->names);
+        $names->names = [];
+        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        $this->assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
     /**
@@ -959,9 +1031,9 @@ class NodesTest extends FunctionalTestCase
 
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
-        $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
-        $this->assertSame(array('baz', 'fluss', 'flux'), $names->names);
+        $names->names = [];
+        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        $this->assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
     /**
@@ -1012,9 +1084,9 @@ class NodesTest extends FunctionalTestCase
         $copiedChildNodes = $fluxNode->copyBefore($bazNode, 'fluss')->getChildNodes();
 
         $names = new \stdClass();
-        $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
-        $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
+        $names->names = [];
+        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
     /**
@@ -1033,9 +1105,9 @@ class NodesTest extends FunctionalTestCase
         $copiedChildNodes = $fluxNode->copyAfter($bazNode, 'fluss')->getChildNodes();
 
         $names = new \stdClass();
-        $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
-        $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
+        $names->names = [];
+        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
     /**
@@ -1151,9 +1223,12 @@ class NodesTest extends FunctionalTestCase
         $nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
         $nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
-        $expectedNodes = array($nodeB, $nodeC);
+        $expectedNodes = [$nodeB, $nodeC];
 
-        $nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+        $nodeA->setProperty('property3', [
+            '81c848ed-abb5-7608-a5db-7eea0331ccfa',
+            'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
+        ]);
         $this->assertSame($expectedNodes, $nodeA->getProperty('property3'));
 
         $nodeA->setProperty('property3', $expectedNodes);
@@ -1173,10 +1248,13 @@ class NodesTest extends FunctionalTestCase
         $nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
         $nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
-        $expectedNodes = array($nodeB, $nodeC);
+        $expectedNodes = [$nodeB, $nodeC];
 
         $nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-        $nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+        $nodeA->setProperty('property3', [
+            '81c848ed-abb5-7608-a5db-7eea0331ccfa',
+            'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
+        ]);
 
         $actualProperties = $nodeA->getProperties();
         $this->assertSame($nodeB, $actualProperties['property2']);
@@ -1191,7 +1269,7 @@ class NodesTest extends FunctionalTestCase
         $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live', 'invisibleContentShown' => false));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live', 'invisibleContentShown' => false]);
 
         $rootNode = $this->context->getNode('/');
         $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1199,12 +1277,17 @@ class NodesTest extends FunctionalTestCase
         $nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
 
         $nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-        $nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+        $nodeA->setProperty('property3', [
+            '81c848ed-abb5-7608-a5db-7eea0331ccfa',
+            'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
+        ]);
 
         $nodeB->setHidden(true);
 
         $this->assertNull($nodeA->getProperty('property2'));
-        $this->assertSame(array($nodeC), $nodeA->getProperty('property3'));
+        $property3 = $nodeA->getProperty('property3');
+        $this->assertCount(1, $property3);
+        $this->assertSame($nodeC, reset($property3));
     }
 
     /**
@@ -1221,7 +1304,7 @@ class NodesTest extends FunctionalTestCase
         $node = $rootNode->createNode('node', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
         $node->setProperty('property2', $identifier);
 
-        $testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
+        $testContext = $this->contextFactory->create(['workspaceName' => 'test']);
 
         $testRootNode = $testContext->getNode('/');
         $testReferencedNode = $testRootNode->createNode('test-referenced-node', $nodeType, $identifier);
@@ -1244,11 +1327,11 @@ class NodesTest extends FunctionalTestCase
         /** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
         $nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
 
-        $nodeDataA = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', array('test' => array(1)));
+        $nodeDataA = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', ['test' => [1]]);
         $variantNodeA1 = $nodeFactory->createFromNodeData($nodeDataA, $this->context);
         $variantNodeA2 = $nodeFactory->createFromNodeData($nodeDataA, $this->context);
 
-        $nodeDataB = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', array('test' => array(2)));
+        $nodeDataB = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', ['test' => [2]]);
         $variantNodeB = $nodeFactory->createFromNodeData($nodeDataB, $this->context);
 
         $this->assertSame($variantNodeA1, $variantNodeA2);
@@ -1260,25 +1343,25 @@ class NodesTest extends FunctionalTestCase
      */
     public function createVariantForContextMatchesTargetContextDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a')
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b')
-        ));
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
 
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1286,27 +1369,27 @@ class NodesTest extends FunctionalTestCase
      */
     public function createVariantForContextAlsoWorksIfTheTargetWorkspaceDiffersFromTheSourceWorkspace()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a'),
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a'],
             'workspace' => 'live'
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b'),
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b'],
             'workspace' => 'test'
-        ));
+        ]);
 
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1314,20 +1397,20 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeReturnsExistingNodeWithMatchingDimensionsIfPossible()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a')
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b')
-        ));
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
 
         $identifier = '30e893c1-caef-0ca5-b53d-e5699bb8e506';
         $variantNodeA = $variantContextA->getRootNode()->createNode('test', null, $identifier);
@@ -1344,20 +1427,20 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeMatchesTargetContextDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a')
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b')
-        ));
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
 
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantContextB->adoptNode($variantNodeA);
@@ -1370,22 +1453,27 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeWithExistingNodeMatchingTargetDimensionValuesWillReuseNode()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a')
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b')
-        ));
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
 
-        $variantContextA->getRootNode()->getNodeData()->createNodeData('test', null, null, $variantContextA->getWorkspace(), array('test' => array('a', 'b')));
+        $variantContextA->getRootNode()->getNodeData()->createNodeData('test', null, null, $variantContextA->getWorkspace(), [
+            'test' => [
+                'a',
+                'b'
+            ]
+        ]);
         $this->persistenceManager->persistAll();
 
         $variantNodeA = $variantContextA->getRootNode()->getNode('test');
@@ -1413,5 +1501,21 @@ class NodesTest extends FunctionalTestCase
         $this->assertNotInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $bazNode);
 
         $this->assertEquals('bar claps hands!', $happyNode->clapsHands());
+    }
+
+
+    /**
+     * @test
+     */
+    public function getChildNodesWithNodeTypeFilterWorks()
+    {
+        $documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document');
+        $headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
+        $imageNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Image');
+
+        $node = $this->context->getRootNode()->createNode('node-with-child-node', $documentNodeType);
+        $node->createNode('headline', $headlineNodeType);
+        $node->createNode('text', $imageNodeType);
+        $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
     }
 }

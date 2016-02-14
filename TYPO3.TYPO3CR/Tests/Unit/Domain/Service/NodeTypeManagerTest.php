@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -32,10 +32,25 @@ class NodeTypeManagerTest extends UnitTestCase
 
     public function setUp()
     {
+        $this->prepareNodeTypeManager($this->nodeTypesFixture);
+    }
+
+    /**
+     * Prepares $this->nodeTypeManager with a fresh instance with all mocks and makes the given fixture data available as NodeTypes configuration
+     *
+     * @param array $nodeTypesFixtureData
+     */
+    protected function prepareNodeTypeManager(array $nodeTypesFixtureData)
+    {
         $this->nodeTypeManager = new NodeTypeManager();
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
+
+        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, [], [], '', false);
+        $mockCache->expects($this->any())->method('get')->willReturn(null);
+        $this->inject($this->nodeTypeManager, 'fullConfigurationCache', $mockCache);
+
+        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($nodeTypesFixtureData));
         $this->inject($this->nodeTypeManager, 'configurationManager', $this->mockConfigurationManager);
     }
 
@@ -326,7 +341,6 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
-        $this->nodeTypeManager = new NodeTypeManager();
         $nodeTypesFixture = array(
             'TYPO3.TYPO3CR.Testing:Base' => array(
                 'final' => true
@@ -335,10 +349,8 @@ class NodeTypeManagerTest extends UnitTestCase
                 'superTypes' => array('TYPO3.TYPO3CR.Testing:Base' => true)
             )
         );
-        $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($nodeTypesFixture));
-        $this->inject($this->nodeTypeManager, 'configurationManager', $mockConfigurationManager);
 
+        $this->prepareNodeTypeManager($nodeTypesFixture);
         $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Sub');
     }
 }
