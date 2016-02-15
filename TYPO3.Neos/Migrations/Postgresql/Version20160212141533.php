@@ -14,7 +14,7 @@ class Version20160212141533 extends AbstractMigration {
 	 * @return void
 	 */
 	public function up(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		// typo3_neos_domain_model_domain
 		$this->addSql("ALTER INDEX idx_f227e8f6694309e4 RENAME TO IDX_8E49A537694309E4");
@@ -31,7 +31,7 @@ class Version20160212141533 extends AbstractMigration {
 	 * @return void
 	 */
 	public function down(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		// typo3_neos_domain_model_domain
 		$this->addSql("ALTER INDEX IDX_8E49A537694309E4 RENAME TO idx_f227e8f6694309e4");
