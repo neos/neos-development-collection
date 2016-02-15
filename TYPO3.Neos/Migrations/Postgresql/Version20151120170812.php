@@ -18,9 +18,9 @@ class Version20151120170812 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER dimensionvalues TYPE jsonb");
+        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER dimensionvalues TYPE jsonb USING dimensionvalues::jsonb");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER dimensionvalues DROP DEFAULT");
-        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER accessroles TYPE jsonb");
+        $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER accessroles TYPE jsonb USING accessroles::jsonb");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER accessroles DROP DEFAULT");
     }
 
