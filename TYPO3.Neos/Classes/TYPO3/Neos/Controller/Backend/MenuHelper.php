@@ -55,24 +55,27 @@ class MenuHelper
      */
     public function buildSiteList(ControllerContext $controllerContext)
     {
-        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
-        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        $requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
 
         $domainsFound = false;
         $sites = array();
         foreach ($this->siteRepository->findOnline() as $site) {
             $uri = null;
+            $active = false;
             /** @var $site \TYPO3\Neos\Domain\Model\Site */
             if ($site->hasActiveDomains()) {
-                $uri = $controllerContext->getUriBuilder()
-                    ->reset()
-                    ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-                $uri = sprintf('%s://%s%s%s',
-                    $requestUri->getScheme(),
-                    $site->getFirstActiveDomain()->getHostPattern(),
-                    rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
-                    $uri
-                );
+                $hostname = $site->getFirstActiveDomain()->getHostname();
+                $active = $hostname === $requestUriHost;
+                if ($active) {
+                    $uri = $controllerContext->getUriBuilder()
+                        ->reset()
+                        ->setCreateAbsoluteUri(true)
+                        ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+                } else {
+                    $uri = $controllerContext->getUriBuilder()
+                        ->reset()
+                        ->uriFor('switchSite', array('hostname' => $hostname), 'Backend\Backend', 'TYPO3.Neos');
+                }
                 $domainsFound = true;
             }
 
@@ -80,7 +83,7 @@ class MenuHelper
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
                 'uri' => $uri,
-                'active' => parse_url($uri, PHP_URL_HOST) === $requestUri->getHost() ? true : false
+                'active' => $active
             );
         }
 

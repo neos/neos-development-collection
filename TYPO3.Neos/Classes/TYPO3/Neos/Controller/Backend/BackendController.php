@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * The Neos Backend controller
@@ -21,6 +22,7 @@ use TYPO3\Flow\I18n\Locale;
  */
 class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Neos\Service\BackendRedirectionService
@@ -32,6 +34,18 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var \TYPO3\Neos\Service\XliffService
      */
     protected $xliffService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $loginTokenCache;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Session\SessionInterface
+     */
+    protected $currentSession;
 
     /**
      * Default action of the backend controller.
@@ -48,6 +62,33 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
+     * Redirects to the Neos backend on the given hostname, passing a one-time login token
+     *
+     * @param string $hostname
+     * @return void
+     */
+    public function switchSiteAction($hostname)
+    {
+        $token = Algorithms::generateRandomToken(32);
+        $this->loginTokenCache->set($token, $this->currentSession->getId());
+
+        $requestUri = $this->controllerContext->getRequest()->getHttpRequest()->getUri();
+        $baseUri = $this->controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+
+        $uri = $this->controllerContext->getUriBuilder()
+            ->reset()
+            ->uriFor('tokenLogin', ['token' => $token], 'Login', 'TYPO3.Neos');
+        $uri = sprintf('%s://%s%s%s',
+            $requestUri->getScheme(),
+            $hostname,
+            rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
+            $uri
+        );
+
+        $this->redirectToUri($uri);
+    }
+
+    /**
      * Returns the cached json array with the xliff labels
      *
      * @param string $locale
@@ -56,6 +97,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
+
         return $this->xliffService->getCachedJson(new Locale($locale));
     }
 }

@@ -9,3 +9,9 @@ TYPO3_Neos_TypoScript:
 TYPO3_Neos_XliffToJsonTranslations:
   frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
   backend: TYPO3\Flow\Cache\Backend\FileBackend
+
+TYPO3_Neos_LoginTokenCache:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backendOptions:
+    defaultLifetime: 30
