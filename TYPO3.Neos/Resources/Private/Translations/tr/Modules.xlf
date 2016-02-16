@@ -233,8 +233,8 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="tr" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="tr" state="needs-translation">Here's what happened recently in Neos:</target></trans-unit>
+				<source>Here's what happened recently in Neos</source>
+			<target xml:lang="tr" state="needs-translation">Here's what happened recently in Neos</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="tr" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>

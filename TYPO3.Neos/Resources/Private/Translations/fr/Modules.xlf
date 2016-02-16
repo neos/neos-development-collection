@@ -235,9 +235,9 @@
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="fr">Ce module donne un aperçu de tous les événements pertinents qui touchent votre site.</target></trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
-				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="fr">Voici ce qui s'est passé récemment dans Neos:</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+				<source>Here's what happened recently in Neos</source>
+			<target xml:lang="fr" state="translated">Voici ce qui s'est passé récemment dans Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="fr">Aucun événement n'a été enregistré qui peut être affiché dans le module d'historique.</target></trans-unit>
