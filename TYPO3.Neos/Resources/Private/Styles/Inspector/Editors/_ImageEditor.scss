@@ -26,8 +26,8 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 
 			&:before {
 				color: #fff;
-				@include icon-FontAwesome();
-				content: $arrow-down;
+				@include fa-icon();
+				content: $fa-var-arrow-down;
 				position: absolute;
 				top: 50%;
 				font-size: $unit;

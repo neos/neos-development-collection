@@ -12,6 +12,9 @@ namespace TYPO3\TypoScript\Core;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -21,8 +24,8 @@ use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
 use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\Utility as EelUtility;
 
 /**
@@ -46,12 +49,14 @@ class Runtime
      * Internal constants defining how evaluateInternal should work in case of an error.
      */
     const BEHAVIOR_EXCEPTION = 'Exception';
+
     const BEHAVIOR_RETURNNULL = 'NULL';
 
     /**
      * Internal constants defining a status of how evaluateInternal evaluated.
      */
     const EVALUATION_EXECUTED = 'Executed';
+
     const EVALUATION_SKIPPED = 'Skipped';
 
     /**
@@ -68,12 +73,14 @@ class Runtime
 
     /**
      * Contains list of contexts
+     *
      * @var array
      */
-    protected $renderingStack = array();
+    protected $renderingStack = [];
 
     /**
      * Default context with helper definitions
+     *
      * @var array
      */
     protected $defaultContextVariables;
@@ -84,7 +91,7 @@ class Runtime
     protected $typoScriptConfiguration;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var ControllerContext
      */
     protected $controllerContext;
 
@@ -96,7 +103,7 @@ class Runtime
     /**
      * @var array
      */
-    protected $configurationOnPathRuntimeCache = array();
+    protected $configurationOnPathRuntimeCache = [];
 
     /**
      * @var boolean
@@ -114,16 +121,29 @@ class Runtime
     protected $lastEvaluationStatus;
 
     /**
+     * @var \Closure
+     */
+    protected $simpleTypeToArrayClosure;
+
+    /**
      * Constructor for the TypoScript Runtime
      *
      * @param array $typoScriptConfiguration
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      */
-    public function __construct(array $typoScriptConfiguration, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function __construct(array $typoScriptConfiguration, ControllerContext $controllerContext)
     {
         $this->typoScriptConfiguration = $typoScriptConfiguration;
         $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
+
+        $this->simpleTypeToArrayClosure = function ($simpleType) {
+            return $simpleType === null ? null : [
+                '__eelExpression' => null,
+                '__value' => $simpleType,
+                '__objectType' => null
+            ];
+        };
     }
 
     /**
@@ -205,7 +225,7 @@ class Runtime
      */
     public function getCurrentContext()
     {
-        return $this->renderingStack[count($this->renderingStack) - 1];
+        return end($this->renderingStack);
     }
 
     /**
@@ -236,8 +256,7 @@ class Runtime
      * @param string $typoScriptPath
      * @return string
      * @throws \Exception
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function render($typoScriptPath)
     {
@@ -268,9 +287,7 @@ class Runtime
      * @param \Exception $exception
      * @param boolean $useInnerExceptionHandler
      * @return string
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
-     * @throws \Exception|\TYPO3\Flow\Exception
+     * @throws InvalidConfigurationException
      */
     public function handleRenderingException($typoScriptPath, \Exception $exception, $useInnerExceptionHandler = false)
     {
@@ -295,17 +312,17 @@ class Runtime
         if ($exceptionHandler === null || !($exceptionHandler instanceof AbstractRenderingExceptionHandler)) {
             $message = sprintf(
                 $invalidExceptionHandlerMessage . "\n" .
-                    'Please specify a fully qualified classname to a subclass of %2$s\AbstractRenderingExceptionHandler.' . "\n" .
-                    'You might implement an own handler or use one of the following:' . "\n" .
-                    '%2$s\AbsorbingHandler' . "\n" .
-                    '%2$s\HtmlMessageHandler' . "\n" .
-                    '%2$s\PlainTextHandler' . "\n" .
-                    '%2$s\ThrowingHandler' . "\n" .
-                    '%2$s\XmlCommentHandler',
+                'Please specify a fully qualified classname to a subclass of %2$s\AbstractRenderingExceptionHandler.' . "\n" .
+                'You might implement an own handler or use one of the following:' . "\n" .
+                '%2$s\AbsorbingHandler' . "\n" .
+                '%2$s\HtmlMessageHandler' . "\n" .
+                '%2$s\PlainTextHandler' . "\n" .
+                '%2$s\ThrowingHandler' . "\n" .
+                '%2$s\XmlCommentHandler',
                 $exceptionHandlerClass,
                 'TYPO3\TypoScript\Core\ExceptionHandlers'
             );
-            throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException($message, 1368788926);
+            throw new InvalidConfigurationException($message, 1368788926);
         }
 
         $exceptionHandler->setRuntime($this);
@@ -313,6 +330,7 @@ class Runtime
             $typoScriptPath .= sprintf('<%s>', $typoScriptConfiguration['__objectType']);
         }
         $output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
+
         return $output;
     }
 
@@ -338,18 +356,15 @@ class Runtime
      */
     protected function canRenderWithConfiguration(array $typoScriptConfiguration)
     {
-        if (isset($typoScriptConfiguration['__eelExpression'])) {
-            return true;
-        }
-        if (isset($typoScriptConfiguration['__value'])) {
+        if ($this->hasExpressionOrValue($typoScriptConfiguration)) {
             return true;
         }
 
-        if (!isset($typoScriptConfiguration['__meta']['class']) || !isset($typoScriptConfiguration['__objectType'])) {
-            return false;
+        if (isset($typoScriptConfiguration['__meta']['class']) && isset($typoScriptConfiguration['__objectType'])) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -360,128 +375,161 @@ class Runtime
      * @param mixed $contextObject the object which will be "this" in Eel expressions, if any
      * @return mixed
      *
-     * @throws \Exception
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-     * @throws \TYPO3\Flow\Security\Exception
-     * @throws \TYPO3\Flow\Utility\Exception\InvalidPositionException
+     * @throws StopActionException
+     * @throws SecurityException
      * @throws \TYPO3\TypoScript\Exception
-     * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
-     * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
-     * @throws \TYPO3\TypoScript\Exception\RuntimeException
+     * @throws Exception\RuntimeException
      */
     protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = null)
     {
         $needToPopContext = false;
         $this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
         $typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
-        $runtimeContentCache = $this->runtimeContentCache;
-
-        $cacheCtx = $runtimeContentCache->enter(isset($typoScriptConfiguration['__meta']['cache']) ? $typoScriptConfiguration['__meta']['cache'] : array(), $typoScriptPath);
-
-        // A closure that needs to be called for every return path in this method
-        $finallyClosure = function ($needToPopContext = false) use ($cacheCtx, $runtimeContentCache) {
-            if ($needToPopContext) {
-                $this->popContext();
-            }
-            $runtimeContentCache->leave($cacheCtx);
-        };
+        $cacheContext = $this->runtimeContentCache->enter(isset($typoScriptConfiguration['__meta']['cache']) ? $typoScriptConfiguration['__meta']['cache'] : [], $typoScriptPath);
 
         if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
-            $finallyClosure();
-            if (isset($typoScriptConfiguration['__objectType'])) {
-                $objectType = $typoScriptConfiguration['__objectType'];
-                throw new Exceptions\MissingTypoScriptImplementationException(sprintf(
-                    "The TypoScript object at path `%s` could not be rendered:
-					The TypoScript object `%s` is not completely defined (missing property `@class`).
-					Most likely you didn't inherit from a basic object.
-					For example you could add the following line to your TypoScript:
-					`prototype(%s) < prototype(TYPO3.TypoScript:Template)`",
-                    $typoScriptPath, $objectType, $objectType), 1332493995);
-            } elseif ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-                throw new Exceptions\MissingTypoScriptObjectException(sprintf(
-                    'No TypoScript object found in path "%s"
-					Please make sure to define one in your TypoScript configuration.', $typoScriptPath
-                ), 1332493990);
-            }
+            $this->finalizePathEvaluation($cacheContext);
+            $this->throwExceptionForUnrenderablePathIfNeeded($typoScriptPath, $typoScriptConfiguration, $behaviorIfPathNotFound);
             $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
             return null;
         }
 
         try {
-            if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
-                if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $contextObject) === false) {
-                    $finallyClosure();
-                    $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
-                    return null;
-                }
-
-                $evaluatedExpression = $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
-                $finallyClosure();
-                return $evaluatedExpression;
+            if ($this->hasExpressionOrValue($typoScriptConfiguration)) {
+                return $this->evaluteExpressionOrValueInternal($typoScriptPath, $typoScriptConfiguration, $cacheContext, $contextObject);
             }
 
-            $tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
-
-            if ($cacheCtx['cacheForPathDisabled'] === true) {
-                $contextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
-                $newContextArray = array();
-                foreach ($cacheCtx['configuration']['context'] as $contextVariableName) {
-                    if (isset($contextArray[$contextVariableName])) {
-                        $newContextArray[$contextVariableName] = $contextArray[$contextVariableName];
-                    }
-                }
-            }
-
-            if (isset($typoScriptConfiguration['__meta']['context'])) {
-                $newContextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
-                foreach ($typoScriptConfiguration['__meta']['context'] as $contextKey => $contextValue) {
-                    $newContextArray[$contextKey] = $this->evaluateInternal($typoScriptPath . '/__meta/context/' . $contextKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-                }
-            }
-
-            if (isset($newContextArray)) {
-                $this->pushContextArray($newContextArray);
-                $needToPopContext = true;
-            }
-
-            list($cacheHit, $cachedResult) = $runtimeContentCache->preEvaluate($cacheCtx, $tsObject);
-            if ($cacheHit) {
-                $finallyClosure($needToPopContext);
-                return $cachedResult;
-            }
-
-            $evaluateObject = true;
-            if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $tsObject) === false) {
-                $evaluateObject = false;
-            }
-
-            if ($evaluateObject) {
-                $output = $tsObject->evaluate();
-                $this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
-            } else {
-                $output = null;
-                $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
-            }
-        } catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
-            $finallyClosure($needToPopContext);
+            $typoScriptObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
+            $needToPopContext = $this->prepareContextForTypoScriptObject($typoScriptObject, $typoScriptPath, $typoScriptConfiguration, $cacheContext);
+            $output = $this->evaluateObjectOrRetrieveFromCache($typoScriptObject, $typoScriptPath, $typoScriptConfiguration, $cacheContext);
+        } catch (StopActionException $stopActionException) {
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             throw $stopActionException;
         } catch (SecurityException $securityException) {
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             throw $securityException;
-        } catch (Exceptions\RuntimeException $runtimeException) {
-            $finallyClosure($needToPopContext);
+        } catch (Exception\RuntimeException $runtimeException) {
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             throw $runtimeException;
         } catch (\Exception $exception) {
-            $finallyClosure($needToPopContext);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             return $this->handleRenderingException($typoScriptPath, $exception, true);
         }
 
-        $output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $tsObject);
-
-        $output = $runtimeContentCache->postProcess($cacheCtx, $tsObject, $output);
-        $finallyClosure($needToPopContext);
-
+        $this->finalizePathEvaluation($cacheContext, $needToPopContext);
         return $output;
+    }
+
+    /**
+     * Does the evaluation of a TypoScript instance, first checking the cache and if conditions and afterwards applying processors.
+     *
+     * @param AbstractTypoScriptObject $typoScriptObject
+     * @param string $typoScriptPath
+     * @param array $typoScriptConfiguration
+     * @param array $cacheContext
+     * @return mixed
+     */
+    protected function evaluateObjectOrRetrieveFromCache($typoScriptObject, $typoScriptPath, $typoScriptConfiguration, $cacheContext)
+    {
+        $output = null;
+        $evaluationStatus = self::EVALUATION_SKIPPED;
+        list($cacheHit, $cachedResult) = $this->runtimeContentCache->preEvaluate($cacheContext, $typoScriptObject);
+        if ($cacheHit) {
+            return $cachedResult;
+        }
+
+        $evaluateObject = true;
+        if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $typoScriptObject) === false) {
+            $evaluateObject = false;
+        }
+
+        if ($evaluateObject) {
+            $output = $typoScriptObject->evaluate();
+            $evaluationStatus = self::EVALUATION_EXECUTED;
+        }
+
+        $this->lastEvaluationStatus = $evaluationStatus;
+
+        $output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $typoScriptObject);
+        $output = $this->runtimeContentCache->postProcess($cacheContext, $typoScriptObject, $output);
+        return $output;
+    }
+
+    /**
+     * Evaluates an EEL expression or value, checking if conditions first and applying processors.
+     *
+     * @param string $typoScriptPath
+     * @param array $typoScriptConfiguration
+     * @param array $cacheContext
+     * @param mixed $contextObject
+     * @return mixed
+     */
+    protected function evaluteExpressionOrValueInternal($typoScriptPath, $typoScriptConfiguration, $cacheContext, $contextObject)
+    {
+        if ($this->evaluateIfCondition($typoScriptConfiguration, $typoScriptPath, $contextObject) === false) {
+            $this->finalizePathEvaluation($cacheContext);
+            $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+
+            return null;
+        }
+
+        $evaluatedExpression = $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
+        $this->finalizePathEvaluation($cacheContext);
+
+        return $evaluatedExpression;
+    }
+
+    /**
+     * Possibly prepares a new context for the current TypoScriptObject and cache context and pushes it to the stack.
+     * Returns if a new context was pushed to the stack or not.
+     *
+     * @param AbstractTypoScriptObject $typoScriptObject
+     * @param string $typoScriptPath
+     * @param array $typoScriptConfiguration
+     * @param array $cacheContext
+     * @return boolean
+     */
+    protected function prepareContextForTypoScriptObject(AbstractTypoScriptObject $typoScriptObject, $typoScriptPath, $typoScriptConfiguration, $cacheContext)
+    {
+        if ($cacheContext['cacheForPathDisabled'] === true) {
+            $contextArray = $this->getCurrentContext();
+            $newContextArray = [];
+            foreach ($cacheContext['configuration']['context'] as $contextVariableName) {
+                if (isset($contextArray[$contextVariableName])) {
+                    $newContextArray[$contextVariableName] = $contextArray[$contextVariableName];
+                }
+            }
+        }
+
+        if (isset($typoScriptConfiguration['__meta']['context'])) {
+            $newContextArray = isset($newContextArray) ? $newContextArray : $this->getCurrentContext();
+            foreach ($typoScriptConfiguration['__meta']['context'] as $contextKey => $contextValue) {
+                $newContextArray[$contextKey] = $this->evaluateInternal($typoScriptPath . '/__meta/context/' . $contextKey, self::BEHAVIOR_EXCEPTION, $typoScriptObject);
+            }
+        }
+
+        if (isset($newContextArray)) {
+            $this->pushContextArray($newContextArray);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Ends the evaluation of a typoscript path by popping the context stack if needed and leaving the cache context.
+     *
+     * @param array $cacheContext
+     * @param boolean $needToPopContext
+     * @return void
+     */
+    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false)
+    {
+        if ($needToPopContext) {
+            $this->popContext();
+        }
+
+        $this->runtimeContentCache->leave($cacheContext);
     }
 
     /**
@@ -493,26 +541,18 @@ class Runtime
      */
     protected function getConfigurationForPath($typoScriptPath)
     {
+        if (isset($this->configurationOnPathRuntimeCache[$typoScriptPath])) {
+            return $this->configurationOnPathRuntimeCache[$typoScriptPath]['c'];
+        }
+
         $pathParts = explode('/', $typoScriptPath);
-
         $configuration = $this->typoScriptConfiguration;
-
-        $simpleTypeToArrayClosure = function ($simpleType) {
-            return $simpleType === null ? null : array(
-                '__eelExpression' => null,
-                '__value' => $simpleType,
-                '__objectType' => null
-            );
-        };
 
         $pathUntilNow = '';
         $currentPrototypeDefinitions = array();
         if (isset($configuration['__prototypes'])) {
             $currentPrototypeDefinitions = $configuration['__prototypes'];
         }
-
-            // we also store the configuration on the *last* level such that we are
-            // able to add __processors to eel expressions and values.
 
         foreach ($pathParts as $pathPart) {
             $pathUntilNow .= '/' . $pathPart;
@@ -521,73 +561,103 @@ class Runtime
                 $currentPrototypeDefinitions = $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'];
                 continue;
             }
-            if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches)) {
-                $currentPathSegment = $matches[1];
 
-                if (isset($configuration[$currentPathSegment])) {
-                    $configuration = is_array($configuration[$currentPathSegment]) ? $configuration[$currentPathSegment] : $simpleTypeToArrayClosure($configuration[$currentPathSegment]);
-                } else {
-                    $configuration = array();
-                }
+            $configuration = $this->matchCurrentPathPart($pathPart, $configuration, $currentPrototypeDefinitions);
+            $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
+            $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
+        }
 
-                if (isset($configuration['__prototypes'])) {
-                    $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $simpleTypeToArrayClosure);
-                }
+        return $configuration;
+    }
 
-                if (isset($matches[3])) {
-                    $currentPathSegmentType = $matches[3];
-                } elseif (isset($configuration['__objectType'])) {
-                    $currentPathSegmentType = $configuration['__objectType'];
-                } else {
-                    $currentPathSegmentType = null;
-                }
+    /**
+     * Matches the current path segment and prepares the configuration.
+     *
+     * @param string $pathPart
+     * @param array $previousConfiguration
+     * @param array $currentPrototypeDefinitions
+     * @return array
+     * @throws Exception
+     */
+    protected function matchCurrentPathPart($pathPart, $previousConfiguration, &$currentPrototypeDefinitions)
+    {
+        if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches) !== 1) {
+            throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
+        }
 
-                if ($currentPathSegmentType !== null) {
-                    if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
-                        if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'])) {
-                            $prototypeMergingOrder = $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'];
-                            $prototypeMergingOrder[] = $currentPathSegmentType;
-                        } else {
-                            $prototypeMergingOrder = array($currentPathSegmentType);
-                        }
+        $currentPathSegment = $matches[1];
+        $configuration = [];
 
-                        $currentPrototypeWithInheritanceTakenIntoAccount = array();
+        if (isset($previousConfiguration[$currentPathSegment])) {
+            $configuration = is_array($previousConfiguration[$currentPathSegment]) ? $previousConfiguration[$currentPathSegment] : $this->simpleTypeToArrayClosure->__invoke($previousConfiguration[$currentPathSegment]);
+        }
 
-                        foreach ($prototypeMergingOrder as $prototypeName) {
-                            if (array_key_exists($prototypeName, $currentPrototypeDefinitions)) {
-                                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $simpleTypeToArrayClosure);
-                            } else {
-                                throw new Exception(sprintf(
-                                    'The TypoScript object `%s` which you tried to inherit from does not exist.
+        if (isset($configuration['__prototypes'])) {
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure);
+        }
+
+        $currentPathSegmentType = null;
+        if (isset($configuration['__objectType'])) {
+            $currentPathSegmentType = $configuration['__objectType'];
+        }
+        if (isset($matches[3])) {
+            $currentPathSegmentType = $matches[3];
+        }
+
+        if ($currentPathSegmentType !== null) {
+            $configuration['__objectType'] = $currentPathSegmentType;
+            $configuration = $this->mergePrototypesWithConfigurationForPathSegment($configuration, $currentPrototypeDefinitions);
+        }
+
+        if (is_array($configuration) && !isset($configuration['__value']) && !isset($configuration['__eelExpression']) && !isset($configuration['__meta']['class']) && !isset($configuration['__objectType']) && isset($configuration['__meta']['process'])) {
+            $configuration['__value'] = '';
+        }
+
+        return $configuration;
+    }
+
+    /**
+     * Merges the prototype chain into the configuration.
+     *
+     * @param array $configuration
+     * @param array $currentPrototypeDefinitions
+     * @return array
+     * @throws Exception
+     */
+    protected function mergePrototypesWithConfigurationForPathSegment($configuration, &$currentPrototypeDefinitions)
+    {
+        $currentPathSegmentType = $configuration['__objectType'];
+
+        if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
+            $prototypeMergingOrder = [$currentPathSegmentType];
+            if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'])) {
+                $prototypeMergingOrder = array_merge($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'], $prototypeMergingOrder);
+            }
+
+            $currentPrototypeWithInheritanceTakenIntoAccount = [];
+
+            foreach ($prototypeMergingOrder as $prototypeName) {
+                if (!array_key_exists($prototypeName, $currentPrototypeDefinitions)) {
+                    throw new Exception(sprintf(
+                        'The TypoScript object `%s` which you tried to inherit from does not exist.
 									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.',
-                                    $prototypeName, $currentPathSegmentType), 1427134340);
-                            }
-                        }
-
-                            // We merge the already flattened prototype with the current configuration (in that order),
-                            // to make sure that the current configuration (not being defined in the prototype) wins.
-                        $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $simpleTypeToArrayClosure);
-
-                            // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
-                            // we update the current prototype definitions.
-                        if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-                            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $simpleTypeToArrayClosure);
-                        }
-                    }
-
-                    $configuration['__objectType'] = $currentPathSegmentType;
+                        $prototypeName, $currentPathSegmentType), 1427134340);
                 }
 
-                if (is_array($configuration) && !isset($configuration['__value']) && !isset($configuration['__eelExpression']) && !isset($configuration['__meta']['class']) && !isset($configuration['__objectType']) && isset($configuration['__meta']['process'])) {
-                    $configuration['__value'] = '';
-                }
+                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure);
+            }
 
-                $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
-                $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
-            } else {
-                throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
+            // We merge the already flattened prototype with the current configuration (in that order),
+            // to make sure that the current configuration (not being defined in the prototype) wins.
+            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure);
+
+            // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
+            // we update the current prototype definitions.
+            if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
+                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure);
             }
         }
+
 
         return $configuration;
     }
@@ -597,7 +667,7 @@ class Runtime
      *
      * @param string $typoScriptPath Path to the configuration for this object instance
      * @param array $typoScriptConfiguration Configuration at the given path
-     * @return \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
+     * @return AbstractTypoScriptObject
      * @throws \TYPO3\TypoScript\Exception
      */
     protected function instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration)
@@ -617,10 +687,10 @@ class Runtime
                 $tsObjectClassName, $typoScriptObjectType), 1347952109);
         }
 
-        /** @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject */
+        /** @var $typoScriptObject AbstractTypoScriptObject */
         $typoScriptObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
-        if ($typoScriptObject instanceof \TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject) {
-            /** @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject */
+        if ($this->isArrayTypoScriptObject($typoScriptObject)) {
+            /** @var $typoScriptObject AbstractArrayTypoScriptObject */
             if (isset($typoScriptConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($typoScriptPath . '/__meta/ignoreProperties', $typoScriptObject);
                 $typoScriptObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : array());
@@ -631,13 +701,35 @@ class Runtime
     }
 
     /**
+     * Check if the given object is an array like object that should get all properties set to iterate or process internally.
+     *
+     * @param AbstractTypoScriptObject $typoScriptObject
+     * @return boolean
+     */
+    protected function isArrayTypoScriptObject(AbstractTypoScriptObject $typoScriptObject)
+    {
+        return ($typoScriptObject instanceof AbstractArrayTypoScriptObject);
+    }
+
+    /**
+     * Does the given TypoScript configuration array hold an EEL expression or simple value.
+     *
+     * @param array $typoScriptConfiguration
+     * @return boolean
+     */
+    protected function hasExpressionOrValue(array $typoScriptConfiguration)
+    {
+        return isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value']);
+    }
+
+    /**
      * Set options on the given (AbstractArray)TypoScript object
      *
-     * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject
+     * @param AbstractArrayTypoScriptObject $typoScriptObject
      * @param array $typoScriptConfiguration
      * @return void
      */
-    protected function setPropertiesOnTypoScriptObject(AbstractTypoScriptObject $typoScriptObject, array $typoScriptConfiguration)
+    protected function setPropertiesOnTypoScriptObject(AbstractArrayTypoScriptObject $typoScriptObject, array $typoScriptConfiguration)
     {
         foreach ($typoScriptConfiguration as $key => $value) {
             // skip keys which start with __, as they are purely internal.
@@ -760,7 +852,7 @@ class Runtime
     /**
      * Returns the context which has been passed by the currently active MVC Controller
      *
-     * @return \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @return ControllerContext
      */
     public function getControllerContext()
     {
@@ -783,6 +875,36 @@ class Runtime
             $this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
         }
         return $this->defaultContextVariables;
+    }
+
+    /**
+     * Checks and throws an exception for an unrenderable path.
+     *
+     * @param string $typoScriptPath The TypoScript path that cannot be rendered
+     * @param array $typoScriptConfiguration
+     * @param string $behaviorIfPathNotFound One of the BEHAVIOR_* constants
+     * @throws Exception\MissingTypoScriptImplementationException
+     * @throws Exception\MissingTypoScriptObjectException
+     */
+    protected function throwExceptionForUnrenderablePathIfNeeded($typoScriptPath, $typoScriptConfiguration, $behaviorIfPathNotFound)
+    {
+        if (isset($typoScriptConfiguration['__objectType'])) {
+            $objectType = $typoScriptConfiguration['__objectType'];
+            throw new Exceptions\MissingTypoScriptImplementationException(sprintf(
+                "The TypoScript object at path `%s` could not be rendered:
+					The TypoScript object `%s` is not completely defined (missing property `@class`).
+					Most likely you didn't inherit from a basic object.
+					For example you could add the following line to your TypoScript:
+					`prototype(%s) < prototype(TYPO3.TypoScript:Template)`",
+                $typoScriptPath, $objectType, $objectType), 1332493995);
+        }
+
+        if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
+            throw new Exceptions\MissingTypoScriptObjectException(sprintf(
+                'No TypoScript object found in path "%s"
+					Please make sure to define one in your TypoScript configuration.', $typoScriptPath
+            ), 1332493990);
+        }
     }
 
     /**

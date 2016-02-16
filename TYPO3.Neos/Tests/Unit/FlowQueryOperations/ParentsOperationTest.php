@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
+namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -37,7 +37,7 @@ class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $context = array($secondLevelNode);
         $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
 
-        $operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\ParentsOperation();
+        $operation = new \TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation();
         $operation->evaluate($q, array());
 
         $output = $q->getContext();

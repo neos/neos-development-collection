@@ -159,6 +159,6 @@ The Neos Setup Tool
 
       The Neos demo site start page
 
-.. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
-.. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html
-.. _Flow File Permissions: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Installation.html#file-permissions
+.. _Flow Documentation: http://flowframework.readthedocs.org/en/stable/index.html
+.. _Flow Requirements Documentation: http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartII/Requirements.html
+.. _Flow File Permissions: http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartII/Installation.html#file-permissions

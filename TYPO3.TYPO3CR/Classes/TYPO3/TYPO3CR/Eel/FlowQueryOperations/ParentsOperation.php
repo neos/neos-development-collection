@@ -35,7 +35,7 @@ class ParentsOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * {@inheritdoc}
@@ -60,8 +60,7 @@ class ParentsOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
-            while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
+            while ($contextNode->getParent() !== null) {
                 $contextNode = $contextNode->getParent();
                 if (!isset($outputNodePaths[$contextNode->getPath()])) {
                     $output[] = $contextNode;

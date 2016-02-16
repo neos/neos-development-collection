@@ -92,10 +92,10 @@
 			<target xml:lang="es-ES" state="translated">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="es-ES" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Este es tu espacio de trabajo personal que no se puede eliminar.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="es-ES" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target xml:lang="es-ES" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>

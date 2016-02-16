@@ -19,11 +19,11 @@
 		padding-right: 4px;
 
 		&:before {
-			content: $file-text-alt;
+			content: $fa-var-file-text-o;
 		}
 
 		&:after {
-			content: $ok-sign;
+			content: $fa-var-check-circle;
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;

@@ -44,8 +44,8 @@ ul.neos-dynatree-container {
 
 		&.neos-hidden {
 			span + span:after {
-				@include icon-FontAwesome();
-				content: $remove-sign;
+				@include fa-icon();
+				content: $fa-var-times-circle;
 				position: absolute;
 				left: 12px;
 				top: 0px;
@@ -62,8 +62,8 @@ ul.neos-dynatree-container {
 
 		&.neos-timedVisibility {
 			span + span:after {
-				@include icon-FontAwesome();
-				content: $time;
+				@include fa-icon();
+				content: $fa-var-clock-o;
 				position: absolute;
 				left: 12px;
 				top: 0px;
@@ -127,7 +127,8 @@ ul.neos-dynatree-container {
 		&.neos-dynatree-exp-el,
 		&.neos-dynatree-exp-edl {
 			.neos-dynatree-expander {
-				@extend .icon-caret-right;
+				@include fa-icon();
+				@extend .#{$fa-css-prefix}-caret-right;
 				@include rotate(45deg);
 
 				&:before {
@@ -152,8 +153,8 @@ ul.neos-dynatree-container {
 		}
 
 		.neos-dynatree-expander {
-			@include icon-FontAwesome();
-			@extend .icon-caret-right;
+			@include fa-icon();
+			@extend .#{$fa-css-prefix}-caret-right;
 			cursor: pointer;
 			font-size: 16px;
 

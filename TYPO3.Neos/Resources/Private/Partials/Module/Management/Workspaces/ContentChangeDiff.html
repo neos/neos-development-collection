@@ -52,6 +52,18 @@
                             </tr>
                         </table>
                     </f:if>
+                    <f:if condition="{contentChanges.type} == 'datetime'">
+                        <table>
+                            <tr>
+                                <td>
+                                    <f:format.date format="d.m.Y H:i:s" date="{contentChanges.original}" />
+                                </td>
+                                <td>
+                                    <f:format.date format="d.m.Y H:i:s" date="{contentChanges.changed}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </f:if>
                 </td>
             </tr>
         </f:for>

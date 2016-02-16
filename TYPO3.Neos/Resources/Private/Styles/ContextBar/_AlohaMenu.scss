@@ -140,6 +140,10 @@
 				width: $wideMargin;
 			}
 
+			.ui-button-text {
+				display: none;
+			}
+
 			.aloha-icon {
 				background: none;
 				-webkit-font-smoothing: antialiased;
@@ -152,6 +156,7 @@
 				margin: 0px;
 				padding: 0px;
 				text-indent: 0px;
+				@include fa-icon();
 			}
 
 			&.ui-state-hover,
@@ -162,97 +167,97 @@
 			}
 
 			.aloha-icon-createTable {
-				@extend .icon-table;
+				@extend .#{$fa-css-prefix}-table;
 			}
 
 			.aloha-icon-toggledragdrop {
-				@extend .icon-move;
+				@extend .#{$fa-css-prefix}-arrows;
 			}
 
 			.aloha-icon-bold,
 			.aloha-icon-strong {
-				@extend .icon-bold;
+				@extend .#{$fa-css-prefix}-bold;
 			}
 
 			.aloha-icon-italic,
 			.aloha-icon-emphasis {
-				@extend .icon-italic;
+				@extend .#{$fa-css-prefix}-italic;
 			}
 
 			.aloha-icon-underline {
-				@extend .icon-underline;
+				@extend .#{$fa-css-prefix}-underline;
 			}
 
 			.aloha-icon-subscript {
-				@extend .icon-subscript;
+				@extend .#{$fa-css-prefix}-subscript;
 			}
 
 			.aloha-icon-superscript {
-				@extend .icon-superscript;
+				@extend .#{$fa-css-prefix}-superscript;
 			}
 
 			.aloha-icon-strikethrough {
-				@extend .icon-strikethrough;
+				@extend .#{$fa-css-prefix}-strikethrough;
 			}
 
 			.aloha-icon-link {
-				@extend .icon-link;
+				@extend .#{$fa-css-prefix}-link;
 			}
 
 			.aloha-icon-formatless-paste {
-				@extend .icon-paste;
+				@extend .#{$fa-css-prefix}-paste;
 			}
 
 			.aloha-icon-align-left {
-				@extend .icon-align-left;
+				@extend .#{$fa-css-prefix}-align-left;
 			}
 
 			.aloha-icon-align-left {
-				@extend .icon-align-left;
+				@extend .#{$fa-css-prefix}-align-left;
 			}
 
 			.aloha-icon-align-center {
-				@extend .icon-align-center;
+				@extend .#{$fa-css-prefix}-align-center;
 			}
 
 			.aloha-icon-align-justify {
-				@extend .icon-align-justify;
+				@extend .#{$fa-css-prefix}-align-justify;
 			}
 
 			.aloha-icon-align-right {
-				@extend .icon-align-right;
+				@extend .#{$fa-css-prefix}-align-right;
 			}
 
 			.aloha-icon-orderedlist {
-				@extend .icon-list-ol;
+				@extend .#{$fa-css-prefix}-list-ol;
 			}
 
 			.aloha-icon-unorderedlist {
-				@extend .icon-list-ul;
+				@extend .#{$fa-css-prefix}-list-ul;
 			}
 
 			.aloha-icon-indent {
-				@extend .icon-indent-right;
+				@extend .#{$fa-css-prefix}-indent;
 			}
 
 			.aloha-icon-outdent {
-				@extend .icon-indent-left;
+				@extend .#{$fa-css-prefix}-outdent;
 			}
 
 			.aloha-icon-code {
-				@extend .icon-code;
+				@extend .#{$fa-css-prefix}-code;
 			}
 
 			.aloha-icon-strong {
-				@extend .icon-bold;
+				@extend .#{$fa-css-prefix}-bold;
 			}
 
 			.aloha-icon-emphasis {
-				@extend .icon-italic;
+				@extend .#{$fa-css-prefix}-italic;
 			}
 
 			.aloha-icon-strikethrough {
-				@extend .icon-strikethrough;
+				@extend .#{$fa-css-prefix}-strikethrough;
 			}
 		}
 	}

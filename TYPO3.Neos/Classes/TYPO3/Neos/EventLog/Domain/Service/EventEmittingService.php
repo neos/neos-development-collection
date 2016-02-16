@@ -72,6 +72,7 @@ class EventEmittingService
      * @param string $eventType
      * @param array $data
      * @param string $eventClassName
+     * @throws Exception
      * @return Event
      */
     public function emit($eventType, array $data, $eventClassName = 'TYPO3\Neos\EventLog\Domain\Model\Event')
@@ -112,6 +113,7 @@ class EventEmittingService
      * together with the parent.
      *
      * @param Event $nodeEvent
+     * @throws Exception
      * @return void
      * @see emit()
      */
@@ -177,24 +179,5 @@ class EventEmittingService
     public function setCurrentAccountIdentifier($accountIdentifier)
     {
         $this->currentAccountIdentifier = $accountIdentifier;
-    }
-
-    /**
-     * Disable the event log temporarily when executing $callback
-     *
-     * @param callable $callback
-     * @return void
-     */
-    public function withoutEventLog($callback)
-    {
-        $previouslyEnabled = $this->isEnabled();
-        $this->enabled = false;
-        try {
-            $callback();
-            $this->enabled = $previouslyEnabled;
-        } catch (\Exception $exception) {
-            $this->enabled = $previouslyEnabled;
-            throw $exception;
-        }
     }
 }
