@@ -136,7 +136,8 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 
 
         $this->flushRoutingCacheForNode($targetNode);
-        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, 301, $hosts);
+        $statusCode = (integer)$this->defaultStatusCode['redirect'];
+        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, $statusCode, $hosts);
         /** @var ContentContext $contentContext */
 
 
