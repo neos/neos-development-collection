@@ -449,6 +449,15 @@ function(
 					$('title').html($htmlDom.filter('title').html());
 					$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
 
+					// We cannot do this stylesheet change on IE < 11 (the user agent string changed with 11, so everything with MSIE in is below 11)
+					if (window.navigator.userAgent.indexOf('MSIE ') < 1) {
+						var $pageStylesheets = $('link[rel="stylesheet"]:not(.neos-ui-asset)');
+
+						var $loadedStylesheets = $htmlDom.filter('link[rel="stylesheet"]:not(.neos-ui-asset)');
+						$('head').append($loadedStylesheets);
+						$pageStylesheets.remove();
+					}
+
 					// TODO: transfer body classes and other possibly important tags from the head section
 
 					that._setPagePosition();
