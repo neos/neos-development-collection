@@ -19,7 +19,7 @@ Set the `quality` to your preferred value (between 0 - very poor and 100 - very 
 Convert CMYK images into RGB
 ============================
 
-If you are working with CMYK images and like to convert them automatically for web usage, you can activate this with in your Settings.yaml:
+If you are working with CMYK images and like to convert them automatically for web usage, you can activate this within your Settings.yaml:
 
 .. code-block:: yaml
     TYPO3:
