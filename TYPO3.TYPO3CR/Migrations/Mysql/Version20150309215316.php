@@ -40,8 +40,6 @@ class Version20150309215316 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("CREATE UNIQUE INDEX uid ON typo3_neos_eventlog_domain_model_event (uid)");
-
         $indexes = $this->sm->listTableIndexes('typo3_typo3cr_domain_model_nodedata');
         if (array_key_exists('idx_60a956b98d940019', $indexes)) {
             $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY FK_60A956B98D940019");
