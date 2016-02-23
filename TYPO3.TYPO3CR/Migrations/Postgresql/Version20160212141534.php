@@ -17,8 +17,8 @@ class Version20160212141534 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		// typo3_typo3cr_domain_model_nodedata
-		$this->addSql("ALTER INDEX idx_820cadc88d940019 RENAME TO IDX_60A956B98D940019");
-		$this->addSql("ALTER INDEX idx_820cadc84930c33c RENAME TO IDX_60A956B94930C33C");
+		$this->addSql("ALTER INDEX IF EXISTS idx_820cadc88d940019 RENAME TO IDX_60A956B98D940019");
+		$this->addSql("ALTER INDEX IF EXISTS idx_820cadc84930c33c RENAME TO IDX_60A956B94930C33C");
 	}
 
 	/**
@@ -29,7 +29,7 @@ class Version20160212141534 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		// typo3_typo3cr_domain_model_nodedata
-		$this->addSql("ALTER INDEX IDX_60A956B98D940019 RENAME TO idx_820cadc88d940019");
-		$this->addSql("ALTER INDEX IDX_60A956B94930C33C RENAME TO idx_820cadc84930c33c");
+		$this->addSql("ALTER INDEX IF EXISTS IDX_60A956B98D940019 RENAME TO idx_820cadc88d940019");
+		$this->addSql("ALTER INDEX IF EXISTS IDX_60A956B94930C33C RENAME TO idx_820cadc84930c33c");
 	}
 }
