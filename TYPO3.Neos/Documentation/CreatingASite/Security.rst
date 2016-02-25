@@ -99,7 +99,7 @@ Here is an example for a role (limiting editing to a specific language) that sho
       parentRoles: ['TYPO3.Neos:RestrictedEditor']
       privileges:
         -
-          privilegeTarget: 'Sip.Neos.Site:EditFinnish'
+          privilegeTarget: 'Acme.Com:EditFinnish'
           permission: GRANT
 
 Node Privileges
