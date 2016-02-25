@@ -18,7 +18,7 @@
 	<f:if condition="{submoduleConfiguration.actions}">
 		<div class="widget-footer">
 			<f:for each="{submoduleConfiguration.actions}" as="actionConfiguration" key="submoduleAction">
-				<neos:link.module title="{actionConfiguration.title}" class="neos-button neos-button-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction -> f:format.case(mode: \'lower\')}')}">
+				<neos:link.module title="{neos:backend.translate(id: actionConfiguration.title, source: 'Modules')}" class="neos-button neos-button-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction -> f:format.case(mode: \'lower\')}')}">
 					<neos:backend.translate source="Modules" id="{actionConfiguration.label}" />
 				</neos:link.module>
 			</f:for>
