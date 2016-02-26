@@ -1,5 +1,5 @@
 <div class="neos-menu-section">
-	<a href="{{unbound items.contentModuleUri}}" title="{{translate id='contentView' value='Content View'}}" class="neos-menu-headline">
+	<a href="{{unbound items.contentModuleUri}}" title="{{translate id='contentView' fallback='Content View'}}" class="neos-menu-headline">
 		<i class="icon-file"></i> {{translate id="content" fallback="Content"}}
 	</a>
 	{{view view.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group="content"}}

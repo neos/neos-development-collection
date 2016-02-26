@@ -3,11 +3,12 @@ define(
 		'emberjs',
 		'Library/jquery-with-dependencies',
 		'../Components/Button',
-		'./MenuPanelController'
-	], function(Ember, $, Button, MenuPanelController) {
+		'./MenuPanelController',
+		'Shared/I18n'
+	], function(Ember, $, Button, MenuPanelController, I18n) {
 		return Button.extend({
 			elementId: ['neos-menu-button'],
-			title: 'Toggle menu',
+			title: I18n.translate('toggleMenu', 'Toggle menu'),
 			classNames: ['neos-button'],
 			classNameBindings: ['controller.menuPanelMode:neos-pressed'],
 

@@ -81,6 +81,12 @@
 			<trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			</trans-unit>
+			<trans-unit id="hide" xml:space="preserve">
+				<source>Hide</source>
+			</trans-unit>
+			<trans-unit id="unhide" xml:space="preserve">
+				<source>Unhide</source>
+			</trans-unit>
 			<trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			</trans-unit>
@@ -150,6 +156,9 @@
 			<trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
 			</trans-unit>
+			<trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			</trans-unit>
 			<trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			</trans-unit>
@@ -182,6 +191,60 @@
 			</trans-unit>
 			<trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
+			</trans-unit>
+			<trans-unit id="version" xml:space="preserve">
+				<source>Version</source>
+			</trans-unit>
+			<trans-unit id="operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			</trans-unit>
+			<trans-unit id="asset" xml:space="preserve">
+				<source>Asset</source>
+			</trans-unit>
+			<trans-unit id="created" xml:space="preserve">
+				<source>Created</source>
+			</trans-unit>
+			<trans-unit id="lastModification" xml:space="preserve">
+				<source>Last modification</source>
+			</trans-unit>
+			<trans-unit id="lastPublication" xml:space="preserve">
+				<source>Last publication</source>
+			</trans-unit>
+			<trans-unit id="identifier" xml:space="preserve">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="name" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			</trans-unit>
+			<trans-unit id="structure.label" xml:space="preserve">
+				<source>Structure</source>
+			</trans-unit>
+			<trans-unit id="structure.toggle" xml:space="preserve">
+				<source>Toggle context structure</source>
+			</trans-unit>
+			<trans-unit id="filter" xml:space="preserve">
+				<source>Filter</source>
+			</trans-unit>
+			<trans-unit id="toggleMenu" xml:space="preserve">
+				<source>Toggle menu</source>
+			</trans-unit>
+			<trans-unit id="loadError" xml:space="preserve">
+				<source>Load error!</source>
+			</trans-unit>
+			<trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+				<source>You have to select a node</source>
+			</trans-unit>
+			<trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+				<source>The Root node cannot be deleted.</source>
+			</trans-unit>
+			<trans-unit id="cannotCopyNode" xml:space="preserve">
+				<source>You cannot copy this node</source>
+			</trans-unit>
+			<trans-unit id="cannotCutNode" xml:space="preserve">
+				<source>You cannot cut this node</source>
 			</trans-unit>
 
 			<!-- node types -->
@@ -303,13 +366,13 @@
 			<trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			</trans-unit>
-			<trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+			<trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			</trans-unit>
-			<trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+			<trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			</trans-unit>
-			<trans-unit id="content-inspector-groups-document" xml:space="preserve">
+			<trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			</trans-unit>
 			<trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
@@ -374,6 +437,15 @@
 			</trans-unit>
 			<trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
+			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+				<source>Start with an empty or pre-filled document?</source>
+			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
+				<source>Create empty</source>
+			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+				<source>Create and copy</source>
 			</trans-unit>
 
 			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
@@ -447,6 +519,9 @@
 			<trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
 			</trans-unit>
+			<trans-unit id="rawContentMode" xml:space="preserve">
+				<source>Raw Content Mode</source>
+			</trans-unit>
 			<trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			</trans-unit>
@@ -460,6 +535,12 @@
 			</trans-unit>
 			<trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
+			</trans-unit>
+			<trans-unit id="wrongCredentials" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			</trans-unit>
+			<trans-unit id="login.expired" xml:space="preserve">
+				<source>Your login has expired. Please log in again.</source>
 			</trans-unit>
 
 			<!-- Error handlers -->
@@ -498,6 +579,26 @@
 			</trans-unit>
 			<trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			</trans-unit>
+			<trans-unit id="error.node.create.unexpected" xml:space="preserve">
+				<source>Unexpected error while creating node</source>
+			</trans-unit>
+			<trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+				<source>Unexpected error while deleting node</source>
+			</trans-unit>
+			<trans-unit id="error.node.update.unexpected" xml:space="preserve">
+				<source>Unexpected error while updating node</source>
+			</trans-unit>
+			<trans-unit id="error.node.move.unexpected" xml:space="preserve">
+				<source>Unexpected error while moving node</source>
+			</trans-unit>
+			<trans-unit id="error.nodeTree.load" xml:space="preserve">
+				<source>Node Tree loading error.</source>
+			</trans-unit>
+
+			<!-- FlashMessages -->
+			<trans-unit id="flashMessage.1222204027" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
 			</trans-unit>
 
 			<!-- Miscellaneous -->

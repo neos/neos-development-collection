@@ -156,7 +156,7 @@ define(
 
 			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: 'Create (hold to select position)',
+				title: I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'),
 				iconClass: 'icon-plus',
 
 				mouseUp: function(event) {
@@ -172,7 +172,7 @@ define(
 
 			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: 'Paste (hold to select position)',
+				title: I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'),
 				iconClass: 'icon-paste',
 
 				mouseUp: function(event) {
@@ -266,8 +266,8 @@ define(
 				clickFolderMode: 1,
 				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
 				strings: {
-					loading: 'Loading...',
-					loadError: 'Load error!'
+					loading: I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
+					loadError: I18n.translate('TYPO3.Neos:Main:loadError', 'Load error!')
 				},
 				cookieId: 'nodes',
 				isDblClick: false,
@@ -539,7 +539,7 @@ define(
 			create: function(position) {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 
@@ -600,11 +600,11 @@ define(
 			showDeleteNodeDialog: function() {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (activeNode.getLevel() === 1) {
-					Notification.info('The Root node cannot be deleted.');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:rootNodeCannotBeDeleted', 'The Root node cannot be deleted.'));
 					return;
 				}
 
@@ -621,7 +621,7 @@ define(
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var data = {
-						title: title ? title : 'Loading ...',
+						title: title ? title : I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
 						nodeType: nodeType,
 						addClass: 'neos-matched',
 						iconClass: iconClass,
@@ -684,7 +684,7 @@ define(
 						that.afterPersistNode(node);
 					},
 					function(error) {
-						Notification.error('Unexpected error while creating node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.create.unexpected', 'Unexpected error while creating node') + ': ' + JSON.stringify(error));
 						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
@@ -703,7 +703,7 @@ define(
 						that.afterDeleteNode(node);
 					},
 					function(error) {
-						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.delete.unexpected', 'Unexpected error while deleting node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -713,7 +713,7 @@ define(
 			toggleHidden: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				var value = !node.data.isHidden;
 				node.data.isHidden = value;
@@ -751,7 +751,7 @@ define(
 					},
 					function(error) {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Unexpected error while updating node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.update.unexpected', 'Unexpected error while updating node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -761,11 +761,11 @@ define(
 			copy: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info('You cannot copy this node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCopyNode', 'You cannot copy this node'));
 					return;
 				}
 				if (this.get('copiedNode') === node) {
@@ -779,11 +779,11 @@ define(
 			cut: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info('You cannot cut this node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCutNode', 'You cannot cut this node'));
 					return;
 				}
 				if (this.get('cutNode') === node) {
@@ -799,7 +799,7 @@ define(
 					cutNode = this.get('cutNode'),
 					copiedNode = this.get('copiedNode');
 				if (!targetNode) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				if (cutNode) {
 					this.set('cutNode', null);
@@ -840,7 +840,7 @@ define(
 						},
 						function(error) {
 							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				}
@@ -891,11 +891,11 @@ define(
 						},
 						function(error) {
 							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				} catch(e) {
-					Notification.error('Unexpected error while moving node: ' + e.toString());
+					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + e.toString());
 				}
 			},
 
@@ -935,7 +935,7 @@ define(
 					},
 					function() {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Node Tree loading error.');
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.nodeTree.load', 'Node Tree loading error.'));
 					}
 				);
 			},

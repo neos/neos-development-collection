@@ -1,12 +1,12 @@
 <div class="neos-modal">
 	<div class="neos-modal-header">
 		<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="content-navigate-deleteNodeDialog-header" fallback="Do you really want to delete"}} "{{view.title}}"?</div>
+		<div class="neos-header">{{translate id="content.navigate.deleteNodeDialog.header" fallback="Do you really want to delete"}} "{{view.title}}"?</div>
 	</div>
 	<div>
 		<div class="neos-subheader">
-			{{translate id="content-navigate-deleteNodeDialog-subheader-1a" fallback="This will delete the element"}}{{#if view.numberOfChildren}} {{translate id="content-navigate-deleteNodeDialog-subheader-1b" fallback="and it's children"}}{{/if}}.<br />
-			{{translate id="content-navigate-deleteNodeDialog-subheader-2" fallback="This action can be undone in the workspace management."}}
+			{{translate id="content.navigate.deleteNodeDialog.subheader.1a" fallback="This will delete the element"}}{{#if view.numberOfChildren}} {{translate id="content.navigate.deleteNodeDialog.subheader.1b" fallback="and it's children"}}{{/if}}.<br />
+			{{translate id="content.navigate.deleteNodeDialog.subheader.2" fallback="This action can be undone in the workspace management."}}
 		</div>
 	</div>
 	<div class="neos-modal-footer">

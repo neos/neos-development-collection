@@ -12,7 +12,7 @@
 
 <div class="widget-body">
 	{{#if view.isLoading}}
-		<span class="neos-widget-loading">Loading<span class="neos-ellipsis"></span></span>
+		<span class="neos-widget-loading">{{translate id="loading" fallback="Loading"}}<span class="neos-ellipsis"></span></span>
 	{{else}}
 		{{#if view.error}}
 			<span class="neos-widget-error"><i class="icon-warning-sign"></i> {{view.error.message}}</span>

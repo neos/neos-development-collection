@@ -1,5 +1,5 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:if condition="{event.node}">
 	<f:then><neos:link.node node="{event.node}">{event.data.nodeLabel}</neos:link.node></f:then>
-	<f:else><span title="This node has been removed in the meantime">{event.data.nodeLabel}</span></f:else>
+	<f:else><span title="{neos:backend.translate(id: 'history.nodeRemovedInMeantime', source: 'Modules')}">{event.data.nodeLabel}</span></f:else>
 </f:if>
