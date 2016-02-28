@@ -109,7 +109,7 @@ class ImageService
 
         $imagineImage = $this->imagineService->open($resourceUri);
 
-        $convertCMYKToRGB = Arrays::getValueByPath($this->settings, 'image.convertCMYKToRGB');
+        $convertCMYKToRGB = $this->getOptionsMergedWithDefaults()['convertCMYKToRGB'];
         if ($convertCMYKToRGB && $imagineImage->palette() instanceof \Imagine\Image\Palette\CMYK) {
             $imagineImage->usePalette(new \Imagine\Image\Palette\RGB());
         }
