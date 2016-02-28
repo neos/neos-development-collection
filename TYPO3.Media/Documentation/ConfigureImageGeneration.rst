@@ -25,4 +25,5 @@ If you are working with CMYK images and like to convert them automatically for w
     TYPO3:
       Media:
         image:
-          convertCMYKToRGB: true #default is false
+          defaultOptions:
+            convertCMYKToRGB: true #default is false
