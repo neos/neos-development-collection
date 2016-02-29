@@ -25,6 +25,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Plugin for the TYPO3CR NodeCommandController which provides functionality for creating missing child nodes.
@@ -259,7 +260,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                         $childNodeMissing = $node->getNode($childNodeName) ? false : true;
                         if ($childNodeMissing) {
                             if ($dryRun === false) {
-                                $node->createNode($childNodeName, $childNodeType);
+                                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
+                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
