@@ -233,7 +233,7 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="lv">Šis modulis sniedz apskatu par visām darbībām, kas ietekmē šo Neos instalāciju.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
+				<source>Here's what happened recently in Neos</source>
 			<target xml:lang="lv" state="translated">Lūk, kas nesen notika Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>

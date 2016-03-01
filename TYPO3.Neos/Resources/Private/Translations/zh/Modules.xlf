@@ -233,7 +233,7 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="zh-CN" state="translated">该模块概述了影响此Neos安装的所有相关事件。</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
+				<source>Here's what happened recently in Neos</source>
 			<target xml:lang="zh-CN" state="translated">最近发生的事件/操作:</target><alt-trans><target xml:lang="zh-CN">最近发生的事件:</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
