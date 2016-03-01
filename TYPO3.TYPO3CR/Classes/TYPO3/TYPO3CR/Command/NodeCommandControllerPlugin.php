@@ -257,16 +257,24 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 }
                 foreach ($childNodes as $childNodeName => $childNodeType) {
                     try {
-                        $childNodeMissing = $node->getNode($childNodeName) ? false : true;
-                        if ($childNodeMissing) {
+                        $childNode = $node->getNode($childNodeName);
+                        $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
+                        if ($childNode === null) {
                             if ($dryRun === false) {
-                                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
                                 $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             }
                             $createdNodesCount++;
+                        } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
+                            if ($dryRun === false) {
+                                $childNode->getNodeData()->setIdentifier($childNodeIdentifier);
+                                $this->nodeDataRepository->update($childNode->getNodeData());
+                                $this->output->outputLine('Updated identifier for child node "%s" in "%s"', array($childNodeName, $node->getPath()));
+                            } else {
+                                $this->output->outputLine('Child node "%s" in "%s" does not have a stable identifier', array($childNodeName, $node->getPath()));
+                            }
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
