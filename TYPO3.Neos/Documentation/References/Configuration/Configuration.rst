@@ -6,17 +6,21 @@
 Configuration Reference
 ========================
 
-Node tree ``loadingDepth``
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Navigation tree ``loadingDepth``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``loadingDepth`` defines the number of levels inside the node tree which shall be loaded eagerly, at start.
-If you have lots of nodes you should maybe reduce this number of elements inside ``Settings.yaml``::
+A similar setting is available for the structure tree.
+
+If you have lots of nodes can reduce the number of levels inside ``Settings.yaml`` to speed up page loading::
 
   TYPO3:
     Neos:
       userInterface:
         navigateComponent:
           nodeTree:
+            loadingDepth: 2
+          structureTree:
             loadingDepth: 2
 
 Node tree base node type

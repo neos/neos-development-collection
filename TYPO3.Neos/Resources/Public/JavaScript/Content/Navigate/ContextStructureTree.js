@@ -67,6 +67,7 @@ define(
 
 		init: function() {
 			this._super();
+			this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.structureTree.loadingDepth'));
 			var that = this;
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
