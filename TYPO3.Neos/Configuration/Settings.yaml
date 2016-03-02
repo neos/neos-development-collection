@@ -173,6 +173,10 @@ TYPO3:
           presets:
             default:
               baseNodeType: 'TYPO3.Neos:Document'
+        structureTree:
+          # number of levels inside the structure tree which shall be loaded eagerly, at start.
+          # 0 means unlimited
+          loadingDepth: 0
 
       inspector:
         dataTypes:
