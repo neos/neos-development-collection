@@ -331,10 +331,10 @@
 			<target xml:lang="el" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="el" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Όνομα</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="el" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Επώνυμο</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="el" state="needs-translation">User Preferences</target></trans-unit>
@@ -355,16 +355,16 @@
 			<target xml:lang="el" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="el" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Όνομα</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="el" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Μεσαίο όνομα</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="el" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Επώνυμο</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="el" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="el" state="translated">Άλλο όνομα</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="el" state="needs-translation">Accounts</target></trans-unit>
@@ -379,7 +379,7 @@
 			<target xml:lang="el" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="el" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="el" state="translated">Κύριο</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="el" state="needs-translation">N/A</target></trans-unit>
@@ -546,7 +546,7 @@
 			<target xml:lang="el" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="el" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="el" state="translated">Τύπος</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="el" state="needs-translation">Tags</target></trans-unit>
@@ -732,7 +732,7 @@
 			<target xml:lang="el" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="el" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="el" state="translated">Μεταδεδομένα</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="el" state="needs-translation">Filename</target></trans-unit>
@@ -747,7 +747,7 @@
 			<target xml:lang="el" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="el" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="el" state="translated">Τύπος</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="el" state="needs-translation">Identifier</target></trans-unit>
