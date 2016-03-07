@@ -26,11 +26,4 @@ interface NodeSearchServiceInterface
      * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
      */
     public function findByProperties($term, array $searchNodeTypes, Context $context);
-
-    /**
-     * @param array $nodeIdentifiers
-     * @param Context $context
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
-     */
-    public function findByIdentifiers(array $nodeIdentifiers, Context $context);
 }
