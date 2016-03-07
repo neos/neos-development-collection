@@ -8,7 +8,10 @@
 			<target xml:lang="no" state="translated">Autopubliser</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="no" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="no" state="translated">Autopubliser til {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="no" state="translated">Se gjennom endringene</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="no" state="translated">Ta i bruk</target></trans-unit>
@@ -32,7 +35,7 @@
 			<target xml:lang="no" state="translated">Innhold</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="no" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="no" state="translated">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="no" state="translated">Innholdsvisning</target></trans-unit>
@@ -122,16 +125,16 @@
 			<target xml:lang="no" state="translated">Publiser</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="no" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="no" state="translated">Publiser til {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="no" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="no" state="translated">Publiser alle endringer for gjeldende side</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="no" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="no" state="translated">Kan ikke publisere fordi arbeidsområdet du vil publisere til er skrivebeskyttet</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="no" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="no" state="translated">Publisering</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="no" state="translated">Publisert</target></trans-unit>
@@ -140,7 +143,7 @@
 			<target xml:lang="no" state="translated">Målarbeidsområde</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="no" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="no" state="translated">Gjeldende arbeidsområde</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="no" state="translated">Fjern</target></trans-unit>
@@ -317,7 +320,7 @@
 			<target xml:lang="no" state="translated">Denne teksten kan ikke være lenger enn {{maximum}} tegn.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="no" state="translated">Bare vanlige tegn (a til å, omlyder, m.fl.) og tallen er tillatt.</target></trans-unit>
+			<target xml:lang="no" state="translated">Bare vanlige tegn (a til å, omlyder, m. fl.) og tall er tillatt.</target><alt-trans><target xml:lang="no">Bare vanlige tegn (a til å, omlyder, m.fl.) og tallen er tillatt.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="no" state="translated">Verdien var ikke tellbar.</target></trans-unit>
@@ -489,20 +492,20 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="no" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="no" state="translated">"{nodeTypeName}" på siden "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="no" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="no" state="translated">Noder</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="no" state="translated">Vis</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="no" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="no" state="translated">Denne noden kan ikke nås gjennom en offentlig URL-adresse</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="no" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="no" state="translated">Egenskaper for node</target></trans-unit>
     </body>
   </file>
 </xliff>

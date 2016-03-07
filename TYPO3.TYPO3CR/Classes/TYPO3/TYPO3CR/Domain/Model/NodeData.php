@@ -13,15 +13,15 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
-use Gedmo\Mapping\Annotation as Gedmo;
 use TYPO3\TYPO3CR\Utility;
 
 /**
@@ -32,15 +32,15 @@ use TYPO3\TYPO3CR\Utility;
  *
  * @Flow\Entity
  * @ORM\Table(
- * 	uniqueConstraints={
+ *    uniqueConstraints={
  * 		@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
  * 		@ORM\UniqueConstraint(name="identifier_workspace_dimensions_movedto",columns={"identifier", "workspace", "dimensionshash", "movedto"})
- * 	},
- * 	indexes={
+ *    },
+ *    indexes={
  * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
  * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
  * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"})
- * 	}
+ *    }
  * )
  */
 class NodeData extends AbstractNodeData
@@ -335,6 +335,7 @@ class NodeData extends AbstractNodeData
         if ($this->depth === null) {
             $this->depth = NodePaths::getPathDepth($this->path);
         }
+
         return $this->depth;
     }
 
@@ -416,6 +417,7 @@ class NodeData extends AbstractNodeData
         if ($this->path === '/') {
             return null;
         }
+
         return $this->nodeDataRepository->findOneByPath($this->parentPath, $this->workspace);
     }
 
@@ -456,6 +458,7 @@ class NodeData extends AbstractNodeData
                 $newNodeData->createNodeData($childNodeName, $childNodeType, null, $workspace, $dimensions);
             }
         }
+
         return $newNodeData;
     }
 
@@ -478,7 +481,7 @@ class NodeData extends AbstractNodeData
             throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1292428697);
         }
 
-        $nodeWorkspace = $workspace ? : $this->workspace;
+        $nodeWorkspace = $workspace ?: $this->workspace;
         $newPath = NodePaths::addNodePathSegment($this->path, $name);
         if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions, null) !== null) {
             throw new NodeExistsException(sprintf('Node with path "' . $newPath . '" already exists in workspace %s and given dimensions %s.', $nodeWorkspace->getName(), var_export($dimensions, true)), 1292503471);
@@ -509,6 +512,7 @@ class NodeData extends AbstractNodeData
 
         $newNodeData = $this->createNodeData($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace, $dimensions);
         $newNodeData->similarize($nodeTemplate);
+
         return $newNodeData;
     }
 
@@ -619,6 +623,7 @@ class NodeData extends AbstractNodeData
                 return true;
             }
         }
+
         return false;
     }
 
@@ -636,6 +641,7 @@ class NodeData extends AbstractNodeData
         if (count($this->accessRoles) === 1 && in_array('TYPO3.Flow:Everybody', $this->accessRoles)) {
             return false;
         }
+
         return true;
     }
 
@@ -652,14 +658,14 @@ class NodeData extends AbstractNodeData
     /**
      * Internal use, do not manipulate collection directly
      *
-     * @param array<NodeDimension> $dimensionsToBeSet
+     * @param array <NodeDimension> $dimensionsToBeSet
      * @return void
      */
     public function setDimensions(array $dimensionsToBeSet)
     {
         if ($this->dimensions->count() > 0) {
             $givenDimensions = $dimensionsToBeSet;
-            $dimensionsToBeSet = array();
+            $dimensionsToBeSet = [];
             /** @var NodeDimension $dimensionToBeSet */
             foreach ($givenDimensions as $dimensionToBeSet) {
                 $dimensionExisted = false;
@@ -713,15 +719,19 @@ class NodeData extends AbstractNodeData
      */
     public function similarize(AbstractNodeData $sourceNode, $isCopy = false)
     {
-        $this->properties = array();
+        $this->properties = [];
         foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
             $this->setProperty($propertyName, $propertyValue);
         }
 
-        $propertyNames = array(
-            'nodeType', 'hidden', 'hiddenAfterDateTime',
-            'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
-        );
+        $propertyNames = [
+            'nodeType',
+            'hidden',
+            'hiddenAfterDateTime',
+            'hiddenBeforeDateTime',
+            'hiddenInIndex',
+            'accessRoles'
+        ];
         if (!$isCopy) {
             $propertyNames[] = 'creationDateTime';
             $propertyNames[] = 'lastModificationDateTime';
@@ -756,7 +766,7 @@ class NodeData extends AbstractNodeData
      */
     protected function buildDimensionValues()
     {
-        $dimensionValues = array();
+        $dimensionValues = [];
         foreach ($this->dimensions as $dimension) {
             /** @var NodeDimension $dimension */
             $dimensionValues[$dimension->getName()][] = $dimension->getValue();
@@ -792,11 +802,12 @@ class NodeData extends AbstractNodeData
         if ($dimensions !== null) {
             $nodeDimensionValues = $this->dimensionValues;
             foreach ($dimensions as $dimensionName => $dimensionValues) {
-                if (!isset($nodeDimensionValues[$dimensionName]) || array_intersect($nodeDimensionValues[$dimensionName], $dimensionValues) === array()) {
+                if (!isset($nodeDimensionValues[$dimensionName]) || array_intersect($nodeDimensionValues[$dimensionName], $dimensionValues) === []) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 
@@ -909,6 +920,7 @@ class NodeData extends AbstractNodeData
         if ($existingShadowNode !== null && $existingShadowNode->getMovedTo() !== null) {
             return $existingShadowNode;
         }
+
         return null;
     }
 
@@ -920,11 +932,12 @@ class NodeData extends AbstractNodeData
      * @param string $path The (original) path for the node data
      * @return NodeData
      */
-    public function createShadow($path)
+    protected function createShadow($path)
     {
         $shadowNode = new NodeData($path, $this->workspace, $this->identifier, $this->dimensionValues);
         $shadowNode->similarize($this);
         $shadowNode->setAsShadowOf($this);
+
         return $shadowNode;
     }
 
@@ -935,7 +948,7 @@ class NodeData extends AbstractNodeData
      * @param NodeData $nodeData
      * @return void
      */
-    public function setAsShadowOf(NodeData $nodeData = null)
+    protected function setAsShadowOf(NodeData $nodeData = null)
     {
         $this->setMovedTo($nodeData);
         $this->setRemoved(($nodeData !== null));
@@ -957,6 +970,7 @@ class NodeData extends AbstractNodeData
         $this->nodeDataRepository->add($newNodeData);
 
         $newNodeData->similarize($this);
+
         return $newNodeData;
     }
 

@@ -28,6 +28,10 @@ use TYPO3\TYPO3CR\Exception\WorkspaceException;
  */
 class Workspace
 {
+    /**
+     * This prefix determines if a given workspace (name) is a user workspace.
+     */
+    const PERSONAL_WORKSPACE_PREFIX = 'user-';
 
     /**
      * @var string
@@ -267,7 +271,7 @@ class Workspace
      */
     public function isPersonalWorkspace()
     {
-        return strpos($this->name, 'user-') === 0;
+        return strpos($this->name, static::PERSONAL_WORKSPACE_PREFIX) === 0;
     }
 
     /**
@@ -407,6 +411,11 @@ class Workspace
             return;
         }
         if ($node->getWorkspace() !== $this) {
+            return;
+        }
+        // Might happen if a node which has been published during an earlier call of publishNode() is attempted to
+        // be published again:
+        if ($node->getWorkspace() === $targetWorkspace) {
             return;
         }
         $this->verifyPublishingTargetWorkspace($targetWorkspace);
@@ -556,7 +565,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace, Workspace $newBaseWorkspace)
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
     {
     }
 

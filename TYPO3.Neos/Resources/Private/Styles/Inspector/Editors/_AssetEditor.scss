@@ -58,8 +58,8 @@
 				}
 
 				&::after {
-					@include icon-FontAwesome();
-					content: $remove;
+					@include fa-icon();
+					content: $fa-var-times;
 					margin-left: -2px;
 				}
 

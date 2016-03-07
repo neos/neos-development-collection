@@ -23,7 +23,7 @@
 			<target xml:lang="ru">Содержит модули управления содержимым</target><alt-trans><target xml:lang="ru">Модули для управления содержимым</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="ru">Workspaces</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Рабочие области</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Рабочие пространства</target></alt-trans><alt-trans><target xml:lang="ru">Workspaces</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
 			<target xml:lang="ru">Подробно об "{0}"</target><alt-trans><target xml:lang="ru">Детали для "{0}"</target></alt-trans><alt-trans><target xml:lang="ru">Детально об "{0}"</target></alt-trans></trans-unit>
@@ -87,12 +87,15 @@
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
 			<target xml:lang="ru">Изменения</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="ru">Открыть страницу в рабочей области "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="ru">Это ваша личная рабочяя область, которую вы не можете удалить сами.</target></trans-unit>
+			<target xml:lang="ru">Это ваша личная рабочяя область, которую вы не можете удалить.</target><alt-trans><target xml:lang="ru">Это ваша личная рабочяя область, которую вы не можете удалить сами.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="ru">Рабочая область содержит изменения. Чтобы удалить, отмените сначала эти изменения.</target></trans-unit>
+			<target xml:lang="ru">Рабочая область содержит изменения. Чтобы её удалить, отмените сначала эти изменения.</target><alt-trans><target xml:lang="ru">Рабочая область содержит изменения. Чтобы удалить, отмените сначала эти изменения.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target xml:lang="ru">Рабочая область не может быть перебазирована поверх другой, так как она всё ещё содержит изменения.</target><alt-trans><target xml:lang="ru">Рабочая область не может быть перебазирована поверх другой, потому что она всё ещё содержит изменения.</target></alt-trans><alt-trans><target xml:lang="ru">Рабочая область не может быть перебасирована на другую, потому что она всё ещё содержит изменения.</target></alt-trans></trans-unit>
@@ -110,7 +113,7 @@
 			<target xml:lang="ru">Это безвозвратно удалит рабочую область, включая все неопубликованные изменения. Эта операция не может быть отменена.</target><alt-trans><target xml:lang="ru">Это безвозвратно удалит рабочую область, включая все неопубликованные материалы.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="ru">Этот модуль содержит обзор всех элементов текущего Workspace, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target xml:lang="ru">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target></alt-trans><alt-trans><target xml:lang="ru">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target xml:lang="ru">Этот модуль содержит обзор всех элементов текущего Workspace, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target></alt-trans><alt-trans><target xml:lang="ru">Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
 			<target xml:lang="ru">Неопубликованные изменения в рабочей области "{0}"</target><alt-trans><target xml:lang="ru">Неопубликованные изменения</target></alt-trans></trans-unit>
@@ -155,10 +158,10 @@
 			<target xml:lang="ru">отредактирован</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="ru">Существуют неопубликованные изменения в этом Workspace.</target><alt-trans><target xml:lang="ru">Существуют неопубликованные изменения в этой рабочей области.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Существуют неопубликованные изменения в этой рабочей области.</target><alt-trans><target xml:lang="ru">Существуют неопубликованные изменения в этом Workspace.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target xml:lang="ru">Вы действительно хотите отменить все изменения в Workspace "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите отменить все изменения в Workspace "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
         <target xml:lang="ru">Рабочая область с этим названием уже существует.</target>
@@ -182,11 +185,17 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит узел {1}.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит элемент {1}.</target>
+          <alt-trans>
+            <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит узел {1}.</target>
+          </alt-trans>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} узлов.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
+          <alt-trans>
+            <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} узлов.</target>
+          </alt-trans>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -229,9 +238,9 @@
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="ru">Этот модуль предоставляет обзор всех событий, имеющих отношение к данной инсталяции Neos.</target></trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
-				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="ru">Вот что недавно произошло в Neos:</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+				<source>Here's what happened recently in Neos</source>
+			<target xml:lang="ru" state="translated">Вот что недавно произошло в Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></trans-unit>
@@ -400,7 +409,7 @@
 			<target xml:lang="ru">Да, удалить пользователя</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные Workspace, включая неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные рабочие области, включая неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></alt-trans><alt-trans><target xml:lang="ru">Это удалит пользователя, все связанные учетные записи и личные Workspace, включая неопубликованные изменения.</target></alt-trans></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target xml:lang="ru">Эта операция не может быть отменена</target></trans-unit>
@@ -455,7 +464,7 @@
 			<target xml:lang="ru">Пользователь</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target xml:lang="ru">Пользовательские настройки</target><alt-trans><target xml:lang="ru">Настройки пользователя</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Мои настройки</target><alt-trans><target xml:lang="ru">Пользовательские настройки</target></alt-trans><alt-trans><target xml:lang="ru">Настройки пользователя</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="ru">Этот модуль позволяет вам настроить ваш профиль пользователя. Здесь вы можете изменить ваш активный системный язык, имя и адрес электронной почты. Здесь вы также можете настроить другие функции системы.</target></trans-unit>
@@ -477,9 +486,9 @@
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="ru">Данные пользователя</target></trans-unit>
-      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+      <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
 				<source>User Menu</source>
-			<target xml:lang="ru" state="needs-translation">User Menu</target></trans-unit>
+			<target xml:lang="ru">Меню пользователя</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
 			<target xml:lang="ru">Настройки пользователя</target></trans-unit>
@@ -531,7 +540,7 @@
 			<target xml:lang="ru">Название</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="ru">Этикетка</target><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Подпись</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target xml:lang="ru">Подпись</target></trans-unit>
@@ -750,7 +759,7 @@
 			<target xml:lang="ru">Идентификатор</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="ru">Предв. Просмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Предпросмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans><alt-trans><target xml:lang="ru">Предв. Просмотр</target></alt-trans></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ru">Не удается загрузить файл</target></trans-unit>

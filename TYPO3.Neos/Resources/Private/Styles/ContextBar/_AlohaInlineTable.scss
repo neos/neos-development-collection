@@ -142,7 +142,7 @@ td.aloha-table-selectrow {
 	overflow: hidden;
 	display: hidden;
 	line-height: 1em;
-	@include icon-FontAwesome();
+	@include fa-icon();
 	font-size: 16px;
 	cursor: pointer;
 	color: $textOnGray;
@@ -155,7 +155,7 @@ td.aloha-table-selectrow {
 		text-decoration: inherit;
 		display: inline-block;
 		speak: none;
-		content: $move;
+		content: $fa-var-arrows;
 	}
 }
 
@@ -240,7 +240,7 @@ td.aloha-table-selectrow {
 				border: none;
 				@include text-shadow(none);
 				@include opacity(1);
-				@include icon-FontAwesome();
+				@include fa-icon();
 				@include box-sizing(border-box);
 
 				span {
@@ -248,7 +248,7 @@ td.aloha-table-selectrow {
 				}
 
 				&:before {
-					content: $remove;
+					content: $fa-var-times;
 				}
 
 				&:hover {

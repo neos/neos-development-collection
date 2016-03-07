@@ -8,7 +8,10 @@
 			<target xml:lang="nl">Automatisch publiceren</target><alt-trans><target xml:lang="nl">Auto-Publiceer</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="nl" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="nl" state="translated">Automatisch publiceren naar {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="nl" state="translated">Controleer wijzigingen</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="nl">Pas Toe</target></trans-unit>
@@ -32,7 +35,7 @@
 			<target xml:lang="nl">Inhoud</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="nl" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="nl" state="translated">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="nl">Content Weergave</target></trans-unit>
@@ -122,16 +125,16 @@
 			<target xml:lang="nl">Publiceren</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="nl" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="nl" state="translated">Publiceren naar {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="nl" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="nl" state="translated">Publiceer alle wijzigingen op de huidige pagina</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="nl" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="nl" state="translated">Kan niet publiceren omdat de workspace alleen lezen is</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="nl" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="nl" state="translated">Publiceren</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="nl">Gepubliceerd</target></trans-unit>
@@ -140,7 +143,7 @@
 			<target xml:lang="nl">Doel workspace</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="nl" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="nl" state="translated">Huidige workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="nl">Verwijderen</target><alt-trans><target xml:lang="nl">Verwijder</target></alt-trans></trans-unit>
@@ -173,7 +176,7 @@
 			<target xml:lang="nl">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="nl" state="translated">Node type</target></trans-unit>
+			<target xml:lang="nl" state="translated">Content type</target><alt-trans><target xml:lang="nl">Node type</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="nl">Pad</target></trans-unit>
@@ -224,7 +227,7 @@
 			<target xml:lang="nl">Alle wijzigingen negeren</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="nl">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target></trans-unit>
+			<target xml:lang="nl">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target><alt-trans><target xml:lang="nl">Weet u zeker dat u alle wijzigingen ongedaan wilt maken in deze workspace?</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target xml:lang="nl">Alles publiceren</target></trans-unit>
@@ -489,20 +492,20 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="nl" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="nl" state="translated">"{nodeTypeName}" op pagina "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="nl" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="nl" state="translated">Nodes</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target xml:lang="nl">Toon</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="nl" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="nl" state="translated">Deze node is niet toegankelijk via een publieke URL</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="nl" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="nl" state="translated">Node eigenschappen</target></trans-unit>
     </body>
   </file>
 </xliff>

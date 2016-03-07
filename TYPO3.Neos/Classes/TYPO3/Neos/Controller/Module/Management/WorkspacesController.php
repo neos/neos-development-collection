@@ -34,6 +34,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 use TYPO3\TYPO3CR\Utility;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * The Neos Workspaces module controller
@@ -119,7 +120,7 @@ class WorkspacesController extends AbstractModuleController
     public function indexAction()
     {
         $currentAccount = $this->securityContext->getAccount();
-        $userWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        $userWorkspace = $this->workspaceRepository->findOneByName(UserUtility::getPersonalWorkspaceNameForUsername($currentAccount->getAccountIdentifier()));
         /** @var Workspace $userWorkspace */
 
         $workspacesAndCounts = [
@@ -249,7 +250,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function deleteAction(Workspace $workspace)
     {
-        if (substr($workspace->getName(), 0, 5) === 'user-') {
+        if ($workspace->isPersonalWorkspace()) {
             $this->redirect('index');
         }
 
@@ -296,7 +297,7 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceRepository->findOneByName('user-' . $currentAccount->getAccountIdentifier());
+        $personalWorkspace = $this->workspaceRepository->findOneByName(UserUtility::getPersonalWorkspaceNameForUsername($currentAccount->getAccountIdentifier()));
         /** @var Workspace $personalWorkspace */
 
         if ($personalWorkspace !== $targetWorkspace) {
@@ -563,6 +564,15 @@ class WorkspacesController extends AbstractModuleController
                     'original' => $originalPropertyValue,
                     'changed' => $changedPropertyValue
                 ];
+            } elseif ($originalPropertyValue instanceof \DateTime && $changedPropertyValue instanceof \DateTime) {
+                if ($changedPropertyValue->getTimestamp() !== $originalPropertyValue->getTimestamp()) {
+                    $contentChanges[$propertyName] = [
+                        'type' => 'datetime',
+                        'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                        'original' => $originalPropertyValue,
+                        'changed' => $changedPropertyValue
+                    ];
+                }
             }
         }
         return $contentChanges;

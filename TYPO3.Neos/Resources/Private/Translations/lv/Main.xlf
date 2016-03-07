@@ -9,6 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="lv" state="translated">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="lv" state="translated">Izmaiņu pārskatīšana</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="lv">Apstiprināt</target></trans-unit>
@@ -123,33 +126,33 @@
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
 			<target xml:lang="lv" state="translated">{0} publicēt</target></trans-unit>
-      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="lv" state="translated">Publicēt visas izmaiņas esošajā lapā</target></trans-unit>
-      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+			<target xml:lang="lv">Publicēt visas izmaiņas esošajā lapā</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="lv" state="translated">Nevar publicēt, jo izvēlētā darba virsma ļauj tikai lasīt</target></trans-unit>
-      <trans-unit id="publishing" xml:space="preserve">
+			<target xml:lang="lv">Nevar publicēt, jo izvēlētā darba virsma ļauj tikai lasīt</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
-			<target xml:lang="lv" state="translated">Publicēšana</target></trans-unit>
+			<target xml:lang="lv">Publicēšana</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="lv">Publicēts</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="lv">Mērķa darbavieta</target></trans-unit>
-      <trans-unit id="currentWorkspace" xml:space="preserve">
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
 				<source>Current workspace</source>
-			<target xml:lang="lv" state="translated">Pašreizējā darba virsma</target></trans-unit>
+			<target xml:lang="lv">Pašreizējā darba virsma</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
 			<target xml:lang="lv">Noņemt</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="lv">Atjaunot</target></trans-unit>
-      <trans-unit id="saving" xml:space="preserve">
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving</source>
-			<target xml:lang="lv" state="translated">Saglabā...</target><alt-trans><target xml:lang="lv">Saglabāt</target></alt-trans></trans-unit>
+			<target xml:lang="lv">Saglabā...</target><alt-trans><target xml:lang="lv">Saglabāt</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target xml:lang="lv">Saglabāts</target></trans-unit>
@@ -177,9 +180,9 @@
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="lv">Ceļš</target></trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
-			<target xml:lang="lv" state="translated">Relatīvais ceļš</target></trans-unit>
+			<target xml:lang="lv">Relatīvais ceļš</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -487,9 +490,9 @@
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="lv">Mezgla tipa konfigurācija, kurai jāparādās, nav pieejama. Iespējams jūs esiet nomainījuši mezgla tipa nosaukumu, neizpildījāt migrācijas procesu vai vienkārši pieļāvāt gramatisku kļūdu.</target></trans-unit>
       <!-- Miscellaneous -->
-      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="lv" state="translated">"{nodeTypeName}" lapā "{pageLabel}"</target></trans-unit>
+			<target xml:lang="lv">"{nodeTypeName}" lapā "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>

@@ -397,10 +397,10 @@ Options Reference:
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search
 
-Property Type: date ``DateTimeEditor`` -- Date & Time Selection Editor
+Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The most important option for ``date`` properties is the ``format``, which is configured like in PHP, as the following
+The most important option for ``DateTime`` properties is the ``format``, which is configured like in PHP, as the following
 examples show:
 
 * ``d-m-Y``: ``05-12-2014`` -- allows to set only the date
@@ -410,7 +410,7 @@ examples show:
 Example::
 
     publishingDate:
-      type: date
+      type: DateTime
       defaultValue: 'today midnight'
       ui:
         label: 'Publishing Date'

@@ -275,7 +275,14 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
+				} else {
+					// if the current viewed page is a children of the moved page load it
+					var explodedPath = node.data.key.split('@');
+					if (this.get('pageNodePath').indexOf(explodedPath[0]) === 0) {
+						ContentModule.loadPage(node.data.href);
+					}
 				}
+
 				EventDispatcher.trigger('nodeMoved', node);
 			},
 

@@ -56,7 +56,7 @@ use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
  * </output>
  *
  * <code title="Generating a link with an absolute URI">
- * <neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
+ * <neos:link.node absolute="{true}">bookmark this page</neos:link.node>
  * </code>
  * <output>
  * <a href="http://www.example.org/homepage/about.html">bookmark this page</a>
@@ -172,7 +172,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $linkedNode = $this->linkingService->getLastLinkedNode();
         $this->templateVariableContainer->add($nodeVariableName, $linkedNode);
         $content = $this->renderChildren();
-        $this->templateVariableContainer->remove($nodeVariableName, $linkedNode);
+        $this->templateVariableContainer->remove($nodeVariableName);
 
         if ($content === null && $linkedNode !== null) {
             $content = $linkedNode->getLabel();

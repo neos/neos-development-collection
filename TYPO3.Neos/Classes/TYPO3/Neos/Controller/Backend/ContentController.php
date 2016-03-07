@@ -177,7 +177,9 @@ class ContentController extends ActionController
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
-        $this->assetRepository->add($asset);
+        if ($this->persistenceManager->isNewObject($asset)) {
+            $this->assetRepository->add($asset);
+        }
 
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         // This will not be sent as "application/json" as we need the JSON string and not the single variables.

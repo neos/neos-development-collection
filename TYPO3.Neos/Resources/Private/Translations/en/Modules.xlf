@@ -89,6 +89,9 @@
 			<trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			</trans-unit>
+			<trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			</trans-unit>
 			<trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			</trans-unit>
@@ -220,7 +223,7 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			</trans-unit>
 			<trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos:</source>
+				<source>Here's what happened recently in Neos</source>
 			</trans-unit>
 			<trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>

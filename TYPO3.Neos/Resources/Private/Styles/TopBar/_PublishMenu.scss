@@ -63,6 +63,7 @@
 		.neos-badge {
 			background-color: $white;
 			color: $orange;
+			text-shadow: none;
 			position: relative;
 			top: 0;
 			left: 5px;
@@ -105,6 +106,11 @@
 			}
 		}
 
+		.icon-review::after {
+			bottom: -5px;
+			right: 5px;
+		}
+
 		.neos-checkbox {
 			margin-top: $relatedMargin;
 			margin-left: $defaultMargin + $tightMargin;
@@ -142,4 +148,3 @@
 		margin-right: 10px;
 	}
 }
-
