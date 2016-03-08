@@ -102,7 +102,7 @@ class NodesController extends ActionController
         if ($nodeIdentifiers === array()) {
             $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
         } else {
-            $nodes = array_map(function($identifier) use ($contentContext) {
+            $nodes = array_map(function ($identifier) use ($contentContext) {
                 return $contentContext->getNodeByIdentifier($identifier);
             }, $nodeIdentifiers);
         }
