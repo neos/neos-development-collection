@@ -5,10 +5,11 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Adjust DB schema to a clean state (remove cruft that built up in the past)
+ * Adjust some (old) index names to current Doctrine DBAL behavior (see https://jira.neos.io/browse/FLOW-427)
  */
-class Version20150309215316 extends AbstractMigration
+class Version20160212141524 extends AbstractMigration
 {
+
     /**
      * @param Schema $schema
      * @return void
