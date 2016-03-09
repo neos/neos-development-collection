@@ -7,7 +7,7 @@
 			<target xml:lang="vi" state="needs-translation">Asset list</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>
-			<target xml:lang="vi" state="needs-translation">Resources</target></trans-unit>
+			<target xml:lang="vi" state="translated">Mã nguồn</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
 			<target xml:lang="vi" state="needs-translation">Assets</target></trans-unit>
