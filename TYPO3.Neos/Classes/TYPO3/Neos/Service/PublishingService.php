@@ -16,7 +16,6 @@ use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -28,7 +27,7 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
  * @api
  * @Flow\Scope("singleton")
  */
-class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService
+class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService
 {
     /**
      * @Flow\Inject
@@ -53,17 +52,23 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService
     protected $currentSite = false;
 
     /**
-     * Publishes the given node to the specified target workspace. If no workspace is specified, "live" is assumed.
+     * Publishes the given node to the specified target workspace. If no workspace is specified, the base workspace
+     * is assumed.
+     *
+     * If the given node is a Document or has ContentCollection child nodes, these nodes are published as well.
      *
      * @param NodeInterface $node
-     * @param Workspace $targetWorkspace If not set the "live" Workspace is assumed to be the publishing target
+     * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
      * @return void
      * @api
      */
     public function publishNode(NodeInterface $node, Workspace $targetWorkspace = null)
     {
         if ($targetWorkspace === null) {
-            $targetWorkspace = $this->workspaceRepository->findOneByName('live');
+            $targetWorkspace = $node->getWorkspace()->getBaseWorkspace();
+        }
+        if (!$targetWorkspace instanceof Workspace) {
+            return;
         }
         $nodes = array($node);
         $nodeType = $node->getNodeType();

@@ -19,7 +19,7 @@ define([
 		 *
 		 * @param {string} endpointName Name of the endpoint, for example "neos-service-nodes"
 		 * @param {string} resourceIdentifier An optional resource identifier, format depends on the actual service endpoint
-		 * @param {object} optionsOverride Additional options to send with the request
+		 * @param {object} optionsOverride Additional options to send with the request. Valid keys for options are: "type", "url" and "data"
 		 * @returns {Promise} A promise which is invoked when the service call is done
 		 */
 		getResource: function(endpointName, resourceIdentifier, optionsOverride) {
@@ -31,7 +31,7 @@ define([
 		 *
 		 * @param {string} endpointName Name of the endpoint, for example "neos-service-nodes"
 		 * @param {string} resourceIdentifier A mandatory resource identifier, format depends on the actual service endpoint
-		 * @param {object} optionsOverride Additional options to send with the request, especially the properties to update
+		 * @param {object} optionsOverride Additional options to send with the request, especially the properties to update. Valid keys for options are: "type", "url" and "data"
 		 * @returns {Promise} A promise which is invoked when the service call is done
 		 */
 		updateResource: function(endpointName, resourceIdentifier, optionsOverride) {
@@ -42,7 +42,7 @@ define([
 		 * Create a new resource through the REST service
 		 *
 		 * @param {string} endpointName Name of the endpoint, for example "neos-service-nodes"
-		 * @param {object} optionsOverride Additional options to send with the request, usually data for the new resource
+		 * @param {object} optionsOverride Additional options to send with the request, usually data for the new resource. Valid keys for options are: "type", "url" and "data"
 		 * @returns {Promise} A promise which is invoked when the service call is done
 		 */
 		createResource: function(endpointName, optionsOverride) {
@@ -54,7 +54,7 @@ define([
 		 *
 		 * @param {string} endpointName Name of the endpoint, for example "neos-service-nodes"
 		 * @param {string} resourceIdentifier A mandatory resource identifier, format depends on the actual service endpoint
-		 * @param {object} optionsOverride Additional options to send with the request
+		 * @param {object} optionsOverride Additional options to send with the request. Valid keys for options are: "type", "url" and "data"
 		 * @returns {Promise} A promise which is invoked when the service call is done
 		 */
 		deleteResource: function(endpointName, resourceIdentifier, optionsOverride) {

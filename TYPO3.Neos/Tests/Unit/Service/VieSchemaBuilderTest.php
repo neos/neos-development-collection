@@ -107,6 +107,10 @@ class VieSchemaBuilderTest extends UnitTestCase
         $this->nodeTypeManager = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array('dummy'));
         $this->nodeTypeManager->_set('configurationManager', $mockConfigurationManager);
 
+        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, [], [], '', false);
+        $mockCache->expects($this->any())->method('get')->willReturn(null);
+        $this->nodeTypeManager->_set('fullConfigurationCache', $mockCache);
+
         $this->vieSchemaBuilder->_set('nodeTypeManager', $this->nodeTypeManager);
     }
 

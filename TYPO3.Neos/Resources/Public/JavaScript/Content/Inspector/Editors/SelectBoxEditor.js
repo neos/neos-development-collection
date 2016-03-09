@@ -4,8 +4,9 @@ define([
 	'Shared/HttpClient',
 	'Content/Inspector/InspectorController',
 	'Shared/I18n',
-	'Shared/Utility'
-], function($, Ember, HttpClient, InspectorController, I18n, Utility) {
+	'Shared/Utility',
+	'Shared/MapObject'
+], function($, Ember, HttpClient, InspectorController, I18n, Utility, MapObject) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -85,12 +86,19 @@ define([
 
 		dataSourceIdentifier: null,
 		dataSourceUri: null,
+		dataSourceAdditionalData: {},
+		elementInserted: false,
+		initialLoadDone: false,
+
 		attributeBindings: ['size', 'disabled', 'multiple'],
 		optionLabelPath: 'content.label',
 		optionValuePath: 'content.value',
+		minimumResultsForSearch: 5,
 
 		init: function() {
 			this._super();
+			this.set('dataSourceAdditionalData', MapObject.create(this.get('dataSourceAdditionalData')));
+			this.set('elementInserted', false);
 			this.off('didInsertElement', this, this._triggerChange);
 			this.on('change', function() {
 				this._change();
@@ -175,19 +183,65 @@ define([
 
 		didInsertElement: function() {
 			this._initializeSelect2();
-			if (this.get('dataSourceUri') || this.get('dataSourceIdentifier')) {
-				var that = this,
-					dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier');
-				this._loadValuesFromController(dataSourceUri, function(options) {
-					that.set('values', options);
+			this.set('elementInserted', true);
+		},
+
+		_refreshDataFromDataSource: function() {
+			if (!this.get('elementInserted') || !(this.get('dataSourceUri') || this.get('dataSourceIdentifier'))) {
+				return;
+			}
+
+			var that = this,
+				dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier'),
+				parameters = Utility.getKeyValueArray(this.get('dataSourceAdditionalData').getAllProperties());
+
+			parameters.push({
+				name: 'node',
+				value: InspectorController.nodeSelection.get('selectedNode.nodePath')
+			});
+
+			this._loadValuesFromController(dataSourceUri, parameters, function(options) {
+				that.set('values', options);
+
+				if (that.get('initialLoadDone')) {
+					that._matchValueAgainstOptions(options);
+				} else {
+					that.set('initialLoadDone', true);
+					// trigger listeners that might be registered
+					that.get('inspector').registerPendingChange(that.get('property'), that.get('value'));
+				}
+			});
+		}.observes('elementInserted', 'dataSourceUri', 'dataSourceIdentifier', 'dataSourceAdditionalData.changed'),
+
+		// this is used to remove options no longer available after a data source refresh
+		_matchValueAgainstOptions: function(options) {
+			var value, availableValues, newValue;
+
+			value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value');
+
+			if (this.get('multiple')) {
+				availableValues = options.filter(function (option) {
+					return value.filter(function (value) {
+							return value.value === option.value;
+						}).length > 0
 				});
+				newValue = availableValues.length > 0 ? JSON.stringify(availableValues) : '';
+			} else {
+				newValue = options.filter(
+					function (option) {
+						return option.value === value;
+					}).length > 0 ? value : '';
+			}
+
+			if (newValue !== this.get('value')) {
+				this.set('value', newValue);
 			}
 		},
 
 		_initializeSelect2: function() {
 			this.$().select2('destroy').select2({
 				maximumSelectionSize: this.get('multiple') ? 0 : 1,
-				minimumResultsForSearch: 5,
+				minimumResultsForSearch: this.get('minimumResultsForSearch'),
 				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
 				placeholder: this.get('_placeholder'),
 				relative: true,

@@ -11,10 +11,13 @@ namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
-use TYPO3\TYPO3CR\Service\PublishingServiceInterface;
+use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -41,12 +44,19 @@ trait NodeOperationsTrait
     abstract protected function getObjectManager();
 
     /**
-     * @return \TYPO3\TYPO3CR\Service\PublishingService $publishingService
+     * @return PublishingServiceInterface
      */
     private function getPublishingService()
     {
-        /** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
-        return $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
+        return $this->getObjectManager()->get(PublishingServiceInterface::class);
+    }
+
+    /**
+     * @return PersistenceManagerInterface
+     */
+    private function getPersistenceManager()
+    {
+        return $this->getObjectManager()->get(PersistenceManagerInterface::class);
     }
 
     /**
@@ -221,7 +231,8 @@ trait NodeOperationsTrait
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
 
-            if ($context->getWorkspace(false) === null) {
+            if ($context->getWorkspace() === null) {
+                // FIXME: Adjust to changed getWorkspace() method -> workspace needs to be created in another way
                 $context->getWorkspace(true);
 
                 $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
@@ -359,7 +370,7 @@ trait NodeOperationsTrait
             $workspace = $context->getWorkspace();
 
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
             $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
             $this->getSubcontext('flow')->persistAll();
@@ -376,7 +387,7 @@ trait NodeOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
         } else {
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
 
             $rows = $table->getHash();
             $rows[0]['Workspace'] = $sourceWorkspaceName;
@@ -701,7 +712,7 @@ trait NodeOperationsTrait
         } else {
             $workspaceRepository = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
             $workspace = $workspaceRepository->findOneByName($workspaceName);
-            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+            $publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface');
             $unpublishedNodesCount = $publishingService->getUnpublishedNodesCount($workspace);
             Assert::assertEquals($count, $unpublishedNodesCount);
         }
@@ -811,6 +822,22 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @Then /^I expect to have (\d+) unpublished node[s]? for the following context:$/
+     */
+    public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, $table)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'integer', escapeshellarg($nodeCount), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+        } else {
+            $rows = $table->getHash();
+            $context = $this->getContextForProperties($rows[0]);
+
+            $publishingService = $this->getPublishingService();
+            Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
+        }
+    }
+
+    /**
      * Makes sure to reset all node instances which might still be stored in the NodeDataRepository, ContextFactory or
      * NodeFactory.
      *
@@ -867,9 +894,14 @@ trait NodeOperationsTrait
             if (isset($humanReadableContextProperties['Language'])) {
                 $contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);
             }
+
             if (isset($humanReadableContextProperties['Workspace'])) {
                 $contextProperties['workspaceName'] = $humanReadableContextProperties['Workspace'];
+                $this->createWorkspaceIfNeeded($contextProperties['workspaceName']);
+            } else {
+                $this->createWorkspaceIfNeeded();
             }
+
             foreach ($humanReadableContextProperties as $propertyName => $propertyValue) {
                 // Set flexible dimensions from features
                 if (strpos($propertyName, 'Dimension: ') === 0) {
@@ -896,18 +928,32 @@ trait NodeOperationsTrait
     }
 
     /**
-     * @Then /^I expect to have (\d+) unpublished node[s]? for the following context:$/
+     * Make sure that the "live" workspace and the requested $workspaceName workspace exist.
+     *
+     * @param string $workspaceName
+     * @return void
+     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, $table)
+    protected function createWorkspaceIfNeeded($workspaceName = null)
     {
-        if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'integer', escapeshellarg($nodeCount), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
-        } else {
-            $rows = $table->getHash();
-            $context = $this->getContextForProperties($rows[0]);
+        /** @var WorkspaceRepository $workspaceRepository */
+        $workspaceRepository = $this->getObjectManager()->get(WorkspaceRepository::class);
+        $liveWorkspace = $workspaceRepository->findOneByName('live');
+        if ($liveWorkspace === null) {
+            $liveWorkspace = new Workspace('live');
+            $workspaceRepository->add($liveWorkspace);
+            $this->getPersistenceManager()->persistAll();
+            $this->resetNodeInstances();
+        }
 
-            $publishingService = $this->getPublishingService();
-            Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
+        if ($workspaceName !== null) {
+            $requestedWorkspace = $workspaceRepository->findOneByName($workspaceName);
+            if ($requestedWorkspace === null) {
+                $requestedWorkspace = new Workspace($workspaceName, $liveWorkspace);
+                $workspaceRepository->add($requestedWorkspace);
+                $this->getPersistenceManager()->persistAll();
+                $this->resetNodeInstances();
+            }
         }
     }
 }

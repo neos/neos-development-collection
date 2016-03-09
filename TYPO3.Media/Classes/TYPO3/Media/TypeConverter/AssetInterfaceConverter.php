@@ -258,7 +258,9 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {
-        if (is_string($identity)) {
+        if ($targetType === 'TYPO3\Media\Domain\Model\Thumbnail') {
+            $object = $this->persistenceManager->getObjectByIdentifier($identity, $targetType);
+        } elseif (is_string($identity)) {
             $object = $this->assetRepository->findByIdentifier($identity);
         } else {
             throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is not a string.', 1415817618);

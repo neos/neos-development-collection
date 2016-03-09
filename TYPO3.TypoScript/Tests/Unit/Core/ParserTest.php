@@ -308,6 +308,12 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                 '__eelExpression' => null,
                 'value' => 'Overridden value'
             ),
+            'firstObject4' => array(
+                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__value' => null,
+                '__eelExpression' => null,
+                'value' => 'Ugly syntax with no space works!'
+            ),
             'secondObject' => array(
                 'subObject' => array(
                     '__objectType' => 'TYPO3.TypoScript:Text',
@@ -673,10 +679,30 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 '__objectType' => null
                             ),
                             'blah3' => array(
-                                '__eelExpression' => 'my.expression("as' . "\n		some stuff }\n		" . '" + "df")',
+                                '__eelExpression' => 'my.expression("as' . "		some stuff }		" . '" + "df")',
                                 '__value' => null,
                                 '__objectType' => null
                             ),
+                            'multiline2' => array(
+                                '__eelExpression' => "my.expression(		Foo.bar(\"foo\")	)",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline3' => array(
+                                '__eelExpression' => "		my.expression(			Bar.foo(\"bar\")		)	",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline4' => array(
+                                '__eelExpression' => "my.expression(		\"bla\",		\"blubb\",		Test()	)",
+                                '__value' => null,
+                                '__objectType' => null
+                            ),
+                            'multiline5' => array(
+                                '__eelExpression' => "'col-sm-'+		String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
+                                '__value' => null,
+                                '__objectType' => null
+                            )
                         )
                     )
                 )

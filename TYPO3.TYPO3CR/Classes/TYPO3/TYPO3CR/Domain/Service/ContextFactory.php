@@ -172,7 +172,7 @@ class ContextFactory implements ContextFactoryInterface
                 }
                 $stringValue = implode('&', $stringParts);
             } else {
-                $stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+                $stringValue = $propertyValue instanceof \DateTimeInterface ? $propertyValue->getTimestamp() : (string)$propertyValue;
             }
             $identifierSource .= ':' . $stringValue;
         }
@@ -208,7 +208,7 @@ class ContextFactory implements ContextFactoryInterface
             }
         }
         if (isset($contextProperties['currentDateTime'])) {
-            if (!$contextProperties['currentDateTime'] instanceof \DateTime) {
+            if (!$contextProperties['currentDateTime'] instanceof \DateTimeInterface) {
                 throw new InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
             }
         }
@@ -304,24 +304,6 @@ class ContextFactory implements ContextFactoryInterface
             }
             $mergedProperties['dimensions'][$identifier] = $values;
         }
-    }
-
-    /**
-     * Helper method which parses the "dimension" part of the context, i.e.
-     * "locales=de_DE,mul_ZZ&...." into an *array* of dimension values.
-     *
-     * Is needed at both the RoutePartHandler and the ObjectConverter; that's why
-     * it's placed here.
-     *
-     * @param string $dimensionPartOfContext
-     * @return array
-     */
-    public function parseDimensionValueStringToArray($dimensionPartOfContext)
-    {
-        parse_str($dimensionPartOfContext, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
-
-        return $dimensions;
     }
 
     /**

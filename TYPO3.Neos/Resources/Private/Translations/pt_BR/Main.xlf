@@ -8,7 +8,10 @@
 			<target xml:lang="pt-BR" state="translated">Auto-Publicar</target><alt-trans><target xml:lang="pt-BR">Publicar automaticamente</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="pt-BR" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Auto-publicar em {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="pt-BR" state="translated">Revisar alterações</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="pt-BR" state="translated">Aplicar</target></trans-unit>
@@ -32,7 +35,7 @@
 			<target xml:lang="pt-BR" state="translated">Conteúdo</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="pt-BR" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Nó</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="pt-BR" state="translated">Exibição de Conteúdo</target></trans-unit>
@@ -122,16 +125,16 @@
 			<target xml:lang="pt-BR" state="translated">Publicar</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="pt-BR" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Publicar em {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="pt-BR" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Publicar todas as alterações da página atual</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="pt-BR" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Não pode publicar porque o espaço de trabalho de destino é somente leitura</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="pt-BR" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Publicando</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="pt-BR" state="translated">Publicado</target></trans-unit>
@@ -140,7 +143,7 @@
 			<target xml:lang="pt-BR" state="translated">Espaço de trabalho de destino</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Espaço de trabalho atual</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="pt-BR" state="translated">Remover</target></trans-unit>
@@ -489,20 +492,20 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="pt-BR" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">"{nodeTypeName}" na página "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="pt-BR" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Nós</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="pt-BR" state="translated">Mostrar</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="pt-BR" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Este nó não pode ser acessado através de uma URL pública</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="pt-BR" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Propriedades do nó</target></trans-unit>
     </body>
   </file>
 </xliff>

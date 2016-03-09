@@ -105,7 +105,7 @@ function(
 			var passedChangedDimension = false;
 			$.each(dimensions, function(key, dimension) {
 				if (passedChangedDimension) {
-					HttpRestClient.getResource('neos-service-contentdimensions-index', dimension.get('identifier'), {data: {chosenDimensionPresets: chosenDimensionPresets}}).then(function (result) {
+					HttpRestClient.getResource('neos-service-contentdimensions', dimension.get('identifier'), {data: {chosenDimensionPresets: chosenDimensionPresets}}).then(function (result) {
 						$.each(dimension.get('presets'), function (key, preset) {
 							if ($('.contentdimension-preset-identifier:contains("' + preset.get('identifier') + '")', result.resource).length === 0) {
 								preset.set('disabled', true);

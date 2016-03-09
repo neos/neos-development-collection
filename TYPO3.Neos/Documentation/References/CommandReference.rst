@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-10-10
+The following reference was automatically generated from code on 2015-10-09
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -989,6 +989,41 @@ and will remove the respective Asset object from the database when the broken re
 This command will ask you interactively what to do before deleting anything.
 
 
+
+
+
+
+
+.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:resource:copy`:
+
+``typo3.flow:resource:copy``
+****************************
+
+**Copy resources**
+
+This command copies all resources from one collection to another storage identified by name.
+The target storage must be empty and must not be identical to the current storage of the collection.
+
+This command merely copies the binary data from one storage to another, it does not change the related
+Resource objects in the database in any way. Since the Resource objects in the database refer to a
+collection name, you can use this command for migrating from one storage to another my configuring
+the new storage with the name of the old storage collection after the resources have been copied.
+
+Arguments
+^^^^^^^^^
+
+``--source-collection``
+  The name of the collection you want to copy the assets from
+``--target-collection``
+  The name of the collection you want to copy the assets to
+
+
+
+Options
+^^^^^^^
+
+``--publish``
+  If enabled, the target collection will be published after the resources have been copied
 
 
 
@@ -2089,6 +2124,71 @@ Options
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:create`:
+
+``typo3.neos:workspace:create``
+*******************************
+
+**Create a new workspace**
+
+This command creates a new workspace.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "christmas-campaign
+
+
+
+Options
+^^^^^^^
+
+``--base-workspace``
+  Name of the base workspace. If none is specified, "live" is assumed.
+``--title``
+  Human friendly title of the workspace, for example "Christmas Campaign
+``--description``
+  A description explaining the purpose of the new workspace
+
+
+
+
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:delete`:
+
+``typo3.neos:workspace:delete``
+*******************************
+
+**Deletes a workspace**
+
+This command deletes a workspace. If you only want to empty a workspace and not delete the
+workspace itself, use *workspace:discard* instead.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "christmas-campaign
+
+
+
+Options
+^^^^^^^
+
+``--force``
+  Delete the workspace and all of its contents
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.neos:workspace:discard``
+  Discard changes in workspace
+
+
+
 .. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:discard`:
 
 ``typo3.neos:workspace:discard``
@@ -2173,7 +2273,8 @@ Related commands
 
 **Publish changes of a workspace**
 
-This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
+This command publishes all modified, created or deleted nodes in the specified workspace to its base workspace.
+If a target workspace is specified, the content is published to that workspace instead.
 
 Arguments
 ^^^^^^^^^
@@ -2186,6 +2287,8 @@ Arguments
 Options
 ^^^^^^^
 
+``--target-workspace``
+  If specified, the content will be published to this workspace instead of the base workspace
 ``--verbose``
   If enabled, some information about individual nodes will be displayed
 ``--dry-run``
@@ -2225,6 +2328,31 @@ Related commands
 
 ``typo3.neos:workspace:publish``
   Publish changes of a workspace
+
+
+
+.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:rebase`:
+
+``typo3.neos:workspace:rebase``
+*******************************
+
+**Rebase a workspace**
+
+This command sets a new base workspace for the specified workspace. Note that doing so will put the possible
+changes contained in the workspace to be rebased into a different context and thus might lead to unintended
+results when being published.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace to rebase, for example "user-john
+``--base-workspace``
+  Name of the new base workspace
+
+
+
+
 
 
 
@@ -2319,6 +2447,11 @@ position from the parents NodeType configuration.
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have a property that have a default value configuration
 the default value for that property will be set.
+
+*Remove broken object references*
+
+Detects and removes references from nodes to entities which don't exist anymore (for
+example Image nodes referencing ImageVariant objects which are gone for some reason).
 
 
 **Examples:**

@@ -115,6 +115,10 @@ class ImageUriImplementation extends AbstractTypoScriptObject
             throw new \Exception('No asset given for rendering.', 1415184217);
         }
         $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling());
-        return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration)['src'];
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration);
+        if ($thumbnailData === null) {
+            return '';
+        }
+        return $thumbnailData['src'];
     }
 }

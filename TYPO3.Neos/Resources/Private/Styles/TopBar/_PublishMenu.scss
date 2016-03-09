@@ -37,7 +37,7 @@
 	}
 
 	.neos-publish-button {
-		min-width: 165px;
+		min-width: 212px;
 		background-color: $green;
 		font-size: $generalFontSize;
 		cursor: default;
@@ -54,6 +54,20 @@
 
 		&.neos-publish-menu-active[disabled] {
 			@include opacity(.75);
+		}
+
+		.icon-lock {
+			line-height: ($unit / 2) - 1;
+		}
+
+		.neos-badge {
+			background-color: $white;
+			color: $orange;
+			text-shadow: none;
+			position: relative;
+			top: 0;
+			left: 5px;
+			margin-right: 5px;
 		}
 	}
 
@@ -92,9 +106,45 @@
 			}
 		}
 
+		.icon-review::after {
+			bottom: -5px;
+			right: 5px;
+		}
+
 		.neos-checkbox {
 			margin-top: $relatedMargin;
 			margin-left: $defaultMargin + $tightMargin;
 		}
+	}
+}
+
+#neos-target-workspace-selector {
+	.neos-select2-container {
+		width: 100%;
+	}
+}
+
+.neos-target-workspace-selector ul.neos-select2-results {
+	li:not(.neos-select2-highlighted) {
+		background: $grayLight;
+	}
+
+	li {
+		.neos-select2-result-label {
+			padding-left: $unit / 2;
+		}
+		.neos-select2-result-label .icon {
+			margin-left: -($unit / 2);
+			line-height: ($unit / 2) - 1
+		}
+	}
+
+}
+
+#neos-target-workspace-selector .neos-select2-container .neos-select2-chosen {
+	.icon {
+		line-height: 20px;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }

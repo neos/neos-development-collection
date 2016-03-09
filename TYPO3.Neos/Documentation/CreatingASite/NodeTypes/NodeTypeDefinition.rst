@@ -14,7 +14,7 @@ A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'TYPO3.Neos:Content': true
 	  ui:
 	    label: 'Special Headline'
 	    group: 'general'
@@ -23,7 +23,7 @@ A node type definition can look as follows::
 	      type: 'string'
 	      defaultValue: 'My Headline Default'
 	      ui:
-	        inlineEditable: TRUE
+	        inlineEditable: true
 	      validation:
 	        'TYPO3.Neos/Validation/StringLengthValidator':
 	          minimum: 1
@@ -36,11 +36,11 @@ The following options are allowed:
 
     'TYPO3.Neos:Document':
       superTypes:
-        'Acme.Demo.ExtraMixin': TRUE
+        'Acme.Demo.ExtraMixin': true
 
     'TYPO3.Neos:Shortcut':
       superTypes:
-        'Acme.Demo.ExtraMixin': FALSE
+        'Acme.Demo.ExtraMixin': false
 
 
 ``constraints``
@@ -50,10 +50,10 @@ The following options are allowed:
     constraints:
       nodeTypes:
         # ALLOW text, DISALLOW Image
-        'TYPO3.Neos.NodeTypes:Text': TRUE
-        'TYPO3.Neos.NodeTypes:Image': FALSE
+        'TYPO3.Neos.NodeTypes:Text': true
+        'TYPO3.Neos.NodeTypes:Image': false
         # DISALLOW as Fallback (for not-explicitely-listed node types)
-        '*': FALSE
+        '*': false
 
 ``childNodes``
   A list of child nodes that are automatically created if a node of this type is created.
@@ -67,8 +67,8 @@ The following options are allowed:
         constraints:
           nodeTypes:
             # only allow images in this ContentCollection
-            'TYPO3.Neos.NodeTypes:Image': TRUE
-            '*': FALSE
+            'TYPO3.Neos.NodeTypes:Image': true
+            '*': false
 
   By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
   An example may look like::
@@ -120,9 +120,35 @@ The following options are allowed:
     Currently it's only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
+  ``help``
+    Configuration of contextual help. Displays a message that is rendered as popover
+    when the user clicks the help icon in an insert node dialog.
+
+    ``message``
+      Help text for the node type. It supports markdown to format the help text and can
+      be translated (see :ref:`translate-nodetypes`).
+
+    ``thumbnail``
+      This is shown in the popover and can be supplied in two ways:
+
+      - as an absolute URL to an image (``http://static/acme.com/thumbnails/bar.png``)
+      - as a resource URI (``resource://AcmeCom.Website/NodeTypes/Thumbnails/foo.png``)
+
+      If the ``thumbnail`` setting is undefined but an image matching the nodetype name
+       is found, it will be used automatically. It will be looked for in
+       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
+       like this:
+
+       ``AcmeCom.Website:FooWithBar`` -> ``AcmeCom.Website`` and ``FooWithBar``
+
+       The image will be downscaled to a width of 342 pixels, so it should either be that
+       size to be placed above any further help text (if supplied) or be half that size for
+       the help text to flow around it.
+
   ``inlineEditable``
-    If TRUE, it is possible to interact with this Node directly in the content view.
-    If FALSE, an overlay is shown preventing any interaction with the node.
+    If `true`, it is possible to interact with this Node directly in the content view.
+    If `false`, an overlay is shown preventing any interaction with the node.
     If not given, checks if any property is marked as ``ui.inlineEditable``.
 
   ``inspector``
@@ -155,6 +181,9 @@ The following options are allowed:
       ``tab``
         The tab the group belongs to. If left empty the group is added to the ``default`` tab.
 
+      ``collapsed``
+        If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
+
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 
@@ -176,18 +205,26 @@ The following options are allowed:
     ``label``
       The human-readable label of the property
 
+    ``help``
+      Configuration of contextual help. Displays a message that is rendered as popover
+      when the user clicks the help icon in the inspector.
+
+      ``message``
+        Help text for this property. It supports markdown to format the help text and can
+        be translated (see :ref:`translate-nodetypes`).
+
     ``reloadIfChanged``
-      If TRUE, the whole content element needs to be re-rendered on the server side if the value
+      If `true`, the whole content element needs to be re-rendered on the server side if the value
       changes. This only works for properties which are displayed inside the property inspector,
       i.e. for properties which have a ``group`` set.
 
     ``reloadPageIfChanged``
-      If TRUE, the whole page needs to be re-rendered on the server side if the value
+      If `true`, the whole page needs to be re-rendered on the server side if the value
       changes. This only works for properties which are displayed inside the property inspector,
       i.e. for properties which have a ``group`` set.
 
     ``inlineEditable``
-      If TRUE, this property is inline editable, i.e. edited directly on the page through Aloha.
+      If `true`, this property is inline editable, i.e. edited directly on the page through Aloha.
 
     ``aloha``
       This section controls the text formatting options the user has available for this property.
@@ -195,39 +232,39 @@ The following options are allowed:
 
         aloha:
           'format': # Enable specific formatting options.
-            'strong': TRUE
-            'b': FALSE
-            'em': TRUE
-            'i': FALSE
-            'u': TRUE
-            'sub': TRUE
-            'sup': TRUE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'h4': FALSE
-            'h5': FALSE
-            'h6': FALSE
-            'code': FALSE
-            'removeFormat': TRUE
+            'strong': true
+            'b': false
+            'em': true
+            'i': false
+            'u': true
+            'sub': true
+            'sup': true
+            'p': true
+            'h1': true
+            'h2': true
+            'h3': true
+            'h4': false
+            'h5': false
+            'h6': false
+            'code': false
+            'removeFormat': true
           'table':
-            'table': TRUE
+            'table': true
           'link':
-            'a': TRUE
+            'a': true
           'list':
-            'ul': TRUE
-            'ol': TRUE
+            'ul': true
+            'ol': true
           'alignment':
-            'left': TRUE
-            'center': TRUE
-            'right': TRUE
-            'justify': TRUE
+            'left': true
+            'center': true
+            'right': true
+            'justify': true
           'formatlesspaste':
-            'button': TRUE # Show toggle button for formatless pasting.
-            'formatlessPasteOption': FALSE # Whether the format less pasting should be enable by default.
+            'button': true # Show toggle button for formatless pasting.
+            'formatlessPasteOption': false # Whether the format less pasting should be enable by default.
             'strippedElements': ['a'] # If not set the default setting is used.
-            'autoparagraph': TRUE # Automatically wrap non-wrapped text blocks in paragraph blocks.
+            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 
@@ -238,8 +275,8 @@ The following options are allowed:
           'list': []
           'alignment': []
           'formatlesspaste':
-            'button': FALSE
-            'formatlessPasteOption': TRUE
+            'button': false
+            'formatlessPasteOption': true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.
@@ -261,6 +298,9 @@ The following options are allowed:
       ``editorOptions``
         A set of options for the given editor, see the :ref:`property-editor-reference`.
 
+      ``editorListeners``
+        Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
+
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
@@ -271,7 +311,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 
 	'TYPO3.Neos.NodeTypes:Image':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'TYPO3.Neos:Content': true
 	  ui:
 	    label: 'Image'
 	    icon: 'icon-picture'
@@ -285,7 +325,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	    alignment:
@@ -293,7 +333,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      defaultValue: ''
 	      ui:
 	        label: 'Alignment'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
@@ -312,7 +352,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      type: string
 	      ui:
 	        label: 'Alternative text'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	      validation:
@@ -323,13 +363,13 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      type: boolean
 	      ui:
 	        label: 'Enable caption'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	    caption:
 	      type: string
 	      defaultValue: '<p>Enter caption here</p>'
 	      ui:
-	        inlineEditable: TRUE
+	        inlineEditable: true
 
 

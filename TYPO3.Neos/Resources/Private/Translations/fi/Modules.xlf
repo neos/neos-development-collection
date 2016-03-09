@@ -87,6 +87,9 @@
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
 			<target xml:lang="fi">Muutokset</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="fi" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="fi">Tämä on henkilökohtainen työtilasi, jota et voi poistaa.</target></trans-unit>
@@ -232,9 +235,9 @@
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="fi">Tämä moduuli näyttää kaikki tämän Neos-asennuksen tapahtumat.</target></trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
-				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="fi">Neosin viimeisimmät tapahtumat:</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+				<source>Here's what happened recently in Neos</source>
+			<target xml:lang="fi" state="translated">Neosin viimeisimmät tapahtumat:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="fi">Historiassa ei vielä ole tapahtumia.</target></trans-unit>

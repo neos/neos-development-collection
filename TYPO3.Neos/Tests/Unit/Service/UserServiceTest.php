@@ -18,8 +18,7 @@ use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
- * Testcase for the UserService
- *
+ * Test case for the UserService
  */
 class UserServiceTest extends UnitTestCase
 {
@@ -63,18 +62,16 @@ class UserServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getCurrentWorkspaceReturnsLiveWorkspaceIfNoUserIsLoggedIn()
+    public function getPersonalWorkspaceReturnsNullIfNoUserIsLoggedIn()
     {
-        $mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue(null));
-        $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
-        $this->assertSame($mockLiveWorkspace, $this->userService->getCurrentWorkspace());
+        $this->assertNull($this->userService->getPersonalWorkspace());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
+    public function getPersonalWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
     {
         $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
         $mockUserWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
@@ -82,27 +79,27 @@ class UserServiceTest extends UnitTestCase
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
         $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will($this->returnValue($mockUserWorkspace));
-        $this->assertSame($mockUserWorkspace, $this->userService->getCurrentWorkspace());
+        $this->assertSame($mockUserWorkspace, $this->userService->getPersonalWorkspace());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceNameReturnsLiveIfNoUserIsLoggedIn()
+    public function getPersonalWorkspaceNameReturnsNullIfNoUserIsLoggedIn()
     {
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue(null));
-        $this->assertSame('live', $this->userService->getCurrentWorkspaceName());
+        $this->assertNull($this->userService->getPersonalWorkspaceName());
     }
 
     /**
      * @test
      */
-    public function getCurrentWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
+    public function getPersonalWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
     {
         $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
-        $this->assertSame('user-TheUserName', $this->userService->getCurrentWorkspaceName());
+        $this->assertSame('user-TheUserName', $this->userService->getPersonalWorkspaceName());
     }
 }

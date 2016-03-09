@@ -286,10 +286,10 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $search;
+				content: $fa-var-search;
 				line-height: 100%;
 				font-size: 14px;
-				@include icon-FontAwesome();
+				@include fa-icon();
 				cursor: pointer;
 			}
 		}
@@ -366,10 +366,10 @@
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;
-			content: $search;
+			content: $fa-var-search;
 			line-height: 100%;
 			font-size: 14px;
-			@include icon-FontAwesome();
+			@include fa-icon();
 			cursor: pointer;
 		}
 

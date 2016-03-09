@@ -18,6 +18,7 @@ use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Content Context
@@ -55,20 +56,22 @@ class ContentContext extends Context
     protected $interfaceRenderModeService;
 
     /**
-     * Constructor
+     * Creates a new Content Context object.
      *
-     * @param string $workspaceName
-     * @param \DateTime $currentDateTime
-     * @param array $dimensions
-     * @param array $targetDimensions
-     * @param boolean $invisibleContentShown
-     * @param boolean $removedContentShown
-     * @param boolean $inaccessibleContentShown
-     * @param Site $currentSite
-     * @param Domain $currentDomain
-     * @return ContentContext
+     * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
+     *
+     * @param string $workspaceName Name of the current workspace
+     * @param \DateTimeInterface $currentDateTime The current date and time
+     * @param array $dimensions Array of dimensions with array of ordered values
+     * @param array $targetDimensions Array of dimensions used when creating / modifying content
+     * @param boolean $invisibleContentShown If invisible content should be returned in query results
+     * @param boolean $removedContentShown If removed content should be returned in query results
+     * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
+     * @param Site $currentSite The current Site object
+     * @param Domain $currentDomain The current Domain object
+     * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
     {
         parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
         $this->currentSite = $currentSite;
@@ -105,7 +108,11 @@ class ContentContext extends Context
     public function getCurrentSiteNode()
     {
         if ($this->currentSite !== null && $this->currentSiteNode === null) {
-            $this->currentSiteNode = $this->getNode('/sites/' . $this->currentSite->getNodeName());
+            $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $this->currentSite->getNodeName());
+            $this->currentSiteNode = $this->getNode($siteNodePath);
+            if (!($this->currentSiteNode instanceof NodeInterface)) {
+                $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);
+            }
         }
         return $this->currentSiteNode;
     }

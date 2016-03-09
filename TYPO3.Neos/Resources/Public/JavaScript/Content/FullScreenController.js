@@ -8,11 +8,13 @@ define(
 	'Library/jquery-with-dependencies',
 	'emberjs',
 	'Shared/LocalStorage',
+	'Shared/EventDispatcher',
 	'LibraryExtensions/Mousetrap'
 ], function(
 	$,
 	Ember,
 	LocalStorage,
+	EventDispatcher,
 	Mousetrap
 ) {
 	return Ember.Controller.extend({
@@ -38,10 +40,13 @@ define(
 				Mousetrap.bind('esc', function() {
 					that.toggleFullScreen();
 				});
+				EventDispatcher.triggerExternalEvent('Neos.FullScreenModeActivated', 'Neos fullscreen mode was activated.');
 			} else {
 				$('body > .' + fullScreenCloseClass).remove();
 				Mousetrap.unbind('esc');
+				EventDispatcher.triggerExternalEvent('Neos.FullScreenModeDeactivated', 'Neos fullscreen mode was deactivated.');
 			}
+			EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
 		},
 
 		onFullScreenModeChanged: function() {

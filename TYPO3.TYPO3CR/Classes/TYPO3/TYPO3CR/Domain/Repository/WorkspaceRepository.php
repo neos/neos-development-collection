@@ -12,12 +12,21 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
  * The repository for workspaces
  *
  * @Flow\Scope("singleton")
  */
-class WorkspaceRepository extends \TYPO3\Flow\Persistence\Repository
+class WorkspaceRepository extends Repository
 {
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array(
+        'baseWorkspace' => QueryInterface::ORDER_ASCENDING,
+        'title' => QueryInterface::ORDER_ASCENDING
+    );
 }

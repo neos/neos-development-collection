@@ -18,8 +18,8 @@
       'TYPO3.Media': 'resource://TYPO3.Media/Private/Layouts'
       'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts/Media'
     partialRootPaths:
-      'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
       'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials/Media'
+      'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
 
     templateRootPathPattern: 'resource://TYPO3.Neos/Private/Templates/Media'
     templatePathAndFilenamePattern: '@templateRoot/@subpackage/Asset/@action.@format'

@@ -26,10 +26,17 @@ define(
 			// Minimum amount of characters to trigger search
 			threshold: 2,
 
-			didInsertElement: function() {
-				var that = this;
+			// The path to a node that defines the starting point for the reference search
+			startingPoint: null,
 
-				var currentQueryTimer = null;
+			didInsertElement: function() {
+				var that = this,
+					currentQueryTimer = null;
+
+				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
+					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
+				}
+
 				this.$().select2({
 					multiple: true,
 					minimumInputLength: that.get('threshold'),
@@ -43,7 +50,7 @@ define(
 						$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 						$itemContent.append('<span class="neos-select2-result-path">' + info + '</span>');
 
-						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
 						}
@@ -57,7 +64,7 @@ define(
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
-							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
 							if (iconClass) {
 								$itemContent.prepend('<i class="' + iconClass + '"></i>');
 							}
@@ -70,13 +77,15 @@ define(
 							window.clearTimeout(currentQueryTimer);
 						}
 						currentQueryTimer = window.setTimeout(function() {
+							var parameters;
+							var $metadata = $('#neos-document-metadata');
 							currentQueryTimer = null;
 
-							var parameters = {
+							parameters = {
 								searchTerm: query.term,
-								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-								dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
-								contextNode: $('#neos-document-metadata').data('neos-site-node-context-path'),
+								workspaceName: $metadata.data('neos-context-workspace-name'),
+								dimensions: $metadata.data('neos-context-dimensions'),
+								contextNode: that.get('startingPoint'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
@@ -84,6 +93,7 @@ define(
 								var data = {results: []};
 								$(result.resource).find('li').each(function(index, value) {
 									var identifier = $('.node-identifier', value).text();
+
 									data.results.push({
 										id: identifier,
 										text: $('.node-label', value).text().trim(),
@@ -123,6 +133,8 @@ define(
 					that.set('content', []);
 					// load names of already selected nodes via the Node REST service:
 					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
+						var parameters;
+						var $metadata = $('#neos-document-metadata');
 						var item = Ember.Object.extend({
 							id: nodeIdentifier,
 							text: function() {
@@ -132,9 +144,9 @@ define(
 
 						that.get('content').pushObject(item);
 
-						var parameters = {
-							workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-							dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+						parameters = {
+							workspaceName: $metadata.data('neos-context-workspace-name'),
+							dimensions: $metadata.data('neos-context-dimensions')
 						};
 						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 							item.set('text', $('.node-label', result.resource).text().trim());

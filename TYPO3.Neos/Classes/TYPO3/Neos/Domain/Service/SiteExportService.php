@@ -159,6 +159,7 @@ class SiteExportService
      */
     protected function exportSite(Site $site, $nodeTypeFilter)
     {
+        /** @var ContentContext $contentContext */
         $contentContext = $this->contextFactory->create(array(
             'currentSite' => $site,
             'invisibleContentShown' => true,
@@ -166,6 +167,7 @@ class SiteExportService
         ));
 
         $siteNode = $contentContext->getCurrentSiteNode();
+
         $this->xmlWriter->startElement('site');
         $this->xmlWriter->writeAttribute('name', $site->getName());
         $this->xmlWriter->writeAttribute('state', $site->getState());

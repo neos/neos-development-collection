@@ -113,6 +113,7 @@ class VieSchemaBuilder
     {
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         $this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
+        /** @var NodeType $superType */
         foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
             $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
         }

@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2015-10-09
 
 
 .. _`Fluid ViewHelper Reference: f:alias`:
@@ -1308,7 +1308,7 @@ Expected result::
 
 **Dummy content for template preview**::
 
-	<f:submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
+	<f:form.submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:form.submit>
 
 
 Expected result::

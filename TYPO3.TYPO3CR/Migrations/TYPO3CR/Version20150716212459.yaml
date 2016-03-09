@@ -10,5 +10,5 @@ up:
             addDefaultDimensionValues: TRUE
 
 down:
-  comments: 'Use migration 20140326143834 to migrate nodes with default dimensions to no migrations. This down migration does nothing.'
+  comments: 'Use migration 20140326143834 to migrate nodes with dimensions to no dimensions. This down migration does nothing.'
   migration: []

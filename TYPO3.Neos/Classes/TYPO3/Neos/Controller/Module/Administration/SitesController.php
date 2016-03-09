@@ -26,6 +26,7 @@ use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Neos Sites Management module controller
@@ -156,8 +157,8 @@ class SitesController extends AbstractModuleController
     public function updateSiteAction(Site $site, $newSiteNodeName)
     {
         if ($site->getNodeName() !== $newSiteNodeName) {
-            $oldSiteNodePath = '/sites/' . $site->getNodeName();
-            $newSiteNodePath = '/sites/' . $newSiteNodeName;
+            $oldSiteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName());
+            $newSiteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $newSiteNodeName);
             /** @var $workspace Workspace */
             foreach ($this->workspaceRepository->findAll() as $workspace) {
                 $siteNode = $this->nodeDataRepository->findOneByPath($oldSiteNodePath, $workspace);

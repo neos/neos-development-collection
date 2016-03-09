@@ -23,6 +23,7 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\Neos\Exception as NeosException;
+use TYPO3\Neos\TYPO3CR\NeosNodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -97,6 +98,12 @@ class LinkingService
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var NeosNodeServiceInterface
+     */
+    protected $nodeService;
+
+    /**
      * @param string|Uri $uri
      * @return boolean
      */
@@ -131,16 +138,17 @@ class LinkingService
      * @param string|Uri $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
+     * @param bool $absolute
      * @return string
      */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
+    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
             return null;
         }
-        return $this->createNodeUri($controllerContext, $targetObject);
+        return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
     /**
@@ -226,17 +234,8 @@ class LinkingService
                 }
                 /** @var ContentContext $contentContext */
                 $contentContext = $baseNode->getContext();
-                if ($nodeString === '~' || $nodeString === '~/') {
-                    $node = $contentContext->getCurrentSiteNode();
-                } elseif (substr($nodeString, 0, 2) === '~/') {
-                    $node = $contentContext->getCurrentSiteNode()->getNode(substr($nodeString, 2));
-                } else {
-                    if (substr($nodeString, 0, 1) === '/') {
-                        $node = $contentContext->getNode($nodeString);
-                    } else {
-                        $node = $baseNode->getNode($nodeString);
-                    }
-                }
+                $normalizedPath = $this->nodeService->normalizePath($nodeString, $baseNode->getPath(), $contentContext->getCurrentSiteNode()->getPath());
+                $node = $contentContext->getNode($normalizedPath);
             }
             if (!$node instanceof NodeInterface) {
                 throw new NeosException(sprintf('The string "%s" could not be resolved to an existing node.', $nodeString), 1415709674);

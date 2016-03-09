@@ -22,7 +22,9 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -41,6 +43,12 @@ class BackendRedirectionService
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
 
     /**
      * @Flow\Inject
@@ -90,17 +98,16 @@ class BackendRedirectionService
         if ($user === null) {
             return null;
         }
-        $workspaceName = $this->userService->getCurrentWorkspaceName();
-        $contentContext = $this->createContext($workspaceName);
-        // create workspace if it does not exist
-        $contentContext->getWorkspace();
-        $this->persistenceManager->persistAll();
+
+        $workspaceName = $this->userService->getUserWorkspaceName();
+        $this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($actionRequest);
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
 
+        $contentContext = $this->createContext($workspaceName);
         $lastVisitedNode = $this->getLastVisitedNode($workspaceName);
         if ($lastVisitedNode !== null) {
             return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
@@ -172,5 +179,33 @@ class BackendRedirectionService
             $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
         }
         return $this->contextFactory->create($contextProperties);
+    }
+
+    /**
+     * If the specified workspace or its root node does not exist yet, the workspace and root node will be created.
+     *
+     * This method is basically a safeguard for legacy and potentially broken websites where users might not have
+     * their own workspace yet. In a normal setup, the Domain User Service is responsible for creating and deleting
+     * user workspaces.
+     *
+     * @param string $workspaceName Name of the workspace
+     * @return void
+     */
+    protected function createWorkspaceAndRootNodeIfNecessary($workspaceName)
+    {
+        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
+        if ($workspace === null) {
+            $liveWorkspace = $this->workspaceRepository->findOneByName('live');
+            $owner = $this->userService->getBackendUser();
+            $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
+            $this->workspaceRepository->add($workspace);
+            $this->persistenceManager->whitelistObject($workspace);
+        }
+
+        $contentContext = $this->createContext($workspaceName);
+        $rootNode = $contentContext->getRootNode();
+        $this->persistenceManager->whitelistObject($rootNode);
+        $this->persistenceManager->whitelistObject($rootNode->getNodeData());
+        $this->persistenceManager->persistAll(true);
     }
 }

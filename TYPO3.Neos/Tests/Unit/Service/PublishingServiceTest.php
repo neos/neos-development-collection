@@ -23,7 +23,6 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Test case for the Workspace PublishingService
- *
  */
 class PublishingServiceTest extends UnitTestCase
 {
@@ -68,6 +67,11 @@ class PublishingServiceTest extends UnitTestCase
     protected $mockWorkspace;
 
     /**
+     * @var Workspace
+     */
+    protected $mockBaseWorkspace;
+
+    /**
      * @var \TYPO3\Flow\Persistence\QueryResultInterface
      */
     protected $mockQueryResult;
@@ -101,8 +105,13 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue($this->mockSite));
         $this->inject($this->publishingService, 'siteRepository', $this->mockSiteRepository);
 
+        $this->mockBaseWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $this->mockBaseWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+        $this->mockBaseWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(null));
+
         $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-        $this->mockWorkspace->expects($this->any())->method('getName')->with()->will($this->returnValue('workspace-name'));
+        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('workspace-name'));
+        $this->mockWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue($this->mockBaseWorkspace));
     }
 
     /**
@@ -225,7 +234,7 @@ class PublishingServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function publishNodePublishesTheGivenNodeToLiveWorkspaceIfNoTargetWorkspaceIsSpecified()
+    public function publishNodePublishesTheGivenNodeToItsBaseWorkspaceIfNoTargetWorkspaceIsSpecified()
     {
         $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
@@ -234,10 +243,7 @@ class PublishingServiceTest extends UnitTestCase
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-        $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
-
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with(array($mockNode), $mockLiveWorkspace);
+        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with(array($mockNode), $this->mockBaseWorkspace);
         $this->publishingService->publishNode($mockNode);
     }
 

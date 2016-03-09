@@ -59,12 +59,6 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
      * @Flow\Inject(lazy = false)
      * @var \TYPO3\Media\Domain\Session\BrowserState
      */

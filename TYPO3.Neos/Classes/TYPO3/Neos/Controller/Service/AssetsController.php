@@ -37,6 +37,12 @@ class AssetsController extends ActionController
     protected $tagRepository;
 
     /**
+     * @Flow\InjectConfiguration(package="TYPO3.Media", path="asyncThumbnails")
+     * @var boolean
+     */
+    protected $asyncThumbnails;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
@@ -54,6 +60,15 @@ class AssetsController extends ActionController
         'text/html',
         'application/json'
     );
+
+    /**
+     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @return void
+     */
+    public function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    {
+        $view->assign('asyncThumbnails', $this->asyncThumbnails);
+    }
 
     /**
      * Shows a list of assets

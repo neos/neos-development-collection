@@ -65,4 +65,12 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     {
         return $this->objectManager;
     }
+
+    /**
+     * @return Environment
+     */
+    protected function getEnvironment()
+    {
+        return $this->objectManager->get(Environment::class);
+    }
 }

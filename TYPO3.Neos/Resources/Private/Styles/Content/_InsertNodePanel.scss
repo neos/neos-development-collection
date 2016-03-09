@@ -15,11 +15,8 @@
 		overflow-y: auto;
 	}
 
-	ul {
-		font-size: 0;
-	}
-
 	.neos-content-new-selecttype-button {
+		position: relative;
 		float: left;
 		margin: 0;
 		width: 100 / 3 * 1%;
@@ -36,16 +33,6 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 
-			&:focus,
-			&:hover {
-				background-color: $blue;
-				outline: none;
-
-				i {
-					color: #fff;
-				}
-			}
-
 			i {
 				width: 14px;
 				padding-right: $relatedMargin;
@@ -54,5 +41,36 @@
 				vertical-align: baseline;
 			}
 		}
+		&:focus, &:hover {
+			background-color: $blue;
+			button {
+				outline: none;
+			}
+			i {
+				color: #fff;
+			}
+
+			.neos-help-message-button {
+				display: inline-block;
+			}
+		}
+
+		.neos-help-message-button {
+			display: none;
+			position: absolute;
+			top: 0;
+			right: 0;
+			padding-right: $defaultMargin - $tightMargin;
+			line-height: $unit;
+			vertical-align: middle;
+			cursor: pointer;
+			&:focus {
+				display: inline-block; // so when the hover is gone, the popover doesn't disappear
+			}
+		}
+	}
+
+	.neos-popover {
+		width: $popoverSizeForHelpMessages;
 	}
 }

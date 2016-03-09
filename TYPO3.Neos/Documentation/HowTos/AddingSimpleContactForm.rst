@@ -35,7 +35,7 @@ Yaml (Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml) ::
   identifier: contact-form
   label: Contact
   renderingOptions:
-      submitButtonLabel: Send
+    submitButtonLabel: Send
   renderables:
     -
       type: 'TYPO3.Form:Page'
@@ -99,7 +99,7 @@ Html (Sites/Vendor.Site/Resources/Private/Templates/Email/Message.txt) ::
   Hello,
 
   <f:for each="{form.formState.formValues}" as="value" key="label">
-      {label}: {value}
+    {label}: {value}
   </f:for>
 
   Thanks

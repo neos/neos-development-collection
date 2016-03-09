@@ -80,8 +80,15 @@ class WorkspacesTest extends FunctionalTestCase
     {
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
         $personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
-        // Make sure the Workspace was created.
-        $this->liveWorkspace = $personalContext->getWorkspace()->getBaseWorkspace();
+
+        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        if ($this->liveWorkspace === null) {
+            $this->liveWorkspace = new Workspace('live');
+            $this->workspaceRepository->add($this->liveWorkspace);
+            $this->workspaceRepository->add(new Workspace($this->currentTestWorkspaceName, $this->liveWorkspace));
+            $this->persistenceManager->persistAll();
+        }
+
         $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
         $this->rootNode = $personalContext->getNode('/');
 

@@ -6,6 +6,12 @@
 			<trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
 			</trans-unit>
+			<trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			</trans-unit>
+			<trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			</trans-unit>
 			<trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
@@ -15,6 +21,9 @@
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+			<trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			</trans-unit>
 			<trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			</trans-unit>
@@ -23,6 +32,9 @@
 			</trans-unit>
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
 			</trans-unit>
 			<trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
@@ -111,8 +123,26 @@
 			<trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			</trans-unit>
+			<trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			</trans-unit>
+			<trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			</trans-unit>
+			<trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			</trans-unit>
+			<trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			</trans-unit>
 			<trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
+			</trans-unit>
+			<trans-unit id="targetWorkspace" xml:space="preserve">
+				<source>Target workspace</source>
+			</trans-unit>
+			<trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
 			</trans-unit>
 			<trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
@@ -121,7 +151,7 @@
 				<source>Refresh</source>
 			</trans-unit>
 			<trans-unit id="saving" xml:space="preserve">
-				<source>Saving...</source>
+				<source>Saving</source>
 			</trans-unit>
 			<trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
@@ -145,13 +175,13 @@
 				<source>Label</source>
 			</trans-unit>
 			<trans-unit id="nodeTypeCaption" xml:space="preserve">
-				<source>Node type</source>
+				<source>Content Type</source>
 			</trans-unit>
 			<trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			</trans-unit>
 			<trans-unit id="relativePathCaption" xml:space="preserve">
-				<source>Relative path</source>
+				<source>Relative Path</source>
 			</trans-unit>
 
 			<!-- node types -->
@@ -209,6 +239,15 @@
 			</trans-unit>
 			<trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
+			</trans-unit>
+			<trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+				<source>Pending changes</source>
+			</trans-unit>
+			<trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
+			</trans-unit>
+			<trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
 			</trans-unit>
 			<trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
@@ -464,6 +503,20 @@
 			<!-- Miscellaneous -->
 			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			</trans-unit>
+
+			<!-- Service output -->
+			<trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			</trans-unit>
+			<trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
 			</trans-unit>
 		</body>
 	</file>

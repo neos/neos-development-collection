@@ -113,7 +113,7 @@ class ContentContextFactory extends ContextFactory
                     $stringParts[] = $dimensionName . '=' . $dimensionValue;
                 }
                 $stringValue = implode('&', $stringParts);
-            } elseif ($propertyValue instanceof \DateTime) {
+            } elseif ($propertyValue instanceof \DateTimeInterface) {
                 $stringValue = $propertyValue->getTimestamp();
             } elseif ($propertyValue instanceof Site) {
                 $stringValue = $propertyValue->getNodeName();

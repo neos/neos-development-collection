@@ -11,10 +11,15 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+
 /**
  * Functional test case.
  */
-class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class NodeDataTest extends FunctionalTestCase
 {
     /**
      * @var \TYPO3\TYPO3CR\Domain\Service\Context
@@ -37,6 +42,9 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
+        $workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $workspaceRepository->add(new Workspace('live'));
+        $this->persistenceManager->persistAll();
         $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
     }
@@ -55,8 +63,8 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function createNodeFromTemplateUsesIdentifierFromTemplate()
     {
-        $identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
-        $template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $identifier = Algorithms::generateUUID();
+        $template = new NodeTemplate();
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
@@ -71,12 +79,12 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function nodeWithRelatedEntityWillTakeCareOfAddingToPersistence()
     {
-        $identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
-        $template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $identifier = Algorithms::generateUUID();
+        $template = new NodeTemplate();
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+        $newEntity = new Fixtures\RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
         $template->setProperty('entity', $newEntity);
 
@@ -99,12 +107,12 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function nodeWithRelatedEntityWillTakeCareOfUpdatingInPersistence()
     {
-        $identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
-        $template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $identifier = Algorithms::generateUUID();
+        $template = new NodeTemplate();
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+        $newEntity = new Fixtures\RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
         $template->setProperty('entity', $newEntity);
 
@@ -139,14 +147,14 @@ class NodeDataTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function nodeWithRelatedEntitiesWillTakeCareOfAddingToPersistence()
     {
-        $identifier = \TYPO3\Flow\Utility\Algorithms::generateUUID();
-        $template = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $identifier = Algorithms::generateUUID();
+        $template = new NodeTemplate();
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+        $newEntity = new Fixtures\RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
-        $anotherNewEntity = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\RelatedEntity();
+        $anotherNewEntity = new Fixtures\RelatedEntity();
         $anotherNewEntity->setFavoritePlace('Japan');
         $template->setProperty('entity', array($newEntity, $anotherNewEntity));
 

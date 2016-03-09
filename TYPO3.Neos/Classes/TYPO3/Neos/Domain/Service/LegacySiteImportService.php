@@ -29,9 +29,12 @@ use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Exception as NeosException;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The "legacy" Site Import Service which understands the "old" XML format used in Neos 1.0 and 1.1 which does not
@@ -77,6 +80,12 @@ class LegacySiteImportService
      * @var AssetRepository
      */
     protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
 
     /**
      * @Flow\Inject
@@ -179,13 +188,10 @@ class LegacySiteImportService
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
             $rootNode = $contentContext->getRootNode();
-            // We fetch the workspace to be sure it's known to the persistence manager and persist all
-            // so the workspace and site node are persisted before we import any nodes to it.
-            $rootNode->getContext()->getWorkspace();
-            $this->persistenceManager->persistAll();
-            $sitesNode = $rootNode->getNode('/sites');
+
+            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
-                $sitesNode = $rootNode->createSingleNode('sites');
+                $sitesNode = $rootNode->createSingleNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
             // We fetch the workspace to be sure it's known to the persistence manager and persist all
             // so the workspace and site node are persisted before we import any nodes to it.
@@ -206,6 +212,12 @@ class LegacySiteImportService
      */
     protected function createContext()
     {
+        $workspace = $this->workspaceRepository->findOneByName('live');
+        if ($workspace === null) {
+            $this->workspaceRepository->add(new Workspace('live'));
+        }
+        $this->persistenceManager->persistAll();
+
         return $this->contextFactory->create(array(
             'workspaceName' => 'live',
             'invisibleContentShown' => true,

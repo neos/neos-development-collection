@@ -416,21 +416,6 @@ class NodeDataTest extends UnitTestCase
     /**
      * @test
      */
-    public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist()
-    {
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPath', 'getContext'), array(), '', false);
-        $nodeDataRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $this->mockWorkspace)->will($this->returnValue(null));
-
-        $currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('normalizePath', 'getContext'), array('/foo/baz', $this->mockWorkspace));
-        $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
-        $currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
-
-        $this->assertNull($currentNode->getNode('/foo/quux'));
-    }
-
-    /**
-     * @test
-     */
     public function getChildNodeDataFindsUnreducedNodeDataChildren()
     {
         $childNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/bar', $this->mockWorkspace));
@@ -497,52 +482,6 @@ class NodeDataTest extends UnitTestCase
         $mockPersistenceManager->expects($this->once())->method('isNewObject')->with($currentNode)->willReturn(false);
 
         $currentNode->remove();
-    }
-
-    /**
-     * @param string $currentPath
-     * @param string $relativePath
-     * @param string $normalizedPath
-     * @test
-     * @dataProvider abnormalPaths
-     */
-    public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath)
-    {
-        $this->nodeData->_set('path', $currentPath);
-        $this->assertSame($normalizedPath, $this->nodeData->_call('normalizePath', $relativePath));
-    }
-
-    /**
-     * @return array
-     */
-    public function abnormalPaths()
-    {
-        return array(
-            array('/', '/', '/'),
-            array('/', '/.', '/'),
-            array('/', '.', '/'),
-            array('/', 'foo/bar', '/foo/bar'),
-            array('/foo', '.', '/foo'),
-            array('/foo', '/foo/.', '/foo'),
-            array('/foo', '../', '/'),
-            array('/foo/bar', '../baz', '/foo/baz'),
-            array('/foo/bar', '../baz/../bar', '/foo/bar'),
-            array('/foo/bar', '.././..', '/'),
-            array('/foo/bar', '../../.', '/'),
-            array('/foo/bar/baz', '../..', '/foo'),
-            array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
-            array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
-        );
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash()
-    {
-        $node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array(), '', false);
-        $node->_call('normalizePath', 'foo//bar');
     }
 
     /**

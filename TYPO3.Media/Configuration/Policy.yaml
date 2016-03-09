@@ -11,3 +11,14 @@ privilegeTargets:
 
     'TYPO3.Media:ManageAssetCollections':
       matcher: 'method(TYPO3\Media\Controller\AssetController->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
+
+    'TYPO3.Media:Thumbnail':
+      matcher: 'method(TYPO3\Media\Controller\ThumbnailController->thumbnailAction())'
+
+roles:
+
+  'TYPO3.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'TYPO3.Media:Thumbnail'
+        permission: GRANT

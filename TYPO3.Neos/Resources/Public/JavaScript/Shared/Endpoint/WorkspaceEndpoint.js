@@ -20,10 +20,10 @@ define([
 			);
 		},
 
-		publishAll: function(workspaceName) {
+		publishAll: function(sourceWorkspaceName, targetWorkspaceName) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-workspace-publishAll'),
-				{data: {workspaceName: workspaceName}}
+				{data: {sourceWorkspaceName: sourceWorkspaceName, targetWorkspaceName: targetWorkspaceName}}
 			);
 		},
 

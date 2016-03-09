@@ -81,7 +81,6 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
             'empty node path' => array(
                 'path' => '',
                 'expected' => array(
-                    0 => ''
                 )
             ),
             'node path starting with /' => array(
@@ -147,6 +146,31 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
         $this->assertSame($expected, $matches);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataSourceForInvalidContextPaths()
+    {
+        return [
+            'invalid dimension values' => [
+                'path' => 'features@user-admin;language=de_DE,mul_ZZ=something'
+            ],
+            'superfluous separator with more data' => [
+                'path' => 'features@user-admin;language=de_DE;mul_ZZ=multilanguage'
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataSourceForInvalidContextPaths
+     */
+    public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
+    {
+        $result = preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
+        $this->assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
     }
 
     /**
