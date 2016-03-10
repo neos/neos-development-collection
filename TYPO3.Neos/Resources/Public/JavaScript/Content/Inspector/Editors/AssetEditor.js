@@ -43,7 +43,6 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		didInsertElement: function() {
 			this._super();
-			this._readAndDeserializeValue();
 
 			if (!this.get('loadingLabel')) {
 				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
@@ -53,6 +52,16 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				this._makeSortable();
 			}
 		},
+
+		/**
+		 * Observe value to initialize list
+		 */
+		_valueDidChange: function() {
+			if (JSON.stringify(this.get('assets').mapBy('assetUuid')) !== this.get('value')) {
+				this.set('assets', Ember.A());
+				this._readAndDeserializeValue();
+			}
+		}.observes('value'),
 
 		_makeSortable: function() {
 			var itemList, sortable, that = this;
