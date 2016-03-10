@@ -5,15 +5,16 @@ define(
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
 		'Shared/I18n',
-		'Shared/Utility'
+		'Shared/Utility',
+		'Library/sortable/Sortable'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility, Sortable) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
 			placeholder: '',
-			_placeholder: function () {
+			_placeholder: function() {
 				return I18n.translate(this.get('placeholder'), 'Type to search');
 			}.property('placeholder'),
 
@@ -31,7 +32,8 @@ define(
 
 			didInsertElement: function() {
 				var that = this,
-					currentQueryTimer = null;
+					currentQueryTimer = null,
+					select2Ul = null;
 
 				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
 					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
@@ -58,9 +60,10 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span>' + item.text + '</span>');
+						var $itemContent = $('<span><em>' + I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...' + '</em></span>');
 
 						if (item.data) {
+							$itemContent = $('<span data-neos-identifier="' + item.data.identifier + '">' + item.text + '</span>');
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
@@ -106,6 +109,7 @@ define(
 					}
 				});
 
+				this._makeSortable();
 				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
 
 				this.$().on('change', function() {
@@ -118,6 +122,19 @@ define(
 					return;
 				}
 				this.$().select2('data', this.get('content'));
+			},
+
+			_makeSortable: function() {
+				var select2Ul, sortable, that = this;
+				select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first().addClass('neos-sortable');
+				sortable = Sortable.create(select2Ul.get(0), {
+					ghostClass: 'neos-sortable-ghost',
+					chosenClass: 'neos-sortable-chosen',
+					draggable: '.neos-select2-search-choice',
+					onEnd: function(event) {
+						that.$().select2('onSortEnd');
+					}
+				});
 			},
 
 			// actual value used and expected by the inspector:

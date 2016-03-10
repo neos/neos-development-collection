@@ -1,0 +1,16 @@
+.neos-sortable > li {
+	cursor: move;
+}
+
+.neos-sortable-ghost {
+	visibility: hidden;
+
+	&.neos-select2-search-choice {
+		visibility: visible;
+		background-color: $grayDark;
+
+		> * {
+			visibility: hidden;
+		}
+	}
+}
