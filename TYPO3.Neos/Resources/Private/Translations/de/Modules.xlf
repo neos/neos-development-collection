@@ -481,11 +481,11 @@
 		  <source>Edit user "{0}"</source>
 		  <target xml:lang="de">Benutzer "{0}" bearbeiten</target>
       </trans-unit>
-      <trans-unit id="electronicAddress.usage.type.Home" xml:space="preserve">
+      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 		  <source>Home</source>
 		  <target xml:lang="de">Privat</target>
       </trans-unit>
-      <trans-unit id="electronicAddress.usage.type.Work" xml:space="preserve">
+      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 		  <source>Work</source>
 		  <target xml:lang="de">Arbeit</target>
       </trans-unit>
