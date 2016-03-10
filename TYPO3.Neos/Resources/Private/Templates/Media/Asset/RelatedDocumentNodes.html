@@ -10,6 +10,12 @@
       <legend>{asset.resource.filename}</legend>
 
       <table class="neos-info-table">
+        <thead>
+          <tr>
+            <th>{neos:backend.translate(id: 'media.relatedDocumentNodesText', source: 'Modules', package: 'TYPO3.Neos')}</th>
+            <th class="neos-aRight">{neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</th>
+          </tr>
+        </thead>
         <tbody>
           <f:for each="{relatedDocumentNodes}" as="node">
             <tr>

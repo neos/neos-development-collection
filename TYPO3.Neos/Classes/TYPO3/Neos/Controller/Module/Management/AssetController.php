@@ -24,11 +24,9 @@ use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\Neos\Utility\User;
+use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -84,6 +82,12 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
      * @return void
      */
     public function initializeObject()
@@ -105,33 +109,18 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      */
     public function editAction(Asset $asset)
     {
-        $context = $this->createContext();
+        parent::editAction($asset);
+
         $relatedDocumentNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
+            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $this->createContentContext($this->userService->getPersonalWorkspaceName()));
             $flowQuery = new FlowQuery(array($node));
             /** @var Node $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
             $relatedDocumentNodes[$documentNode->getIdentifier()] = $documentNode;
         }
 
-        $this->view->assignMultiple(array(
-            'tags' => $asset->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($asset->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),
-            'asset' => $asset,
-            'assetCollections' => $this->assetCollectionRepository->findAll(),
-            'relatedDocumentNodes' => $relatedDocumentNodes
-        ));
-    }
-
-    /**
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
-     */
-    protected function createContext()
-    {
-        $account = $this->securityContext->getAccount();
-        /** @var Workspace $personalWorkspace */
-        $personalWorkspace = $this->workspaceRepository->findOneByName(User::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier()));
-        return $this->createContentContext($personalWorkspace->getName());
+        $this->view->assign('relatedDocumentNodes', $relatedDocumentNodes);
     }
 
     /**
@@ -162,14 +151,9 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      */
     public function relatedDocumentNodesAction(Asset $asset)
     {
-        //$limit = 2;
-        //$page = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
-        //$offset = $rec_limit * $page ;
-
-        $context = $this->createContext();
         $relatedDocumentNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
+            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $this->createContentContext($this->userService->getPersonalWorkspaceName()));
             $flowQuery = new FlowQuery(array($node));
             /** @var Node $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);

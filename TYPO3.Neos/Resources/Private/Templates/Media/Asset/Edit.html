@@ -77,11 +77,11 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
-			<f:if condition="{relatedDocumentNodes -> f:count()}<=0">
+			<f:if condition="{relatedDocumentNodes -> f:count()}">
         <a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
       </f:if>
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.saveEditing', source: 'Modules', package: 'TYPO3.Neos')}" />
-      <f:if condition="{relatedDocumentNodes -> f:count()}<=0">
+      <f:if condition="{relatedDocumentNodes -> f:count()}">
         <div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
           <div class="neos-modal">
             <div class="neos-modal-header">
