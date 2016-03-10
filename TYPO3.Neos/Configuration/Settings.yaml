@@ -397,6 +397,20 @@ TYPO3:
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
 
+    transliterationRules:
+      da:
+        'Å': 'Aa'
+        'Ø': 'Oe'
+        'å': 'aa'
+        'ø': 'oe'
+      de:
+        'Ä': 'Ae'
+        'Ö': 'Oe'
+        'Ü': 'Ue'
+        'ä': 'ae'
+        'ö': 'oe'
+        'ü': 'ue'
+
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:
