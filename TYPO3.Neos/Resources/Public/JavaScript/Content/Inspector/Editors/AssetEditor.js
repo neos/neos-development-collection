@@ -65,17 +65,19 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		_makeSortable: function() {
 			var itemList, sortable, that = this;
-			itemList = this.$().find('ul.neos-inspector-file-list').first();
+			itemList = this.$().find('ul.neos-inspector-file-list').first().addClass('neos-sortable');
 			sortable = Sortable.create(itemList.get(0), {
-				onUpdate: function (event) {
+				ghostClass: 'neos-sortable-ghost',
+				chosenClass: 'neos-sortable-chosen',
+				onUpdate: function(event) {
 					var data = [];
-					itemList.find('li').each(function () {
+					itemList.find('li').each(function() {
 						var currentIdentifier = $(this).find('[data-neos-identifier]').data('neos-identifier');
-						$(that.get('assets')).each(function () {
+						$(that.get('assets')).each(function() {
 							if (!this.assetUuid) {
 								return;
 							}
-							if (this.assetUuid == currentIdentifier) {
+							if (this.assetUuid === currentIdentifier) {
 								data.push(this);
 							}
 						});

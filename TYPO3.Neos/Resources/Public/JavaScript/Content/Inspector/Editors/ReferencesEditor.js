@@ -14,7 +14,7 @@ define(
 			attributeBindings: ['type'],
 			type: 'hidden',
 			placeholder: '',
-			_placeholder: function () {
+			_placeholder: function() {
 				return I18n.translate(this.get('placeholder'), 'Type to search');
 			}.property('placeholder'),
 
@@ -67,9 +67,9 @@ define(
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
-							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : 'icon-file-text';
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui ? NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon : null;
 							if (iconClass) {
-								$itemContent.prepend('<i class="neos-ui-drag-handle ' + iconClass + '"></i>');
+								$itemContent.prepend('<i class="' + iconClass + '"></i>');
 							}
 						}
 
@@ -112,7 +112,7 @@ define(
 				this._makeSortable();
 				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
 
-				this.$().on('change', function () {
+				this.$().on('change', function() {
 					that.set('content', $(this).select2('data'));
 				});
 			},
@@ -126,30 +126,12 @@ define(
 
 			_makeSortable: function() {
 				var select2Ul, sortable, that = this;
-				select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first();
+				select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first().addClass('neos-sortable');
 				sortable = Sortable.create(select2Ul.get(0), {
-					filter: '.neos-select2-search-field',
-					onUpdate: function (event) {
-						var data = [];
-						select2Ul.find('.neos-select2-search-choice').each(function () {
-							var currentIdentifier = $(this).find('[data-neos-identifier]').data('neos-identifier');
-							$(that.$().select2('data')).each(function () {
-								if (!this.data) {
-									return;
-								}
-								if (this.data.identifier == currentIdentifier) {
-									data.push(this);
-								}
-							});
-						});
-						that.$().select2('data', data);
-						that.set('content', that.$().select2('data'));
-					},
-					onStart: function (event) {
-						that.$().select2('onSortStart');
-					},
-					// dragging ended
-					onEnd: function (event) {
+					ghostClass: 'neos-sortable-ghost',
+					chosenClass: 'neos-sortable-chosen',
+					draggable: '.neos-select2-search-choice',
+					onEnd: function(event) {
 						that.$().select2('onSortEnd');
 					}
 				});
