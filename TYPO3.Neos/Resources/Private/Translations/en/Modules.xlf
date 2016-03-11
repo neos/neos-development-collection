@@ -748,17 +748,20 @@
 			<trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			</trans-unit>
-			<trans-unit id="media.relatedDocumentNodes" xml:space="preserve">
-				<source>Used in</source>
-			</trans-unit>
-      <group id="media.relatedDocumentNodesText" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedDocumentNodesText[0]">
-          <source>Document</source>
+      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedDocumentNodes[0]">
+          <source>Used in {0} Document</source>
         </trans-unit>
-        <trans-unit id="media.relatedDocumentNodesText[1]">
-          <source>Documents</source>
+        <trans-unit id="media.relatedDocumentNodes[1]">
+          <source>Used in {0} Documents</source>
         </trans-unit>
       </group>
+      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve">
+				<source>Document</source>
+			</trans-unit>
+      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
+				<source>Reference</source>
+			</trans-unit>
 			<trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
 			</trans-unit>

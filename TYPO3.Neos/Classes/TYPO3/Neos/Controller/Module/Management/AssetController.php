@@ -157,7 +157,8 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             $flowQuery = new FlowQuery(array($node));
             /** @var Node $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-            $relatedDocumentNodes[$documentNode->getIdentifier()] = $documentNode;
+            $relatedDocumentNodes[$documentNode->getIdentifier()]['documentNode'] = $documentNode;
+            $relatedDocumentNodes[$documentNode->getIdentifier()]['node'][] = $relatedNodeData;
         }
 
         $this->view->assignMultiple(array(
