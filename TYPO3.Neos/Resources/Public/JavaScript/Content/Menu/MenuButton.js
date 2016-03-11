@@ -8,13 +8,14 @@ define(
 	], function(Ember, $, Button, MenuPanelController, I18n) {
 		return Button.extend({
 			elementId: ['neos-menu-button'],
-			title: I18n.translate('toggleMenu', 'Toggle menu'),
 			classNames: ['neos-button'],
 			classNameBindings: ['controller.menuPanelMode:neos-pressed'],
+
 
 			controller: MenuPanelController,
 
 			init: function() {
+				this.set('title', I18n.translate('toggleMenu', 'Toggle menu'));
 				if (this.get('controller.configuration.menuPanelStickyMode') && this.get('controller.configuration.isMenuPanelStickyModeShown')) {
 					this.toggleProperty('controller.menuPanelMode');
 				}

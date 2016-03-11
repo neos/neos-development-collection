@@ -156,8 +156,11 @@ define(
 
 			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'),
 				iconClass: 'icon-plus',
+				init: function() {
+					this._super();
+					this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'));
+				},
 
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
@@ -172,8 +175,11 @@ define(
 
 			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'),
 				iconClass: 'icon-paste',
+				init: function() {
+					this._super();
+					this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'));
+				},
 
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
@@ -183,7 +189,7 @@ define(
 						this.get('parentView').paste(position);
 					}
 					$(event.target).filter('button').click();
-				},
+				}
 			}),
 
 			currentFocusedNodeIsHidden: function() {
@@ -265,10 +271,6 @@ define(
 				autoFocus: false,
 				clickFolderMode: 1,
 				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
-				strings: {
-					loading: I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
-					loadError: I18n.translate('TYPO3.Neos:Main:loadError', 'Load error!')
-				},
 				cookieId: 'nodes',
 				isDblClick: false,
 				dnd: {
@@ -376,7 +378,12 @@ define(
 				if (this.$nodeTree) {
 					return;
 				}
-				this.$nodeTree = this.$(this.treeSelector).dynatree(this.get('treeConfiguration'));
+				var treeConfiguration = this.get('treeConfiguration');
+				treeConfiguration['strings'] = {
+					loading: I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
+					loadError: I18n.translate('TYPO3.Neos:Main:loadError', 'Load error!')
+				};
+				this.$nodeTree = this.$(this.treeSelector).dynatree(treeConfiguration);
 
 				// Automatically expand the first node when opened
 				this.$nodeTree.dynatree('getRoot').getChildren()[0].expand(true);

@@ -47,8 +47,11 @@ function (
 
 		NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedNewPositions',
-			title: I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'),
 			iconClass: 'icon-plus',
+			init: function() {
+				this._super();
+				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'));
+			},
 
 			mouseUp: function(event) {
 				clearTimeout(this.get('downTimer'));
@@ -58,13 +61,16 @@ function (
 					ContentCommands.create(newPosition);
 				}
 				$(event.target).filter('button').click();
-			},
+			}
 		}),
 
 		PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedPastePositions',
-			title: I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'),
 			iconClass: 'icon-paste',
+			init: function() {
+				this._super();
+				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'));
+			},
 
 			mouseUp: function(event) {
 				clearTimeout(this.get('downTimer'));
