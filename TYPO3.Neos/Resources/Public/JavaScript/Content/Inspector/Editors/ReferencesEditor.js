@@ -5,15 +5,16 @@ define(
 		'Shared/HttpRestClient',
 		'Shared/NodeTypeService',
 		'Shared/I18n',
-		'Shared/Utility'
+		'Shared/Utility',
+		'Library/sortable/Sortable'
 	],
-	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility) {
+	function($, Ember, HttpRestClient, NodeTypeService, I18n, Utility, Sortable) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
 			placeholder: '',
-			_placeholder: function () {
+			_placeholder: function() {
 				return I18n.translate(this.get('placeholder'), 'Type to search');
 			}.property('placeholder'),
 
@@ -31,7 +32,8 @@ define(
 
 			didInsertElement: function() {
 				var that = this,
-					currentQueryTimer = null;
+					currentQueryTimer = null,
+					select2Ul = null;
 
 				if (this.get('startingPoint') === null || this.get('startingPoint') === '') {
 					this.set('startingPoint', $('#neos-document-metadata').data('neos-site-node-context-path'));
@@ -58,9 +60,10 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span>' + item.text + '</span>');
+						var $itemContent = $('<span><em>' + I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...' + '</em></span>');
 
 						if (item.data) {
+							$itemContent = $('<span data-neos-identifier="' + item.data.identifier + '">' + item.text + '</span>');
 							var info = item.data.path ? item.data.path : item.data.identifier;
 							$itemContent.attr('title', $itemContent.text().trim() + (info ? ' (' + info + ')' : ''));
 
@@ -77,8 +80,8 @@ define(
 							window.clearTimeout(currentQueryTimer);
 						}
 						currentQueryTimer = window.setTimeout(function() {
-							var parameters;
-							var $metadata = $('#neos-document-metadata');
+							var parameters,
+								$metadata = $('#neos-document-metadata');
 							currentQueryTimer = null;
 
 							parameters = {
@@ -106,6 +109,7 @@ define(
 					}
 				});
 
+				this._makeSortable();
 				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('_placeholder'));
 
 				this.$().on('change', function() {
@@ -120,6 +124,19 @@ define(
 				this.$().select2('data', this.get('content'));
 			},
 
+			_makeSortable: function() {
+				var select2Ul, sortable, that = this;
+				select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first().addClass('neos-sortable');
+				sortable = Sortable.create(select2Ul.get(0), {
+					ghostClass: 'neos-sortable-ghost',
+					chosenClass: 'neos-sortable-chosen',
+					draggable: '.neos-select2-search-choice',
+					onEnd: function(event) {
+						that.$().select2('onSortEnd');
+					}
+				});
+			},
+
 			// actual value used and expected by the inspector:
 			value: function(key, value) {
 				var that = this,
@@ -129,31 +146,28 @@ define(
 
 				if (value && value !== currentValue) {
 					// Remove all items so they don't appear multiple times.
-					// TODO: cache already found items and load multiple node records at once
 					that.set('content', []);
-					// load names of already selected nodes via the Node REST service:
-					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
-						var parameters;
-						var $metadata = $('#neos-document-metadata');
-						var item = Ember.Object.extend({
-							id: nodeIdentifier,
-							text: function() {
-								return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
-							}.property()
-						}).create();
+					var parameters = {
+						nodeIdentifiers: JSON.parse(value),
+						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					};
+					HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
+						$(result.resource).find('li').each(function(index, value) {
+							var nodeIdentifier = $('.node-identifier', value).text().trim(),
+								label = $('.node-label', value).text().trim(),
+								icon = $('.node-icon', value).text().trim();
 
-						that.get('content').pushObject(item);
+							var item = Ember.Object.extend({
+								id: nodeIdentifier
+							}).create();
 
-						parameters = {
-							workspaceName: $metadata.data('neos-context-workspace-name'),
-							dimensions: $metadata.data('neos-context-dimensions')
-						};
-						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-							item.set('text', $('.node-label', result.resource).text().trim());
-							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: Utility.removeContextPath($('.node-frontend-uri', result.resource).text().trim().replace('.html', '')), nodeType: $('.node-type', result.resource).text()});
-							that._updateSelect2();
+							item.set('text', $('.node-label', value).text().trim());
+							item.set('data', {identifier: $('.node-identifier', value).text(), path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()});
+
+							that.get('content').pushObject(item);
 						});
-
+						that._updateSelect2();
 					});
 					that._updateSelect2();
 				}

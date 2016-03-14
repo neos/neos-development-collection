@@ -307,6 +307,7 @@
 			border-left: none;
 			border-right: none;
 			border-bottom: 1px solid $grayDark;
+			border-radius: 0;
 
 			div {
 				line-height: $relatedMargin + $defaultMargin;
@@ -347,8 +348,8 @@
 
 				i {
 					position: absolute;
-					left: 14px;
-					top: 13px;
+					left: 13px;
+					top: 12px;
 				}
 			}
 		}

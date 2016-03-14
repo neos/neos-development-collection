@@ -60,3 +60,23 @@ TYPO3\Neos\Service\XliffService:
 
 League\CommonMark\CommonMarkConverter:
   className: League\CommonMark\CommonMarkConverter
+
+TYPO3\Neos\Controller\Backend\BackendController:
+  properties:
+    loginTokenCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Neos_LoginTokenCache
+
+TYPO3\Neos\Controller\LoginController:
+  properties:
+    loginTokenCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Neos_LoginTokenCache

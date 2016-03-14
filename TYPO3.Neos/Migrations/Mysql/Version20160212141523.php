@@ -5,10 +5,11 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Adjust DB schema to a clean state (remove cruft that built up in the past)
+ * Adjust some (old) index names to current Doctrine DBAL behavior (see https://jira.neos.io/browse/FLOW-427)
  */
-class Version20150309215317 extends AbstractMigration
+class Version20160212141523 extends AbstractMigration
 {
+
     /**
      * @param Schema $schema
      * @return void
@@ -36,7 +37,6 @@ class Version20150309215317 extends AbstractMigration
             $this->addSql("CREATE UNIQUE INDEX UNIQ_FC846DAAE931A6F5 ON typo3_neos_domain_model_user (preferences)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_user ADD CONSTRAINT typo3_neos_domain_model_user_ibfk_1 FOREIGN KEY (preferences) REFERENCES typo3_neos_domain_model_userpreferences (persistence_object_identifier)");
         }
-        $this->addSql("DROP INDEX uid ON typo3_neos_eventlog_domain_model_event");
     }
 
     /**
@@ -46,8 +46,6 @@ class Version20150309215317 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-
-        $this->addSql("CREATE UNIQUE INDEX uid ON typo3_neos_eventlog_domain_model_event (uid)");
 
         $indexes = $this->sm->listTableIndexes('typo3_neos_domain_model_domain');
         if (array_key_exists('idx_8e49a537694309e4', $indexes)) {

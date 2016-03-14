@@ -8432,6 +8432,19 @@ neos .icon-fw {
 .neos #neos-inspector .neos-inspector-form label.neos-inline + label:not(.neos-inline) {
   margin-top: 12px;
 }
+.neos #neos-inspector .neos-inspector-form .neos-sortable > li {
+  cursor: move;
+}
+.neos #neos-inspector .neos-inspector-form .neos-sortable-ghost {
+  visibility: hidden;
+}
+.neos #neos-inspector .neos-inspector-form .neos-sortable-ghost.neos-select2-search-choice {
+  visibility: visible;
+  background-color: #222;
+}
+.neos #neos-inspector .neos-inspector-form .neos-sortable-ghost.neos-select2-search-choice > * {
+  visibility: hidden;
+}
 .neos #neos-inspector .neos-inspector-form .neos-input-prepend,
 .neos #neos-inspector .neos-inspector-form .neos-input-append {
   display: table;
@@ -15593,6 +15606,7 @@ disabled look for disabled choices in the results dropdown
   border-left: none;
   border-right: none;
   border-bottom: 1px solid #222;
+  border-radius: 0;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice div {
   line-height: 24px;
@@ -15633,8 +15647,8 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-search-choice-close i {
   position: absolute;
-  left: 14px;
-  top: 13px;
+  left: 13px;
+  top: 12px;
 }
 
 .neos-select2-with-searchbox .neos-select2-search:after {

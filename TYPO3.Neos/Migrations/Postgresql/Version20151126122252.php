@@ -21,6 +21,8 @@ class Version20151126122252 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
+        $this->addSql("TRUNCATE TABLE typo3_neos_eventlog_domain_model_event");
+
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER data TYPE jsonb USING data::jsonb");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER data DROP DEFAULT");
 
@@ -35,6 +37,8 @@ class Version20151126122252 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+
+        $this->addSql("TRUNCATE TABLE typo3_neos_eventlog_domain_model_event");
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER data TYPE TEXT");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER data DROP DEFAULT");

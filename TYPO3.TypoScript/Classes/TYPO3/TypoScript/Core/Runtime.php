@@ -450,7 +450,9 @@ class Runtime
 
         $this->lastEvaluationStatus = $evaluationStatus;
 
-        $output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $typoScriptObject);
+        if ($evaluateObject) {
+            $output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $typoScriptObject);
+        }
         $output = $this->runtimeContentCache->postProcess($cacheContext, $typoScriptObject, $output);
         return $output;
     }
