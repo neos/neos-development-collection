@@ -27,6 +27,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
