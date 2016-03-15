@@ -172,6 +172,8 @@ TYPO3:
 
           presets:
             default:
+              # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
+              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'TYPO3.Neos:Document'
 
       inspector:
