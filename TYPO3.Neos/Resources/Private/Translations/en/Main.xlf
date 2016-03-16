@@ -441,6 +441,15 @@
 			<trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
 			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			</trans-unit>
+			<trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			</trans-unit>
 			<trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
 			</trans-unit>

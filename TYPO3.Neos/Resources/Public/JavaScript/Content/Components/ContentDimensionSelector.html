@@ -28,20 +28,16 @@
 			<div class="neos-header">{{translate id="content.dimension.createDialog.header" fallback="Start with an empty or pre-filled document?"}}</div>
 		</div>
 		<div>
-			{{!-- TODO: {{translate}} with parameters --}}
 			<div class="neos-subheader">
-				<div>This {{view._nodeTypeLabel}} does not exist yet in {{controller.currentDimensionChoiceText}}.</div>
+				<div>{{boundTranslate id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" nodeTypeLabelBinding="view._nodeTypeLabel" currentDimensionChoiceTextBinding="controller.currentDimensionChoiceText" fallback="This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}."}}</div>
 
 				<div>
-					You can create it now, either starting with an empty {{view._nodeTypeLabel}}
-					or copying all content from the currently visible {{view._nodeTypeLabel}}
-					in {{controller.currentDocumentDimensionChoiceText}}.
+					{{boundTranslate id="content.dimension.createDialog.createEmptyOrCopy" nodeTypeLabelBinding="view._nodeTypeLabel" currentDocumentDimensionChoiceTextBinding="controller.currentDocumentDimensionChoiceText" fallback="You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}."}}
 				</div>
 
 				{{#if controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}}
 					<div>
-						Additionally, there are {{controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}} ancestor documents
-						which do not exist in the chosen variant either, and which will be created as well.
+						{{boundTranslate id="content.dimension.createDialog.existingAncestorDocuments" numberOfNodesMissingInRootlineBinding="controller.showInitialTranslationDialog.numberOfNodesMissingInRootline" fallback="Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well."}}
 					</div>
 				{{/if}}
 			</div>
