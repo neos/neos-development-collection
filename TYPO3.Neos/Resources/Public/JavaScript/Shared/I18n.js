@@ -170,7 +170,7 @@ define(
 				var placeholderElements = contentBetweenBrackets.replace(' ', '').split(',');
 
 				var valueIndex = placeholderElements[0];
-				if (!parameters[valueIndex]) {
+				if (typeof parameters[valueIndex] === undefined) {
 					window.console.error('Placeholder "' + valueIndex + '" was not provided, make sure you provide values for every placeholder.');
 					break;
 				}
