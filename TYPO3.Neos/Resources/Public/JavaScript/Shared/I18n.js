@@ -96,7 +96,7 @@ define(
 				return fallback;
 			}
 
-			if (parameters && parameters.length > 0) {
+			if (!_.isEmpty(parameters)) {
 				translatedValue = this._resolvePlaceholders(translatedValue, parameters);
 			}
 
