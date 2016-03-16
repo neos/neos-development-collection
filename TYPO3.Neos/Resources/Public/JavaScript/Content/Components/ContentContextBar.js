@@ -31,15 +31,26 @@ define(
       Configuration: Configuration,
 
       /**
-       * Computed property of preview uri
+       * Update the preview uri when the page is loaded (happens when navigating, switching
+       * target workspace or changing content dimensions).
        */
-      previewUri: function() {
+      init: function () {
+        var that = this;
+        ContentModule.on('pageLoaded', function () {
+          that.updatePreviewUri();
+        });
+      },
+
+      /**
+       * Update the preview uri
+       */
+      updatePreviewUri: function () {
         var targetWorkspaceName = this.get('targetWorkspaceController.targetWorkspace.name');
         if (targetWorkspaceName === 'live') {
-          return location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '');
+          this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, ''));
         } else {
-          return location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '@' + targetWorkspaceName);
+          this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '@' + targetWorkspaceName));
         }
-      }.property('targetWorkspaceController.targetWorkspace', 'contentDimensionController.selectedDimensions')
+      }
     });
   });
