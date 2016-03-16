@@ -89,7 +89,7 @@
 			<target xml:lang="de">Änderungen</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
-			<target xml:lang="de" state="translated">Seite in Arbeitsbereich "{0}" öffnen</target></trans-unit>
+			<target xml:lang="de" state="translated">Seite in "{0}" Arbeitsbereich öffnen</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="de">Dies ist Ihr persönlicher Arbeitsbereich, welcher nicht gelöscht werden kann.</target></trans-unit>
@@ -280,10 +280,6 @@
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
 			<target xml:lang="de">Mehr laden</target><alt-trans><target xml:lang="de">Mehr Laden</target></alt-trans></trans-unit>
-      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
-		  <source>This node has been removed in the meantime</source>
-		  <target xml:lang="de">Dieses Element wurde in der Zwischenzeit entfernt</target>
-      </trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -321,9 +317,9 @@
       <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target xml:lang="de">Benutzer erstellen</target></trans-unit>
-      <trans-unit id="user.actions.new.subtitle" xml:space="preserve" approved="yes">
+      <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="de">Neuen Benutzer erstellen</target></trans-unit>
+			<target xml:lang="de" state="needs-translation">Create a new user</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="de">Benutzerdaten</target></trans-unit>
@@ -441,144 +437,12 @@
       <trans-unit id="users.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
 			<target xml:lang="de">Rollen</target></trans-unit>
-      <trans-unit id="users.name" xml:space="preserve">
-		  <source>Name</source>
-		  <target xml:lang="de">Name</target>
-      </trans-unit>
-      <trans-unit id="users.accountsAndRoles" xml:space="preserve">
-		  <source>Accounts and Roles</source>
-		  <target xml:lang="de">Accounts und Rollen</target>
-      </trans-unit>
-      <trans-unit id="users.tooltip.view" xml:space="preserve">
-		  <source>View user</source>
-		  <target xml:lang="de">Benutzerdetails anzeigen</target>
-      </trans-unit>
-      <trans-unit id="users.tooltip.edit" xml:space="preserve">
-		  <source>Edit user</source>
-		  <target xml:lang="de">Benutzer bearbeiten</target>
-      </trans-unit>
-      <trans-unit id="users.tooltip.delete" xml:space="preserve">
-		  <source>Delete user</source>
-		  <target xml:lang="de">Benutzer löschen</target>
-      </trans-unit>
-      <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
-		  <source>You are logged in as this user and you cannot delete yourself.</source>
-		  <target xml:lang="de">Sie sind als dieser Nutzer angemeldet und können sich nicht selbst löschen.</target>
-      </trans-unit>
-      <trans-unit id="users.message.reallyDelete" xml:space="preserve">
-		  <source>Do you really want to delete the user "{0}"?</source>
-		  <target xml:lang="de">Benutzer "{0}" wirklich löschen?</target>
-      </trans-unit>
-      <trans-unit id="users.message.willBeDeleted" xml:space="preserve">
-		  <source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-		  <target xml:lang="de">Dies wird diesen Benutzer, die zugehörigen Accounts sowie den persönlichen Arbeitsbereich inklusive der unveröffentlichten Änderungen löschen.</target>
-      </trans-unit>
-      <trans-unit id="users.message.confirmDelete" xml:space="preserve">
-		  <source>Yes, delete the user</source>
-		  <target xml:lang="de">Ja, Benutzer löschen</target>
-      </trans-unit>
-      <trans-unit id="users.editUser" xml:space="preserve">
-		  <source>Edit user "{0}"</source>
-		  <target xml:lang="de">Benutzer "{0}" bearbeiten</target>
-      </trans-unit>
-      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
-		  <source>Home</source>
-		  <target xml:lang="de">Privat</target>
-      </trans-unit>
-      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
-		  <source>Work</source>
-		  <target xml:lang="de">Arbeit</target>
-      </trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
 			<target xml:lang="de">Paketverwaltung</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="de">Das Paketverwaltungs-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target></trans-unit>
-      <trans-unit id="packages.index.legend" xml:space="preserve">
-		  <source>Available packages</source>
-		  <target xml:lang="de">Verfügbare Pakete</target>
-      </trans-unit>
-      <trans-unit id="packages.name" xml:space="preserve">
-		  <source>Package Name</source>
-		  <target xml:lang="de">Paketname</target>
-      </trans-unit>
-      <trans-unit id="packages.key" xml:space="preserve">
-		  <source>Package Key</source>
-		  <target xml:lang="de">Paketschlüssel</target>
-      </trans-unit>
-      <trans-unit id="packages.type" xml:space="preserve">
-		  <source>Package Type</source>
-		  <target xml:lang="de">Pakettyp</target>
-      </trans-unit>
-      <trans-unit id="packages.deactivated" xml:space="preserve">
-		  <source>Deactivated</source>
-		  <target xml:lang="de">Deaktiviert</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
-		  <source>This package is currently frozen. Click to unfreeze it.</source>
-		  <target xml:lang="de">Dieses Paket ist momentan eingeforen. Klicken um es freizugeben.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
-		  <source>Freeze the package in order to speed up your website.</source>
-		  <target xml:lang="de">Paket einfrieren um die Website zu beschleunigen.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
-		  <source>This package is protected and cannot be deactivated.</source>
-		  <target xml:lang="de">Das Paket ist geschützt und kann nicht deaktiviert werden.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
-		  <source>Deactivate Package</source>
-		  <target xml:lang="de">Paket deaktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
-		  <source>Activate Package</source>
-		  <target xml:lang="de">Paket aktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
-		  <source>This package is protected and cannot be deleted.</source>
-		  <target xml:lang="de">Das Paket ist geschützt und kann nicht gelöscht werden.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
-		  <source>Delete Package</source>
-		  <target xml:lang="de">Paket löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
-		  <source>Do you really want to delete "{0}"?</source>
-		  <target xml:lang="de">Paket "{0}" wirklich löschen?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
-		  <source>Yes, delete the package</source>
-		  <target xml:lang="de">Ja, Paket löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
-		  <source>Yes, delete the packages</source>
-		  <target xml:lang="de">Ja, Pakete löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
-		  <source>Do you really want to delete the selected packages?</source>
-		  <target xml:lang="de">Ausgewählte Pakete wirklich löschen?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve">
-		  <source>Freeze selected packages</source>
-		  <target xml:lang="de">Ausgewählte Pakete einfrieren</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
-		  <source>Unfreeze selected packages</source>
-		  <target xml:lang="de">Ausgewählte Pakete freigeben</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve">
-		  <source>Delete selected packages</source>
-		  <target xml:lang="de">Ausgewählte Pakete löschen</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
-		  <source>Deactivate selected packages</source>
-		  <target xml:lang="de">Ausgewählte Pakete deaktivieren</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve">
-		  <source>Activate selected packages</source>
-		  <target xml:lang="de">Ausgewählte Pakete aktivieren</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="de">Websites Verwaltung</target><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
@@ -839,21 +703,9 @@
       <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
 			<target xml:lang="de">Tag löschen</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
-		  <source>Enter tag label</source>
-		  <target xml:lang="de">Tag-Bezeichnung eingeben</target>
-      </trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
 			<target xml:lang="de">Tag erstellen</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve">
-		  <source>All assets</source>
-		  <target xml:lang="de">Alle Assets</target>
-      </trans-unit>
-      <trans-unit id="media.tags.all" xml:space="preserve">
-		  <source>Alle</source>
-		  <target xml:lang="de">Alle</target>
-      </trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
 			<target xml:lang="de">Assets ohne Tags</target></trans-unit>

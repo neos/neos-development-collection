@@ -308,9 +308,9 @@
       <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target xml:lang="lv">Izveidot lietotāju</target></trans-unit>
-      <trans-unit id="user.actions.new.subtitle" xml:space="preserve" approved="yes">
+      <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="lv">Izveidot jaunu lietotāju</target></trans-unit>
+			<target xml:lang="lv" state="needs-translation">Create a new user</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="lv">Lietotāja dati</target></trans-unit>

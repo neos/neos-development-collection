@@ -309,9 +309,9 @@
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="km" state="translated">ការបង្កើតអក្នប្រើប្រាស់</target></trans-unit>
-      <trans-unit id="user.actions.new.subtitle" xml:space="preserve">
+      <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="km" state="translated">ការបង្កើតអក្នប្រើប្រាស់ថ្មី</target></trans-unit>
+			<target xml:lang="km" state="needs-translation">Create a new user</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="km" state="translated">ទិន្នន័យរប​ស់​អ្នក​ប្រើ​ប្រាស់</target></trans-unit>

@@ -300,13 +300,13 @@
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="la-LA">crwdns86:0crwdne86:0</target></trans-unit>
-      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="la-LA">crwdns87:0crwdne87:0</target></trans-unit>
-      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="la-LA">crwdns88:0crwdne88:0</target></trans-unit>
-      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="la-LA">crwdns89:0crwdne89:0</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">

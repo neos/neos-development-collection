@@ -300,13 +300,13 @@
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="pt-BR" state="translated">Mudar escrita</target></trans-unit>
-      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="pt-BR" state="translated">Informação adicional</target></trans-unit>
-      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="pt-BR" state="translated">Visibilidade</target></trans-unit>
-      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
+      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="pt-BR" state="translated">Opções de Documento</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
