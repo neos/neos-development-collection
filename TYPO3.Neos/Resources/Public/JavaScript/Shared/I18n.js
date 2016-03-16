@@ -49,9 +49,17 @@ define(
 				translateHelperClosure;
 
 			translateHelperClosure = function (options) {
-				var attrs;
-				attrs = options.hash;
-				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
+				var attrs = options.hash;
+				parameters = Object.keys(attrs).reduce(function(parameters, attr) {
+					if (!attr.match(/(id|fallback|package|source|boundOptions|(.+)Binding)$/)) {
+						parameters.push(attr);
+					}
+					return parameters;
+				}, []).reduce(function(parameters, attr) {
+					parameters[attr] = attrs[attr];
+					return parameters;
+				}, {});
+				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source, parameters);
 			};
 
 			Ember.Handlebars.registerHelper('translate', translateHelperClosure);
