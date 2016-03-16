@@ -186,7 +186,7 @@
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="el" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="el" state="translated">Γενικά</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="el" state="needs-translation">Structure</target></trans-unit>
@@ -454,7 +454,7 @@
 			<target xml:lang="el" state="needs-translation">Authenticating</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="el" state="needs-translation">Logout</target></trans-unit>
+			<target xml:lang="el" state="translated">Αποσύνδεση</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>

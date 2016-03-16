@@ -300,7 +300,7 @@
 			<trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
 			</trans-unit>
-			<trans-unit id="user.actions.new.subtitle" xml:space="preserve">
+			<trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
 			</trans-unit>
 			<trans-unit id="users.new.userData" xml:space="preserve">
