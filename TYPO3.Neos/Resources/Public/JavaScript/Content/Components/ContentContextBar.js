@@ -51,6 +51,6 @@ define(
         } else {
           this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '@' + targetWorkspaceName));
         }
-      }
-    });
+      }.observes('targetWorkspaceController.targetWorkspace', 'contentDimensionController.selectedDimensions')
+    })
   });
