@@ -146,8 +146,8 @@
 		</h2>
 		<ul class="neos-media-aside-list">
 			<li class="neos-media-list-all">
-				<f:link.action action="index" title="All assets" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
-					{neos:backend.translate(id: 'media.filter.all', source: 'Modules', package: 'TYPO3.Neos')}
+				<f:link.action action="index" title="{neos:backend.translate(id: 'media.tags.title.all', source: 'Modules', package: 'TYPO3.Neos')}" class="{f:if(condition: '{tagMode} == 1', then: 'neos-active')}" arguments="{tagMode: 1}">
+					{neos:backend.translate(id: 'media.tags.all', source: 'Modules', package: 'TYPO3.Neos')}
 					<span class="count">{allCount}</span>
 				</f:link.action>
 			</li>
@@ -197,7 +197,7 @@
 			</div>
 		</ul>
 		<f:form action="createTag" id="neos-tags-create-form">
-			<f:form.textfield name="label" placeholder="Enter tag label" /><br /><br />
+			<f:form.textfield name="label" placeholder="{neos:backend.translate(id: 'media.placeholder.createTag', source: 'Modules', package: 'TYPO3.Neos')}" /><br /><br />
 			<button type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'media.createTag', source: 'Modules', package: 'TYPO3.Neos')}</button>
 		</f:form>
 	</div>

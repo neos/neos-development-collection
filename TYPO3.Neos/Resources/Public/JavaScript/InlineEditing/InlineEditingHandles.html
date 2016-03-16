@@ -17,7 +17,7 @@
 
 			{{view view.PastePositionSelectorButton}}
 
-			<button class="neos-button action-remove" title="{{translate id='remove' value='Remove'}}" {{bindAttr disabled="view.currentFocusedNodeCanBeModified"}} {{action "remove" target="view"}} tabindex="-1">
+			<button class="neos-button action-remove" title="{{translate id='remove' fallback='Remove'}}" {{bindAttr disabled="view.currentFocusedNodeCanBeModified"}} {{action "remove" target="view"}} tabindex="-1">
 				<i class="icon-trash"></i>
 			</button>
 		{{/if}}

@@ -81,6 +81,14 @@
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve">
+		  <source>Hide</source>
+		  <target xml:lang="de">Verbergen</target>
+      </trans-unit>
+      <trans-unit id="unhide" xml:space="preserve">
+		  <source>Unhide</source>
+		  <target xml:lang="de">Anzeigen</target>
+      </trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="de">Lade</target><alt-trans><target xml:lang="de">Lädt</target></alt-trans></trans-unit>
@@ -150,6 +158,10 @@
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
 			<target xml:lang="de">Aktualisieren</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+		  <source>Save</source>
+		  <target xml:lang="de">Speichern</target>
+      </trans-unit>
       <trans-unit id="saving" xml:space="preserve" approved="yes">
 				<source>Saving</source>
 			<target xml:lang="de">Speichert</target><alt-trans><target xml:lang="de">Speichert...</target></alt-trans><alt-trans><target xml:lang="de">Speichern...</target></alt-trans></trans-unit>
@@ -183,6 +195,82 @@
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
 			<target xml:lang="de">Relativer Pfad</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve">
+		  <source>Version</source>
+		  <target xml:lang="de">Version</target>
+      </trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve">
+		  <source>This operation cannot be undone.</source>
+		  <target xml:lang="de">Dieser Vorgang kann nicht rückgängig gemacht werden.</target>
+      </trans-unit>
+      <trans-unit id="asset" xml:space="preserve">
+		  <source>Asset</source>
+		  <target xml:lang="de">Datei</target>
+      </trans-unit>
+      <trans-unit id="created" xml:space="preserve">
+		  <source>Created</source>
+		  <target xml:lang="de">Erstellt</target>
+      </trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve">
+		  <source>Last modification</source>
+		  <target xml:lang="de">Letzte Bearbeitung</target>
+      </trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve">
+		  <source>Last publication</source>
+		  <target xml:lang="de">Letzte Veröffentlichung</target>
+      </trans-unit>
+      <trans-unit id="identifier" xml:space="preserve">
+		  <source>Identifier</source>
+		  <target xml:lang="de">Identifikator</target>
+		  <alt-trans>
+			  <target xml:lang="de">Bezeichner</target>
+		  </alt-trans>
+      </trans-unit>
+      <trans-unit id="name" xml:space="preserve">
+		  <source>Name</source>
+		  <target xml:lang="de">Name</target>
+      </trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+		  <source>Workspace</source>
+		  <target xml:lang="de">Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve">
+		  <source>Structure</source>
+		  <target xml:lang="de">Struktur</target>
+      </trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve">
+		  <source>Toggle context structure</source>
+		  <target xml:lang="de">Struktur ein-/ausblenden</target>
+      </trans-unit>
+      <trans-unit id="filter" xml:space="preserve">
+		  <source>Filter</source>
+		  <target xml:lang="de">Filter</target>
+      </trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve" approved="yes">
+		  <source>Toggle menu</source>
+		  <target xml:lang="de">Menü ein-/ausblenden</target>
+      </trans-unit>
+      <trans-unit id="loadError" xml:space="preserve">
+		  <source>Load error!</source>
+		  <target xml:lang="de">Ladefehler!</target>
+      </trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+		  <source>You have to select a node</source>
+		  <target xml:lang="de">Es muss ein Element ausgewählt werden</target>
+      </trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+		  <source>The Root node cannot be deleted.</source>
+		  <target xml:lang="de">Das Wurzelelement kann nicht gelöscht werden.</target>
+      </trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve">
+		  <source>You cannot copy this node</source>
+		  <target xml:lang="de">Dieses Element kann nicht kopiert werden</target>
+      </trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve">
+		  <source>You cannot cut this node</source>
+		  <target xml:lang="de">Dieses Element kann nicht ausgeschnitten werden</target>
+      </trans-unit>
+
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -300,13 +388,13 @@
       <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
 			<target xml:lang="de">Typ ändern</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
 			<target xml:lang="de">Zusätzliche Informationen</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
 			<target xml:lang="de">Sichtbarkeit</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
 			<target xml:lang="de">Dokument-Einstellungen</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
@@ -372,6 +460,18 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="de">Der Wert ist keine gültige UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+		  <source>Start with an empty or pre-filled document?</source>
+		  <target xml:lang="de">Mit einem leeren oder mit einem vorausgefüllten Dokument starten?</target>
+      </trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
+		  <source>Create empty</source>
+		  <target xml:lang="de">Erstelle leer</target>
+      </trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+		  <source>Create and copy</source>
+		  <target xml:lang="de">Erstelle und kopiere</target>
+      </trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="de">Inhalt</target></trans-unit>
@@ -442,6 +542,10 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
 			<target xml:lang="de">Roh-Ansicht</target></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve">
+		  <source>Raw Content Mode</source>
+		  <target xml:lang="de">Rohansichtsmodus</target>
+      </trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="de">Desktop-Ansicht</target><alt-trans><target xml:lang="de">PC-Ansicht</target></alt-trans></trans-unit>
@@ -455,6 +559,14 @@
       <trans-unit id="logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="de">Abmelden</target></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve">
+		  <source>The entered username or password was wrong</source>
+		  <target xml:lang="de">Der eingegebene Benutzername oder das Passwort war falsch</target>
+      </trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve">
+		  <source>Your login has expired. Please log in again.</source>
+		  <target xml:lang="de">Die Sitzung ist abgelaufen. Bitte nochmals einloggen.</target>
+      </trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -489,6 +601,31 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="de">Die Konfiguration des Kontentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target><alt-trans><target xml:lang="de">Die Konfiguration des Knotentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target></alt-trans></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+		  <source>Unexpected error while creating node</source>
+		  <target xml:lang="de">Unerwarteter Fehler beim Erstellen des Elements</target>
+      </trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+		  <source>Unexpected error while deleting node</source>
+		  <target xml:lang="de">Unerwarteter Fehler beim Löschen des Elements</target>
+      </trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+		  <source>Unexpected error while updating node</source>
+		  <target xml:lang="de">Unerwarteter Fehler beim Aktualisieren des Elements</target>
+      </trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+		  <source>Unexpected error while moving node</source>
+		  <target xml:lang="de">Unerwarteter Fehler beim Verschieben des Elements</target>
+      </trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+		  <source>Node Tree loading error.</source>
+		  <target xml:lang="de">Fehler beim Laden des Elementbaumes.</target>
+      </trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+		  <source>The entered username or password was wrong</source>
+		  <target xml:lang="de">Der eingegebene Benutzername oder das Passwort war falsch</target>
+      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
