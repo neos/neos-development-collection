@@ -70,6 +70,10 @@ as follows:
 			</body>
 		</file>
 	</xliff>
+	
+If you prefix your NodeType with a dot as seperator you have to add the prefix to your translation file as well but
+replace the dot with an underscore. So the translation file for `Vendor.Site:Prefix.YourContentElementName` must be
+named `Prefix_YourContentElementName.xlf`
 
 Add properties to existing NodeTypes
 ------------------------------------
