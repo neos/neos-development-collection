@@ -26,7 +26,7 @@
 			<target xml:lang="de">Zurück</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target xml:lang="de">Bitte auswählen</target></trans-unit>
+			<target xml:lang="de">Auswählen</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
 			<target xml:lang="de">Eingabe zur Suche</target><alt-trans><target xml:lang="de">Eingeben um zu Suchen</target></alt-trans><alt-trans><target xml:lang="de">Lostippen, um zu suchen</target></alt-trans></trans-unit>
