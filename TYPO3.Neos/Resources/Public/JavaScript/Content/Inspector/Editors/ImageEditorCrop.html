@@ -1,6 +1,5 @@
 <div class="neos-image-editor-crop-aspect-ratio neos-clearfix">
 	<span>
-		<i class="icon-crop"></i>
 		{{#if view.aspectRatioReduced}}
 			<span {{bindAttr title="view.aspectRatioReduced"}}>{{view.aspectRatioReduced}}</span>
 			{{#if view.aspectRatioLocked}}
@@ -21,3 +20,6 @@
 	{{/unless}}
 </div>
 <img />
+<div class="neos-footer">
+	<a class="neos-button neos-button-primary" href="#">Save</a>
+</div>

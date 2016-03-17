@@ -1,2 +1,6 @@
-<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "hide"}}></button>
-{{view Ember.ContainerView currentViewBinding="view.contentView"}}
+<div class="neos-secondary-inspector__topbar">
+    <button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "hide"}}></button>
+</div>
+<div class="neos-secondary-inspector__view">
+    {{view Ember.ContainerView currentViewBinding="view.contentView"}}
+</div>
