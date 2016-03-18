@@ -285,8 +285,9 @@ class UsersController extends AbstractModuleController
             $electronicAddressTypes[$type] = $type;
         }
         $electronicAddressUsageTypes = array();
+        $translationHelper = new TranslationHelper();
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
-            $electronicAddressUsageTypes[$type] = $type;
+            $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'TYPO3.Neos');
         }
         array_unshift($electronicAddressUsageTypes, '');
         $this->view->assignMultiple(array(

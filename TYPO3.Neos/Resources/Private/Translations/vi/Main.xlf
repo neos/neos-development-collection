@@ -8,10 +8,10 @@
 			<target xml:lang="vi" state="translated">Tự động công khai</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="vi" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="vi" state="translated">Tự động công khai đến {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="vi" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="vi" state="translated">Xem trước thay đổi</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="vi" state="translated">Đồng ý</target><alt-trans><target xml:lang="vi">Áp dụng</target></alt-trans></trans-unit>
@@ -29,7 +29,7 @@
 			<target xml:lang="vi" state="translated">Chọn</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="vi" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="vi" state="translated">Nhập để tìm kiếm</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="vi" state="translated">Nội dung</target></trans-unit>
@@ -95,7 +95,7 @@
 			<target xml:lang="vi" state="translated">Mới trong</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="vi" state="needs-translation">Navigate</target></trans-unit>
+			<target xml:lang="vi" state="translated">Điều hướng</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
 			<target xml:lang="vi" state="translated">Đống ý</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target xml:lang="vi" state="translated">Đã lưu</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="vi" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="vi" state="translated">Tìm kiếm</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="vi" state="needs-translation">Toggle inspector</target></trans-unit>
@@ -192,7 +192,7 @@
 			<target xml:lang="vi" state="translated">Cấu trúc</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="vi" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="vi" state="translated">Plugins</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -205,7 +205,7 @@
 			<target xml:lang="vi" state="translated">Click vào {0} để mở các liên kết.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="vi" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="vi" state="translated">(không có mục tiêu nào được lựa chọn)</target><alt-trans><target xml:lang="vi">(không có mục tiêu được lựa chọn)</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="vi" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -215,31 +215,31 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="vi" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="vi" state="translated">Toàn màn hình</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="vi" state="needs-translation">Open page in live workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="vi" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="vi" state="translated">Loại bỏ tất cả</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="vi" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="vi" state="translated">Loại bỏ tất cả thay đổi</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="vi" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="vi" state="translated">Bạn có chắc bạn muốn loại bỏ tất cả những thay đổi trong không gian làm việc này?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="vi" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="vi" state="translated">Công khai tất cả</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="vi" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="vi" state="translated">Công khai tất cả thay đổi</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="vi" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="vi" state="translated">Bạn có chắc chắn muốn công khai tất cả thay đổi</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="vi" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="vi" state="translated">Đang xử lý những thay đổi</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
 			<target xml:lang="vi" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
@@ -248,7 +248,7 @@
 			<target xml:lang="vi" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="vi" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="vi" state="translated">Chỉnh sửa chế độ</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			<target xml:lang="vi" state="needs-translation">Preview Central</target></trans-unit>
@@ -257,7 +257,7 @@
 			<target xml:lang="vi" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="vi" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="vi" state="translated">Phần tử đã chọn</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
 			<target xml:lang="vi" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
@@ -266,34 +266,34 @@
 			<target xml:lang="vi" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="vi" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="vi" state="translated">Tiếp tục chỉnh sửa</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="vi" state="needs-translation">Throw away</target></trans-unit>
+			<target xml:lang="vi" state="translated">Bỏ qua</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="vi" state="translated">Đồng ý</target><alt-trans><target xml:lang="vi">Áp dụng</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="vi" state="needs-translation">Select a Plugin</target></trans-unit>
+			<target xml:lang="vi" state="translated">Chọn Plugin</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="vi" state="needs-translation">No plugin configured</target></trans-unit>
+			<target xml:lang="vi" state="translated">Không có plugin đã cấu hình</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="vi" state="needs-translation">view is displayed on page</target></trans-unit>
+			<target xml:lang="vi" state="translated">Xem trước để hiển thị trên trang</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
 			<target xml:lang="vi" state="needs-translation">view is displayed on current page</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="vi" state="needs-translation">No date set</target></trans-unit>
+			<target xml:lang="vi" state="translated">Không có ngày được thiết lập</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="vi" state="needs-translation">Edit code</target></trans-unit>
+			<target xml:lang="vi" state="translated">Chỉnh sửa code</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="vi" state="needs-translation">Paste a link, or type to search</target></trans-unit>
+			<target xml:lang="vi" state="translated">Dán link hoặc nhập để tìm kiếm</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
 			<target xml:lang="vi" state="needs-translation">Unable to load sub node types of:</target></trans-unit>
@@ -305,19 +305,19 @@
 			<target xml:lang="vi" state="translated">Thông tin bổ sung</target></trans-unit>
       <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="vi" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="vi" state="translated">Khả năng hiển thị</target></trans-unit>
       <trans-unit id="content-inspector-groups-document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="vi" state="translated">Tùy chọn tài liệu</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
-				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
-			<target xml:lang="vi" state="translated">Độ dài của văn bản nên ở khoảng {{minimum}} và {{maximum}} ký tự.</target></trans-unit>
+				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
+			<target xml:lang="vi" state="translated">Độ dài của văn bản nên ở khoảng {minimum} và {maximum} ký tự.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
-				<source>This field must contain at least {{minimum}} characters.</source>
-			<target xml:lang="vi" state="translated">Trường này phải chứa ít nhất {{minimum}} ký tự.</target></trans-unit>
+				<source>This field must contain at least {minimum} characters.</source>
+			<target xml:lang="vi" state="translated">Trường này phải chứa ít nhất {minimum} ký tự.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
-				<source>This text may not exceed {{maximum}} characters.</source>
-			<target xml:lang="vi" state="translated">Văn bản này không thể vượt quá {{maximum}} ký tự.</target></trans-unit>
+				<source>This text may not exceed {maximum} characters.</source>
+			<target xml:lang="vi" state="translated">Văn bản này không thể vượt quá {maximum} ký tự.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="vi" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
@@ -325,20 +325,20 @@
 				<source>The given subject was not countable.</source>
 			<target xml:lang="vi" state="needs-translation">The given subject was not countable.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
-				<source>The count must be between {{minimum}} and {{maximum}}.</source>
-			<target xml:lang="vi" state="needs-translation">The count must be between {{minimum}} and {{maximum}}.</target></trans-unit>
+				<source>The count must be between {minimum} and {maximum}.</source>
+			<target xml:lang="vi" state="needs-translation">The count must be between {minimum} and {maximum}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
 			<target xml:lang="vi" state="needs-translation">The given value was not a valid date.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
-				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
-			<target xml:lang="vi" state="needs-translation">The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</target></trans-unit>
+				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
+			<target xml:lang="vi" state="needs-translation">The given date must be between {formatEarliestDate} and {formatLatestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
-				<source>The given date must be after {{formatEarliestDate}}</source>
-			<target xml:lang="vi" state="needs-translation">The given date must be after {{formatEarliestDate}}</target></trans-unit>
+				<source>The given date must be after {formatEarliestDate}</source>
+			<target xml:lang="vi" state="needs-translation">The given date must be after {formatEarliestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
-				<source>The given date must be before {{formatLatestDate}}</source>
-			<target xml:lang="vi" state="needs-translation">The given date must be before {{formatLatestDate}}</target></trans-unit>
+				<source>The given date must be before {formatLatestDate}</source>
+			<target xml:lang="vi" state="needs-translation">The given date must be before {formatLatestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
 			<target xml:lang="vi" state="needs-translation">Please specify a valid email address.</target></trans-unit>
@@ -353,16 +353,16 @@
 			<target xml:lang="vi" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
 				<source>This property is required.</source>
-			<target xml:lang="vi" state="needs-translation">This property is required.</target></trans-unit>
+			<target xml:lang="vi" state="translated">Thuộc tính này là bắt buộc</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
 				<source>A valid number is expected.</source>
 			<target xml:lang="vi" state="needs-translation">A valid number is expected.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
-				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
-			<target xml:lang="vi" state="translated">Vui lòng nhập vào số hợp lệ trong khoảng {{minimum}} and {{maximum}}</target></trans-unit>
+				<source>Please enter a valid number between {minimum} and {maximum}</source>
+			<target xml:lang="vi" state="translated">Vui lòng nhập vào số hợp lệ trong khoảng {minimum} and {maximum}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
-				<source>The given subject did not match the pattern ({{pattern}})</source>
-			<target xml:lang="vi" state="needs-translation">The given subject did not match the pattern ({{pattern}})</target></trans-unit>
+				<source>The given subject did not match the pattern ({pattern})</source>
+			<target xml:lang="vi" state="needs-translation">The given subject did not match the pattern ({pattern})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
 			<target xml:lang="vi" state="needs-translation">A valid string is expected.</target></trans-unit>
@@ -492,17 +492,17 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="vi" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target xml:lang="vi" state="translated">"{nodeTypeName}" trên trang "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
 			<target xml:lang="vi" state="translated">Nút</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="vi" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="vi" state="translated">Hiển thị</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="vi" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="vi" state="translated">Nút này không thể truy cập thông qua một URL công khai</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
 			<target xml:lang="vi" state="translated">Thuộc tính của nút</target></trans-unit>

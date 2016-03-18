@@ -13,7 +13,8 @@ define(
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
-	'InlineEditing/InsertNodePanel'
+	'InlineEditing/InsertNodePanel',
+	'Shared/I18n'
 ],
 function (
 	$,
@@ -29,7 +30,8 @@ function (
 	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
-	InsertNodePanel
+	InsertNodePanel,
+	I18n
 ) {
 	return Ember.View.extend({
 		classNames: ['neos-handle-container'],
@@ -45,8 +47,11 @@ function (
 
 		NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedNewPositions',
-			title: 'Create (hover to select position)',
 			iconClass: 'icon-plus',
+			init: function() {
+				this._super();
+				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'));
+			},
 
 			mouseUp: function(event) {
 				clearTimeout(this.get('downTimer'));
@@ -56,13 +61,16 @@ function (
 					ContentCommands.create(newPosition);
 				}
 				$(event.target).filter('button').click();
-			},
+			}
 		}),
 
 		PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedPastePositions',
-			title: 'Paste (hover to select position)',
 			iconClass: 'icon-paste',
+			init: function() {
+				this._super();
+				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'));
+			},
 
 			mouseUp: function(event) {
 				clearTimeout(this.get('downTimer'));
@@ -160,7 +168,7 @@ function (
 		},
 
 		_hideToggleTitle: function() {
-			return this.get('_hidden') === true ? 'Unhide' : 'Hide';
+			return this.get('_hidden') === true ? I18n.translate('TYPO3.Neos:Main:unhide', 'Unhide') : I18n.translate('TYPO3.Neos:Main:hide', 'Hide');
 		}.property('_hidden'),
 
 		_thisElementStartedCut: function() {
