@@ -271,9 +271,9 @@
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
 			<target xml:lang="da">Indlæs flere</target></trans-unit>
-      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
+      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve" approved="yes">
 				<source>This node has been removed in the meantime</source>
-			<target xml:lang="da" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target xml:lang="da">Dette element er blevet fjernet i mellemtiden</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -311,9 +311,9 @@
       <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target xml:lang="da">Opret bruger</target></trans-unit>
-      <trans-unit id="users.actions.new.title" xml:space="preserve">
+      <trans-unit id="users.actions.new.title" xml:space="preserve" approved="yes">
 				<source>Create a new user</source>
-			<target xml:lang="da" state="translated">Opret ny bruger</target></trans-unit>
+			<target xml:lang="da">Opret ny bruger</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="da">Brugerinformation</target><alt-trans><target xml:lang="da">Bruger information</target></alt-trans></trans-unit>
@@ -434,18 +434,18 @@
       <trans-unit id="users.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="da">Navn</target></trans-unit>
-      <trans-unit id="users.accountsAndRoles" xml:space="preserve">
+      <trans-unit id="users.accountsAndRoles" xml:space="preserve" approved="yes">
 				<source>Accounts and Roles</source>
-			<target xml:lang="da" state="needs-translation">Accounts and Roles</target></trans-unit>
-      <trans-unit id="users.tooltip.view" xml:space="preserve">
+			<target xml:lang="da">Konti og roller</target></trans-unit>
+      <trans-unit id="users.tooltip.view" xml:space="preserve" approved="yes">
 				<source>View user</source>
-			<target xml:lang="da" state="needs-translation">View user</target></trans-unit>
-      <trans-unit id="users.tooltip.edit" xml:space="preserve">
+			<target xml:lang="da">Vis bruger</target></trans-unit>
+      <trans-unit id="users.tooltip.edit" xml:space="preserve" approved="yes">
 				<source>Edit user</source>
-			<target xml:lang="da" state="needs-translation">Edit user</target></trans-unit>
-      <trans-unit id="users.tooltip.delete" xml:space="preserve">
+			<target xml:lang="da">Rediger bruger</target></trans-unit>
+      <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
-			<target xml:lang="da" state="needs-translation">Delete user</target></trans-unit>
+			<target xml:lang="da">Slet bruger</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="da">Du er logget ind som denne bruger og du kan ikke slette dig selv.</target></trans-unit>
@@ -458,84 +458,84 @@
       <trans-unit id="users.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target xml:lang="da">Ja, slet brugeren</target></trans-unit>
-      <trans-unit id="users.editUser" xml:space="preserve">
+      <trans-unit id="users.editUser" xml:space="preserve" approved="yes">
 				<source>Edit user "{0}"</source>
-			<target xml:lang="da" state="needs-translation">Edit user "{0}"</target></trans-unit>
-      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
+			<target xml:lang="da">Rediger bruger "{0}"</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve" approved="yes">
 				<source>Home</source>
-			<target xml:lang="da" state="needs-translation">Home</target></trans-unit>
-      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
+			<target xml:lang="da">Hjem</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve" approved="yes">
 				<source>Work</source>
-			<target xml:lang="da" state="needs-translation">Work</target></trans-unit>
+			<target xml:lang="da">Arbejde</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
 			<target xml:lang="da">Pakkehåndtering</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="da">Pakkehåndteringsmodulet giver dig et overblik over alle pakker. Du kan aktivere og deaktivere individuelle pakker, importere nye pakker og slette eksisterende pakker. Det giver dig også mulighed for at fastlåse og frigøre pakker i udviklingssammenhæng.</target></trans-unit>
-      <trans-unit id="packages.index.legend" xml:space="preserve">
+      <trans-unit id="packages.index.legend" xml:space="preserve" approved="yes">
 				<source>Available packages</source>
-			<target xml:lang="da" state="needs-translation">Available packages</target></trans-unit>
-      <trans-unit id="packages.name" xml:space="preserve">
+			<target xml:lang="da">Tilgængelige pakker</target></trans-unit>
+      <trans-unit id="packages.name" xml:space="preserve" approved="yes">
 				<source>Package Name</source>
-			<target xml:lang="da" state="needs-translation">Package Name</target></trans-unit>
-      <trans-unit id="packages.key" xml:space="preserve">
+			<target xml:lang="da">Pakkenavn</target></trans-unit>
+      <trans-unit id="packages.key" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
-			<target xml:lang="da" state="needs-translation">Package Key</target></trans-unit>
-      <trans-unit id="packages.type" xml:space="preserve">
+			<target xml:lang="da">Pakkenøgle</target></trans-unit>
+      <trans-unit id="packages.type" xml:space="preserve" approved="yes">
 				<source>Package Type</source>
-			<target xml:lang="da" state="needs-translation">Package Type</target></trans-unit>
-      <trans-unit id="packages.deactivated" xml:space="preserve">
+			<target xml:lang="da">Pakketype</target></trans-unit>
+      <trans-unit id="packages.deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
-			<target xml:lang="da" state="needs-translation">Deactivated</target></trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
+			<target xml:lang="da">Deaktiveret</target></trans-unit>
+      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target xml:lang="da" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
+			<target xml:lang="da">Denne pakke er i øjeblikket låst. Klik for at frigive den.</target></trans-unit>
+      <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target xml:lang="da" state="needs-translation">Freeze the package in order to speed up your website.</target></trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
+			<target xml:lang="da">Lås pakken for at optimere din hjemmeside.</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target xml:lang="da" state="needs-translation">This package is protected and cannot be deactivated.</target></trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
+			<target xml:lang="da">Denne pakke er beskyttet og kan ikke deaktiveres.</target></trans-unit>
+      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate Package</source>
-			<target xml:lang="da" state="needs-translation">Deactivate Package</target></trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
+			<target xml:lang="da">Deaktivér pakke</target></trans-unit>
+      <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
 				<source>Activate Package</source>
-			<target xml:lang="da" state="needs-translation">Activate Package</target></trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
+			<target xml:lang="da">Aktivér pakke</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deleted.</source>
-			<target xml:lang="da" state="needs-translation">This package is protected and cannot be deleted.</target></trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
+			<target xml:lang="da">Denne pakke er beskyttet og kan ikke slettes.</target></trans-unit>
+      <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete Package</source>
-			<target xml:lang="da" state="needs-translation">Delete Package</target></trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
+			<target xml:lang="da">Slet pakke</target></trans-unit>
+      <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"?</source>
-			<target xml:lang="da" state="needs-translation">Do you really want to delete "{0}"?</target></trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
+			<target xml:lang="da">Vil du slette "{0}"?</target></trans-unit>
+      <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the package</source>
-			<target xml:lang="da" state="needs-translation">Yes, delete the package</target></trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
+			<target xml:lang="da">Ja, slet pakken</target></trans-unit>
+      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve" approved="yes">
 				<source>Yes, delete the packages</source>
-			<target xml:lang="da" state="needs-translation">Yes, delete the packages</target></trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
+			<target xml:lang="da">Ja, slet pakkerne</target></trans-unit>
+      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the selected packages?</source>
-			<target xml:lang="da" state="needs-translation">Do you really want to delete the selected packages?</target></trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve">
+			<target xml:lang="da">Vil du slette de valgte pakker?</target></trans-unit>
+      <trans-unit id="packages.selected.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze selected packages</source>
-			<target xml:lang="da" state="needs-translation">Freeze selected packages</target></trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
+			<target xml:lang="da">Lås valgte pakker</target></trans-unit>
+      <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
 				<source>Unfreeze selected packages</source>
-			<target xml:lang="da" state="needs-translation">Unfreeze selected packages</target></trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve">
+			<target xml:lang="da">Frigør valgte pakker</target></trans-unit>
+      <trans-unit id="packages.selected.delete" xml:space="preserve" approved="yes">
 				<source>Delete selected packages</source>
-			<target xml:lang="da" state="needs-translation">Delete selected packages</target></trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
+			<target xml:lang="da">Slet valgte pakker</target></trans-unit>
+      <trans-unit id="packages.selected.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate selected packages</source>
-			<target xml:lang="da" state="needs-translation">Deactivate selected packages</target></trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve">
+			<target xml:lang="da">Deaktivér valgte pakker</target></trans-unit>
+      <trans-unit id="packages.selected.activate" xml:space="preserve" approved="yes">
 				<source>Activate selected packages</source>
-			<target xml:lang="da" state="needs-translation">Activate selected packages</target></trans-unit>
+			<target xml:lang="da">Aktivér valgte pakker</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="da">Administration af websteder</target></trans-unit>
@@ -796,15 +796,15 @@
       <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
 			<target xml:lang="da">Slet tag</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
+      <trans-unit id="media.placeholder.createTag" xml:space="preserve" approved="yes">
 				<source>Enter tag label</source>
-			<target xml:lang="da" state="needs-translation">Enter tag label</target></trans-unit>
+			<target xml:lang="da">Angiv tag navn</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
 			<target xml:lang="da">Opret tag</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve">
+      <trans-unit id="media.tags.title.all" xml:space="preserve" approved="yes">
 				<source>All assets</source>
-			<target xml:lang="da" state="needs-translation">All assets</target></trans-unit>
+			<target xml:lang="da">Alle filer</target></trans-unit>
       <trans-unit id="media.tags.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target xml:lang="da">Alle</target></trans-unit>
