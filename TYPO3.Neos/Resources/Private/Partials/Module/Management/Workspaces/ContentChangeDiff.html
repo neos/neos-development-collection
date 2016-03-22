@@ -10,6 +10,20 @@
                 {f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
             </th>
         </tr>
+        <f:if condition="{change.targetDimensions}">
+            <tr>
+                <th>Dimensions</th>
+            </tr>
+            <tr>
+                <td>
+                    <ul>
+                        <f:for each="{change.targetDimensions}" key="name" as="dimension">
+                            <li>{name}: {dimension}</li>
+                        </f:for>
+                    </ul>
+                </td>
+            </tr>
+        </f:if>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
             <tr>
                 <th>{neos:backend.translate(id: contentChanges.propertyLabel)}</th>
