@@ -14,6 +14,10 @@ TYPO3:
       globalObjects:
         userInformation: TYPO3\Neos\Service\UserService
 
+    core:
+      applicationPackageKey: 'TYPO3.Neos'
+      applicationName: 'Neos'
+
     security:
       authentication:
         providers:
