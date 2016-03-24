@@ -38,7 +38,7 @@ define(
 					} else if (minimum > 0) {
 						this.addError(I18n.translate('content.inspector.validators.stringLength.smallerThanMinimum', null, null, null, {minimum: minimum}));
 					} else {
-						this.addError(I18n.translate('content.inspector.validators.stringLength.greaterThanMaximum', null, null, null, {minimum: minimum}));
+						this.addError(I18n.translate('content.inspector.validators.stringLength.greaterThanMaximum', null, null, null, {maximum: maximum}));
 					}
 				}
 			}
