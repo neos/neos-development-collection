@@ -12,3 +12,7 @@ insert_final_newline = true
 # PHP should follow the PSR-2 standard
 [*.php]
 indent_size = 4
+
+# JS should use 4 spaces
+[*.js]
+indent_size = 4
