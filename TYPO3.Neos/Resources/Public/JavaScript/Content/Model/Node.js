@@ -76,21 +76,22 @@ define([
 		 */
 		init: function() {
 			var that = this,
-				vieEntity = this.get('_vieEntity'),
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				vieEntity = this.get('_vieEntity');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(namespace + '__workspaceName') !== 'live');
+			this.set('publishable', this.getAttribute('__workspaceName') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
-				// this event fires if inline content changes
+
+			// this event fires if inline content changes
 			$entityElement.bind('midgardeditablechanged', function(event, data) {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
 			});
-				// this event fires if content changes through the property inspector
+
+			// this event fires if content changes through the property inspector
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
-				that.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
+				that.set('publishable', that.getAttribute('__workspacename') !== 'live');
 			});
 
 			this.set('$element', $entityElement);
@@ -105,6 +106,17 @@ define([
 			}
 			return {};
 		}.property('_vieEntity').volatile(),
+
+		/**
+		 * Check if an attribute exists on the underlying VIE entity
+		 *
+		 * @param {string} key
+		 * @return {void}
+		 */
+		hasAttribute: function(key) {
+			var attributeName = 'typo3:' + key;
+			this.get('_vieEntity').has(attributeName);
+		},
 
 		/**
 		 * Set an attribute on the underlying VIE entity
@@ -133,6 +145,15 @@ define([
 		},
 
 		/**
+		 * @param {string} key
+		 * @return {object}
+		 */
+		getPreviousAttribute: function(key) {
+			var vieEntity = this.get('_vieEntity');
+			return Entity.extractAttributesFromVieEntity(vieEntity, vieEntity.previousAttributes())[key];
+		},
+
+		/**
 		 * @return {string}
 		 */
 		nodePath: function() {
@@ -144,25 +165,21 @@ define([
 		 * @return {boolean}
 		 */
 		isHideable: function() {
-			return this.get('_vieEntity').has('typo3:_hidden');
+			return this.hasAttribute('_hidden');
 		},
 
 		/**
 		 * @return {boolean}
 		 */
 		isHidden: function() {
-			return this.get('_vieEntity').get('typo3:_hidden');
+			return this.getAttribute('_hidden');
 		},
 
 		/**
 		 * @return {string}
 		 */
 		nodeLabel: function() {
-			if (this.get('_vieEntity').get('typo3:title') !== undefined) {
-				return this.get('_vieEntity').get('typo3:title');
-			}
-
-			return '';
+			return this.getAttribute('title') || '';
 		}.property('_vieEntity'),
 
 		/**
@@ -185,7 +202,7 @@ define([
 		 */
 		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
 			var cleanAttributes = {},
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
 			_.each(attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
@@ -206,7 +223,7 @@ define([
 		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
 				type,
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			if (!_.isArray(types)) {
 				types = [types];
 			}

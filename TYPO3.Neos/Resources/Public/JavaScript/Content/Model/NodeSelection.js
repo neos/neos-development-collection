@@ -324,7 +324,17 @@ define(
 		},
 
 		getNode: function(contextPath) {
-			return this._entitiesBySubject['<' + contextPath + '>'];
+			var node = this._entitiesBySubject['<' + contextPath + '>'];
+			if (node) {
+				return node;
+			}
+
+			var element = $('[about="' + contextPath + '"]');
+			if (element) {
+				return this._createEntityWrapper(element);
+			}
+
+			return null;
 		},
 
 		selectedNode: function() {

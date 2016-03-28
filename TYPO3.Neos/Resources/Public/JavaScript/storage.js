@@ -3,7 +3,6 @@ define(
 	'Library/jquery-with-dependencies',
 	'Content/Model/Node',
 	'Library/backbone',
-	'Content/Model/PublishableNodes',
 	'Shared/Endpoint/NodeEndpoint',
 	'Shared/EventDispatcher',
 	'Shared/Notification'
@@ -11,7 +10,6 @@ define(
 	$,
 	Entity,
 	Backbone,
-	PublishableNodes,
 	NodeEndpoint,
 	EventDispatcher,
 	Notification
@@ -43,16 +41,15 @@ define(
 						//
 						// Furthermore, we do not want event listeners to be fired, as otherwise the content element
 						// would be redrawn leading to a loss of the current editing cursor position.
-						//
-						// The PublishableNodes are explicitly updated, as changes from the backbone models
-						// workspace name attribute are suppressed and our entity wrapper would not notice.
 						NodeEndpoint.set('_saveRunning', false);
 						EventDispatcher.trigger('contentSaved');
 
 						if (result !== undefined && (result.success === true || options.render)) {
 							if (!options.render) {
 								model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
-								PublishableNodes._updatePublishableEntities();
+								// The PublishableNodes are explicitly updated through the ``nodesUpdated`` event, as changes from
+								// the backbone models workspace name attribute are suppressed and our entity wrapper would not notice.
+								EventDispatcher.trigger('nodeUpdated');
 							}
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
