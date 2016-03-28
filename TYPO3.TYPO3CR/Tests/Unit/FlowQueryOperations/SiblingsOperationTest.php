@@ -59,7 +59,6 @@ class SiblingsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->thirdNodeInLevel
         )));
         $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-        $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->siteNode));
 
         $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
