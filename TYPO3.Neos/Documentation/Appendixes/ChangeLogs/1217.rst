@@ -1,0 +1,37 @@
+`1.2.17 (2016-03-18) <https://github.com/neos/neos-development-collection/releases/tag/1.2.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Node constraints for auto created node types in structure tree <https://github.com/neos/neos-development-collection/pull/405>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+The node type was not updated when a new page was loaded, leading to
+incorrect constraints being applied to auto created child nodes.
+
+NEOS-1728 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Image crop selection incorrect on small screens <https://github.com/neos/neos-development-collection/pull/404>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When the cropping area in the secondary inspector isn't wide enough,
+the coordinates of the cropping area are miscalculated. To solve this
+the cropping area now has a minimum width and scroll is added, when
+the area is too small.
+
+NEOS-1787 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing styling in backend modules <https://github.com/neos/neos-development-collection/pull/403>`_
+------------------------------------------------------------------------------------------------------------
+
+When using minified resources.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/1.2.16...1.2.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
