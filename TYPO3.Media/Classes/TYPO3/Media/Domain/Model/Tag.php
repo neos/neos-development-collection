@@ -39,7 +39,6 @@ class Tag
 
     /**
      * @param string $label
-     * @return void
      */
     public function __construct($label)
     {
