@@ -81,6 +81,12 @@
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			<target xml:lang="ca" state="needs-translation">Hide / Unhide</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve">
+				<source>Hide</source>
+			<target xml:lang="ca" state="needs-translation">Hide</target></trans-unit>
+      <trans-unit id="unhide" xml:space="preserve">
+				<source>Unhide</source>
+			<target xml:lang="ca" state="needs-translation">Unhide</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="ca" state="needs-translation">Loading</target></trans-unit>
@@ -150,6 +156,9 @@
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
 			<target xml:lang="ca" state="needs-translation">Refresh</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="ca" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target xml:lang="ca" state="needs-translation">Saving</target></trans-unit>
@@ -183,6 +192,60 @@
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
 			<target xml:lang="ca" state="needs-translation">Relative Path</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve">
+				<source>Version</source>
+			<target xml:lang="ca" state="needs-translation">Version</target></trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="ca" state="needs-translation">This operation cannot be undone.</target></trans-unit>
+      <trans-unit id="asset" xml:space="preserve">
+				<source>Asset</source>
+			<target xml:lang="ca" state="needs-translation">Asset</target></trans-unit>
+      <trans-unit id="created" xml:space="preserve">
+				<source>Created</source>
+			<target xml:lang="ca" state="needs-translation">Created</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve">
+				<source>Last modification</source>
+			<target xml:lang="ca" state="needs-translation">Last modification</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve">
+				<source>Last publication</source>
+			<target xml:lang="ca" state="needs-translation">Last publication</target></trans-unit>
+      <trans-unit id="identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="ca" state="needs-translation">Identifier</target></trans-unit>
+      <trans-unit id="name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="ca" state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="ca" state="needs-translation">Workspace</target></trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="ca" state="needs-translation">Structure</target></trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve">
+				<source>Toggle context structure</source>
+			<target xml:lang="ca" state="needs-translation">Toggle context structure</target></trans-unit>
+      <trans-unit id="filter" xml:space="preserve">
+				<source>Filter</source>
+			<target xml:lang="ca" state="needs-translation">Filter</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve">
+				<source>Toggle menu</source>
+			<target xml:lang="ca" state="needs-translation">Toggle menu</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve">
+				<source>Load error!</source>
+			<target xml:lang="ca" state="needs-translation">Load error!</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+				<source>You have to select a node</source>
+			<target xml:lang="ca" state="needs-translation">You have to select a node</target></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+				<source>The Root node cannot be deleted.</source>
+			<target xml:lang="ca" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve">
+				<source>You cannot copy this node</source>
+			<target xml:lang="ca" state="needs-translation">You cannot copy this node</target></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve">
+				<source>You cannot cut this node</source>
+			<target xml:lang="ca" state="needs-translation">You cannot cut this node</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -300,13 +363,13 @@
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="ca" state="needs-translation">Change type</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="ca" state="needs-translation">Additional info</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="ca" state="needs-translation">Visibility</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="ca" state="needs-translation">Document options</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
@@ -372,6 +435,24 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="ca" state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+				<source>Start with an empty or pre-filled document?</source>
+			<target xml:lang="ca" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			<target xml:lang="ca" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			<target xml:lang="ca" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			<target xml:lang="ca" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
+				<source>Create empty</source>
+			<target xml:lang="ca" state="needs-translation">Create empty</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+				<source>Create and copy</source>
+			<target xml:lang="ca" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="ca" state="needs-translation">Content</target></trans-unit>
@@ -442,6 +523,9 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
 			<target xml:lang="ca" state="needs-translation">Raw Content</target></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve">
+				<source>Raw Content Mode</source>
+			<target xml:lang="ca" state="needs-translation">Raw Content Mode</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="ca" state="needs-translation">Desktop</target></trans-unit>
@@ -455,6 +539,12 @@
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
 			<target xml:lang="ca" state="needs-translation">Logout</target></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="ca" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve">
+				<source>Your login has expired. Please log in again.</source>
+			<target xml:lang="ca" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -489,6 +579,25 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="ca" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+				<source>Unexpected error while creating node</source>
+			<target xml:lang="ca" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+				<source>Unexpected error while deleting node</source>
+			<target xml:lang="ca" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+				<source>Unexpected error while updating node</source>
+			<target xml:lang="ca" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+				<source>Unexpected error while moving node</source>
+			<target xml:lang="ca" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+				<source>Node Tree loading error.</source>
+			<target xml:lang="ca" state="needs-translation">Node Tree loading error.</target></trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="ca" state="needs-translation">The entered username or password was wrong</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

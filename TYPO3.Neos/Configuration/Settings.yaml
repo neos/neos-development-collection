@@ -407,6 +407,20 @@ TYPO3:
       stylesheets:
         'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 
+    transliterationRules:
+      da:
+        'Å': 'Aa'
+        'Ø': 'Oe'
+        'å': 'aa'
+        'ø': 'oe'
+      de:
+        'Ä': 'Ae'
+        'Ö': 'Oe'
+        'Ü': 'Ue'
+        'ä': 'ae'
+        'ö': 'oe'
+        'ü': 'ue'
+
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:

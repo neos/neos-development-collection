@@ -6,7 +6,8 @@
     "require": {
         "typo3/flow": "*",
         "typo3/eel": "*",
-        "gedmo/doctrine-extensions": "2.3.*"
+        "gedmo/doctrine-extensions": "2.3.*",
+        "behat/transliterator": "~1.0"
     },
     "autoload": {
         "psr-0": {
