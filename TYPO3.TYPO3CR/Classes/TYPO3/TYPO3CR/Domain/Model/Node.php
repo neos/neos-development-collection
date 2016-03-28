@@ -959,7 +959,7 @@ class Node implements NodeInterface, CacheAwareInterface
             }
 
             foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-                $childNodeIdentifier = $this->buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
+                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
                 $alreadyPresentChildNode = $newNode->getNode($childNodeName);
                 if ($alreadyPresentChildNode === null) {
                     $newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
@@ -972,22 +972,6 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->emitAfterNodeCreate($newNode);
 
         return $newNode;
-    }
-
-    /**
-     * Generate a stable identifier for auto-created child nodes
-     *
-     * This is needed if multiple node variants are created through "createNode" with different dimension values. If
-     * child nodes with the same path and different identifiers exist, bad things can happen.
-     *
-     * @param string $childNodeName
-     * @param string $identifier
-     * @return string The generated UUID like identifier
-     */
-    protected function buildAutoCreatedChildNodeIdentifier($childNodeName, $identifier)
-    {
-        $hex = md5($identifier . '-' . $childNodeName);
-        return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12);
     }
 
     /**

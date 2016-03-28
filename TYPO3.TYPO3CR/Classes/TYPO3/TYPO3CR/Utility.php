@@ -64,4 +64,21 @@ class Utility
 
         return md5(json_encode($dimensionValues));
     }
+
+    /**
+     * Generate a stable identifier for auto-created child nodes
+     *
+     * This is needed if multiple node variants are created through "createNode" with different dimension values. If
+     * child nodes with the same path and different identifiers exist, bad things can happen.
+     *
+     * @param string $childNodeName
+     * @param string $identifier Identifier of the node where the child node should be created
+     * @return string The generated UUID like identifier
+     */
+    public static function buildAutoCreatedChildNodeIdentifier($childNodeName, $identifier)
+    {
+        $hex = md5($identifier . '-' . $childNodeName);
+
+        return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12);
+    }
 }
