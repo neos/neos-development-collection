@@ -57,7 +57,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->mockContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', false);
 
         $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
-        $this->mockContextualizedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', null, array($mockNode, $this->mockContext));
+        $this->mockContextualizedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getContext'), array($mockNode, $this->mockContext));
         $mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
@@ -147,7 +147,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', false);
 
         $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
-        $mockContextualizedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', null, array($mockNode, $mockContext));
+        $mockContextualizedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getContext'), array($mockNode, $mockContext));
         $mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
