@@ -65,7 +65,10 @@ define(
 							NodeUpdateFailureDialog.create();
 						});
 					}
-				);
+				).fail(function(error) {
+					Notification.error('An error occurred.');
+					console.error('An error occurred:', error);
+				});
 			},
 			'delete': function(model, options) {
 				console.log('DELETE', arguments);

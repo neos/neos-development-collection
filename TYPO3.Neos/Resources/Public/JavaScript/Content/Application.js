@@ -442,10 +442,14 @@ function(
 					}
 				},
 				function() {
+					Notification.error('An error occurred.');
 					that.set('_isLoadingPage', false);
 					LoadingIndicator.done();
 				}
-			)
+			).fail(function(error) {
+				Notification.error('An error occurred.');
+				console.error('An error occurred:', error);
+			});
 		}
 
 	}).create();

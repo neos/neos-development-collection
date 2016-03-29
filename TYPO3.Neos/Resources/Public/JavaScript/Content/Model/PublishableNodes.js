@@ -144,7 +144,10 @@ define(
               that.set('publishRunning', false);
               Notification.error('Unexpected error while publishing changes: ' + JSON.stringify(error));
             }
-          );
+          ).fail(function(error) {
+              Notification.error('An error occurred.');
+              console.error('An error occurred:', error);
+          });
         }
       },
 
