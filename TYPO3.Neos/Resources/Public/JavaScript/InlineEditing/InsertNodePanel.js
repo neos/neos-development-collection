@@ -52,7 +52,7 @@ function(
 					return;
 				}
 
-				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(type.metadata.url, '');
+				var nodeTypeName = type.id.slice(1, -1).replace(type.metadata.url, '');
 				if (!contentTypes.hasOwnProperty(nodeTypeName)) {
 					return;
 				}

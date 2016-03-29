@@ -158,7 +158,7 @@ define([
 		 */
 		nodePath: function() {
 			var subject = this.get('_vieEntity').getSubject();
-			return subject.substring(1, subject.length - 1);
+			return subject.slice(1, -1);
 		}.property('_vieEntity'),
 
 		/**
@@ -238,7 +238,7 @@ define([
 
 			if (type) {
 				type = type.substr(namespace.length + 1);
-				type = type.substr(0, type.length - 1);
+				type = type.slice(0, -1);
 			}
 			return type;
 		}

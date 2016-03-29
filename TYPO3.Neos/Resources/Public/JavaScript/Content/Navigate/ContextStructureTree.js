@@ -114,7 +114,7 @@ define(
 
 			var that = this;
 			PublishableNodes.get('publishableEntitySubjects').forEach(function(entitySubject) {
-				var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(entitySubject.slice(1, entitySubject.length - 1));
+				var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(entitySubject.slice(1, -1));
 				if (treeNode) {
 					$(treeNode.span).addClass('neos-dynatree-dirty');
 				}

@@ -82,7 +82,7 @@ define(
         vie.entities.forEach(function (entity) {
           if (this._isEntityPublishable(entity)) {
             var entitySubject = entity.id,
-              nodeContextPath = entitySubject.slice(1, entitySubject.length - 1);
+              nodeContextPath = entitySubject.slice(1, -1);
             if (!this.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath)) {
               this.get('workspaceWidePublishableEntitySubjects').addObject({
                 nodeContextPath: nodeContextPath,
@@ -164,7 +164,7 @@ define(
           entity.set('typo3:__workspaceName', workspaceOverride, {silent: true});
         }
 
-        var nodeContextPath = entitySubject.slice(1, entitySubject.length - 1),
+        var nodeContextPath = entitySubject.slice(1, -1),
           node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath);
         if (node) {
           that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
