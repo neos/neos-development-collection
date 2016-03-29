@@ -3,12 +3,14 @@ define([
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Shared/Configuration',
+	'Shared/I18n',
 	'vie'
 ], function(
 	Ember,
 	$,
 	_,
 	Configuration,
+	I18n,
 	vieInstance
 ) {
 	var Entity = Ember.Object.extend({
@@ -68,7 +70,7 @@ define([
 		}.property('_vieEntity').volatile(),
 
 		nodeTypeLabel: function() {
-			return this.get('nodeTypeSchema.ui.label');
+			return I18n.translate(this.get('nodeTypeSchema.ui.label'));
 		}.property('nodeTypeSchema.ui.label'),
 
 		/**
@@ -96,6 +98,10 @@ define([
 				_.each(changedAttributes, function(value, key) {
 					that.notifyPropertyChange('typo3:' + key);
 				});
+			});
+
+			this.addObserver('typo3:__label', function() {
+				this.notifyPropertyChange('nodeLabel');
 			});
 
 			this.set('$element', $entityElement);
@@ -183,8 +189,25 @@ define([
 		 * @return {string}
 		 */
 		nodeLabel: function() {
-			return this.getAttribute('title') || '';
-		}.property('_vieEntity'),
+			var label = this.getAttribute('__label');
+			if (label) {
+				return label;
+			}
+
+			var entity = this.get('_vieEntity');
+			if (this.hasAttribute('title') && this.getAttribute('title')) {
+				label = this.getAttribute('title');
+			} else if (this.hasAttribute('text') && this.getAttribute('text')) {
+				label = this.getAttribute('text');
+			} else {
+				label = (this.get('nodeTypeLabel') || this.get('nodeType')) + ' (' + this.getAttribute('_name') + ')';
+			}
+
+			label = $('<span>' + label + '</span>').text().trim();
+
+			var croppedLabel = label.substr(0, 30).trim();
+			return croppedLabel + (croppedLabel.length < label.length ? ' …' : '');
+		}.property().volatile(),
 
 		/**
 		 * Receive the node type schema

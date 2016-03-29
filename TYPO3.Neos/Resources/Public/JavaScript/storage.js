@@ -2,6 +2,7 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'Content/Model/Node',
+	'Content/Model/NodeSelection',
 	'Library/backbone',
 	'Shared/Endpoint/NodeEndpoint',
 	'Shared/EventDispatcher',
@@ -9,6 +10,7 @@ define(
 ], function(
 	$,
 	Entity,
+	NodeSelection,
 	Backbone,
 	NodeEndpoint,
 	EventDispatcher,
@@ -51,6 +53,8 @@ define(
 								// the backbone models workspace name attribute are suppressed and our entity wrapper would not notice.
 								EventDispatcher.trigger('nodeUpdated');
 							}
+
+							NodeSelection.getNode(model.id.slice(1, -1)).setAttribute('__label', result.data.labelOfNode, {silent: true});
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
 							if (options && options.success) {

@@ -142,6 +142,7 @@ class ContentElementWrappingService
         $attributes['data-node-_identifier'] = $node->getIdentifier();
         $attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
         $attributes['data-node-__typoscript-path'] = $typoScriptPath;
+        $attributes['data-node-__label'] = $node->getLabel();
 
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints
         // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.

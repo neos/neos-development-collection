@@ -17,10 +17,6 @@ define(
 			template: Ember.Handlebars.compile(template),
 			_node: null,
 
-			strippedLabel: function() {
-				return $('<span>' + this.get('_node.nodeLabel') + '</span>').text().trim();
-			}.property('_node.nodeLabel'),
-
 			'delete': function() {
 				this.get('_node').$element.remove();
 				NodeActions.remove(this.get('_node'));

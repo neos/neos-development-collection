@@ -444,6 +444,9 @@ define(
 					entityWrapper.addObserver('typo3:_hiddenAfterDateTime', function() {
 						that.synchronizeNodeVisibility(this);
 					});
+					entityWrapper.addObserver('typo3:__label', function() {
+						that.synchronizeNodeLabel(this);
+					});
 				});
 			},
 
@@ -479,7 +482,16 @@ define(
 			synchronizeNodeTitle: function(entityWrapper) {
 				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					node.setTitle(entityWrapper.getAttribute('title'));
+					var title = entityWrapper.getAttribute('title');
+					node.data.title = title
+					node.data.fullTitle = title;
+				}
+			},
+
+			synchronizeNodeLabel: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
+				if (node) {
+					node.setTitle(entityWrapper.getAttribute('__label'));
 				}
 			},
 
