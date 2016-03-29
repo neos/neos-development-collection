@@ -92,6 +92,10 @@ define([
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
 				that.set('publishable', that.getAttribute('__workspacename') !== 'live');
+				var changedAttributes = Entity.extractAttributesFromVieEntity(vieEntity, vieEntity.changed);
+				_.each(changedAttributes, function(value, key) {
+					that.notifyPropertyChange('typo3:' + key);
+				});
 			});
 
 			this.set('$element', $entityElement);
