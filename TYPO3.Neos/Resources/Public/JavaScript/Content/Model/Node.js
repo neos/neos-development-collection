@@ -163,7 +163,7 @@ define([
 		nodePath: function() {
 			var subject = this.get('_vieEntity').getSubject();
 			return subject.slice(1, -1);
-		}.property('_vieEntity'),
+		}.property('_vieEntity').volatile(),
 
 		/**
 		 * @return {boolean}
