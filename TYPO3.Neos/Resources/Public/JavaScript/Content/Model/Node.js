@@ -194,7 +194,7 @@ define([
 		nodeTypeSchema: function() {
 			var schema = Configuration.get('Schema');
 			return schema[this.get('nodeType')];
-		}.property()
+		}.property('nodeType')
 	});
 
 	Entity.reopenClass({
