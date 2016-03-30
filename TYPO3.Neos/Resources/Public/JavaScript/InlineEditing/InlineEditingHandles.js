@@ -13,7 +13,6 @@ define(
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
-	'InlineEditing/InsertNodePanel',
 	'Shared/I18n'
 ],
 function (
@@ -30,7 +29,6 @@ function (
 	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
-	InsertNodePanel,
 	I18n
 ) {
 	return Ember.View.extend({

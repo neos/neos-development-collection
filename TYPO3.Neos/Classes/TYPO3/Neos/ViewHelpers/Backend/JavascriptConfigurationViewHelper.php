@@ -182,7 +182,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             }
             $settings[] = array(
                 'name' => $nodeTypeGroupName,
-                'label' => $nodeTypeGroupSettings['label']
+                'label' => $nodeTypeGroupSettings['label'],
+                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
             );
         }
 

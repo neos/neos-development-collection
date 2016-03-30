@@ -4,25 +4,30 @@
 		<div class="neos-header">{{translate id="createNew" fallback="Create new"}}</div>
 	</div>
 	<div class="neos-modal-body">
-		{{#each view.nodeTypeGroups}}
-			<div class="neos-subheader">{{unbound label}}</div>
-			<ul class="neos-clearfix">
-				{{#each nodeTypes}}
-					<li class="neos-content-new-selecttype-button">
-						<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}}>
-							{{#if icon}}
-								<i class="{{unbound icon}}"></i>
-							{{else}}
-								<i class="icon-sign-blank"></i>
+		{{#each nodeTypeGroup in view.nodeTypeGroups}}
+			{{#if nodeTypeGroup.sortedNodeTypes}}
+				<div class="neos-subheader">
+					{{unbound nodeTypeGroup.label}}
+					{{view view.ToggleNodeTypeGroup nodeTypeGroupBinding="nodeTypeGroup"}}
+				</div>
+				<ul {{bindAttr class=":neos-clearfix"}}>
+					{{#each nodeTypeGroup.sortedNodeTypes}}
+						<li class="neos-content-new-selecttype-button">
+							<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}}>
+								{{#if icon}}
+									<i class="{{unbound icon}}"></i>
+								{{else}}
+									<i class="icon-sign-blank"></i>
+								{{/if}}
+								{{unbound label}}
+							</button>
+							{{#if helpMessage}}
+								{{view view.HelpMessage titleBinding="label" contentBinding="helpMessage" popoverContainer=".neos-insert-node-panel"}}
 							{{/if}}
-							{{unbound label}}
-						</button>
-						{{#if helpMessage}}
-							{{view view.HelpMessage titleBinding="label" contentBinding="helpMessage" popoverContainer=".neos-insert-node-panel"}}
-						{{/if}}
-					</li>
-				{{/each}}
-			</ul>
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
 		{{/each}}
 	</div>
 	<div class="neos-modal-footer">

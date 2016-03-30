@@ -12501,12 +12501,54 @@ neos .icon-fw {
   margin-left: 8px;
 }
 .neos .neos-insert-node-panel .neos-subheader {
-  padding: 0 16px 8px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 16px;
   margin: 0;
+  position: relative;
+  border-bottom: 1px solid #3f3f3f;
+  overflow: hidden;
 }
-.neos .neos-insert-node-panel .neos-subheader ~ .neos-subheader {
-  padding: 16px 16px 8px;
-  border-top: 1px solid #3f3f3f;
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: #fff;
+}
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group:focus {
+  outline: 1px dotted #fff;
+}
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group:hover {
+  background-color: #00b5ff;
+  outline: none;
+}
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group::before {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  line-height: 40px;
+}
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group.neos-collapsed::before {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 19px;
+}
+.neos .neos-insert-node-panel .neos-subheader .neos-modal-collapse-group.neos-open::before {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: 13px;
 }
 .neos .neos-insert-node-panel .neos-modal-body {
   border-bottom: 1px solid #3f3f3f;

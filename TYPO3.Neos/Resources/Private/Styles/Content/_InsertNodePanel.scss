@@ -1,11 +1,50 @@
 .neos-insert-node-panel {
 	.neos-subheader {
-		padding: 0 $defaultMargin $relatedMargin;
+		height: $unit;
+		line-height: $unit;
+		padding-left: $defaultMargin;
 		margin: 0;
+		position: relative;
+		border-bottom: 1px solid $grayLight;
+		overflow: hidden;
 
-		~ .neos-subheader {
-			padding: $defaultMargin $defaultMargin $relatedMargin;
-			border-top: 1px solid $grayLight;
+		.neos-modal-collapse-group {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: $unit;
+			height: $unit;
+			cursor: pointer;
+			color: #fff;
+
+			&:focus {
+				outline: 1px dotted #fff;
+			}
+
+			&:hover {
+				background-color: $blue;
+				outline: none;
+			}
+
+			&::before {
+				content: "›";
+				font-size: 26px;
+				font-weight: normal;
+				display: inline-block;
+				position: relative;
+				top: 0;
+				line-height: $unit;
+			}
+
+			&.neos-collapsed::before {
+				@include rotate(90deg);
+				left: 19px;
+			}
+
+			&.neos-open::before {
+				@include rotate(-90deg);
+				left: 13px;
+			}
 		}
 	}
 
