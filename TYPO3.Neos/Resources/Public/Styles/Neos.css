@@ -5533,25 +5533,26 @@ neos .icon-fw {
 }
 .neos .neos-modal {
   position: fixed;
-  top: 120px;
-  left: 50%;
   z-index: 10050;
-  margin: 0px 0px 0px -17.5%;
+  margin: 0;
   color: #fff;
   background: #222;
   border: 1px solid #3f3f3f;
   padding: 0px;
-  width: 35%;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  width: calc(100vw - 80px);
+  max-width: 640px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .neos .neos-modal.neos-modal-wide {
-  width: 50%;
-  left: 42.5%;
+  max-width: 960px;
 }
 .neos .neos-modal.neos-fade {
   -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
@@ -12552,7 +12553,7 @@ neos .icon-fw {
 }
 .neos .neos-insert-node-panel .neos-modal-body {
   border-bottom: 1px solid #3f3f3f;
-  max-height: 480px;
+  max-height: calc(100vh - 204px);
   overflow-y: auto;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button {

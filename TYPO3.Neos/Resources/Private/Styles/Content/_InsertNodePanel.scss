@@ -50,7 +50,7 @@
 
 	.neos-modal-body {
 		border-bottom: 1px solid $grayLight;
-		max-height: $unit * 12;
+		max-height: calc(100vh - #{$unit * 2 + 52 + 72});
 		overflow-y: auto;
 	}
 
