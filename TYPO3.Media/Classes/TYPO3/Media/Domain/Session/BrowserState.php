@@ -27,6 +27,7 @@ class BrowserState
         'activeTag' => null,
         'view' => 'Thumbnail',
         'sort' => 'Modified',
+        'sortDirection' => 'ASC',
         'filter' => 'All'
     );
 

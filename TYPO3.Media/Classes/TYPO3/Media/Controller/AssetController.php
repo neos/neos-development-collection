@@ -94,6 +94,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      *
      * @param string $view
      * @param string $sort
+     * @param string $sortDirection
      * @param string $filter
      * @param integer $tagMode
      * @param Tag $tag
@@ -102,7 +103,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @param AssetCollection $assetCollection
      * @return void
      */
-    public function indexAction($view = null, $sort = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null)
+    public function indexAction($view = null, $sort = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null)
     {
         if ($view !== null) {
             $this->browserState->set('view', $view);
@@ -111,6 +112,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
         if ($sort !== null) {
             $this->browserState->set('sort', $sort);
             $this->view->assign('sort', $sort);
+        }
+        if ($sortDirection !== null) {
+            $this->browserState->set('sortDirection', $sortDirection);
+            $this->view->assign('sortDirection', $sortDirection);
         }
         if ($filter !== null) {
             $this->browserState->set('filter', $filter);
@@ -169,8 +174,19 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             }
         }
 
-        if ($this->browserState->get('sort') !== 'Modified') {
-            $this->assetRepository->setDefaultOrderings(array('resource.filename' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING));
+        if ($sortDirection === null) {
+            $sortDirection = $this->browserState->get('sortDirection');
+            $this->view->assign('sortDirection', $sortDirection);
+        }
+
+        switch ($this->browserState->get('sort')) {
+            case 'Name':
+                $this->assetRepository->setDefaultOrderings(array('resource.filename' => $sortDirection));
+                break;
+            case 'Modified':
+            default:
+                $this->assetRepository->setDefaultOrderings(array('lastModified' => $sortDirection));
+                break;
         }
 
         if (!$this->browserState->get('activeTag') && $this->browserState->get('tagMode') === self::TAG_GIVEN) {

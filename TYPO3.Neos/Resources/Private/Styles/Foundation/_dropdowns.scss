@@ -97,6 +97,83 @@
 	}
 }
 
+// The dropdown menu with multiple ul's
+// ----------------------
+.neos-dropdown-menu-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: $zindexDropdown;
+	display: none; // none by default, but block on "open" of the menu
+	background-color: $grayMedium;
+	@include box-shadow(0 5px 10px rgba(0,0,0,.2));
+
+	// Aligns the dropdown menu to right
+	&.neos-pull-right {
+		right: 0;
+		left: auto;
+	}
+
+	.neos-dropdown-menu-list-title {
+		display: block;
+		height: $unit;
+		clear: both;
+		font-weight: normal;
+		color: $dropdownLinkColor;
+		white-space: nowrap;
+		padding: 0 $defaultMargin;
+		line-height: $unit;
+		font-size: 14px;
+		border-bottom: 1px solid $grayDark;
+		font-style: italic;
+	}
+
+
+	ul {
+		list-style: none;
+		padding: 0;
+		float: left;
+		min-width: 160px;
+		margin: 1px 0 20px 0;
+
+		// Links within the dropdown menu
+		> li {
+			display: block;
+			height: $unit;
+			clear: both;
+			font-weight: normal;
+			line-height: $baseLineHeight;
+			color: $dropdownLinkColor;
+			white-space: nowrap;
+			padding: 0;
+			border-bottom: 1px solid $grayDark;
+
+			> a {
+				display: block;
+				width: 100%;
+				text-align: left;
+				line-height: $unit;
+				padding: 0 $defaultMargin;
+				@include box-sizing(border-box);
+
+				&:hover,
+				&.neos-active {
+					background-color: $blue;
+					color: #fff;
+				}
+
+				[class^="icon-"],
+				[class*=" icon-"] {
+					margin: 0 $relatedMargin;
+					line-height: $unit;
+					vertical-align: top;
+				}
+			}
+		}
+	}
+}
+
+
 // Hover/Focus state
 // -----------
 .neos-dropdown-menu > li > a:hover,
@@ -144,6 +221,10 @@
 	*z-index: $zindexDropdown;
 
 	& > .neos-dropdown-menu {
+		display: block;
+	}
+
+	& > .neos-dropdown-menu-list {
 		display: block;
 	}
 }

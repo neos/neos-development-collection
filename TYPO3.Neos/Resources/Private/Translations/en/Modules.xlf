@@ -656,6 +656,18 @@
 			<trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
 			</trans-unit>
+			<trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			</trans-unit>
 			<trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			</trans-unit>
