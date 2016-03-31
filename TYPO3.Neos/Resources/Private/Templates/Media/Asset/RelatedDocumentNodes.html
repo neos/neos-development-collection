@@ -4,41 +4,42 @@
 <f:section name="Title">RelatedDocumentNodes view of AssetController</f:section>
 
 <f:section name="Content">
-      <legend>{asset.resource.filename}</legend>
+  <legend>{asset.label}</legend>
 
-      <table class="neos-info-table">
-        <thead>
-          <tr>
-            <th>{neos:backend.translate(id: 'media.relatedDocumentNodes.document', source: 'Modules', package: 'TYPO3.Neos')}</th>
-            <th>{neos:backend.translate(id: 'media.relatedDocumentNodes.reference', source: 'Modules', package: 'TYPO3.Neos')}</th>
-            <th class="neos-aRight">{neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <f:for each="{relatedDocumentNodes}" as="relatedDocumentNode">
-            <tr>
-              <td><neos:link.node node="{relatedDocumentNode.documentNode}" /></td>
-              <td>
-                <ul>
-                  <f:for each="{relatedDocumentNode.node}" as="node">
-                    <li>
-                      <f:if condition="{node.nodeType.label}">
-                        <f:then>
-                          <neos:backend.translate id="{node.nodeType.label}" /> ({node.nodeType.name})
-                        </f:then>
-                        <f:else>
-                          {node.nodeType.name}
-                        </f:else>
-                      </f:if>
-                    </li>
-                  </f:for>
-                </ul>
-              </td>
-              <td class="neos-aRight">{relatedDocumentNode.documentNode.nodeData.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}</td>
-            </tr>
-          </f:for>
-        </tbody>
-      </table>
+  <table class="neos-info-table">
+    <thead>
+      <tr>
+        <th>{neos:backend.translate(id: 'media.relatedDocumentNodes.document', source: 'Modules', package: 'TYPO3.Neos')}</th>
+        <th>{neos:backend.translate(id: 'media.relatedDocumentNodes.reference', source: 'Modules', package: 'TYPO3.Neos')}</th>
+        <th class="neos-aRight">{neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <f:for each="{relatedDocumentNodes}" as="relatedDocumentNode">
+        <tr>
+          <td>
+            <f:if condition="{relatedDocumentNode.documentNode.nodeType.ui.icon}">
+              <i class="{relatedDocumentNode.documentNode.nodeType.ui.icon} icon-fw" title="{relatedDocumentNode.documentNode.nodeType.name}"></i>
+            </f:if>
+            <span title="{relatedDocumentNode.documentNode.path}"><neos:link.node node="{relatedDocumentNode.documentNode}"><neos:backend.documentBreadcrumbPath node="{relatedDocumentNode.documentNode}"><f:for each="{documentNodes}" as="documentNode" iteration="{iterator}"> / {documentNode.label}</f:for></neos:backend.documentBreadcrumbPath></neos:link.node></span>
+          </td>
+          <td>
+            <ul>
+              <f:for each="{relatedDocumentNode.node}" as="node">
+                <li>
+                  <f:if condition="{node.nodeType.ui.icon}">
+                    <i class="{node.nodeType.ui.icon} icon-fw" title="{node.nodeType.name}"></i>
+                  </f:if>
+                  <neos:link.node node="{relatedDocumentNode.documentNode}" title="{node.nodeType.name}">{f:if(condition: node.nodeType.label, then: '{neos:backend.translate(id: node.nodeType.label)}', else: node.nodeType.name)}</neos:link.node>
+                </li>
+              </f:for>
+            </ul>
+          </td>
+          <td class="neos-aRight">{relatedDocumentNode.documentNode.nodeData.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}</td>
+        </tr>
+      </f:for>
+    </tbody>
+  </table>
 
   <div class="neos-footer">
     <f:link.action action="edit" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
