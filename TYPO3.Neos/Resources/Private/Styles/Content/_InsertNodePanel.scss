@@ -48,10 +48,18 @@
 		}
 	}
 
+	+ ul {
+		margin-bottom: 1px;
+	}
+
 	.neos-modal-body {
-		border-bottom: 1px solid $grayLight;
 		max-height: calc(100vh - #{$unit * 2 + 52 + 72});
 		overflow-y: auto;
+	}
+
+	.neos-modal-footer {
+		border-top: 1px solid $grayLight;
+		margin-top: -1px;
 	}
 
 	.neos-content-new-selecttype-button {

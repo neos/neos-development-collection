@@ -12551,10 +12551,16 @@ neos .icon-fw {
   transform: rotate(-90deg);
   left: 13px;
 }
+.neos .neos-insert-node-panel + ul {
+  margin-bottom: 1px;
+}
 .neos .neos-insert-node-panel .neos-modal-body {
-  border-bottom: 1px solid #3f3f3f;
   max-height: calc(100vh - 204px);
   overflow-y: auto;
+}
+.neos .neos-insert-node-panel .neos-modal-footer {
+  border-top: 1px solid #3f3f3f;
+  margin-top: -1px;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button {
   position: relative;
