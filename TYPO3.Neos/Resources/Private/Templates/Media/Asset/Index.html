@@ -39,7 +39,14 @@
 		<div class="neos-dropdown" id="neos-sort-menu">
 			<span title="{neos:backend.translate(id: 'media.tooltip.sortOptions', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">
 				<a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
-					<i class="icon-{f:if(condition: '{sortBy} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+					<f:if condition="{sortDirection} == 'ASC'">
+						<f:then>
+							<i class="icon-{f:if(condition: '{sortBy} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+						</f:then>
+						<f:else>
+							<i class="icon-{f:if(condition: '{sortBy} == \'Modified\'', then: 'sort-by-order-alt', else: 'sort-by-alphabet-alt')}"></i>
+						</f:else>
+					</f:if>
 				</a>
 			</span>
 			<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
@@ -55,10 +62,10 @@
 				<span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'media.sortdirection', source: 'Modules', package: 'TYPO3.Neos')}</span>
 				<ul>
 					<li>
-						<f:link.action action="index" title="Sort direction Ascending" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} == \'ASC\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> {neos:backend.translate(id: 'media.sortdirection.asc', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+						<f:link.action action="index" title="Sort direction Ascending" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} == \'ASC\'', then: 'neos-active')}"><i class="icon-{f:if(condition: '{sortBy} == \'Name\'', then: 'sort-by-alphabet', else: 'sort-by-order')}"></i> {neos:backend.translate(id: 'media.sortdirection.asc', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 					</li>
 					<li>
-						<f:link.action action="index" title="Sort direction Descending" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} == \'DESC\'', then: 'neos-active')}"><i class="icon-sort-by-order-alt"></i> {neos:backend.translate(id: 'media.sortdirection.desc', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+						<f:link.action action="index" title="Sort direction Descending" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} == \'DESC\'', then: 'neos-active')}"><i class="icon-{f:if(condition: '{sortBy} == \'Name\'', then: 'sort-by-alphabet-alt', else: 'sort-by-order-alt')}"></i> {neos:backend.translate(id: 'media.sortdirection.desc', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 					</li>
 				</ul>
 			</div>
