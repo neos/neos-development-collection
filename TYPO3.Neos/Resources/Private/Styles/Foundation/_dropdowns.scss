@@ -125,16 +125,15 @@
 		line-height: $unit;
 		font-size: 14px;
 		border-bottom: 1px solid $grayDark;
-		font-style: italic;
+		font-weight: bold;
 	}
-
 
 	ul {
 		list-style: none;
 		padding: 0;
 		float: left;
 		min-width: 160px;
-		margin: 1px 0 20px 0;
+		margin: 1px 0 0 0;
 
 		// Links within the dropdown menu
 		> li {
