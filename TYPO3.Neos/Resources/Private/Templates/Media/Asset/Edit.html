@@ -76,7 +76,7 @@
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 			<f:if condition="{relatedDocumentNodes}">
         <f:then>
-          <a title="{neos:backend.translate(id: 'media.deleteRelatedDocumentNodes', source: 'Modules', package: 'TYPO3.Neos')}" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+          <a title="{neos:backend.translate(id: 'media.deleteRelatedDocumentNodes', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
         </f:then>
         <f:else>
           <a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
