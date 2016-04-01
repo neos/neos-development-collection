@@ -6,7 +6,7 @@
 			<tr>
 				<th></th>
 				<th>
-					<f:if condition="{sort} == 'Name'">
+					<f:if condition="{sortBy} == 'Name'">
 						<f:then>
 							{neos:backend.translate(id: 'media.field.name', source: 'Modules', package: 'TYPO3.Neos')}
 							<f:if condition="{sortDirection} == 'ASC'">
@@ -25,7 +25,7 @@
 							</f:if>
 						</f:then>
 						<f:else>
-							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByName', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Name'}" addQueryString="TRUE">
+							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByName', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE">
 								{neos:backend.translate(id: 'media.field.name', source: 'Modules', package: 'TYPO3.Neos')}
 							</f:link.action>
 							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortdirection.asc', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Name', sortDirection: 'ASC'}" addQueryString="TRUE">
@@ -38,7 +38,7 @@
 					</f:if>
 				</th>
 				<th>
-					<f:if condition="{sort} == 'Modified'">
+					<f:if condition="{sortBy} == 'Modified'">
 						<f:then>
 							{neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}
 							<f:if condition="{sortDirection} == 'ASC'">
@@ -57,7 +57,7 @@
 							</f:if>
 						</f:then>
 						<f:else>
-							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByLastModified', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Modified'}" addQueryString="TRUE">
+							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByLastModified', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE">
 								{neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}
 							</f:link.action>
 							<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortdirection.asc', source: 'Modules', package: 'TYPO3.Neos')}" data="{neos-toggle: 'tooltip'}" arguments="{sort: 'Modified', sortDirection: 'ASC'}" addQueryString="TRUE">
