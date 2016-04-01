@@ -59,9 +59,11 @@ class NodeUriPathSegmentGenerator
      * @param NodeInterface $node Optional node to determine language dimension
      * @param string $text Optional text
      * @return string
+     * @throws \TYPO3\Neos\Exception
      */
     public function generateUriPathSegment(NodeInterface $node = null, $text = null)
     {
+        $language = null;
         if ($node) {
             $text = $text ?: $node->getLabel() ?: $node->getName();
             $dimensions = $node->getContext()->getDimensions();
