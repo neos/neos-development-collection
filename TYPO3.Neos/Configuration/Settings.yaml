@@ -60,7 +60,10 @@ TYPO3:
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
           'databaseConnectionExceptions':
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            matchingExceptionClassNames:
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseStructureException'
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
