@@ -194,10 +194,7 @@ function(
 		},
 
 		_initializeVie: function() {
-			var that = this,
-				schemaLoadErrorCallback = function() {
-					console.warn('Error loading schemas.', arguments);
-				};
+			var that = this;
 
 			if (this.get('_vieOptions').stanbolUrl) {
 				vie.use(new vie.StanbolService({
@@ -220,11 +217,9 @@ function(
 							vie.Util.loadSchemaOrg(vie, vieSchema, null);
 							Configuration.set('Schema', nodeTypeSchema.nodeTypes);
 							that._initializeVieAfterSchemaIsLoaded(vie);
-						},
-						schemaLoadErrorCallback
+						}
 					);
-				},
-				schemaLoadErrorCallback
+				}
 			);
 		},
 

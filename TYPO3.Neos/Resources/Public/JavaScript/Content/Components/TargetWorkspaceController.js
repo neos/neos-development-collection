@@ -74,8 +74,6 @@ define(
 					});
 
 					that.set('configuration', configuration);
-				}, function(error) {
-					console.error('Failed loading workspaces data.', error);
 				});
 			},
 

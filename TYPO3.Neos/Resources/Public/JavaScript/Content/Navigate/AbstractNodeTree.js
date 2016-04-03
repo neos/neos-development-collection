@@ -677,7 +677,6 @@ define(
 						that.afterPersistNode(node);
 					},
 					function(error) {
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.create.unexpected', 'Unexpected error while creating node') + ': ' + JSON.stringify(error));
 						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
@@ -694,9 +693,6 @@ define(
 						parentNode.activate();
 						node.remove();
 						that.afterDeleteNode(node);
-					},
-					function(error) {
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.delete.unexpected', 'Unexpected error while deleting node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -744,7 +740,6 @@ define(
 					},
 					function(error) {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.update.unexpected', 'Unexpected error while updating node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -833,7 +828,6 @@ define(
 						},
 						function(error) {
 							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				}
@@ -884,11 +878,11 @@ define(
 						},
 						function(error) {
 							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				} catch(e) {
-					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + e.toString());
+					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node'), e.toString());
+					console.error(e);
 				}
 			},
 
@@ -928,7 +922,6 @@ define(
 					},
 					function() {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.nodeTree.load', 'Node Tree loading error.'));
 					}
 				);
 			},

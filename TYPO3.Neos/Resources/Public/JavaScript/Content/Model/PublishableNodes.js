@@ -142,7 +142,6 @@ define(
             },
             function (error) {
               that.set('publishRunning', false);
-              Notification.error('Unexpected error while publishing changes: ' + JSON.stringify(error));
             }
           ).fail(function(error) {
               Notification.error('An error occurred.');
@@ -217,7 +216,6 @@ define(
             },
             function (error) {
               that.set('discardRunning', false);
-              Notification.error('Unexpected error while discarding changes: ' + JSON.stringify(error));
             }
           );
         }
@@ -247,7 +245,6 @@ define(
           },
           function (error) {
             that.set('publishAllRunning', false);
-            Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(error));
           }
         );
       },
@@ -286,7 +283,6 @@ define(
           },
           function (error) {
             that.set('discardAllRunning', false);
-            Notification.error('Unexpected error while discarding all changes: ' + JSON.stringify(error));
           }
         );
       },

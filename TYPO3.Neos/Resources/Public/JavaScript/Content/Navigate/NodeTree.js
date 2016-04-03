@@ -365,25 +365,23 @@ define(
 							}
 						).then(
 							function(result) {
-								if (result !== null && result.success === true) {
-									node.data.href = result.data.nextUri;
-									node.setLazyNodeStatus(that.statusCodes.ok);
-									var nodeEntity = NodeSelection.getNode(node.data.key),
-										selectedNodeEntity = NodeSelection.get('selectedNode');
-									if (nodeEntity) {
-										nodeEntity.setAttribute('title', title);
-										nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
-										if (nodeEntity === selectedNodeEntity) {
-											InspectorController.set('cleanProperties.title', title);
-											InspectorController.set('nodeProperties.title', title);
-										}
-										ContentModule.loadPage(node.data.href);
+								node.data.href = result.data.nextUri;
+								node.setLazyNodeStatus(that.statusCodes.ok);
+								var nodeEntity = NodeSelection.getNode(node.data.key),
+									selectedNodeEntity = NodeSelection.get('selectedNode');
+								if (nodeEntity) {
+									nodeEntity.setAttribute('title', title);
+									nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+									if (nodeEntity === selectedNodeEntity) {
+										InspectorController.set('cleanProperties.title', title);
+										InspectorController.set('nodeProperties.title', title);
 									}
-									EventDispatcher.trigger('nodeUpdated');
-								} else {
-									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
-									node.setLazyNodeStatus(that.statusCodes.error);
+									ContentModule.loadPage(node.data.href);
 								}
+								EventDispatcher.trigger('nodeUpdated');
+							},
+							function(error) {
+								node.setLazyNodeStatus(that.statusCodes.error);
 							}
 						);
 					}
@@ -511,7 +509,6 @@ define(
 									node.addChild(result.data);
 								} else {
 									node.setLazyNodeStatus(that.statusCodes.error);
-									Notification.error('Node Tree loading error.');
 								}
 							}
 						}

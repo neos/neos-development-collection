@@ -71,8 +71,6 @@ function(
 			var that = this;
 			ResourceCache.getItem(Configuration.get('ContentDimensionsUri')).then(function(configuration) {
 				that.set('configuration', configuration);
-			}, function(error) {
-				console.error('Failed loading dimension presets data.', error);
 			});
 		},
 
@@ -248,7 +246,7 @@ function(
 				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {
-					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
+					Notification.error('Unexpected error while while fetching alternative content variants.');
 				}
 			});
 		},
@@ -287,8 +285,6 @@ function(
 					Notification.ok('Created ' + that.get('currentDimensionChoiceText'));
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
 				});
-			}, function(error) {
-				Notification.error('Unexpected error while creating a new content variant: ' + JSON.stringify(error));
 			});
 		}
 	}).create();
