@@ -233,7 +233,9 @@ function(
 				};
 
 			this.set('showInitialTranslationDialog', false);
+			ContentModule.set('httpClientFailureHandling', false);
 			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
+				ContentModule.set('httpClientFailureHandling', true);
 				that.set('selectorIsActive', false);
 				ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
@@ -242,6 +244,7 @@ function(
 					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
 				});
 			}, function(error) {
+				ContentModule.set('httpClientFailureHandling', true);
 				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {

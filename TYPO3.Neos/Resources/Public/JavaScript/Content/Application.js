@@ -22,6 +22,7 @@ define(
 	'create',
 	'Shared/Notification',
 	'Shared/HttpClient',
+	'Shared/HttpRestClient',
 	'Content/Components/StorageManager'
 ],
 function(
@@ -41,6 +42,7 @@ function(
 	CreateJS,
 	Notification,
 	HttpClient,
+	HttpRestClient,
 	StorageManager
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
@@ -86,20 +88,34 @@ function(
 
 		$loader: null,
 		spinner: null,
+		httpClientFailureHandling: true,
 
 		bootstrap: function() {
-			var that = this;
-			HttpClient.on('failure', function(xhr, status, message) {
-				if (status === 'abort' || xhr.status === 401) {
-					return;
-				}
-				if (xhr === undefined || xhr.status !== 404) {
-					Notification.error('Server communication ' + status + ': ' + message);
-				} else {
-					that._handlePageNotFoundError(that.getCurrentUri());
-				}
-				LoadingIndicator.done();
-			});
+			var that = this,
+				httpClientFailureHandler = function(xhr, status, statusMessage) {
+					if (that.get('httpClientFailureHandling') === false) {
+						return;
+					}
+					if (status === 'abort' || xhr.status === 401) {
+						return;
+					}
+					if (xhr === undefined || xhr.status !== 404) {
+						console.error(statusMessage, xhr);
+						var errorMessage = '';
+						if (xhr.responseJSON && xhr.responseJSON.error.message) {
+							errorMessage = xhr.responseJSON.error.message;
+						} else {
+							errorMessage = $(xhr.responseText).find('.ExceptionSubject').text();
+						}
+						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage);
+					} else {
+						console.log('_handlePageNotFoundError');
+						// that._handlePageNotFoundError(that.getCurrentUri());
+					}
+					LoadingIndicator.done();
+				};
+			HttpClient.on('failure', httpClientFailureHandler);
+			HttpRestClient.on('failure', httpClientFailureHandler);
 
 			this.set('vie', vie);
 			if (window.T3.isContentModule) {
