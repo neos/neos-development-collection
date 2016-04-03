@@ -122,12 +122,15 @@ TYPO3:
         general:
           position: 'start'
           label: 'TYPO3.Neos:Main:nodeTypes.groups.general'
+          collapsed: false
         structure:
           position: 100
           label: 'TYPO3.Neos:Main:nodeTypes.groups.structure'
+          collapsed: false
         plugins:
           position: 200
           label: 'TYPO3.Neos:Main:nodeTypes.groups.plugins'
+          collapsed: true
 
     userInterface:
       # should minified JavaScript be loaded? For developing the Neos

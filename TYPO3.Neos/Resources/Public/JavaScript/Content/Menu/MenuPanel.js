@@ -2,12 +2,11 @@ define(
 	[
 		'emberjs',
 		'Library/jquery-with-dependencies',
-		'Shared/LocalStorage',
 		'./MenuPanelController',
 		'Shared/EventDispatcher',
 		'Shared/I18n',
 		'text!./MenuPanel.html'
-	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, I18n, template) {
+	], function(Ember, $, MenuPanelController, EventDispatcher, I18n, template) {
 
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
