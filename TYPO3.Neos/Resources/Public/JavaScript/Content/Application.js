@@ -109,8 +109,7 @@ function(
 						}
 						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage);
 					} else {
-						console.log('_handlePageNotFoundError');
-						// that._handlePageNotFoundError(that.getCurrentUri());
+						that._handlePageNotFoundError(that.getCurrentUri());
 					}
 					LoadingIndicator.done();
 				};

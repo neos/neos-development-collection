@@ -174,7 +174,7 @@ function(
 			});
 
 			return dimensions;
-		}.property('configuration', 'selectedDimensions'),
+		}.property('selectedDimensions'),
 
 		/**
 		 * Computed property of selected dimension values
