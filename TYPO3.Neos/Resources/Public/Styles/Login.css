@@ -4547,6 +4547,8 @@ body {
   text-align: center;
   text-decoration: none;
   background-color: #000;
+  white-space: normal;
+  text-shadow: none;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;

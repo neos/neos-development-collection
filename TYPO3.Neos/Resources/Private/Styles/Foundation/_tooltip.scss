@@ -27,6 +27,8 @@
   text-align: center;
   text-decoration: none;
   background-color: $tooltipBackground;
+  white-space: normal;
+  text-shadow: none;
   @include border-radius($baseBorderRadius);
 }
 
