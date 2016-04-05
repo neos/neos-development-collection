@@ -172,6 +172,7 @@ define(
 					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
 						$(nodeSpan).addClass('neos-dynatree-dirty');
 					}
+					$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
 				},
 
 				onCustomRender: function(node) {
