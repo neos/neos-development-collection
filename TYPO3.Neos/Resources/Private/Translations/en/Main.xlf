@@ -138,11 +138,17 @@
 			<trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			</trans-unit>
+			<trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			</trans-unit>
 			<trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			</trans-unit>
 			<trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
+			</trans-unit>
+			<trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
 			</trans-unit>
 			<trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
