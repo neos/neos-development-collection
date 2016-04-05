@@ -1,7 +1,7 @@
 <div class="neos-toolbar">
 	<div class="neos-inspector-tabs">
 		{{#each tab in groupedViews}}
-			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}}>
+			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}} data-neos-tooltip data-placement="bottom">
 				<i {{bindAttr class="tab.icon"}}></i>
 			</button>
 		{{/each}}
@@ -17,9 +17,9 @@
 			{{#each group in tab.groups}}
 				{{#view view.Section classNames="neos-inspector-section" groupBinding="group" groupNameBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
 					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
-						<span>{{unbound group.label}}</span>
+						<span title="{{unbound group.label}}" data-neos-tooltip>{{unbound group.label}}</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
-						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}}></div>
+						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}} data-neos-tooltip title="Toggle {{unbound group.label}}"></div>
 					</div>
 					{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="group.properties"}}
 						{{#if isBoolean}}
@@ -31,7 +31,7 @@
 								{{/if}}
 							</label>
 						{{else}}
-							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">
+							<label for="{{unbound elementId}}" title="{{unbound ui.label}}" data-neos-tooltip>
 								{{unbound ui.label}}
 								{{#if ui.help.message}}
 									{{view view.parentView.parentView.HelpMessage titleBinding="ui.label" contentBinding="ui.help.message" popoverContainer="#neos-inspector" placement="left"}}
