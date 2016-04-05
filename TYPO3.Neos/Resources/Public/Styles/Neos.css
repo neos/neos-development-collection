@@ -5716,7 +5716,7 @@ neos .icon-fw {
 }
 .neos .neos-tooltip {
   position: absolute;
-  z-index: 1030;
+  z-index: 999999;
   display: block;
   visibility: visible;
   font-size: 11px;
