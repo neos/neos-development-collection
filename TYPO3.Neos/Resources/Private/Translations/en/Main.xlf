@@ -87,6 +87,15 @@
 			<trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			</trans-unit>
+			<trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			</trans-unit>
+			<trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			</trans-unit>
+			<trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			</trans-unit>
 			<trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			</trans-unit>

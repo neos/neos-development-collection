@@ -1,7 +1,13 @@
 <div class="neos-modal neos-modal-wide neos-insert-node-panel">
 	<div class="neos-modal-header">
 		<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}} data-neos-toggle></button>
-		<div class="neos-header">{{translate id="createNew" fallback="Create new"}}</div>
+		<div class="neos-header">
+			{{translate id="createNew" fallback="Create new"}}
+			{{#if view._position}}
+				{{boundTranslate idBinding="view._position" fallbackBinding="view._position"}}
+				<i {{bindAttr class="view._positionIconClass"}}></i>
+			{{/if}}
+		</div>
 	</div>
 	<div class="neos-modal-body">
 		{{#each nodeTypeGroup in view.nodeTypeGroups}}
