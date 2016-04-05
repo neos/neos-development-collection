@@ -52,7 +52,16 @@
 								</f:else>
 							</f:if>
 						</td>
-						<td>{workspace.owner.label}</td>
+						<td>
+							<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Administration.Users">
+								<f:then>
+									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.owner}">{workspace.owner.label}</neos:link.module>
+								</f:then>
+								<f:else>
+									{workspace.owner.label}
+								</f:else>
+							</f:security.ifAccess>
+						</td>
 						<td class="neos-changes">
 							<f:if condition="{workspace.baseWorkspace}">
 								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}" data-neos-toggle="tooltip">
