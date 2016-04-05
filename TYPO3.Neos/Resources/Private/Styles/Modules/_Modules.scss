@@ -1,8 +1,9 @@
 &.neos-module {
-	@import "Administration/Packages";
 	@import "Administration/Configuration";
-	@import "Management/Workspaces";
+	@import "Administration/Packages";
+	@import "Administration/Sites";
 	@import "Management/History";
+	@import "Management/Workspaces";
 	@include font;
 
 	background-color: $grayDarker;
