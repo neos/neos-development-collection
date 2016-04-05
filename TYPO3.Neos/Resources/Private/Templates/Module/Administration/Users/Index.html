@@ -13,27 +13,27 @@
 			</thead>
 			<f:for each="{users}" key="index" as="user">
 				<tr>
-					<td title="{user.alias}">{user.name}</td>
+					<td>{user.name.fullName}</td>
 					<td>
 						<f:for each="{user.accounts}" as="account">
-							<i class="icon-user icon-white"></i>{account.accountIdentifier} (<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />)
+							<i class="icon-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 						</f:for>
 					</td>
 					<td class="neos-action">
 						<div class="neos-pull-right">
-							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'TYPO3.Neos')}">
+							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.edit', source: 'Modules', package: 'TYPO3.Neos')}">
+							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.edit', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
 							<f:if condition="{currentUser} == {user}">
 								<f:then>
-									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotDeleteYourself', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
+									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotDeleteYourself', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#user-{index}">
+									<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#user-{index}" data-neos-toggle="tooltip">
 										<i class="icon-trash icon-white"></i>
 									</button>
 									<div class="neos-hide" id="user-{index}">

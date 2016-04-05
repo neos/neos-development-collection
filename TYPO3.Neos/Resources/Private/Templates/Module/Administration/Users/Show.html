@@ -57,7 +57,7 @@
 				</tr>
 				<f:for each="{user.accounts}" as="account">
 				<tr>
-					<td>{account.accountIdentifier}</td>
+					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
 					<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
 				</tr>
 				</f:for>
