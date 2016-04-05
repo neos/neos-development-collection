@@ -74,7 +74,7 @@
 					<td class="asset-label"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
 					<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
 					<td>{asset.resource.fileSize -> f:format.bytes()}</td>
-					<td>{asset.resource.mediatype}</td>
+					<td><span class="neos-label">{asset.resource.mediatype}</span></td>
 					<td class="tags">
 						<f:for each="{asset.tags}" as="tag">
 							<span class="neos-label">{tag.label}</span>
