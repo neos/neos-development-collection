@@ -460,6 +460,12 @@
 			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>
+			<trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			</trans-unit>
+			<trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			</trans-unit>
 			<trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			</trans-unit>
