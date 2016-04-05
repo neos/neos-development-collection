@@ -45,6 +45,7 @@ function (
 
 		toggleSelectorOption: function(newPosition) {
 			this.set('desiredPosition', newPosition);
+			this.triggerAction(this.get('position'));
 		},
 
 		position: function() {
