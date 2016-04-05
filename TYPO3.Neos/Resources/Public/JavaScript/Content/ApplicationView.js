@@ -50,6 +50,7 @@ function(
 			// Make sure to create the top bar *after* the DOM is loaded completely,
 			// and the #neos-top-bar is transmitted from the server.
 			TopBar.create({_isContentModule: this.get('_isContentModule')}).appendTo('#neos-top-bar');
+			this.$('[data-neos-tooltip]').tooltip({container: '#neos-application'});
 
 			Ember.run.next(function() {
 				EventDispatcher.triggerExternalEvent('Neos.ContentModuleLoaded', 'Content module finished loading.');
