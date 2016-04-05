@@ -4521,8 +4521,8 @@ body {
   opacity: 0;
 }
 .neos .neos-tooltip.neos-in {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
-  opacity: 0.8;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+  opacity: 0.9;
 }
 .neos .neos-tooltip.neos-top {
   margin-top: -3px;

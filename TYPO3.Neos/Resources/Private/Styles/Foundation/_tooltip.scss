@@ -12,7 +12,7 @@
   font-size: 11px;
   line-height: 1.4;
   @include opacity(0);
-  &.neos-in     { @include opacity(.8); }
+  &.neos-in     { @include opacity(.9); }
   &.neos-top    { margin-top:  -3px; padding: 5px 0; }
   &.neos-right  { margin-left:  3px; padding: 0 5px; }
   &.neos-bottom { margin-top:   3px; padding: 5px 0; }
