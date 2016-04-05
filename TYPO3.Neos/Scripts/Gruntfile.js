@@ -116,6 +116,12 @@ module.exports = function (grunt) {
 						src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 						src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
 
+						// tooltips
+						src = src.replace(/tooltipClass: 'aloha aloha-ui-tooltip',/g, "placement: 'bottom',");
+						src = src.replace(".tooltip('close', null, true);", ".tooltip('hide');");
+						src = src.replace(".tooltip('disable');", ".tooltip('hide');");
+						src = src.replace(".tooltip('enable');", ".tooltip('show');");
+
 						return src;
 					}
 				}
