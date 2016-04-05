@@ -30,6 +30,10 @@ define([
 			});
 		},
 
+		didInsertElement: function() {
+			this.$().find('[data-neos-tooltip]').tooltip();
+		},
+
 		ToggleNodeTypeGroup: Ember.View.extend({
 			tagName: 'a',
 			href: '#',

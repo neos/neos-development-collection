@@ -9,7 +9,8 @@ define(
 	'Content/Inspector/InspectorController',
 	'Content/Model/NodeSelection',
 	'Content/Model/NodeActions',
-	'Content/Components/AbstractPositionSelectorButton',
+	'Content/Components/NewPositionSelectorButton',
+	'Content/Components/PastePositionSelectorButton',
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
@@ -25,7 +26,8 @@ function (
 	InspectorController,
 	NodeSelection,
 	NodeActions,
-	AbstractPositionSelectorButton,
+	NewPositionSelectorButton,
+	PastePositionSelectorButton,
 	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
@@ -43,41 +45,17 @@ function (
 		// this property mirrors the _hidden property of the node (it's automatically updated)
 		_hidden: false,
 
-		NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+		NewPositionSelectorButton: NewPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedNewPositions',
-			iconClass: 'icon-plus',
-			init: function() {
-				this._super();
-				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'));
-			},
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var newPosition = this.get('position');
-					ContentCommands.create(newPosition);
-				}
-				$(event.target).filter('button').click();
+			triggerAction: function(position) {
+				ContentCommands.create(position);
 			}
 		}),
 
-		PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+		PastePositionSelectorButton: PastePositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedPastePositions',
-			iconClass: 'icon-paste',
-			init: function() {
-				this._super();
-				this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'));
-			},
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var pastePosition = this.get('position');
-					ContentCommands.paste(pastePosition);
-				}
-				$(event.target).filter('button').click();
+			triggerAction: function(position) {
+				ContentCommands.paste(position);
 			}
 		}),
 

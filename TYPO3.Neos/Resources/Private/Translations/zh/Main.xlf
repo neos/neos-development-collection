@@ -459,9 +459,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="zh-CN" state="translated">你真的想要删除吗</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="zh-CN" state="translated">新建 (按住以选择位置)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="zh-CN" state="translated">此操作将会删除元素</target></trans-unit>
@@ -471,9 +468,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="zh-CN" state="translated">此操作可以在工作区管理界面中撤消。</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="zh-CN" state="translated">粘贴 (按住以选择位置)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="zh-CN" state="translated">高度</target></trans-unit>
