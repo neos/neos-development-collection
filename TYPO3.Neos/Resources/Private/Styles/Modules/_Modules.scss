@@ -411,6 +411,10 @@
 			td.check {
 				padding-right: $relatedMargin !important;
 			}
+
+			.neos-label {
+				background-color: $textSubtle;
+			}
 		}
 
 		&.neos-info-table {
@@ -482,6 +486,11 @@
 			&.neos-action {
 				padding-left: 0 !important;
 				padding-right: 0 !important;
+			}
+
+			i {
+				vertical-align: baseline;
+				text-align: center;
 			}
 		}
 

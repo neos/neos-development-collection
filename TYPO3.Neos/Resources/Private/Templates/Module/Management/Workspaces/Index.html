@@ -20,32 +20,32 @@
 						<td class="neos-workspace-type">
 							<f:if condition="{userWorkspace} == {workspace}">
 								<f:then>
-									<span class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+									<span class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
 								</f:then>
 								<f:else>
 									<f:if condition="{canPublish}">
 										<f:then>
 											<f:if condition="{workspace.privateWorkspace}">
 												<f:then>
-													<span class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+													<span class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
 												</f:then>
 												<f:else>
-													<span class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+													<span class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
 												</f:else>
 											</f:if>
 										</f:then>
 										<f:else>
-											<span class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"></span>
+											<span class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
 										</f:else>
 									</f:if>
 								</f:else>
 							</f:if>
 						</td>
-						<td><span title="{workspace.name}">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
+						<td><span title="{workspace.name}" data-neos-toggle="tooltip">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
 						<td>
 							<f:if condition="{workspace.baseWorkspace}">
 								<f:then>
-									<span title="{workspace.baseWorkspace.name}">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+									<span title="{workspace.baseWorkspace.name}" data-neos-toggle="tooltip">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
 								</f:then>
 								<f:else>
 									<span>-</span>
@@ -55,7 +55,7 @@
 						<td>{workspace.owner.label}</td>
 						<td class="neos-changes">
 							<f:if condition="{workspace.baseWorkspace}">
-								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}">
+								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}" data-neos-toggle="tooltip">
 									<div class="neos-change-stats">
 										<f:if condition="{changesCounts.total} != 0">
 											<f:then>
@@ -80,28 +80,28 @@
 						<td class="neos-action">
 							<div class="neos-pull-right">
 								<f:if condition="{canManage}">
-									<f:link.action action="edit" arguments="{workspace: workspace}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}">
+									<f:link.action action="edit" arguments="{workspace: workspace}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 										<i class="icon-pencil icon-white"></i>
 									</f:link.action>
 								</f:if>
 
 								<f:if condition="{userWorkspace} == {workspace}">
 									<f:then>
-										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
+										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 									</f:then>
 									<f:else>
 										<f:if condition="{changesCounts.total} != 0">
 											<f:then>
-												<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.workspaceContainsChanges', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
+												<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.workspaceContainsChanges', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 											</f:then>
 											<f:else>
 												<f:if condition="{dependentWorkspacesCount} != 0">
 													<f:then>
-														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-trash icon-white"></i></button>
+														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 													</f:then>
 													<f:else>
 														<f:if condition="{canManage}">
-															<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#workspace-{workspacesIterator.index}">
+															<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#workspace-{workspacesIterator.index}" data-neos-toggle="tooltip">
 																<i class="icon-trash icon-white"></i>
 															</button>
 															<div class="neos-hide" id="workspace-{workspacesIterator.index}">
