@@ -138,12 +138,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="fr">Impossible de publier, l'espace de travail cible est en lecture seule</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="fr" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="fr">Publication</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="fr">Publié</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="fr" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="fr">Espace de travail cible</target></trans-unit>
@@ -435,6 +441,9 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="fr">Le sujet donné n'est pas un UUID valide.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="fr" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="fr" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
@@ -456,12 +465,15 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="fr">Contenu</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="fr" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="fr" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="fr">Confirmez-vous la suppression</target><alt-trans><target xml:lang="fr">Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="fr">Créer un nouveau (maintenir enfoncé pour sélectionner la position)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
 			<target xml:lang="fr">Cet action supprimera l'élément</target><alt-trans><target xml:lang="fr">Cette action supprimera l'élément</target></alt-trans></trans-unit>
@@ -471,9 +483,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="fr">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="fr">Coller (maintenir enfoncé pour sélectionner la position)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="fr">Hauteur</target></trans-unit>

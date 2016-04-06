@@ -138,12 +138,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="lv">Nevar publicēt, jo izvēlētā darba virsma ļauj tikai lasīt</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="lv" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="lv">Publicēšana</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="lv">Publicēts</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="lv" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="lv">Mērķa darbavieta</target></trans-unit>
@@ -435,6 +441,9 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="lv">Attiecīgajā vērtībā nav derīgs UUID.</target><alt-trans><target xml:lang="lv">Attiecīgā vērtībā nav derīgs UUID.</target></alt-trans><alt-trans><target xml:lang="lv">Attiecīgajā jautājumā nav derīgs UUID.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="lv" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="lv" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
@@ -456,12 +465,15 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="lv">Saturs</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="lv" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="lv" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="lv">Vai tiešām vēlaties izdzēst</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="lv">Izveidot jaunu (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
 			<target xml:lang="lv">Lapa tiks izdzēsta</target></trans-unit>
@@ -471,9 +483,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="lv">Šo darbību var atsaukt darba virsmas vadības panelī.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="lv">Ielīmēt (turiet nospiestu, lai izvēlētos pozīciju)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="lv">Augstums</target></trans-unit>
