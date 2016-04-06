@@ -12585,6 +12585,9 @@ neos .icon-fw {
 .neos .neos-button-group + .neos-button-group {
   margin-left: 8px;
 }
+.neos .neos-insert-node-panel .neos-header i {
+  vertical-align: baseline;
+}
 .neos .neos-insert-node-panel .neos-subheader {
   height: 40px;
   line-height: 40px;
