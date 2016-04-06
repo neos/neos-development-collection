@@ -612,7 +612,7 @@
     , template: '<div class="neos-tooltip"><div class="neos-tooltip-arrow"></div><div class="neos-tooltip-inner"></div></div>'
     , trigger: 'hover focus'
     , title: ''
-    , delay: 0
+    , delay: { 'show': 500, 'hide': 100 }
     , html: false
     , container: false
   }

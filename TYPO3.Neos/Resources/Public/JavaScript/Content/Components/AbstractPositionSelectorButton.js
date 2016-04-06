@@ -1,13 +1,15 @@
 /**
  * AbstractPositionSelectorButton, used to select position for new and paste
- * operations in the tree and in inline handles.
+ * operations in the tree and in inline editing handles.
  */
 define([
 	'emberjs',
+	'Shared/I18n',
 	'text!./AbstractPositionSelectorButton.html'
 ],
 function (
 	Ember,
+	I18n,
 	template
 ) {
 	return Ember.View.extend({
@@ -18,7 +20,7 @@ function (
 		allowedPositions: null,
 		title: null,
 		iconClass: null,
-		mouseUp: function(event) {},
+		triggerAction: Ember.required,
 
 		isActive: true,
 
@@ -43,6 +45,7 @@ function (
 
 		toggleSelectorOption: function(newPosition) {
 			this.set('desiredPosition', newPosition);
+			this.triggerAction(this.get('position'));
 		},
 
 		position: function() {
@@ -71,6 +74,14 @@ function (
 			}
 		},
 
+		mouseUp: function(event) {
+			clearTimeout(this.get('downTimer'));
+			this.set('downTimer', null);
+			if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
+				this.triggerAction(this.get('position'));
+			}
+		},
+
 		mouseEnter: function(event) {
 			if (this.get('isDisabled') === false) {
 				var that = this;
@@ -89,11 +100,17 @@ function (
 			this.set('isExpanded', false);
 		},
 
+		didInsertElement: function() {
+			this.$().tooltip({container: '#neos-application'});
+		},
+
 		PositionSelectorOption: Ember.View.extend({
 			// Set position to either `into`, `before` or `after` when using
 			position: Ember.required(),
 
 			tagName: 'button',
+
+			type: null, // "new" or "paste"
 
 			currentPositionBinding: 'parentView.position',
 
@@ -106,6 +123,8 @@ function (
 				'isDisabled:neos-disabled'
 			],
 
+			attributeBindings: ['title'],
+
 			iconClass: function () {
 				switch (this.get('position')) {
 					case 'before':
@@ -114,9 +133,21 @@ function (
 						return 'icon-long-arrow-right';
 					case 'after':
 						return 'icon-level-down';
-					default:
-						return '';
 				}
+				return '';
+			}.property('position'),
+
+			title: function () {
+				var type = this.get('type');
+				switch (this.get('position')) {
+					case 'before':
+						return I18n.translate(type + 'Before');
+					case 'into':
+						return I18n.translate(type + 'Into');
+					case 'after':
+						return I18n.translate(type + 'After');
+				}
+				return '';
 			}.property('position'),
 
 			isActive: function() {
@@ -130,6 +161,10 @@ function (
 					return false;
 				}
 			}.property('allowedPositions.@each'),
+
+			didInsertElement: function() {
+				this.$().tooltip({container: '#neos-application', placement: 'right'});
+			},
 
 			mouseDown: function(event) {
 				if (!this.get('isDisabled')) {

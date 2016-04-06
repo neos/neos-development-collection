@@ -7,7 +7,8 @@ define(
 		'Library/jquery-with-dependencies',
 		'../Application',
 		'Content/Model/Node',
-		'Content/Components/AbstractPositionSelectorButton',
+		'Content/Components/NewPositionSelectorButton',
+		'Content/Components/PastePositionSelectorButton',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
 		'Shared/NodeTypeService',
@@ -24,7 +25,8 @@ define(
 		$,
 		ContentModule,
 		EntityWrapper,
-		AbstractPositionSelectorButton,
+		NewPositionSelectorButton,
+		PastePositionSelectorButton,
 		NodeSelection,
 		Configuration,
 		NodeTypeService,
@@ -154,41 +156,17 @@ define(
 				return positions;
 			}.property('activeNode', 'cutNode', 'copiedNode'),
 
-			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+			NewPositionSelectorButton: NewPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				iconClass: 'icon-plus',
-				init: function() {
-					this._super();
-					this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.createNewHoldPosition', 'Create new (hold to select position)'));
-				},
-
-				mouseUp: function(event) {
-					clearTimeout(this.get('downTimer'));
-					this.set('downTimer', null);
-					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-						var position = this.get('position');
-						this.get('parentView').create(position);
-					}
-					$(event.target).filter('button').click();
+				triggerAction: function(position) {
+					this.get('parentView').create(position);
 				}
 			}),
 
-			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+			PastePositionSelectorButton: PastePositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				iconClass: 'icon-paste',
-				init: function() {
-					this._super();
-					this.set('title', I18n.translate('TYPO3.Neos:Main:content.navigate.pasteHoldPosition', 'Paste (hold to select position)'));
-				},
-
-				mouseUp: function(event) {
-					clearTimeout(this.get('downTimer'));
-					this.set('downTimer', null);
-					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-						var position = this.get('position');
-						this.get('parentView').paste(position);
-					}
-					$(event.target).filter('button').click();
+				triggerAction: function(position) {
+					this.get('parentView').paste(position);
 				}
 			}),
 

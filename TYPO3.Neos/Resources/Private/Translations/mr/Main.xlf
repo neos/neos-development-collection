@@ -459,9 +459,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="mr" state="needs-translation">Do you really want to delete</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="mr" state="needs-translation">Create new (hold to select position)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="mr" state="needs-translation">This will delete the element</target></trans-unit>
@@ -471,9 +468,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="mr" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="mr" state="needs-translation">Paste (hold to select position)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="mr" state="needs-translation">Height</target></trans-unit>

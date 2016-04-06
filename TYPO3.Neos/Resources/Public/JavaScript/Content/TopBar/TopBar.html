@@ -1,7 +1,7 @@
 {{view view.MenuButton}}
 {{#unbound if view._isContentModule}}
-	<button id="neos-navigate-button" title="{{translate id='navigate' fallback='Navigate'}}" {{bindAttr class=":neos-button view.navigatePanelController.navigatePanelMode:neos-pressed"}} {{action "toggleNavigatePanelMode" target="view.navigatePanelController"}}>{{translate id="navigate" fallback="Navigate"}}</button>
-	<button id="neos-edit-preview-button" title="{{translate id='editPreview' fallback='Edit / Preview'}}" {{bindAttr class=":neos-button view.editPreviewPanelController.editPreviewPanelMode:neos-pressed"}} {{action "toggleEditPreviewPanelMode" target="view.editPreviewPanelController"}}>
+	<button id="neos-navigate-button" {{bindAttr class=":neos-button view.navigatePanelController.navigatePanelMode:neos-pressed"}} {{action "toggleNavigatePanelMode" target="view.navigatePanelController"}}>{{translate id="navigate" fallback="Navigate"}}</button>
+	<button id="neos-edit-preview-button" {{bindAttr class=":neos-button view.editPreviewPanelController.editPreviewPanelMode:neos-pressed"}} {{action "toggleEditPreviewPanelMode" target="view.editPreviewPanelController"}}>
 		<span {{bindAttr class="view.editPreviewPanelController.isEditingModeActive:neos-active"}}>{{translate id="edit" fallback="Edit"}}</span> / <span {{bindAttr class="view.editPreviewPanelController.isPreviewModeActive:neos-active"}}>{{translate id="preview" fallback="Preview"}}</span>
 	</button>
 {{/unbound}}

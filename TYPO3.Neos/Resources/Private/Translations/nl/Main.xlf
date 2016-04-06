@@ -459,9 +459,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="nl">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="nl">Maak nieuw aan (ingedrukt houden om positie te kiezen)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
 			<target xml:lang="nl">Dit zal de pagina verwijderen</target></trans-unit>
@@ -471,9 +468,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="nl">Deze bewerking kan ongedaan worden gemaakt in de workspace management omgeving.</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="nl">Plakken (ingedrukt houden om positie te kiezen)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="nl">Hoogte</target></trans-unit>

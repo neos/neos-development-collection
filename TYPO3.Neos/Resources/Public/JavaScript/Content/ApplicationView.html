@@ -3,7 +3,7 @@
 	{{view view.EditPreviewPanel}}
 	{{view view.SecondaryInspectorView}}
 
-	<button id="neos-inspector-button" title="{{translate id='toggleInspector' fallback='Toggle inspector'}}" {{bindAttr class=":neos-button view.inspectorController.inspectorMode:neos-pressed"}} {{action "toggleInspectorMode" target="view.inspectorController"}}></button>
+	<button id="neos-inspector-button" title="{{translate id='toggleInspector' fallback='Toggle inspector'}}" {{bindAttr class=":neos-button view.inspectorController.inspectorMode:neos-pressed"}} {{action "toggleInspectorMode" target="view.inspectorController"}} data-neos-tooltip data-placement="bottom"></button>
 
 	{{view view.InspectorView}}
 	{{view view.NavigatePanel}}

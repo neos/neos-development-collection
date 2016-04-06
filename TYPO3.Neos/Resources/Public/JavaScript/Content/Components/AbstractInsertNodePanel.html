@@ -1,6 +1,6 @@
 <div class="neos-modal neos-modal-wide neos-insert-node-panel">
 	<div class="neos-modal-header">
-		<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
+		<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}} data-neos-toggle></button>
 		<div class="neos-header">{{translate id="createNew" fallback="Create new"}}</div>
 	</div>
 	<div class="neos-modal-body">
@@ -13,7 +13,7 @@
 				<ul {{bindAttr class=":neos-clearfix"}}>
 					{{#each nodeTypeGroup.sortedNodeTypes}}
 						<li class="neos-content-new-selecttype-button">
-							<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}}>
+							<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}} data-neos-tooltip>
 								{{#if icon}}
 									<i class="{{unbound icon}}"></i>
 								{{else}}
@@ -31,7 +31,7 @@
 		{{/each}}
 	</div>
 	<div class="neos-modal-footer">
-		<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+		<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

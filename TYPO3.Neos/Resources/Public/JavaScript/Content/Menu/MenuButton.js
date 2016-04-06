@@ -40,6 +40,10 @@ define(
 				// For more information see
 				// http://ariatemplates.com/blog/2014/05/ghost-clicks-in-mobile-browsers/
 				event.preventDefault();
+			},
+
+			didInsertElement: function() {
+				this.$().tooltip({placement: 'right'});
 			}
 		});
 	}

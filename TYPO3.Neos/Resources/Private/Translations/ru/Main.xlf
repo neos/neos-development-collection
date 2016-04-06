@@ -459,9 +459,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="ru">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve" approved="yes">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="ru">Создать новые (удерживайте для выбора позиции)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
 			<target xml:lang="ru">Это приведёт к удалению элемента</target><alt-trans><target xml:lang="ru">Это приведёт к удалению страницы</target></alt-trans></trans-unit>
@@ -471,9 +468,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="ru">Операцию можно отменить в меню управления рабочими областями.</target><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления рабочей областью.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve" approved="yes">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="ru">вставить (удерживайте для выбора позиции)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target xml:lang="ru">Высота</target></trans-unit>

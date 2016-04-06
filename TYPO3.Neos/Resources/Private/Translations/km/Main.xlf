@@ -460,9 +460,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎</target></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="km" state="translated">បង្កើតថ្មី (ជាប់ដើម្បីជ្រើសទីតាំង)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="km" state="translated">មួយនេះនឹងលុបធាតុចោល</target></trans-unit>
@@ -472,9 +469,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="km" state="translated">នៅក្នុង ការគ្រប់គ្រងលំហរការងារ សកម្មភាពនេះមិនអាចថយក្រោយបានទេ។</target></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="km" state="translated">បិទភ្ជាប់ (ជាប់ដើម្បីជ្រើសទីតាំង)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="km" state="translated">កម្ពស់</target></trans-unit>

@@ -49,7 +49,7 @@
 					<f:if condition="{configuration.hideInMenu}">
 						<f:else>
 							<li>
-								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}"><i class="{configuration.icon}"></i> <neos:backend.translate source="Modules" id="{configuration.label}" /></neos:link.module>
+								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}" title="{f:if(condition: configuration.description, then: '{neos:backend.translate(id: configuration.description)}')}" additionalAttributes="{data-neos-toggle: 'tooltip', data-placement: 'bottom'}"><i class="{configuration.icon}"></i> <neos:backend.translate source="Modules" id="{configuration.label}" /></neos:link.module>
 								<f:if condition="{iterator.isLast}"><f:else><span class="neos-divider">/</span></f:else></f:if>
 							</li>
 						</f:else>

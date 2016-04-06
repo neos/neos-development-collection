@@ -847,12 +847,6 @@
 			padding-left: $relatedMargin + $tightMargin;
 		}
 
-		.tags {
-			.neos-label {
-				background-color: $textSubtle;
-			}
-		}
-
 		.neos-action {
 			width: 10%;
 			font-size: 0;
@@ -873,6 +867,12 @@
 			tbody tr:hover td {
 				background-color: $blue;
 				cursor: pointer;
+
+				.neos-label {
+					background-color: #fff;
+					color: $blue;
+					text-shadow: none;
+				}
 			}
 
 			.icon-move {

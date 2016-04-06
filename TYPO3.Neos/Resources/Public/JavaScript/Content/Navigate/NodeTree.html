@@ -1,29 +1,28 @@
 <div class="neos-node-tree-toolbar">
 	<div class="neos-node-tree-toolbar-top">
-		<button id="neos-node-tree-refresh" class="neos-button" title="{{translate id='refresh' fallback='Refresh'}}" {{action "refresh" target="view"}}>
+		<button id="neos-node-tree-refresh" class="neos-button" title="{{translate id='refresh' fallback='Refresh'}}" {{action "refresh" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-refresh"></i>
 		</button>
-		<button id="neos-node-tree-delete-node" class="neos-button" title="{{translate id='delete' fallback='Delete'}}" {{bindAttr disabled="view.currentFocusedNodeCantBeModified"}} {{action "showDeleteNodeDialog" target="view"}}>
+		<button id="neos-node-tree-delete-node" class="neos-button" title="{{translate id='delete' fallback='Delete'}}" {{bindAttr disabled="view.currentFocusedNodeCantBeModified"}} {{action "showDeleteNodeDialog" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-trash"></i>
 		</button>
 
 		{{view view.PastePositionSelectorButton}}
 
-		<button id="neos-node-tree-cut-node" title="{{translate id='cut' fallback='Cut'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "cut" target="view"}}>
+		<button id="neos-node-tree-cut-node" title="{{translate id='cut' fallback='Cut'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "cut" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-cut"></i>
 		</button>
-		<button id="neos-node-tree-copy-node" title="{{translate id='copy' fallback='Copy'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "copy" target="view"}}>
+		<button id="neos-node-tree-copy-node" title="{{translate id='copy' fallback='Copy'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "copy" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-copy"></i>
 		</button>
-		<button id="neos-node-tree-toggle-hidden" title="{{translate id='hideUnhide' fallback='Hide/unhide'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "toggleHidden" target="view"}}>
+		<button id="neos-node-tree-toggle-hidden" title="{{translate id='hideUnhide' fallback='Hide/unhide'}}" {{bindAttr class=":neos-button view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "toggleHidden" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-eye-close"></i>
 		</button>
-		<button id="neos-node-tree-edit-node" title="{{translate id='editTitle' fallback='Edit title'}}" {{bindAttr class=":neos-button view.editNodeTitleMode:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "editNode" target="view"}}>
+		<button id="neos-node-tree-edit-node" title="{{translate id='editTitle' fallback='Edit title'}}" {{bindAttr class=":neos-button view.editNodeTitleMode:neos-pressed" disabled="view.currentFocusedNodeCantBeModified"}} {{action "editNode" target="view"}} data-neos-tooltip data-placement="top">
 			<i class="icon-pencil"></i>
 		</button>
 
 		{{view view.NewPositionSelectorButton}}
-
 	</div>
 	<div class="neos-node-tree-toolbar-bottom">
 		<div id="neos-node-tree-filter">
