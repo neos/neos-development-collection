@@ -393,45 +393,46 @@ define(
 					entityWrapper;
 
 				$elements.each(function() {
-					entityWrapper = NodeSelection._createEntityWrapper(this);
+					entityWrapper = NodeSelection.getNode($(this).attr('about'));
 					if (!entityWrapper) {
-						// element might not have be existing; so we directly return
+						// element might not be existing; so we directly return
 						return;
 					}
 
-					var vieEntity = entityWrapper._vieEntity;
-					if (vieEntity.isof('typo3:TYPO3.Neos:Document')) {
+					if (NodeTypeService.isOfType(entityWrapper, 'TYPO3.Neos:Document')) {
 						entityWrapper.addObserver('typo3:title', function() {
-							that.synchronizeNodeTitle(vieEntity);
+							that.synchronizeNodeTitle(this);
 						});
 						entityWrapper.addObserver('typo3:_name', function() {
-							that.synchronizeNodeName(vieEntity);
+							that.synchronizeNodeName(this);
 						});
 						entityWrapper.addObserver('typo3:uriPathSegment', function() {
-							that.synchronizeUriPathSegment(vieEntity);
+							that.synchronizeUriPathSegment(this);
 						});
 					}
 					entityWrapper.addObserver('typo3:_hidden', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenInIndex', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenBeforeDateTime', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenAfterDateTime', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
+					});
+					entityWrapper.addObserver('typo3:__label', function() {
+						that.synchronizeNodeLabel(this);
 					});
 				});
 			},
 
-			synchronizeNodeVisibility: function(vieEntity) {
+			synchronizeNodeVisibility: function(entityWrapper) {
 				var now = new Date().getTime(),
-					node = this.getNodeByEntity(vieEntity);
-
+					node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity),
+					var attributes = entityWrapper.get('attributes'),
 						classes = node.data.addClass;
 					if (attributes._hidden === true) {
 						classes = $.trim(classes.replace(/neos-timedVisibility/g, ''));
@@ -456,20 +457,27 @@ define(
 				}
 			},
 
-			synchronizeNodeTitle: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeNodeTitle: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity);
-					node.setTitle(attributes.title);
+					var title = entityWrapper.getAttribute('title');
+					node.data.title = title
+					node.data.fullTitle = title;
 				}
 			},
 
-			synchronizeNodeName: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeNodeLabel: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity);
-					var previousNodeName = vieEntity.previousAttributes()['<' + Configuration.get('TYPO3_NAMESPACE') + '_name' + '>'];
-					var newNodeName = attributes._name;
+					node.setTitle(entityWrapper.getAttribute('__label'));
+				}
+			},
+
+			synchronizeNodeName: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
+				if (node) {
+					var previousNodeName = entityWrapper.getPreviousAttribute('_name'),
+						newNodeName = entityWrapper.getAttribute('_name');
 					if (node.data.key) {
 						node.data.key = node.data.key.replace(previousNodeName + '@', newNodeName + '@');
 					}
@@ -489,12 +497,11 @@ define(
 				}
 			},
 
-			synchronizeUriPathSegment: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeUriPathSegment: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var uriPathSegmentAttributeUri = '<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>',
-						previousUriPathSegment = vieEntity.previousAttributes()[uriPathSegmentAttributeUri],
-						newUriPathSegment = vieEntity.attributes['<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>'];
+					var previousUriPathSegment = entityWrapper.getPreviousAttribute('uriPathSegment'),
+						newUriPathSegment = entityWrapper.getAttribute('uriPathSegment');
 
 					if (node.data.href) {
 						node.data.href = node.data.href.replace(previousUriPathSegment + '@', newUriPathSegment + '@');
@@ -514,9 +521,9 @@ define(
 				}
 			},
 
-			getNodeByEntity: function(vieEntity) {
+			getNodeByEntityWrapper: function(entityWrapper) {
 				if (this.$nodeTree && this.$nodeTree.children().length > 0) {
-					return this.$nodeTree.dynatree('getTree').getNodeByKey(vieEntity.getSubjectUri());
+					return this.$nodeTree.dynatree('getTree').getNodeByKey(entityWrapper.get('nodePath'));
 				}
 				return null;
 			},
