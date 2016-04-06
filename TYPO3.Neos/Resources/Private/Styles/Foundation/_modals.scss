@@ -24,7 +24,6 @@
 .neos-modal {
 	position: fixed;
 	z-index: $zindexModal;
-	margin: 0;
 	color: $textOnGray;
 	background: $grayDark;
 	border: 1px solid $grayLight;
@@ -35,9 +34,12 @@
 	outline: none;
 	width: calc(100vw - #{$unit * 2});
 	max-width: $unit * 16;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin: auto;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: inline-table;
 
 	&.neos-modal-wide {
 		max-width: $unit * 24;

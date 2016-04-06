@@ -5603,7 +5603,6 @@ neos .icon-fw {
 .neos .neos-modal {
   position: fixed;
   z-index: 10050;
-  margin: 0;
   color: #fff;
   background: #222;
   border: 1px solid #3f3f3f;
@@ -5616,9 +5615,12 @@ neos .icon-fw {
   outline: none;
   width: calc(100vw - 80px);
   max-width: 640px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: inline-table;
 }
 .neos .neos-modal.neos-modal-wide {
   max-width: 960px;
