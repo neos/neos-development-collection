@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Service\UserService;
+use TYPO3\Neos\Domain\Service\UserService;
 
 /**
  * Service Controller for user preferences
@@ -31,7 +31,7 @@ class UserPreferenceController extends AbstractServiceController
     public function indexAction()
     {
         $this->response->setHeader('Content-Type', 'application/json');
-        return json_encode($this->userService->getBackendUser()->getPreferences()->getPreferences());
+        return json_encode($this->userService->getCurrentUser()->getPreferences()->getPreferences());
     }
 
     /**
@@ -50,9 +50,9 @@ class UserPreferenceController extends AbstractServiceController
             $value = true;
         }
 
-        $user = $this->userService->getBackendUser();
+        $user = $this->userService->getCurrentUser();
         $user->getPreferences()->set($key, $value);
-        $this->partyRepository->update($user);
+        $this->userService->updateUser($user);
         $this->throwStatus(204, 'User preferences have been updated');
     }
 }
