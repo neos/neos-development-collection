@@ -180,6 +180,10 @@ function (
 
 		copy: function() {
 			ContentCommands.copy();
+		},
+
+		didInsertElement: function() {
+			this.$('[neos-data-tooltip]').tooltip({container: '#neos-application'});
 		}
 	});
 });
