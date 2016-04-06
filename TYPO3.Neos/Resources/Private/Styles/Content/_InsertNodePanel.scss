@@ -1,4 +1,10 @@
 .neos-insert-node-panel {
+	.neos-header {
+		i {
+			vertical-align: baseline;
+		}
+	}
+
 	.neos-subheader {
 		height: $unit;
 		line-height: $unit;

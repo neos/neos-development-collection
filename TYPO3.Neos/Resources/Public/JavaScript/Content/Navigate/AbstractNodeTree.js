@@ -568,6 +568,7 @@ define(
 
 				InsertNodePanel.create({
 					allowedNodeTypes: allowedNodeTypes,
+					_position: position,
 					insertNode: function(nodeType, icon) {
 						that.set('insertNodePanelShown', false);
 						that.createNode(activeNode, null, nodeType, icon, position);

@@ -20,6 +20,18 @@ define([
 		configuration: null,
 		insertNode: Ember.required,
 		HelpMessage: HelpMessage,
+		_position: null,
+		_positionIconClass: function() {
+			switch (this.get('_position')) {
+				case 'into':
+					return 'icon-long-arrow-right';
+				case 'before':
+					return 'icon-level-up';
+				case 'after':
+					return 'icon-level-down';
+			}
+			return '';
+		}.property('_position'),
 
 		init: function() {
 			this._super();
