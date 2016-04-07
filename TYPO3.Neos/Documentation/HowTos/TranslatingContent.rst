@@ -55,7 +55,7 @@ Migration of existing content
 Existing content of a site needs to be migrated to use the dimension default value, otherwise no nodes would be found.
 This can be done with a node migration which is included in the ``TYPO3.TYPO3CR`` package::
 
-	./flow node:migrate 20140326143834
+	./flow node:migrate 20150716212459
 
 This migration has to be applied whenever a new dimension is configured to set the default value on all existing nodes.
 
