@@ -7,8 +7,6 @@ define(
 	'Library/jquery-with-dependencies',
 	'./AbstractNodeTree',
 	'Content/Application',
-	'Content/Model/Node',
-	'vie',
 	'Shared/Configuration',
 	'Shared/Notification',
 	'Shared/EventDispatcher',
@@ -23,8 +21,6 @@ define(
 	$,
 	AbstractNodeTree,
 	ContentModule,
-	EntityWrapper,
-	InstanceWrapper,
 	Configuration,
 	Notification,
 	EventDispatcher,
@@ -82,11 +78,18 @@ define(
 		},
 
 		_onPageNodePathChanged: function() {
-			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-document-metadata'))),
-				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),
+			var documentMetadata = $('#neos-document-metadata'),
+				page = NodeSelection.getNode(documentMetadata.attr('about')),
+				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
+				documentNodeType = documentMetadata.data('node-_node-type'),
+				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(documentNodeType),
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
-			siteNode.fromDict({key: this.get('pageNodePath'), title: pageTitle});
+			siteNode.fromDict({
+				key: this.get('pageNodePath'),
+				title: pageTitle,
+				nodeType: documentNodeType,
+				nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : ''
+			});
 			this.refresh();
 		}.observes('pageNodePath'),
 
@@ -111,7 +114,7 @@ define(
 
 			var that = this;
 			PublishableNodes.get('publishableEntitySubjects').forEach(function(entitySubject) {
-				var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(entitySubject.slice(1, entitySubject.length - 1));
+				var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(entitySubject.slice(1, -1));
 				if (treeNode) {
 					$(treeNode.span).addClass('neos-dynatree-dirty');
 				}
@@ -127,10 +130,9 @@ define(
 				return;
 			}
 
-			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(documentMetadata)),
-				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath,
-				nodeType = documentMetadata.attr('typeof').substr(6),
+			var page = NodeSelection.getNode(documentMetadata.attr('about')),
+				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
+				nodeType = documentMetadata.data('node-_node-type'),
 				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
 
 			this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
@@ -167,6 +169,7 @@ define(
 					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
 						$(nodeSpan).addClass('neos-dynatree-dirty');
 					}
+					$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
 				},
 
 				onCustomRender: function(node) {

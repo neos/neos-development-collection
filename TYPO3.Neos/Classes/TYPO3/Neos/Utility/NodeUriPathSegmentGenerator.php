@@ -11,15 +11,25 @@ namespace TYPO3\Neos\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations\After;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Locale;
+use TYPO3\Neos\Service\TransliterationService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * Static Utility to generate a valid, non-conflicting uriPathSegment for Nodes.
+ * Utility to generate a valid, non-conflicting uriPathSegment for nodes.
+ *
+ * @Flow\Scope("singleton")
  */
 class NodeUriPathSegmentGenerator
 {
+    /**
+     * @Flow\Inject
+     * @var TransliterationService
+     */
+    protected $transliterationService;
+
     /**
      * Sets the best possible uriPathSegment for the given Node.
      * Will use an already set uriPathSegment or alternatively the node name as base,
@@ -41,5 +51,28 @@ class NodeUriPathSegmentGenerator
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);
         }
+    }
+
+    /**
+     * Generates a URI path segment for a given node taking it's language dimension into account
+     *
+     * @param NodeInterface $node Optional node to determine language dimension
+     * @param string $text Optional text
+     * @return string
+     */
+    public function generateUriPathSegment(NodeInterface $node = null, $text = null)
+    {
+        if ($node) {
+            $text = $text ?: $node->getLabel() ?: $node->getName();
+            $dimensions = $node->getContext()->getDimensions();
+            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+                $locale = new Locale($dimensions['language'][0]);
+                $language = $locale->getLanguage();
+            }
+        } elseif (strlen($text) === 0) {
+            throw new \TYPO3\Neos\Exception('Given text was empty.', 1457591815);
+        }
+        $text = $this->transliterationService->transliterate($text, $language ?: null);
+        return \Behat\Transliterator\Transliterator::urlize($text);
     }
 }

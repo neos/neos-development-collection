@@ -189,8 +189,7 @@ function(
 					},
 					'*': {
 						'ui/ui-plugin': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/ui-plugin',
-						'ui/multiSplit': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/multiSplit',
-						'ui/button': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/button'
+						'ui/multiSplit': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/multiSplit'
 					}
 				},
 				paths: {

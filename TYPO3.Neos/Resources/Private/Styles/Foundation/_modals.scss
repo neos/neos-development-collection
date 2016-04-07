@@ -23,23 +23,24 @@
 // Base modal
 .neos-modal {
 	position: fixed;
-	top: 120px;
-	left: 50%;
 	z-index: $zindexModal;
-	margin: 0px 0px 0px -17.5%;
+	margin: 0;
 	color: $textOnGray;
 	background: $grayDark;
 	border: 1px solid $grayLight;
 	padding: 0px;
-	width: 35%;
 	@include border-radius(0);
 	@include font();
 	// Remove focus outline from opened modal
 	outline: none;
+	width: calc(100vw - #{$unit * 2});
+	max-width: $unit * 16;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 
 	&.neos-modal-wide {
-		width: 50%;
-		left: 42.5%;
+		max-width: $unit * 24;
 	}
 
 	&.neos-fade {
@@ -54,6 +55,7 @@
 	.neos-modal-header {
 		padding: 0px;
 		border: 0px;
+
 		// Heading
 		h3 {
 			margin: 0;

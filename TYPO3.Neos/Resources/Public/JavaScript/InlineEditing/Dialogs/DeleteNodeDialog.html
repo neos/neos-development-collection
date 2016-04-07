@@ -1,17 +1,16 @@
 <div class="neos-modal">
 	<div class="neos-modal-header">
-		<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1a" fallback="Do you really want to delete"}} {{#if view._node.nodeLabel}}"{{view._node.nodeLabel}}"{{else}}{{translate id="inlineEditing-dialogs-deleteNodeDialog-header-1b" fallback="this element"}}{{/if}}?</div>
+		<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">{{translate id="inlineEditing.dialogs.deleteNodeDialog.header.1a" fallback="Do you really want to delete"}} {{#if view._node.nodeLabel}}"{{view._node.nodeLabel}}"{{else}}{{translate id="inlineEditing.dialogs.deleteNodeDialog.header.1b" fallback="this element"}}{{/if}}?</div>
 	</div>
 	<div>
 		<div class="neos-subheader">
-			{{translate id="inlineEditing-dialogs-deleteNodeDialog-subheader-1" fallback="This will delete the element."}}<br />
-			{{translate id="inlineEditing-dialogs-deleteNodeDialog-subheader-2" fallback="This action can be undone in the workspace management."}}
+			{{translate id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" fallback="This action can be undone in the workspace management."}}
 		</div>
 	</div>
 	<div class="neos-modal-footer">
-		<button class="neos-button" title="{{translate id='cancel' value='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" value="Cancel"}}</button>
-		<button class="neos-button neos-button-danger" title="{{translate id='deleteElementTitle' value='Delete the element'}}" {{action "delete" target="view"}}>{{translate id="deleteElement" fallback="Yes, delete the element"}}</button>
+		<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+		<button class="neos-button neos-button-danger" title="{{translate id='deleteElementTitle' fallback='Delete the element'}}" {{action "delete" target="view"}}>{{translate id="deleteElement" fallback="Yes, delete the element"}}</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

@@ -34,6 +34,10 @@ define(
 		},
 		updateCurrentUri: function() {
 			this.set('liveUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, ''));
+		},
+
+		didInsertElement: function() {
+			this.$('[data-neos-tooltip]').tooltip();
 		}
 	});
 });

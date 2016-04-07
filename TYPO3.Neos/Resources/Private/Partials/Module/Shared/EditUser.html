@@ -68,12 +68,12 @@
 				<tbody>
 				<f:for each="{user.accounts}" as="account">
 					<tr>
-						<td>{account.accountIdentifier}</td>
+						<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
 						<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
 						<td><span title="{account.authenticationProviderName}"><neos:backend.authenticationProviderLabel identifier="{account.authenticationProviderName}"/></span></td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
-								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'TYPO3.Neos')}"><i class="icon-pencil icon-white"></i></f:link.action>
+								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-pencil icon-white"></i></f:link.action>
 							</div>
 						</td>
 					</tr>

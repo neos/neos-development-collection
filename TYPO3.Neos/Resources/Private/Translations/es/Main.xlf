@@ -81,6 +81,12 @@
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			<target xml:lang="es-ES" state="translated">Ocultar / mostrar</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve">
+				<source>Hide</source>
+			<target xml:lang="es-ES" state="translated">Ocultar</target></trans-unit>
+      <trans-unit id="unhide" xml:space="preserve">
+				<source>Unhide</source>
+			<target xml:lang="es-ES" state="needs-translation">Unhide</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="es-ES" state="translated">Cargando</target></trans-unit>
@@ -150,6 +156,9 @@
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
 			<target xml:lang="es-ES" state="translated">Actualizar</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target xml:lang="es-ES" state="translated">Guardando...</target></trans-unit>
@@ -183,6 +192,60 @@
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
 			<target xml:lang="es-ES" state="translated">Ruta relativa</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve">
+				<source>Version</source>
+			<target xml:lang="es-ES" state="needs-translation">Version</target></trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="es-ES" state="translated">Esta operación no se puede deshacer.</target></trans-unit>
+      <trans-unit id="asset" xml:space="preserve">
+				<source>Asset</source>
+			<target xml:lang="es-ES" state="needs-translation">Asset</target></trans-unit>
+      <trans-unit id="created" xml:space="preserve">
+				<source>Created</source>
+			<target xml:lang="es-ES" state="needs-translation">Created</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve">
+				<source>Last modification</source>
+			<target xml:lang="es-ES" state="needs-translation">Last modification</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve">
+				<source>Last publication</source>
+			<target xml:lang="es-ES" state="needs-translation">Last publication</target></trans-unit>
+      <trans-unit id="identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="es-ES" state="translated">Identificador</target></trans-unit>
+      <trans-unit id="name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="es-ES" state="needs-translation">Workspace</target></trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="es-ES" state="translated">Estructura</target></trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve">
+				<source>Toggle context structure</source>
+			<target xml:lang="es-ES" state="needs-translation">Toggle context structure</target></trans-unit>
+      <trans-unit id="filter" xml:space="preserve">
+				<source>Filter</source>
+			<target xml:lang="es-ES" state="needs-translation">Filter</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve">
+				<source>Toggle menu</source>
+			<target xml:lang="es-ES" state="needs-translation">Toggle menu</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve">
+				<source>Load error!</source>
+			<target xml:lang="es-ES" state="needs-translation">Load error!</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+				<source>You have to select a node</source>
+			<target xml:lang="es-ES" state="needs-translation">You have to select a node</target></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+				<source>The Root node cannot be deleted.</source>
+			<target xml:lang="es-ES" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve">
+				<source>You cannot copy this node</source>
+			<target xml:lang="es-ES" state="needs-translation">You cannot copy this node</target></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve">
+				<source>You cannot cut this node</source>
+			<target xml:lang="es-ES" state="needs-translation">You cannot cut this node</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -300,23 +363,23 @@
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target xml:lang="es-ES" state="translated">Cambiar tipo</target></trans-unit>
-      <trans-unit id="content-inspector-groups-nodeInfo" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target xml:lang="es-ES" state="translated">Información adicional</target></trans-unit>
-      <trans-unit id="content-inspector-groups-visibility" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="es-ES" state="translated">Visibilidad</target></trans-unit>
-      <trans-unit id="content-inspector-groups-document" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="es-ES" state="translated">Opciones de documento</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Document options</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
-				<source>The length of this text must be between {{minimum}} and {{maximum}} characters.</source>
+				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target xml:lang="es-ES" state="translated">La longitud de este texto debe ser entre {{minimum}} y {{maximum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
-				<source>This field must contain at least {{minimum}} characters.</source>
+				<source>This field must contain at least {minimum} characters.</source>
 			<target xml:lang="es-ES" state="translated">Este campo debe contener al menos {{minimum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
-				<source>This text may not exceed {{maximum}} characters.</source>
+				<source>This text may not exceed {maximum} characters.</source>
 			<target xml:lang="es-ES" state="translated">Este texto no puede superar {{maximum}} caracteres.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
@@ -325,19 +388,19 @@
 				<source>The given subject was not countable.</source>
 			<target xml:lang="es-ES" state="translated">El objeto no es contable.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
-				<source>The count must be between {{minimum}} and {{maximum}}.</source>
+				<source>The count must be between {minimum} and {maximum}.</source>
 			<target xml:lang="es-ES" state="translated">La cuenta debe estar entre {{minimum}} y {{maximum}}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
 			<target xml:lang="es-ES" state="translated">El valor dado no era una fecha válida.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
-				<source>The given date must be between {{formatEarliestDate}} and {{formatLatestDate}}</source>
+				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
 			<target xml:lang="es-ES" state="translated">La fecha debe estar entre {{formatEarliestDate}} y {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
-				<source>The given date must be after {{formatEarliestDate}}</source>
+				<source>The given date must be after {formatEarliestDate}</source>
 			<target xml:lang="es-ES" state="translated">La fecha debe ser posterior a {{formatEarliestDate}}</target><alt-trans><target xml:lang="es-ES">La fecha debe ser después de {{formatEarliestDate}}</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
-				<source>The given date must be before {{formatLatestDate}}</source>
+				<source>The given date must be before {formatLatestDate}</source>
 			<target xml:lang="es-ES" state="translated">La fecha debe ser anterior a {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
@@ -358,10 +421,10 @@
 				<source>A valid number is expected.</source>
 			<target xml:lang="es-ES" state="translated">Se esperaba un número válido.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
-				<source>Please enter a valid number between {{minimum}} and {{maximum}}</source>
+				<source>Please enter a valid number between {minimum} and {maximum}</source>
 			<target xml:lang="es-ES" state="translated">Por favor, introduzca un número válido entre {{minimum}} y {{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
-				<source>The given subject did not match the pattern ({{pattern}})</source>
+				<source>The given subject did not match the pattern ({pattern})</source>
 			<target xml:lang="es-ES" state="translated">El objeto no coincide con el patrón ({{pattern}})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
@@ -372,15 +435,30 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="es-ES" state="translated">El objeto no es un UUID válido.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+				<source>Start with an empty or pre-filled document?</source>
+			<target xml:lang="es-ES" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			<target xml:lang="es-ES" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			<target xml:lang="es-ES" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			<target xml:lang="es-ES" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
+				<source>Create empty</source>
+			<target xml:lang="es-ES" state="needs-translation">Create empty</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+				<source>Create and copy</source>
+			<target xml:lang="es-ES" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.createNewHoldPosition" xml:space="preserve">
-				<source>Create new (hold to select position)</source>
-			<target xml:lang="es-ES" state="translated">Crear nuevo (mantenga para seleccionar posición)</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target xml:lang="es-ES" state="translated">Se eliminará el elemento</target></trans-unit>
@@ -390,9 +468,6 @@
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="es-ES" state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target><alt-trans><target xml:lang="es-ES">Esta acción se puede deshacer en el gestor de áreas de trabajo.</target></alt-trans></trans-unit>
-      <trans-unit id="content.navigate.pasteHoldPosition" xml:space="preserve">
-				<source>Paste (hold to select position)</source>
-			<target xml:lang="es-ES" state="translated">Pegar (mantener para seleccionar posición)</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="es-ES" state="translated">Altura</target></trans-unit>
@@ -442,6 +517,9 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
 			<target xml:lang="es-ES" state="translated">Contenido sin formato</target></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve">
+				<source>Raw Content Mode</source>
+			<target xml:lang="es-ES" state="needs-translation">Raw Content Mode</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="es-ES" state="translated">Escritorio</target></trans-unit>
@@ -455,6 +533,12 @@
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
 			<target xml:lang="es-ES" state="translated">Salir</target></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="es-ES" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve">
+				<source>Your login has expired. Please log in again.</source>
+			<target xml:lang="es-ES" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -489,6 +573,25 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="es-ES" state="translated">La configuración del tipo de nodo que se supone que se representa aquí no está disponible. Probablemente se cambió el nombre el tipo de nodo y falta una migración o puede que simplemente esté mal escrito.</target></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+				<source>Unexpected error while creating node</source>
+			<target xml:lang="es-ES" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+				<source>Unexpected error while deleting node</source>
+			<target xml:lang="es-ES" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+				<source>Unexpected error while updating node</source>
+			<target xml:lang="es-ES" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+				<source>Unexpected error while moving node</source>
+			<target xml:lang="es-ES" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+				<source>Node Tree loading error.</source>
+			<target xml:lang="es-ES" state="needs-translation">Node Tree loading error.</target></trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="es-ES" state="needs-translation">The entered username or password was wrong</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

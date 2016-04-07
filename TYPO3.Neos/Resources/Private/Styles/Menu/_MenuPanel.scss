@@ -106,13 +106,16 @@
 
 		.neos-menu-headline {
 			@include box-sizing(border-box);
-			padding-left: $unit + $defaultMargin;
-			padding-right: $menuButtonWidth;
+			padding-left: $menuButtonWidth;
 			height: $unit;
 			border-top: 1px solid $grayLight;
 			cursor: pointer;
 			line-height: $unit;
 			position: relative;
+
+			.neos-menu-panel-sticky & {
+				padding-left: 0;
+			}
 		}
 
 		.neos-menu-collapse {
@@ -199,6 +202,10 @@
 				padding-left: $menuButtonWidth;
 				position: relative;
 				font-weight: normal;
+
+				.neos-menu-panel-sticky & {
+					padding-left: 0;
+				}
 			}
 		}
 	}

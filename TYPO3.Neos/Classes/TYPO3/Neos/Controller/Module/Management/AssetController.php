@@ -11,15 +11,25 @@ namespace TYPO3\Neos\Controller\Module\Management;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Service\UserService;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * Controller for asset handling
@@ -28,11 +38,19 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
  */
 class AssetController extends \TYPO3\Media\Controller\AssetController
 {
+    use CreateContentContextTrait;
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var NodeFactory
+     */
+    protected $nodeFactory;
 
     /**
      * @Flow\Inject
@@ -53,6 +71,24 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     protected $domainRepository;
 
     /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
      * @return void
      */
     public function initializeObject()
@@ -67,12 +103,76 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     }
 
     /**
+     * Edit an asset
+     *
+     * @param Asset $asset
+     * @return void
+     */
+    public function editAction(Asset $asset)
+    {
+        parent::editAction($asset);
+
+        $relatedDocumentNodes = [];
+        foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $this->createContentContext($this->userService->getPersonalWorkspaceName()));
+            $flowQuery = new FlowQuery(array($node));
+            /** @var Node $documentNode */
+            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $relatedDocumentNodes[$documentNode->getIdentifier()] = $documentNode;
+        }
+
+        $this->view->assign('relatedDocumentNodes', $relatedDocumentNodes);
+    }
+
+    /**
      * Delete an asset
      *
      * @param \TYPO3\Media\Domain\Model\Asset $asset
      * @return void
      */
     public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
+    {
+        $relatedNodes = $this->getRelatedNodes($asset);
+        if (count($relatedNodes) > 0) {
+            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
+            $this->redirect('index');
+        }
+
+        // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
+        $this->assetRepository->remove($asset);
+        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, array(), 1412375050);
+        $this->redirect('index');
+    }
+
+    /**
+     * Get Related Document Nodes from an asset
+     *
+     * @param Asset $asset
+     * @return void
+     */
+    public function relatedDocumentNodesAction(Asset $asset)
+    {
+        $relatedDocumentNodes = [];
+        foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $this->createContentContext($this->userService->getPersonalWorkspaceName()));
+            $flowQuery = new FlowQuery(array($node));
+            /** @var Node $documentNode */
+            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $relatedDocumentNodes[$documentNode->getIdentifier()]['documentNode'] = $documentNode;
+            $relatedDocumentNodes[$documentNode->getIdentifier()]['node'][] = $node;
+        }
+
+        $this->view->assignMultiple(array(
+            'asset' => $asset,
+            'relatedDocumentNodes' => $relatedDocumentNodes
+        ));
+    }
+
+    /**
+     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @return array
+     */
+    protected function getRelatedNodes(\TYPO3\Media\Domain\Model\Asset $asset)
     {
         $relationMap = [];
         $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
@@ -87,16 +187,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             }
         }
 
-        $relatedNodes = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
-        if (count($relatedNodes) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
-            $this->redirect('index');
-        }
-
-        // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
-        $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, array(), 1412375050);
-        $this->redirect('index');
+        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
     }
 
     /**

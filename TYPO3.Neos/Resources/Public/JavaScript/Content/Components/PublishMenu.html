@@ -1,5 +1,5 @@
 {{view view.PublishButton autoPublishBinding="view.autoPublish"}}
-<button {{bindAttr class=":neos-button :neos-dropdown-toggle view._hasWorkspaceWideChanges:neos-publish-menu-active"}} data-neos-toggle="dropdown"></button>
+<button {{bindAttr class=":neos-button :neos-dropdown-toggle view._hasWorkspaceWideChanges:neos-publish-menu-active"}} title="{{translate id='togglePublishMenu' fallback='Toggle publish menu'}}" data-neos-toggle="dropdown" data-neos-tooltip data-placement="left"></button>
 <ul class="neos-dropdown-menu">
 	{{view view.TargetWorkspaceSelector isVisibleBinding="view._isTargetWorkspaceSelectorVisible"}}
 	<li>

@@ -43,6 +43,65 @@ As a quick example, a privilege target giving access to a specific part of the n
     'YourSite:EditWebsitePart':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
+Adjusting and defining roles
+============================
+
+Neos comes with a number of predefined roles that can be assigned to users:
+
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| Role                        | Parent role(s)              | Description                                            |
++=============================+=============================+========================================================+
+| TYPO3.TYPO3CR:Administrator |                             | A no-op role for future use                            |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:AbstractEditor   | TYPO3.TYPO3CR:Administrator | Grants the very basic things needed to use Neos at all |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
+|                             |                             | workspace                                              |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:RestrictedEditor | TYPO3.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
+|                             |                             | workspace                                              |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:Editor           | TYPO3.Neos:AbstractEditor   | Allows to edit and publish content                     |
+|                             |                             |                                                        |
+|                             | TYPO3.Neos:LivePublisher    |                                                        |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:Administrator    | TYPO3.Neos:Editor           | Everything the Editor can do, plus admin things        |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+
+To adjust permissions for your editors, you can of course just adjust the existing roles (`TYPO3.Neos:RestrictedEditor`
+and `TYPO3.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own
+custom roles, though.
+
+Those custom roles should inherit from RestrictedEditor or Editor and then grant access to the additional privilege
+targets you define (see below).
+
+Here is an example for a role (limiting editing to a specific language) that shows this:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+      # this privilegeTarget is defined to switch to a "whitelist" approach
+      'Acme.Com:EditAllNodes':
+        matcher: 'TRUE'
+
+      'Acme.Com:EditFinnish':
+        matcher: 'isInDimensionPreset("language", "fi")'
+
+  roles:
+    'TYPO3.Neos:Editor':
+      privileges:
+        -
+          privilegeTarget: 'Acme.Com:EditAllNodes'
+          permission: GRANT
+
+    'Acme.Com:FinnishEditor':
+      parentRoles: ['TYPO3.Neos:RestrictedEditor']
+      privileges:
+        -
+          privilegeTarget: 'Acme.Com:EditFinnish'
+          permission: GRANT
+
 Node Privileges
 ===============
 
