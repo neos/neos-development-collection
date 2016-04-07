@@ -202,13 +202,15 @@ class NodesController extends ActionController
             // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
             // "Document" nodes (aggregate=TRUE), because they are always moved in-sync.
             $node = reset($nodeVariants);
+            /** @var NodeInterface $node */
             if ($node->getNodeType()->isAggregate()) {
                 $pathSegmentsToSites = NodePaths::getPathDepth(SiteService::SITES_ROOT_PATH);
                 $pathSegmentsToNodeVariant = NodePaths::getPathDepth($node->getPath());
                 // Segments between the sites root "/sites" and the node variant (minimum 1)
                 $pathSegments = $pathSegmentsToNodeVariant - $pathSegmentsToSites;
                 // Nodes between (and including) the site root node and the node variant (minimum 1)
-                $nodes = $context->getNodesOnPath($context->getCurrentSiteNode()->getPath(), $node->getPath());
+                $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $context->getCurrentSite()->getNodeName());
+                $nodes = $context->getNodesOnPath($siteNodePath, $node->getPath());
                 $missingNodesOnRootline = $pathSegments - count($nodes);
                 if ($missingNodesOnRootline > 0) {
                     $this->response->setHeader('X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);

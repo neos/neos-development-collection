@@ -263,6 +263,7 @@ Registering 2 new groups could look like::
 	        special:
 	          position: 50
 	          label: 'Special elements'
+	          collapsed: true
 
 The groups are ordered by the position argument.
 

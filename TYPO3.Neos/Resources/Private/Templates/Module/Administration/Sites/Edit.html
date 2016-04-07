@@ -62,29 +62,29 @@
 								</td>
 								<td class="neos-action aRight">
 									<div class="neos-pull-right">
-										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}">
+										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
 										<f:if condition="{domain.active} == 1">
 											<f:then>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
 													<i class="icon-minus-sign icon-white"></i>
 												</button>
 											</f:then>
 											<f:else>
-												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
 													<i class="icon-plus-sign icon-white"></i>
 												</button>
 											</f:else>
 										</f:if>
-										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}-{number}">
+										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}-{number}" data-neos-toggle="tooltip">
 											<i class="icon-trash icon-white"></i>
 										</button>
 										<div class="neos-hide" id="{site.nodeName}-{number}">
 											<div class="neos-modal">
 												<div class="neos-modal-header">
 													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-													<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain.hostPattern}, value: '--Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.')}</div>
+													<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain.hostPattern}, value: 'Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.')}</div>
 												</div>
 												<div class="neos-modal-footer">
 													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
@@ -102,7 +102,7 @@
 						</tbody>
 					</table>
 					<div class="neos-pull-right">
-						<f:link.action action="newDomain" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}">{neos:backend.translate(id: 'domain.add', value: 'Add Domain')}</f:link.action>
+						<f:link.action action="newDomain" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}" >{neos:backend.translate(id: 'domain.add', value: 'Add Domain')}</f:link.action>
 					</div>
 				</fieldset>
 			</div>
@@ -114,7 +114,7 @@
 						<tbody>
 							<tr>
 								<th>{neos:backend.translate(id: 'packageKey', value: 'Package Key')}</th>
-								<td>{site.siteResourcesPackageKey}</td>
+								<td><span class="neos-label">{site.siteResourcesPackageKey}</span></td>
 							</tr>
 							<f:if condition="{sitePackageMetaData.title}">
 								<tr>

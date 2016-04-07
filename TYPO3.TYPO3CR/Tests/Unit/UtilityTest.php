@@ -25,11 +25,22 @@ class UtilityTest extends UnitTestCase
      */
     public function sourcesAndNodeNames()
     {
-        return array(
-            array('Überlandstraßen; adé', 'uberlandstrassen-ade'),
-            array('Что делать, если я не хочу, UTF-8?', 'chto-delat-esli-ya-ne-hochu-utf-8'),
-            array('TEST DRIVE: INFINITI Q50S 3.7', 'test-drive-infiniti-q50s-3-7')
-        );
+        return [
+            ['Überlandstraßen; adé', 'uberlandstrassen-ade'],
+            ['TEST DRIVE: INFINITI Q50S 3.7', 'test-drive-infiniti-q50s-3-7'],
+            ['汉语', 'yi-yu'],
+            ['日本語', 'ri-ben-yu'],
+            ['Việt', 'viet'],
+            ['ភាសាខ្មែរ', 'bhaasaakhmaer'],
+            ['ภาษาไทย', 'phaasaaaithy'],
+            ['العَرَبِية', 'l-arabiy'],
+            ['עברית', 'bryt'],
+            ['한국어', 'hangugeo'],
+            ['ελληνικά', 'ellenika'],
+            ['မြန်မာဘာသာ', 'm-n-maabhaasaa'],
+            [' हिन्दी', 'hindii'],
+            [' x- ', 'x']
+        ];
     }
 
     /**

@@ -77,6 +77,7 @@ function(
 		vie: null,
 
 		_activeEntity: null,
+		_loadPageRequest: null,
 
 		_vieOptions: {
 			stanbolUrl: null,
@@ -358,7 +359,10 @@ function(
 			}
 
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
-			HttpClient.getResource(
+			if (this.get('_loadPageRequest')) {
+				this.get('_loadPageRequest').abort();
+			}
+			this.set('_loadPageRequest', HttpClient.getResource(
 				uri,
 				{
 					xhr: function() {
@@ -376,70 +380,76 @@ function(
 						};
 						return xhr;
 					}
-				}).then(
-					function(htmlString) {
-						var $htmlDom = $($.parseHTML(htmlString)),
-							$documentMetadata = $htmlDom.filter('#neos-document-metadata');
-						if ($documentMetadata.length === 0) {
-							Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
-							that.set('_isLoadingPage', false);
-							LoadingIndicator.done();
-							return;
-						}
-
-						pushUriToHistory();
-
-						// Extract the HTML from the page, starting at (including) #neos-document-metadata until #neos-application.
-						var $newContent = $htmlDom.filter('#neos-document-metadata').nextUntil('#neos-application').andSelf();
-
-						// remove the current HTML content
-						var $neosApplication = $('#neos-application');
-						$neosApplication.prevAll().remove();
-						$('body').prepend($newContent);
-						that.set('_isLoadingPage', false);
-
-						var $insertedContent = $neosApplication.prevAll();
-						var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
-						that._linkInterceptionHandler($links);
-						LoadingIndicator.done();
-
-						$('title').html($htmlDom.filter('title').html());
-						$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
-
-						// TODO: transfer body classes and other possibly important tags from the head section
-
-						that._setPagePosition();
-
-						// Update node selection (will update VIE)
-						NodeSelection.initialize();
-
-						if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
-							// Refresh CreateJS, renders the button bars f.e.
-							CreateJS.enableEdit();
-						}
-
-						// If doing a reload, we highlight the currently active content element again
-						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
-						if ($currentlyActiveContentElement.length === 1) {
-							NodeSelection.updateSelection($currentlyActiveContentElement, {scrollToElement: true});
-						}
-
+				}
+			));
+			this.get('_loadPageRequest').then(
+				function(htmlString) {
+					var $htmlDom = $($.parseHTML(htmlString)),
+						$documentMetadata = $htmlDom.filter('#neos-document-metadata');
+					if ($documentMetadata.length === 0) {
+						Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
-
-						that.trigger('pageLoaded');
-						// Send external event so site JS can act on it
-						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
-
-						if (typeof callback === 'function') {
-							callback();
-						}
-					},
-					function() {
-						that.set('_isLoadingPage', false);
-						LoadingIndicator.done();
+						return;
 					}
-				);
+
+					pushUriToHistory();
+
+					// Extract the HTML from the page, starting at (including) #neos-document-metadata until #neos-application.
+					var $newContent = $htmlDom.filter('#neos-document-metadata').nextUntil('#neos-application').andSelf();
+
+					// remove the current HTML content
+					var $neosApplication = $('#neos-application');
+					$neosApplication.prevAll().remove();
+					$('body').prepend($newContent);
+					that.set('_isLoadingPage', false);
+
+					var $insertedContent = $neosApplication.prevAll();
+					var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
+					that._linkInterceptionHandler($links);
+					LoadingIndicator.done();
+
+					$('title').html($htmlDom.filter('title').html());
+					$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
+
+					// TODO: transfer body classes and other possibly important tags from the head section
+
+					that._setPagePosition();
+
+					// Update node selection (will update VIE)
+					NodeSelection.initialize();
+
+					if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+						// Refresh CreateJS, renders the button bars f.e.
+						CreateJS.enableEdit();
+					}
+
+					// If doing a reload, we highlight the currently active content element again
+					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
+					if ($currentlyActiveContentElement.length === 1) {
+						NodeSelection.updateSelection($currentlyActiveContentElement, {scrollToElement: true});
+					}
+
+					that.set('_isLoadingPage', false);
+					LoadingIndicator.done();
+
+					that.trigger('pageLoaded');
+					// Send external event so site JS can act on it
+					EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
+
+					if (typeof callback === 'function') {
+						callback();
+					}
+				},
+				function() {
+					Notification.error('An error occurred.');
+					that.set('_isLoadingPage', false);
+					LoadingIndicator.done();
+				}
+			).fail(function(error) {
+				Notification.error('An error occurred.');
+				console.error('An error occurred:', error);
+			});
 		}
 
 	}).create();

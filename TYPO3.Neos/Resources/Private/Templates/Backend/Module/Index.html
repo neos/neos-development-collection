@@ -4,6 +4,17 @@
 <f:section name="head">
 	<title><neos:backend.translate id="{title}" /></title>
 
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<link rel="stylesheet" type="text/css"
+				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
+		</f:then>
+		<f:else>
+			<link rel="stylesheet" type="text/css"
+				  href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}"/>
+		</f:else>
+	</f:if>
+
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
 		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
 			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
@@ -28,15 +39,6 @@
 	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'TYPO3.Neos', absolute: true) -> f:format.raw()}" />
-
-	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-		<f:then>
-			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}?bust={neos:backend.cssBuiltVersion()}" />
-		</f:then>
-		<f:else>
-			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
-		</f:else>
-	</f:if>
 </f:section>
 
 <f:section name="body">
@@ -47,7 +49,7 @@
 					<f:if condition="{configuration.hideInMenu}">
 						<f:else>
 							<li>
-								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}"><i class="{configuration.icon}"></i> <neos:backend.translate source="Modules" id="{configuration.label}" /></neos:link.module>
+								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}" title="{f:if(condition: configuration.description, then: '{neos:backend.translate(id: configuration.description)}')}" additionalAttributes="{data-neos-toggle: 'tooltip', data-placement: 'bottom'}"><i class="{configuration.icon}"></i> <neos:backend.translate source="Modules" id="{configuration.label}" /></neos:link.module>
 								<f:if condition="{iterator.isLast}"><f:else><span class="neos-divider">/</span></f:else></f:if>
 							</li>
 						</f:else>

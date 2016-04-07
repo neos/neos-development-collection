@@ -3,12 +3,14 @@ define([
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Shared/Configuration',
+	'Shared/I18n',
 	'vie'
 ], function(
 	Ember,
 	$,
 	_,
 	Configuration,
+	I18n,
 	vieInstance
 ) {
 	var Entity = Ember.Object.extend({
@@ -68,7 +70,7 @@ define([
 		}.property('_vieEntity').volatile(),
 
 		nodeTypeLabel: function() {
-			return this.get('nodeTypeSchema.ui.label');
+			return I18n.translate(this.get('nodeTypeSchema.ui.label'));
 		}.property('nodeTypeSchema.ui.label'),
 
 		/**
@@ -76,21 +78,30 @@ define([
 		 */
 		init: function() {
 			var that = this,
-				vieEntity = this.get('_vieEntity'),
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				vieEntity = this.get('_vieEntity');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(namespace + '__workspaceName') !== 'live');
+			this.set('publishable', this.getAttribute('__workspaceName') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
-				// this event fires if inline content changes
+
+			// this event fires if inline content changes
 			$entityElement.bind('midgardeditablechanged', function(event, data) {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
 			});
-				// this event fires if content changes through the property inspector
+
+			// this event fires if content changes through the property inspector
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
-				that.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
+				that.set('publishable', that.getAttribute('__workspacename') !== 'live');
+				var changedAttributes = Entity.extractAttributesFromVieEntity(vieEntity, vieEntity.changed);
+				_.each(changedAttributes, function(value, key) {
+					that.notifyPropertyChange('typo3:' + key);
+				});
+			});
+
+			this.addObserver('typo3:__label', function() {
+				this.notifyPropertyChange('nodeLabel');
 			});
 
 			this.set('$element', $entityElement);
@@ -105,6 +116,17 @@ define([
 			}
 			return {};
 		}.property('_vieEntity').volatile(),
+
+		/**
+		 * Check if an attribute exists on the underlying VIE entity
+		 *
+		 * @param {string} key
+		 * @return {void}
+		 */
+		hasAttribute: function(key) {
+			var attributeName = 'typo3:' + key;
+			return this.get('_vieEntity').has(attributeName);
+		},
 
 		/**
 		 * Set an attribute on the underlying VIE entity
@@ -133,37 +155,59 @@ define([
 		},
 
 		/**
+		 * @param {string} key
+		 * @return {object}
+		 */
+		getPreviousAttribute: function(key) {
+			var vieEntity = this.get('_vieEntity');
+			return Entity.extractAttributesFromVieEntity(vieEntity, vieEntity.previousAttributes())[key];
+		},
+
+		/**
 		 * @return {string}
 		 */
 		nodePath: function() {
 			var subject = this.get('_vieEntity').getSubject();
-			return subject.substring(1, subject.length - 1);
-		}.property('_vieEntity'),
+			return subject.slice(1, -1);
+		}.property('_vieEntity').volatile(),
 
 		/**
 		 * @return {boolean}
 		 */
 		isHideable: function() {
-			return this.get('_vieEntity').has('typo3:_hidden');
+			return this.hasAttribute('_hidden');
 		},
 
 		/**
 		 * @return {boolean}
 		 */
 		isHidden: function() {
-			return this.get('_vieEntity').get('typo3:_hidden');
+			return this.getAttribute('_hidden');
 		},
 
 		/**
 		 * @return {string}
 		 */
 		nodeLabel: function() {
-			if (this.get('_vieEntity').get('typo3:title') !== undefined) {
-				return this.get('_vieEntity').get('typo3:title');
+			var label = this.getAttribute('__label');
+			if (label) {
+				return label;
 			}
 
-			return '';
-		}.property('_vieEntity'),
+			var entity = this.get('_vieEntity');
+			if (this.hasAttribute('title') && this.getAttribute('title')) {
+				label = this.getAttribute('title');
+			} else if (this.hasAttribute('text') && this.getAttribute('text')) {
+				label = this.getAttribute('text');
+			} else {
+				label = (this.get('nodeTypeLabel') || this.get('nodeType')) + ' (' + this.getAttribute('_name') + ')';
+			}
+
+			label = $('<span>' + label + '</span>').text().trim();
+
+			var croppedLabel = label.substr(0, 30).trim();
+			return croppedLabel + (croppedLabel.length < label.length ? ' …' : '');
+		}.property().volatile(),
 
 		/**
 		 * Receive the node type schema
@@ -173,7 +217,7 @@ define([
 		nodeTypeSchema: function() {
 			var schema = Configuration.get('Schema');
 			return schema[this.get('nodeType')];
-		}.property()
+		}.property('nodeType')
 	});
 
 	Entity.reopenClass({
@@ -185,7 +229,7 @@ define([
 		 */
 		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
 			var cleanAttributes = {},
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
 			_.each(attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
@@ -206,7 +250,7 @@ define([
 		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
 				type,
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				namespace = vieEntity.vie.namespaces.get('typo3');
 			if (!_.isArray(types)) {
 				types = [types];
 			}
@@ -221,7 +265,7 @@ define([
 
 			if (type) {
 				type = type.substr(namespace.length + 1);
-				type = type.substr(0, type.length - 1);
+				type = type.slice(0, -1);
 			}
 			return type;
 		}

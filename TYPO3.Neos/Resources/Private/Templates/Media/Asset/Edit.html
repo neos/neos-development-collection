@@ -55,14 +55,17 @@
 							</f:if>
 							<tr>
 								<th>{neos:backend.translate(id: 'media.metadata.type', source: 'Modules', package: 'TYPO3.Neos')}</th>
-								<td>{asset.resource.mediatype}</td>
+								<td><span class="neos-label">{asset.resource.mediatype}</span></td>
 							</tr>
 							<tr>
 								<th>{neos:backend.translate(id: 'media.metadata.identifier', source: 'Modules', package: 'TYPO3.Neos')}</th>
-								<td>{asset.identifier}</td>
+								<td><span class="neos-label">{asset.identifier}</span></td>
 							</tr>
 						</tbody>
 					</table>
+					<f:if condition="{relatedDocumentNodes}">
+						<f:link.action action="relatedDocumentNodes" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'media.relatedDocumentNodes', quantity: '{relatedDocumentNodes -> f:count()}', arguments: {0:'{relatedDocumentNodes -> f:count()}'}, source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+					</f:if>
 				</fieldset>
 			</div>
 			<div class="neos-span6 neos-image-example">
@@ -71,8 +74,16 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
-			<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+			<f:if condition="{relatedDocumentNodes}">
+				<f:then>
+					<a title="{neos:backend.translate(id: 'media.deleteRelatedDocumentNodes', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+				</f:then>
+				<f:else>
+					<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+				</f:else>
+			</f:if>
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.saveEditing', source: 'Modules', package: 'TYPO3.Neos')}" />
+
 			<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
 				<div class="neos-modal">
 					<div class="neos-modal-header">

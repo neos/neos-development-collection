@@ -261,6 +261,9 @@
 			<trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
 			</trans-unit>
+			<trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
+				<source>This node has been removed in the meantime</source>
+			</trans-unit>
 
 			<!-- Administration -->
 			<trans-unit id="administration.label" xml:space="preserve">
@@ -300,7 +303,7 @@
 			<trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
 			</trans-unit>
-			<trans-unit id="user.actions.new.subtitle" xml:space="preserve">
+			<trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
 			</trans-unit>
 			<trans-unit id="users.new.userData" xml:space="preserve">
@@ -420,6 +423,42 @@
 			<trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
 			</trans-unit>
+			<trans-unit id="users.name" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="users.accountsAndRoles" xml:space="preserve">
+				<source>Accounts and Roles</source>
+			</trans-unit>
+			<trans-unit id="users.tooltip.view" xml:space="preserve">
+				<source>View user</source>
+			</trans-unit>
+			<trans-unit id="users.tooltip.edit" xml:space="preserve">
+				<source>Edit user</source>
+			</trans-unit>
+			<trans-unit id="users.tooltip.delete" xml:space="preserve">
+				<source>Delete user</source>
+			</trans-unit>
+			<trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
+				<source>You are logged in as this user and you cannot delete yourself.</source>
+			</trans-unit>
+			<trans-unit id="users.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the user "{0}"?</source>
+			</trans-unit>
+			<trans-unit id="users.message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
+			</trans-unit>
+			<trans-unit id="users.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the user</source>
+			</trans-unit>
+			<trans-unit id="users.editUser" xml:space="preserve">
+				<source>Edit user "{0}"</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
+				<source>Home</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
+				<source>Work</source>
+			</trans-unit>
 
 			<trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
@@ -427,6 +466,70 @@
 			<trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			</trans-unit>
+			<trans-unit id="packages.index.legend" xml:space="preserve">
+				<source>Available packages</source>
+			</trans-unit>
+			<trans-unit id="packages.name" xml:space="preserve">
+				<source>Package Name</source>
+			</trans-unit>
+			<trans-unit id="packages.key" xml:space="preserve">
+				<source>Package Key</source>
+			</trans-unit>
+			<trans-unit id="packages.type" xml:space="preserve">
+				<source>Package Type</source>
+			</trans-unit>
+			<trans-unit id="packages.deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
+				<source>This package is currently frozen. Click to unfreeze it.</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.freeze" xml:space="preserve">
+				<source>Freeze the package in order to speed up your website.</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
+				<source>This package is protected and cannot be deactivated.</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
+				<source>Deactivate Package</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.activate" xml:space="preserve">
+				<source>Activate Package</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
+				<source>This package is protected and cannot be deleted.</source>
+			</trans-unit>
+			<trans-unit id="packages.tooltip.delete" xml:space="preserve">
+				<source>Delete Package</source>
+			</trans-unit>
+			<trans-unit id="packages.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete "{0}"?</source>
+			</trans-unit>
+			<trans-unit id="packages.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the package</source>
+			</trans-unit>
+			<trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
+				<source>Yes, delete the packages</source>
+			</trans-unit>
+			<trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the selected packages?</source>
+			</trans-unit>
+			<trans-unit id="packages.selected.freeze" xml:space="preserve">
+				<source>Freeze selected packages</source>
+			</trans-unit>
+			<trans-unit id="packages.selected.unfreeze" xml:space="preserve">
+				<source>Unfreeze selected packages</source>
+			</trans-unit>
+			<trans-unit id="packages.selected.delete" xml:space="preserve">
+				<source>Delete selected packages</source>
+			</trans-unit>
+			<trans-unit id="packages.selected.deactivate" xml:space="preserve">
+				<source>Deactivate selected packages</source>
+			</trans-unit>
+			<trans-unit id="packages.selected.activate" xml:space="preserve">
+				<source>Activate selected packages</source>
+			</trans-unit>
+
 			<trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			</trans-unit>
@@ -552,6 +655,18 @@
 			</trans-unit>
 			<trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
+			</trans-unit>
+			<trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			</trans-unit>
+			<trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
 			</trans-unit>
 			<trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
@@ -691,8 +806,17 @@
 			<trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
 			</trans-unit>
+			<trans-unit id="media.placeholder.createTag" xml:space="preserve">
+				<source>Enter tag label</source>
+			</trans-unit>
 			<trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
+			</trans-unit>
+			<trans-unit id="media.tags.title.all" xml:space="preserve">
+				<source>All assets</source>
+			</trans-unit>
+			<trans-unit id="media.tags.all" xml:space="preserve">
+				<source>All</source>
 			</trans-unit>
 			<trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
@@ -771,6 +895,23 @@
 			</trans-unit>
 			<trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
+			</trans-unit>
+			<trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			</trans-unit>
+      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedDocumentNodes[0]">
+          <source>Used in {0} Document</source>
+        </trans-unit>
+        <trans-unit id="media.relatedDocumentNodes[1]">
+          <source>Used in {0} Documents</source>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve">
+				<source>Document</source>
+			</trans-unit>
+      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
+				<source>Reference</source>
 			</trans-unit>
 		</body>
 	</file>

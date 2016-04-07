@@ -1,8 +1,9 @@
 &.neos-module {
-	@import "Administration/Packages";
 	@import "Administration/Configuration";
-	@import "Management/Workspaces";
+	@import "Administration/Packages";
+	@import "Administration/Sites";
 	@import "Management/History";
+	@import "Management/Workspaces";
 	@include font;
 
 	background-color: $grayDarker;
@@ -264,7 +265,7 @@
 		&:after {
 			top: 0px;
 			padding-top: 4px;
-			border-left: 1px solid $grayDark
+			border-left: 1px solid $grayMedium;
 		}
 
 		select {
@@ -410,6 +411,10 @@
 			td.check {
 				padding-right: $relatedMargin !important;
 			}
+
+			.neos-label {
+				background-color: $textSubtle;
+			}
 		}
 
 		&.neos-info-table {
@@ -481,6 +486,11 @@
 			&.neos-action {
 				padding-left: 0 !important;
 				padding-right: 0 !important;
+			}
+
+			i {
+				vertical-align: baseline;
+				text-align: center;
 			}
 		}
 
