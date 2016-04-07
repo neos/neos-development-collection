@@ -5600,9 +5600,33 @@ neos .icon-fw {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=35);
   opacity: 0.35;
 }
-.neos .neos-modal {
+.neos .neos-modal-container {
+  width: 100%;
+  height: 100%;
+  display: table;
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 10050;
+}
+.neos .neos-modal {
+  display: table-cell;
+  vertical-align: middle;
+}
+.neos .neos-modal.neos-fade {
+  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
+  transition: opacity 0.3s linear, top 0.3s ease-out;
+  top: -25%;
+}
+.neos .neos-modal.neos-fade.neos-in {
+  top: 10%;
+}
+.neos .neos-modal .neos-modal-content {
+  margin: 0 auto;
   color: #fff;
   background: #222;
   border: 1px solid #3f3f3f;
@@ -5615,25 +5639,9 @@ neos .icon-fw {
   outline: none;
   width: calc(100vw - 80px);
   max-width: 640px;
-  margin: auto;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  display: inline-table;
 }
-.neos .neos-modal.neos-modal-wide {
+.neos .neos-modal .neos-modal-content.neos-modal-wide {
   max-width: 960px;
-}
-.neos .neos-modal.neos-fade {
-  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
-  transition: opacity 0.3s linear, top 0.3s ease-out;
-  top: -25%;
-}
-.neos .neos-modal.neos-fade.neos-in {
-  top: 10%;
 }
 .neos .neos-modal .neos-modal-header {
   padding: 0px;
