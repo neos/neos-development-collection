@@ -87,6 +87,15 @@
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			<target xml:lang="la-LA">crwdns643:0crwdne643:0</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="la-LA">crwdns727:0crwdne727:0</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="la-LA">crwdns728:0crwdne728:0</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="la-LA">crwdns729:0crwdne729:0</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="la-LA">crwdns22:0crwdne22:0</target></trans-unit>

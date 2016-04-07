@@ -87,6 +87,15 @@
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			<target xml:lang="ja" state="needs-translation">Unhide</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="ja" state="needs-translation">into</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="ja" state="needs-translation">before</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="ja" state="needs-translation">after</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="ja" state="needs-translation">Loading</target></trans-unit>

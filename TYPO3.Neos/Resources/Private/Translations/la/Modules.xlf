@@ -898,6 +898,25 @@
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="la-LA">crwdns474:0crwdne474:0</target></trans-unit>
+      <trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="la-LA">crwdns730:0crwdne730:0</target></trans-unit>
+      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedDocumentNodes[0]">
+          <source>Used in {0} Document</source>
+          <target xml:lang="la-LA">crwdns731:0{0}crwdne731:0</target>
+        </trans-unit>
+        <trans-unit id="media.relatedDocumentNodes[1]">
+          <source>Used in {0} Documents</source>
+          <target xml:lang="la-LA">crwdns732:0{0}crwdne732:0</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="la-LA">crwdns733:0crwdne733:0</target></trans-unit>
+      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="la-LA">crwdns734:0crwdne734:0</target></trans-unit>
     </body>
   </file>
 </xliff>
