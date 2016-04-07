@@ -13682,6 +13682,9 @@ neos .icon-fw {
 .neos.media-browser table.neos-table .neos-action .neos-modal {
   text-align: left;
 }
+.neos.media-browser table.neos-info-table i {
+  vertical-align: baseline;
+}
 .neos.media-browser .draggable-asset {
   cursor: move;
 }
