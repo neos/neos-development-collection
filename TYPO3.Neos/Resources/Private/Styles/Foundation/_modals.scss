@@ -22,8 +22,17 @@
 
 // Base modal
 .neos-modal {
+	@include flex();
+	@include flex-center();
 	position: fixed;
 	z-index: $zindexModal;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+}
+
+.neos-modal-content {
 	margin: 0;
 	color: $textOnGray;
 	background: $grayDark;
@@ -35,9 +44,6 @@
 	outline: none;
 	width: calc(100vw - #{$unit * 2});
 	max-width: $unit * 16;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 
 	&.neos-modal-wide {
 		max-width: $unit * 24;

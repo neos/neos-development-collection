@@ -5599,8 +5599,29 @@ neos .icon-fw {
   opacity: 0.35;
 }
 .neos .neos-modal {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
   position: fixed;
   z-index: 10050;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+.neos .neos-modal-content {
   margin: 0;
   color: #fff;
   background: #222;
@@ -5614,32 +5635,29 @@ neos .icon-fw {
   outline: none;
   width: calc(100vw - 80px);
   max-width: 640px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
-.neos .neos-modal.neos-modal-wide {
+.neos .neos-modal-content.neos-modal-wide {
   max-width: 960px;
 }
-.neos .neos-modal.neos-fade {
+.neos .neos-modal-content.neos-fade {
   -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
   -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
   -o-transition: opacity 0.3s linear, top 0.3s ease-out;
   transition: opacity 0.3s linear, top 0.3s ease-out;
   top: -25%;
 }
-.neos .neos-modal.neos-fade.neos-in {
+.neos .neos-modal-content.neos-fade.neos-in {
   top: 10%;
 }
-.neos .neos-modal .neos-modal-header {
+.neos .neos-modal-content .neos-modal-header {
   padding: 0px;
   border: 0px;
 }
-.neos .neos-modal .neos-modal-header h3 {
+.neos .neos-modal-content .neos-modal-header h3 {
   margin: 0;
   line-height: 30px;
 }
-.neos .neos-modal .neos-modal-header .neos-close {
+.neos .neos-modal-content .neos-modal-header .neos-close {
   margin: 0;
   color: #fff;
   font-size: 18px;
@@ -5662,13 +5680,13 @@ neos .icon-fw {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-modal-header .neos-close:before {
+.neos .neos-modal-content .neos-modal-header .neos-close:before {
   content: "";
 }
-.neos .neos-modal .neos-modal-header .neos-close:hover {
+.neos .neos-modal-content .neos-modal-header .neos-close:hover {
   background: #00b5ff;
 }
-.neos .neos-modal .neos-modal-header .neos-header {
+.neos .neos-modal-content .neos-modal-header .neos-header {
   font-size: 16px;
   line-height: 100%;
   margin: 16px;
@@ -5677,14 +5695,14 @@ neos .icon-fw {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-subheader {
+.neos .neos-modal-content .neos-subheader {
   font-size: 14px;
   margin: 16px;
   line-height: 18px;
   font-weight: normal;
   color: #adadad;
 }
-.neos .neos-modal .neos-modal-footer {
+.neos .neos-modal-content .neos-modal-footer {
   background: transparent;
   -webkit-box-shadow: 0px 0px 0px transparent;
   -moz-box-shadow: 0px 0px 0px transparent;
@@ -5697,15 +5715,15 @@ neos .icon-fw {
   text-align: right;
   *zoom: 1;
 }
-.neos .neos-modal .neos-modal-footer:before, .neos .neos-modal .neos-modal-footer:after {
+.neos .neos-modal-content .neos-modal-footer:before, .neos .neos-modal-content .neos-modal-footer:after {
   display: table;
   content: "";
   line-height: 0;
 }
-.neos .neos-modal .neos-modal-footer:after {
+.neos .neos-modal-content .neos-modal-footer:after {
   clear: both;
 }
-.neos .neos-modal .neos-modal-footer .neos-button {
+.neos .neos-modal-content .neos-modal-footer .neos-button {
   margin-left: 8px;
   margin-bottom: 0;
 }
