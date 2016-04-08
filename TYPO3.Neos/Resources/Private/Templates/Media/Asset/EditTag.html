@@ -30,21 +30,23 @@
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.save', source: 'Modules', package: 'TYPO3.Neos')}" />
 			<div class="neos-hide" id="tag-{tag -> f:format.identifier()}">
 				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: tag.label}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: tag.label}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+							<div>
+								<div class="neos-subheader">
+									<p>
+										{neos:backend.translate(id: 'media.message.willDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}">{neos:backend.translate(id: 'media.message.confirmDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}</button>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}">{neos:backend.translate(id: 'media.message.confirmDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}</button>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>

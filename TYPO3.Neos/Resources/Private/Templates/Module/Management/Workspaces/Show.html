@@ -79,16 +79,18 @@
 
 			<div class="neos-hide" id="discard">
 				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
-						<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
-							<i class="icon-trash icon-white"></i>
-							{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
-						</button>
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+						</div>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
+							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
+								<i class="icon-trash icon-white"></i>
+								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>

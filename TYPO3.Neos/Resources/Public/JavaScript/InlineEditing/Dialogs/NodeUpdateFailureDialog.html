@@ -1,16 +1,18 @@
 <div class="neos-modal">
-	<div class="neos-modal-header">
-		<button class="neos-close neos-button" data-dismiss="modal" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" fallback="An error occurred during saving"}}</div>
-	</div>
-	<div>
-		<div class="neos-subheader">
-			{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" fallback="Reload the page to attempt to fix the problem."}}
+	<div class="neos-modal-content">
+		<div class="neos-modal-header">
+			<button class="neos-close neos-button" data-dismiss="modal" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
+			<div class="neos-header">{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" fallback="An error occurred during saving"}}</div>
 		</div>
-	</div>
-	<div class="neos-modal-footer">
-		<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
-		<button class="neos-button neos-button-danger" title="{{translate id='inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle' fallback='Reload the backend'}}" {{action "reload" target="view"}}>{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" fallback="Reload"}}</button>
+		<div>
+			<div class="neos-subheader">
+				{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" fallback="Reload the page to attempt to fix the problem."}}
+			</div>
+		</div>
+		<div class="neos-modal-footer">
+			<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+			<button class="neos-button neos-button-danger" title="{{translate id='inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle' fallback='Reload the backend'}}" {{action "reload" target="view"}}>{{translate id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" fallback="Reload"}}</button>
+		</div>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

@@ -12609,6 +12609,14 @@ neos .icon-fw {
 .neos .neos-button-group + .neos-button-group {
   margin-left: 8px;
 }
+.neos .neos-insert-node-panel {
+  -webkit-box-align: flex-start;
+  -moz-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  top: 140px;
+}
 .neos .neos-insert-node-panel .neos-header i {
   vertical-align: baseline;
 }
