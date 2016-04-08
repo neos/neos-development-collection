@@ -417,7 +417,7 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				var prevTitle = newNode.data.tooltip,
+				var prevTitle = newNode.data.fullTitle,
 					tree = newNode.tree;
 
 				if (position === 'into') {
@@ -458,6 +458,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
+						newNode.data.fullTitle = title;
 						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});
