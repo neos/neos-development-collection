@@ -11,7 +11,7 @@ namespace Neos\RedirectHandler\NeosAdapter\Service;
  * source code.
  */
 
-use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
@@ -50,9 +50,9 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 
     /**
      * @Flow\Inject
-     * @var RedirectionStorageInterface
+     * @var RedirectStorageInterface
      */
-    protected $redirectionStorage;
+    protected $redirectStorage;
 
     /**
      * @Flow\Inject
@@ -121,7 +121,7 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
             $statusCode = (integer)$this->defaultStatusCode['gone'];
-            $this->redirectionStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hosts);
+            $this->redirectStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hosts);
             return;
         }
 
@@ -137,7 +137,7 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
 
         $this->flushRoutingCacheForNode($targetNode);
         $statusCode = (integer)$this->defaultStatusCode['redirect'];
-        $this->redirectionStorage->addRedirection($targetNodeUriPath, $nodeUriPath, $statusCode, $hosts);
+        $this->redirectStorage->addRedirection($targetNodeUriPath, $nodeUriPath, $statusCode, $hosts);
         /** @var ContentContext $contentContext */
 
 

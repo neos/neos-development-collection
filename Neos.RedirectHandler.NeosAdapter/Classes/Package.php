@@ -11,9 +11,9 @@ namespace Neos\RedirectHandler\NeosAdapter;
  * source code.
  */
 
+use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectionService;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
-use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectionService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
