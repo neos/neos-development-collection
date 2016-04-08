@@ -138,9 +138,9 @@ Options Reference:
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In case only fixed strings are allowed to be chosen, a select box can be used. Multiple selection is supported as well.
-The most important option is called ``values``, containing the choices which can be made. If wanted, an icon can be displayed
-for each choice by setting the ``icon`` class appropriately.
+In case only fixed entries are allowed to be chosen a select box can be used - multiple selection is supported as well.
+The data for populating the select box can be fetched from a fixed set of entries defined in YAML or a datasource.
+The most important option is called ``values``, containing the choices which can be made. If wanted, an icon can be displayed for each choice by setting the ``icon`` class appropriately.
 
 Basic Example -- simple select box::
 
