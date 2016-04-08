@@ -86,16 +86,16 @@
 			<target xml:lang="pl">Ukryj</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="pl" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="pl" state="translated">Odkryj</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="pl" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="pl" state="translated">do</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="pl" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="pl" state="translated">przed</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="pl" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="pl" state="translated">po</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="pl">Ładowanie</target></trans-unit>
@@ -149,7 +149,7 @@
 			<target xml:lang="pl">Nie można opublikować, ponieważ docelowy obszar roboczy jest tylko do odczytu</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="pl" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wybierz docelowy obszar roboczy</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="pl">Publikowanie</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target xml:lang="pl">Opublikowano</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="pl" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przełącz menu publikacji</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="pl">Docelowy obszar roboczy</target><alt-trans><target xml:lang="pl">Przestrzeń robocza</target></alt-trans></trans-unit>
@@ -209,22 +209,22 @@
 			<target xml:lang="pl">Ścieżka względna</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="pl" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wersja</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="pl">Tej operacji nie można cofnąć.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="pl" state="needs-translation">Asset</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zasób</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="pl" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utworzony</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="pl" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ostatnia modyfikacja</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="pl" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ostatnia publikacja</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="pl">Identyfikator</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="pl">Nazwa</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="pl" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="pl" state="translated">Obszar roboczy</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve" approved="yes">
 				<source>Structure</source>
 			<target xml:lang="pl">Struktura</target></trans-unit>
@@ -242,16 +242,16 @@
 			<target xml:lang="pl" state="needs-translation">Toggle context structure</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="pl" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="pl" state="translated">Filtr</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="pl" state="needs-translation">Toggle menu</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przełącz menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="pl" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="pl" state="translated">Błąd ładowania!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="pl" state="needs-translation">You have to select a node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Musisz wybrać węzeł</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
 			<target xml:lang="pl" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
@@ -467,10 +467,10 @@
 			<target xml:lang="pl" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="pl" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz pusty</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="pl" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz i kopiuj</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="pl">Treść</target><alt-trans><target xml:lang="pl">Zawartość</target></alt-trans></trans-unit>
@@ -559,7 +559,7 @@
 			<target xml:lang="pl">Wyloguj</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="pl" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wprowadzona nazwa użytkownika lub hasło było nieprawidłowe</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="pl" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
@@ -615,7 +615,7 @@
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="pl" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wprowadzona nazwa użytkownika lub hasło było nieprawidłowe</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
