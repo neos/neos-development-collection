@@ -1,4 +1,6 @@
 .neos-insert-node-panel {
+	@include flex-align(flex-start);
+	top: 140px;
 	.neos-header {
 		i {
 			vertical-align: baseline;
