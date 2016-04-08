@@ -32,16 +32,32 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\Diff\\": "Neos.Diff/Classes",
-            "Neos\\RedirectHandler\\NeosAdapter\\": "Neos.RedirectHandler.NeosAdapter/Classes"
+            "Neos\\Diff\\": [
+                "Neos.Diff/Classes"
+            ],
+            "Neos\\RedirectHandler\\NeosAdapter\\": [
+                "Neos.RedirectHandler.NeosAdapter/Classes"
+            ]
         },
         "psr-0": {
-            "TYPO3\\Media": "TYPO3.Media/Classes",
-            "TYPO3\\Neos\\Kickstarter": "TYPO3.Neos.Kickstarter/Classes",
-            "TYPO3\\Neos\\NodeTypes": "TYPO3.Neos.NodeTypes/Classes",
-            "TYPO3\\Neos": "TYPO3.Neos/Classes",
-            "TYPO3\\TYPO3CR": "TYPO3.TYPO3CR/Classes",
-            "TYPO3\\TypoScript": "TYPO3.TypoScript/Classes"
+            "TYPO3\\Media": [
+                "TYPO3.Media/Classes"
+            ],
+            "TYPO3\\Neos\\Kickstarter": [
+                "TYPO3.Neos.Kickstarter/Classes"
+            ],
+            "TYPO3\\Neos\\NodeTypes": [
+                "TYPO3.Neos.NodeTypes/Classes"
+            ],
+            "TYPO3\\Neos": [
+                "TYPO3.Neos/Classes"
+            ],
+            "TYPO3\\TYPO3CR": [
+                "TYPO3.TYPO3CR/Classes"
+            ],
+            "TYPO3\\TypoScript": [
+                "TYPO3.TypoScript/Classes"
+            ]
         }
     },
     "extra": {
