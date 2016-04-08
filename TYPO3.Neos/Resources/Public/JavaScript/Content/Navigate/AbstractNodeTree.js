@@ -613,9 +613,11 @@ define(
 			},
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var data = {
+				var nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
+					data = {
 						title: title ? title : I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'neos-matched',
 						iconClass: iconClass,
 						expand: true
