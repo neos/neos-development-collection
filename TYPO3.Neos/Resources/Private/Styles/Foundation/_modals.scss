@@ -21,27 +21,21 @@
 }
 
 // Base modal
-.neos-modal {
+.neos-modal-container {
+	width: 100%;
+	height: 100%;
+	display: table;
 	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	z-index: $zindexModal;
-	margin: 0;
-	color: $textOnGray;
-	background: $grayDark;
-	border: 1px solid $grayLight;
-	padding: 0px;
-	@include border-radius(0);
-	@include font();
-	// Remove focus outline from opened modal
-	outline: none;
-	width: calc(100vw - #{$unit * 2});
-	max-width: $unit * 16;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+}
 
-	&.neos-modal-wide {
-		max-width: $unit * 24;
-	}
+.neos-modal {
+	display: table-cell;
+	vertical-align: middle;
 
 	&.neos-fade {
 		@include transition(opacity .3s linear, top .3s ease-out);
@@ -50,6 +44,24 @@
 
 	&.neos-fade.neos-in {
 		top: 10%;
+	}
+
+	.neos-modal-content {
+		margin: 0 auto;
+		color: $textOnGray;
+		background: $grayDark;
+		border: 1px solid $grayLight;
+		padding: 0px;
+		@include border-radius(0);
+		@include font();
+		// Remove focus outline from opened modal
+		outline: none;
+		width: calc(100vw - #{$unit * 2});
+		max-width: $unit * 16;
+
+		&.neos-modal-wide {
+			max-width: $unit * 24;
+		}
 	}
 
 	.neos-modal-header {
