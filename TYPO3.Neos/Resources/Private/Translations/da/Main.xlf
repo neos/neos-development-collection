@@ -87,6 +87,15 @@
       <trans-unit id="unhide" xml:space="preserve" approved="yes">
 				<source>Unhide</source>
 			<target xml:lang="da">Vis</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="da" state="needs-translation">into</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="da" state="needs-translation">before</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="da" state="needs-translation">after</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="da">Indlæser</target></trans-unit>
@@ -138,12 +147,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="da">Kunne ikke publicére da destinationsarbejdsrummet er skrivebeskyttet</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="da" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="da">Publicering</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="da">Publiceret</target><alt-trans><target xml:lang="da">Udgivet</target></alt-trans></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="da" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="da">Destinationsarbejdsrum</target><alt-trans><target xml:lang="da">Destinationsarbejdsområde</target></alt-trans><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
@@ -435,6 +450,9 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="da">Det givne emne er ikke et gyldigt UUID.</target><alt-trans><target xml:lang="da">Det givne emne er ikke en gyldig UUID.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="da" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="da">Starte med et tomt eller forudfyldt dokument?</target></trans-unit>
@@ -456,6 +474,12 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="da">Indhold</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="da" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="da" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="da">Er du sikker på, at du vil slette</target></trans-unit>

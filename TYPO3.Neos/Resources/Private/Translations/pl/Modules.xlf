@@ -658,6 +658,18 @@
       <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
 			<target xml:lang="pl">Sortuj według ostatniej modyfikacji</target></trans-unit>
+      <trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="pl" state="needs-translation">Sort by</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="pl" state="needs-translation">Sort direction</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="pl" state="needs-translation">Ascending</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="pl" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pl">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
@@ -886,6 +898,25 @@
       <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target xml:lang="pl">Tworzenie</target></trans-unit>
+      <trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="pl" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedDocumentNodes[0]">
+          <source>Used in {0} Document</source>
+          <target xml:lang="pl" state="needs-translation">Used in {0} Document</target>
+        </trans-unit>
+        <trans-unit id="media.relatedDocumentNodes[1]">
+          <source>Used in {0} Documents</source>
+          <target xml:lang="pl" state="needs-translation">Used in {0} Documents</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve" approved="yes">
+				<source>Document</source>
+			<target xml:lang="pl">Dokument</target></trans-unit>
+      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="pl" state="needs-translation">Reference</target></trans-unit>
     </body>
   </file>
 </xliff>

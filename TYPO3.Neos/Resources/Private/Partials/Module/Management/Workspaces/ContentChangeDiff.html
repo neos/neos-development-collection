@@ -3,11 +3,11 @@
 <div class="neos-content-diff">
     <table class="neos-content-diff">
         <tr>
-            <th>
+            <th title="{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}" data-neos-toggle="tooltip">
                 <f:if condition="{change.configuration.ui.icon}">
-                    <i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}" data-neos-toggle="tooltip"></i>
+                    <i class="{change.configuration.ui.icon}"></i>
                 </f:if>
-                {f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
+                {change.node.label}
             </th>
         </tr>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">

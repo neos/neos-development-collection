@@ -72,7 +72,7 @@ class NodeUriPathSegmentGenerator
         } elseif (strlen($text) === 0) {
             throw new \TYPO3\Neos\Exception('Given text was empty.', 1457591815);
         }
-        $text = $this->transliterationService->transliterate($text, $language ?: null);
+        $text = $this->transliterationService->transliterate($text, isset($language) ? $language : null);
         return \Behat\Transliterator\Transliterator::urlize($text);
     }
 }

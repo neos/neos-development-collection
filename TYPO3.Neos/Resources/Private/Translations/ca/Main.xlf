@@ -87,6 +87,15 @@
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			<target xml:lang="ca" state="needs-translation">Unhide</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="ca" state="needs-translation">into</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="ca" state="needs-translation">before</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="ca" state="needs-translation">after</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="ca" state="needs-translation">Loading</target></trans-unit>
@@ -138,12 +147,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="ca" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="ca" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target xml:lang="ca" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="ca" state="needs-translation">Published</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="ca" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="ca" state="needs-translation">Target workspace</target></trans-unit>
@@ -435,6 +450,9 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="ca" state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="ca" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="ca" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
@@ -456,6 +474,12 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="ca" state="needs-translation">Content</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="ca" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="ca" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="ca" state="needs-translation">Do you really want to delete</target></trans-unit>
