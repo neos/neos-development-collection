@@ -25,7 +25,7 @@
 }
 
 //Vendor Prefixes
-// --------
+// --------------
 @mixin flex() {
   display: -webkit-box;
   display: -moz-box;
@@ -33,18 +33,19 @@
   display: -webkit-flex;
   display: flex;
 }
-
-@mixin flex-center() {
-  -webkit-box-align: center;
-  -moz-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -moz-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
+@mixin flex-align($position) {
+  -webkit-box-align: $position;
+  -moz-box-align: $position;
+  -ms-flex-align: $position;
+  -webkit-align-items: $position;
+  align-items: $position;
+}
+@mixin flex-justify($position) {
+  -webkit-box-pack: $position;
+  -moz-box-pack: $position;
+  -ms-flex-pack: $position;
+  -webkit-justify-content: $position;
+  justify-content: $position;
 }
 
 // Webkit-style focus

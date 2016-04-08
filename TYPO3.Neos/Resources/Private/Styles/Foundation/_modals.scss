@@ -23,7 +23,8 @@
 // Base modal
 .neos-modal {
 	@include flex();
-	@include flex-center();
+	@include flex-align(center);
+	@include flex-justify(center);
 	position: fixed;
 	z-index: $zindexModal;
 	height: 100%;
