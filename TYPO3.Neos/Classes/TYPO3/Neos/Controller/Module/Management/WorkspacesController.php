@@ -26,6 +26,7 @@ use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Service\PublishingService;
@@ -99,6 +100,12 @@ class WorkspacesController extends AbstractModuleController
     protected $translator;
 
     /**
+     * @var ContentDimensionPresetSourceInterface
+     * @Flow\Inject
+     */
+    protected $contentDimensionPresetSource;
+
+    /**
      * @return void
      */
     protected function initializeAction()
@@ -161,7 +168,8 @@ class WorkspacesController extends AbstractModuleController
             'baseWorkspaceName' => $workspace->getBaseWorkspace()->getName(),
             'baseWorkspaceLabel' => $workspace->getBaseWorkspace()->getTitle() ?: $workspace->getBaseWorkspace()->getName(),
             'canPublishToBaseWorkspace' => $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
-            'siteChanges' => $this->computeSiteChanges($workspace)
+            'siteChanges' => $this->computeSiteChanges($workspace),
+            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets()
         ]);
     }
 

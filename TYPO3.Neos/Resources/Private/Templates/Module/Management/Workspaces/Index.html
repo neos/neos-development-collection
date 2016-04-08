@@ -20,22 +20,22 @@
 						<td class="neos-workspace-type">
 							<f:if condition="{userWorkspace} == {workspace}">
 								<f:then>
-									<span class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
+									<i class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 								</f:then>
 								<f:else>
 									<f:if condition="{canPublish}">
 										<f:then>
 											<f:if condition="{workspace.privateWorkspace}">
 												<f:then>
-													<span class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
+													<i class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 												</f:then>
 												<f:else>
-													<span class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
+													<i class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 												</f:else>
 											</f:if>
 										</f:then>
 										<f:else>
-											<span class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></span>
+											<i class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 										</f:else>
 									</f:if>
 								</f:else>
