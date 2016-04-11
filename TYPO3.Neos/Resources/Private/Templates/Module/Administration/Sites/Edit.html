@@ -49,6 +49,7 @@
 						<thead>
 							<tr>
 								<th>{neos:backend.translate(id: 'domain', value: 'Domain')}</th>
+								<th class="neos-aCenter">{neos:backend.translate(id: 'primary')}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -58,6 +59,13 @@
 									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostPattern}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
 									<f:if condition="{domain.active} == 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
+									</f:if>
+								</td>
+								<td class="neos-aCenter check">
+									<f:if condition="{domain.active}">
+										<label class="neos-radio">
+											<f:form.radio property="primaryDomain" value="{domain}" checked="{f:if(condition: '{site.primaryDomain} == {domain}', then: 'checked')}" /><span></span>
+										</label>
 									</f:if>
 								</td>
 								<td class="neos-action aRight">

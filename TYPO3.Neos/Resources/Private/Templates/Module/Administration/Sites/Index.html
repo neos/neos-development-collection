@@ -41,7 +41,7 @@
 									</f:if>
 								</td>
 								<td><span class="neos-label">{site.nodeName}</span></td>
-								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.domains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.firstActiveDomain.hostPattern}</span></f:if></td>
+								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.activeDomains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.primaryDomain}</span></f:if></td>
 								<td class="neos-action">
 									<div class="neos-pull-right">
 										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
