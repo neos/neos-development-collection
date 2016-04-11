@@ -32,7 +32,8 @@
 									<td colspan="2" class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
-												<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:<span title="{document.documentNode.path}" data-neos-toggle="tooltip"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"><f:for each="{documentNodes}" as="documentNode" iteration="{iterator}"> / {documentNode.label}</f:for></neos:backend.documentBreadcrumbPath></span></strong>
+												{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:
+												<f:render partial="Module/Shared/DocumentBreadcrumb" arguments="{node: document.documentNode, showIcon: true}"></f:render>
 											</div>
 
 											<div class="neos-span2 neos-pull-right neos-aRight">
@@ -54,7 +55,7 @@
 											<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
 										</td>
 										<td id="change-{change.node.identifier}" {f:render(partial: 'Module/Management/Workspaces/ContentChangeAttributes', arguments: {change: change})} data-neos-toggle="tooltip" data-placement="left" data-container="body">
-											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change}"/>
+											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change, contentDimensions: contentDimensions}"/>
 										</td>
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
@@ -62,7 +63,7 @@
 													<i class="icon-ok icon-white"></i>
 												</button>
 											</f:if>
-											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">
+											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
 												<i class="icon-trash icon-white"></i>
 											</button>
 										</td>

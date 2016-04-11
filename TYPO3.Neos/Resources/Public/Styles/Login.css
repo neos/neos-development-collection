@@ -4549,9 +4549,13 @@ body {
   background-color: #000;
   white-space: normal;
   text-shadow: none;
+  word-break: break-word;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.neos .neos-tooltip-inner i[class^="icon-"] {
+  vertical-align: baseline;
 }
 .neos .neos-tooltip-arrow {
   position: absolute;
