@@ -13771,6 +13771,9 @@ neos .icon-fw {
   position: absolute;
   left: -9999px;
 }
+.neos.media-browser .fold-toggle {
+  cursor: pointer;
+}
 .neos #neos-notification-container.neos-notification-top {
   position: fixed;
   z-index: 999999;

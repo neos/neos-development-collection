@@ -3266,8 +3266,6 @@ neos .icon-fw {
   font-style: normal;
 }
 .neos [class^="icon-"].icon-language:before {
-  font-size: 20px;
-  line-height: 20px;
   font-family: 'neos-language';
   content: "\e600";
 }
@@ -5753,9 +5751,13 @@ neos .icon-fw {
   background-color: #000;
   white-space: normal;
   text-shadow: none;
+  word-break: break-word;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.neos .neos-tooltip-inner i[class^="icon-"] {
+  vertical-align: baseline;
 }
 .neos .neos-tooltip-arrow {
   position: absolute;
@@ -10413,6 +10415,8 @@ neos .icon-fw {
   width: 24px;
   text-align: center;
   color: #adadad;
+  font-size: 20px;
+  line-height: 20px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions {
   display: none;
@@ -10436,6 +10440,8 @@ neos .icon-fw {
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
   width: 24px;
+  font-size: 20px;
+  line-height: 20px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
   overflow: hidden;
@@ -13580,24 +13586,24 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table th {
+.neos.media-browser table.neos-table.asset-list th {
   white-space: nowrap;
 }
-.neos.media-browser table.neos-table th a:hover {
+.neos.media-browser table.neos-table.asset-list th a:hover {
   color: #00b5ff;
 }
-.neos.media-browser table.neos-table th i {
+.neos.media-browser table.neos-table.asset-list th i {
   vertical-align: baseline;
 }
-.neos.media-browser table.neos-table th,
-.neos.media-browser table.neos-table td {
+.neos.media-browser table.neos-table.asset-list th,
+.neos.media-browser table.neos-table.asset-list td {
   padding: 8px;
   line-height: 24px;
 }
-.neos.media-browser table.neos-table tbody tr.asset td:first-child {
+.neos.media-browser table.neos-table.asset-list tbody tr.asset td:first-child {
   padding: 0 !important;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail {
   background-color: #141414;
   height: 40px;
   width: 40px;
@@ -13609,10 +13615,10 @@ neos .icon-fw {
   background-repeat: no-repeat;
   overflow: hidden;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail[data-content] {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail[data-content] {
   cursor: zoom-in;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail img {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13628,15 +13634,15 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table .neos-popover {
+.neos.media-browser table.neos-table.asset-list .neos-popover {
   width: auto;
   height: auto;
   border-color: #323232;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-title {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-title {
   border-color: #323232;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-content {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-content {
   width: 250px;
   height: 250px;
   position: relative;
@@ -13647,7 +13653,7 @@ neos .icon-fw {
   overflow: hidden;
   background-color: #141414;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-content img {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-content img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13663,23 +13669,23 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table .neos-popover.neos-top .neos-arrow {
+.neos.media-browser table.neos-table.asset-list .neos-popover.neos-top .neos-arrow {
   border-top-color: #141414;
 }
-.neos.media-browser table.neos-table .neos-popover.neos-bottom .neos-arrow {
+.neos.media-browser table.neos-table.asset-list .neos-popover.neos-bottom .neos-arrow {
   border-bottom-color: #222;
 }
-.neos.media-browser table.neos-table .icon-move {
+.neos.media-browser table.neos-table.asset-list .icon-move {
   float: left;
   line-height: 40px;
   padding-left: 12px;
 }
-.neos.media-browser table.neos-table .neos-action {
+.neos.media-browser table.neos-table.asset-list .neos-action {
   width: 10%;
   font-size: 0;
   text-align: right;
 }
-.neos.media-browser table.neos-table .neos-action .neos-modal {
+.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal {
   text-align: left;
 }
 .neos.media-browser table.neos-info-table i {
@@ -13764,6 +13770,9 @@ neos .icon-fw {
   visibility: hidden;
   position: absolute;
   left: -9999px;
+}
+.neos.media-browser .fold-toggle {
+  cursor: pointer;
 }
 .neos #neos-notification-container.neos-notification-top {
   position: fixed;
