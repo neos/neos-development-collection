@@ -74,7 +74,7 @@ class MenuHelper
                 } else {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
-                        ->uriFor('switchSite', array('hostname' => $hostname), 'Backend\Backend', 'TYPO3.Neos');
+                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'TYPO3.Neos');
                 }
                 $domainsFound = true;
             }
