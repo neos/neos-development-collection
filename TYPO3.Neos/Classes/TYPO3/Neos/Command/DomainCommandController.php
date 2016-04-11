@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\ValidatorResolver;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
@@ -37,6 +38,12 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     protected $siteRepository;
 
     /**
+     * @var ValidatorResolver
+     * @Flow\Inject
+     */
+    protected $validatorResolver;
+
+    /**
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
@@ -47,19 +54,30 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if (!$site instanceof Site) {
-            $this->outputLine('No site found with nodeName "%s".', array($siteNodeName));
+            $this->outputLine('<error>No site found with nodeName "%s".</error>', array($siteNodeName));
             $this->quit(1);
         }
 
         $domains = $this->domainRepository->findByHostPattern($hostPattern);
         if ($domains->count() > 0) {
-            $this->outputLine('The host pattern "%s" is not unique.', array($hostPattern));
+            $this->outputLine('<error>The host pattern "%s" is not unique.</error>', array($hostPattern));
             $this->quit(1);
         }
 
         $domain = new Domain();
         $domain->setSite($site);
         $domain->setHostPattern($hostPattern);
+
+        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
+        $result = $domainValidator->validate($domain);
+        if ($result->hasErrors()) {
+            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
+                $firstError = array_pop($errors);
+                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
+                $this->quit(1);
+            }
+        }
+
         $this->domainRepository->add($domain);
 
         $this->outputLine('Domain created.');
@@ -122,7 +140,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
@@ -140,7 +158,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
@@ -159,7 +177,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
