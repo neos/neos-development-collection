@@ -157,8 +157,8 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         $userWorkspace = $this->userService->getPersonalWorkspace();
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            $accessible = $this->domainUserService->currentUserCanPublishToWorkspace($relatedNodeData->getWorkspace());
-            if ($accessible && $relatedNodeData->getWorkspace()->getName() !== 'live') {
+            $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
+            if ($accessible) {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
             } else {
                 $context = $this->createContentContext($userWorkspace->getName());
