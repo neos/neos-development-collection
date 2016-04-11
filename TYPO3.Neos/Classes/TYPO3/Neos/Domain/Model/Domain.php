@@ -32,6 +32,20 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
     protected $hostPattern = '*';
 
     /**
+     * @var string
+     * @Flow\Validate(type="RegularExpression", options={ "regularExpression"="/^(http|https)$/" })
+     * @ORM\Column(nullable=true)
+     */
+    protected $scheme;
+
+    /**
+     * @var integer
+     * @Flow\Validate(type="NumberRange", options={ "minimum"=0, "maximum"=49151 })
+     * @ORM\Column(nullable=true)
+     */
+    protected $port;
+
+    /**
      * @var \TYPO3\Neos\Domain\Model\Site
      * @ORM\ManyToOne(inversedBy="domains")
      * @Flow\Validate(type="NotEmpty")
@@ -66,6 +80,52 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
     public function getHostPattern()
     {
         return $this->hostPattern;
+    }
+
+    /**
+     * Sets the scheme for the domain
+     *
+     * @param string $scheme Scheme for the domain
+     * @return void
+     * @api
+     */
+    public function setScheme($scheme = null)
+    {
+        $this->scheme = $scheme;
+    }
+
+    /**
+     * Returns the scheme for this domain
+     *
+     * @return string The scheme
+     * @api
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * Sets the port for the domain
+     *
+     * @param integer $port Port for the domain
+     * @return void
+     * @api
+     */
+    public function setPort($port = null)
+    {
+        $this->port = $port;
+    }
+
+    /**
+     * Returns the port for this domain
+     *
+     * @return integer The port
+     * @api
+     */
+    public function getPort()
+    {
+        return $this->port;
     }
 
     /**
@@ -133,5 +193,30 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
     public function getCacheEntryIdentifier()
     {
         return $this->hostPattern;
+    }
+
+    /**
+     * Returns a URI string representation of this domain
+     *
+     * @return string This domain as a URI string
+     */
+    public function __toString()
+    {
+        $domain = '';
+        $domain .= $this->scheme ? $this->scheme . '://' : '';
+        $domain .= $this->hostPattern;
+        if ($this->port !== null) {
+            switch ($this->scheme) {
+                case 'http':
+                    $domain .= ($this->port !== 80 ? ':' . $this->port : '');
+                    break;
+                case 'https':
+                    $domain .= ($this->port !== 443 ? ':' . $this->port : '');
+                    break;
+                default:
+                    $domain .= (isset($this->port) ? ':' . $this->port : '');
+            }
+        }
+        return $domain;
     }
 }

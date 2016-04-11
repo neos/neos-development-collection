@@ -273,6 +273,18 @@
 			<trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			</trans-unit>
+			<trans-unit id="host" xml:space="preserve">
+				<source>Host</source>
+			</trans-unit>
+			<trans-unit id="scheme" xml:space="preserve">
+				<source>Scheme</source>
+			</trans-unit>
+			<trans-unit id="port" xml:space="preserve">
+				<source>Port</source>
+			</trans-unit>
+			<trans-unit id="primary" xml:space="preserve">
+				<source>Primary</source>
+			</trans-unit>
 
 			<!-- node types -->
 			<trans-unit id="nodeTypes.groups.general" xml:space="preserve">

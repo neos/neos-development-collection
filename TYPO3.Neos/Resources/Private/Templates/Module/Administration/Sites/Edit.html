@@ -55,7 +55,7 @@
 						<f:for each="{domains}" as="domain" key="number">
 							<tr>
 								<td>
-									{domain.hostPattern}
+									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostPattern}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
 									<f:if condition="{domain.active} == 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 									</f:if>
@@ -85,7 +85,7 @@
 												<div class="neos-modal-content">
 													<div class="neos-modal-header">
 														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-														<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain.hostPattern}, value: 'Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.')}</div>
+														<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain}, value: 'Do you really want to delete "{domain}"? This action cannot be undone.')}</div>
 													</div>
 													<div class="neos-modal-footer">
 														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>

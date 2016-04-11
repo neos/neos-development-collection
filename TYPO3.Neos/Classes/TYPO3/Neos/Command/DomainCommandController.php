@@ -48,9 +48,11 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
      * @param string $hostPattern The host pattern to match on, e.g. "neos.typo3.org"
+     * @param string $scheme The scheme for linking (http/https)
+     * @param integer $port The port for linking (0-49151)
      * @return void
      */
-    public function addCommand($siteNodeName, $hostPattern)
+    public function addCommand($siteNodeName, $hostPattern, $scheme = null, $port = null)
     {
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if (!$site instanceof Site) {
@@ -65,6 +67,12 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
         }
 
         $domain = new Domain();
+        if ($scheme !== null) {
+            $domain->setScheme($scheme);
+        }
+        if ($port !== null) {
+            $domain->setPort($port);
+        }
         $domain->setSite($site);
         $domain->setHostPattern($hostPattern);
 
@@ -111,21 +119,33 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
             array_push($availableDomains, array(
                 'nodeName' => $domain->getSite()->getNodeName(),
                 'hostPattern' => $domain->getHostPattern(),
+                'scheme' => $domain->getScheme(),
+                'port' => $domain->getPort(),
                 'active' => $domain->getActive()
             ));
             if (strlen($domain->getSite()->getNodeName()) > $longestNodeName) {
                 $longestNodeName = strlen($domain->getSite()->getNodeName());
             }
-            if (strlen($domain->getHostPattern()) > $longestHostPattern) {
-                $longestHostPattern = strlen($domain->getHostPattern());
+            if (strlen($domain) > $longestHostPattern) {
+                $longestHostPattern = strlen($domain);
             }
         }
 
         $this->outputLine();
-        $this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Host pattern', $longestHostPattern + 5) . 'State');
-        $this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 14));
+        $this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Domain (Scheme/<b>Host</b>/Port)', $longestHostPattern + 12) . 'State');
+        $this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 12));
         foreach ($availableDomains as $domain) {
-            $this->outputLine(' ' . str_pad($domain['nodeName'], $longestNodeName + 10) . str_pad($domain['hostPattern'], $longestHostPattern + 5) . ($domain['active'] ? 'Active' : 'Inactive'));
+            $this->outputLine(sprintf(
+                ' %s%s%s',
+                str_pad($domain['nodeName'], $longestNodeName + 10),
+                str_pad(
+                    ($domain['scheme'] ? $domain['scheme'] . '://' : '') .
+                    '<b>' . $domain['hostPattern'] . '</b>' .
+                    ($domain['port'] ? ':' . $domain['port'] : ''),
+                    $longestHostPattern + 12
+                ),
+                ($domain['active'] ? 'Active' : 'Inactive')
+            ));
         }
         $this->outputLine();
     }
