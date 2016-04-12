@@ -230,8 +230,8 @@ define(
 					},
 
 					onCustomRender: function(node) {
-						var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel),
-							tooltip = node.data.title;
+						var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel || ''),
+							tooltip = node.data.title || '';
 
 						if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
 							tooltip += ' (' + nodeTypeLabel + ')';
@@ -396,9 +396,11 @@ define(
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var that = this,
+					nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
 					data = {
 						title: title,
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3_neos-page neos-matched',
 						iconClass: iconClass,
 						expand: false
@@ -415,7 +417,7 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				var prevTitle = newNode.data.tooltip,
+				var prevTitle = newNode.data.fullTitle,
 					tree = newNode.tree;
 
 				if (position === 'into') {
@@ -456,6 +458,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
+						newNode.data.fullTitle = title;
 						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});

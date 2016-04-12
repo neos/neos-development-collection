@@ -173,8 +173,8 @@ define(
 				},
 
 				onCustomRender: function(node) {
-					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel),
-						tooltip = node.data.title;
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel || ''),
+						tooltip = node.data.title || '';
 
 					if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
 						tooltip += ' (' + nodeTypeLabel + ')';
