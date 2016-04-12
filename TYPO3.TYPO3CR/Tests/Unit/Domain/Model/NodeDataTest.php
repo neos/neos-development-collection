@@ -461,7 +461,7 @@ class NodeDataTest extends UnitTestCase
 
         $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
 
-        $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('setRemoved', 'update'), array(), '', false);
+        $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('setRemoved', 'update', 'remove'), array(), '', false);
         $this->inject($nodeDataRepository, 'entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 

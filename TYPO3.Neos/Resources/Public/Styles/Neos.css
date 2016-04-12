@@ -7321,12 +7321,26 @@
 .neos .neos-secondary-inspector > div > div {
   height: 100%;
 }
-.neos .neos-secondary-inspector-image-crop .jcrop-holder {
-  margin: 16px auto;
+.neos .neos-secondary-inspector-image-crop {
+  overflow: auto;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area {
+  padding: 0 16px;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area > img {
+  max-width: none;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-holder {
+  margin: 0 auto;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-vline,
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-hline {
+  background: url("../Library/jcrop/css/Jcrop.gif") #fff;
 }
 .neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio {
-  margin: 40px auto 0;
   width: 600px;
+  margin: 0 auto;
+  padding: 40px 16px 16px;
 }
 .neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > span {
   line-height: 40px;

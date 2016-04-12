@@ -71,7 +71,7 @@ HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.htm
 		</header>
 		<div>
 			{neos:contentElement.editable(property: 'text')}
-			<media:image image="{image}" maximumWidth="300" alt="{headline}" />
+			<f:if condition="{image}"><media:image image="{image}" maximumWidth="300" alt="{headline}" /></f:if>
 		</div>
 	</article>
 

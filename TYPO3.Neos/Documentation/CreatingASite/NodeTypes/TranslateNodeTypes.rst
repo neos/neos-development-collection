@@ -36,7 +36,7 @@ for this NodeTypes you have to add the following configuration to the Settings.y
             'Vendor.Site': ['NodeTypes/*']
 
 
-Inside of the xliff file **Resources/Private/Translations/en/NodeTypes/YourContentElementName.xliff** the
+Inside of the xliff file **Resources/Private/Translations/en/NodeTypes/YourContentElementName.xlf** the
 translated labels for ``properties``, ``groups``, ``tabs`` and ``views`` are defined in the xliff like as follows.
 
 .. code-block:: xml
@@ -80,7 +80,7 @@ For adding properties to existing NodeTypes the use of mixins is encouraged.
       'Vendor.Site:YourNodetypeMixin': TRUE
 
 That way you can add the translations for the added properties to the file
-**Resources/Private/Translations/en/NodeTypes/YourNodetypeMixin.xliff**.
+**Resources/Private/Translations/en/NodeTypes/YourNodetypeMixin.xlf**.
 
 Override Translations
 ---------------------

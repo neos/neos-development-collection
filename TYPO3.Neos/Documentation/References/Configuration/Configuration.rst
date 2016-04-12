@@ -22,3 +22,25 @@ If you have lots of nodes can reduce the number of levels inside ``Settings.yaml
             loadingDepth: 2
           structureTree:
             loadingDepth: 2
+
+Node tree base node type
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allows configuring the baseNodeType used in the node tree.
+
+This example shows how to exclude one specific node type (and it's children) from the tree:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos:
+      userInterface:
+        navigateComponent:
+          nodeTree:
+            presets:
+              default:
+                baseNodeType: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
+
+.. note::
+  The naming of the configuration (``presets``) keeps into account that the node tree should support multiple presets
+  in the future.
