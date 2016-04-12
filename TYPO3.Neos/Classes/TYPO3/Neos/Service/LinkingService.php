@@ -300,10 +300,10 @@ class LinkingService
 
         if ($site->hasActiveDomains()) {
             $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
-            $activeDomains = $site->getActiveDomains()->map(function ($domain) {
+            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
                 return $domain->getHostPattern();
-            });
-            if (!in_array($requestUriHost, $activeDomains->toArray(), true)) {
+            })->toArray();
+            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
             } elseif ($absolute === true) {
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
