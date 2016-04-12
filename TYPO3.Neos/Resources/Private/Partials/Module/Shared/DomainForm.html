@@ -15,13 +15,32 @@
 				</div>
 			</div>
 			<div class="neos-span6">
-				<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostPattern', then: ' neos-error')}">
-					<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
-					<div class="neos-controls">
-						<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
-						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostPattern'}"/>
-					</div>
-				</div>
+				<f:validation.results for="domain">
+					<f:if condition="{validationResults.errors}">
+						<f:then>
+							<div class="neos-control-group neos-error">
+								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
+								<div class="neos-controls">
+									<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<ul class="errors">
+										<f:for each="{validationResults.errors}" as="error">
+											<li><span class="neos-help-block">{error}</span></li>
+										</f:for>
+									</ul>
+								</div>
+							</div>
+						</f:then>
+						<f:else>
+							<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostPattern', then: ' neos-error')}">
+								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
+								<div class="neos-controls">
+									<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostPattern'}"/>
+								</div>
+							</div>
+						</f:else>
+					</f:if>
+				</f:validation.results>
 			</div>
 			<div class="neos-span4">
 				<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.port', then: ' neos-error')}">
