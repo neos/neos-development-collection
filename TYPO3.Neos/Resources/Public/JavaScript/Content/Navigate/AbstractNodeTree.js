@@ -911,7 +911,7 @@ define(
 			refresh: function() {
 				var node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 				node.removeChildren();
-				this.loadNode(node, 0);
+				this.loadNode(node, this.get('loadingDepth'));
 			},
 
 			/**
