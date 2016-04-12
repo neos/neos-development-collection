@@ -939,6 +939,10 @@ class NodeDataRepository extends Repository
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 
         if (is_array($term)) {
+            if (count($term) !== 1) {
+                throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported.', 1460437584);
+            }
+
             // Build the like parameter as "key": "value" to search by a specific key and value
             $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
         } else {
