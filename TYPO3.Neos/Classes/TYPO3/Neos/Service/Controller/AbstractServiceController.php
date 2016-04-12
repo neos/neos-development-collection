@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Service\Controller;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response as HttpResponse;
+use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\RequestInterface;
@@ -99,31 +100,38 @@ abstract class AbstractServiceController extends ActionController
      */
     protected function convertException(\Exception $exception)
     {
-        $exceptionData = array(
-            'code' => $exception->getCode(),
-            'message' => $exception->getMessage(),
-        );
-        $splitMessagePattern = '/
-			(?<=                # Begin positive lookbehind.
-			  [.!?]\s           # Either an end of sentence punct,
-			| \n                # or line break
-			)
-			(?<!                # Begin negative lookbehind.
-			  i\.E\.\s          # Skip "i.E."
-			)                   # End negative lookbehind.
-			/ix';
-        $sentences = preg_split($splitMessagePattern, $exception->getMessage(), 2, PREG_SPLIT_NO_EMPTY);
-        if (!isset($sentences[1])) {
-            $exceptionData['message'] = $exception->getMessage();
+        if ($this->objectManager->getContext()->isProduction()) {
+            $exceptionData = ['message' => Response::getStatusMessageByCode($exception->getCode())];
+            if ($exception instanceof FlowException) {
+                $exceptionData['details'] = 'When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $exception->getReferenceCode();
+            }
         } else {
-            $exceptionData['message'] = trim($sentences[0]);
-            $exceptionData['details'] = trim($sentences[1]);
-        }
-        if ($exception instanceof FlowException) {
-            $exceptionData['referenceCode'] = $exception->getReferenceCode();
-        }
-        if ($exception->getPrevious() !== null) {
-            $exceptionData['previous'] = $this->convertException($exception->getPrevious());
+            $exceptionData = array(
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            );
+            $splitMessagePattern = '/
+                (?<=                # Begin positive lookbehind.
+                  [.!?]\s           # Either an end of sentence punct,
+                | \n                # or line break
+                )
+                (?<!                # Begin negative lookbehind.
+                  i\.E\.\s          # Skip "i.E."
+                )                   # End negative lookbehind.
+                /ix';
+            $sentences = preg_split($splitMessagePattern, $exception->getMessage(), 2, PREG_SPLIT_NO_EMPTY);
+            if (!isset($sentences[1])) {
+                $exceptionData['message'] = $exception->getMessage();
+            } else {
+                $exceptionData['message'] = trim($sentences[0]);
+                $exceptionData['details'] = trim($sentences[1]);
+            }
+            if ($exception instanceof FlowException) {
+                $exceptionData['referenceCode'] = $exception->getReferenceCode();
+            }
+            if ($exception->getPrevious() !== null) {
+                $exceptionData['previous'] = $this->convertException($exception->getPrevious());
+            }
         }
         return $exceptionData;
     }
