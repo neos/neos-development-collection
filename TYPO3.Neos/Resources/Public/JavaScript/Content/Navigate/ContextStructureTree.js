@@ -44,7 +44,6 @@ define(
 		nodeSelection: NodeSelection,
 		baseNodeType: '!TYPO3.Neos:Document',
 		treeSelector: '#neos-context-structure-tree',
-		loadingDepth: 0,
 		desiredNewPosition: 'inside',
 		desiredPastePosition: 'inside',
 
