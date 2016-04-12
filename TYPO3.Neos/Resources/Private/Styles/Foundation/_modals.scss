@@ -22,29 +22,20 @@
 
 // Base modal
 .neos-modal {
-	@include flex();
-	@include flex-align(center);
-	@include flex-justify(center);
 	position: fixed;
+	top: 120px;
+	left: 50%;
 	z-index: $zindexModal;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	left: 0;
-}
-
-.neos-modal-content {
-	margin: 0;
+	margin: 0px 0px 0px -17.5%;
 	color: $textOnGray;
 	background: $grayDark;
 	border: 1px solid $grayLight;
 	padding: 0px;
+	width: 35%;
 	@include border-radius(0);
 	@include font();
 	// Remove focus outline from opened modal
 	outline: none;
-	width: calc(100vw - #{$unit * 2});
-	max-width: $unit * 16;
 
 	&.neos-modal-wide {
 		max-width: $unit * 24;
@@ -128,6 +119,31 @@
 			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
 		}
 	}
+}
+
+// Base modal flexbox container
+.neos-modal-centered {
+	@include flex();
+	@include flex-align(center);
+	@include flex-justify(center);
+	position: fixed;
+	z-index: $zindexModal;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+}
+
+// Base modal flexbox content
+.neos-modal-content {
+	@extend .neos-modal;
+	position: static;
+	top: 0;
+	left: 0;
+	width: calc(100vw - #{$unit * 2});
+	max-width: $unit * 16;
+	margin: 0;
+	z-index: auto;
 }
 
 // Remove bottom margin if need be
