@@ -101,13 +101,38 @@ function(
 					}
 					if (xhr === undefined || xhr.status !== 404) {
 						console.error(statusMessage, xhr);
-						var errorMessage = '';
-						if (xhr.responseJSON && xhr.responseJSON.error.message) {
-							errorMessage = xhr.responseJSON.error.message;
-						} else {
-							errorMessage = $(xhr.responseText).find('.ExceptionSubject').text();
+						var errorMessage = '',
+							errorDetails = '';
+						if (xhr.responseJSON && xhr.responseJSON.error) {
+							if (xhr.responseJSON.error.code) {
+								errorMessage += '#' + xhr.responseJSON.error.code + ': ';
+							}
+							errorMessage += xhr.responseJSON.error.message;
+							errorDetails = xhr.responseJSON.error.details;
+							if (xhr.responseJSON.error.referenceCode) {
+								errorDetails = '<br /><br />Reference code: ' + xhr.responseJSON.error.referenceCode;
+							}
+						} else if (xhr.responseText) {
+							var $exception = $(xhr.responseText);
+							if ($exception.has('.Window_Body').length > 0) {
+								errorMessage = $exception.find('.Window_Body p:last').html();
+							} else {
+								errorMessage = $exception.find('.ExceptionSubject').text();
+								errorDetails = '<br /><br />';
+								var $lastExceptionProperty = $exception.find('.ExceptionProperty:last');
+								$exception.find('.ExceptionSubject').parent().contents().each(function() {
+									if (this == $lastExceptionProperty.get(0)) {
+										errorDetails += $(this).text();
+										return false;
+									}
+									if ($(this).is('.ExceptionSubject')) {
+										return;
+									}
+									errorDetails += $(this).is('br') ? '<br /><br />' : $(this).text();
+								});
+							}
 						}
-						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage);
+						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage + errorDetails);
 					} else {
 						that._handlePageNotFoundError(that.getCurrentUri());
 					}
