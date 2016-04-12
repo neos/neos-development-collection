@@ -107,7 +107,7 @@
 										<f:else>
 											<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'packages.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#{package.sanitizedPackageKey}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 											<div class="neos-hide" id="{package.sanitizedPackageKey}">
-												<div class="neos-modal">
+												<div class="neos-modal-centered">
 													<div class="neos-modal-content">
 														<div class="neos-modal-header">
 															<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
@@ -155,7 +155,7 @@
 			</button>
 		</div>
 		<div class="neos-hide" id="delete">
-			<div class="neos-modal">
+			<div class="neos-modal-centered">
 				<div class="neos-modal-content">
 					<div class="neos-modal-header">
 						<button type="button" class="neos-close" data-dismiss="modal"></button>

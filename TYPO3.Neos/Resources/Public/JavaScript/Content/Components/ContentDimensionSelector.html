@@ -22,7 +22,7 @@
 	</div>
 	{{/if}}
 
-	<div {{bindAttr class=":neos-modal :neos-content-dimension-selector-initial-translation-dialog controller.showInitialTranslationDialog:neos-show:neos-hide"}}>
+	<div {{bindAttr class=":neos-modal-centered :neos-content-dimension-selector-initial-translation-dialog controller.showInitialTranslationDialog:neos-show:neos-hide"}}>
 		<div class="neos-modal-content">
 			<div class="neos-modal-header">
 				<button class="neos-close neos-button" data-dismiss="modal" title="{{translate id='close' fallback='Close'}}" {{action "cancelCreateAction" target="controller"}}></button>

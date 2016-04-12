@@ -4635,7 +4635,7 @@ neos .icon-fw {
   white-space: nowrap;
   padding: 0 !important;
 }
-.neos .neos-table .neos-action .neos-modal {
+.neos .neos-table .neos-action .neos-modal, .neos .neos-table .neos-action .neos-modal-content {
   white-space: normal;
 }
 .neos .neos-table .neos-button {
@@ -5598,7 +5598,116 @@ neos .icon-fw {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=35);
   opacity: 0.35;
 }
-.neos .neos-modal {
+.neos .neos-modal, .neos .neos-modal-content {
+  position: fixed;
+  top: 120px;
+  left: 50%;
+  z-index: 10050;
+  margin: 0px 0px 0px -17.5%;
+  color: #fff;
+  background: #222;
+  border: 1px solid #3f3f3f;
+  padding: 0px;
+  width: 35%;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+}
+.neos .neos-modal.neos-modal-wide, .neos .neos-modal-wide.neos-modal-content {
+  max-width: 960px;
+}
+.neos .neos-modal.neos-fade, .neos .neos-fade.neos-modal-content {
+  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
+  transition: opacity 0.3s linear, top 0.3s ease-out;
+  top: -25%;
+}
+.neos .neos-modal.neos-fade.neos-in, .neos .neos-fade.neos-in.neos-modal-content {
+  top: 10%;
+}
+.neos .neos-modal .neos-modal-header, .neos .neos-modal-content .neos-modal-header {
+  padding: 0px;
+  border: 0px;
+}
+.neos .neos-modal .neos-modal-header h3, .neos .neos-modal-content .neos-modal-header h3 {
+  margin: 0;
+  line-height: 30px;
+}
+.neos .neos-modal .neos-modal-header .neos-close, .neos .neos-modal-content .neos-modal-header .neos-close {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 100%;
+  width: 40px;
+  height: 40px;
+  margin-left: 16px;
+  margin-top: -16px;
+  border-left: none;
+  text-shadow: none;
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos .neos-modal .neos-modal-header .neos-close:before, .neos .neos-modal-content .neos-modal-header .neos-close:before {
+  content: "";
+}
+.neos .neos-modal .neos-modal-header .neos-close:hover, .neos .neos-modal-content .neos-modal-header .neos-close:hover {
+  background: #00b5ff;
+}
+.neos .neos-modal .neos-modal-header .neos-header, .neos .neos-modal-content .neos-modal-header .neos-header {
+  font-size: 16px;
+  line-height: 100%;
+  margin: 16px;
+  line-height: 20px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos .neos-modal .neos-subheader, .neos .neos-modal-content .neos-subheader {
+  font-size: 14px;
+  margin: 16px;
+  line-height: 18px;
+  font-weight: normal;
+  color: #adadad;
+}
+.neos .neos-modal .neos-modal-footer, .neos .neos-modal-content .neos-modal-footer {
+  background: transparent;
+  -webkit-box-shadow: 0px 0px 0px transparent;
+  -moz-box-shadow: 0px 0px 0px transparent;
+  box-shadow: 0px 0px 0px transparent;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border: 0px;
+  padding: 16px;
+  text-align: right;
+  *zoom: 1;
+}
+.neos .neos-modal .neos-modal-footer:before, .neos .neos-modal-content .neos-modal-footer:before, .neos .neos-modal .neos-modal-footer:after, .neos .neos-modal-content .neos-modal-footer:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos .neos-modal .neos-modal-footer:after, .neos .neos-modal-content .neos-modal-footer:after {
+  clear: both;
+}
+.neos .neos-modal .neos-modal-footer .neos-button, .neos .neos-modal-content .neos-modal-footer .neos-button {
+  margin-left: 8px;
+  margin-bottom: 0;
+}
+.neos .neos-modal-centered {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -5622,110 +5731,13 @@ neos .icon-fw {
   left: 0;
 }
 .neos .neos-modal-content {
-  margin: 0;
-  color: #fff;
-  background: #222;
-  border: 1px solid #3f3f3f;
-  padding: 0px;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  outline: none;
+  position: static;
+  top: 0;
+  left: 0;
   width: calc(100vw - 80px);
   max-width: 640px;
-}
-.neos .neos-modal-content.neos-modal-wide {
-  max-width: 960px;
-}
-.neos .neos-modal-content.neos-fade {
-  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
-  transition: opacity 0.3s linear, top 0.3s ease-out;
-  top: -25%;
-}
-.neos .neos-modal-content.neos-fade.neos-in {
-  top: 10%;
-}
-.neos .neos-modal-content .neos-modal-header {
-  padding: 0px;
-  border: 0px;
-}
-.neos .neos-modal-content .neos-modal-header h3 {
   margin: 0;
-  line-height: 30px;
-}
-.neos .neos-modal-content .neos-modal-header .neos-close {
-  margin: 0;
-  color: #fff;
-  font-size: 18px;
-  line-height: 100%;
-  width: 40px;
-  height: 40px;
-  margin-left: 16px;
-  margin-top: -16px;
-  border-left: none;
-  text-shadow: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
-  opacity: 1;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos .neos-modal-content .neos-modal-header .neos-close:before {
-  content: "";
-}
-.neos .neos-modal-content .neos-modal-header .neos-close:hover {
-  background: #00b5ff;
-}
-.neos .neos-modal-content .neos-modal-header .neos-header {
-  font-size: 16px;
-  line-height: 100%;
-  margin: 16px;
-  line-height: 20px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos .neos-modal-content .neos-subheader {
-  font-size: 14px;
-  margin: 16px;
-  line-height: 18px;
-  font-weight: normal;
-  color: #adadad;
-}
-.neos .neos-modal-content .neos-modal-footer {
-  background: transparent;
-  -webkit-box-shadow: 0px 0px 0px transparent;
-  -moz-box-shadow: 0px 0px 0px transparent;
-  box-shadow: 0px 0px 0px transparent;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  border: 0px;
-  padding: 16px;
-  text-align: right;
-  *zoom: 1;
-}
-.neos .neos-modal-content .neos-modal-footer:before, .neos .neos-modal-content .neos-modal-footer:after {
-  display: table;
-  content: "";
-  line-height: 0;
-}
-.neos .neos-modal-content .neos-modal-footer:after {
-  clear: both;
-}
-.neos .neos-modal-content .neos-modal-footer .neos-button {
-  margin-left: 8px;
-  margin-bottom: 0;
+  z-index: auto;
 }
 .neos .neos-modal-form {
   margin-bottom: 0;
@@ -6835,7 +6847,7 @@ neos .icon-fw {
   .neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 0;
   }
-  .neos .neos-modal {
+  .neos .neos-modal, .neos .neos-modal-content {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -6843,10 +6855,10 @@ neos .icon-fw {
     width: auto;
     margin: 0;
   }
-  .neos .neos-modal.neos-fade {
+  .neos .neos-modal.neos-fade, .neos .neos-fade.neos-modal-content {
     top: -100px;
   }
-  .neos .neos-modal.neos-fade.neos-in {
+  .neos .neos-modal.neos-fade.neos-in, .neos .neos-fade.neos-in.neos-modal-content {
     top: 20px;
   }
 }
@@ -6875,7 +6887,7 @@ neos .icon-fw {
     padding-left: 10px;
     padding-right: 10px;
   }
-  .neos .neos-modal {
+  .neos .neos-modal, .neos .neos-modal-content {
     top: 10px;
     left: 10px;
     right: 10px;
@@ -12148,7 +12160,7 @@ neos .icon-fw {
 .neos.neos-module .neos-footer .neos-button {
   margin-right: 8px;
 }
-.neos.neos-module .neos-footer .neos-modal .neos-button {
+.neos.neos-module .neos-footer .neos-modal .neos-button, .neos.neos-module .neos-footer .neos-modal-content .neos-button {
   margin-right: 0;
 }
 .neos.neos-module .fixedsticky-dummy {
@@ -13711,7 +13723,7 @@ neos .icon-fw {
   font-size: 0;
   text-align: right;
 }
-.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal {
+.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal .neos-modal-content {
   text-align: left;
 }
 .neos.media-browser table.neos-info-table i {
@@ -13933,7 +13945,7 @@ neos .icon-fw {
   font-weight: 400;
   font-size: 14px;
 }
-.neos .neos-login-dialog .neos-modal {
+.neos .neos-login-dialog .neos-modal, .neos .neos-login-dialog .neos-modal-content {
   width: 400px;
   top: 240px;
   margin: 0px 0px 0px -160px;
