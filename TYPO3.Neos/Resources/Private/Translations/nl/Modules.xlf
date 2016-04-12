@@ -901,25 +901,22 @@
       <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target xml:lang="nl">Wordt aangemaakt</target></trans-unit>
-      <trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="nl" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
-      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedDocumentNodes[0]">
-          <source>Used in {0} Document</source>
-          <target xml:lang="nl" state="needs-translation">Used in {0} Document</target>
+      <group id="media.relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="nl" state="needs-translation">{0} usages</target>
         </trans-unit>
-        <trans-unit id="media.relatedDocumentNodes[1]">
-          <source>Used in {0} Documents</source>
-          <target xml:lang="nl" state="needs-translation">Used in {0} Documents</target>
+        <trans-unit id="media.relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="nl" state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
-      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve" approved="yes">
-				<source>Document</source>
-			<target xml:lang="nl">Document</target></trans-unit>
-      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
-				<source>Reference</source>
-			<target xml:lang="nl" state="needs-translation">Reference</target></trans-unit>
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="nl" state="needs-translation">References to "{asset}"</target></trans-unit>
     </body>
   </file>
 </xliff>
