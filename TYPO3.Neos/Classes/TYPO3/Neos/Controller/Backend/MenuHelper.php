@@ -64,10 +64,10 @@ class MenuHelper
             $active = false;
             /** @var $site \TYPO3\Neos\Domain\Model\Site */
             if ($site->hasActiveDomains()) {
-                $activeDomains = $site->getActiveDomains()->map(function ($domain) {
+                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
                     return $domain->getHostPattern();
-                });
-                $active = in_array($requestUriHost, $activeDomains->toArray(), true);
+                })->toArray();
+                $active = in_array($requestUriHost, $activeHostPatterns, true);
                 if ($active) {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
