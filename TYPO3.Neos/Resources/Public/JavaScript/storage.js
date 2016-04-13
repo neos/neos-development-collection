@@ -81,7 +81,7 @@ define(
 			},
 			_convertModelToJson: function(model) {
 				var contextPath = model.fromReference(model.id);
-				var attributes = Entity.extractAttributesFromVieEntity(model, null, function(k) {
+				var attributes = Entity.extractAttributesFromVieEntity(model, model.changed, function(k) {
 						// skip internal properties starting with __; and skip "content-collection" (which is collection-specific)
 					return !( (k[0] === '_' && k[1] === '_') || k === 'content-collection');
 				});
