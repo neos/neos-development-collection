@@ -108,9 +108,11 @@ function(
 								errorMessage += '#' + xhr.responseJSON.error.code + ': ';
 							}
 							errorMessage += xhr.responseJSON.error.message;
-							errorDetails = xhr.responseJSON.error.details;
+							if (xhr.responseJSON.error.details) {
+								errorDetails += '<br /><br />' + xhr.responseJSON.error.details;
+							}
 							if (xhr.responseJSON.error.referenceCode) {
-								errorDetails = '<br /><br />Reference code: ' + xhr.responseJSON.error.referenceCode;
+								errorDetails += '<br /><br />Reference code: ' + xhr.responseJSON.error.referenceCode;
 							}
 						} else if (xhr.responseText) {
 							var $exception = $(xhr.responseText);
