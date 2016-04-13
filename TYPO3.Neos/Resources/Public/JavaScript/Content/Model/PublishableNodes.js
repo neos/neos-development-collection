@@ -134,9 +134,8 @@ define(
                 var documentMetadata = $('#neos-document-metadata'),
                   nodeType = documentMetadata.data('node-_node-type'),
                   page = NodeSelection.getNode(documentMetadata.attr('about')),
-                  pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
                   nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
-                Notification.ok('Published changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
+                Notification.ok('Published changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + page.get('nodeLabel') + '"');
               }
               that.set('publishRunning', false);
             },
@@ -210,9 +209,8 @@ define(
               var documentMetadata = $('#neos-document-metadata'),
                 nodeType = documentMetadata.data('node-_node-type'),
                 page = NodeSelection.getNode(documentMetadata.attr('about')),
-                pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
                 nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
-              Notification.ok('Discarded changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
+              Notification.ok('Discarded changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + page.get('nodeLabel') + '"');
               that.set('discardRunning', false);
             },
             function (error) {

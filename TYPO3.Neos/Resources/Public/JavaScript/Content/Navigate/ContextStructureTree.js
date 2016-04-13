@@ -80,13 +80,12 @@ define(
 		_onPageNodePathChanged: function() {
 			var documentMetadata = $('#neos-document-metadata'),
 				page = NodeSelection.getNode(documentMetadata.attr('about')),
-				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
 				documentNodeType = documentMetadata.data('node-_node-type'),
 				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(documentNodeType),
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 			siteNode.fromDict({
 				key: this.get('pageNodePath'),
-				title: pageTitle,
+				title: page.get('nodeLabel'),
 				nodeType: documentNodeType,
 				nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : ''
 			});
@@ -132,7 +131,6 @@ define(
 			}
 
 			var page = NodeSelection.getNode(documentMetadata.attr('about')),
-				pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || this.get('pageNodePath'),
 				nodeType = documentMetadata.data('node-_node-type'),
 				nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
 
@@ -140,7 +138,7 @@ define(
 				parent: this,
 				children: [
 					{
-						title: pageTitle,
+						title: page ? page.get('nodeLabel') : this.get('pageNodePath'),
 						key: this.get('pageNodePath'),
 						isFolder: true,
 						expand: false,
