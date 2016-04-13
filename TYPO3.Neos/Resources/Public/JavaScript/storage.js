@@ -26,6 +26,7 @@ define(
 			},
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model),
+					changedAttributes = Entity.extractAttributesFromVieEntity(model, model.changed),
 					method = options.render === true ? 'updateAndRender' : 'update',
 					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
@@ -53,6 +54,8 @@ define(
 								// the backbone models workspace name attribute are suppressed and our entity wrapper would not notice.
 								EventDispatcher.trigger('nodeUpdated');
 								NodeSelection.getNode(model.id.slice(1, -1)).setAttribute('__label', result.data.labelOfNode, {silent: true});
+							} else if ('_nodeType' in changedAttributes) {
+								EventDispatcher.trigger('contentChanged');
 							}
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());

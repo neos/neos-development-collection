@@ -273,7 +273,7 @@
 			<target xml:lang="pl">Załaduj więcej</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target xml:lang="pl" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten węzeł został usunięty w międzyczasie</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -313,7 +313,7 @@
 			<target xml:lang="pl">Utwórz użytkownika</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="pl" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz nowego użytkownika</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="pl">Dane użytkownika</target></trans-unit>
@@ -439,13 +439,13 @@
 			<target xml:lang="pl" state="needs-translation">Accounts and Roles</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="pl" state="needs-translation">View user</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zobacz użytkownika</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="pl" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj użytkownika</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
-			<target xml:lang="pl" state="needs-translation">Delete user</target></trans-unit>
+			<target xml:lang="pl" state="translated">Usuń użytkownika</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="pl">Jesteś zalogowany jako ten użytkownik i nie możesz usunąć siebie.</target></trans-unit>
@@ -460,7 +460,7 @@
 			<target xml:lang="pl">Tak, usuń użytkownika</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve">
 				<source>Edit user "{0}"</source>
-			<target xml:lang="pl" state="needs-translation">Edit user "{0}"</target></trans-unit>
+			<target xml:lang="pl" state="translated">Edytuj użytkownika "{0}"</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 				<source>Home</source>
 			<target xml:lang="pl" state="needs-translation">Home</target></trans-unit>
@@ -560,7 +560,7 @@
 			<target xml:lang="pl">Użytkownik</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target xml:lang="pl">Ustawienia użytkownika</target></trans-unit>
+			<target xml:lang="pl">Ustawienia</target><alt-trans><target xml:lang="pl">Ustawienia użytkownika</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target xml:lang="pl">Moduł ten pozwala na dostosowanie Twojego profilu użytkownika backendu. Możesz tutaj zmienić swój aktywny język systemu, nazwisko i adres e-mail. Możesz również skonfigurować inne ogólne parametry w systemie.</target><alt-trans><target xml:lang="pl">Moduł ten pozwala na dostosowanie profilu użytkownika administracyjnego. Możesz zmienić swój język, nazwisko i adres e-mail. Możesz zmienić inne parametry.</target></alt-trans></trans-unit>
@@ -660,16 +660,16 @@
 			<target xml:lang="pl">Sortuj według ostatniej modyfikacji</target></trans-unit>
       <trans-unit id="media.sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="pl" state="needs-translation">Sort by</target></trans-unit>
+			<target xml:lang="pl" state="translated">Sortuj według</target></trans-unit>
       <trans-unit id="media.sortdirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="pl" state="needs-translation">Sort direction</target></trans-unit>
+			<target xml:lang="pl" state="translated">Kierunek sortowania</target></trans-unit>
       <trans-unit id="media.sortdirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="pl" state="needs-translation">Ascending</target></trans-unit>
+			<target xml:lang="pl" state="translated">Rosnąco</target></trans-unit>
       <trans-unit id="media.sortdirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="pl" state="needs-translation">Descending</target></trans-unit>
+			<target xml:lang="pl" state="translated">Malejąco</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pl">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
@@ -898,25 +898,22 @@
       <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target xml:lang="pl">Tworzenie</target></trans-unit>
-      <trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="pl" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
-      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedDocumentNodes[0]">
-          <source>Used in {0} Document</source>
-          <target xml:lang="pl" state="needs-translation">Used in {0} Document</target>
+      <group id="media.relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="pl" state="needs-translation">{0} usages</target>
         </trans-unit>
-        <trans-unit id="media.relatedDocumentNodes[1]">
-          <source>Used in {0} Documents</source>
-          <target xml:lang="pl" state="needs-translation">Used in {0} Documents</target>
+        <trans-unit id="media.relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="pl" state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
-      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve" approved="yes">
-				<source>Document</source>
-			<target xml:lang="pl">Dokument</target></trans-unit>
-      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
-				<source>Reference</source>
-			<target xml:lang="pl" state="needs-translation">Reference</target></trans-unit>
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="pl" state="needs-translation">References to "{asset}"</target></trans-unit>
     </body>
   </file>
 </xliff>

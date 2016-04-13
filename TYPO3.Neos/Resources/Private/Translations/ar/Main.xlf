@@ -261,6 +261,18 @@
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
 			<target xml:lang="ar" state="needs-translation">You cannot cut this node</target></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve">
+				<source>Content Dimensions</source>
+			<target xml:lang="ar" state="needs-translation">Content Dimensions</target></trans-unit>
+      <trans-unit id="site" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="ar" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="ar" state="needs-translation">Document</target></trans-unit>
+      <trans-unit id="reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="ar" state="needs-translation">Reference</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -519,6 +531,9 @@
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="ar" state="needs-translation">Missing required property: </target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="ar" state="needs-translation">Workspace</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="ar" state="needs-translation">Workspaces</target></trans-unit>
