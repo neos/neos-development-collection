@@ -261,6 +261,7 @@ define(
 					 */
 					onDragStart: function(node) {
 						var parent = node.tree.options.parent;
+						$('a[title]', parent.$nodeTree).tooltip('hide').tooltip('disable');
 						// the root node should not be draggable
 						if (node.data.key !== parent.get('siteNodeContextPath')) {
 							parent.set('dragInProgress', true);
@@ -275,6 +276,7 @@ define(
 					},
 
 					onDragStop: function(node) {
+						$('a[title]', parent.$nodeTree).tooltip('enable');
 						node.tree.options.parent.set('dragInProgress', false);
 						Mousetrap.unbind('esc');
 					},
@@ -310,10 +312,7 @@ define(
 					},
 
 					onDragOver: function(node, sourceNode, hitMode) {
-						if (node.isDescendantOf(sourceNode)) {
-							return false;
-						}
-						return true;
+						return !node.isDescendantOf(sourceNode);
 					},
 
 					/**
@@ -324,7 +323,9 @@ define(
 					 * !source node = new Node
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						node.tree.options.parent.move(sourceNode, node, hitMode === 'over' ? 'into' : hitMode);
+						var parent = node.tree.options.parent;
+						$('a[title]', parent.$nodeTree).tooltip('destroy');
+						parent.move(sourceNode, node, hitMode === 'over' ? 'into' : hitMode);
 					}
 				},
 
@@ -345,6 +346,17 @@ define(
 
 				onActivate: function(node) {
 					this.options.parent.set('activeNode', node);
+				},
+
+				onCustomRender: function(node) {
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel || ''),
+						tooltip = node.data.title || '';
+
+					if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
+						tooltip += ' (' + nodeTypeLabel + ')';
+					}
+					node.data.tooltip = tooltip;
+					return null;
 				}
 			},
 

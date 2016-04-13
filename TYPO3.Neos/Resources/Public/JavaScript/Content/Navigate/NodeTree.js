@@ -227,17 +227,6 @@ define(
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
 						$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
-					},
-
-					onCustomRender: function(node) {
-						var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel || ''),
-							tooltip = node.data.title || '';
-
-						if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
-							tooltip += ' (' + nodeTypeLabel + ')';
-						}
-						node.data.tooltip = tooltip;
-						return null;
 					}
 				}));
 
