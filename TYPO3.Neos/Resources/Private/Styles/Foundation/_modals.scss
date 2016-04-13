@@ -38,7 +38,8 @@
 	outline: none;
 
 	&.neos-modal-wide {
-		max-width: $unit * 24;
+		width: 50%;
+		left: 42.5%;
 	}
 
 	&.neos-fade {
@@ -128,10 +129,37 @@
 	@include flex-justify(center);
 	position: fixed;
 	z-index: $zindexModal;
-	height: 100%;
 	width: 100%;
+	height: 100%;
 	top: 0;
 	left: 0;
+
+	&.neos-modal-wide {
+		width: 100%;
+		left: 0;
+
+		.neos-modal-content {
+			max-width: $unit * 24;
+		}
+	}
+
+	&.neos-modal-fixed {
+		@include flex-align(flex-start);
+		top: 120px;
+	}
+
+	&.neos-fade {
+		@include transition(opacity .3s linear, top .3s ease-out);
+		top: -25%;
+	}
+
+	&.neos-fade.neos-in {
+		top: 0;
+
+		&.neos-modal-fixed {
+			top: 120px;
+		}
+	}
 }
 
 // Base modal flexbox content

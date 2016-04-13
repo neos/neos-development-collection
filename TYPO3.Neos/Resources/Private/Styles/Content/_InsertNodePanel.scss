@@ -1,6 +1,4 @@
 .neos-insert-node-panel {
-	@include flex-align(flex-start);
-	top: 140px;
 	.neos-header {
 		i {
 			vertical-align: baseline;
@@ -61,7 +59,7 @@
 	}
 
 	.neos-modal-body {
-		max-height: calc(100vh - #{$unit * 2 + 52 + 72});
+		max-height: calc(100vh - #{$unit * 2 + 52 + 72 + 80});
 		overflow-y: auto;
 	}
 
