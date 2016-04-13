@@ -106,6 +106,7 @@ define(
 				return;
 			}
 			selectedNode.activate();
+			selectedNode.select();
 			this.scrollToCurrentNode();
 		}.observes('nodeSelection.selectedNode'),
 
@@ -144,9 +145,9 @@ define(
 						isFolder: true,
 						expand: false,
 						isLazy: true,
-						select: false,
+						select: true,
 						active: false,
-						unselectable: true,
+						unselectable: false,
 						nodeType: nodeType,
 						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3-neos-page',
@@ -155,6 +156,7 @@ define(
 				],
 
 				onClick: function(node, event) {
+					node.select();
 					if (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null) {
 						this.options.parent._selectNode(node);
 					}
@@ -231,6 +233,7 @@ define(
 					currentNode = tree.getNodeByKey(NodeSelection.get('selectedNode').$element.attr('about'));
 				if (currentNode) {
 					currentNode.activate();
+					currentNode.select();
 					this.scrollToCurrentNode();
 				}
 			}
