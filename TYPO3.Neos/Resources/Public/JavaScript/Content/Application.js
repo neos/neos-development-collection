@@ -441,10 +441,12 @@ function(
 						callback();
 					}
 				},
-				function() {
-					Notification.error('An error occurred.');
-					that.set('_isLoadingPage', false);
-					LoadingIndicator.done();
+				function(request) {
+					if (request.status !== 'abort') {
+						Notification.error('An error occurred.');
+						that.set('_isLoadingPage', false);
+						LoadingIndicator.done();
+					}
 				}
 			).fail(function(error) {
 				Notification.error('An error occurred.');
