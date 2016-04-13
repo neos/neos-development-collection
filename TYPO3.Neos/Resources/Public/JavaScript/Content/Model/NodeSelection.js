@@ -86,6 +86,7 @@ define(
 				nodesWithVirtualNode.addObjects(this.get('_nodes'));
 
 				nodesWithVirtualNode.addObject(Ember.Object.create({
+					nodeLabel: 'Table',
 					nodeType: 'ALOHA-CONTROL',
 					node: nodesWithVirtualNode.get('lastObject'),
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
