@@ -87,6 +87,7 @@ define(
 
 				nodesWithVirtualNode.addObject(Ember.Object.create({
 					nodeType: 'ALOHA-CONTROL',
+					node: nodesWithVirtualNode.get('lastObject'),
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
 					_enableTransactionalInspector: false,
 					attributes: Ember.Object.create(),

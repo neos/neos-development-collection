@@ -66,6 +66,10 @@ function (
 				return;
 			}
 
+			if (selectedNode.get('nodeType') === 'ALOHA-CONTROL') {
+				selectedNode = selectedNode.node;
+			}
+
 			this.set('_node', selectedNode);
 
 			if (selectedNode.isHideable()) {
@@ -83,20 +87,12 @@ function (
 		}.observes('nodeSelection.selectedNode'),
 
 		currentFocusedNodeCanBeModified: function() {
-			if (this.get('nodeSelection.selectedNode')) {
-				if (this.get('nodeSelection.selectedNode').$element.data('node-_is-autocreated')) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}.property('nodeSelection.selectedNode'),
+			return this.get('_node') && !!this.get('_node').$element.data('node-_is-autocreated');
+		}.property('_node'),
 
 		allowedNewPositions: function() {
 			var positions = [],
-				selectedNode = this.get('nodeSelection.selectedNode');
+				selectedNode = this.get('_node');
 			if (!selectedNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
 				return positions;
 			}
@@ -112,11 +108,11 @@ function (
 				positions.push('after');
 			}
 			return positions;
-		}.property('nodeSelection.selectedNode'),
+		}.property('_node'),
 
 		allowedPastePositions: function() {
 			var positions = [],
-				selectedNode = this.get('nodeSelection.selectedNode'),
+				selectedNode = this.get('_node'),
 				sourceNode = this.get('nodeActions.clipboard');
 			if (!selectedNode || !sourceNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
 				return positions;
@@ -134,11 +130,11 @@ function (
 				positions.push('after');
 			}
 			return positions;
-		}.property('nodeSelection.selectedNode', 'nodeActions.clipboard'),
+		}.property('_node', 'nodeActions.clipboard'),
 
 		/** Content element actions **/
 		remove: function() {
-			DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
+			DeleteNodeDialog.create({_node: this.get('_node')});
 		},
 
 		_hideToggleTitle: function() {
