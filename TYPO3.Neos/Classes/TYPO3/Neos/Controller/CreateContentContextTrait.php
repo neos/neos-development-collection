@@ -12,6 +12,9 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A trait to add create a content context
@@ -64,6 +67,34 @@ trait CreateContentContextTrait
             $contextProperties['currentDomain'] = $currentDomain;
         } else {
             $contextProperties['currentSite'] = $this->_siteRepository->findFirstOnline();
+        }
+
+        return $this->_contextFactory->create($contextProperties);
+    }
+
+    /**
+     * Generates a Context that exactly fits the given NodeData Workspace, Dimensions & Site.
+     *
+     * @param NodeData $nodeData
+     * @return \TYPO3\Neos\Domain\Service\ContentContext
+     */
+    protected function createContextMatchingNodeData(NodeData $nodeData)
+    {
+        $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $nodeData->getPath());
+        list($siteNodeName) = explode('/', $nodePath);
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+
+        $contextProperties = [
+            'workspaceName' => $nodeData->getWorkspace()->getName(),
+            'invisibleContentShown' => true,
+            'inaccessibleContentShown' => true,
+            'removedContentShown' => true,
+            'dimensions' => $nodeData->getDimensionValues(),
+            'currentSite' => $site
+        ];
+
+        if ($domain = $site->getFirstActiveDomain()) {
+            $contextProperties['currentDomain'] = $domain;
         }
 
         return $this->_contextFactory->create($contextProperties);

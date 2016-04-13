@@ -331,7 +331,14 @@ class NodeController extends AbstractServiceController
         $q = new FlowQuery(array($node));
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
         $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
-        $this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => true));
+        $this->view->assign('value', array(
+            'data' => array(
+                'workspaceNameOfNode' => $node->getWorkspace()->getName(),
+                'labelOfNode' => $node->getLabel(),
+                'nextUri' => $nextUri
+            ),
+            'success' => true
+        ));
     }
 
     /**

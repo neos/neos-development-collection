@@ -9,6 +9,7 @@ define(
     'Library/jquery-with-dependencies',
     'vie',
     'Content/Model/Node',
+    'Content/Model/NodeSelection',
     'Content/Components/TargetWorkspaceController',
     'Shared/EventDispatcher',
     'Shared/NodeTypeService',
@@ -22,6 +23,7 @@ define(
                $,
                vie,
                EntityWrapper,
+               NodeSelection,
                TargetWorkspaceController,
                EventDispatcher,
                NodeTypeService,
@@ -80,7 +82,7 @@ define(
         vie.entities.forEach(function (entity) {
           if (this._isEntityPublishable(entity)) {
             var entitySubject = entity.id,
-              nodeContextPath = entitySubject.slice(1, entitySubject.length - 1);
+              nodeContextPath = entitySubject.slice(1, -1);
             if (!this.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath)) {
               this.get('workspaceWidePublishableEntitySubjects').addObject({
                 nodeContextPath: nodeContextPath,
@@ -131,11 +133,10 @@ define(
               if (autoPublish !== true) {
                 var documentMetadata = $('#neos-document-metadata'),
                   nodeType = documentMetadata.data('node-_node-type'),
-                  page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
-                  namespace = Configuration.get('TYPO3_NAMESPACE'),
-                  title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
-                  nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-                Notification.ok('Published changes for ' + I18n.translate(nodeTypeDefinition.ui.label) + ' "' + $('<a />').html(title).text() + '"');
+                  page = NodeSelection.getNode(documentMetadata.attr('about')),
+                  pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
+                  nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+                Notification.ok('Published changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
               }
               that.set('publishRunning', false);
             },
@@ -143,7 +144,10 @@ define(
               that.set('publishRunning', false);
               Notification.error('Unexpected error while publishing changes: ' + JSON.stringify(error));
             }
-          );
+          ).fail(function(error) {
+              Notification.error('An error occurred.');
+              console.error('An error occurred:', error);
+          });
         }
       },
 
@@ -160,7 +164,7 @@ define(
           entity.set('typo3:__workspaceName', workspaceOverride, {silent: true});
         }
 
-        var nodeContextPath = entitySubject.slice(1, entitySubject.length - 1),
+        var nodeContextPath = entitySubject.slice(1, -1),
           node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath);
         if (node) {
           that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
@@ -205,11 +209,10 @@ define(
               );
               var documentMetadata = $('#neos-document-metadata'),
                 nodeType = documentMetadata.data('node-_node-type'),
-                page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
-                namespace = Configuration.get('TYPO3_NAMESPACE'),
-                title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
-                nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-              Notification.ok('Discarded changes for ' + nodeTypeDefinition.ui.label + ' "' + title + '"');
+                page = NodeSelection.getNode(documentMetadata.attr('about')),
+                pageTitle = (typeof page !== 'undefined' ? page.getAttribute('title') : null) || '',
+                nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType);
+              Notification.ok('Discarded changes for ' + I18n.translate(nodeTypeConfiguration.ui.label) + ' "' + $('<a />').html(pageTitle).text() + '"');
               that.set('discardRunning', false);
             },
             function (error) {

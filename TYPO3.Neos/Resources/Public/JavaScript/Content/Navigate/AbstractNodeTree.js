@@ -7,7 +7,8 @@ define(
 		'Library/jquery-with-dependencies',
 		'../Application',
 		'Content/Model/Node',
-		'Content/Components/AbstractPositionSelectorButton',
+		'Content/Components/NewPositionSelectorButton',
+		'Content/Components/PastePositionSelectorButton',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
 		'Shared/NodeTypeService',
@@ -24,7 +25,8 @@ define(
 		$,
 		ContentModule,
 		EntityWrapper,
-		AbstractPositionSelectorButton,
+		NewPositionSelectorButton,
+		PastePositionSelectorButton,
 		NodeSelection,
 		Configuration,
 		NodeTypeService,
@@ -154,36 +156,18 @@ define(
 				return positions;
 			}.property('activeNode', 'cutNode', 'copiedNode'),
 
-			NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+			NewPositionSelectorButton: NewPositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedNewPositions',
-				title: 'Create (hover to select position)',
-				iconClass: 'icon-plus',
-
-				mouseUp: function(event) {
-					clearTimeout(this.get('downTimer'));
-					this.set('downTimer', null);
-					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-						var position = this.get('position');
-						this.get('parentView').create(position);
-					}
-					$(event.target).filter('button').click();
+				triggerAction: function(position) {
+					this.get('parentView').create(position);
 				}
 			}),
 
-			PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+			PastePositionSelectorButton: PastePositionSelectorButton.extend({
 				allowedPositionsBinding: 'parentView.allowedPastePositions',
-				title: 'Paste (hover to select position)',
-				iconClass: 'icon-paste',
-
-				mouseUp: function(event) {
-					clearTimeout(this.get('downTimer'));
-					this.set('downTimer', null);
-					if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-						var position = this.get('position');
-						this.get('parentView').paste(position);
-					}
-					$(event.target).filter('button').click();
-				},
+				triggerAction: function(position) {
+					this.get('parentView').paste(position);
+				}
 			}),
 
 			currentFocusedNodeIsHidden: function() {
@@ -265,10 +249,6 @@ define(
 				autoFocus: false,
 				clickFolderMode: 1,
 				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
-				strings: {
-					loading: 'Loading...',
-					loadError: 'Load error!'
-				},
 				cookieId: 'nodes',
 				isDblClick: false,
 				dnd: {
@@ -376,7 +356,12 @@ define(
 				if (this.$nodeTree) {
 					return;
 				}
-				this.$nodeTree = this.$(this.treeSelector).dynatree(this.get('treeConfiguration'));
+				var treeConfiguration = this.get('treeConfiguration');
+				treeConfiguration['strings'] = {
+					loading: I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
+					loadError: I18n.translate('TYPO3.Neos:Main:loadError', 'Load error!')
+				};
+				this.$nodeTree = this.$(this.treeSelector).dynatree(treeConfiguration);
 
 				// Automatically expand the first node when opened
 				this.$nodeTree.dynatree('getRoot').getChildren()[0].expand(true);
@@ -408,45 +393,46 @@ define(
 					entityWrapper;
 
 				$elements.each(function() {
-					entityWrapper = NodeSelection._createEntityWrapper(this);
+					entityWrapper = NodeSelection.getNode($(this).attr('about'));
 					if (!entityWrapper) {
-						// element might not have be existing; so we directly return
+						// element might not be existing; so we directly return
 						return;
 					}
 
-					var vieEntity = entityWrapper._vieEntity;
-					if (vieEntity.isof('typo3:TYPO3.Neos:Document')) {
+					if (NodeTypeService.isOfType(entityWrapper, 'TYPO3.Neos:Document')) {
 						entityWrapper.addObserver('typo3:title', function() {
-							that.synchronizeNodeTitle(vieEntity);
+							that.synchronizeNodeTitle(this);
 						});
 						entityWrapper.addObserver('typo3:_name', function() {
-							that.synchronizeNodeName(vieEntity);
+							that.synchronizeNodeName(this);
 						});
 						entityWrapper.addObserver('typo3:uriPathSegment', function() {
-							that.synchronizeUriPathSegment(vieEntity);
+							that.synchronizeUriPathSegment(this);
 						});
 					}
 					entityWrapper.addObserver('typo3:_hidden', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenInIndex', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenBeforeDateTime', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
 					});
 					entityWrapper.addObserver('typo3:_hiddenAfterDateTime', function() {
-						that.synchronizeNodeVisibility(vieEntity);
+						that.synchronizeNodeVisibility(this);
+					});
+					entityWrapper.addObserver('typo3:__label', function() {
+						that.synchronizeNodeLabel(this);
 					});
 				});
 			},
 
-			synchronizeNodeVisibility: function(vieEntity) {
+			synchronizeNodeVisibility: function(entityWrapper) {
 				var now = new Date().getTime(),
-					node = this.getNodeByEntity(vieEntity);
-
+					node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity),
+					var attributes = entityWrapper.get('attributes'),
 						classes = node.data.addClass;
 					if (attributes._hidden === true) {
 						classes = $.trim(classes.replace(/neos-timedVisibility/g, ''));
@@ -471,20 +457,27 @@ define(
 				}
 			},
 
-			synchronizeNodeTitle: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeNodeTitle: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity);
-					node.setTitle(attributes.title);
+					var title = entityWrapper.getAttribute('title');
+					node.data.title = title
+					node.data.fullTitle = title;
 				}
 			},
 
-			synchronizeNodeName: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeNodeLabel: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity);
-					var previousNodeName = vieEntity.previousAttributes()['<' + Configuration.get('TYPO3_NAMESPACE') + '_name' + '>'];
-					var newNodeName = attributes._name;
+					node.setTitle(entityWrapper.getAttribute('__label'));
+				}
+			},
+
+			synchronizeNodeName: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
+				if (node) {
+					var previousNodeName = entityWrapper.getPreviousAttribute('_name'),
+						newNodeName = entityWrapper.getAttribute('_name');
 					if (node.data.key) {
 						node.data.key = node.data.key.replace(previousNodeName + '@', newNodeName + '@');
 					}
@@ -504,12 +497,11 @@ define(
 				}
 			},
 
-			synchronizeUriPathSegment: function(vieEntity) {
-				var node = this.getNodeByEntity(vieEntity);
+			synchronizeUriPathSegment: function(entityWrapper) {
+				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
-					var uriPathSegmentAttributeUri = '<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>',
-						previousUriPathSegment = vieEntity.previousAttributes()[uriPathSegmentAttributeUri],
-						newUriPathSegment = vieEntity.attributes['<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>'];
+					var previousUriPathSegment = entityWrapper.getPreviousAttribute('uriPathSegment'),
+						newUriPathSegment = entityWrapper.getAttribute('uriPathSegment');
 
 					if (node.data.href) {
 						node.data.href = node.data.href.replace(previousUriPathSegment + '@', newUriPathSegment + '@');
@@ -529,9 +521,9 @@ define(
 				}
 			},
 
-			getNodeByEntity: function(vieEntity) {
+			getNodeByEntityWrapper: function(entityWrapper) {
 				if (this.$nodeTree && this.$nodeTree.children().length > 0) {
-					return this.$nodeTree.dynatree('getTree').getNodeByKey(vieEntity.getSubjectUri());
+					return this.$nodeTree.dynatree('getTree').getNodeByKey(entityWrapper.get('nodePath'));
 				}
 				return null;
 			},
@@ -539,7 +531,7 @@ define(
 			create: function(position) {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 
@@ -583,6 +575,7 @@ define(
 
 				InsertNodePanel.create({
 					allowedNodeTypes: allowedNodeTypes,
+					_position: position,
 					insertNode: function(nodeType, icon) {
 						that.set('insertNodePanelShown', false);
 						that.createNode(activeNode, null, nodeType, icon, position);
@@ -600,11 +593,11 @@ define(
 			showDeleteNodeDialog: function() {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (activeNode.getLevel() === 1) {
-					Notification.info('The Root node cannot be deleted.');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:rootNodeCannotBeDeleted', 'The Root node cannot be deleted.'));
 					return;
 				}
 
@@ -620,9 +613,11 @@ define(
 			},
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var data = {
-						title: title ? title : 'Loading ...',
+				var nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
+					data = {
+						title: title ? title : I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'neos-matched',
 						iconClass: iconClass,
 						expand: true
@@ -684,7 +679,7 @@ define(
 						that.afterPersistNode(node);
 					},
 					function(error) {
-						Notification.error('Unexpected error while creating node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.create.unexpected', 'Unexpected error while creating node') + ': ' + JSON.stringify(error));
 						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
@@ -703,7 +698,7 @@ define(
 						that.afterDeleteNode(node);
 					},
 					function(error) {
-						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.delete.unexpected', 'Unexpected error while deleting node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -713,7 +708,7 @@ define(
 			toggleHidden: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				var value = !node.data.isHidden;
 				node.data.isHidden = value;
@@ -751,7 +746,7 @@ define(
 					},
 					function(error) {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Unexpected error while updating node: ' + JSON.stringify(error));
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.update.unexpected', 'Unexpected error while updating node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -761,11 +756,11 @@ define(
 			copy: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info('You cannot copy this node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCopyNode', 'You cannot copy this node'));
 					return;
 				}
 				if (this.get('copiedNode') === node) {
@@ -779,11 +774,11 @@ define(
 			cut: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info('You cannot cut this node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCutNode', 'You cannot cut this node'));
 					return;
 				}
 				if (this.get('cutNode') === node) {
@@ -799,7 +794,7 @@ define(
 					cutNode = this.get('cutNode'),
 					copiedNode = this.get('copiedNode');
 				if (!targetNode) {
-					Notification.info('You have to select a node');
+					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				if (cutNode) {
 					this.set('cutNode', null);
@@ -840,7 +835,7 @@ define(
 						},
 						function(error) {
 							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				}
@@ -891,11 +886,11 @@ define(
 						},
 						function(error) {
 							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
+							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				} catch(e) {
-					Notification.error('Unexpected error while moving node: ' + e.toString());
+					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + e.toString());
 				}
 			},
 
@@ -935,7 +930,7 @@ define(
 					},
 					function() {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Node Tree loading error.');
+						Notification.error(I18n.translate('TYPO3.Neos:Main:error.nodeTree.load', 'Node Tree loading error.'));
 					}
 				);
 			},

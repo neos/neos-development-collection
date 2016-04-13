@@ -48,11 +48,11 @@
 			background-color: $warning;
 		}
 
-		&[disabled] {
+		&.neos-disabled {
 			cursor: not-allowed;
 		}
 
-		&.neos-publish-menu-active[disabled] {
+		&.neos-publish-menu-active.neos-disabled {
 			@include opacity(.75);
 		}
 

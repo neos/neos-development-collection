@@ -513,7 +513,7 @@ define(
 						} else if (reloadElement === true) {
 							if (result && result.data && result.data.collectionContent) {
 								LoadingIndicator.done();
-								var id = entity.id.substring(1, entity.id.length - 1),
+								var id = entity.id.slice(1, -1);
 									$element = $('[about="' + id + '"]').first(),
 									content = $(result.data.collectionContent).find('[about="' + xhr.getResponseHeader('X-Neos-AffectedNodePath') + '"]').first();
 								if (content.length === 0) {

@@ -35,15 +35,15 @@
 		<div class="neos-dropdown" id="neos-sort-menu">
 			<span title="Sort options" data-neos-toggle="tooltip">
 				<a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
-					<i class="icon-{f:if(condition: '{sort} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+					<i class="icon-{f:if(condition: '{sortBy} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
 				</a>
 			</span>
 			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
 				<li>
-					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
+					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
 				</li>
 				<li>
-					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
+					<f:link.action action="index" title="Sort by name" arguments="{sortBy: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
 				</li>
 			</ul>
 		</div>
@@ -203,7 +203,7 @@
 	</div>
 	<f:if condition="{assets}">
 		<f:then>
-			<f:render partial="{view}View" arguments="{assets: assets, sort: sort}" />
+			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy}" />
 		</f:then>
 		<f:else>
 			<p>No Assets found.</p>

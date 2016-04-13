@@ -42,6 +42,7 @@ function(
 			this.$('.neos-content-dimension-selector-summary').on('click', function() {
 				that.toggleProperty('isActive');
 			});
+			this.$().find('[data-neos-tooltip]').tooltip();
 		},
 
 		/**

@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="vi" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="vi" state="translated">Tiêu đề</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="vi" state="needs-translation">URL path segment</target></trans-unit>
+			<target xml:lang="vi" state="translated">Phân đoạn đường dẫn URL</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="vi" state="needs-translation">Hide in menus</target></trans-unit>
+			<target xml:lang="vi" state="translated">Ẩn trong menu</target></trans-unit>
     </body>
   </file>
 </xliff>

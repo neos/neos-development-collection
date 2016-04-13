@@ -271,6 +271,9 @@
       <trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
 			<target xml:lang="pt-BR" state="needs-translation">Load More</target></trans-unit>
+      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
+				<source>This node has been removed in the meantime</source>
+			<target xml:lang="pt-BR" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -308,9 +311,9 @@
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="pt-BR" state="translated">Criar usuário</target></trans-unit>
-      <trans-unit id="user.actions.new.subtitle" xml:space="preserve">
+      <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="pt-BR" state="translated">Criar um novo usuário</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Create a new user</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="pt-BR" state="translated">Dados do usuário</target></trans-unit>
@@ -428,12 +431,111 @@
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="pt-BR" state="translated">Funções de usuário</target></trans-unit>
+      <trans-unit id="users.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="pt-BR" state="translated">Nome</target></trans-unit>
+      <trans-unit id="users.accountsAndRoles" xml:space="preserve">
+				<source>Accounts and Roles</source>
+			<target xml:lang="pt-BR" state="needs-translation">Accounts and Roles</target></trans-unit>
+      <trans-unit id="users.tooltip.view" xml:space="preserve">
+				<source>View user</source>
+			<target xml:lang="pt-BR" state="needs-translation">View user</target></trans-unit>
+      <trans-unit id="users.tooltip.edit" xml:space="preserve">
+				<source>Edit user</source>
+			<target xml:lang="pt-BR" state="needs-translation">Edit user</target></trans-unit>
+      <trans-unit id="users.tooltip.delete" xml:space="preserve">
+				<source>Delete user</source>
+			<target xml:lang="pt-BR" state="needs-translation">Delete user</target></trans-unit>
+      <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
+				<source>You are logged in as this user and you cannot delete yourself.</source>
+			<target xml:lang="pt-BR" state="translated">Você está logado como esse usuário e você não pode apagar-se.</target></trans-unit>
+      <trans-unit id="users.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the user "{0}"?</source>
+			<target xml:lang="pt-BR" state="translated">Você quer mesmo excluir o usuário "{0}"?</target></trans-unit>
+      <trans-unit id="users.message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
+			<target xml:lang="pt-BR" state="translated">Isto irá apagar o usuário, as contas relacionadas e seu espaço de trabalho pessoal, incluindo todo conteúdo não publicado.</target></trans-unit>
+      <trans-unit id="users.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the user</source>
+			<target xml:lang="pt-BR" state="translated">Sim, excluir o usuário</target></trans-unit>
+      <trans-unit id="users.editUser" xml:space="preserve">
+				<source>Edit user "{0}"</source>
+			<target xml:lang="pt-BR" state="needs-translation">Edit user "{0}"</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
+				<source>Home</source>
+			<target xml:lang="pt-BR" state="needs-translation">Home</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
+				<source>Work</source>
+			<target xml:lang="pt-BR" state="needs-translation">Work</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="pt-BR" state="translated">Gerenciamento de Pacotes</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target xml:lang="pt-BR" state="translated">O módulo de gerenciamento de pacotes fornece uma visão geral de todos os pacotes. Você pode ativar e desativar os pacotes individuais, importar novos pacotes e excluir pacotes existentes. Também fornece a capacidade para congelar e descongelar pacotes no contexto de desenvolvimento.</target></trans-unit>
+      <trans-unit id="packages.index.legend" xml:space="preserve">
+				<source>Available packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Available packages</target></trans-unit>
+      <trans-unit id="packages.name" xml:space="preserve">
+				<source>Package Name</source>
+			<target xml:lang="pt-BR" state="needs-translation">Package Name</target></trans-unit>
+      <trans-unit id="packages.key" xml:space="preserve">
+				<source>Package Key</source>
+			<target xml:lang="pt-BR" state="needs-translation">Package Key</target></trans-unit>
+      <trans-unit id="packages.type" xml:space="preserve">
+				<source>Package Type</source>
+			<target xml:lang="pt-BR" state="needs-translation">Package Type</target></trans-unit>
+      <trans-unit id="packages.deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			<target xml:lang="pt-BR" state="needs-translation">Deactivated</target></trans-unit>
+      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
+				<source>This package is currently frozen. Click to unfreeze it.</source>
+			<target xml:lang="pt-BR" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
+      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
+				<source>Freeze the package in order to speed up your website.</source>
+			<target xml:lang="pt-BR" state="needs-translation">Freeze the package in order to speed up your website.</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
+				<source>This package is protected and cannot be deactivated.</source>
+			<target xml:lang="pt-BR" state="needs-translation">This package is protected and cannot be deactivated.</target></trans-unit>
+      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
+				<source>Deactivate Package</source>
+			<target xml:lang="pt-BR" state="needs-translation">Deactivate Package</target></trans-unit>
+      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
+				<source>Activate Package</source>
+			<target xml:lang="pt-BR" state="needs-translation">Activate Package</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
+				<source>This package is protected and cannot be deleted.</source>
+			<target xml:lang="pt-BR" state="needs-translation">This package is protected and cannot be deleted.</target></trans-unit>
+      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
+				<source>Delete Package</source>
+			<target xml:lang="pt-BR" state="needs-translation">Delete Package</target></trans-unit>
+      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete "{0}"?</source>
+			<target xml:lang="pt-BR" state="needs-translation">Do you really want to delete "{0}"?</target></trans-unit>
+      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the package</source>
+			<target xml:lang="pt-BR" state="needs-translation">Yes, delete the package</target></trans-unit>
+      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
+				<source>Yes, delete the packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Yes, delete the packages</target></trans-unit>
+      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the selected packages?</source>
+			<target xml:lang="pt-BR" state="needs-translation">Do you really want to delete the selected packages?</target></trans-unit>
+      <trans-unit id="packages.selected.freeze" xml:space="preserve">
+				<source>Freeze selected packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Freeze selected packages</target></trans-unit>
+      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
+				<source>Unfreeze selected packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Unfreeze selected packages</target></trans-unit>
+      <trans-unit id="packages.selected.delete" xml:space="preserve">
+				<source>Delete selected packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Delete selected packages</target></trans-unit>
+      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
+				<source>Deactivate selected packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Deactivate selected packages</target></trans-unit>
+      <trans-unit id="packages.selected.activate" xml:space="preserve">
+				<source>Activate selected packages</source>
+			<target xml:lang="pt-BR" state="needs-translation">Activate selected packages</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="pt-BR" state="translated">Gerenciamento de Sites</target></trans-unit>
@@ -556,6 +658,18 @@
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
 			<target xml:lang="pt-BR" state="translated">Ordenar por modificado</target></trans-unit>
+      <trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="pt-BR" state="needs-translation">Sort by</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="pt-BR" state="needs-translation">Sort direction</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="pt-BR" state="needs-translation">Ascending</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="pt-BR" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pt-BR" state="translated">Arrastar e soltar na tag ou coleção</target></trans-unit>
@@ -694,9 +808,18 @@
       <trans-unit id="media.deleteTag" xml:space="preserve">
 				<source>Delete tag</source>
 			<target xml:lang="pt-BR" state="translated">Excluir tag</target></trans-unit>
+      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
+				<source>Enter tag label</source>
+			<target xml:lang="pt-BR" state="needs-translation">Enter tag label</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve">
 				<source>Create tag</source>
 			<target xml:lang="pt-BR" state="translated">Criar tag</target><alt-trans><target xml:lang="pt-BR">Criar Tag</target></alt-trans></trans-unit>
+      <trans-unit id="media.tags.title.all" xml:space="preserve">
+				<source>All assets</source>
+			<target xml:lang="pt-BR" state="needs-translation">All assets</target></trans-unit>
+      <trans-unit id="media.tags.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="pt-BR" state="translated">Tudo</target></trans-unit>
       <trans-unit id="media.untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
 			<target xml:lang="pt-BR" state="translated">Ativos sem tags</target></trans-unit>
@@ -775,6 +898,25 @@
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="pt-BR" state="translated">Criando</target></trans-unit>
+      <trans-unit id="media.deleteRelatedDocumentNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="pt-BR" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+      <group id="media.relatedDocumentNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedDocumentNodes[0]">
+          <source>Used in {0} Document</source>
+          <target xml:lang="pt-BR" state="needs-translation">Used in {0} Document</target>
+        </trans-unit>
+        <trans-unit id="media.relatedDocumentNodes[1]">
+          <source>Used in {0} Documents</source>
+          <target xml:lang="pt-BR" state="needs-translation">Used in {0} Documents</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedDocumentNodes.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="pt-BR" state="translated">Documento</target></trans-unit>
+      <trans-unit id="media.relatedDocumentNodes.reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="pt-BR" state="needs-translation">Reference</target></trans-unit>
     </body>
   </file>
 </xliff>

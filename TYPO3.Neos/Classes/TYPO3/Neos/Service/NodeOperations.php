@@ -12,12 +12,12 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
-use TYPO3\TYPO3CR\Utility;
 
 /**
  * Centralizes common operations like moving and copying of Nodes with Neos specific additional handling.
@@ -39,6 +39,12 @@ class NodeOperations
     protected $nodeService;
 
     /**
+     * @Flow\Inject
+     * @var NodeUriPathSegmentGenerator
+     */
+    protected $nodeUriPathSegmentGenerator;
+
+    /**
      * Helper method for creating a new node.
      *
      * @param NodeInterface $referenceNode
@@ -55,7 +61,7 @@ class NodeOperations
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
         if ($nodeType->isOfType('TYPO3.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
-            $nodeData['properties']['uriPathSegment'] = Utility::renderValidNodeName($nodeData['properties']['title']);
+            $nodeData['properties']['uriPathSegment'] = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($referenceNode, $nodeData['properties']['title']);
         }
 
         $proposedNodeName = isset($nodeData['nodeName']) ? $nodeData['nodeName'] : null;
