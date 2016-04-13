@@ -8,8 +8,6 @@
 
 .neos [class^="icon-"] {
 	&.icon-language:before {
-		font-size: 20px;
-		line-height: 20px;
 		font-family: 'neos-language';
 		content: "\e600";
 	}

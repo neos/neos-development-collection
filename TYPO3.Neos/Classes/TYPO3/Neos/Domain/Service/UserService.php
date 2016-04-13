@@ -600,6 +600,28 @@ class UserService
     }
 
     /**
+     * Checks if the current user may read the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanReadWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return true;
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if the current user may manage the given workspace according to one the roles of the user's accounts
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an

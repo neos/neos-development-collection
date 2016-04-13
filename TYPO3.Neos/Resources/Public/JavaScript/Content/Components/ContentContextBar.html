@@ -4,10 +4,10 @@
 </div>
 
 <div class="neos-right">
-  <a class="neos-button neos-preview-shortcut" target="neosPreview" {{bind-attr href="view.previewUri" }} title="{{translate id='content.components.contentContextBar.previewShortcutButton.title' fallback='Open page in target workspace'}}">
+  <a class="neos-button neos-preview-shortcut" target="neosPreview" {{bind-attr href="view.previewUri" }} title="{{translate id='content.components.contentContextBar.previewShortcutButton.title' fallback='Open page in target workspace'}}" data-neos-tooltip data-placement="bottom">
     <i class="icon-external-link"></i>
   </a>
-  <button class="neos-button neos-full-screen-open" title="{{translate id='content.components.contentContextBar.fullScreenButton.title' fallback='Full Screen'}}" {{action "toggleFullScreen" target="view.fullScreenController"}}>
+  <button class="neos-button neos-full-screen-open" title="{{translate id='content.components.contentContextBar.fullScreenButton.title' fallback='Full Screen'}}" {{action "toggleFullScreen" target="view.fullScreenController"}} data-neos-tooltip data-placement="bottom">
   <i class="icon-resize-full"></i>
   </button>
 </div>

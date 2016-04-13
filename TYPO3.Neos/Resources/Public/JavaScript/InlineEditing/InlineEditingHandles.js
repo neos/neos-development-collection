@@ -9,11 +9,12 @@ define(
 	'Content/Inspector/InspectorController',
 	'Content/Model/NodeSelection',
 	'Content/Model/NodeActions',
-	'Content/Components/AbstractPositionSelectorButton',
+	'Content/Components/NewPositionSelectorButton',
+	'Content/Components/PastePositionSelectorButton',
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
-	'InlineEditing/InsertNodePanel'
+	'Shared/I18n'
 ],
 function (
 	$,
@@ -25,11 +26,12 @@ function (
 	InspectorController,
 	NodeSelection,
 	NodeActions,
-	AbstractPositionSelectorButton,
+	NewPositionSelectorButton,
+	PastePositionSelectorButton,
 	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
-	InsertNodePanel
+	I18n
 ) {
 	return Ember.View.extend({
 		classNames: ['neos-handle-container'],
@@ -43,57 +45,41 @@ function (
 		// this property mirrors the _hidden property of the node (it's automatically updated)
 		_hidden: false,
 
-		NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+		NewPositionSelectorButton: NewPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedNewPositions',
-			title: 'Create (hover to select position)',
-			iconClass: 'icon-plus',
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var newPosition = this.get('position');
-					ContentCommands.create(newPosition);
-				}
-				$(event.target).filter('button').click();
-			},
+			triggerAction: function(position) {
+				ContentCommands.create(position);
+			}
 		}),
 
-		PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+		PastePositionSelectorButton: PastePositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedPastePositions',
-			title: 'Paste (hover to select position)',
-			iconClass: 'icon-paste',
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var pastePosition = this.get('position');
-					ContentCommands.paste(pastePosition);
-				}
-				$(event.target).filter('button').click();
+			triggerAction: function(position) {
+				ContentCommands.paste(position);
 			}
 		}),
 
 		_onNodeSelectionChange: function() {
 			this.$().find('.action-new').trigger('hidePopover');
-			var selectedNode = this.get('nodeSelection.selectedNode'),
-				entity = selectedNode.get('_vieEntity');
-
-			if (selectedNode && entity) {
-				this.set('_node', selectedNode);
-
-				entity.on('change', this._entityChanged, this);
-				this._entityChanged();
-
-				if (selectedNode.isHideable()) {
-					this.set('_showHide', true);
-					this.set('_hidden', selectedNode.isHidden());
-				} else {
-					this.set('_showHide', false);
-					this.set('_hidden', false);
-				}
+			var selectedNode = NodeSelection.get('selectedNode');
+			if (!selectedNode) {
+				return;
 			}
+
+			this.set('_node', selectedNode);
+
+			if (selectedNode.isHideable()) {
+				this.set('_showHide', true);
+				this.set('_hidden', selectedNode.isHidden());
+			} else {
+				this.set('_showHide', false);
+				this.set('_hidden', false);
+			}
+
+			var that = this;
+			selectedNode.addObserver('typo3:_hidden', function() {
+				that.set('_hidden', selectedNode.isHidden());
+			});
 		}.observes('nodeSelection.selectedNode'),
 
 		currentFocusedNodeCanBeModified: function() {
@@ -150,17 +136,13 @@ function (
 			return positions;
 		}.property('nodeSelection.selectedNode', 'nodeActions.clipboard'),
 
-		_entityChanged: function() {
-			this.set('_hidden', this.get('_node._vieEntity').get('typo3:_hidden'));
-		},
-
 		/** Content element actions **/
 		remove: function() {
 			DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
 		},
 
 		_hideToggleTitle: function() {
-			return this.get('_hidden') === true ? 'Unhide' : 'Hide';
+			return this.get('_hidden') === true ? I18n.translate('TYPO3.Neos:Main:unhide', 'Unhide') : I18n.translate('TYPO3.Neos:Main:hide', 'Hide');
 		}.property('_hidden'),
 
 		_thisElementStartedCut: function() {
@@ -182,10 +164,10 @@ function (
 		}.property('nodeActions.clipboard', '_node'),
 
 		toggleHidden: function() {
-			var entity = this.get('_node._vieEntity'),
-				value = !entity.get('typo3:_hidden');
+			var node = this.get('_node'),
+				value = !node.getAttribute('_hidden');
 			this.set('_hidden', value);
-			entity.set('typo3:_hidden', value);
+			node.setAttribute('_hidden', value);
 			InspectorController.set('nodeProperties._hidden', value);
 			InspectorController.apply();
 		},
@@ -196,6 +178,10 @@ function (
 
 		copy: function() {
 			ContentCommands.copy();
+		},
+
+		didInsertElement: function() {
+			this.$('[neos-data-tooltip]').tooltip({container: '#neos-application'});
 		}
 	});
 });

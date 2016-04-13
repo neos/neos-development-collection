@@ -82,7 +82,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     {
         $view->assignMultiple(array(
             'view' => $this->browserState->get('view'),
-            'sort' => $this->browserState->get('sort'),
+            'sortBy' => $this->browserState->get('sortBy'),
+            'sortDirection' => $this->browserState->get('sortDirection'),
             'filter' => $this->browserState->get('filter'),
             'activeTag' => $this->browserState->get('activeTag'),
             'activeAssetCollection' => $this->browserState->get('activeAssetCollection')
@@ -93,7 +94,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * List existing assets
      *
      * @param string $view
-     * @param string $sort
+     * @param string $sortBy
+     * @param string $sortDirection
      * @param string $filter
      * @param integer $tagMode
      * @param Tag $tag
@@ -102,15 +104,19 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @param AssetCollection $assetCollection
      * @return void
      */
-    public function indexAction($view = null, $sort = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null)
+    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null)
     {
         if ($view !== null) {
             $this->browserState->set('view', $view);
             $this->view->assign('view', $view);
         }
-        if ($sort !== null) {
-            $this->browserState->set('sort', $sort);
-            $this->view->assign('sort', $sort);
+        if ($sortBy !== null) {
+            $this->browserState->set('sortBy', $sortBy);
+            $this->view->assign('sortBy', $sortBy);
+        }
+        if ($sortDirection !== null) {
+            $this->browserState->set('sortDirection', $sortDirection);
+            $this->view->assign('sortDirection', $sortDirection);
         }
         if ($filter !== null) {
             $this->browserState->set('filter', $filter);
@@ -169,8 +175,14 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             }
         }
 
-        if ($this->browserState->get('sort') !== 'Modified') {
-            $this->assetRepository->setDefaultOrderings(array('resource.filename' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING));
+        switch ($this->browserState->get('sortBy')) {
+            case 'Name':
+                $this->assetRepository->setDefaultOrderings(array('resource.filename' => $this->browserState->get('sortDirection')));
+                break;
+            case 'Modified':
+            default:
+                $this->assetRepository->setDefaultOrderings(array('lastModified' => $this->browserState->get('sortDirection')));
+                break;
         }
 
         if (!$this->browserState->get('activeTag') && $this->browserState->get('tagMode') === self::TAG_GIVEN) {

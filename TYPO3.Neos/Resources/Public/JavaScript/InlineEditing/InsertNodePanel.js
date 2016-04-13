@@ -1,7 +1,6 @@
 define(
 [
 	'emberjs',
-	'Library/underscore',
 	'vie',
 	'Content/Components/AbstractInsertNodePanel',
 	'Content/Application',
@@ -14,7 +13,6 @@ define(
 ],
 function(
 	Ember,
-	_,
 	vie,
 	AbstractInsertNodePanel,
 	ContentModule,
@@ -28,9 +26,9 @@ function(
 		_node: null,
 		_position: null,
 
-		nodeTypeGroups: function() {
+		init: function() {
+			this._super();
 			var groups = {},
-				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				node = this.get('_node'),
 				position = this.get('_position'),
 				types;
@@ -41,61 +39,39 @@ function(
 				types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
 			}
 
-			types = _.map(types, function(nodeType) {
+			types = types.map(function(nodeType) {
 				return 'typo3:' + nodeType;
 			});
 
-			var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content');
-
-			_.each(types, function(nodeType) {
-				var type = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types.get(nodeType);
+			var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+				nodeTypeGroups = this.get('nodeTypeGroups'),
+				vieTypes = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types;
+			types.forEach(function(nodeType) {
+				var type = vieTypes.get(nodeType);
 				if (!type || !type.metadata || type.metadata.abstract === true) {
 					return;
 				}
 
-				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(namespace, '');
+				var nodeTypeName = type.id.slice(1, -1).replace(type.metadata.url, '');
 				if (!contentTypes.hasOwnProperty(nodeTypeName)) {
 					return;
 				}
 
-				if (type.metadata.ui && type.metadata.ui.group) {
-					if (!groups[type.metadata.ui.group]) {
-						groups[type.metadata.ui.group] = {
-							name: type.metadata.ui.group,
-							label: '',
-							nodeTypes: []
-						};
-					}
-					var helpMessage;
-					if (type.metadata.ui.help && type.metadata.ui.help.message) {
-						helpMessage = type.metadata.ui.help.message;
-					} else {
-						helpMessage = '';
-					}
-					groups[type.metadata.ui.group].nodeTypes.push({
-						'nodeType': nodeTypeName,
-						'label': I18n.translate(type.metadata.ui.label),
-						'helpMessage': helpMessage,
-						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
-						'position': type.metadata.ui.position
-					});
+				var helpMessage = '';
+				if (type.metadata.ui.help && type.metadata.ui.help.message) {
+					helpMessage = type.metadata.ui.help.message;
 				}
-			}, this);
 
-			// Make the data object an array for usage in #each helper
-			var data = [];
-			Configuration.get('nodeTypes.groups').forEach(function(group) {
-				if (groups[group.name]) {
-					groups[group.name].nodeTypes.sort(function(a, b) {
-						return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
-					});
-					groups[group.name].label = I18n.translate(group.label);
-					data.push(groups[group.name]);
-				}
+				var groupName = type.metadata.ui.group || 'general';
+				nodeTypeGroups.findBy('name', groupName).get('nodeTypes').pushObject({
+					'nodeType': nodeTypeName,
+					'label': I18n.translate(type.metadata.ui.label),
+					'helpMessage': helpMessage,
+					'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
+					'position': type.metadata.ui.position
+				});
 			});
-
-			return data;
-		}.property(),
+		},
 
 		/**
 		 * @param {string} nodeType

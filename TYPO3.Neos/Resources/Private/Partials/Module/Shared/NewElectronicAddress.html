@@ -2,7 +2,7 @@
 <f:form action="createElectronicAddress" name="electronicAddress" object="{electronicAddress}" arguments="{user: user}">
 	<div class="neos-row-fluid neos-module-container">
 		<fieldset class="neos-span5">
-			<legend>{neos:backend.translate(id: 'userSettings.addNewElectronicAddress', value: 'Add new electronic address')}</legend>
+			<legend>{neos:backend.translate(id: 'userSettings.electronicAddresses.addElectronicAddress', value: 'Add new electronic address', source: 'Modules')}</legend>
 			<div class="neos-control-group">
 				<label class="neos-control-label" for="electronicAddress">{neos:backend.translate(id: 'electronicAddress.type', package: 'TYPO3.Party', value: 'Type')}</label>
 				<div class="neos-controls">
@@ -25,7 +25,7 @@
 						<f:if condition="{electronicAddressUsageType}">
 							<label class="neos-radio neos-inline">
 								<f:form.radio property="usage" value="{electronicAddressUsageType}" checked="{f:if(condition: '{iterator.index} == 1', then: 'checked')}" /><span></span>
-								{electronicAddressUsageType}
+								{neos:backend.translate(id: 'users.electronicAddress.usage.type.{electronicAddressUsageType}', package: 'TYPO3.Neos', value: '{electronicAddressUsageType}')}
 							</label>
 						</f:if>
 					</f:for>

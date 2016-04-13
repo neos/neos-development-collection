@@ -14,6 +14,10 @@ TYPO3:
       globalObjects:
         userInformation: TYPO3\Neos\Service\UserService
 
+    core:
+      applicationPackageKey: 'TYPO3.Neos'
+      applicationName: 'Neos'
+
     security:
       authentication:
         providers:
@@ -56,7 +60,10 @@ TYPO3:
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
           'databaseConnectionExceptions':
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            matchingExceptionClassNames:
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseStructureException'
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
@@ -118,12 +125,15 @@ TYPO3:
         general:
           position: 'start'
           label: 'TYPO3.Neos:Main:nodeTypes.groups.general'
+          collapsed: false
         structure:
           position: 100
           label: 'TYPO3.Neos:Main:nodeTypes.groups.structure'
+          collapsed: false
         plugins:
           position: 200
           label: 'TYPO3.Neos:Main:nodeTypes.groups.plugins'
+          collapsed: true
 
     userInterface:
       # should minified JavaScript be loaded? For developing the Neos
@@ -178,6 +188,8 @@ TYPO3:
 
           presets:
             default:
+              # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
+              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'TYPO3.Neos:Document'
 
       inspector:
@@ -400,6 +412,20 @@ TYPO3:
     backendLoginForm:
       stylesheets:
         'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
+
+    transliterationRules:
+      da:
+        'Å': 'Aa'
+        'Ø': 'Oe'
+        'å': 'aa'
+        'ø': 'oe'
+      de:
+        'Ä': 'Ae'
+        'Ö': 'Oe'
+        'Ü': 'Ue'
+        'ä': 'ae'
+        'ö': 'oe'
+        'ü': 'ue'
 
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']

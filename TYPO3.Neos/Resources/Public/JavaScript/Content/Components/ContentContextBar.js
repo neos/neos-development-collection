@@ -51,6 +51,13 @@ define(
         } else {
           this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '@' + targetWorkspaceName));
         }
-      }.observes('targetWorkspaceController.targetWorkspace', 'contentDimensionController.selectedDimensions')
+      }.observes('targetWorkspaceController.targetWorkspace', 'contentDimensionController.selectedDimensions'),
+
+      /**
+       * Show tooltip for inserted elements
+       */
+      didInsertElement: function() {
+        this.$('[data-neos-tooltip]').tooltip();
+      }
     })
   });

@@ -43,7 +43,8 @@ require(
 		Notification,
 		Configuration,
 		ExternalApi,
-		_
+		_,
+		I18n
 	) {
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
@@ -55,6 +56,7 @@ require(
 			ResourceCache.getItem(Configuration.get('XliffUri')).then(function(labels) {
 				try {
 					$.extend(Ember.I18n.translations, labels);
+					I18n.set('initialized', true);
 				} catch (exception) {
 					if ('localStorage' in window && 'showDevelopmentFeatures' in window.localStorage) {
 						console.error('Could not parse JSON for locale file ' + labels[iterator].substr(5));

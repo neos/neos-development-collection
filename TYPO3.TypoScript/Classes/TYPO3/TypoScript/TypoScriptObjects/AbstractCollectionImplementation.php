@@ -45,6 +45,14 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
     }
 
     /**
+     * @return string
+     */
+    public function getItemKey()
+    {
+        return $this->tsValue('itemKey');
+    }
+
+    /**
      * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
      *
      * @return string
@@ -73,11 +81,15 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
         if ($itemName === null) {
             throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
         }
+        $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
         $collectionTotalCount = count($collection);
-        foreach ($collection as $collectionElement) {
+        foreach ($collection as $collectionKey => $collectionElement) {
             $context = $this->tsRuntime->getCurrentContext();
             $context[$itemName] = $collectionElement;
+            if ($itemKey !== null) {
+                $context[$itemKey] = $collectionKey;
+            }
             if ($iterationName !== null) {
                 $context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
             }

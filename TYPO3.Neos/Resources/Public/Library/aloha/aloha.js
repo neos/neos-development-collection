@@ -35172,7 +35172,7 @@ function (jQuery, Component, Utils) {
 			Utils.makeButton(this.buttonElement, this)
 				.uibutton('widget')
 				.tooltip({
-					tooltipClass: 'aloha aloha-ui-tooltip',
+					placement: 'bottom',
 					position: {
 						my: 'left top',
 						at: 'right bottom'
@@ -35195,7 +35195,7 @@ function (jQuery, Component, Utils) {
 
 		closeTooltip: function () {
 			// 'close', /*event*/, /*force*/
-			this.buttonElement.tooltip('close', null, true);
+			this.buttonElement.tooltip('hide');
 		},
 
 		/**
@@ -48576,7 +48576,7 @@ define('ui/menuButton',[
 			wrapper.children('[title]').removeAttr('title').end()
 				.attr('title', props.tooltip)
 				.tooltip({
-					tooltipClass: 'aloha aloha-ui-tooltip',
+					placement: 'bottom',
 					position: {
 						my: 'left top',
 						at: 'right bottom'
@@ -48585,10 +48585,10 @@ define('ui/menuButton',[
 
 			if (props.menu) {
 				wrapper.on('menushown', function() {
-					wrapper.tooltip('disable');
+					wrapper.tooltip('hide');
 				});
 				wrapper.on('menuhidden', function() {
-					wrapper.tooltip('enable');
+					wrapper.tooltip('show');
 				});
 			}
 		}
