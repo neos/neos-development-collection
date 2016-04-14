@@ -79,7 +79,7 @@ require(
 				});
 			});
 		}, function (reason) {
-			console.log('Neos failed to initialize', reason);
+			console.error('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API
