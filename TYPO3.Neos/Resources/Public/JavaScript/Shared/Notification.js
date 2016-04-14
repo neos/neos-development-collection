@@ -138,9 +138,9 @@ function(
 		},
 
 		_registerExpandHandler: function() {
-			$('.neos-notification-content.expandable', '#neos-notification-container').unbind('click').click(function(){
-				$(this).toggleClass('expanded');
-				$('.neos-expand-content', this).slideToggle();
+			$('.neos-notification-content.expandable .neos-notification-heading', '#neos-notification-container').unbind('click').click(function(){
+				$(this).parent().toggleClass('expanded');
+				$(this).next('.neos-expand-content').slideToggle();
 			});
 		}
 	}).create();
