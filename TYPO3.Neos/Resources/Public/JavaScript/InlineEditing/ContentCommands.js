@@ -9,9 +9,25 @@ define(
 	'Shared/NodeTypeService'
 ],
 function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeTypeService) {
-	return Ember.Object.create({
+	return Ember.Object.extend({
 		_nodePath: null,
 		_selectedNode: null,
+
+		nodeSelection: NodeSelection,
+
+		_onNodeSelectionChange: function() {
+			var selectedNode = NodeSelection.get('selectedNode');
+
+			if (!selectedNode) {
+				return;
+			}
+
+			if (selectedNode.get('nodeType') === 'ALOHA-CONTROL') {
+				selectedNode = selectedNode.node;
+			}
+
+			this.set('_selectedNode', selectedNode);
+		}.observes('nodeSelection.selectedNode'),
 
 		/**
 		 * Returns true if the selected node is a document
@@ -52,12 +68,11 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * @return {void}
 		 */
 		create: function(position) {
-			var selectedNode = NodeSelection.get('selectedNode');
-
 			if (typeof position === 'undefined') {
 				position = 'into';
 			}
 
+			var selectedNode = this.get('_selectedNode');
 			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
 				if($('.neos-modal:visible').length > 0) {
 					$('.neos-modal .neos-close').trigger('click');
@@ -78,7 +93,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		cut: function(node) {
 			if (!node) {
-				node = NodeSelection.get('selectedNode');
+				node = this.get('_selectedNode');
 			}
 
 			NodeActions.cut(node);
@@ -92,7 +107,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		copy: function(node) {
 			if (!node) {
-				node = NodeSelection.get('selectedNode');
+				node = this.get('_selectedNode');
 			}
 
 			NodeActions.copy(node);
@@ -105,7 +120,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * @return {boolean}
 		 */
 		paste: function(position) {
-			var referenceNode = NodeSelection.get('selectedNode');
+			var referenceNode = this.get('_selectedNode');
 			switch (position) {
 				case 'before':
 					return NodeActions.pasteBefore(referenceNode);
@@ -124,7 +139,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		remove: function(node) {
 			if (!node) {
-				node = NodeSelection.get('selectedNode');
+				node = this.get('_selectedNode');
 			}
 
 			require({context: 'neos'}, ['InlineEditing/Dialogs/DeleteNodeDialog'], function(DeleteNodeDialog) {
@@ -187,5 +202,5 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			var parentNodeType = node.$element.data('node-__grandparent-node-type');
 			return this._getAllowedChildNodeTypes(nodeName, nodeType, parentNodeType, isAutoCreated);
 		}
-	});
+	}).create();
 });
