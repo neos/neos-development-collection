@@ -11239,6 +11239,9 @@
   margin-top: -1px;
   text-indent: 16px;
 }
+.neos #neos-navigate-panel .neos-node-tree-toolbar.neos-context-structure-toolbar i {
+  text-indent: 0;
+}
 .neos #neos-navigate-panel #neos-context-structure-tree-container {
   position: relative;
   white-space: nowrap;
