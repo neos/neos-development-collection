@@ -1,35 +1,37 @@
-<div class="neos-modal">
-	<form>
-		<div class="neos-modal-header">
-			<div class="neos-header">
-				{{translate id="login.expired" fallback="Your login has expired. Please log in again."}}
+<div class="neos-modal-centered">
+	<div class="neos-modal-content">
+		<form>
+			<div class="neos-modal-header">
+				<div class="neos-header">
+					{{translate id="login.expired" fallback="Your login has expired. Please log in again."}}
+				</div>
 			</div>
-		</div>
-		<div class="neos-modal-body">
-			<fieldset>
-				<div class="neos-controls">
-					<input required="required" placeholder="{{translate id='username' fallback='Username'}}" id="neos-login-dialog-username" type="text" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" {{bind-attr value="view._username"}} />
-				</div>
-				<div class="neos-controls">
-					<input required="required" placeholder="{{translate id='password' fallback='Password'}}" id="neos-login-dialog-password" type="password" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" {{bind-attr value="view._password"}} />
-				</div>
-				<div class="neos-controls">
-					<button {{bind-attr class=":neos-button :neos-button-primary view.authenticating:neos-disabled"}} type="submit">
-						{{#if view.authenticating}}
-							{{translate id="authenticating" fallback="Authenticating"}}<span class="neos-ellipsis"></span>
-						{{else}}
-							{{translate id="login" fallback="Login"}}
-						{{/if}}
-					</button>
-				</div>
-				{{#if view.failed}}
-					<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
-						<div class="neos-tooltip-arrow"></div>
-						<div class="neos-tooltip-inner">{{translate id="wrongCredentials" fallback="The entered username or password was wrong"}}</div>
+			<div class="neos-modal-body">
+				<fieldset>
+					<div class="neos-controls">
+						<input required="required" placeholder="{{translate id='username' fallback='Username'}}" id="neos-login-dialog-username" type="text" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" {{bind-attr value="view._username"}} />
 					</div>
-				{{/if}}
-			</fieldset>
-		</div>
-	</form>
+					<div class="neos-controls">
+						<input required="required" placeholder="{{translate id='password' fallback='Password'}}" id="neos-login-dialog-password" type="password" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" {{bind-attr value="view._password"}} />
+					</div>
+					<div class="neos-controls">
+						<button {{bind-attr class=":neos-button :neos-button-primary view.authenticating:neos-disabled"}} type="submit">
+							{{#if view.authenticating}}
+								{{translate id="authenticating" fallback="Authenticating"}}<span class="neos-ellipsis"></span>
+							{{else}}
+								{{translate id="login" fallback="Login"}}
+							{{/if}}
+						</button>
+					</div>
+					{{#if view.failed}}
+						<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
+							<div class="neos-tooltip-arrow"></div>
+							<div class="neos-tooltip-inner">{{translate id="wrongCredentials" fallback="The entered username or password was wrong"}}</div>
+						</div>
+					{{/if}}
+				</fieldset>
+			</div>
+		</form>
+	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

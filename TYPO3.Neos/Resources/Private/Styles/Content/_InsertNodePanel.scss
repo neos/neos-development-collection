@@ -59,7 +59,7 @@
 	}
 
 	.neos-modal-body {
-		max-height: calc(100vh - #{$unit * 2 + 52 + 72});
+		max-height: calc(100vh - #{$unit * 2 + 52 + 72 + 80});
 		overflow-y: auto;
 	}
 
