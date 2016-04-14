@@ -1,15 +1,15 @@
 <div class="neos-toolbar">
 	<div class="neos-inspector-tabs">
 		{{#each tab in groupedViews}}
-			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}} data-neos-tooltip data-placement="bottom">
-				<i {{bindAttr class="tab.icon"}}></i>
+			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active"}} title="{{unbound tab.label}}" data-neos-tooltip data-placement="bottom">
+				<i class="{{unbound tab.icon}}"></i>
 			</button>
 		{{/each}}
 	</div>
 </div>
 <div class="neos-inspector-form">
 	<div class="neos-inspector-field">
-		<label for="neos-content-breadcrumb">{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</label>
+		<label for="neos-content-breadcrumb"><i class="icon-mouse-pointer"></i> <b>{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</b></label>
 		{{view view.Breadcrumb}}
 	</div>
 	{{#each tab in groupedViews}}
