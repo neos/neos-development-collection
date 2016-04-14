@@ -17,7 +17,12 @@
 			{{#each group in tab.groups}}
 				{{#view view.Section classNames="neos-inspector-section" groupBinding="group" groupNameBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
 					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
-						<span title="{{unbound group.label}}" data-neos-tooltip>{{unbound group.label}}</span>
+						<span title="{{unbound group.label}}" data-neos-tooltip>
+							{{#if group.icon}}
+								<i class="{{unbound group.icon}}"></i>&nbsp;
+							{{/if}}
+							{{unbound group.label}}
+						</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
 						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}} data-neos-tooltip title="Toggle {{unbound group.label}}"></div>
 					</div>
