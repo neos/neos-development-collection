@@ -12796,6 +12796,9 @@
   vertical-align: middle;
   cursor: pointer;
 }
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button .neos-help-message-icon {
+  font-size: 16px;
+}
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button:focus {
   display: inline-block;
 }
