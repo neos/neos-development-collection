@@ -1132,15 +1132,15 @@
 }
 
 /*!
- *  Font Awesome 4.5.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.6.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?v=4.5.0");
-  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?#iefix&v=4.5.0") format("embedded-opentype"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff2?v=4.5.0") format("woff2"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff?v=4.5.0") format("woff"), url("../Library/fontawesome/fonts/fontawesome-webfont.ttf?v=4.5.0") format("truetype"), url("../Library/fontawesome/fonts/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular") format("svg");
+  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?v=4.6.0");
+  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?#iefix&v=4.6.0") format("embedded-opentype"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff2?v=4.6.0") format("woff2"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff?v=4.6.0") format("woff"), url("../Library/fontawesome/fonts/fontawesome-webfont.ttf?v=4.6.0") format("truetype"), url("../Library/fontawesome/fonts/fontawesome-webfont.svg?v=4.6.0#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1175,7 +1175,7 @@
   font-size: 5em;
 }
 
-neos .icon-fw {
+.neos .icon-fw {
   width: 1.28571em;
   text-align: center;
 }
@@ -1261,31 +1261,31 @@ neos .icon-fw {
   }
 }
 .neos .icon-rotate-90 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .neos .icon-rotate-180 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 .neos .icon-rotate-270 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
   -webkit-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   transform: rotate(270deg);
 }
 .neos .icon-flip-horizontal {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
   -webkit-transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
 .neos .icon-flip-vertical {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
   -webkit-transform: scale(1, -1);
   -ms-transform: scale(1, -1);
   transform: scale(1, -1);
@@ -3227,6 +3227,98 @@ neos .icon-fw {
 }
 .neos .icon-percent:before {
   content: "";
+}
+.neos .icon-gitlab:before {
+  content: "";
+}
+.neos .icon-wpbeginner:before {
+  content: "";
+}
+.neos .icon-wpforms:before {
+  content: "";
+}
+.neos .icon-envira:before {
+  content: "";
+}
+.neos .icon-universal-access:before {
+  content: "";
+}
+.neos .icon-wheelchair-alt:before {
+  content: "";
+}
+.neos .icon-question-circle-o:before {
+  content: "";
+}
+.neos .icon-blind:before {
+  content: "";
+}
+.neos .icon-audio-description:before {
+  content: "";
+}
+.neos .icon-volume-control-phone:before {
+  content: "";
+}
+.neos .icon-braille:before {
+  content: "";
+}
+.neos .icon-assistive-listening-systems:before {
+  content: "";
+}
+.neos .icon-asl-interpreting:before,
+.neos .icon-american-sign-language-interpreting:before {
+  content: "";
+}
+.neos .icon-deafness:before,
+.neos .icon-hard-of-hearing:before,
+.neos .icon-deaf:before {
+  content: "";
+}
+.neos .icon-glide:before {
+  content: "";
+}
+.neos .icon-glide-g:before {
+  content: "";
+}
+.neos .icon-signing:before,
+.neos .icon-sign-language:before {
+  content: "";
+}
+.neos .icon-low-vision:before {
+  content: "";
+}
+.neos .icon-viadeo:before {
+  content: "";
+}
+.neos .icon-viadeo-square:before {
+  content: "";
+}
+.neos .icon-snapchat:before {
+  content: "";
+}
+.neos .icon-snapchat-ghost:before {
+  content: "";
+}
+.neos .icon-snapchat-square:before {
+  content: "";
+}
+
+.neos .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.neos .sr-only-focusable:active, .neos .sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
 }
 
 body {

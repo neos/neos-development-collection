@@ -5709,7 +5709,8 @@
   outline: none;
 }
 .neos .neos-modal.neos-modal-wide, .neos .neos-modal-wide.neos-modal-content {
-  max-width: 960px;
+  width: 50%;
+  left: 42.5%;
 }
 .neos .neos-modal.neos-fade, .neos .neos-fade.neos-modal-content {
   -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
@@ -5817,10 +5818,38 @@
   justify-content: center;
   position: fixed;
   z-index: 10050;
-  height: 100%;
   width: 100%;
+  height: 100%;
   top: 0;
   left: 0;
+}
+.neos .neos-modal-centered.neos-modal-wide {
+  width: 100%;
+  left: 0;
+}
+.neos .neos-modal-centered.neos-modal-wide .neos-modal-content {
+  max-width: 960px;
+}
+.neos .neos-modal-centered.neos-modal-fixed {
+  -webkit-box-align: flex-start;
+  -moz-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  top: 120px;
+}
+.neos .neos-modal-centered.neos-fade {
+  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
+  transition: opacity 0.3s linear, top 0.3s ease-out;
+  top: -25%;
+}
+.neos .neos-modal-centered.neos-fade.neos-in {
+  top: 0;
+}
+.neos .neos-modal-centered.neos-fade.neos-in.neos-modal-fixed {
+  top: 120px;
 }
 .neos .neos-modal-content {
   position: static;
@@ -12713,14 +12742,6 @@
 .neos .neos-button-group + .neos-button-group {
   margin-left: 8px;
 }
-.neos .neos-insert-node-panel {
-  -webkit-box-align: flex-start;
-  -moz-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  -webkit-align-items: flex-start;
-  align-items: flex-start;
-  top: 140px;
-}
 .neos .neos-insert-node-panel .neos-header i {
   vertical-align: baseline;
 }
@@ -12778,7 +12799,7 @@
   margin-bottom: 1px;
 }
 .neos .neos-insert-node-panel .neos-modal-body {
-  max-height: calc(100vh - 204px);
+  max-height: calc(100vh - 284px);
   overflow-y: auto;
 }
 .neos .neos-insert-node-panel .neos-modal-footer {
@@ -13818,7 +13839,7 @@
   font-size: 0;
   text-align: right;
 }
-.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal .neos-modal-content {
+.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal, .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal-content {
   text-align: left;
 }
 .neos.media-browser table.neos-info-table i {
