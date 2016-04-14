@@ -94,11 +94,14 @@
 				vertical-align: baseline;
 			}
 		}
+
 		&:focus, &:hover {
 			background-color: $blue;
+
 			button {
 				outline: none;
 			}
+
 			i {
 				color: #fff;
 			}
@@ -117,6 +120,11 @@
 			line-height: $unit;
 			vertical-align: middle;
 			cursor: pointer;
+
+			.neos-help-message-icon {
+				font-size: 16px;
+			}
+
 			&:focus {
 				display: inline-block; // so when the hover is gone, the popover doesn't disappear
 			}
