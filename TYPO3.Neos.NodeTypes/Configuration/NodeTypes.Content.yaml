@@ -4,7 +4,7 @@
     'TYPO3.Neos.NodeTypes:TitleMixin': TRUE
   ui:
     label: i18n
-    icon: 'icon-font'
+    icon: 'icon-header'
     position: 100
 
 'TYPO3.Neos.NodeTypes:Text':
