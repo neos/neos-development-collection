@@ -224,7 +224,7 @@
 			<target xml:lang="de" state="translated">Letzte Änderung</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="de" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="de" state="translated">Letzte Publikation</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="de">Bezeichner</target><alt-trans><target xml:lang="de">Bezeichnung</target></alt-trans></trans-unit>
@@ -248,7 +248,7 @@
 			<target xml:lang="de" state="needs-translation">Toggle menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="de" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="de" state="translated">Ladefehler!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
 			<target xml:lang="de" state="needs-translation">You have to select a node</target></trans-unit>
@@ -272,7 +272,7 @@
 			<target xml:lang="de">Dokument</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="de" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="de" state="translated">Referenz</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -308,7 +308,11 @@
 			<target xml:lang="de">Vollbild</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="de">Seite im Live-Arbeitsbereich öffnen</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
+			<target xml:lang="de" state="needs-translation">Open page in target workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="de">Alle verwerfen</target></trans-unit>
@@ -626,7 +630,7 @@
 			<target xml:lang="de" state="needs-translation">Unexpected error while moving node</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="de" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="de" state="translated">Beim dem Laden des Nodetrees trat ein Fehler auf.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>

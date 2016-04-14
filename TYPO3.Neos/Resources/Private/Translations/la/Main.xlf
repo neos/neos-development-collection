@@ -308,7 +308,11 @@
 			<target xml:lang="la-LA">crwdns63:0crwdne63:0</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="la-LA">crwdns64:0crwdne64:0</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
+			<target xml:lang="la-LA">crwdns743:0crwdne743:0</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="la-LA">crwdns279:0crwdne279:0</target></trans-unit>

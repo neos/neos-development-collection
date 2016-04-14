@@ -308,7 +308,11 @@
 			<target xml:lang="no" state="translated">Fullskjerm</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="no" state="translated">Åpne siden i live-arbeidsområdet</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
+			<target xml:lang="no" state="needs-translation">Open page in target workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="no" state="translated">Forkast alt</target></trans-unit>
