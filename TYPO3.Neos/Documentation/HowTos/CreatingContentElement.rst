@@ -17,6 +17,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	      groups:
 	        image:
 	          label: 'Image'
+	          icon: 'icon-image'
 	          position: 1
 	  properties:
 	    headline:
