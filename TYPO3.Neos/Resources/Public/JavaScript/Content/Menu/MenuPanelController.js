@@ -24,9 +24,6 @@ define(
 			ResourceCache.getItem(Configuration.get('MenuDataUri')).then(
 				function(data) {
 					that.set('items', data);
-				},
-				function(error) {
-					console.error('Error loading menu data.', error);
 				}
 			);
 

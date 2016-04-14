@@ -66,7 +66,6 @@ define(
 					},
 					function() {
 						NodeEndpoint.set('_saveRunning', false);
-						Notification.error('An error occurred while saving.');
 						require({context: 'neos'}, ['InlineEditing/Dialogs/NodeUpdateFailureDialog'], function(NodeUpdateFailureDialog) {
 							NodeUpdateFailureDialog.create();
 						});
