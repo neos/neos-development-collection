@@ -29,7 +29,7 @@
   background-color: $tooltipBackground;
   white-space: normal;
   text-shadow: none;
-  word-break: break-word;
+  word-wrap: break-word;
   @include border-radius($baseBorderRadius);
 
   i[class^="icon-"] {
