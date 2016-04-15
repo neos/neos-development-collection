@@ -36,7 +36,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
  *
  * @Flow\Scope("singleton")
  */
-class NodeRedirectionService implements NodeRedirectionServiceInterface
+class NodeRedirectService implements NodeRedirectServiceInterface
 {
     /**
      * @Flow\Inject

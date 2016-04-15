@@ -18,7 +18,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 /**
  * Service that creates redirects for moved / deleted nodes
  */
-interface NodeRedirectionServiceInterface
+interface NodeRedirectServiceInterface
 {
     /**
      * Creates a redirect for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
