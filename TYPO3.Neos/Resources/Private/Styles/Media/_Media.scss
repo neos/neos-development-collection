@@ -746,7 +746,7 @@
 		}
 	}
 
-	table.neos-table {
+	table.neos-table.asset-list {
 		th {
 			white-space: nowrap;
 
@@ -963,5 +963,9 @@
 		visibility: hidden;
 		position: absolute;
 		left: -9999px;
+	}
+
+	.fold-toggle {
+		cursor: pointer;
 	}
 }

@@ -261,6 +261,7 @@ define(
 					 */
 					onDragStart: function(node) {
 						var parent = node.tree.options.parent;
+						$('a[title]', parent.$nodeTree).tooltip('hide').tooltip('disable');
 						// the root node should not be draggable
 						if (node.data.key !== parent.get('siteNodeContextPath')) {
 							parent.set('dragInProgress', true);
@@ -275,6 +276,7 @@ define(
 					},
 
 					onDragStop: function(node) {
+						$('a[title]', parent.$nodeTree).tooltip('enable');
 						node.tree.options.parent.set('dragInProgress', false);
 						Mousetrap.unbind('esc');
 					},
@@ -310,10 +312,7 @@ define(
 					},
 
 					onDragOver: function(node, sourceNode, hitMode) {
-						if (node.isDescendantOf(sourceNode)) {
-							return false;
-						}
-						return true;
+						return !node.isDescendantOf(sourceNode);
 					},
 
 					/**
@@ -324,7 +323,9 @@ define(
 					 * !source node = new Node
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						node.tree.options.parent.move(sourceNode, node, hitMode === 'over' ? 'into' : hitMode);
+						var parent = node.tree.options.parent;
+						$('a[title]', parent.$nodeTree).tooltip('destroy');
+						parent.move(sourceNode, node, hitMode === 'over' ? 'into' : hitMode);
 					}
 				},
 
@@ -345,6 +346,17 @@ define(
 
 				onActivate: function(node) {
 					this.options.parent.set('activeNode', node);
+				},
+
+				onCustomRender: function(node) {
+					var nodeTypeLabel = I18n.translate(node.data.nodeTypeLabel || ''),
+						tooltip = node.data.title || '';
+
+					if (nodeTypeLabel !== '' && tooltip.indexOf(nodeTypeLabel) === -1) {
+						tooltip += ' (' + nodeTypeLabel + ')';
+					}
+					node.data.tooltip = tooltip;
+					return null;
 				}
 			},
 
@@ -613,9 +625,11 @@ define(
 			},
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
-				var data = {
+				var nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
+					data = {
 						title: title ? title : I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'neos-matched',
 						iconClass: iconClass,
 						expand: true
@@ -677,7 +691,6 @@ define(
 						that.afterPersistNode(node);
 					},
 					function(error) {
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.create.unexpected', 'Unexpected error while creating node') + ': ' + JSON.stringify(error));
 						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
@@ -694,9 +707,6 @@ define(
 						parentNode.activate();
 						node.remove();
 						that.afterDeleteNode(node);
-					},
-					function(error) {
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.delete.unexpected', 'Unexpected error while deleting node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -744,7 +754,6 @@ define(
 					},
 					function(error) {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.update.unexpected', 'Unexpected error while updating node') + ': ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -833,7 +842,6 @@ define(
 						},
 						function(error) {
 							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				}
@@ -884,11 +892,11 @@ define(
 						},
 						function(error) {
 							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + JSON.stringify(error));
 						}
 					);
 				} catch(e) {
-					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node') + ': ' + e.toString());
+					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node'), e.toString());
+					console.error(e);
 				}
 			},
 
@@ -928,7 +936,6 @@ define(
 					},
 					function() {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error(I18n.translate('TYPO3.Neos:Main:error.nodeTree.load', 'Node Tree loading error.'));
 					}
 				);
 			},

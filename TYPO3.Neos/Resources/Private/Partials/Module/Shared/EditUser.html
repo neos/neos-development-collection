@@ -125,14 +125,16 @@
 									<i class="icon-trash icon-white"></i>
 								</button>
 								<div class="neos-hide" id="electronicAddress-{index}">
-									<div class="neos-modal">
-										<div class="neos-modal-header">
-											<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-											<div class="neos-header">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete', source: 'Modules', package: TYPO3.Neos)} "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
-										</div>
-										<div class="neos-modal-footer">
-											<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel',source: 'Modules', package: 'TYPO3.Neos')}</a>
-											<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: {user: user, electronicAddress: electronicAddress})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete.confirmation', source: 'Modules', package: 'TYPO3.Neos')}</button>
+									<div class="neos-modal-centered">
+										<div class="neos-modal-content">
+											<div class="neos-modal-header">
+												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+												<div class="neos-header">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete', source: 'Modules', package: TYPO3.Neos)} "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
+											</div>
+											<div class="neos-modal-footer">
+												<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel',source: 'Modules', package: 'TYPO3.Neos')}</a>
+												<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: {user: user, electronicAddress: electronicAddress})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete.confirmation', source: 'Modules', package: 'TYPO3.Neos')}</button>
+											</div>
 										</div>
 									</div>
 									<div class="neos-modal-backdrop neos-in"></div>

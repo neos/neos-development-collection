@@ -915,7 +915,7 @@ class NodeDataRepository extends Repository
      *
      * This method is internal and will be replaced with better search capabilities.
      *
-     * @param string $term Search term
+     * @param string|array $term Search term
      * @param string $nodeTypeFilter Node type filter
      * @param Workspace $workspace
      * @param array $dimensions
@@ -925,7 +925,7 @@ class NodeDataRepository extends Repository
     public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
     {
         $pathStartingPoint = strtolower($pathStartingPoint);
-        if (strlen($term) === 0) {
+        if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $workspaces = array();
@@ -937,8 +937,19 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
-        // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
-        $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+
+        if (is_array($term)) {
+            if (count($term) !== 1) {
+                throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported.', 1460437584);
+            }
+
+            // Build the like parameter as "key": "value" to search by a specific key and value
+            $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
+        } else {
+            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+        }
+
         $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
@@ -1177,6 +1188,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
@@ -1188,9 +1200,15 @@ class NodeDataRepository extends Repository
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException('Node workspace not found in allowed workspaces, this could result from a detached workspace entity in the context.', 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
@@ -1237,7 +1255,13 @@ class NodeDataRepository extends Repository
         foreach ($nodes as $node) {
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
 
             $uniqueNodeDataIdentity = $node->getIdentifier() . '|' . $node->getDimensionsHash();
             if (!isset($minimalPositionByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {

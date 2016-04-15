@@ -1,19 +1,21 @@
-<div class="neos-modal">
-	<div class="neos-modal-header">
-		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">
-			{{translate id="content.inspector.unappliedChangesDialog.header" fallback="You still have changes. What do you want to do with them?"}}
-		</div>
-		<div class="neos-modal-footer">
-			<button class="neos-button neos-button-danger" {{action "revert" target="view"}}>{{translate id="content.inspector.unappliedChangesDialog.button.danger" fallback="Throw away"}}</button>
-			<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="content.inspector.unappliedChangesDialog.button.default" fallback="Continue editing"}}</button>
-			{{#if hasValidationErrors}}
-                <button class="neos-button neos-button-success neos-disabled" title="{{translate id='content.inspector.unappliedChangesDialog.alert.title' fallback='There are fields that are not correctly filled in.'}}" onclick="alert('{{translate id='content.inspector.unappliedChangesDialog.alert.content' fallback='The fields marked with an error are not yet correctly filled in. Please complete them properly.'}}');">
-                    {{translate id="apply" fallback="Apply"}}
-                </button>
-			{{else}}
-			    <button class="neos-button neos-button-success" {{action "apply" target="view"}}>{{translate id="apply" fallback="Apply"}}</button>
-			{{/if}}
+<div class="neos-modal-centered">
+	<div class="neos-modal-content">
+		<div class="neos-modal-header">
+			<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
+			<div class="neos-header">
+				{{translate id="content.inspector.unappliedChangesDialog.header" fallback="You still have changes. What do you want to do with them?"}}
+			</div>
+			<div class="neos-modal-footer">
+				<button class="neos-button neos-button-danger" {{action "revert" target="view"}}>{{translate id="content.inspector.unappliedChangesDialog.button.danger" fallback="Throw away"}}</button>
+				<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="content.inspector.unappliedChangesDialog.button.default" fallback="Continue editing"}}</button>
+				{{#if hasValidationErrors}}
+					<button class="neos-button neos-button-success neos-disabled" title="{{translate id='content.inspector.unappliedChangesDialog.alert.title' fallback='There are fields that are not correctly filled in.'}}" onclick="alert('{{translate id='content.inspector.unappliedChangesDialog.alert.content' fallback='The fields marked with an error are not yet correctly filled in. Please complete them properly.'}}');">
+						{{translate id="apply" fallback="Apply"}}
+					</button>
+				{{else}}
+					<button class="neos-button neos-button-success" {{action "apply" target="view"}}>{{translate id="apply" fallback="Apply"}}</button>
+				{{/if}}
+			</div>
 		</div>
 	</div>
 </div>

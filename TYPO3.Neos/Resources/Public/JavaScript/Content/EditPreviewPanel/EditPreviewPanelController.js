@@ -85,10 +85,6 @@ define(
 			ResourceCache.getItem(Configuration.get('EditPreviewDataUri')).then(
 				function(data) {
 					that.set('configuration', data);
-				},
-				function(error) {
-					Notification.error('Failed loading edit / preview data.');
-					console.error('Error loading edit / preview data.', error);
 				}
 			);
 

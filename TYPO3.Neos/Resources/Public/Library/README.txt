@@ -133,7 +133,7 @@ To execute the update scripts method you'll need:
    which are used in the Cakefile in hallo root dir. Replace "sed -i ..." with "sed -i '' ..." or "sed -ibak ..." to ignore backup files.
 
 
-Font Awesome v4.5.0
+Font Awesome v4.6.0
 http://fontawesome.io
 
 * Changed $fa-font-path in sass/_variables.scss

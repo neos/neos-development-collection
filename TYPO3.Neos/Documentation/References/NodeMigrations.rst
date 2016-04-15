@@ -15,7 +15,6 @@ The Content Repository comes with a number of common transformations:
 - ``AddNewProperty``
 - ``ChangeNodeType``
 - ``ChangePropertyValue``
-- ``CreateNodes``
 - ``RemoveNode``
 - ``RemoveProperty``
 - ``RenameDimension``

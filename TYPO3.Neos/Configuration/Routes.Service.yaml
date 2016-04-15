@@ -39,6 +39,7 @@
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'index'
+    '@format':     'json'
   httpMethods: ['GET']
 
 -
@@ -49,6 +50,7 @@
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'update'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 # RESTful routes for Assets service
@@ -98,6 +100,7 @@
     '@package':    'TYPO3.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'create'
+    '@format':     'json'
   httpMethods: ['POST']
 
 # Note: we need to specify the workspace as {workspace.__identity} in the uriPattern because if we just used
@@ -110,6 +113,7 @@
     '@package':    'TYPO3.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'update'
+    '@format':     'json'
   appendExceedingArguments: TRUE
   httpMethods: ['PUT']
 
@@ -122,6 +126,7 @@
     '@subpackage': 'Service'
     '@action':     'getWorkspaceWideUnpublishedNodes'
     '@controller': 'Workspace'
+    '@format':     'json'
   appendExceedingArguments: TRUE
   httpMethods: ['GET']
 
@@ -133,6 +138,7 @@
     '@subpackage': 'Service'
     '@action':     'publishNode'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -143,6 +149,7 @@
     '@subpackage': 'Service'
     '@action':     'publishNodes'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -153,6 +160,7 @@
     '@subpackage': 'Service'
     '@action':     'discardNode'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -163,6 +171,7 @@
     '@subpackage': 'Service'
     '@action':     'discardNodes'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -173,6 +182,7 @@
     '@subpackage': 'Service'
     '@action':     'publishAll'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -183,6 +193,7 @@
     '@subpackage': 'Service'
     '@action':     'discardAll'
     '@controller': 'Workspace'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 # NodeController routes
@@ -194,6 +205,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'getChildNodesForTree'
+    '@format':     'json'
   httpMethods: ['GET']
 
 -
@@ -204,6 +216,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'filterChildNodesForTree'
+    '@format':     'json'
   httpMethods: ['GET']
 
 -
@@ -214,6 +227,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'searchPage'
+    '@format':     'json'
   httpMethods: ['GET']
 
 -
@@ -224,6 +238,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'create'
+    '@format':     'json'
   httpMethods: ['POST']
 
 -
@@ -245,6 +260,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createNodeForTheTree'
+    '@format':     'json'
   httpMethods: ['POST']
 
 -
@@ -255,6 +271,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'discardNode'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -265,6 +282,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'move'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -286,6 +304,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'copy'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -307,6 +326,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'update'
+    '@format':     'json'
   httpMethods: ['PUT']
 
 -
@@ -328,6 +348,7 @@
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'delete'
+    '@format':     'json'
   # TODO: make DELETE method with the full REST implementation
   # For now we can not use DELETE and also pass arguments using the request body,
   # and client side we don\t have a UrlTemplates implementation yet

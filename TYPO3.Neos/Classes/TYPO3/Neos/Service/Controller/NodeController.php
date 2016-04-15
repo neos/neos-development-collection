@@ -43,7 +43,7 @@ class NodeController extends AbstractServiceController
      */
     protected $viewFormatToObjectNameMap = array(
         'html' => 'TYPO3\Neos\Service\View\NodeView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'json' => 'TYPO3\Neos\Service\View\NodeView'
     );
 
     /**

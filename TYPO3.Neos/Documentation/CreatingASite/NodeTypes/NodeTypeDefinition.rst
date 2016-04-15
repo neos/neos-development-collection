@@ -114,6 +114,10 @@ The following options are allowed:
 
     All valid groups are given in the ``TYPO3.Neos.nodeTypes.groups`` setting
 
+  ``position``
+    Position inside the group this content element is grouped into for the 'New Content Element' dialog.
+    Small numbers are sorted on top.
+
   ``icon``
     This setting define the icon to use in the Neos UI for the node type
 
