@@ -88,7 +88,7 @@ define(
         'data-neos-tooltip': '',
         'data-placement': 'left',
         attributeBindings: ['data-neos-tooltip', 'data-placement', 'data-original-title'],
-        classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active', '_disabled:neos-disabled'],
+        classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active', '_hasWorkspaceWideChanges:neos-publish-dropdown-active', '_disabled:neos-disabled'],
         classNames: ['neos-publish-button'],
         controller: PublishableNodes,
         targetWorkspaceController: TargetWorkspaceController,
@@ -111,6 +111,8 @@ define(
         _publishRunningBinding: 'controller.publishRunning',
         _noChangesBinding: 'controller.noChanges',
         _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
+
+        _noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 
         defaultTemplate: Ember.Handlebars.compile('{{view.label}}'),
 
@@ -186,6 +188,10 @@ define(
           }
           return !this.get('_noChanges') || this.get('_saveRunning') || this.get('_savePending');
         }.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
+
+        _hasWorkspaceWideChanges: function () {
+          return !this.get('_noWorkspaceWideChanges');
+        }.property('_noWorkspaceWideChanges'),
 
         connectionStatusClass: function () {
           var className = 'neos-connection-status-';
