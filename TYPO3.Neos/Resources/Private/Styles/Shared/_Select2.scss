@@ -216,33 +216,35 @@
 
 		> .neos-select2-arrow {
 			width: $unit;
-			border-left: 1px solid $grayDark;
 			background: none;
 			color: $textOnGray;
+			border-left: none;
 
 			b {
 				display: none;
 				background-image: none;
 			}
 
-			&:before,
+			&:before {
+				display: block;
+				content: '';
+				position: absolute;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				right: $unit + 1;
+				background-color: #fff;
+				opacity: .15;
+			}
+
 			&:after {
+				@include fa-icon();
+				content: $fa-var-caret-down;
 				display: block;
 				position: absolute;
-				right: 15px;
-				font-family: Arial;
-				font-size: 17px;
+				width: $unit;
+				text-align: center;
 				line-height: $unit;
-				content: "▾";
-			}
-
-			&:before {
-				top: -4px;
-				@include rotate(180deg);
-			}
-
-			&:after {
-				top: 4px;
 			}
 		}
 	}
