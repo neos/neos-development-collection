@@ -7581,7 +7581,7 @@
   left: 0;
   right: 0;
   top: 0;
-  z-index: 10020;
+  z-index: 10021;
   background-color: #222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
@@ -13485,12 +13485,12 @@ disabled look for disabled choices in the results dropdown
 }
 
 .neos-select2-drop-mask {
-  z-index: 10019;
+  z-index: 10024;
 }
 
 .neos-select2-drop {
   position: fixed;
-  z-index: 10020;
+  z-index: 10025;
 }
 
 .neos-select2-drop {
