@@ -167,7 +167,6 @@ function (
 			var node = this.get('_node'),
 				value = !node.getAttribute('_hidden');
 			this.set('_hidden', value);
-			node.setAttribute('_hidden', value);
 			InspectorController.set('nodeProperties._hidden', value);
 			InspectorController.apply();
 		},
