@@ -406,13 +406,13 @@
 					border: 1px solid $green;
 				}
 
-				&:hover + span:before {
-					border: 1px solid $green;
-				}
-
 				&:checked + span:before {
 					background-color: $green;
 					border: 1px solid $green;
+				}
+
+				&:checked:hover + span:before {
+					border: 1px solid $blue;
 				}
 			}
 
