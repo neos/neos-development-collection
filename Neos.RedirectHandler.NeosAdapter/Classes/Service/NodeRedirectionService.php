@@ -30,7 +30,8 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
- * Service that creates redirections for moved / deleted nodes.
+ * Service that creates redirects for moved / deleted nodes.
+ *
  * Note: This is usually invoked by a signal emitted by Workspace::publishNode()
  *
  * @Flow\Scope("singleton")
@@ -85,12 +86,7 @@ class NodeRedirectionService implements NodeRedirectionServiceInterface
     protected $defaultStatusCode;
 
     /**
-     * Creates a redirection for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
-     *
-     * @param NodeInterface $node The node that is about to be published
-     * @param Workspace $targetWorkspace
-     * @return void
-     * @throws Exception
+     * {@inheritdoc}
      */
     public function createRedirectionsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace)
     {

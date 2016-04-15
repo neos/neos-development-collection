@@ -16,12 +16,12 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
- * Service that creates redirections for moved / deleted nodes
+ * Service that creates redirects for moved / deleted nodes
  */
 interface NodeRedirectionServiceInterface
 {
     /**
-     * Creates a redirection for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
+     * Creates a redirect for the node if it is a 'TYPO3.Neos:Document' node and its URI has changed
      *
      * @param NodeInterface $node The node that is about to be published
      * @param Workspace $targetWorkspace
