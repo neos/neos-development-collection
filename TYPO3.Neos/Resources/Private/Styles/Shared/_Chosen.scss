@@ -33,26 +33,27 @@
 
 		div {
 			width: $unit;
-			border-left: 1px solid $grayDark;
-
-			&:before,
-			&:after {
-				display: block;
-				position: absolute;
-				right: 15px;
-				font-family: Arial;
-				font-size: 17px;
-				line-height: $unit;
-				content: "▾";
-			}
 
 			&:before {
-				top: -4px;
-				@include rotate(180deg);
+				display: block;
+				content: '';
+				position: absolute;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				left: 0;
+				background-color: #fff;
+				opacity: .15;
 			}
 
 			&:after {
-				top: 4px;
+				@include fa-icon();
+				content: $fa-var-caret-down;
+				display: block;
+				position: absolute;
+				width: $unit;
+				text-align: center;
+				line-height: $unit;
 			}
 
 			b {
