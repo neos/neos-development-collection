@@ -261,6 +261,18 @@
 			<trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
 			</trans-unit>
+			<trans-unit id="contentDimensions" xml:space="preserve">
+				<source>Content Dimensions</source>
+			</trans-unit>
+			<trans-unit id="site" xml:space="preserve">
+				<source>Site</source>
+			</trans-unit>
+			<trans-unit id="document" xml:space="preserve">
+				<source>Document</source>
+			</trans-unit>
+			<trans-unit id="reference" xml:space="preserve">
+				<source>Reference</source>
+			</trans-unit>
 
 			<!-- node types -->
 			<trans-unit id="nodeTypes.groups.general" xml:space="preserve">
@@ -299,6 +311,10 @@
 			</trans-unit>
 			<trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
+			</trans-unit>
+			<trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
 			</trans-unit>
 			<trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
@@ -522,6 +538,9 @@
 			</trans-unit>
 			<trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
+			</trans-unit>
+			<trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
 			</trans-unit>
 			<trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>

@@ -26,6 +26,7 @@ define(
 			},
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model),
+					changedAttributes = Entity.extractAttributesFromVieEntity(model, model.changed),
 					method = options.render === true ? 'updateAndRender' : 'update',
 					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
@@ -52,9 +53,10 @@ define(
 								// The PublishableNodes are explicitly updated through the ``nodesUpdated`` event, as changes from
 								// the backbone models workspace name attribute are suppressed and our entity wrapper would not notice.
 								EventDispatcher.trigger('nodeUpdated');
+								NodeSelection.getNode(model.id.slice(1, -1)).setAttribute('__label', result.data.labelOfNode, {silent: true});
+							} else if ('_nodeType' in changedAttributes) {
+								EventDispatcher.trigger('contentChanged');
 							}
-
-							NodeSelection.getNode(model.id.slice(1, -1)).setAttribute('__label', result.data.labelOfNode, {silent: true});
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
 							if (options && options.success) {
@@ -64,7 +66,6 @@ define(
 					},
 					function() {
 						NodeEndpoint.set('_saveRunning', false);
-						Notification.error('An error occurred while saving.');
 						require({context: 'neos'}, ['InlineEditing/Dialogs/NodeUpdateFailureDialog'], function(NodeUpdateFailureDialog) {
 							NodeUpdateFailureDialog.create();
 						});

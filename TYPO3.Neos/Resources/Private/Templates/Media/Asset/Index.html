@@ -1,7 +1,7 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="Default" />
 
-<f:section name="Title">Index view of AssetController</f:section>
+<f:section name="Title">Index view</f:section>
 
 <f:section name="Options">
 	<div class="neos-file-options">
@@ -124,27 +124,29 @@
 				</f:for>
 			</ul>
 			<div class="neos-hide" id="delete-assetcollection-modal">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}</div>
+							<div>
+								<div class="neos-subheader">
+									<p>
+										{neos:backend.translate(id: 'media.message.willDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<f:form action="deleteAssetCollection" class="neos-inline">
-							<f:form.hidden name="assetCollection" id="modal-form-object" />
-							<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'TYPO3.Neos')}">
-								{neos:backend.translate(id: 'media.message.confirmDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}
-							</button>
-						</f:form>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+							<f:form action="deleteAssetCollection" class="neos-inline">
+								<f:form.hidden name="assetCollection" id="modal-form-object" />
+								<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'TYPO3.Neos')}">
+									{neos:backend.translate(id: 'media.message.confirmDeleteCollection', source: 'Modules', package: 'TYPO3.Neos')}
+								</button>
+							</f:form>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>
@@ -189,27 +191,29 @@
 				</li>
 			</f:for>
 			<div class="neos-hide" id="delete-tag-modal">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}</div>
+							<div>
+								<div class="neos-subheader">
+									<p>
+										{neos:backend.translate(id: 'media.message.willDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<f:form action="deleteTag" class="neos-inline">
-							<f:form.hidden name="tag" id="modal-form-object" />
-							<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}">
-								{neos:backend.translate(id: 'media.message.confirmDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}
-							</button>
-						</f:form>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+							<f:form action="deleteTag" class="neos-inline">
+								<f:form.hidden name="tag" id="modal-form-object" />
+								<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'media.deleteTag', source: 'Modules', package: 'TYPO3.Neos')}">
+									{neos:backend.translate(id: 'media.message.confirmDeleteTag', source: 'Modules', package: 'TYPO3.Neos')}
+								</button>
+							</f:form>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>
@@ -236,27 +240,29 @@
 		<f:then>
 			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy, sortDirection: sortDirection}" />
 			<div class="neos-hide" id="delete-asset-modal">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', source: 'Modules', package: 'TYPO3.Neos')}</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', source: 'Modules', package: 'TYPO3.Neos')}</div>
+							<div>
+								<div class="neos-subheader">
+									<p>
+										{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<f:form action="delete" method="post" class="neos-inline">
-							<f:form.hidden name="asset" id="modal-form-object" />
-							<button type="submit" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
-								{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
-							</button>
-						</f:form>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+							<f:form action="delete" method="post" class="neos-inline">
+								<f:form.hidden name="asset" id="modal-form-object" />
+								<button type="submit" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
+									{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
+								</button>
+							</f:form>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>

@@ -5,17 +5,25 @@
         <tr>
             <th>
                 <f:if condition="{change.configuration.ui.icon}">
-                    <i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}" data-neos-toggle="tooltip"></i>
+                    <i class="{change.configuration.ui.icon}" title="{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}" data-neos-toggle="tooltip"></i>
                 </f:if>
-                {f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}
+                {change.node.label}
+            </th>
+            <f:if condition="{contentDimensions}">
+                <th>
+                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node.nodeData}" />
+                </th>
+            </f:if>
+            <th>
+                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="icon-time"></i> {change.node.lastModificationDateTime -> m:format.relativeDate()}</span>
             </th>
         </tr>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
             <tr>
-                <th>{neos:backend.translate(id: contentChanges.propertyLabel)}</th>
+                <th colspan="3">{neos:backend.translate(id: contentChanges.propertyLabel)}</th>
             </tr>
             <tr>
-                <td>
+                <td colspan="3">
                     <f:if condition="{contentChanges.type} == 'text'">
                         <table>
                             <f:for each="{contentChanges.diff}" key="index" as="blocks">

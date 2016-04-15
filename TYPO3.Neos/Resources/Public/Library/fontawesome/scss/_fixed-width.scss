@@ -1,9 +1,6 @@
 // Fixed Width Icons
 // -------------------------
-neos {
-  .#{$fa-css-prefix}-fw {
-    width: (18em / 14);
-    text-align: center;
-  }
-
+.neos .#{$fa-css-prefix}-fw {
+  width: (18em / 14);
+  text-align: center;
 }

@@ -1157,15 +1157,15 @@
 }
 
 /*!
- *  Font Awesome 4.5.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.6.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?v=4.5.0");
-  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?#iefix&v=4.5.0") format("embedded-opentype"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff2?v=4.5.0") format("woff2"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff?v=4.5.0") format("woff"), url("../Library/fontawesome/fonts/fontawesome-webfont.ttf?v=4.5.0") format("truetype"), url("../Library/fontawesome/fonts/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular") format("svg");
+  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?v=4.6.0");
+  src: url("../Library/fontawesome/fonts/fontawesome-webfont.eot?#iefix&v=4.6.0") format("embedded-opentype"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff2?v=4.6.0") format("woff2"), url("../Library/fontawesome/fonts/fontawesome-webfont.woff?v=4.6.0") format("woff"), url("../Library/fontawesome/fonts/fontawesome-webfont.ttf?v=4.6.0") format("truetype"), url("../Library/fontawesome/fonts/fontawesome-webfont.svg?v=4.6.0#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1200,7 +1200,7 @@
   font-size: 5em;
 }
 
-neos .icon-fw {
+.neos .icon-fw {
   width: 1.28571em;
   text-align: center;
 }
@@ -1286,31 +1286,31 @@ neos .icon-fw {
   }
 }
 .neos .icon-rotate-90 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .neos .icon-rotate-180 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 .neos .icon-rotate-270 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
   -webkit-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   transform: rotate(270deg);
 }
 .neos .icon-flip-horizontal {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
   -webkit-transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
 .neos .icon-flip-vertical {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
   -webkit-transform: scale(1, -1);
   -ms-transform: scale(1, -1);
   transform: scale(1, -1);
@@ -3258,6 +3258,98 @@ neos .icon-fw {
 .neos .icon-percent:before {
   content: "";
 }
+.neos .icon-gitlab:before {
+  content: "";
+}
+.neos .icon-wpbeginner:before {
+  content: "";
+}
+.neos .icon-wpforms:before {
+  content: "";
+}
+.neos .icon-envira:before {
+  content: "";
+}
+.neos .icon-universal-access:before {
+  content: "";
+}
+.neos .icon-wheelchair-alt:before {
+  content: "";
+}
+.neos .icon-question-circle-o:before {
+  content: "";
+}
+.neos .icon-blind:before {
+  content: "";
+}
+.neos .icon-audio-description:before {
+  content: "";
+}
+.neos .icon-volume-control-phone:before {
+  content: "";
+}
+.neos .icon-braille:before {
+  content: "";
+}
+.neos .icon-assistive-listening-systems:before {
+  content: "";
+}
+.neos .icon-asl-interpreting:before,
+.neos .icon-american-sign-language-interpreting:before {
+  content: "";
+}
+.neos .icon-deafness:before,
+.neos .icon-hard-of-hearing:before,
+.neos .icon-deaf:before {
+  content: "";
+}
+.neos .icon-glide:before {
+  content: "";
+}
+.neos .icon-glide-g:before {
+  content: "";
+}
+.neos .icon-signing:before,
+.neos .icon-sign-language:before {
+  content: "";
+}
+.neos .icon-low-vision:before {
+  content: "";
+}
+.neos .icon-viadeo:before {
+  content: "";
+}
+.neos .icon-viadeo-square:before {
+  content: "";
+}
+.neos .icon-snapchat:before {
+  content: "";
+}
+.neos .icon-snapchat-ghost:before {
+  content: "";
+}
+.neos .icon-snapchat-square:before {
+  content: "";
+}
+
+.neos .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.neos .sr-only-focusable:active, .neos .sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+}
 
 @font-face {
   font-family: 'neos-language';
@@ -3266,8 +3358,6 @@ neos .icon-fw {
   font-style: normal;
 }
 .neos [class^="icon-"].icon-language:before {
-  font-size: 20px;
-  line-height: 20px;
   font-family: 'neos-language';
   content: "\e600";
 }
@@ -4637,7 +4727,7 @@ neos .icon-fw {
   white-space: nowrap;
   padding: 0 !important;
 }
-.neos .neos-table .neos-action .neos-modal {
+.neos .neos-table .neos-action .neos-modal, .neos .neos-table .neos-action .neos-modal-content {
   white-space: normal;
 }
 .neos .neos-table .neos-button {
@@ -5600,48 +5690,47 @@ neos .icon-fw {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=35);
   opacity: 0.35;
 }
-.neos .neos-modal {
+.neos .neos-modal, .neos .neos-modal-content {
   position: fixed;
+  top: 120px;
+  left: 50%;
   z-index: 10050;
-  margin: 0;
+  margin: 0px 0px 0px -17.5%;
   color: #fff;
   background: #222;
   border: 1px solid #3f3f3f;
   padding: 0px;
+  width: 35%;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   outline: none;
-  width: calc(100vw - 80px);
-  max-width: 640px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
-.neos .neos-modal.neos-modal-wide {
-  max-width: 960px;
+.neos .neos-modal.neos-modal-wide, .neos .neos-modal-wide.neos-modal-content {
+  width: 50%;
+  left: 42.5%;
 }
-.neos .neos-modal.neos-fade {
+.neos .neos-modal.neos-fade, .neos .neos-fade.neos-modal-content {
   -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
   -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
   -o-transition: opacity 0.3s linear, top 0.3s ease-out;
   transition: opacity 0.3s linear, top 0.3s ease-out;
   top: -25%;
 }
-.neos .neos-modal.neos-fade.neos-in {
+.neos .neos-modal.neos-fade.neos-in, .neos .neos-fade.neos-in.neos-modal-content {
   top: 10%;
 }
-.neos .neos-modal .neos-modal-header {
+.neos .neos-modal .neos-modal-header, .neos .neos-modal-content .neos-modal-header {
   padding: 0px;
   border: 0px;
 }
-.neos .neos-modal .neos-modal-header h3 {
+.neos .neos-modal .neos-modal-header h3, .neos .neos-modal-content .neos-modal-header h3 {
   margin: 0;
   line-height: 30px;
 }
-.neos .neos-modal .neos-modal-header .neos-close {
+.neos .neos-modal .neos-modal-header .neos-close, .neos .neos-modal-content .neos-modal-header .neos-close {
   margin: 0;
   color: #fff;
   font-size: 18px;
@@ -5664,13 +5753,13 @@ neos .icon-fw {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-modal-header .neos-close:before {
+.neos .neos-modal .neos-modal-header .neos-close:before, .neos .neos-modal-content .neos-modal-header .neos-close:before {
   content: "";
 }
-.neos .neos-modal .neos-modal-header .neos-close:hover {
+.neos .neos-modal .neos-modal-header .neos-close:hover, .neos .neos-modal-content .neos-modal-header .neos-close:hover {
   background: #00b5ff;
 }
-.neos .neos-modal .neos-modal-header .neos-header {
+.neos .neos-modal .neos-modal-header .neos-header, .neos .neos-modal-content .neos-modal-header .neos-header {
   font-size: 16px;
   line-height: 100%;
   margin: 16px;
@@ -5679,14 +5768,14 @@ neos .icon-fw {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-subheader {
+.neos .neos-modal .neos-subheader, .neos .neos-modal-content .neos-subheader {
   font-size: 14px;
   margin: 16px;
   line-height: 18px;
   font-weight: normal;
   color: #adadad;
 }
-.neos .neos-modal .neos-modal-footer {
+.neos .neos-modal .neos-modal-footer, .neos .neos-modal-content .neos-modal-footer {
   background: transparent;
   -webkit-box-shadow: 0px 0px 0px transparent;
   -moz-box-shadow: 0px 0px 0px transparent;
@@ -5699,17 +5788,77 @@ neos .icon-fw {
   text-align: right;
   *zoom: 1;
 }
-.neos .neos-modal .neos-modal-footer:before, .neos .neos-modal .neos-modal-footer:after {
+.neos .neos-modal .neos-modal-footer:before, .neos .neos-modal-content .neos-modal-footer:before, .neos .neos-modal .neos-modal-footer:after, .neos .neos-modal-content .neos-modal-footer:after {
   display: table;
   content: "";
   line-height: 0;
 }
-.neos .neos-modal .neos-modal-footer:after {
+.neos .neos-modal .neos-modal-footer:after, .neos .neos-modal-content .neos-modal-footer:after {
   clear: both;
 }
-.neos .neos-modal .neos-modal-footer .neos-button {
+.neos .neos-modal .neos-modal-footer .neos-button, .neos .neos-modal-content .neos-modal-footer .neos-button {
   margin-left: 8px;
   margin-bottom: 0;
+}
+.neos .neos-modal-centered {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 10050;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.neos .neos-modal-centered.neos-modal-wide {
+  width: 100%;
+  left: 0;
+}
+.neos .neos-modal-centered.neos-modal-wide .neos-modal-content {
+  max-width: 960px;
+}
+.neos .neos-modal-centered.neos-modal-fixed {
+  -webkit-box-align: flex-start;
+  -moz-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  top: 120px;
+}
+.neos .neos-modal-centered.neos-fade {
+  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
+  transition: opacity 0.3s linear, top 0.3s ease-out;
+  top: -25%;
+}
+.neos .neos-modal-centered.neos-fade.neos-in {
+  top: 0;
+}
+.neos .neos-modal-centered.neos-fade.neos-in.neos-modal-fixed {
+  top: 120px;
+}
+.neos .neos-modal-content {
+  position: static;
+  top: 0;
+  left: 0;
+  width: calc(100vw - 80px);
+  max-width: 640px;
+  margin: 0;
+  z-index: auto;
 }
 .neos .neos-modal-form {
   margin-bottom: 0;
@@ -5753,9 +5902,13 @@ neos .icon-fw {
   background-color: #000;
   white-space: normal;
   text-shadow: none;
+  word-wrap: break-word;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.neos .neos-tooltip-inner i[class^="icon-"] {
+  vertical-align: baseline;
 }
 .neos .neos-tooltip-arrow {
   position: absolute;
@@ -6815,7 +6968,7 @@ neos .icon-fw {
   .neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 0;
   }
-  .neos .neos-modal {
+  .neos .neos-modal, .neos .neos-modal-content {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -6823,10 +6976,10 @@ neos .icon-fw {
     width: auto;
     margin: 0;
   }
-  .neos .neos-modal.neos-fade {
+  .neos .neos-modal.neos-fade, .neos .neos-fade.neos-modal-content {
     top: -100px;
   }
-  .neos .neos-modal.neos-fade.neos-in {
+  .neos .neos-modal.neos-fade.neos-in, .neos .neos-fade.neos-in.neos-modal-content {
     top: 20px;
   }
 }
@@ -6855,7 +7008,7 @@ neos .icon-fw {
     padding-left: 10px;
     padding-right: 10px;
   }
-  .neos .neos-modal {
+  .neos .neos-modal, .neos .neos-modal-content {
     top: 10px;
     left: 10px;
     right: 10px;
@@ -10413,6 +10566,8 @@ neos .icon-fw {
   width: 24px;
   text-align: center;
   color: #adadad;
+  font-size: 20px;
+  line-height: 20px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions {
   display: none;
@@ -10436,6 +10591,8 @@ neos .icon-fw {
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
   width: 24px;
+  font-size: 20px;
+  line-height: 20px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
   overflow: hidden;
@@ -12124,7 +12281,7 @@ neos .icon-fw {
 .neos.neos-module .neos-footer .neos-button {
   margin-right: 8px;
 }
-.neos.neos-module .neos-footer .neos-modal .neos-button {
+.neos.neos-module .neos-footer .neos-modal .neos-button, .neos.neos-module .neos-footer .neos-modal-content .neos-button {
   margin-right: 0;
 }
 .neos.neos-module .fixedsticky-dummy {
@@ -12642,7 +12799,7 @@ neos .icon-fw {
   margin-bottom: 1px;
 }
 .neos .neos-insert-node-panel .neos-modal-body {
-  max-height: calc(100vh - 204px);
+  max-height: calc(100vh - 284px);
   overflow-y: auto;
 }
 .neos .neos-insert-node-panel .neos-modal-footer {
@@ -12697,6 +12854,9 @@ neos .icon-fw {
   line-height: 40px;
   vertical-align: middle;
   cursor: pointer;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button .neos-help-message-icon {
+  font-size: 16px;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button:focus {
   display: inline-block;
@@ -13580,24 +13740,24 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table th {
+.neos.media-browser table.neos-table.asset-list th {
   white-space: nowrap;
 }
-.neos.media-browser table.neos-table th a:hover {
+.neos.media-browser table.neos-table.asset-list th a:hover {
   color: #00b5ff;
 }
-.neos.media-browser table.neos-table th i {
+.neos.media-browser table.neos-table.asset-list th i {
   vertical-align: baseline;
 }
-.neos.media-browser table.neos-table th,
-.neos.media-browser table.neos-table td {
+.neos.media-browser table.neos-table.asset-list th,
+.neos.media-browser table.neos-table.asset-list td {
   padding: 8px;
   line-height: 24px;
 }
-.neos.media-browser table.neos-table tbody tr.asset td:first-child {
+.neos.media-browser table.neos-table.asset-list tbody tr.asset td:first-child {
   padding: 0 !important;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail {
   background-color: #141414;
   height: 40px;
   width: 40px;
@@ -13609,10 +13769,10 @@ neos .icon-fw {
   background-repeat: no-repeat;
   overflow: hidden;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail[data-content] {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail[data-content] {
   cursor: zoom-in;
 }
-.neos.media-browser table.neos-table .neos-list-thumbnail img {
+.neos.media-browser table.neos-table.asset-list .neos-list-thumbnail img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13628,15 +13788,15 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table .neos-popover {
+.neos.media-browser table.neos-table.asset-list .neos-popover {
   width: auto;
   height: auto;
   border-color: #323232;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-title {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-title {
   border-color: #323232;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-content {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-content {
   width: 250px;
   height: 250px;
   position: relative;
@@ -13647,7 +13807,7 @@ neos .icon-fw {
   overflow: hidden;
   background-color: #141414;
 }
-.neos.media-browser table.neos-table .neos-popover .neos-popover-content img {
+.neos.media-browser table.neos-table.asset-list .neos-popover .neos-popover-content img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13663,23 +13823,23 @@ neos .icon-fw {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser table.neos-table .neos-popover.neos-top .neos-arrow {
+.neos.media-browser table.neos-table.asset-list .neos-popover.neos-top .neos-arrow {
   border-top-color: #141414;
 }
-.neos.media-browser table.neos-table .neos-popover.neos-bottom .neos-arrow {
+.neos.media-browser table.neos-table.asset-list .neos-popover.neos-bottom .neos-arrow {
   border-bottom-color: #222;
 }
-.neos.media-browser table.neos-table .icon-move {
+.neos.media-browser table.neos-table.asset-list .icon-move {
   float: left;
   line-height: 40px;
   padding-left: 12px;
 }
-.neos.media-browser table.neos-table .neos-action {
+.neos.media-browser table.neos-table.asset-list .neos-action {
   width: 10%;
   font-size: 0;
   text-align: right;
 }
-.neos.media-browser table.neos-table .neos-action .neos-modal {
+.neos.media-browser table.neos-table.asset-list .neos-action .neos-modal, .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal-content {
   text-align: left;
 }
 .neos.media-browser table.neos-info-table i {
@@ -13764,6 +13924,9 @@ neos .icon-fw {
   visibility: hidden;
   position: absolute;
   left: -9999px;
+}
+.neos.media-browser .fold-toggle {
+  cursor: pointer;
 }
 .neos #neos-notification-container.neos-notification-top {
   position: fixed;
@@ -13898,7 +14061,7 @@ neos .icon-fw {
   font-weight: 400;
   font-size: 14px;
 }
-.neos .neos-login-dialog .neos-modal {
+.neos .neos-login-dialog .neos-modal, .neos .neos-login-dialog .neos-modal-content {
   width: 400px;
   top: 240px;
   margin: 0px 0px 0px -160px;

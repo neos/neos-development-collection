@@ -38,7 +38,7 @@ define(
 		_entitiesBySubject: {},
 
 		nodes: function() {
-			if (this.get('currentlyShownSecondaryAlohaTabs')) {
+			if (this.get('currentlyShownSecondaryAlohaTabs') && $('body').hasClass('neos-inline-editing-active')) {
 				// we show secondary aloha tabs currently, so we *replace* the inspector contents.
 				// we build up a custom-tailored "node type" which can be rendered using the normal
 				// Inspector UI.
@@ -86,7 +86,9 @@ define(
 				nodesWithVirtualNode.addObjects(this.get('_nodes'));
 
 				nodesWithVirtualNode.addObject(Ember.Object.create({
+					nodeLabel: 'Table',
 					nodeType: 'ALOHA-CONTROL',
+					node: nodesWithVirtualNode.get('lastObject'),
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
 					_enableTransactionalInspector: false,
 					attributes: Ember.Object.create(),

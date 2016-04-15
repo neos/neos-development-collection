@@ -658,6 +658,18 @@
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
 			<target xml:lang="la-LA">crwdns401:0crwdne401:0</target></trans-unit>
+      <trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="la-LA">crwdns718:0crwdne718:0</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="la-LA">crwdns719:0crwdne719:0</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="la-LA">crwdns720:0crwdne720:0</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="la-LA">crwdns721:0crwdne721:0</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="la-LA">crwdns402:0crwdne402:0</target></trans-unit>
@@ -886,6 +898,22 @@
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="la-LA">crwdns474:0crwdne474:0</target></trans-unit>
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="la-LA">crwdns739:0crwdne739:0</target></trans-unit>
+      <group id="media.relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="la-LA">crwdns740:0{0}crwdne740:0</target>
+        </trans-unit>
+        <trans-unit id="media.relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="la-LA">crwdns741:0{0}crwdne741:0</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="la-LA">crwdns742:0{asset}crwdne742:0</target></trans-unit>
     </body>
   </file>
 </xliff>

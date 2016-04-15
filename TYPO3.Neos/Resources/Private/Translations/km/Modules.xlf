@@ -661,6 +661,18 @@
       <trans-unit id="media.sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
 			<target xml:lang="km" state="translated">តម្រៀបតាមការកែប្រែចុងក្រោយ</target></trans-unit>
+      <trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="km" state="needs-translation">Sort by</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="km" state="needs-translation">Sort direction</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="km" state="needs-translation">Ascending</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="km" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="km" state="translated">អូសនិងទម្លាក់លើស្លាករឺការប្រមូល</target></trans-unit>
@@ -891,6 +903,22 @@
       <trans-unit id="media.creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="km" state="translated">ការបង្កេីត</target></trans-unit>
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="km" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+      <group id="media.relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="km" state="needs-translation">{0} usages</target>
+        </trans-unit>
+        <trans-unit id="media.relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="km" state="needs-translation">{0} usages</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="km" state="needs-translation">References to "{asset}"</target></trans-unit>
     </body>
   </file>
 </xliff>

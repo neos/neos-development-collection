@@ -87,6 +87,15 @@
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			<target xml:lang="pt-BR" state="needs-translation">Unhide</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="pt-BR" state="needs-translation">into</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="pt-BR" state="needs-translation">before</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="pt-BR" state="needs-translation">after</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="pt-BR" state="translated">carregando</target></trans-unit>
@@ -138,12 +147,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="pt-BR" state="translated">Não pode publicar porque o espaço de trabalho de destino é somente leitura</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="pt-BR" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target xml:lang="pt-BR" state="translated">Publicando</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="pt-BR" state="translated">Publicado</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="pt-BR" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="pt-BR" state="translated">Espaço de trabalho de destino</target></trans-unit>
@@ -246,6 +261,18 @@
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
 			<target xml:lang="pt-BR" state="needs-translation">You cannot cut this node</target></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve">
+				<source>Content Dimensions</source>
+			<target xml:lang="pt-BR" state="needs-translation">Content Dimensions</target></trans-unit>
+      <trans-unit id="site" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="pt-BR" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="pt-BR" state="translated">Documento</target></trans-unit>
+      <trans-unit id="reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="pt-BR" state="needs-translation">Reference</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -435,6 +462,9 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="pt-BR" state="translated">O determinado assunto não é um válido UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="pt-BR" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="pt-BR" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
@@ -456,6 +486,12 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="pt-BR" state="translated">Conteúdo</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="pt-BR" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="pt-BR" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pt-BR" state="translated">Deseja realmente excluir</target></trans-unit>
@@ -495,6 +531,9 @@
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			<target xml:lang="pt-BR" state="translated">Faltando propriedade necessária: </target><alt-trans><target xml:lang="pt-BR">Faltando propriedade necessária:</target></alt-trans></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="pt-BR" state="needs-translation">Workspace</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="pt-BR" state="translated">Espaços de Trabalho</target></trans-unit>

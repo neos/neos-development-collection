@@ -59,7 +59,7 @@
 	}
 
 	.neos-modal-body {
-		max-height: calc(100vh - #{$unit * 2 + 52 + 72});
+		max-height: calc(100vh - #{$unit * 2 + 52 + 72 + 80});
 		overflow-y: auto;
 	}
 
@@ -94,11 +94,14 @@
 				vertical-align: baseline;
 			}
 		}
+
 		&:focus, &:hover {
 			background-color: $blue;
+
 			button {
 				outline: none;
 			}
+
 			i {
 				color: #fff;
 			}
@@ -117,6 +120,11 @@
 			line-height: $unit;
 			vertical-align: middle;
 			cursor: pointer;
+
+			.neos-help-message-icon {
+				font-size: 16px;
+			}
+
 			&:focus {
 				display: inline-block; // so when the hover is gone, the popover doesn't disappear
 			}

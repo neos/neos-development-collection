@@ -22,6 +22,7 @@ define(
 	'create',
 	'Shared/Notification',
 	'Shared/HttpClient',
+	'Shared/HttpRestClient',
 	'Content/Components/StorageManager'
 ],
 function(
@@ -41,6 +42,7 @@ function(
 	CreateJS,
 	Notification,
 	HttpClient,
+	HttpRestClient,
 	StorageManager
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
@@ -86,20 +88,60 @@ function(
 
 		$loader: null,
 		spinner: null,
+		httpClientFailureHandling: true,
 
 		bootstrap: function() {
-			var that = this;
-			HttpClient.on('failure', function(xhr, status, message) {
-				if (status === 'abort' || xhr.status === 401) {
-					return;
-				}
-				if (xhr === undefined || xhr.status !== 404) {
-					Notification.error('Server communication ' + status + ': ' + message);
-				} else {
-					that._handlePageNotFoundError(that.getCurrentUri());
-				}
-				LoadingIndicator.done();
-			});
+			var that = this,
+				httpClientFailureHandler = function(xhr, status, statusMessage) {
+					if (that.get('httpClientFailureHandling') === false) {
+						return;
+					}
+					if (status === 'abort' || xhr.status === 401) {
+						return;
+					}
+					if (xhr === undefined || xhr.status !== 404) {
+						console.error(statusMessage, xhr);
+						var errorMessage = '',
+							errorDetails = '';
+						if (xhr.responseJSON && xhr.responseJSON.error) {
+							if (xhr.responseJSON.error.code) {
+								errorMessage += '#' + xhr.responseJSON.error.code + ': ';
+							}
+							errorMessage += xhr.responseJSON.error.message;
+							if (xhr.responseJSON.error.details) {
+								errorDetails += '<br /><br />' + xhr.responseJSON.error.details;
+							}
+							if (xhr.responseJSON.error.referenceCode) {
+								errorDetails += '<br /><br />Reference code: ' + xhr.responseJSON.error.referenceCode;
+							}
+						} else if (xhr.responseText) {
+							var $exception = $(xhr.responseText);
+							if ($exception.has('.Window_Body').length > 0) {
+								errorMessage = $exception.find('.Window_Body p:last').html();
+							} else {
+								errorMessage = $exception.find('.ExceptionSubject').text();
+								errorDetails = '<br /><br />';
+								var $lastExceptionProperty = $exception.find('.ExceptionProperty:last');
+								$exception.find('.ExceptionSubject').parent().contents().each(function() {
+									if (this == $lastExceptionProperty.get(0)) {
+										errorDetails += $(this).text();
+										return false;
+									}
+									if ($(this).is('.ExceptionSubject')) {
+										return;
+									}
+									errorDetails += $(this).is('br') ? '<br /><br />' : $(this).text();
+								});
+							}
+						}
+						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage + errorDetails);
+					} else {
+						that._handlePageNotFoundError(that.getCurrentUri());
+					}
+					LoadingIndicator.done();
+				};
+			HttpClient.on('failure', httpClientFailureHandler);
+			HttpRestClient.on('failure', httpClientFailureHandler);
 
 			this.set('vie', vie);
 			if (window.T3.isContentModule) {
@@ -178,10 +220,7 @@ function(
 		},
 
 		_initializeVie: function() {
-			var that = this,
-				schemaLoadErrorCallback = function() {
-					console.warn('Error loading schemas.', arguments);
-				};
+			var that = this;
 
 			if (this.get('_vieOptions').stanbolUrl) {
 				vie.use(new vie.StanbolService({
@@ -204,11 +243,9 @@ function(
 							vie.Util.loadSchemaOrg(vie, vieSchema, null);
 							Configuration.set('Schema', nodeTypeSchema.nodeTypes);
 							that._initializeVieAfterSchemaIsLoaded(vie);
-						},
-						schemaLoadErrorCallback
+						}
 					);
-				},
-				schemaLoadErrorCallback
+				}
 			);
 		},
 
@@ -441,10 +478,12 @@ function(
 						callback();
 					}
 				},
-				function() {
-					Notification.error('An error occurred.');
-					that.set('_isLoadingPage', false);
-					LoadingIndicator.done();
+				function(request) {
+					if (request.status !== 'abort') {
+						Notification.error('An error occurred.');
+						that.set('_isLoadingPage', false);
+						LoadingIndicator.done();
+					}
 				}
 			).fail(function(error) {
 				Notification.error('An error occurred.');

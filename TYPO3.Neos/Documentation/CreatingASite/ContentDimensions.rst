@@ -184,6 +184,20 @@ example:
 While the examples only defined constraints in the ``language`` dimension configuration, it is perfectly possible to
 additionally or exclusively define constraints in ``country`` or other dimensions.
 
+Migration of existing content
+=============================
+
+Adjusting content dimensions configuration can lead to issues for existing content. When a new content dimension is added,
+a corresponding value needs to be added to existing content, otherwise no nodes would be found.
+
+This can be done with a node migration which is included in the ``TYPO3.TYPO3CR`` package::
+
+	./flow node:migrate 20150716212459
+
+This migration adds missing content dimensions by setting the default value on all existing nodes, if not already set.
+
+Alternatively a custom node migration can be created allowing flexibility and constraints. See :ref:`node-migrations`.
+
 Routing
 =======
 

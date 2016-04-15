@@ -180,8 +180,6 @@ define(
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);
@@ -264,8 +262,6 @@ define(
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);
