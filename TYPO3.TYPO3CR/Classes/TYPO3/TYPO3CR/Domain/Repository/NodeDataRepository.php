@@ -1200,9 +1200,15 @@ class NodeDataRepository extends Repository
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException('Node workspace not found in allowed workspaces, this could result from a detached workspace entity in the context.', 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
@@ -1249,7 +1255,13 @@ class NodeDataRepository extends Repository
         foreach ($nodes as $node) {
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
 
             $uniqueNodeDataIdentity = $node->getIdentifier() . '|' . $node->getDimensionsHash();
             if (!isset($minimalPositionByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {
