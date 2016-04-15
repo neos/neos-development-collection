@@ -8462,12 +8462,12 @@
 .neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox] + span:before {
   border: 1px solid #00a338;
 }
-.neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox]:hover + span:before {
-  border: 1px solid #00a338;
-}
 .neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox]:checked + span:before {
   background-color: #00a338;
   border: 1px solid #00a338;
+}
+.neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox]:checked:hover + span:before {
+  border: 1px solid #00b5ff;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice {
   border: 2px solid #00a338;
@@ -8606,23 +8606,30 @@
   left: 0;
   width: 20px;
   height: 20px;
-  line-height: 20px;
   background-color: #3f3f3f;
   border: 1px solid #adadad;
-  color: #fff;
+  color: #5b5b5b;
   cursor: pointer;
-  content: '';
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  line-height: 20px;
+  text-align: center;
 }
 .neos #neos-inspector .neos-inspector-form .neos-checkbox input:checked + span::before,
 .neos #neos-inspector .neos-inspector-form .neos-radio input:checked + span::before {
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
   background-color: #39c6ff;
   border: 1px solid #39c6ff;
-  content: '\2713';
-  font-size: 16px;
   text-align: center;
-  font-weight: bold;
+  color: #fff;
+}
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input:checked:hover + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input:checked:hover + span::before {
+  background-color: #3f3f3f;
 }
 .neos #neos-inspector .neos-inspector-form .neos-checkbox input[type='radio'] + span::before,
 .neos #neos-inspector .neos-inspector-form .neos-radio input[type='radio'] + span::before {
@@ -8633,16 +8640,11 @@
 .neos #neos-inspector .neos-inspector-form .neos-radio input[type='radio']:checked + span::after {
   content: "";
   position: absolute;
-  width: 8px;
-  height: 8px;
-  left: 7px;
-  top: 7px;
   background: #fff;
   border-radius: 50%;
 }
-.neos #neos-inspector .neos-inspector-form .neos-checkbox input:hover + span::before, .neos #neos-inspector .neos-inspector-form .neos-checkbox input:focus + span::before,
-.neos #neos-inspector .neos-inspector-form .neos-radio input:hover + span::before,
-.neos #neos-inspector .neos-inspector-form .neos-radio input:focus + span::before {
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input:hover + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input:hover + span::before {
   border-color: #39c6ff;
 }
 .neos #neos-inspector .neos-inspector-form .neos-checkbox input[disabled] + span,
@@ -9757,25 +9759,34 @@
   left: 0;
   width: 20px;
   height: 20px;
-  line-height: 20px;
   background-color: #3f3f3f;
   border: 1px solid #adadad;
-  color: #fff;
+  color: #5b5b5b;
   cursor: pointer;
-  content: '';
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  line-height: 20px;
+  text-align: center;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:checked + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked + span::before,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:checked + span::before,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:checked + span::before {
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
   background-color: #39c6ff;
   border: 1px solid #39c6ff;
-  content: '\2713';
-  font-size: 16px;
   text-align: center;
-  font-weight: bold;
+  color: #fff;
+}
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:checked:hover + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked:hover + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:checked:hover + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:checked:hover + span::before {
+  background-color: #3f3f3f;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::before,
@@ -9790,20 +9801,13 @@
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after {
   content: "";
   position: absolute;
-  width: 8px;
-  height: 8px;
-  left: 7px;
-  top: 7px;
   background: #fff;
   border-radius: 50%;
 }
-.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:hover + span::before, .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:focus + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:hover + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:hover + span::before,
-.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:focus + span::before,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:hover + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:focus + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:hover + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:focus + span::before {
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:hover + span::before {
   border-color: #39c6ff;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[disabled] + span,
@@ -12330,23 +12334,30 @@
   left: 0;
   width: 20px;
   height: 20px;
-  line-height: 20px;
   background-color: #3f3f3f;
   border: 1px solid #adadad;
-  color: #fff;
+  color: #5b5b5b;
   cursor: pointer;
-  content: '';
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  line-height: 20px;
+  text-align: center;
 }
 .neos.neos-module .neos-checkbox input:checked + span::before,
 .neos.neos-module .neos-radio input:checked + span::before {
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
   background-color: #39c6ff;
   border: 1px solid #39c6ff;
-  content: '\2713';
-  font-size: 16px;
   text-align: center;
-  font-weight: bold;
+  color: #fff;
+}
+.neos.neos-module .neos-checkbox input:checked:hover + span::before,
+.neos.neos-module .neos-radio input:checked:hover + span::before {
+  background-color: #3f3f3f;
 }
 .neos.neos-module .neos-checkbox input[type='radio'] + span::before,
 .neos.neos-module .neos-radio input[type='radio'] + span::before {
@@ -12357,16 +12368,11 @@
 .neos.neos-module .neos-radio input[type='radio']:checked + span::after {
   content: "";
   position: absolute;
-  width: 8px;
-  height: 8px;
-  left: 7px;
-  top: 7px;
   background: #fff;
   border-radius: 50%;
 }
-.neos.neos-module .neos-checkbox input:hover + span::before, .neos.neos-module .neos-checkbox input:focus + span::before,
-.neos.neos-module .neos-radio input:hover + span::before,
-.neos.neos-module .neos-radio input:focus + span::before {
+.neos.neos-module .neos-checkbox input:hover + span::before,
+.neos.neos-module .neos-radio input:hover + span::before {
   border-color: #39c6ff;
 }
 .neos.neos-module .neos-checkbox input[disabled] + span,
