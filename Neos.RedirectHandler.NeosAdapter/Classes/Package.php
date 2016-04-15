@@ -11,7 +11,7 @@ namespace Neos\RedirectHandler\NeosAdapter;
  * source code.
  */
 
-use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectionService;
+use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectService;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -29,6 +29,6 @@ class Package extends BasePackage
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
-        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', NodeRedirectionService::class, 'createRedirectionsForPublishedNode');
+        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', NodeRedirectService::class, 'createRedirectionsForPublishedNode');
     }
 }
