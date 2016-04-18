@@ -59,6 +59,7 @@
         image:
           label: i18n
           position: 5
+          icon: 'icon-image'
   properties:
     image:
       type: TYPO3\Media\Domain\Model\ImageInterface

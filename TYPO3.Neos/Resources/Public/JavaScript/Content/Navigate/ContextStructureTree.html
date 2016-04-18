@@ -1,7 +1,7 @@
 <div class="neos-node-tree-toolbar neos-context-structure-toolbar">
 	<div title="{{translate id='structure.toggle' fallback='Toggle context structure'}}" {{bindAttr class=":neos-context-structure-collapse contextStructureMode:collapsed:open"}} {{action "toggleContextStructureMode"}} data-neos-tooltip data-placement="top"></div>
 	{{#if view.isExpanded}}
-		{{translate id="structure.label" fallback="Structure"}}
+		<i class="icon-sitemap"></i> {{translate id="structure.label" fallback="Structure"}}
 	{{else}}
 		<div class="neos-node-tree-toolbar-top">
 			<button class="neos-button neos-node-tree-refresh" title="{{translate id='refresh' fallback='Refresh'}}" {{action "refresh" target="view"}} data-neos-tooltip data-placement="top">

@@ -11,6 +11,10 @@
 	border-top: 1px solid $grayLight;
 	margin-top: -1px;
 	text-indent: $defaultMargin;
+
+	i {
+		text-indent: 0;
+	}
 }
 
 #neos-context-structure-tree-container {
