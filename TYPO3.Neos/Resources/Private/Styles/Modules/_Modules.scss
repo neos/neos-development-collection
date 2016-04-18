@@ -237,35 +237,33 @@
 		&:focus {
 			outline: none;
 
-			&:before,
 			&:after {
 				color: $textOnWhite;
 			}
 		}
 
-		&:before,
+		&:before {
+			display: block;
+			content: '';
+			position: absolute;
+			width: 1px;
+			height: $relatedMargin * 3;
+			top: $relatedMargin;
+			right: $unit + 1;
+			background-color: #fff;
+			opacity: .15;
+		}
+
 		&:after {
+			@include fa-icon();
+			content: $fa-var-caret-down;
 			display: block;
 			position: absolute;
-			right: 0px;
-			top: 0px;
-			font-family: Arial;
-			font-size: 17px;
+			right: 0;
+			top: 0;
 			width: 40px;
 			line-height: $unit;
-			content: "▾";
 			text-align: center;
-		}
-
-		&:before {
-			top: -4px;
-			@include rotate(180deg);
-		}
-
-		&:after {
-			top: 0px;
-			padding-top: 4px;
-			border-left: 1px solid $grayMedium;
 		}
 
 		select {

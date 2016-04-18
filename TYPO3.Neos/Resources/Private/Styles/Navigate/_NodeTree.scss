@@ -59,10 +59,6 @@
 	.chosen-container {
 		.chosen-single {
 			background-color: $grayDark;
-
-			& > div {
-				border-left: 1px solid $grayLight;
-			}
 		}
 
 		.chosen-drop {
