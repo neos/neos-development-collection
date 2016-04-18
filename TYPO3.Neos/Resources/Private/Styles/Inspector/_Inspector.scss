@@ -134,7 +134,6 @@
 		#neos-content-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
 			margin-right: -$relatedMargin;
-			cursor: pointer;
 			@include user-select(none);
 			position: relative;
 
@@ -157,7 +156,6 @@
 				span {
 					display: block;
 					margin-right: $unit;
-					border-right: 1px solid $grayDark;
 					line-height: $unit;
 					height: $unit;
 					overflow: hidden;
@@ -165,25 +163,39 @@
 					white-space: nowrap;
 					padding: 0 $defaultMargin;
 				}
+			}
 
-				&:before,
-				&:after {
-					display: block;
-					position: absolute;
-					right: 15px;
-					font-family: Arial;
-					font-size: 17px;
-					line-height: $unit;
-					content: "▾";
-				}
+			&.neos-breadcrumb-multiple {
+				cursor: pointer;
 
-				&:before {
-					top: -4px;
-					@include rotate(180deg);
-				}
+				div {
+					span {
+						margin-right: $unit;
+					}
 
-				&:after {
-					top: 4px;
+					&:before {
+						display: block;
+						content: '';
+						position: absolute;
+						width: 1px;
+						height: $relatedMargin * 3;
+						top: $relatedMargin;
+						right: $unit + 1;
+						background-color: #fff;
+						opacity: .15;
+					}
+
+					&:after {
+						@include fa-icon();
+						content: $fa-var-caret-down;
+						display: block;
+						position: absolute;
+						width: $unit;
+						text-align: center;
+						line-height: $unit;
+						top: 0;
+						right: 0;
+					}
 				}
 			}
 
@@ -309,6 +321,10 @@
 
 		.neos-inspector-field {
 			padding: 0 $defaultMargin;
+
+			label {
+				cursor: default;
+			}
 
 			& > div {
 				padding-bottom: $defaultMargin;
