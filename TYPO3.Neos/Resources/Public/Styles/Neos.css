@@ -11676,6 +11676,9 @@
 .neos.neos-module.neos-module-administration-sites .fold-toggle {
   cursor: pointer;
 }
+.neos.neos-module.neos-module-administration-sites .neos-control-label + .neos-control-label {
+  margin-left: 2px;
+}
 .neos.neos-module.neos-module-management-history .neos-history-events-divider {
   margin: 0;
   padding: 0;
