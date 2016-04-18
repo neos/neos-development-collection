@@ -144,6 +144,26 @@ define([
 		},
 
 		/**
+		 * Set attributes on the underlying VIE entity
+		 *
+		 * @param {object} attributes
+		 * @param {object} options
+		 * @return {void}
+		 */
+		setAttributes: function(attributes, options) {
+			var prefixedAttributes = {};
+			_.each(attributes, function(value, key) {
+				var prefixedAttributeName = 'typo3:' + key;
+				prefixedAttributes[prefixedAttributeName] = value;
+				this.propertyWillChange(prefixedAttributeName);
+			}, this);
+			this.get('_vieEntity').set(prefixedAttributes, options);
+			_.each(prefixedAttributes, function(value, key) {
+				this.propertyDidChange(key);
+			}, this);
+		},
+
+		/**
 		 * Get an attribute on the underlying VIE entity
 		 *
 		 * @param {string} key
