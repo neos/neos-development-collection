@@ -3351,14 +3351,21 @@
   clip: auto;
 }
 
-.neos [class^="icon-"].icon-review {
+.neos [class^="icon-"],
+.neos [class*=" icon-"] {
+  vertical-align: baseline;
+}
+.neos [class^="icon-"].icon-review,
+.neos [class*=" icon-"].icon-review {
   position: relative;
   padding-right: 4px;
 }
-.neos [class^="icon-"].icon-review:before {
+.neos [class^="icon-"].icon-review:before,
+.neos [class*=" icon-"].icon-review:before {
   content: "";
 }
-.neos [class^="icon-"].icon-review:after {
+.neos [class^="icon-"].icon-review:after,
+.neos [class*=" icon-"].icon-review:after {
   content: "";
   text-decoration: inherit;
   display: inline-block;
@@ -5446,10 +5453,6 @@
 .neos .neos-button.neos-button-danger:focus {
   outline: 1px dotted #fff;
 }
-.neos button i,
-.neos .neos-button i {
-  margin-top: 3px;
-}
 .neos a.neos-button {
   color: #fff;
 }
@@ -5896,9 +5899,6 @@
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-}
-.neos .neos-tooltip-inner i[class^="icon-"] {
-  vertical-align: baseline;
 }
 .neos .neos-tooltip-arrow {
   position: absolute;
@@ -7391,7 +7391,7 @@
   height: 14px;
   line-height: 14px;
   font-size: 14px;
-  vertical-align: text-top;
+  vertical-align: baseline;
   *margin-right: .3em;
   margin: 1px 0 0 0;
   background-image: none;
@@ -8176,7 +8176,6 @@
   display: block;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb i {
-  margin-top: 3px;
   margin-right: 5px;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div {

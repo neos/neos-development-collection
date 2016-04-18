@@ -3351,24 +3351,21 @@
   clip: auto;
 }
 
-@font-face {
-  font-family: 'neos-language';
-  src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggi/LYAAAC8AAAAYGNtYXAaVcxXAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zr9/DIIAAAFwAAABfGhlYWT/r6QdAAAC7AAAADZoaGVhA8QB5gAAAyQAAAAkaG10eAMAAB4AAANIAAAAFGxvY2EAKADSAAADXAAAAAxtYXhwAAoAfAAAA2gAAAAgbmFtZXu8lvUAAAOIAAABHnBvc3QAAwAAAAAEqAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADmAAHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIOYA//3//wAAAAAAIOYA//3//wAB/+MaBAADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAABAAe//sB4gHFAFMAVwBwAHkAABMOAwcnPgM3LgMnMx4DFz4DNyM1MzUzFTMVIw4DBx4DFz4DOwE+ATQ2NTQuAiMiDgIVFB4CMzoCNjM1LgMnFwczJzcjIg4CHQEUHgI7ATI+Aj0BNC4CIwcnIwcjNzMXI7AHERMVDQcLExEPBgcMCgYCFgIFCAoGCg4JBAGBThZOHAEEChANAQMDAwIBBAUFA2IBAQEXKDUeHjUoFxcoNR4DBQYFAwMGBQYCrBw3G3HkBAgFBAQFCATkBAgFBAQFCAQ9EkUSFj8YQBgBCAYLCwsFEwUJCgoFCBAPDQcFCwsMBgsUEw8FFRkZFQYSFhkNAQICAwECBAICAwcHCAMeNSgXFyg1Hh41KBYBVQIEBAQCRkxMRgMFCATkBQcGAwMGBwXkBAgFA9UxMaKiAAABAAAAAQAAdXvwoV8PPPUACwIAAAAAAM9XMbAAAAAAz1cxsAAA//sB4gHFAAAACAACAAAAAAAAAAEAAAHg/+AAAAIAAAAAAAHiAAEAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAQAAAAIAAB4AAAAAAAoAFAAeAL4AAQAAAAUAegAEAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA4ArgABAAAAAAABAAgAAAABAAAAAAACAA4AMgABAAAAAAADAAgAHgABAAAAAAAEAAgAQAABAAAAAAAFABYACAABAAAAAAAGAAQAJgABAAAAAAAKACgASAADAAEECQABAAgAAAADAAEECQACAA4AMgADAAEECQADAAgAHgADAAEECQAEAAgAQAADAAEECQAFABYACAADAAEECQAGAAgAKgADAAEECQAKACgASABuAGUAbwBzAFYAZQByAHMAaQBvAG4AIAAxAC4AMABuAGUAbwBzbmVvcwBuAGUAbwBzAFIAZQBnAHUAbABhAHIAbgBlAG8AcwBHAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format("truetype"), url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAATEAAoAAAAABHwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAWIAAAFi8ShyJk9TLzIAAAJYAAAAYAAAAGAIIvy2Y21hcAAAArgAAABMAAAATBpVzFdnYXNwAAADBAAAAAgAAAAIAAAAEGhlYWQAAAMMAAAANgAAADb/r6QdaGhlYQAAA0QAAAAkAAAAJAPEAeZobXR4AAADaAAAABQAAAAUAwAAHm1heHAAAAN8AAAABgAAAAYABVAAbmFtZQAAA4QAAAEeAAABHnu8lvVwb3N0AAAEpAAAACAAAAAgAAMAAAEABAQAAQEBBW5lb3MAAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAABtDx0AAAByER0AAAAJHQAAAVkSAAYBAQUJCw0QFW5lb3NuZW9zdTB1MXUyMHVFNjAwAAACAYkAAwAFAQEEBwoN3/yUDvyUDvyUDvuUDvdE95wVeHxye2p+CISeBaiXoZicmXeggKCFnAihiwWQfpV7m3unp5OnjZkI+xWLi6DZi4ukoYuLctmLi3ZviwWJe4NpaWmPiI+Ij4iPkZGPk4sI7YsFjZSMlIuVi9xKzDqLO4tJSos6izvNStuLk4uSi5KMCIvgBYOQg5GFkAj3QEUVbz/Ci3DXBfcF0RX7eIsFgIuBgouACIv7eAWLf5WClosI93iLBZaLlZSLlwiL93gFi5aBlICLCE77aRV5vEaLeVp1i8r3NqOLy/s2c4sFDviUFPiUFYsMCgAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA5gAB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDmAP/9//8AAAAAACDmAP/9//8AAf/jGgQAAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAABTxcwFXw889QALAgAAAAAAz1cxsAAAAADPVzGwAAD/+wHiAcUAAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAAeIAAQAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAABAAAAAgAAHgAAUAAABQAAAAAADgCuAAEAAAAAAAEACAAAAAEAAAAAAAIADgAyAAEAAAAAAAMACAAeAAEAAAAAAAQACABAAAEAAAAAAAUAFgAIAAEAAAAAAAYABAAmAAEAAAAAAAoAKABIAAMAAQQJAAEACAAAAAMAAQQJAAIADgAyAAMAAQQJAAMACAAeAAMAAQQJAAQACABAAAMAAQQJAAUAFgAIAAMAAQQJAAYACAAqAAMAAQQJAAoAKABIAG4AZQBvAHMAVgBlAHIAcwBpAG8AbgAgADEALgAwAG4AZQBvAHNuZW9zAG4AZQBvAHMAUgBlAGcAdQBsAGEAcgBuAGUAbwBzAEcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format("woff");
-  font-weight: normal;
-  font-style: normal;
+.neos [class^="icon-"],
+.neos [class*=" icon-"] {
+  vertical-align: baseline;
 }
-.neos [class^="icon-"].icon-language:before {
-  font-family: 'neos-language';
-  content: "\e600";
-}
-.neos [class^="icon-"].icon-review {
+.neos [class^="icon-"].icon-review,
+.neos [class*=" icon-"].icon-review {
   position: relative;
   padding-right: 4px;
 }
-.neos [class^="icon-"].icon-review:before {
+.neos [class^="icon-"].icon-review:before,
+.neos [class*=" icon-"].icon-review:before {
   content: "";
 }
-.neos [class^="icon-"].icon-review:after {
+.neos [class^="icon-"].icon-review:after,
+.neos [class*=" icon-"].icon-review:after {
   content: "";
   text-decoration: inherit;
   display: inline-block;
@@ -5456,10 +5453,6 @@
 .neos .neos-button.neos-button-danger:focus {
   outline: 1px dotted #fff;
 }
-.neos button i,
-.neos .neos-button i {
-  margin-top: 3px;
-}
 .neos a.neos-button {
   color: #fff;
 }
@@ -5906,9 +5899,6 @@
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-}
-.neos .neos-tooltip-inner i[class^="icon-"] {
-  vertical-align: baseline;
 }
 .neos .neos-tooltip-arrow {
   position: absolute;
@@ -7401,7 +7391,7 @@
   height: 14px;
   line-height: 14px;
   font-size: 14px;
-  vertical-align: text-top;
+  vertical-align: baseline;
   *margin-right: .3em;
   margin: 1px 0 0 0;
   background-image: none;
@@ -8186,7 +8176,6 @@
   display: block;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb i {
-  margin-top: 3px;
   margin-right: 5px;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div {
@@ -10546,8 +10535,8 @@
   width: 24px;
   text-align: center;
   color: #adadad;
-  font-size: 20px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 16px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions {
   display: none;
@@ -10571,8 +10560,8 @@
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
   width: 24px;
-  font-size: 20px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 16px;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
   overflow: hidden;
@@ -11248,6 +11237,9 @@
   border-top: 1px solid #3f3f3f;
   margin-top: -1px;
   text-indent: 16px;
+}
+.neos #neos-navigate-panel .neos-node-tree-toolbar.neos-context-structure-toolbar i {
+  text-indent: 0;
 }
 .neos #neos-navigate-panel #neos-context-structure-tree-container {
   position: relative;
