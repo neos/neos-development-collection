@@ -273,6 +273,18 @@
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="la-LA">crwdns738:0crwdne738:0</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve">
+				<source>Host</source>
+			<target xml:lang="la-LA">crwdns744:0crwdne744:0</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve">
+				<source>Scheme</source>
+			<target xml:lang="la-LA">crwdns745:0crwdne745:0</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve">
+				<source>Port</source>
+			<target xml:lang="la-LA">crwdns746:0crwdne746:0</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve">
+				<source>Primary</source>
+			<target xml:lang="la-LA">crwdns747:0crwdne747:0</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>

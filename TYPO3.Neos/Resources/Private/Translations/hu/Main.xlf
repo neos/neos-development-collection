@@ -273,6 +273,18 @@
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="hu" state="needs-translation">Reference</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve">
+				<source>Host</source>
+			<target xml:lang="hu" state="needs-translation">Host</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve">
+				<source>Scheme</source>
+			<target xml:lang="hu" state="needs-translation">Scheme</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve">
+				<source>Port</source>
+			<target xml:lang="hu" state="needs-translation">Port</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve">
+				<source>Primary</source>
+			<target xml:lang="hu" state="needs-translation">Primary</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
