@@ -127,11 +127,15 @@
 
 -
   name: 'Backend switch site'
-  uriPattern: 'switch/to/{hostname}'
+  uriPattern: 'switch/to/{site}'
   defaults:
     '@package': 'TYPO3.Neos'
     '@controller': 'Backend\Backend'
     '@action': 'switchSite'
+  routeParts:
+    site:
+      objectType: 'TYPO3\Neos\Domain\Model\Site'
+      uriPattern: '{name}'
 
 -
   name: 'Backend UI XLIFF labels'

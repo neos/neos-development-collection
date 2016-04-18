@@ -26,7 +26,7 @@
 						</div>
 					</div>
 					<div class="neos-control-group">
-						<label class="neos-control-label" for="node-name">{neos:backend.translate(id: 'state', value: 'Default asset collection')}</label>
+						<label class="neos-control-label" for="asset-collection">{neos:backend.translate(id: 'state', value: 'Default asset collection')}</label>
 						<div class="neos-controls">
 							<f:form.select property="assetCollection" id="asset-collection" options="{assetCollections}" optionLabelField="title" prependOptionLabel="None" prependOptionValue="" class="neos-span12" />
 						</div>
@@ -49,15 +49,23 @@
 						<thead>
 							<tr>
 								<th>{neos:backend.translate(id: 'domain', value: 'Domain')}</th>
+								<th class="neos-aCenter">{neos:backend.translate(id: 'primary')}</th>
 							</tr>
 						</thead>
 						<tbody>
 						<f:for each="{domains}" as="domain" key="number">
 							<tr>
 								<td>
-									{domain.hostPattern}
+									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostPattern}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
 									<f:if condition="{domain.active} == 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
+									</f:if>
+								</td>
+								<td class="neos-aCenter check">
+									<f:if condition="{domain.active}">
+										<label class="neos-radio">
+											<f:form.radio property="primaryDomain" value="{domain}" checked="{f:if(condition: '{site.primaryDomain} == {domain}', then: 'checked')}" /><span></span>
+										</label>
 									</f:if>
 								</td>
 								<td class="neos-action aRight">
@@ -85,7 +93,7 @@
 												<div class="neos-modal-content">
 													<div class="neos-modal-header">
 														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-														<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain.hostPattern}, value: 'Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.')}</div>
+														<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain}, value: 'Do you really want to delete "{domain}"? This action cannot be undone.')}</div>
 													</div>
 													<div class="neos-modal-footer">
 														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>

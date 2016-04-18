@@ -64,8 +64,10 @@ class MenuHelper
             $active = false;
             /** @var $site \TYPO3\Neos\Domain\Model\Site */
             if ($site->hasActiveDomains()) {
-                $hostname = $site->getFirstActiveDomain()->getHostPattern();
-                $active = $hostname === $requestUriHost;
+                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                    return $domain->getHostPattern();
+                })->toArray();
+                $active = in_array($requestUriHost, $activeHostPatterns, true);
                 if ($active) {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
@@ -74,7 +76,7 @@ class MenuHelper
                 } else {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
-                        ->uriFor('switchSite', array('hostname' => $hostname), 'Backend\Backend', 'TYPO3.Neos');
+                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'TYPO3.Neos');
                 }
                 $domainsFound = true;
             }

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Model;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetCollection;
@@ -55,11 +56,18 @@ class Site
     protected $nodeName;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain>
+     * @var Collection<Domain>
      * @ORM\OneToMany(mappedBy="site")
      * @Flow\Lazy
      */
     protected $domains;
+
+    /**
+     * @var Domain
+     * @ORM\ManyToOne
+     * @ORM\Column(nullable=true)
+     */
+    protected $primaryDomain;
 
     /**
      * The site's state
@@ -218,10 +226,13 @@ class Site
     public function setDomains($domains)
     {
         $this->domains = $domains;
+        if (!$this->domains->contains($this->primaryDomain)) {
+            $this->primaryDomain = $this->getFirstActiveDomain();
+        }
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain>
+     * @return Collection<\TYPO3\Neos\Domain\Model\Domain>
      */
     public function getDomains()
     {
@@ -233,16 +244,56 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function ($index, $domain) { return $domain->getActive(); });
+        return $this->domains->exists(function ($index, $domain) {
+            return $domain->getActive();
+        });
     }
 
     /**
-     * @return \TYPO3\Neos\Domain\Model\Domain
+     * @return Collection
+     */
+    public function getActiveDomains()
+    {
+        $activeDomains = $this->domains->filter(function ($domain) {
+            return $domain->getActive();
+        });
+        return $activeDomains;
+    }
+
+    /**
+     * @return \TYPO3\Neos\Domain\Model\Domain|null
      */
     public function getFirstActiveDomain()
     {
-        $activeDomains = $this->domains->filter(function ($domain) { return $domain->getActive(); });
-        return $activeDomains->first();
+        $activeDomains = $this->getActiveDomains();
+        return count($activeDomains) > 0 ? $this->getActiveDomains()->first() : null;
+    }
+
+    /**
+     * Sets (and adds if necessary) the primary domain of this site.
+     *
+     * @param Domain $domain The domain
+     * @return void
+     */
+    public function setPrimaryDomain(Domain $domain)
+    {
+        if (!$domain->getActive()) {
+            return;
+        }
+        $this->primaryDomain = $domain;
+        if (!$this->domains->contains($domain)) {
+            $this->domains->add($domain);
+        }
+    }
+
+    /**
+     * Returns the primary domain, if one has been defined.
+     *
+     * @return Domain The primary domain or NULL
+     */
+    public function getPrimaryDomain()
+    {
+        return isset($this->primaryDomain) && $this->primaryDomain->getActive() ? $this->primaryDomain : $this->getFirstActiveDomain();
     }
 
     /**

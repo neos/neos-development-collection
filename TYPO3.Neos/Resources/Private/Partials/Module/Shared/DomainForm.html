@@ -1,14 +1,55 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<div class="neos-row-fluid neos-module-container">
-	<fieldset class="neos-span5">
+<div class="neos-row neos-module-container">
+	<fieldset class="neos-span12">
 		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
 		<legend>{neos:backend.translate(id: 'domainform.domainData', value: 'Domain data')}</legend>
 
-		<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostPattern', then: ' neos-error')}">
-			<label class="neos-control-label" for="host-pattern">{neos:backend.translate(id: 'hostPattern', value: 'Host pattern')}</label>
-			<div class="neos-controls">
-				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" class="neos-span12" placeholder="{neos:backend.translate(id: 'domainform.hostPatternPlaceholder', value: 'e.g. www.neos.io')}" />
-				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostPattern'}"/>
+		<div class="neos-row">
+			<div class="neos-span2">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.scheme', then: ' neos-error')}">
+					<label class="neos-control-label" for="scheme">{neos:backend.translate(id: 'scheme', value: 'Scheme')}</label>
+					<div class="neos-controls">
+						<f:form.select property="scheme" value="{domain.scheme}" id="scheme" options="{schemes}" class="neos-span2" />
+						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.scheme'}"/>
+					</div>
+				</div>
+			</div>
+			<div class="neos-span6">
+				<f:validation.results for="domain">
+					<f:if condition="{validationResults.errors}">
+						<f:then>
+							<div class="neos-control-group neos-error">
+								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
+								<div class="neos-controls">
+									<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<ul class="errors">
+										<f:for each="{validationResults.errors}" as="error">
+											<li><span class="neos-help-block">{error}</span></li>
+										</f:for>
+									</ul>
+								</div>
+							</div>
+						</f:then>
+						<f:else>
+							<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostPattern', then: ' neos-error')}">
+								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
+								<div class="neos-controls">
+									<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostPattern'}"/>
+								</div>
+							</div>
+						</f:else>
+					</f:if>
+				</f:validation.results>
+			</div>
+			<div class="neos-span4">
+				<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.port', then: ' neos-error')}">
+					<label class="neos-control-label" for="port">{neos:backend.translate(id: 'port', value: 'Port')}</label>
+					<div class="neos-controls">
+						<f:form.textfield property="port" value="{domain.port}" id="port" class="neos-span2" placeholder="{neos:backend.translate(id: 'domainform.portPlaceholder', value: '0-49151')}" />
+						<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.port'}"/>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="neos-control-group">
