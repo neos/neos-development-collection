@@ -4219,19 +4219,19 @@
 .neos .neos-control-group.neos-warning .neos-control-label,
 .neos .neos-control-group.neos-warning .neos-help-block,
 .neos .neos-control-group.neos-warning .neos-help-inline {
-  color: #c09853;
+  color: #ff8700;
 }
 .neos .neos-control-group.neos-warning .neos-checkbox,
 .neos .neos-control-group.neos-warning .neos-radio,
 .neos .neos-control-group.neos-warning input,
 .neos .neos-control-group.neos-warning select,
 .neos .neos-control-group.neos-warning textarea {
-  color: #c09853;
+  color: #ff8700;
 }
 .neos .neos-control-group.neos-warning input,
 .neos .neos-control-group.neos-warning select,
 .neos .neos-control-group.neos-warning textarea {
-  border-color: #c09853;
+  border-color: #ff8700;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -4239,33 +4239,33 @@
 .neos .neos-control-group.neos-warning input:focus,
 .neos .neos-control-group.neos-warning select:focus,
 .neos .neos-control-group.neos-warning textarea:focus {
-  border-color: #a47e3c;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #dbc59e;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #dbc59e;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #dbc59e;
+  border-color: #cc6c00;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ffb766;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ffb766;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ffb766;
 }
 .neos .neos-control-group.neos-warning .neos-input-prepend .neos-add-on,
 .neos .neos-control-group.neos-warning .neos-input-append .neos-add-on {
-  color: #c09853;
+  color: #ff8700;
   background-color: #fcf8e3;
-  border-color: #c09853;
+  border-color: #ff8700;
 }
 .neos .neos-control-group.neos-error .neos-control-label,
 .neos .neos-control-group.neos-error .neos-help-block,
 .neos .neos-control-group.neos-error .neos-help-inline {
-  color: #b94a48;
+  color: #ff460d;
 }
 .neos .neos-control-group.neos-error .neos-checkbox,
 .neos .neos-control-group.neos-error .neos-radio,
 .neos .neos-control-group.neos-error input,
 .neos .neos-control-group.neos-error select,
 .neos .neos-control-group.neos-error textarea {
-  color: #b94a48;
+  color: #ff460d;
 }
 .neos .neos-control-group.neos-error input,
 .neos .neos-control-group.neos-error select,
 .neos .neos-control-group.neos-error textarea {
-  border-color: #b94a48;
+  border-color: #ff460d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -4273,33 +4273,33 @@
 .neos .neos-control-group.neos-error input:focus,
 .neos .neos-control-group.neos-error select:focus,
 .neos .neos-control-group.neos-error textarea:focus {
-  border-color: #953b39;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+  border-color: #d93300;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ff9473;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ff9473;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ff9473;
 }
 .neos .neos-control-group.neos-error .neos-input-prepend .neos-add-on,
 .neos .neos-control-group.neos-error .neos-input-append .neos-add-on {
-  color: #b94a48;
+  color: #ff460d;
   background-color: #f2dede;
-  border-color: #b94a48;
+  border-color: #ff460d;
 }
 .neos .neos-control-group.neos-success .neos-control-label,
 .neos .neos-control-group.neos-success .neos-help-block,
 .neos .neos-control-group.neos-success .neos-help-inline {
-  color: #468847;
+  color: #00a338;
 }
 .neos .neos-control-group.neos-success .neos-checkbox,
 .neos .neos-control-group.neos-success .neos-radio,
 .neos .neos-control-group.neos-success input,
 .neos .neos-control-group.neos-success select,
 .neos .neos-control-group.neos-success textarea {
-  color: #468847;
+  color: #00a338;
 }
 .neos .neos-control-group.neos-success input,
 .neos .neos-control-group.neos-success select,
 .neos .neos-control-group.neos-success textarea {
-  border-color: #468847;
+  border-color: #00a338;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -4307,33 +4307,33 @@
 .neos .neos-control-group.neos-success input:focus,
 .neos .neos-control-group.neos-success select:focus,
 .neos .neos-control-group.neos-success textarea:focus {
-  border-color: #356635;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+  border-color: #007026;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #0aff5e;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #0aff5e;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #0aff5e;
 }
 .neos .neos-control-group.neos-success .neos-input-prepend .neos-add-on,
 .neos .neos-control-group.neos-success .neos-input-append .neos-add-on {
-  color: #468847;
+  color: #00a338;
   background-color: #dff0d8;
-  border-color: #468847;
+  border-color: #00a338;
 }
 .neos .neos-control-group.neos-info .neos-control-label,
 .neos .neos-control-group.neos-info .neos-help-block,
 .neos .neos-control-group.neos-info .neos-help-inline {
-  color: #3a87ad;
+  color: #00b5ff;
 }
 .neos .neos-control-group.neos-info .neos-checkbox,
 .neos .neos-control-group.neos-info .neos-radio,
 .neos .neos-control-group.neos-info input,
 .neos .neos-control-group.neos-info select,
 .neos .neos-control-group.neos-info textarea {
-  color: #3a87ad;
+  color: #00b5ff;
 }
 .neos .neos-control-group.neos-info input,
 .neos .neos-control-group.neos-info select,
 .neos .neos-control-group.neos-info textarea {
-  border-color: #3a87ad;
+  border-color: #00b5ff;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -4341,16 +4341,16 @@
 .neos .neos-control-group.neos-info input:focus,
 .neos .neos-control-group.neos-info select:focus,
 .neos .neos-control-group.neos-info textarea:focus {
-  border-color: #2d6987;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+  border-color: #0091cc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #66d3ff;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #66d3ff;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #66d3ff;
 }
 .neos .neos-control-group.neos-info .neos-input-prepend .neos-add-on,
 .neos .neos-control-group.neos-info .neos-input-append .neos-add-on {
-  color: #3a87ad;
+  color: #00b5ff;
   background-color: #d9edf7;
-  border-color: #3a87ad;
+  border-color: #00b5ff;
 }
 .neos input:focus:invalid,
 .neos textarea:focus:invalid,

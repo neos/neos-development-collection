@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * The Neos Backend controller
@@ -34,6 +35,12 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var \TYPO3\Neos\Service\XliffService
      */
     protected $xliffService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\LinkingService
+     */
+    protected $linkingService;
 
     /**
      * @Flow\Inject
@@ -62,30 +69,21 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
-     * Redirects to the Neos backend on the given hostname, passing a one-time login token
+     * Redirects to the Neos backend on the given site, passing a one-time login token
      *
-     * @param string $hostname
+     * @param Site $site
      * @return void
      */
-    public function switchSiteAction($hostname)
+    public function switchSiteAction($site)
     {
         $token = Algorithms::generateRandomToken(32);
         $this->loginTokenCache->set($token, $this->currentSession->getId());
+        $siteUri = $this->linkingService->createSiteUri($this->controllerContext, $site);
 
-        $requestUri = $this->controllerContext->getRequest()->getHttpRequest()->getUri();
-        $baseUri = $this->controllerContext->getRequest()->getHttpRequest()->getBaseUri();
-
-        $uri = $this->controllerContext->getUriBuilder()
+        $loginUri = $this->controllerContext->getUriBuilder()
             ->reset()
             ->uriFor('tokenLogin', ['token' => $token], 'Login', 'TYPO3.Neos');
-        $uri = sprintf('%s://%s%s%s',
-            $requestUri->getScheme(),
-            $hostname,
-            rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
-            $uri
-        );
-
-        $this->redirectToUri($uri);
+        $this->redirectToUri($siteUri . $loginUri);
     }
 
     /**
