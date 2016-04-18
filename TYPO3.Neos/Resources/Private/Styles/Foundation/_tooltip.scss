@@ -31,10 +31,6 @@
   text-shadow: none;
   word-wrap: break-word;
   @include border-radius($baseBorderRadius);
-
-  i[class^="icon-"] {
-    vertical-align: baseline;
-  }
 }
 
 // Arrows

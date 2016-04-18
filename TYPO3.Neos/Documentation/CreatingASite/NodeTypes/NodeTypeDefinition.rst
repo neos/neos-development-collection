@@ -182,6 +182,9 @@ The following options are allowed:
       ``position``
         Position of the inspector group, small numbers are sorted on top
 
+      ``icon``
+        This setting define the icon to use in the Neos UI for the group
+
       ``tab``
         The tab the group belongs to. If left empty the group is added to the ``default`` tab.
 
@@ -323,6 +326,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      groups:
 	        image:
 	          label: 'Image'
+	          icon: 'icon-image'
 	          position: 5
 	  properties:
 	    image:

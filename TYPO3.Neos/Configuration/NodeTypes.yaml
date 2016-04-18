@@ -17,9 +17,11 @@
         type:
           label: i18n
           tab: 'meta'
+          icon: 'icon-exchange'
           position: 990
         nodeInfo:
           label: i18n
+          icon: 'icon-info'
           tab: 'meta'
           position: 1000
           collapsed: true
@@ -62,6 +64,7 @@
       groups:
         visibility:
           label: 'TYPO3.Neos:Inspector:groups.visibility'
+          icon: 'icon-eye'
           position: 100
           tab: meta
   properties:
@@ -81,6 +84,7 @@
       groups:
         visibility:
           label: 'TYPO3.Neos:Inspector:groups.visibility'
+          icon: 'icon-eye'
           position: 100
           tab: meta
   properties:
@@ -131,6 +135,7 @@
         document:
           label: i18n
           position: 10
+          icon: 'icon-file'
   properties:
     _nodeType:
       ui:
@@ -236,6 +241,7 @@
       groups:
         pluginSettings:
           label: i18n
+          icon: 'icon-sliders'
   postprocessors:
     'PluginPostprocessor':
       postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
@@ -253,6 +259,7 @@
         pluginViews:
           label: i18n
           position: 100
+          icon: 'icon-puzzle-piece'
   properties:
     plugin:
       type: string
@@ -284,7 +291,7 @@
       '*': FALSE
   ui:
     label: i18n
-    icon: 'icon-unchecked'
+    icon: 'icon-square-o'
     group: 'general'
     search:
       searchCategory: 'Content'
