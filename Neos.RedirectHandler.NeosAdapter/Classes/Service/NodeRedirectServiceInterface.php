@@ -28,5 +28,5 @@ interface NodeRedirectServiceInterface
      * @return void
      * @throws Exception
      */
-    public function createRedirectionsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace);
+    public function createRedirectsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace);
 }

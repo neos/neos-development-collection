@@ -29,6 +29,6 @@ class Package extends BasePackage
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
-        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', NodeRedirectService::class, 'createRedirectionsForPublishedNode');
+        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', NodeRedirectService::class, 'createRedirectsForPublishedNode');
     }
 }
