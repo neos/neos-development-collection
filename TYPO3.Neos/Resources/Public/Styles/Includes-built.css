@@ -8175,7 +8175,6 @@
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb {
   max-width: 288px;
   margin-right: -8px;
-  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -8198,7 +8197,6 @@
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div span {
   display: block;
   margin-right: 40px;
-  border-right: 1px solid #222;
   line-height: 40px;
   height: 40px;
   overflow: hidden;
@@ -8206,25 +8204,38 @@
   white-space: nowrap;
   padding: 0 16px;
 }
-.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:before, .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:after {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple {
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div span {
+  margin-right: 40px;
+}
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:before {
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  right: 41px;
+  background-color: #fff;
+  opacity: .15;
+}
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
   display: block;
   position: absolute;
-  right: 15px;
-  font-family: Arial;
-  font-size: 17px;
+  width: 40px;
+  text-align: center;
   line-height: 40px;
-  content: "▾";
-}
-.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:after {
-  top: 4px;
+  top: 0;
+  right: 0;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul {
   display: none;
@@ -8344,6 +8355,9 @@
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-field {
   padding: 0 16px;
+}
+.neos #neos-inspector .neos-inspector-form .neos-inspector-field label {
+  cursor: default;
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-field > div {
   padding-bottom: 16px;
@@ -9883,14 +9897,6 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
-.neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle::before {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  left: -3px;
-}
 .neos #neos-publish-menu.neos-button-group.neos-publish-menu-action-running .neos-dropdown-toggle::before {
   display: none;
 }
@@ -9904,18 +9910,19 @@
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
+}
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active:after,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active:after {
+  opacity: .25;
 }
 .neos #neos-publish-menu.neos-button-group .neos-publish-button {
   min-width: 212px;
   background-color: #00a338;
   font-size: 14px;
   cursor: default;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
-  margin-right: 2px;
+  position: relative;
+  opacity: .5;
+  box-shadow: none;
 }
 .neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-connection-status-down {
   background-color: #ff460d;
@@ -9939,35 +9946,41 @@
   left: 5px;
   margin-right: 5px;
 }
+.neos #neos-publish-menu.neos-button-group .neos-publish-button:after {
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  right: 0;
+  background-color: #fff;
+  opacity: .5;
+}
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle {
   width: 40px;
   border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
   border-radius: 0;
   padding: 0;
   background-color: #00a338;
   line-height: 0;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
+  opacity: .5;
+  box-shadow: none;
+  margin-left: 0;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before {
-  content: "›";
-  font-size: 26px;
-  font-weight: normal;
   display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
   position: relative;
   top: 0;
   line-height: 40px;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  left: 3px;
+  font-size: 14px;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.disabled {
   color: #5b5b5b;
@@ -10005,37 +10018,9 @@
 .neos .neos-user-menu.neos-button-group {
   font-size: 14px;
 }
-.neos .neos-user-menu.neos-button-group.neos-open .neos-button::after {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  left: 2px;
-}
 .neos .neos-user-menu.neos-button-group .neos-button {
   background: none;
-  padding-left: 16px;
-  padding-right: 32px;
-}
-.neos .neos-user-menu.neos-button-group .neos-button i {
-  margin-top: 3px;
-}
-.neos .neos-user-menu.neos-button-group .neos-button::after {
-  content: "›";
-  font-size: 26px;
-  font-weight: normal;
-  display: inline-block;
-  position: relative;
-  top: 0;
-  line-height: 40px;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  left: 8px;
-  vertical-align: middle;
+  padding: 0 16px;
 }
 .neos #neos-edit-preview-button {
   position: relative;
@@ -10321,27 +10306,31 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222;
-}
-.neos #neos-context-bar .chosen-container .chosen-single div:before, .neos #neos-context-bar .chosen-container .chosen-single div:after {
-  display: block;
-  position: absolute;
-  right: 15px;
-  font-family: Arial;
-  font-size: 17px;
-  line-height: 40px;
-  content: "▾";
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  left: 0;
+  background-color: #fff;
+  opacity: .15;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:after {
-  top: 4px;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 40px;
+  text-align: center;
+  line-height: 40px;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div b {
   display: none;
@@ -10460,9 +10449,6 @@
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
 }
-.neos #neos-context-bar #neos-aloha-topmenu .chosen-container .chosen-single div {
-  border-left: 1px solid #3f3f3f;
-}
 .neos #neos-context-bar #neos-aloha-topmenu .chosen-container .chosen-drop {
   margin-top: 0;
 }
@@ -10502,14 +10488,6 @@
 .neos #neos-context-bar .neos-content-dimension-selector.active .neos-content-dimension-selector-dimensions {
   display: block;
 }
-.neos #neos-context-bar .neos-content-dimension-selector.active .neos-content-dimension-selector-summary::before {
-  right: 3px;
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-}
 .neos-contentelement-selected .neos #neos-context-bar .neos-content-dimension-selector {
   display: none;
 }
@@ -10540,21 +10518,19 @@
   clear: both;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before {
-  content: "›";
-  font-size: 26px;
-  font-weight: normal;
   display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  font-size: 14px;
   position: absolute;
-  top: 0;
-  right: -3px;
+  right: 0;
   width: 40px;
   line-height: 40px;
   text-align: center;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension {
   line-height: 40px;
@@ -11006,27 +10982,31 @@
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222;
-}
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:before, .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
-  display: block;
-  position: absolute;
-  right: 15px;
-  font-family: Arial;
-  font-size: 17px;
-  line-height: 40px;
-  content: "▾";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  left: 0;
+  background-color: #fff;
+  opacity: .15;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
-  top: 4px;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 40px;
+  text-align: center;
+  line-height: 40px;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div b {
   display: none;
@@ -11143,9 +11123,6 @@
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single {
   background-color: #222;
-}
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single > div {
-  border-left: 1px solid #3f3f3f;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
   margin-top: 1px;
@@ -12185,33 +12162,35 @@
 .neos.neos-module .neos-select:focus {
   outline: none;
 }
-.neos.neos-module .neos-select:focus:before, .neos.neos-module .neos-select:focus:after {
+.neos.neos-module .neos-select:focus:after {
   color: #252525;
 }
-.neos.neos-module .neos-select:before, .neos.neos-module .neos-select:after {
-  display: block;
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  font-family: Arial;
-  font-size: 17px;
-  width: 40px;
-  line-height: 40px;
-  content: "▾";
-  text-align: center;
-}
 .neos.neos-module .neos-select:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  right: 41px;
+  background-color: #fff;
+  opacity: .15;
 }
 .neos.neos-module .neos-select:after {
-  top: 0px;
-  padding-top: 4px;
-  border-left: 1px solid #323232;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
 }
 .neos.neos-module .neos-select select {
   -moz-appearance: none;
@@ -15832,33 +15811,38 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow {
   width: 40px;
-  border-left: 1px solid #222;
   background: none;
   color: #fff;
+  border-left: none;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow b {
   display: none;
   background-image: none;
 }
-.neos-select2-container .neos-select2-choice > .neos-select2-arrow:before, .neos-select2-container .neos-select2-choice > .neos-select2-arrow:after {
-  display: block;
-  position: absolute;
-  right: 15px;
-  font-family: Arial;
-  font-size: 17px;
-  line-height: 40px;
-  content: "▾";
-}
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
+  display: block;
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  right: 41px;
+  background-color: #fff;
+  opacity: .15;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow:after {
-  top: 4px;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 40px;
+  text-align: center;
+  line-height: 40px;
 }
 
 /* Multi Selection */
