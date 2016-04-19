@@ -276,7 +276,7 @@
 			<target xml:lang="nl" state="translated">Meer laden</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target xml:lang="nl" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target xml:lang="nl" state="translated">Intussen werd deze node verwijders</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -316,7 +316,7 @@
 			<target xml:lang="nl">Gebruiker aanmaken</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="nl" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="nl" state="translated">Maak een nieuwe gebruiker aan</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
 			<target xml:lang="nl">Gebruikersgegevens</target></trans-unit>
@@ -442,13 +442,13 @@
 			<target xml:lang="nl" state="needs-translation">Accounts and Roles</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="nl" state="needs-translation">View user</target></trans-unit>
+			<target xml:lang="nl" state="translated">Gebruiker bekijken</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="nl" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="nl" state="translated">Gebruiker aanpassen</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
-			<target xml:lang="nl" state="needs-translation">Delete user</target></trans-unit>
+			<target xml:lang="nl" state="translated">Gebruiker verwijderen</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="nl">U bent aangemeld als deze gebruiker en u kan uzelf niet verwijderen.</target></trans-unit>
@@ -463,13 +463,13 @@
 			<target xml:lang="nl">Ja, verwijder de gebruiker</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve">
 				<source>Edit user "{0}"</source>
-			<target xml:lang="nl" state="needs-translation">Edit user "{0}"</target></trans-unit>
+			<target xml:lang="nl" state="translated">Gebruiker "{0}" aanpassen</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 				<source>Home</source>
-			<target xml:lang="nl" state="needs-translation">Home</target></trans-unit>
+			<target xml:lang="nl" state="translated">Beginscherm</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
-			<target xml:lang="nl" state="needs-translation">Work</target></trans-unit>
+			<target xml:lang="nl" state="translated">Werk</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
 			<target xml:lang="nl">Pakketbeheer</target></trans-unit>
@@ -478,19 +478,19 @@
 			<target xml:lang="nl">De Package Management module biedt u met een overzicht van alle packages. U kunt individuele packages activeren en deactiveren, nieuwe packages importeren en bestaande packages verwijderen. Het biedt u ook met de mogelijkheid om te packages te freezen/unfreezen in verband met development.</target></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve">
 				<source>Available packages</source>
-			<target xml:lang="nl" state="needs-translation">Available packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Beschikbare pakketten</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve">
 				<source>Package Name</source>
-			<target xml:lang="nl" state="needs-translation">Package Name</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakketnaam</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="nl" state="needs-translation">Package Key</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakket Sleutel</target><alt-trans><target xml:lang="nl">Pakket sleutel</target></alt-trans></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
-			<target xml:lang="nl" state="needs-translation">Package Type</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakket Type</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="nl" state="needs-translation">Deactivated</target></trans-unit>
+			<target xml:lang="nl" state="translated">Uitgeschakeld</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
 			<target xml:lang="nl" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
@@ -903,7 +903,7 @@
 			<target xml:lang="nl">Wordt aangemaakt</target></trans-unit>
       <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="nl" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+			<target xml:lang="nl" state="translated">Bestand kon niet worden verwijderd, omdat het nog door nodes wordt gebruikt</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
