@@ -338,7 +338,7 @@ class NodeDataRepository extends Repository
                     $newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
                 } else {
                     // there is no free space left between $referenceNode and following sibling -> we have to make room!
-                    $this->createFreeIndexSpace($parentPath, $referenceIndex);
+                    $this->openIndexSpace($parentPath, $referenceIndex);
                     $referenceIndex = $referenceNode->getIndex();
                     $nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
                     if ($nextLowerIndex === null) {
@@ -363,7 +363,7 @@ class NodeDataRepository extends Repository
                     $newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
                 } else {
                     // $referenceNode is not last node, and no free space is left -> we have to make room after the reference node!
-                    $this->createFreeIndexSpace($parentPath, $referenceIndex + 1);
+                    $this->openIndexSpace($parentPath, $referenceIndex + 1);
                     $nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
                     if ($nextHigherIndex === null) {
                         $newIndex = $referenceIndex + 100;
@@ -618,7 +618,7 @@ class NodeDataRepository extends Repository
      * @param integer $referenceIndex
      * @throws Exception\NodeException
      */
-    protected function createFreeIndexSpace ($parentPath, $referenceIndex)
+    protected function openIndexSpace($parentPath, $referenceIndex)
     {
         $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
 
