@@ -130,6 +130,12 @@ TYPO3:
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 
+      # The number of seconds to wait before giving up on loading a script.
+      # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
+      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
+      requireJsWaitSeconds: 30
+
       # Switch on to see all translated labels getting scrambled. You now can localize
       # everything that is still readable.
       scrambleTranslatedLabels: FALSE
