@@ -74,7 +74,6 @@
 		background: $grayDarker;
 		line-height: $unit;
 		z-index: 10015;
-		overflow: hidden;
 	}
 
 	.neos-inspector-tabs {
@@ -94,6 +93,10 @@
 				line-height: 16px;
 			}
 
+			&:hover {
+				color: $blue;
+			}
+
 			&:focus {
 				outline: none;
 			}
@@ -108,9 +111,14 @@
 					top: $unit;
 					left: 0;
 					width: 100%;
-					border-bottom: 1px solid $grayDark;
+					border-bottom: 1px solid $blue;
 					content: '';
 				}
+			}
+
+			// Hide tabs from 7 onwards
+			&:nth-of-type(n+7) {
+				display: none;
 			}
 		}
 	}

@@ -6051,7 +6051,6 @@
   background: #141414;
   line-height: 40px;
   z-index: 10015;
-  overflow: hidden;
 }
 .neos #neos-inspector .neos-inspector-tabs {
   clear: both;
@@ -6069,6 +6068,9 @@
   font-size: 16px;
   line-height: 16px;
 }
+.neos #neos-inspector .neos-inspector-tabs > button:hover {
+  color: #00b5ff;
+}
 .neos #neos-inspector .neos-inspector-tabs > button:focus {
   outline: none;
 }
@@ -6082,8 +6084,11 @@
   top: 40px;
   left: 0;
   width: 100%;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #00b5ff;
   content: '';
+}
+.neos #neos-inspector .neos-inspector-tabs > button:nth-of-type(n+7) {
+  display: none;
 }
 .neos #neos-inspector .neos-inspector-tab-content {
   display: none;
