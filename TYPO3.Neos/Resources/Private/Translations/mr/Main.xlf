@@ -273,6 +273,18 @@
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="mr" state="needs-translation">Reference</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve">
+				<source>Host</source>
+			<target xml:lang="mr" state="needs-translation">Host</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve">
+				<source>Scheme</source>
+			<target xml:lang="mr" state="needs-translation">Scheme</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve">
+				<source>Port</source>
+			<target xml:lang="mr" state="needs-translation">Port</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve">
+				<source>Primary</source>
+			<target xml:lang="mr" state="needs-translation">Primary</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -308,7 +320,11 @@
 			<target xml:lang="mr" state="needs-translation">Full Screen</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="mr" state="needs-translation">Open page in live workspace</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
+			<target xml:lang="mr" state="needs-translation">Open page in target workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="mr" state="needs-translation">Discard all</target></trans-unit>
