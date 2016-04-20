@@ -235,12 +235,12 @@ function(
 				}
 			}
 		};
-
 		require(
 			{
 				context: 'aloha',
 				baseUrl: alohaBaseUrl,
-				urlArgs: Configuration.get('neosJavascriptVersion') ? 'bust=' +  Configuration.get('neosJavascriptVersion') : ''
+				urlArgs: Configuration.get('neosJavascriptVersion') ? 'bust=' +  Configuration.get('neosJavascriptVersion') : '',
+				waitSeconds: Configuration.get('UserInterface.requireJsWaitSeconds')
 			},
 			['aloha']
 		);
