@@ -599,6 +599,18 @@ TYPO3:
             namespaces:
               f: 'TYPO3\Fluid\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
+      'Neos:TypoScriptViewHelpers':
+        title: 'TypoScript ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+              ts: 'TYPO3\TypoScript\ViewHelpers'
 
       # Validators
       'Neos:FlowValidators':
