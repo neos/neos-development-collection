@@ -473,7 +473,7 @@ define(
 				var node = this.getNodeByEntityWrapper(entityWrapper);
 				if (node) {
 					var title = entityWrapper.getAttribute('title');
-					node.data.title = title
+					node.data.title = title;
 					node.data.fullTitle = title;
 				}
 			},
