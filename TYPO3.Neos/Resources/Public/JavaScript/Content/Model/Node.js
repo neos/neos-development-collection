@@ -223,7 +223,7 @@ define([
 				label = (this.get('nodeTypeLabel') || this.get('nodeType')) + ' (' + this.getAttribute('_name') + ')';
 			}
 
-			label = $('<span>' + label + '</span>').text().trim();
+			label = $('<u/>').html(label).text().trim();
 
 			var croppedLabel = label.substr(0, 30).trim();
 			return croppedLabel + (croppedLabel.length < label.length ? ' …' : '');
