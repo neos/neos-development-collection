@@ -527,7 +527,7 @@ TYPO3:
 
     commandReferences:
       'Neos:NeosCommands':
-        title: 'Neos Command Reference'
+        title: 'Command Reference'
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
