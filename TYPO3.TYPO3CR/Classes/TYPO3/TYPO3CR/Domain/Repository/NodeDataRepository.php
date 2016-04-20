@@ -337,8 +337,8 @@ class NodeDataRepository extends Repository
                     // there is free space left between $referenceNode and preceding sibling.
                     $newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
                 } else {
-                    // there is no free space left between $referenceNode and following sibling -> we need to re-number!
-                    $this->renumberIndexesInLevel($parentPath);
+                    // there is no free space left between $referenceNode and following sibling -> we have to make room!
+                    $this->openIndexSpace($parentPath, $referenceIndex);
                     $referenceIndex = $referenceNode->getIndex();
                     $nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
                     if ($nextLowerIndex === null) {
@@ -362,9 +362,8 @@ class NodeDataRepository extends Repository
                     // $referenceNode is not last node, but there is free space left between $referenceNode and following sibling.
                     $newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
                 } else {
-                    // $referenceNode is not last node, and no free space is left -> we need to re-number!
-                    $this->renumberIndexesInLevel($parentPath);
-                    $referenceIndex = $referenceNode->getIndex();
+                    // $referenceNode is not last node, and no free space is left -> we have to make room after the reference node!
+                    $this->openIndexSpace($parentPath, $referenceIndex + 1);
                     $nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
                     if ($nextHigherIndex === null) {
                         $newIndex = $referenceIndex + 100;
@@ -612,21 +611,16 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Renumbers the indexes of all nodes directly below the node specified by the
-     * given path.
+     * Make room in the sortindex-index space of a given path in preparation to inserting a node.
+     * All indices that are greater or equal to the given referenceIndex are incremented by 100
      *
-     * Note that renumbering must happen in-memory and can't be optimized by a clever
-     * query executed directly by the database because sorting indexes of new or
-     * modified nodes need to be considered.
-     *
-     * @param string $parentPath Path to the parent node
-     * @return void
+     * @param string $parentPath
+     * @param integer $referenceIndex
      * @throws Exception\NodeException
      */
-    protected function renumberIndexesInLevel($parentPath)
+    protected function openIndexSpace($parentPath, $referenceIndex)
     {
-        $parentPath = strtolower($parentPath);
-        $this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
+        $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
 
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
@@ -635,33 +629,30 @@ class NodeDataRepository extends Repository
         $nodesOnLevel = array();
         /** @var $node NodeData */
         foreach ($query->getArrayResult() as $node) {
-            $nodesOnLevel[$node['index']] = array(
+            $nodesOnLevel[] = array(
                 'identifier' => $node['identifier'],
-                'path' => $node['path']
+                'path' => $node['path'],
+                'index' => $node['index']
             );
         }
 
         /** @var $node NodeData */
         foreach ($this->addedNodes as $node) {
             if ($node->getParentPath() === $parentPath) {
-                $index = $node->getIndex();
-                if (isset($nodesOnLevel[$index])) {
-                    throw new Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
-                }
-                $nodesOnLevel[$index] = array(
+                $nodesOnLevel[] = array(
                     'addedNode' => $node,
-                    'path' => $node->getPath()
+                    'path' => $node->getPath(),
+                    'index' => $node->getIndex()
                 );
             }
         }
 
-            // We need to sort the nodes now, to take unpersisted node orderings into account.
-            // This fixes bug #34291
-        ksort($nodesOnLevel);
-
-        $newIndex = 100;
         $query = $this->entityManager->createQuery('UPDATE TYPO3\TYPO3CR\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
         foreach ($nodesOnLevel as $node) {
+            if ($node['index'] < $referenceIndex) {
+                continue;
+            }
+            $newIndex = $node['index'] + 100;
             if ($newIndex > self::INDEX_MAXIMUM) {
                 throw new Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node['path']), 1317140402);
             }
@@ -675,7 +666,6 @@ class NodeDataRepository extends Repository
                 $query->setParameter('identifier', $node['identifier']);
                 $query->execute();
             }
-            $newIndex += 100;
         }
     }
 
