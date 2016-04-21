@@ -11,8 +11,18 @@
 </f:section>
 
 <f:section name="body">
-	<body class="neos">
-		<div class="neos-modal-centered neos-modal-wide">
+	<f:if condition="{settings.userInterface.backendLoginForm.backgroundImage}">
+		<f:then>
+			<body class="neos"{f:if(condition: settings.userInterface.backendLoginForm.backgroundImage, then: ' style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});"')}>
+		</f:then>
+		<f:else>
+			<body class="neos">
+		</f:else>
+	</f:if>
+		<div class="neos-modal-centered">
+			<f:if condition="{settings.userInterface.backendLoginForm.backgroundImage}">
+				<div class="neos-background-image-clone" style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});"></div>
+			</f:if>
 			<div id="neos-login-box">
 				<svg version="1.1"
 					 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
