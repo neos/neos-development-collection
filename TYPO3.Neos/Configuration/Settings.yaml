@@ -317,7 +317,7 @@ TYPO3:
           position: 100
 
       backendLoginForm:
-        backgroundImage: ~
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
         stylesheets:
           'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 
