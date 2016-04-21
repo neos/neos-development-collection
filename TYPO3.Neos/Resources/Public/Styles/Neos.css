@@ -8162,7 +8162,6 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-top: 11px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -8346,6 +8345,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.neos #neos-inspector .neos-inspector-form > .neos-inspector-field {
+  margin-top: 11px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-field {
   padding: 0 16px;

@@ -8,6 +8,7 @@ define(
 	'./SecondaryInspectorController',
 	'Library/underscore',
 	'Library/backbone',
+	'Shared/Configuration',
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
 	'Content/Application',
@@ -23,6 +24,7 @@ define(
 	SecondaryInspectorController,
 	_,
 	Backbone,
+	Configuration,
 	LocalStorage,
 	NodeSelection,
 	ContentModule,
@@ -73,11 +75,14 @@ define(
 
 		activeTab: 'default',
 
+		showBreadcrumb: true,
+
 		init: function() {
 			if (LocalStorage.getItem('inspectorMode') !== false) {
 				this.set('inspectorMode', true);
 			}
 			this.set('configuration', LocalStorage.getItem('inspectorConfiguration') || {});
+			this.set('showBreadcrumb', Configuration.get('UserInterface.inspector.showBreadcrumb'));
 
 			var activeTab = LocalStorage.getItem('activeInspectorTab');
 			if (activeTab) {
