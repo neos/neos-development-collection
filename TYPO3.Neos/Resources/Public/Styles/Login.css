@@ -3322,8 +3322,12 @@
 }
 
 body {
-  background: #141414;
+  background-color: #141414;
   margin: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .neos {
@@ -4646,9 +4650,6 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.neos .neos-tooltip-inner i[class^="icon-"] {
-  vertical-align: baseline;
-}
 .neos .neos-tooltip-arrow {
   position: absolute;
   width: 0;
@@ -4748,12 +4749,66 @@ body {
   -webkit-animation-timing-function: step-start;
   animation-timing-function: step-start;
 }
+.neos[style] .neos-background-image-clone {
+  position: relative;
+  right: -205px;
+  width: 330px;
+  height: 398px;
+  padding: 40px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  -webkit-filter: blur(10px);
+  /* Chrome, Opera, etc. */
+  filter: url("../../Public/Images/blur.svg#blur");
+  /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
+  filter: blur(10px);
+  /* Firefox 35+, eventually all */
+}
+.neos[style] #neos-login-box {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 40px;
+  position: relative;
+  left: -200px;
+}
+.neos[style] input[type="text"],
+.neos[style] input[type="password"] {
+  background-color: rgba(255, 255, 255, 0.75);
+  color: #252525;
+}
+.neos[style] input[type="text"]:focus, .neos[style] input[type="text"]:invalid:focus,
+.neos[style] input[type="password"]:focus,
+.neos[style] input[type="password"]:invalid:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.neos[style] input[type="text"]:-webkit-autofill,
+.neos[style] input[type="password"]:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 50px #fff inset;
+  -webkit-text-fill-color: #252525;
+}
+.neos[style] input[type="text"]:-webkit-autofill:focus,
+.neos[style] input[type="password"]:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 50px #fff inset;
+  -webkit-text-fill-color: #252525;
+}
+.neos[style] #neos-login-footer p,
+.neos[style] #neos-login-footer a {
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.75);
+}
+.neos form {
+  margin-bottom: 0;
+}
 .neos input[type="text"],
 .neos input[type="password"] {
   width: 100%;
   min-width: 288px;
   height: 40px;
-  border: 2px solid #323232;
+  border: none;
   background-color: #323232;
   color: #fff;
   font-size: 14px;
@@ -4779,7 +4834,6 @@ body {
 .neos input[type="password"]:focus,
 .neos input[type="password"]:invalid:focus {
   background-color: #fff;
-  border: 2px solid #fff;
   color: #252525;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -4795,15 +4849,20 @@ body {
   -webkit-box-shadow: 0 0 0 50px #fff inset;
   -webkit-text-fill-color: #252525;
 }
+.neos .neos-modal-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 .neos #neos-login-box {
   background: transparent;
   border: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
   width: 320px;
-  margin-top: -125px;
-  margin-left: -160px;
   z-index: 10;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -4811,6 +4870,10 @@ body {
   -webkit-border-radius: none;
   -moz-border-radius: none;
   border-radius: none;
+}
+.neos #neos-login-box svg {
+  margin: 0 auto;
+  display: block;
 }
 .neos #neos-login-box header {
   color: #fff;
@@ -4826,8 +4889,6 @@ body {
   bottom: 0;
   width: 100%;
   height: 40px;
-  border-top: 1px solid #222;
-  background-color: #222;
 }
 .neos #neos-login-box .neos-actions button {
   height: 40px;
@@ -4928,10 +4989,16 @@ body {
 .neos #neos-login-footer a {
   color: #535353;
 }
+.neos #neos-login-footer a:hover {
+  text-decoration: none;
+}
 
 @media (min-width: 320px) and (max-width: 480px) {
+  .neos .neos-background-image-clone,
+  .neos .neos-modal-centered {
+    align-items: flex-start;
+  }
   .neos #neos-login-box {
-    position: static;
     top: 0;
     margin-top: 40px;
     margin-left: 0;
@@ -4944,7 +5011,6 @@ body {
     box-sizing: border-box;
   }
   .neos #neos-login-footer {
-    position: static;
     margin-top: 40px;
     margin-bottom: 20px;
   }

@@ -112,7 +112,7 @@ class LoginController extends AbstractAuthenticationController
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findFirstOnline();
         $this->view->assignMultiple([
-            'styles' => array_filter($this->settings['backendLoginForm']['stylesheets']),
+            'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite
         ]);
