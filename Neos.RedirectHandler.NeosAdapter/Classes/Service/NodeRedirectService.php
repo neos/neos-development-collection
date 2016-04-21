@@ -88,7 +88,7 @@ class NodeRedirectService implements NodeRedirectServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function createRedirectionsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace)
+    public function createRedirectsForPublishedNode(NodeInterface $node, Workspace $targetWorkspace)
     {
         $nodeType = $node->getNodeType();
         if ($targetWorkspace->getName() !== 'live' || !$nodeType->isOfType('TYPO3.Neos:Document')) {
@@ -117,7 +117,7 @@ class NodeRedirectService implements NodeRedirectServiceInterface
         if ($node->isRemoved()) {
             $this->flushRoutingCacheForNode($targetNode);
             $statusCode = (integer)$this->defaultStatusCode['gone'];
-            $this->redirectStorage->addRedirection($targetNodeUriPath, '', $statusCode, $hosts);
+            $this->redirectStorage->addRedirect($targetNodeUriPath, '', $statusCode, $hosts);
             return;
         }
 
@@ -133,13 +133,13 @@ class NodeRedirectService implements NodeRedirectServiceInterface
 
         $this->flushRoutingCacheForNode($targetNode);
         $statusCode = (integer)$this->defaultStatusCode['redirect'];
-        $this->redirectStorage->addRedirection($targetNodeUriPath, $nodeUriPath, $statusCode, $hosts);
+        $this->redirectStorage->addRedirect($targetNodeUriPath, $nodeUriPath, $statusCode, $hosts);
         /** @var ContentContext $contentContext */
 
 
         $q = new FlowQuery([$node]);
         foreach ($q->children('[instanceof TYPO3.Neos:Document]') as $childrenNode) {
-            $this->createRedirectionsForPublishedNode($childrenNode, $targetWorkspace);
+            $this->createRedirectsForPublishedNode($childrenNode, $targetWorkspace);
         }
     }
 
