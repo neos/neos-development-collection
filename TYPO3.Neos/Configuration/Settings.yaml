@@ -320,6 +320,11 @@ TYPO3:
           title: 'TYPO3.Neos:Main:editPreviewModes.desktop'
           position: 100
 
+      backendLoginForm:
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        stylesheets:
+          'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
+
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:
@@ -412,10 +417,6 @@ TYPO3:
             accountIdentifier: '${entity.accountIdentifier}'
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
-
-    backendLoginForm:
-      stylesheets:
-        'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 
     transliterationRules:
       da:
