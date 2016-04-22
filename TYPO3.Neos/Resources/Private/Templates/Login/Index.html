@@ -11,65 +11,111 @@
 </f:section>
 
 <f:section name="body">
-	<body class="neos">
-		<div id="neos-login-box">
-			<header><neos:backend.translate id="login.index.title">Login to</neos:backend.translate> <strong>{site.name}</strong></header>
-			<div class="neos-login-body neos">
-				<f:form name="login" action="authenticate">
-					<f:form.hidden name="lastVisitedNode" />
-					<fieldset>
-						<f:if condition="{username}">
-							<f:then>
-								<div class="neos-controls">
-									<f:form.textfield required="required" id="username" type="text" placeholder="{neos:backend.translate(id: 'username', value: 'Username')}" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" value="{username}" />
-								</div>
-								<div class="neos-controls">
-									<f:form.textfield required="required" id="password" type="password" placeholder="{neos:backend.translate(id: 'password', value: 'Password')}" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" additionalAttributes="{autofocus:'autofocus'}" />
-								</div>
-							</f:then>
-							<f:else>
-								<div class="neos-controls">
-									<f:form.textfield required="required" id="username" type="text" placeholder="{neos:backend.translate(id: 'username', value: 'Username')}" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus:'autofocus'}" value="{username}" />
-								</div>
-								<div class="neos-controls">
-									<f:form.textfield required="required" id="password" type="password" placeholder="{neos:backend.translate(id: 'password', value: 'Password')}" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
-								</div>
-							</f:else>
-						</f:if>
-						<div class="neos-actions">
-							<!-- Forgot password link will be here -->
-							<f:form.button type="submit" class="neos-span5 neos-pull-right neos-button neos-login-btn">
-								<neos:backend.translate id="login" value="Login" />
-							</f:form.button>
-							<button class="neos-span5 neos-pull-right neos-button neos-login-btn neos-disabled neos-hidden">
-								<neos:backend.translate id="authenticating" value="Authenticating" /><span class="neos-ellipsis"></span>
-							</button>
-							<f:flashMessages as="flashMessages">
-								<f:for each="{flashMessages}" as="flashMessage">
-									<f:if condition="{flashMessage.severity} == 'OK'">
-										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-success">
-									</f:if>
-									<f:if condition="{flashMessage.severity} == 'Notice'">
-										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-notice">
-									</f:if>
-									<f:if condition="{flashMessage.severity} == 'Warning'">
-										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-warning">
-									</f:if>
-									<f:if condition="{flashMessage.severity} == 'Error'">
-										<script>
-											$(function() {
-												$('fieldset').effect('shake', {times: 1}, 60);
-											});
-										</script>
-										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
-									</f:if>
-									<div class="neos-tooltip-arrow"></div>
-									<div class="neos-tooltip-inner">{neos:backend.translate(id: 'flashMessage.{flashMessage.code}', package: 'TYPO3.Neos', value: flashMessage)}</div>
-								</f:for>
-							</f:flashMessages>
-						</div>
-					</fieldset>
-				</f:form>
+	<f:if condition="{settings.userInterface.backendLoginForm.backgroundImage}">
+		<f:then>
+			<body class="neos"{f:if(condition: settings.userInterface.backendLoginForm.backgroundImage, then: ' style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});"')}>
+		</f:then>
+		<f:else>
+			<body class="neos">
+		</f:else>
+	</f:if>
+		<div class="neos-modal-centered">
+			<f:if condition="{settings.userInterface.backendLoginForm.backgroundImage}">
+				<div class="neos-background-image-clone" style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});"></div>
+			</f:if>
+			<div id="neos-login-box">
+				<svg version="1.1"
+					 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+					<g>
+						<polygon fill="#26224C" points="132.984,37.5 112.342,52.662 112.342,84.378 132.984,113.791 	"/>
+						<polygon fill="#26224C" points="132.984,150.564 53.627,37.5 44.434,44.273 44.434,162.5 65.076,147.338 65.076,88.79
+								116.695,162.5 139.275,162.5 155.566,150.564 	"/>
+						<polygon fill="#00ADEE" points="65.076,88.79 65.076,147.338 44.434,162.5 67.016,162.5 87.658,147.338 87.658,121.038 	"/>
+						<polygon fill="#00ADEE" points="132.984,113.791 132.984,37.5 155.566,37.5 155.566,150.564 132.984,150.564 53.627,37.5
+								79.436,37.5 	"/>
+					</g>
+				</svg>
+
+				<header>
+					<neos:backend.translate id="login.index.title">Login to</neos:backend.translate>
+					<strong>{site.name}</strong></header>
+				<div class="neos-login-body neos">
+					<f:form name="login" action="authenticate">
+						<f:form.hidden name="lastVisitedNode"/>
+						<fieldset>
+							<f:if condition="{username}">
+								<f:then>
+									<div class="neos-controls">
+										<f:form.textfield required="required" id="username" type="text"
+														  placeholder="{neos:backend.translate(id: 'username', value: 'Username')}"
+														  class="neos-span12"
+														  name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]"
+														  value="{username}"/>
+									</div>
+									<div class="neos-controls">
+										<f:form.textfield required="required" id="password" type="password"
+														  placeholder="{neos:backend.translate(id: 'password', value: 'Password')}"
+														  class="neos-span12"
+														  name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]"
+														  additionalAttributes="{autofocus:'autofocus'}"/>
+									</div>
+								</f:then>
+								<f:else>
+									<div class="neos-controls">
+										<f:form.textfield required="required" id="username" type="text"
+														  placeholder="{neos:backend.translate(id: 'username', value: 'Username')}"
+														  class="neos-span12"
+														  name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]"
+														  additionalAttributes="{autofocus:'autofocus'}"
+														  value="{username}"/>
+									</div>
+									<div class="neos-controls">
+										<f:form.textfield required="required" id="password" type="password"
+														  placeholder="{neos:backend.translate(id: 'password', value: 'Password')}"
+														  class="neos-span12"
+														  name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]"/>
+									</div>
+								</f:else>
+							</f:if>
+							<div class="neos-actions">
+								<!-- Forgot password link will be here -->
+								<f:form.button type="submit" class="neos-span5 neos-pull-right neos-button neos-login-btn">
+									<neos:backend.translate id="login" value="Login"/>
+								</f:form.button>
+								<button class="neos-span5 neos-pull-right neos-button neos-login-btn neos-disabled neos-hidden">
+									<neos:backend.translate id="authenticating" value="Authenticating"/>
+									<span class="neos-ellipsis"></span>
+								</button>
+								<f:flashMessages as="flashMessages">
+									<f:for each="{flashMessages}" as="flashMessage">
+										<f:if condition="{flashMessage.severity} == 'OK'">
+											<div class="neos-tooltip neos-bottom neos-in neos-tooltip-success">
+										</f:if>
+										<f:if condition="{flashMessage.severity} == 'Notice'">
+											<div class="neos-tooltip neos-bottom neos-in neos-tooltip-notice">
+										</f:if>
+										<f:if condition="{flashMessage.severity} == 'Warning'">
+											<div class="neos-tooltip neos-bottom neos-in neos-tooltip-warning">
+										</f:if>
+										<f:if condition="{flashMessage.severity} == 'Error'">
+											<script>
+												$(function () {
+													$('fieldset').effect('shake', {times: 1}, 60);
+												});
+											</script>
+											<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
+										</f:if>
+										<div class="neos-tooltip-arrow"></div>
+										<div class="neos-tooltip-inner">{neos:backend.translate(id:
+											'flashMessage.{flashMessage.code}', package: 'TYPO3.Neos', value: flashMessage)}
+										</div>
+									</f:for>
+								</f:flashMessages>
+							</div>
+						</fieldset>
+					</f:form>
+				</div>
 			</div>
 		</div>
 		<div id="neos-login-footer">
