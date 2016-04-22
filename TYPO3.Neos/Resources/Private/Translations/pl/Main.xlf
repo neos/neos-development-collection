@@ -239,7 +239,7 @@
 			<target xml:lang="pl">Struktura</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="pl" state="needs-translation">Toggle context structure</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przełącz strukturę kontekstu</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
 			<target xml:lang="pl" state="translated">Filtr</target></trans-unit>
@@ -254,34 +254,34 @@
 			<target xml:lang="pl" state="translated">Musisz wybrać węzeł</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="pl" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Węzeł nadrzędny nie może być usunięty.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="pl" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nie można skopiować tego węzła</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="pl" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nie można wyciąć tego węzła</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
 			<target xml:lang="pl" state="needs-translation">Content Dimensions</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="pl" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="pl" state="translated">Strona</target></trans-unit>
       <trans-unit id="document" xml:space="preserve" approved="yes">
 				<source>Document</source>
 			<target xml:lang="pl">Dokument</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="pl" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="pl" state="translated">Odniesienie</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="pl" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="pl" state="translated">Host</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="pl" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="pl" state="translated">Schemat</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="pl" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="pl" state="translated">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="pl">Główny</target></trans-unit>
@@ -324,7 +324,7 @@
 			<target xml:lang="pl">Otwórz stronę w przestrzeni roboczej live</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="pl" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="pl" state="translated">Otwórz stronę w docelowej przestrzeni roboczej</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="pl">Odrzuć wszystko</target></trans-unit>
@@ -414,7 +414,7 @@
 			<target xml:lang="pl">Widoczność</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="pl" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="pl" state="translated">Opcje dokumentu</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target xml:lang="pl" state="translated">Długość tego tekstu musi zawierać się między {{minimum}} i {{maximum}} znaków.</target></trans-unit>
@@ -483,13 +483,13 @@
 			<target xml:lang="pl" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="pl" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+			<target xml:lang="pl" state="translated">Rozpocząć z pustym czy wstępnie wypełnionym dokumentem?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="pl" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten {nodeTypeLabel} nie istnieje jeszcze w {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="pl" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Możesz stworzyć go teraz, rozpocząć z pustym {nodeTypeLabel} lub skopiować całą zawartość z obecnie widocznego {nodeTypeLabel}, który znajduje się w {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
 			<target xml:lang="pl" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
@@ -507,7 +507,7 @@
 			<target xml:lang="pl" state="needs-translation">Toggle menu group</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="pl" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przełącz menu w tryb uproszczony</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pl">Czy na pewno chcesz usunąć</target></trans-unit>
@@ -574,7 +574,7 @@
 			<target xml:lang="pl">Sama treść</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="pl" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tryb treści nieprzetworzonej</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="pl">Komputer</target></trans-unit>
@@ -593,7 +593,7 @@
 			<target xml:lang="pl" state="translated">Wprowadzona nazwa użytkownika lub hasło było nieprawidłowe</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="pl" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Twoja sesja wygasła. Zaloguj się ponownie.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -630,19 +630,19 @@
 			<target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target><alt-trans><target xml:lang="pl">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę NodeType i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></alt-trans></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="pl" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wystąpił nieoczekiwany błąd podczas tworzenia węzła</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="pl" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wystąpił nieoczekiwany błąd podczas usuwania węzła</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="pl" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wystąpił nieoczekiwany błąd podczas aktualizowania węzła</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="pl" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wystąpił nieoczekiwany błąd podczas przenoszenia węzła</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="pl" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Błąd ładowania drzewa węzłów.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>

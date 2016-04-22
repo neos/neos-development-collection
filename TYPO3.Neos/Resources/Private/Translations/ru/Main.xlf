@@ -86,16 +86,16 @@
 			<target xml:lang="ru">Скрыть</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="ru" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="ru" state="translated">Показать</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="ru" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="ru" state="translated">в</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="ru" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="ru" state="translated">перед</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="ru" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="ru" state="translated">После</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="ru">Загружается</target></trans-unit>
@@ -209,7 +209,7 @@
 			<target xml:lang="ru">Относительный путь</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="ru" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="ru" state="translated">Версия</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="ru">Эта операция не может быть отменена.</target></trans-unit>
@@ -218,13 +218,13 @@
 			<target xml:lang="ru" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="ru" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="ru" state="translated">создано</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="ru" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="ru" state="translated">Последнее изменение</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="ru" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="ru" state="translated">Последняя публикация</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="ru">Идентификатор</target></trans-unit>

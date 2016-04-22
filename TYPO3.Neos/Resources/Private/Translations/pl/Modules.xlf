@@ -234,7 +234,7 @@
 			<target xml:lang="pl">Ten moduł zawiera przegląd wszystkich istotnych zdarzeń wpływających na działanie tej instalacji Neos.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="pl" state="translated">Ostatnie zdarzenia w Neos:</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ostatnie zdarzenia w Neos:</target><alt-trans><target xml:lang="pl">Oto co wydarzyło się ostatnio w Neos</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="pl">Nie zarejestrowano żadnych zdarzeń, które mogłyby być wyświetlone w tej historii.</target></trans-unit>
@@ -436,10 +436,10 @@
 			<target xml:lang="pl">Nazwa</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="pl" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="pl" state="translated">Konta i role</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="pl" state="translated">Zobacz użytkownika</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wyświetl użytkownika</target><alt-trans><target xml:lang="pl">Zobacz użytkownika</target></alt-trans></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			<target xml:lang="pl" state="translated">Edytuj użytkownika</target></trans-unit>
@@ -463,10 +463,10 @@
 			<target xml:lang="pl" state="translated">Edytuj użytkownika "{0}"</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 				<source>Home</source>
-			<target xml:lang="pl" state="needs-translation">Home</target></trans-unit>
+			<target xml:lang="pl" state="translated">Domowy</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
-			<target xml:lang="pl" state="needs-translation">Work</target></trans-unit>
+			<target xml:lang="pl" state="translated">Firmowy</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
 			<target xml:lang="pl">Zarządzanie pakietami</target></trans-unit>
@@ -475,52 +475,52 @@
 			<target xml:lang="pl">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, zaimportować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve">
 				<source>Available packages</source>
-			<target xml:lang="pl" state="needs-translation">Available packages</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dostępne pakiety</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve">
 				<source>Package Name</source>
-			<target xml:lang="pl" state="needs-translation">Package Name</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nazwa pakietu</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="pl" state="needs-translation">Package Key</target></trans-unit>
+			<target xml:lang="pl" state="translated">Klucz pakietu</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
-			<target xml:lang="pl" state="needs-translation">Package Type</target></trans-unit>
+			<target xml:lang="pl" state="translated">Typ pakietu</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="pl" state="needs-translation">Deactivated</target></trans-unit>
+			<target xml:lang="pl" state="translated">Nieaktywny</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target xml:lang="pl" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten pakiet jest obecnie zamrożony. Kliknij, aby go odblokować.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target xml:lang="pl" state="needs-translation">Freeze the package in order to speed up your website.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zamroź pakiet, aby przyspieszyć działanie Twojej strony.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target xml:lang="pl" state="needs-translation">This package is protected and cannot be deactivated.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten pakiet jest chroniony i nie może zostać dezaktywowany.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-			<target xml:lang="pl" state="needs-translation">Deactivate Package</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dezaktywuj pakiet</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>
-			<target xml:lang="pl" state="needs-translation">Activate Package</target></trans-unit>
+			<target xml:lang="pl" state="translated">Aktywuj pakiet</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
 				<source>This package is protected and cannot be deleted.</source>
-			<target xml:lang="pl" state="needs-translation">This package is protected and cannot be deleted.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten pakiet jest chroniony i nie może zostać usunięty.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve">
 				<source>Delete Package</source>
-			<target xml:lang="pl" state="needs-translation">Delete Package</target></trans-unit>
+			<target xml:lang="pl" state="translated">Usuń pakiet</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete "{0}"?</source>
-			<target xml:lang="pl" state="needs-translation">Do you really want to delete "{0}"?</target></trans-unit>
+			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć "{0}"?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the package</source>
-			<target xml:lang="pl" state="needs-translation">Yes, delete the package</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tak, usuń pakiet</target></trans-unit>
       <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
 				<source>Yes, delete the packages</source>
-			<target xml:lang="pl" state="needs-translation">Yes, delete the packages</target></trans-unit>
+			<target xml:lang="pl" state="translated">Tak, usuń pakiety</target></trans-unit>
       <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete the selected packages?</source>
-			<target xml:lang="pl" state="needs-translation">Do you really want to delete the selected packages?</target></trans-unit>
+			<target xml:lang="pl" state="translated">Czy na pewno chcesz usunąć wybrane pakiety?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve">
 				<source>Freeze selected packages</source>
 			<target xml:lang="pl" state="needs-translation">Freeze selected packages</target></trans-unit>
@@ -529,13 +529,13 @@
 			<target xml:lang="pl" state="needs-translation">Unfreeze selected packages</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve">
 				<source>Delete selected packages</source>
-			<target xml:lang="pl" state="needs-translation">Delete selected packages</target></trans-unit>
+			<target xml:lang="pl" state="translated">Usuń wybrane pakiety</target></trans-unit>
       <trans-unit id="packages.selected.deactivate" xml:space="preserve">
 				<source>Deactivate selected packages</source>
-			<target xml:lang="pl" state="needs-translation">Deactivate selected packages</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dezaktywuj wybrane pakiety</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve">
 				<source>Activate selected packages</source>
-			<target xml:lang="pl" state="needs-translation">Activate selected packages</target></trans-unit>
+			<target xml:lang="pl" state="translated">Aktywuj wybrane pakiety</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="pl">Zarządzanie stronami</target><alt-trans><target xml:lang="pl">Zarządzanie stroną</target></alt-trans></trans-unit>
@@ -810,13 +810,13 @@
 			<target xml:lang="pl">Usuń tag</target></trans-unit>
       <trans-unit id="media.placeholder.createTag" xml:space="preserve">
 				<source>Enter tag label</source>
-			<target xml:lang="pl" state="needs-translation">Enter tag label</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wprowadź etykietę tagu</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
 			<target xml:lang="pl">Utwórz tag</target></trans-unit>
       <trans-unit id="media.tags.title.all" xml:space="preserve">
 				<source>All assets</source>
-			<target xml:lang="pl" state="needs-translation">All assets</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wszystkie zasoby</target></trans-unit>
       <trans-unit id="media.tags.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target xml:lang="pl">Wszystkie</target></trans-unit>
@@ -900,20 +900,20 @@
 			<target xml:lang="pl">Tworzenie</target></trans-unit>
       <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="pl" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zasób nie może zostać usunięty, ponieważ istnieją węzły, które go używają</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="pl" state="needs-translation">{0} usages</target>
+          <target xml:lang="pl" state="translated">{0} użycia</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="pl" state="needs-translation">{0} usages</target>
+          <target xml:lang="pl" state="translated">{0} użycia</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target xml:lang="pl" state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target xml:lang="pl" state="translated">Odniesienia do "{asset}"</target></trans-unit>
     </body>
   </file>
 </xliff>
