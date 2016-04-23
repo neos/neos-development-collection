@@ -271,7 +271,7 @@
 			<target xml:lang="km" state="translated">{0} បាន​លុប​គណនី "{1}" នៃ {2}។</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
-			<target xml:lang="km" state="needs-translation">Load More</target></trans-unit>
+			<target xml:lang="km" state="translated">ទាញយកបន្ថែមទៀត</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
 			<target xml:lang="km" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
@@ -443,7 +443,7 @@
 			<target xml:lang="km" state="needs-translation">View user</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="km" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="km" state="translated">កែតម្រូវ</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target xml:lang="km" state="needs-translation">Delete user</target></trans-unit>
