@@ -27,6 +27,16 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
      *
      * @return string
      */
+    public function getTemplateSource()
+    {
+        return trim($this->tsValue('templateSource'));
+    }
+
+    /**
+     * Path to the template which should be rendered
+     *
+     * @return string
+     */
     public function getTemplatePath()
     {
         return $this->tsValue('templatePath');
@@ -84,9 +94,11 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
         }
         $fluidTemplate = new Helpers\FluidView($this, $actionRequest);
 
-        $templatePath = $this->getTemplatePath();
-        if ($templatePath === null) {
-            throw new \Exception(sprintf("
+        $templateSource = $this->getTemplateSource();
+        if ($templateSource === '') {
+            $templatePath = $this->getTemplatePath();
+            if ($templatePath === null) {
+                throw new \Exception(sprintf("
 				No template path set.
 				Most likely you didn't configure `templatePath` in your TypoScript object correctly.
 				For example you could add and adapt the following line to your TypoScript:
@@ -94,23 +106,26 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
 					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
 				}`
 			", $templatePath, $this->typoScriptObjectName));
-        }
-        $fluidTemplate->setTemplatePathAndFilename($templatePath);
+            }
+            $fluidTemplate->setTemplatePathAndFilename($templatePath);
 
-        $partialRootPath = $this->getPartialRootPath();
-        if ($partialRootPath !== null) {
-            $fluidTemplate->setPartialRootPath($partialRootPath);
-        }
+            $partialRootPath = $this->getPartialRootPath();
+            if ($partialRootPath !== null) {
+                $fluidTemplate->setPartialRootPath($partialRootPath);
+            }
 
-        $layoutRootPath = $this->getLayoutRootPath();
-        if ($layoutRootPath !== null) {
-            $fluidTemplate->setLayoutRootPath($layoutRootPath);
-        }
+            $layoutRootPath = $this->getLayoutRootPath();
+            if ($layoutRootPath !== null) {
+                $fluidTemplate->setLayoutRootPath($layoutRootPath);
+            }
 
             // Template resources need to be evaluated from the templates package not the requests package.
-        if (strpos($templatePath, 'resource://') === 0) {
-            $templateResourcePathParts = parse_url($templatePath);
-            $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
+            if (strpos($templatePath, 'resource://') === 0) {
+                $templateResourcePathParts = parse_url($templatePath);
+                $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
+            }
+        } else {
+            $fluidTemplate->setTemplateSource($templateSource);
         }
 
         foreach ($this->properties as $key => $value) {
