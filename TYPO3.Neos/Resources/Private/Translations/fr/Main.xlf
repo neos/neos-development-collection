@@ -9,9 +9,9 @@
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="fr">Publier auto. vers {0}</target></trans-unit>
-      <trans-unit id="reviewChanges" xml:space="preserve">
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
 				<source>Review changes</source>
-			<target xml:lang="fr" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="fr">Réviser les modifications</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="fr">Appliquer</target></trans-unit>
@@ -84,18 +84,18 @@
       <trans-unit id="hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target xml:lang="fr">Cacher</target></trans-unit>
-      <trans-unit id="unhide" xml:space="preserve">
+      <trans-unit id="unhide" xml:space="preserve" approved="yes">
 				<source>Unhide</source>
-			<target xml:lang="fr" state="translated">Afficher</target></trans-unit>
-      <trans-unit id="into" xml:space="preserve">
+			<target xml:lang="fr">Afficher</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve" approved="yes">
 				<source>into</source>
-			<target xml:lang="fr" state="translated">dans</target></trans-unit>
-      <trans-unit id="before" xml:space="preserve">
+			<target xml:lang="fr">dans</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve" approved="yes">
 				<source>before</source>
-			<target xml:lang="fr" state="translated">avant</target></trans-unit>
-      <trans-unit id="after" xml:space="preserve">
+			<target xml:lang="fr">avant</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve" approved="yes">
 				<source>after</source>
-			<target xml:lang="fr" state="translated">après</target></trans-unit>
+			<target xml:lang="fr">après</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="fr">En cours</target></trans-unit>
@@ -147,18 +147,18 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="fr">Impossible de publier, l'espace de travail cible est en lecture seule</target></trans-unit>
-      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve" approved="yes">
 				<source>Select target workspace</source>
-			<target xml:lang="fr" state="translated">Sélectionnez l'espace de travail cible</target></trans-unit>
+			<target xml:lang="fr">Sélectionnez l'espace de travail cible</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="fr">Publication</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
 			<target xml:lang="fr">Publié</target></trans-unit>
-      <trans-unit id="togglePublishMenu" xml:space="preserve">
+      <trans-unit id="togglePublishMenu" xml:space="preserve" approved="yes">
 				<source>Toggle publish menu</source>
-			<target xml:lang="fr" state="translated">Activer/désactiver le menu de plublication</target></trans-unit>
+			<target xml:lang="fr">Basculer le menu de plublication</target><alt-trans><target xml:lang="fr">Activer/désactiver le menu de plublication</target></alt-trans></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="fr">Espace de travail cible</target></trans-unit>
@@ -207,81 +207,81 @@
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
 			<target xml:lang="fr">Chemin relatif</target></trans-unit>
-      <trans-unit id="version" xml:space="preserve">
+      <trans-unit id="version" xml:space="preserve" approved="yes">
 				<source>Version</source>
-			<target xml:lang="fr" state="translated">Version</target></trans-unit>
+			<target xml:lang="fr">Version</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="fr">Cette opération ne peut pas être annulée.</target></trans-unit>
-      <trans-unit id="asset" xml:space="preserve">
+      <trans-unit id="asset" xml:space="preserve" approved="yes">
 				<source>Asset</source>
-			<target xml:lang="fr" state="translated">Ressource</target></trans-unit>
-      <trans-unit id="created" xml:space="preserve">
+			<target xml:lang="fr">Ressource</target></trans-unit>
+      <trans-unit id="created" xml:space="preserve" approved="yes">
 				<source>Created</source>
-			<target xml:lang="fr" state="needs-translation">Created</target></trans-unit>
-      <trans-unit id="lastModification" xml:space="preserve">
+			<target xml:lang="fr">Créé</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve" approved="yes">
 				<source>Last modification</source>
-			<target xml:lang="fr" state="translated">Dernière modification</target></trans-unit>
-      <trans-unit id="lastPublication" xml:space="preserve">
+			<target xml:lang="fr">Dernière modification</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve" approved="yes">
 				<source>Last publication</source>
-			<target xml:lang="fr" state="translated">Dernière publication</target></trans-unit>
+			<target xml:lang="fr">Dernière publication</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="fr">Identifiant</target></trans-unit>
       <trans-unit id="name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="fr">Nom</target></trans-unit>
-      <trans-unit id="workspace" xml:space="preserve">
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
-			<target xml:lang="fr" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="fr">Espace de travail</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve" approved="yes">
 				<source>Structure</source>
 			<target xml:lang="fr">Structure</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
 			<target xml:lang="fr" state="needs-translation">Toggle context structure</target></trans-unit>
-      <trans-unit id="filter" xml:space="preserve">
+      <trans-unit id="filter" xml:space="preserve" approved="yes">
 				<source>Filter</source>
-			<target xml:lang="fr" state="needs-translation">Filter</target></trans-unit>
-      <trans-unit id="toggleMenu" xml:space="preserve">
+			<target xml:lang="fr">Filtrer</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve" approved="yes">
 				<source>Toggle menu</source>
-			<target xml:lang="fr" state="needs-translation">Toggle menu</target></trans-unit>
-      <trans-unit id="loadError" xml:space="preserve">
+			<target xml:lang="fr">Basculer le menu</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve" approved="yes">
 				<source>Load error!</source>
-			<target xml:lang="fr" state="needs-translation">Load error!</target></trans-unit>
-      <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+			<target xml:lang="fr">Erreur de chargement !</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve" approved="yes">
 				<source>You have to select a node</source>
-			<target xml:lang="fr" state="needs-translation">You have to select a node</target></trans-unit>
-      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+			<target xml:lang="fr">Vous devez sélectionner un noeud</target></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve" approved="yes">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="fr" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
-      <trans-unit id="cannotCopyNode" xml:space="preserve">
+			<target xml:lang="fr">Impossible de supprimer le noeud racine.</target></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve" approved="yes">
 				<source>You cannot copy this node</source>
-			<target xml:lang="fr" state="needs-translation">You cannot copy this node</target></trans-unit>
-      <trans-unit id="cannotCutNode" xml:space="preserve">
+			<target xml:lang="fr">Vous ne pouvez pas copier ce noeud</target></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve" approved="yes">
 				<source>You cannot cut this node</source>
-			<target xml:lang="fr" state="needs-translation">You cannot cut this node</target></trans-unit>
-      <trans-unit id="contentDimensions" xml:space="preserve">
+			<target xml:lang="fr">Vous ne pouvez pas couper ce noeud</target></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve" approved="yes">
 				<source>Content Dimensions</source>
-			<target xml:lang="fr" state="needs-translation">Content Dimensions</target></trans-unit>
-      <trans-unit id="site" xml:space="preserve">
+			<target xml:lang="fr">Dimensions de contenu</target></trans-unit>
+      <trans-unit id="site" xml:space="preserve" approved="yes">
 				<source>Site</source>
-			<target xml:lang="fr" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="fr">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve" approved="yes">
 				<source>Document</source>
 			<target xml:lang="fr">Document</target></trans-unit>
-      <trans-unit id="reference" xml:space="preserve">
+      <trans-unit id="reference" xml:space="preserve" approved="yes">
 				<source>Reference</source>
-			<target xml:lang="fr" state="needs-translation">Reference</target></trans-unit>
-      <trans-unit id="host" xml:space="preserve">
+			<target xml:lang="fr">Référence</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve" approved="yes">
 				<source>Host</source>
-			<target xml:lang="fr" state="needs-translation">Host</target></trans-unit>
-      <trans-unit id="scheme" xml:space="preserve">
+			<target xml:lang="fr">Nom de l'hôte</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve" approved="yes">
 				<source>Scheme</source>
-			<target xml:lang="fr" state="needs-translation">Scheme</target></trans-unit>
-      <trans-unit id="port" xml:space="preserve">
+			<target xml:lang="fr">Schéma</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve" approved="yes">
 				<source>Port</source>
-			<target xml:lang="fr" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="fr">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="fr">Principal</target></trans-unit>
@@ -322,9 +322,9 @@
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="fr">Ouvrir la page dans l'espace de travail Live</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in target workspace</source>
-			<target xml:lang="fr" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="fr">Ouvrir la page dans l'espace de travail cible</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="fr">ReJeter tous</target></trans-unit>
@@ -412,39 +412,39 @@
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
 			<target xml:lang="fr">Visibilité</target></trans-unit>
-      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target xml:lang="fr" state="needs-translation">Document options</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+			<target xml:lang="fr">Options du document</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target xml:lang="fr" state="translated">La longueur de ce texte doit être comprise entre {{minimum}} et {{maximum}} caractères.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+			<target xml:lang="fr">La longueur de ce texte doit être comprise entre {{minimum}} et {{maximum}} caractères.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target xml:lang="fr" state="translated">Ce champ doit contenir au moins {{minimum}} caractères.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+			<target xml:lang="fr">Ce champ doit contenir au moins {{minimum}} caractères.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target xml:lang="fr" state="translated">Ce texte ne doit pas dépasser {{maximum}} caractères.</target></trans-unit>
+			<target xml:lang="fr">Ce texte ne doit pas dépasser {{maximum}} caractères.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="fr">Seuls les caractères normaux (a à z, trémas,...) et les nombres sont autorisés.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="fr">Le sujet donné n'est pas dénombrable.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target xml:lang="fr" state="translated">Le décompte doit être compris entre {{minimum}} et {{maximum}}.</target></trans-unit>
+			<target xml:lang="fr">Le décompte doit être compris entre {{minimum}} et {{maximum}}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
 			<target xml:lang="fr">La valeur donnée n'était pas une date valide.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target xml:lang="fr" state="translated">La date doit être comprise entre le {{formatEarliestDate}} et le {{formatLatestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+			<target xml:lang="fr">La date doit être comprise entre le {{formatEarliestDate}} et le {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target xml:lang="fr" state="translated">La date donnée doit être après le {{formatEarliestDate}}</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+			<target xml:lang="fr">La date donnée doit être après le {{formatEarliestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target xml:lang="fr" state="translated">La date donnée doit être avant le {{formatLatestDate}}</target></trans-unit>
+			<target xml:lang="fr">La date donnée doit être avant le {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
 			<target xml:lang="fr">Veuillez entrer une adresse e-mail valide.</target></trans-unit>
@@ -463,12 +463,12 @@
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
 			<target xml:lang="fr">Un nombre valide est attendu.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target xml:lang="fr" state="translated">Veuillez entrer un nombre valide entre {{minimum}} et {{maximum}}</target><alt-trans><target xml:lang="fr">Veuillez entrer un numéro valide entre {{minimum}} et {{maximum}}</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+			<target xml:lang="fr">Veuillez entrer un nombre valide entre {{minimum}} et {{maximum}}</target><alt-trans><target xml:lang="fr">Veuillez entrer un numéro valide entre {{minimum}} et {{maximum}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target xml:lang="fr" state="translated">Le sujet donné ne correspond pas au modèle ({{pattern}})</target></trans-unit>
+			<target xml:lang="fr">Le sujet donné ne correspond pas au modèle ({{pattern}})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target xml:lang="fr">Une chaîne valide est attendue.</target></trans-unit>
@@ -478,36 +478,36 @@
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
 			<target xml:lang="fr">Le sujet donné n'est pas un UUID valide.</target></trans-unit>
-      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="fr" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+			<target xml:lang="fr">Basculer le sélecteur de dimensions de contenu</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="fr" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+			<target xml:lang="fr">Commencer avec un document vide ou rempli au préalable ?</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve" approved="yes">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="fr" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+			<target xml:lang="fr">Ce {nodeTypeLabel} n'existe pas encore en {currentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="fr" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="fr">Vous pouvez le créer maintenant, en démarrant soir d'un {nodeTypeLabel} vide ou copier tout le contenu du {nodeTypeLabel} actuellement visible dans {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
 			<target xml:lang="fr" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
 			<target xml:lang="fr" state="needs-translation">Create empty</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve" approved="yes">
 				<source>Create and copy</source>
-			<target xml:lang="fr" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="fr">Créer et copier</target><alt-trans><target xml:lang="fr">Créer et copie</target></alt-trans></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="fr">Contenu</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target xml:lang="fr" state="needs-translation">Toggle menu group</target></trans-unit>
-      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="fr" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="fr">Basculer le menu "sticky"</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="fr">Confirmez-vous la suppression</target><alt-trans><target xml:lang="fr">Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
@@ -547,9 +547,9 @@
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
 			<target xml:lang="fr">Propriété requise manquante: </target><alt-trans><target xml:lang="fr">Propriété requise manquante:</target></alt-trans><alt-trans><target xml:lang="fr">Propriété requise manquante :</target></alt-trans></trans-unit>
-      <trans-unit id="workspace" xml:space="preserve">
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
-			<target xml:lang="fr" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="fr">Espace de travail</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="fr">Espaces de travail</target></trans-unit>
@@ -572,9 +572,9 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
 			<target xml:lang="fr">Contenu brut</target></trans-unit>
-      <trans-unit id="rawContentMode" xml:space="preserve">
+      <trans-unit id="rawContentMode" xml:space="preserve" approved="yes">
 				<source>Raw Content Mode</source>
-			<target xml:lang="fr" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="fr">Mode de contenu brut</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="fr">Ordinateur de bureau</target><alt-trans><target xml:lang="fr">Affichage ordinateur de bureau</target></alt-trans></trans-unit>
@@ -588,12 +588,12 @@
       <trans-unit id="logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="fr">Déconnexion</target></trans-unit>
-      <trans-unit id="wrongCredentials" xml:space="preserve">
+      <trans-unit id="wrongCredentials" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="fr" state="needs-translation">The entered username or password was wrong</target></trans-unit>
-      <trans-unit id="login.expired" xml:space="preserve">
+			<target xml:lang="fr">Le nom d'utilisateur ou mot de passe entré est inconnu</target></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve" approved="yes">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="fr" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="fr">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -628,25 +628,25 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="fr">La configuration du type de noeud qui doit s'afficher ici n'est pas disponible. Le type de noeud a probablement été renommé. Validez que vous avez bien exécuté toutes les migrations. Ou peut-être est-ce simplement une erreur de frappe.</target></trans-unit>
-      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="fr" state="needs-translation">Unexpected error while creating node</target></trans-unit>
-      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+			<target xml:lang="fr">Erreur inattendue lors de la création du nœud</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="fr" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
-      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+			<target xml:lang="fr">Erreur inattendue lors de la suppression du nœud</target></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="fr" state="needs-translation">Unexpected error while updating node</target></trans-unit>
-      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+			<target xml:lang="fr">Erreur inattendue lors de la mise à jour du nœud</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="fr" state="needs-translation">Unexpected error while moving node</target></trans-unit>
-      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+			<target xml:lang="fr">Erreur inattendue lors du déplacement du nœud</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve" approved="yes">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="fr" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="fr">Erreur de chargement de l'arborescence.</target></trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="fr" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="fr">Le nom d'utilisateur ou mot de passe entré est inconnu</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

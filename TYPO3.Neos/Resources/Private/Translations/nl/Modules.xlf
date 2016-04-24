@@ -439,7 +439,7 @@
 			<target xml:lang="nl">Naam</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="nl" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="nl" state="translated">Accounts en rollen</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
 			<target xml:lang="nl" state="translated">Gebruiker bekijken</target></trans-unit>
@@ -493,52 +493,52 @@
 			<target xml:lang="nl" state="translated">Uitgeschakeld</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target xml:lang="nl" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit pakket is momenteel vergrendeld. Klik om deze te ontgrendelen.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target xml:lang="nl" state="needs-translation">Freeze the package in order to speed up your website.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Vergrendel dit pakket om je website sneller te laten lopen.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target xml:lang="nl" state="needs-translation">This package is protected and cannot be deactivated.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit pakket is beschermd en kan daarom niet worden uitgeschakeld.</target><alt-trans><target xml:lang="nl">Dit pakket is beschermd en kan niet worden uitgeschakeld.</target></alt-trans></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-			<target xml:lang="nl" state="needs-translation">Deactivate Package</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakket uitschakelen</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>
-			<target xml:lang="nl" state="needs-translation">Activate Package</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakket inschakelen</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
 				<source>This package is protected and cannot be deleted.</source>
-			<target xml:lang="nl" state="needs-translation">This package is protected and cannot be deleted.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit pakket is beschermd en kan daarom niet worden verwijderd.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve">
 				<source>Delete Package</source>
-			<target xml:lang="nl" state="needs-translation">Delete Package</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pakket verwijderen</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete "{0}"?</source>
-			<target xml:lang="nl" state="needs-translation">Do you really want to delete "{0}"?</target></trans-unit>
+			<target xml:lang="nl" state="translated">Weet je zeker dat je "{0}" wilt verwijderen?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the package</source>
-			<target xml:lang="nl" state="needs-translation">Yes, delete the package</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ja, verwijder het pakket</target></trans-unit>
       <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
 				<source>Yes, delete the packages</source>
-			<target xml:lang="nl" state="needs-translation">Yes, delete the packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ja, verwijder de pakketten</target></trans-unit>
       <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete the selected packages?</source>
-			<target xml:lang="nl" state="needs-translation">Do you really want to delete the selected packages?</target></trans-unit>
+			<target xml:lang="nl" state="translated">Weet je zeker dat je de geselecteerde pakketten wil verwijderen?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve">
 				<source>Freeze selected packages</source>
-			<target xml:lang="nl" state="needs-translation">Freeze selected packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Vergrendel de geselecteerde pakketten</target><alt-trans><target xml:lang="nl">Vergrendel de geselecteerde paketten</target></alt-trans></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
 				<source>Unfreeze selected packages</source>
-			<target xml:lang="nl" state="needs-translation">Unfreeze selected packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ontgrendel de geselecteerde pakketten</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve">
 				<source>Delete selected packages</source>
-			<target xml:lang="nl" state="needs-translation">Delete selected packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verwijder de geselecteerde pakketten</target></trans-unit>
       <trans-unit id="packages.selected.deactivate" xml:space="preserve">
 				<source>Deactivate selected packages</source>
-			<target xml:lang="nl" state="needs-translation">Deactivate selected packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Schakel de geselecteerde pakketten uit</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve">
 				<source>Activate selected packages</source>
-			<target xml:lang="nl" state="needs-translation">Activate selected packages</target></trans-unit>
+			<target xml:lang="nl" state="translated">Schakel de geselecteerde pakketten in</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target xml:lang="nl">Site Management</target></trans-unit>
@@ -663,16 +663,16 @@
 			<target xml:lang="nl">Sorteer op laatst gewijzigd</target></trans-unit>
       <trans-unit id="media.sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="nl" state="needs-translation">Sort by</target></trans-unit>
+			<target xml:lang="nl" state="translated">Sorteren op</target></trans-unit>
       <trans-unit id="media.sortdirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="nl" state="needs-translation">Sort direction</target></trans-unit>
+			<target xml:lang="nl" state="translated">Sorteer volgorde</target></trans-unit>
       <trans-unit id="media.sortdirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="nl" state="needs-translation">Ascending</target></trans-unit>
+			<target xml:lang="nl" state="translated">Oplopend</target></trans-unit>
       <trans-unit id="media.sortdirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="nl" state="needs-translation">Descending</target></trans-unit>
+			<target xml:lang="nl" state="translated">Aflopend</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="nl">Slepen en neerzetten op tag of collectie</target></trans-unit>
@@ -813,13 +813,13 @@
 			<target xml:lang="nl">Verwijder tag</target></trans-unit>
       <trans-unit id="media.placeholder.createTag" xml:space="preserve">
 				<source>Enter tag label</source>
-			<target xml:lang="nl" state="needs-translation">Enter tag label</target></trans-unit>
+			<target xml:lang="nl" state="translated">Voer het label van de tag in</target></trans-unit>
       <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
 			<target xml:lang="nl">Maak tag aan</target></trans-unit>
       <trans-unit id="media.tags.title.all" xml:space="preserve">
 				<source>All assets</source>
-			<target xml:lang="nl" state="needs-translation">All assets</target></trans-unit>
+			<target xml:lang="nl" state="translated">Alle assets</target></trans-unit>
       <trans-unit id="media.tags.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target xml:lang="nl">Alle</target></trans-unit>
@@ -907,16 +907,16 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="needs-translation">{0} usages</target>
+          <target xml:lang="nl" state="translated">{0} toepassingen</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="needs-translation">{0} usages</target>
+          <target xml:lang="nl" state="translated">{0} toepassingen</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target xml:lang="nl" state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target xml:lang="nl" state="translated">Referenties naar "{asset}"</target></trans-unit>
     </body>
   </file>
 </xliff>
