@@ -838,6 +838,61 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailableAcrossDimensions()
+    {
+        $this->contentDimensionRepository->setDimensionsConfiguration(array(
+            'test' => array(
+                'default' => 'a'
+            )
+        ));
+
+        $variantContextA = $this->contextFactory->create(array(
+            'dimensions' => array('test' => array('a')),
+            'targetDimensions' => array('test' => 'a')
+        ));
+        $variantContextB = $this->contextFactory->create(array(
+            'dimensions' => array('test' => array('b', 'a')),
+            'targetDimensions' => array('test' => 'b')
+        ));
+
+        $rootNodeA = $variantContextA->getRootNode();
+        $rootNodeB = $rootNodeA->createVariantForContext($variantContextB);
+
+        $liveParentNodeA = $rootNodeA->createNode('parent-node');
+        $liveParentNodeB = $liveParentNodeA->createVariantForContext($variantContextB);
+
+        $nodesA = array();
+        $nodesA[0] = $liveParentNodeA->createNode('node000');
+        $nodesA[150] = $liveParentNodeA->createNode('node150');
+
+        $nodesB[0] = $nodesA[0]->createVariantForContext($variantContextB);
+        $nodesB[150] = $nodesA[150]->createVariantForContext($variantContextB);
+
+        $this->persistenceManager->persistAll();
+
+        for ($i = 1; $i < 150; $i++) {
+            $newNodeA = $liveParentNodeA->createNode('node' . sprintf('%1$03d', $i));
+            $newNodeA->moveAfter($nodesA[$i - 1]);
+            $newNodeB = $newNodeA->createVariantForContext($variantContextB);
+
+            $nodesA[$i] = $newNodeA;
+            $nodesB[$i] = $newNodeB;
+        }
+        $this->persistenceManager->persistAll();
+
+        ksort($nodesA);
+        ksort($nodesB);
+
+        $actualChildNodesA = $liveParentNodeA->getChildNodes();
+        $actualChildNodesB = $liveParentNodeB->getChildNodes();
+
+        $this->assertSameOrder($nodesA, $actualChildNodesA);
+        $this->assertSameOrder($nodesB, $actualChildNodesB);
+    }
+
+    /**
      * Asserts that the order of the given nodes is the same.
      * This doesn't check if the node objects are the same or equal but rather tests
      * if their path is identical. Therefore nodes can be in different workspaces
