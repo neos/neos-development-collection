@@ -15,7 +15,9 @@ require(
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.T3Configuration.neosJavascriptVersion ? 'bust=' +  window.T3Configuration.neosJavascriptVersion : '',
 		paths: requirePaths,
-		context: 'neos'
+		context: 'neos',
+		waitSeconds: window.T3Configuration.UserInterface.requireJsWaitSeconds
+
 	},
 	[
 		'Library/jquery-with-dependencies',
