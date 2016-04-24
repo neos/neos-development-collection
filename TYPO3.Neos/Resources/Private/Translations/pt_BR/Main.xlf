@@ -26,7 +26,7 @@
 			<target xml:lang="pt-BR" state="translated">Voltar</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="pt-BR" state="translated">escolher</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Escolher</target><alt-trans><target xml:lang="pt-BR">escolher</target></alt-trans></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
 			<target xml:lang="pt-BR" state="translated">Escreva pra procurar</target></trans-unit>
@@ -86,19 +86,19 @@
 			<target xml:lang="pt-BR" state="translated">Esconder</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Exibir</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
 			<target xml:lang="pt-BR" state="needs-translation">into</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="pt-BR" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">antes</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="pt-BR" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">depois</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="pt-BR" state="translated">carregando</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Carregando</target><alt-trans><target xml:lang="pt-BR">carregando</target></alt-trans></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="pt-BR" state="translated">Novo Depois</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target xml:lang="pt-BR" state="translated">ok</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="pt-BR" state="translated">página</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Página</target><alt-trans><target xml:lang="pt-BR">página</target></alt-trans></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="pt-BR" state="translated">Colar</target></trans-unit>
@@ -146,10 +146,10 @@
 			<target xml:lang="pt-BR" state="translated">Publicar todas as alterações da página atual</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="pt-BR" state="translated">Não pode publicar porque o espaço de trabalho de destino é somente leitura</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Não foi possível publicar porque o espaço de trabalho de destino tem acesso somente leitura</target><alt-trans><target xml:lang="pt-BR">Não pode publicar porque o espaço de trabalho de destino é somente leitura</target></alt-trans></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Selecione o espaço de trabalho de destino</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target xml:lang="pt-BR" state="translated">Publicando</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target xml:lang="pt-BR" state="translated">Publicado</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir/Fechar menu de publicação</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="pt-BR" state="translated">Espaço de trabalho de destino</target></trans-unit>
@@ -176,7 +176,7 @@
 			<target xml:lang="pt-BR" state="translated">Salvar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="pt-BR" state="translated">Salvando...</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Salvando</target><alt-trans><target xml:lang="pt-BR">Salvando...</target></alt-trans></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 			<target xml:lang="pt-BR" state="translated">Salvo</target></trans-unit>
@@ -209,22 +209,22 @@
 			<target xml:lang="pt-BR" state="translated">Caminho relativo</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="pt-BR" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Versão</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="pt-BR" state="translated">Esta operação não pode ser desfeita.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="pt-BR" state="needs-translation">Asset</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Ítem</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="pt-BR" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Criado</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="pt-BR" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Última modificação</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="pt-BR" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Última publicação</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="pt-BR" state="translated">Identificador</target></trans-unit>
@@ -233,55 +233,55 @@
 			<target xml:lang="pt-BR" state="translated">Nome</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Espaço de Trabalho</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="pt-BR" state="translated">Estrutura</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle context structure</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir/Fechar estrutura do contexto</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="pt-BR" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Filtro</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle menu</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir/fechar o menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="pt-BR" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro ao carregar!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="pt-BR" state="needs-translation">You have to select a node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Selecione um nó</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="pt-BR" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O nó raíz não pode ser removido.</target><alt-trans><target xml:lang="pt-BR">O nó raíz não pode ser apagado.</target></alt-trans></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="pt-BR" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Você não pode copiar este nó</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="pt-BR" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Você não pode cortar este nó</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target xml:lang="pt-BR" state="needs-translation">Content Dimensions</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Dimensões de conteúdo</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="pt-BR" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
 			<target xml:lang="pt-BR" state="translated">Documento</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="pt-BR" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Referência</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="pt-BR" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Host</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="pt-BR" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Esquema</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="pt-BR" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Porta</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="pt-BR" state="translated">Primário</target></trans-unit>
@@ -324,7 +324,7 @@
 			<target xml:lang="pt-BR" state="translated">Página aberta em espaço de trabalho ao vivo</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir página em espaço de trabalho de destino</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="pt-BR" state="translated">Descartar todos</target></trans-unit>
@@ -414,7 +414,7 @@
 			<target xml:lang="pt-BR" state="translated">Visibilidade</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="pt-BR" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Opções do documento</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target xml:lang="pt-BR" state="translated">O comprimento deste texto deve estar entre {{minimum}} e {{maximum}} caracteres.</target></trans-unit>
@@ -480,34 +480,34 @@
 			<target xml:lang="pt-BR" state="translated">O determinado assunto não é um válido UUID.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir/Fechar selecionador das dimensões de conteúdo</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="pt-BR" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Começar com um documento vazio ou já preenchido?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="pt-BR" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Este {nodeTypeLabel} ainda não existe no {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="pt-BR" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Você pode criá-lo agora, começando com um {nodeTypeLabel} vazio ou copiar todo o conteúdo do {nodeTypeLabel} atualmente visível no {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Além disso, há {numberOfNodesMissingInRootline} documentos ancestrais que também não existem na variante escolhida, e que serão igualmente criados.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="pt-BR" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Criar vazio</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="pt-BR" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Criar e copiar</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="pt-BR" state="translated">Conteúdo</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Abrir/Fechar grupo de menus</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="pt-BR" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Ativar/Desativar modo de menú colado</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="pt-BR" state="translated">Deseja realmente excluir</target></trans-unit>
@@ -549,7 +549,7 @@
 			<target xml:lang="pt-BR" state="translated">Faltando propriedade necessária: </target><alt-trans><target xml:lang="pt-BR">Faltando propriedade necessária:</target></alt-trans></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="pt-BR" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Espaço de Trabalho</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="pt-BR" state="translated">Espaços de Trabalho</target></trans-unit>
@@ -574,7 +574,7 @@
 			<target xml:lang="pt-BR" state="translated">Conteúdo bruto</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="pt-BR" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Modo de conteúdo nú</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="pt-BR" state="translated">Área de Trabalho</target></trans-unit>
@@ -590,10 +590,10 @@
 			<target xml:lang="pt-BR" state="translated">Sair</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="pt-BR" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O nome de usuário ou a senha estão incorretos</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O login expirou. Por favor faça um novo login.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -630,23 +630,23 @@
 			<target xml:lang="pt-BR" state="translated">A configuração do NodeType que é suposto ser processado aqui não está disponível. Provavelmente você renomeou o NodeType e está faltando uma migração, ou você simplesmente escreveu errado.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro não esperado ao criar o nó</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro não esperado ao apagar o nó</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro não esperado ao atualizar o nó</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro não esperado ao mover o nó</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Erro ao carregar a árvore de nós.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="pt-BR" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">O nome de usuário ou a senha estão incorretos</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

@@ -86,16 +86,16 @@
 			<target xml:lang="ru">Скрыть</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="ru" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="ru" state="translated">Показать</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="ru" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="ru" state="translated">в</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="ru" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="ru" state="translated">перед</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="ru" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="ru" state="translated">После</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="ru">Загружается</target></trans-unit>
@@ -209,7 +209,7 @@
 			<target xml:lang="ru">Относительный путь</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="ru" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="ru" state="translated">Версия</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="ru">Эта операция не может быть отменена.</target></trans-unit>
@@ -218,13 +218,13 @@
 			<target xml:lang="ru" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="ru" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="ru" state="translated">создано</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="ru" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="ru" state="translated">Последнее изменение</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="ru" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="ru" state="translated">Последняя публикация</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="ru">Идентификатор</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="ru">Имя</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="ru" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="ru" state="translated">Рабочая область</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve" approved="yes">
 				<source>Structure</source>
 			<target xml:lang="ru">Структура</target></trans-unit>
@@ -242,46 +242,46 @@
 			<target xml:lang="ru" state="needs-translation">Toggle context structure</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="ru" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="ru" state="translated">Фильтр</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
 			<target xml:lang="ru" state="needs-translation">Toggle menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="ru" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ошибка загрузки!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="ru" state="needs-translation">You have to select a node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вы должны выбрать узел</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="ru" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Корневой узел не может быть удален.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="ru" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нельзя скопировать этот узел</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="ru" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Нельзя вырезать этот узел</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
 			<target xml:lang="ru" state="needs-translation">Content Dimensions</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="ru" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="ru" state="translated">Сайт</target></trans-unit>
       <trans-unit id="document" xml:space="preserve" approved="yes">
 				<source>Document</source>
 			<target xml:lang="ru">Документ</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="ru" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ссылка</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="ru" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="ru" state="translated">Хост</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="ru" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="ru" state="translated">Схема</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="ru" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="ru" state="translated">Порт</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="ru">Основной</target><alt-trans><target xml:lang="ru">Основное</target></alt-trans></trans-unit>
@@ -414,7 +414,7 @@
 			<target xml:lang="ru">Видимость</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="ru" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="ru" state="translated">Параметры документа</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target xml:lang="ru" state="translated">Длина этого текста должна быть между {{minimum}} и {{maximum}} символами.</target></trans-unit>
@@ -486,7 +486,7 @@
 			<target xml:lang="ru" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="ru" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Этот {nodeTypeLabel} еще не существует в {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
 			<target xml:lang="ru" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
@@ -495,7 +495,7 @@
 			<target xml:lang="ru" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="ru" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="ru" state="translated">Создайте пустой</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
 			<target xml:lang="ru" state="needs-translation">Create and copy</target></trans-unit>
@@ -549,7 +549,7 @@
 			<target xml:lang="ru">Отсутствует обязательное свойство: </target><alt-trans><target xml:lang="ru">Отсутствует обязательное свойство:</target></alt-trans></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="ru" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="ru" state="translated">Рабочая область</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="ru">Рабочие области</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Рабочие пространства</target></alt-trans><alt-trans><target xml:lang="ru">Workspaces</target></alt-trans></trans-unit>
@@ -590,10 +590,10 @@
 			<target xml:lang="ru">Выйти из системы</target><alt-trans><target xml:lang="ru">Выйти из профиля</target></alt-trans></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="ru" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="ru" state="translated">Введенное имя пользователя или пароль был неправ</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="ru" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ваш логин истек. Пожалуйста, войдите снова.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
@@ -630,23 +630,23 @@
 			<target xml:lang="ru">Настройка типа элемента, который должен отображаться здесь не доступен. Вероятно вы переименовали тип элемента и не выполнили миграцию или просто допустили опечатку.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="ru" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Непредвиденная ошибка при создании узла</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="ru" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Непредвиденная ошибка при удалении узла</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="ru" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Непредвиденная ошибка при обновлении узла</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="ru" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target xml:lang="ru" state="translated">Неожиданная ошибка при перемещении узла</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
 			<target xml:lang="ru" state="needs-translation">Node Tree loading error.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="ru" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="ru" state="translated">Введенное имя пользователя или пароль был неправ</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
