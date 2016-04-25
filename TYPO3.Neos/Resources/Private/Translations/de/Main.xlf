@@ -507,7 +507,7 @@
 			<target xml:lang="de" state="translated">Menügruppe umschalten</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="de" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="de" state="translated">Sticky Menu verbergen / anzeigen</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>

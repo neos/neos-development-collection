@@ -660,16 +660,16 @@
 			<target xml:lang="da">Sorter efter sidste ændring</target></trans-unit>
       <trans-unit id="media.sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="da" state="needs-translation">Sort by</target></trans-unit>
+			<target xml:lang="da" state="translated">Sortér efter</target></trans-unit>
       <trans-unit id="media.sortdirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="da" state="needs-translation">Sort direction</target></trans-unit>
+			<target xml:lang="da" state="translated">Sorteringsretning</target></trans-unit>
       <trans-unit id="media.sortdirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="da" state="needs-translation">Ascending</target></trans-unit>
+			<target xml:lang="da" state="translated">Stigende</target></trans-unit>
       <trans-unit id="media.sortdirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="da" state="needs-translation">Descending</target></trans-unit>
+			<target xml:lang="da" state="translated">Faldende</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="da">Træk og slip på tag eller samling</target></trans-unit>
@@ -900,20 +900,20 @@
 			<target xml:lang="da">Opretter</target></trans-unit>
       <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="da" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+			<target xml:lang="da" state="translated">Filen kunne ikke slettes da der indhold som bruger den</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="da" state="needs-translation">{0} usages</target>
+          <target xml:lang="da" state="translated">{0} anvendelser</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="da" state="needs-translation">{0} usages</target>
+          <target xml:lang="da" state="translated">{0} anvendelser</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target xml:lang="da" state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target xml:lang="da" state="translated">Henvisninger til "{asset}"</target><alt-trans><target xml:lang="da">Referencer til "{asset}"</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

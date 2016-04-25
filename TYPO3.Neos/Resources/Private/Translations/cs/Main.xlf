@@ -284,11 +284,11 @@
 			<target xml:lang="cs" state="needs-translation">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="cs" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="cs" state="translated">Výchozí</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="cs" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="cs" state="translated">Obecný</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="cs" state="needs-translation">Structure</target></trans-unit>
