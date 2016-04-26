@@ -95,7 +95,7 @@ The following options are allowed:
 
   Example::
 
-    'TYPO3.NeosDemoTypo3Org:Flickr':
+    'Neos.Demo:Flickr':
       label: ${'Flickr plugin (' + q(node).property('tags') + ')'}
 
   ``generatorClass``

@@ -47,7 +47,7 @@ The actual rendering of the edit/preview mode is configured in TypoScript::
 					media = 'all'
 					rel = 'stylesheet'
 					href = TYPO3.TypoScript:ResourceUri {
-						path = 'resource://TYPO3.NeosDemoTypo3Org/Public/Styles/Print.css'
+						path = 'resource://Neos.Demo/Public/Styles/Print.css'
 					}
 				}
 			}
