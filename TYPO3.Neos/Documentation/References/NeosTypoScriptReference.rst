@@ -1,8 +1,8 @@
 .. _neos-typoscript-reference:
 
-=========================
-Neos TypoScript Reference
-=========================
+====================
+TypoScript Reference
+====================
 
 TYPO3.TypoScript
 ================

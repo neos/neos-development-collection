@@ -1,5 +1,7 @@
-Configuration
-=============
+.. _neos-configuration-reference:
+
+Configuration Reference
+=======================
 
 .. toctree::
 	:maxdepth: 2
