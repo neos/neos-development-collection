@@ -13,6 +13,6 @@ insert_final_newline = true
 [*.php]
 indent_size = 4
 
-# JS should use 4 spaces
+# JS should use tabs, to reduce conflicts
 [*.js]
-indent_size = 4
+indent_style = tab
