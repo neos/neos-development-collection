@@ -28,6 +28,7 @@ use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -168,9 +169,10 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             $flowQuery = new FlowQuery([$node]);
             /** @var Node $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $documentNodeIdentifier = $documentNode instanceof NodeInterface ? $documentNode->getIdentifier() : null;
             $relatedNodes[$site->getNodeName()]['site'] = $site;
-            $relatedNodes[$site->getNodeName()]['documentNodes'][$documentNode->getIdentifier()]['node'] = $documentNode;
-            $relatedNodes[$site->getNodeName()]['documentNodes'][$documentNode->getIdentifier()]['nodes'][] = [
+            $relatedNodes[$site->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $documentNode;
+            $relatedNodes[$site->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
                 'node' => $node,
                 'nodeData' => $relatedNodeData,
                 'contextDocumentNode' => $documentNode,
