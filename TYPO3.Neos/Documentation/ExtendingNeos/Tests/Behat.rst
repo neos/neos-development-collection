@@ -6,7 +6,7 @@ Setting up Neos for running Behat tests
 =======================================
 
 The Neos package contains a growing suite of Behat tests which you should take into account while fixing bugs or
-adding new features. Please note that running these tests require that the Neos demo site package (TYPO3.NeosDemoTypo3Org)
+adding new features. Please note that running these tests require that the Neos demo site package (Neos.Demo)
 is installed and activated.
 
 Install Behat for the base distribution

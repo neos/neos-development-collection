@@ -455,7 +455,7 @@ class FeatureContext extends MinkContext
     public function iHaveTheSite($siteName)
     {
         $site = new \TYPO3\Neos\Domain\Model\Site($siteName);
-        $site->setSiteResourcesPackageKey('TYPO3.NeosDemoTypo3Org');
+        $site->setSiteResourcesPackageKey('Neos.Demo');
         /** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
         $siteRepository = $this->objectManager->get(\TYPO3\Neos\Domain\Repository\SiteRepository::class);
         $siteRepository->add($site);
