@@ -900,7 +900,7 @@
 			<target xml:lang="da">Opretter</target></trans-unit>
       <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="da" state="translated">Filen kunne ikke slettes da der indhold som bruger den</target></trans-unit>
+			<target xml:lang="da" state="translated">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target xml:lang="da">Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
