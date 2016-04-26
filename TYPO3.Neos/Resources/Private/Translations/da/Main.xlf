@@ -89,13 +89,13 @@
 			<target xml:lang="da">Vis</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="da" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="da" state="translated">indeni</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="da" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="da" state="translated">før</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="da" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="da" state="translated">efter</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="da">Indlæser</target></trans-unit>
@@ -149,7 +149,7 @@
 			<target xml:lang="da">Kunne ikke publicére da destinationsarbejdsrummet er skrivebeskyttet</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="da" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="da" state="translated">Vælg destinations arbejdsrum</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="da">Publicering</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target xml:lang="da">Publiceret</target><alt-trans><target xml:lang="da">Udgivet</target></alt-trans></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="da" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="da" state="translated">Vis/skjul publiceringsmenu</target><alt-trans><target xml:lang="da">Åbn/luk publiceringsmenu</target></alt-trans></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target xml:lang="da">Destinationsarbejdsrum</target><alt-trans><target xml:lang="da">Destinationsarbejdsområde</target></alt-trans><alt-trans><target xml:lang="da">Arbejdsområde</target></alt-trans></trans-unit>
@@ -263,25 +263,25 @@
 			<target xml:lang="da">Dette element kan ikke klippes</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target xml:lang="da" state="needs-translation">Content Dimensions</target></trans-unit>
+			<target xml:lang="da" state="translated">Indholdsdimensioner</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="da" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="da" state="translated">Webside</target></trans-unit>
       <trans-unit id="document" xml:space="preserve" approved="yes">
 				<source>Document</source>
 			<target xml:lang="da">Dokument</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="da" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="da" state="translated">Reference</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="da" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="da" state="translated">Domæne</target><alt-trans><target xml:lang="da">Host</target></alt-trans></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="da" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="da" state="translated">Protokol</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="da" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="da" state="translated">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="da">Primær</target></trans-unit>
@@ -324,7 +324,7 @@
 			<target xml:lang="da">Åbn side i drift arbejdsrum</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="da" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="da" state="translated">Åben side i destinations arbejdsrum</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="da">Kassér alle</target></trans-unit>
@@ -480,7 +480,7 @@
 			<target xml:lang="da">Det givne emne er ikke et gyldigt UUID.</target><alt-trans><target xml:lang="da">Det givne emne er ikke en gyldig UUID.</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="da" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
+			<target xml:lang="da" state="translated">Åben/luk indholdsdimensionsvælger</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="da">Starte med et tomt eller forudfyldt dokument?</target></trans-unit>
@@ -504,10 +504,10 @@
 			<target xml:lang="da">Indhold</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="da" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="da" state="translated">Åbn/luk menu gruppe</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="da" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="da" state="translated">Aktiver/deaktiver fastgjort menu</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="da">Er du sikker på, at du vil slette</target></trans-unit>
