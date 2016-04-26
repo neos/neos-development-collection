@@ -89,7 +89,7 @@
 			<target xml:lang="de">Änderungen</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
-			<target xml:lang="de" state="translated">Seite in "{0}" Arbeitsbereich öffnen</target><alt-trans><target xml:lang="de">Seite in Arbeitsbereich "{0}" öffnen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Seite in Arbeitsbereich "{0}" öffnen</target><alt-trans><target xml:lang="de">Seite in "{0}" Arbeitsbereich öffnen</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target xml:lang="de">Dies ist Ihr persönlicher Arbeitsbereich, welcher nicht gelöscht werden kann.</target></trans-unit>
@@ -243,7 +243,7 @@
 			<target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target><alt-trans><target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse, die diese Neos-Installation betreffen.</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="de" state="translated">Dies ist kürzlich in Neos geschehen:</target></trans-unit>
+			<target xml:lang="de" state="translated">Dies ist kürzlich im Neos geschehen</target><alt-trans><target xml:lang="de">Dies ist kürzlich in Neos geschehen:</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target><alt-trans><target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet, die in diesem Verlauf dargestellt werden könnten.</target></alt-trans></trans-unit>
@@ -282,7 +282,7 @@
 			<target xml:lang="de">Mehr laden</target><alt-trans><target xml:lang="de">Mehr Laden</target></alt-trans></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target xml:lang="de" state="translated">Dieser Knoten wurde in der Zwischenzeit entfernt</target></trans-unit>
+			<target xml:lang="de" state="translated">Diese Node wurde in der Zwischenzeit entfernt</target><alt-trans><target xml:lang="de">Dieser Knoten wurde in der Zwischenzeit entfernt</target></alt-trans></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -499,7 +499,7 @@
 			<target xml:lang="de" state="translated">Deaktiviert</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target xml:lang="de" state="translated">Dieses Paket ist derzeit eingefroren. Hier klicken, um es freizugeben.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieses Paket ist derzeit eingefroren. Klicken Sie hier, um es freizugeben.</target><alt-trans><target xml:lang="de">Dieses Paket ist derzeit eingefroren. Hier klicken, um es freizugeben.</target></alt-trans></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
 			<target xml:lang="de" state="translated">Frieren Sie das Paket ein, um Ihre Webseite zu beschleunigen.</target></trans-unit>

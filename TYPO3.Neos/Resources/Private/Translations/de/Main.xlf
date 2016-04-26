@@ -68,7 +68,7 @@
 			<target xml:lang="de">Verwerfen</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="de">Änderungen verwerfen</target></trans-unit>
+			<target xml:lang="de">Änderungen verwerfen</target><alt-trans><target xml:lang="de">Verwerfen</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
 			<target xml:lang="de">Titel bearbeiten</target></trans-unit>
@@ -495,7 +495,7 @@
 			<target xml:lang="de" state="translated">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} Elternelemente die bei diesem Vorgang auch erstellt werden.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="de" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="de" state="translated">Leer erstellen</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
 			<target xml:lang="de" state="translated">Erstellen und kopieren</target></trans-unit>
@@ -507,7 +507,7 @@
 			<target xml:lang="de" state="translated">Menügruppe umschalten</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="de" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="de" state="translated">Sticky Menu verbergen / anzeigen</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
@@ -574,7 +574,7 @@
 			<target xml:lang="de">Roh-Ansicht</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="de" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="de" state="translated">Nur-Inhalt-Modus</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="de">Desktop-Ansicht</target><alt-trans><target xml:lang="de">PC-Ansicht</target></alt-trans></trans-unit>

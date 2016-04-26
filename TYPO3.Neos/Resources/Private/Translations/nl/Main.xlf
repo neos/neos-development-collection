@@ -6,12 +6,12 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="nl">Automatisch publiceren</target><alt-trans><target xml:lang="nl">Auto-Publiceer</target></alt-trans></trans-unit>
-      <trans-unit id="autoPublishTo" xml:space="preserve">
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="nl" state="translated">Automatisch publiceren naar {0}</target></trans-unit>
-      <trans-unit id="reviewChanges" xml:space="preserve">
+			<target xml:lang="nl">Automatisch publiceren naar {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
 				<source>Review changes</source>
-			<target xml:lang="nl" state="translated">Controleer wijzigingen</target></trans-unit>
+			<target xml:lang="nl">Controleer wijzigingen</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="nl">Pas Toe</target></trans-unit>
@@ -33,9 +33,9 @@
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="nl">Inhoud</target></trans-unit>
-      <trans-unit id="node" xml:space="preserve">
+      <trans-unit id="node" xml:space="preserve" approved="yes">
 				<source>Node</source>
-			<target xml:lang="nl" state="translated">Node</target></trans-unit>
+			<target xml:lang="nl">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target xml:lang="nl">Content Weergave</target></trans-unit>
@@ -84,18 +84,18 @@
       <trans-unit id="hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target xml:lang="nl">Verbergen</target><alt-trans><target xml:lang="nl">Verberg</target></alt-trans></trans-unit>
-      <trans-unit id="unhide" xml:space="preserve">
+      <trans-unit id="unhide" xml:space="preserve" approved="yes">
 				<source>Unhide</source>
-			<target xml:lang="nl" state="translated">Zichtbaar maken</target></trans-unit>
-      <trans-unit id="into" xml:space="preserve">
+			<target xml:lang="nl">Zichtbaar maken</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve" approved="yes">
 				<source>into</source>
-			<target xml:lang="nl" state="translated">in</target></trans-unit>
-      <trans-unit id="before" xml:space="preserve">
+			<target xml:lang="nl">in</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve" approved="yes">
 				<source>before</source>
-			<target xml:lang="nl" state="translated">voor</target></trans-unit>
-      <trans-unit id="after" xml:space="preserve">
+			<target xml:lang="nl">voor</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve" approved="yes">
 				<source>after</source>
-			<target xml:lang="nl" state="translated">na</target></trans-unit>
+			<target xml:lang="nl">na</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="nl">Aan het laden</target></trans-unit>
@@ -138,9 +138,9 @@
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target xml:lang="nl">Publiceren</target></trans-unit>
-      <trans-unit id="publishTo" xml:space="preserve">
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
 				<source>Publish to {0}</source>
-			<target xml:lang="nl" state="translated">Publiceren naar {0}</target></trans-unit>
+			<target xml:lang="nl">Publiceren naar {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
 			<target xml:lang="nl" state="translated">Publiceer alle wijzigingen op de huidige pagina</target></trans-unit>
@@ -231,9 +231,9 @@
       <trans-unit id="name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="nl">Naam</target></trans-unit>
-      <trans-unit id="workspace" xml:space="preserve">
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
-			<target xml:lang="nl" state="translated">Workspace</target></trans-unit>
+			<target xml:lang="nl">Workspace</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve" approved="yes">
 				<source>Structure</source>
 			<target xml:lang="nl">Structuur</target></trans-unit>
@@ -502,12 +502,12 @@
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target xml:lang="nl">Inhoud</target></trans-unit>
-      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
-			<target xml:lang="nl" state="translated">Menu groep verbergen / tonen</target></trans-unit>
-      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+			<target xml:lang="nl">Menu groep verbergen / tonen</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="nl" state="translated">Sticky menu modus verbergen / tonen</target></trans-unit>
+			<target xml:lang="nl">Sticky menu modus verbergen / tonen</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target xml:lang="nl">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
@@ -547,9 +547,9 @@
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
 			<target xml:lang="nl">Missend verplichte eigenschap: </target><alt-trans><target xml:lang="nl">Missend verplichte eigenschap:</target></alt-trans><alt-trans><target xml:lang="nl">Verplicht ontbrekende eigenschap:</target></alt-trans></trans-unit>
-      <trans-unit id="workspace" xml:space="preserve">
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
-			<target xml:lang="nl" state="translated">Workspace</target></trans-unit>
+			<target xml:lang="nl">Workspace</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
 			<target xml:lang="nl">Workspaces</target></trans-unit>
@@ -572,9 +572,9 @@
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
 			<target xml:lang="nl">Alleen content</target></trans-unit>
-      <trans-unit id="rawContentMode" xml:space="preserve">
+      <trans-unit id="rawContentMode" xml:space="preserve" approved="yes">
 				<source>Raw Content Mode</source>
-			<target xml:lang="nl" state="translated">Content zonder opmaak mode</target></trans-unit>
+			<target xml:lang="nl">Content zonder opmaak mode</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="nl">Desktop</target></trans-unit>
@@ -588,9 +588,9 @@
       <trans-unit id="logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="nl">Log uit</target></trans-unit>
-      <trans-unit id="wrongCredentials" xml:space="preserve">
+      <trans-unit id="wrongCredentials" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="nl" state="translated">De gebruikersnaam of het wachtwoord is onjuist</target></trans-unit>
+			<target xml:lang="nl">De gebruikersnaam of het wachtwoord is onjuist</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="nl" state="translated">Uw login is verlopen. Log opnieuw in alstublieft.</target></trans-unit>
@@ -644,9 +644,9 @@
 				<source>Node Tree loading error.</source>
 			<target xml:lang="nl" state="translated">Node boomstructuur laad fout.</target></trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="nl" state="translated">De gebruikersnaam of het wachtwoord is onjuist</target></trans-unit>
+			<target xml:lang="nl">De gebruikersnaam of het wachtwoord is onjuist</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

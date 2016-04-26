@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin</source>
-			<target xml:lang="cs" state="needs-translation">Plugin</target></trans-unit>
+			<target xml:lang="cs" state="translated">Doplněk</target></trans-unit>
     </body>
   </file>
 </xliff>
