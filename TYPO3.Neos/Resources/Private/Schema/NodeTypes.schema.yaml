@@ -180,6 +180,8 @@ additionalProperties:
 
                   'collapsed': { type: boolean, description: 'If TRUE, the group in the inspector panel is collapsed by default.' }
 
+                  'icon': { type: string, description: "CSS Class for displaying an icon for each group." }
+
             'views':
               type: dictionary
               additionalProperties:
