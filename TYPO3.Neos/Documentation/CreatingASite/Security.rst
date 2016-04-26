@@ -359,17 +359,17 @@ target is then granted for the "Editor" role.
   privilegeTargets:
     'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
       # This privilegeTarget must be defined, so that we switch to a "whitelist" approach
-      'TYPO3.NeosDemoTypo3Org:EditAllNodes':
+      'Neos.Demo:EditAllNodes':
         matcher: 'TRUE'
 
-      'TYPO3.NeosDemoTypo3Org:EditGerman':
+      'Neos.Demo:EditGerman':
         matcher: 'isInDimensionPreset("language", "de")'
 
   roles:
     'TYPO3.Neos:Editor':
       privileges:
         -
-          privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
+          privilegeTarget: 'Neos.Demo:EditGerman'
           permission: GRANT
 
 Restricting Access to Backend Modules
