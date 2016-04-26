@@ -6,7 +6,7 @@ Feature: Content module / Inline editing
 
   @fixtures @javascript @remote
   Scenario: Edit text of a content element with automatic save
-    Given I imported the site "TYPO3.NeosDemoTypo3Org"
+    Given I imported the site "Neos.Demo"
     And the following users exist:
       | username | password | firstname | lastname | roles  |
       | jdoe     | password | John      | Doe      | Editor |

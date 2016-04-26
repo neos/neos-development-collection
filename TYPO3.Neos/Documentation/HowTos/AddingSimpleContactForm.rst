@@ -107,4 +107,4 @@ Html (Sites/Vendor.Site/Resources/Private/Templates/Email/Message.txt) ::
 To find out more about how to create forms see the TYPO3.Form package. There is even a Click Form Builder that
 exports the Yaml settings files.
 
-.. warning:: Make sure the TYPO3.NeosDemoTypo3Org package (or other) is deactivated. Otherwise the setting ``TYPO3.Form.yamlPersistenceManager.savePath`` may be overwritten by another package. You can deactivate a package with the command ``./flow package:deactivate <PackageKey>``.
+.. warning:: Make sure the Neos.Demo package (or other) is deactivated. Otherwise the setting ``TYPO3.Form.yamlPersistenceManager.savePath`` may be overwritten by another package. You can deactivate a package with the command ``./flow package:deactivate <PackageKey>``.

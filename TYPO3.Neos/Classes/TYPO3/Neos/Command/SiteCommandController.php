@@ -115,7 +115,7 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Export sites content (e.g. site:export --package-key "TYPO3.NeosDemoTypo3Org")
+     * Export sites content (e.g. site:export --package-key "Neos.Demo")
      *
      * This command exports all or one specific site with all its content into an XML format.
      *

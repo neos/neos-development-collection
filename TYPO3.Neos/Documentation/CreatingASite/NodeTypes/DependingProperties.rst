@@ -116,7 +116,7 @@ a refresh of the available options from the data source.
           editorListeners:
             updateForSourceData:
               property: 'serviceType'
-              handler: 'TYPO3.NeosDemoTypo3Org/Handlers/TeaserOptionsHandler'
+              handler: 'Neos.Demo/Handlers/TeaserOptionsHandler'
 
 .. code-block:: js
 
