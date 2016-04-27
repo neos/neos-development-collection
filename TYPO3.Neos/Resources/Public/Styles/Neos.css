@@ -6197,6 +6197,9 @@
 .neos .neos-show {
   display: block;
 }
+.neos .neos-show-flex {
+  display: flex;
+}
 .neos .neos-invisible {
   visibility: hidden;
 }
