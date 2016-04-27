@@ -15,8 +15,10 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -70,6 +72,12 @@ class AssetService
      * @var array
      */
     protected $usageStrategies;
+
+    /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
 
     /**
      * Returns the repository for an asset
@@ -217,5 +225,78 @@ class AssetService
         if ($this->isInUse($asset)) {
             throw new AssetServiceException('Asset could not be deleted, because it is still in use.', 1462196420);
         }
+    }
+
+    /**
+     * Replace resource on an asset. Takes variants and redirect handling into account.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @return void
+     */
+    public function replaceAssetResource(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        $originalAssetResource = $asset->getResource();
+        $asset->setResource($resource);
+
+        if (isset($options['keepOriginalFilename']) && (boolean)$options['keepOriginalFilename'] === true) {
+            $asset->getResource()->setFilename($originalAssetResource->getFilename());
+        }
+
+        $uriMapping = [];
+        $redirectHandlerEnabled = isset($options['generateRedirects']) && (boolean)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
+        if ($redirectHandlerEnabled) {
+            $uriMapping[
+                $this->resourceManager->getPublicPersistentResourceUri($originalAssetResource)
+            ] = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+        }
+
+        if (method_exists($asset, 'getVariants')) {
+            $variants = $asset->getVariants();
+            foreach ($variants as $variant) {
+                $originalVariantResource = $variant->getResource();
+                $variant->refresh();
+
+                foreach ($variant->getAdjustments() as $adjustment) {
+                    if (method_exists($adjustment, 'refit')) {
+                        $adjustment->refit($asset);
+                    }
+                }
+
+                if ($redirectHandlerEnabled) {
+                    $uriMapping[
+                        $this->resourceManager->getPublicPersistentResourceUri($originalVariantResource)
+                    ] = $this->resourceManager->getPublicPersistentResourceUri($variant->getResource());
+                }
+
+                $this->getRepository($variant)->update($variant);
+            }
+        }
+
+        if ($redirectHandlerEnabled) {
+            /** @var \Neos\RedirectHandler\Storage\RedirectStorageInterface $redirectStorage */
+            $redirectStorage = $this->objectManager->get('Neos\\RedirectHandler\\Storage\\RedirectStorageInterface');
+            foreach ($uriMapping as $originalUri => $newUri) {
+                $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
+                if ($existingRedirect === null) {
+                    $redirectStorage->addRedirect($originalUri, $newUri, 301);
+                }
+            }
+        }
+
+        $this->getRepository($asset)->update($asset);
+        $this->emitAssetResourceReplaced($asset);
+    }
+
+    /**
+     * Signals that a resource on an asset has been replaced
+     *
+     * @param AssetInterface $asset
+     * @return void
+     * @Flow\Signal
+     */
+    public function emitAssetResourceReplaced(AssetInterface $asset)
+    {
     }
 }
