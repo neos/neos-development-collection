@@ -8644,12 +8644,20 @@
   content: "";
   border-radius: 50%;
 }
-.neos #neos-inspector .neos-inspector-form .neos-checkbox input[type='radio']:checked + span::after,
-.neos #neos-inspector .neos-inspector-form .neos-radio input[type='radio']:checked + span::after {
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input[type='radio'] + span::after,
+.neos #neos-inspector .neos-inspector-form .neos-radio input[type='radio'] + span::after {
   content: "";
   position: absolute;
-  background: #fff;
+  background: #5b5b5b;
   border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  left: 7px;
+  top: 7px;
+}
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input[type='radio']:checked + span::after,
+.neos #neos-inspector .neos-inspector-form .neos-radio input[type='radio']:checked + span::after {
+  background: #fff;
 }
 .neos #neos-inspector .neos-inspector-form .neos-checkbox input:hover + span::before,
 .neos #neos-inspector .neos-inspector-form .neos-radio input:hover + span::before {
@@ -9803,14 +9811,24 @@
   content: "";
   border-radius: 50%;
 }
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::after,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::after,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::after,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio'] + span::after {
+  content: "";
+  position: absolute;
+  background: #5b5b5b;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  left: 7px;
+  top: 7px;
+}
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio']:checked + span::after,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[type='radio']:checked + span::after,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after {
-  content: "";
-  position: absolute;
   background: #fff;
-  border-radius: 50%;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:hover + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:hover + span::before,
@@ -12343,12 +12361,20 @@
   content: "";
   border-radius: 50%;
 }
-.neos.neos-module .neos-checkbox input[type='radio']:checked + span::after,
-.neos.neos-module .neos-radio input[type='radio']:checked + span::after {
+.neos.neos-module .neos-checkbox input[type='radio'] + span::after,
+.neos.neos-module .neos-radio input[type='radio'] + span::after {
   content: "";
   position: absolute;
-  background: #fff;
+  background: #5b5b5b;
   border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  left: 7px;
+  top: 7px;
+}
+.neos.neos-module .neos-checkbox input[type='radio']:checked + span::after,
+.neos.neos-module .neos-radio input[type='radio']:checked + span::after {
+  background: #fff;
 }
 .neos.neos-module .neos-checkbox input:hover + span::before,
 .neos.neos-module .neos-radio input:hover + span::before {
