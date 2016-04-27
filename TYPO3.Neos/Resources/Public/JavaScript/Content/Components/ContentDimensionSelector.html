@@ -22,33 +22,35 @@
 	</div>
 	{{/if}}
 
-	<div {{bindAttr class=":neos-modal-centered :neos-content-dimension-selector-initial-translation-dialog controller.showInitialTranslationDialog:neos-show:neos-hide"}}>
-		<div class="neos-modal-content">
-			<div class="neos-modal-header">
-				<button class="neos-close neos-button" data-dismiss="modal" title="{{translate id='close' fallback='Close'}}" {{action "cancelCreateAction" target="controller"}}></button>
-				<div class="neos-header">{{translate id="content.dimension.createDialog.header" fallback="Start with an empty or pre-filled document?"}}</div>
-			</div>
-			<div>
-				<div class="neos-subheader">
-					<div>{{boundTranslate id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" nodeTypeLabelBinding="view._nodeTypeLabel" currentDimensionChoiceTextBinding="controller.currentDimensionChoiceText" fallback="This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}."}}</div>
+	{{#if controller.showInitialTranslationDialog}}
+		<div class="neos-modal-centered neos-content-dimension-selector-initial-translation-dialog">
+			<div class="neos-modal-content">
+				<div class="neos-modal-header">
+					<button class="neos-close neos-button" data-dismiss="modal" title="{{translate id='close' fallback='Close'}}" {{action "cancelCreateAction" target="controller"}}></button>
+					<div class="neos-header">{{translate id="content.dimension.createDialog.header" fallback="Start with an empty or pre-filled document?"}}</div>
+				</div>
+				<div>
+					<div class="neos-subheader">
+						<div>{{boundTranslate id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" nodeTypeLabelBinding="view._nodeTypeLabel" currentDimensionChoiceTextBinding="controller.currentDimensionChoiceText" fallback="This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}."}}</div>
 
-					<div>
-						{{boundTranslate id="content.dimension.createDialog.createEmptyOrCopy" nodeTypeLabelBinding="view._nodeTypeLabel" currentDocumentDimensionChoiceTextBinding="controller.currentDocumentDimensionChoiceText" fallback="You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}."}}
-					</div>
-
-					{{#if controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}}
 						<div>
-							{{boundTranslate id="content.dimension.createDialog.existingAncestorDocuments" numberOfNodesMissingInRootlineBinding="controller.showInitialTranslationDialog.numberOfNodesMissingInRootline" fallback="Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well."}}
+							{{boundTranslate id="content.dimension.createDialog.createEmptyOrCopy" nodeTypeLabelBinding="view._nodeTypeLabel" currentDocumentDimensionChoiceTextBinding="controller.currentDocumentDimensionChoiceText" fallback="You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}."}}
 						</div>
-					{{/if}}
+
+						{{#if controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}}
+							<div>
+								{{boundTranslate id="content.dimension.createDialog.existingAncestorDocuments" numberOfNodesMissingInRootlineBinding="controller.showInitialTranslationDialog.numberOfNodesMissingInRootline" fallback="Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well."}}
+							</div>
+						{{/if}}
+					</div>
+				</div>
+				<div class="neos-modal-footer">
+					<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancelCreateAction" target="controller"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+					<button class="neos-button" {{action "createEmptyDocumentAction" target="controller"}}>{{translate id="content.dimension.createDialog.createEmpty" fallback="Create empty"}}</button>
+					<button class="neos-button" {{action "createDocumentAndCopyContentAction" target="controller"}}>{{translate id="content.dimension.createDialog.createAndCopy" fallback="Create and copy"}}</button>
 				</div>
 			</div>
-			<div class="neos-modal-footer">
-				<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancelCreateAction" target="controller"}}>{{translate id="cancel" fallback="Cancel"}}</button>
-				<button class="neos-button" {{action "createEmptyDocumentAction" target="controller"}}>{{translate id="content.dimension.createDialog.createEmpty" fallback="Create empty"}}</button>
-				<button class="neos-button" {{action "createDocumentAndCopyContentAction" target="controller"}}>{{translate id="content.dimension.createDialog.createAndCopy" fallback="Create and copy"}}</button>
-			</div>
 		</div>
-	</div>
-	<div {{bindAttr class=":neos-modal-backdrop :neos-in controller.showInitialTranslationDialog:neos-show:neos-hide"}}></div>
+		<div class="neos-modal-backdrop neos-in"></div>
+	{{/if}}
 </div>
