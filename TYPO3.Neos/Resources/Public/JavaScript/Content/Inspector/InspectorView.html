@@ -8,10 +8,12 @@
 	</div>
 </div>
 <div class="neos-inspector-form">
-	<div class="neos-inspector-field">
-		<label for="neos-content-breadcrumb"><i class="icon-mouse-pointer"></i> <b>{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</b></label>
-		{{view view.Breadcrumb}}
-	</div>
+	{{#if showBreadcrumb}}
+		<div class="neos-inspector-field">
+			<label for="neos-content-breadcrumb"><i class="icon-mouse-pointer"></i> <b>{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</b></label>
+			{{view view.Breadcrumb}}
+		</div>
+	{{/if}}
 	{{#each tab in groupedViews}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each group in tab.groups}}
