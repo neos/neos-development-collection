@@ -147,7 +147,11 @@ class LoginController extends AbstractAuthenticationController
      */
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        if ($this->view instanceof JsonView) {
+            $this->view->assign('value', array('success' => false));
+        } else {
+            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        }
     }
 
     /**
