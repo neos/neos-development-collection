@@ -9,6 +9,9 @@ User experience improvements
 - The styling of the user interface has been improved in many places (`checkboxes <https://github.com/neos/neos-development-collection/pull/457>`_, `dropdowns <https://github.com/neos/neos-development-collection/pull/459>`_, radio buttons, `active inspector tab <https://github.com/neos/neos-development-collection/pull/456>`_, `help message icon <https://github.com/neos/neos-development-collection/pull/453>`_, `error notifications <https://github.com/neos/neos-development-collection/pull/424>`_, …)
 - `Inspector groups can now be assigned icons <https://github.com/neos/neos-development-collection/pull/455>`_ to help identify them more easily.
 - The structure tree has been improved (`configurable loading depth <https://github.com/neos/neos-development-collection/pull/451>`_, `selectable nodes <https://github.com/neos/neos-development-collection/pull/443>`_, `node type changes <https://github.com/neos/neos-development-collection/pull/442>`_, …).
+- `Error notification messages have been improved <https://github.com/neos/neos-development-collection/pull/424>`_ (no more tall orange notifications)
+- `Insert new/paste position selection is more intuitive <https://github.com/neos/neos-development-collection/pull/320>`_ (opens automatically, only one click needed) – additionally the selected position is `shown in the insert new panel <https://github.com/neos/neos-development-collection/pull/426>`_
+- `Additional tooltips and a improved styling them <https://github.com/neos/neos-development-collection/pull/427>`_
 - All `dialogs are centered vertically <https://github.com/neos/neos-development-collection/pull/434>`_ now.
 - The Workspaces module has been improved with better date/time handling, styling fixes, …
 - Insert panel groups `are now collapsible <https://github.com/neos/neos-development-collection/pull/418>`_.
@@ -37,13 +40,6 @@ Options for scheme and port have been added to site domains to enable setting th
 
 When linking to a node the primary domain of the site the node belongs to is taking into account. This allows for correct cross-site linking instead of creating an invalid link to a non-existing node with the existing site's URL.
 
-Improved thumbnail generation
-=============================
-
-- `Thumbnail generator fixes <https://github.com/neos/neos-development-collection/pull/295>`_
-- `SVG Thumbnail Generator should keep track of width / height <https://github.com/neos/neos-development-collection/pull/289>`_
-- `FontDocumentThumbnailGenerator must respect thumbnail width/height <https://github.com/neos/neos-development-collection/pull/290>`_
-
 Search nodes by property & exact value in NodeDataRepository
 ============================================================
 
@@ -53,39 +49,25 @@ jsonified properties field. Instead, the term can also be an array to match exac
 Update to latest Font Awesome
 =============================
 
-Neos now ships the Font Awesome, version 4.5.0. This allows integrators to select from a wider range of icons for node types, inspector groups and other uses.
+Neos now ships the Font Awesome, version 4.6. This allows integrators to select from a wider range of icons for node types, inspector groups and other uses.
 
-All icons are prefixed with "icon-" and old icon-names from version 3.2.1 are still available for backwards compatibility.
+All icons are prefixed with "icon-" and old icon-names from version 3.2 are still available for backwards compatibility.
 
 Further additions
 =================
 
 In addition to the larger features, lots of small improvements and bugfixes have been included in Neos 2.2, among them:
 
-- `Translate process is broken for dimensions without fallbacks <https://github.com/neos/neos-development-collection/pull/392>`_
-- `Editing asset collection <https://github.com/neos/neos-development-collection/pull/476>`_
 - `Introduce interface to customize the default TS prototype <https://github.com/neos/neos-development-collection/pull/473>`_
 - `Add settings to customize login screen stylesheets <https://github.com/neos/neos-development-collection/pull/285>`_
 - `Implement new Login-Screen <https://github.com/neos/neos-development-collection/pull/472>`_
 - `Backend fails to load due to RequireJS timeout <https://github.com/neos/neos-development-collection/pull/463>`_
 - `Use and improve node label <https://github.com/neos/neos-development-collection/pull/448>`_
 - `Only update changed model properties <https://github.com/neos/neos-development-collection/pull/450>`_
-- `Don't show error notification on cancelled page loads <https://github.com/neos/neos-development-collection/pull/449>`_
-- `Aloha table mode issues <https://github.com/neos/neos-development-collection/pull/447>`_
 - `Improved countByParentAndNodeType performance <https://github.com/neos/neos-development-collection/pull/4>`_
-- `Prevent edit / preview rendering path from applying to front-end <https://github.com/neos/neos-development-collection/pull/429>`_
-- `Correct timezone offset in node info inspector view <https://github.com/neos/neos-development-collection/pull/441>`_
 - `Display node label instead of node type label in workspace overview <https://github.com/neos/neos-development-collection/pull/420>`_
-- `Use stable identifier for auto-created child nodes in repair <https://github.com/neos/neos-development-collection/pull/389>`_
-- `Creating pages using non-latin characters <https://github.com/neos/neos-development-collection/pull/394>`_
-- `Node constraints for auto created node types in structure tree <https://github.com/neos/neos-development-collection/pull/405>`_
-- `Image crop selection incorrect on small screens <https://github.com/neos/neos-development-collection/pull/404>`_
 - `Ignore empty NodeType configurations <https://github.com/neos/neos-development-collection/pull/367>`_
-- `Content Collection nodes vanish when publishing to nested workspace <https://github.com/neos/neos-development-collection/pull/372>`_
 - `Event logging tweaks & fixes <https://github.com/neos/neos-development-collection/pull/274>`_
-- `Refresh NodeTree if Workspace is switched <https://github.com/neos/neos-development-collection/pull/334>`_
-- `Reintroduce PublishingService <https://github.com/neos/neos-development-collection/pull/315>`_
-- `Show content element after copy paste inline <https://github.com/neos/neos-development-collection/pull/309>`_
 
 
 See also the full `release notes <https://jira.neos.io/jira/secure/ReleaseNote.jspa?projectId=10000&version=11410>`_ and `changelog <http://neos.readthedocs.org/en/2.2/Appendixes/ChangeLogs/220.html>`_
