@@ -658,18 +658,18 @@
       <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
 			<target xml:lang="da">Sorter efter sidste ændring</target></trans-unit>
-      <trans-unit id="media.sortby" xml:space="preserve">
+      <trans-unit id="media.sortby" xml:space="preserve" approved="yes">
 				<source>Sort by</source>
-			<target xml:lang="da" state="translated">Sortér efter</target></trans-unit>
-      <trans-unit id="media.sortdirection" xml:space="preserve">
+			<target xml:lang="da">Sortér efter</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve" approved="yes">
 				<source>Sort direction</source>
-			<target xml:lang="da" state="translated">Sorteringsretning</target></trans-unit>
-      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+			<target xml:lang="da">Sorteringsretning</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve" approved="yes">
 				<source>Ascending</source>
-			<target xml:lang="da" state="translated">Stigende</target></trans-unit>
-      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+			<target xml:lang="da">Stigende</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
-			<target xml:lang="da" state="translated">Faldende</target></trans-unit>
+			<target xml:lang="da">Faldende</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="da">Træk og slip på tag eller samling</target></trans-unit>
@@ -898,22 +898,22 @@
       <trans-unit id="media.creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target xml:lang="da">Opretter</target></trans-unit>
-      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="da" state="translated">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target xml:lang="da">Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
+			<target xml:lang="da">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target xml:lang="da">Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
+        <trans-unit id="media.relatedNodes[0]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="da" state="translated">{0} anvendelser</target>
+          <target xml:lang="da">{0} anvendelser</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]">
+        <trans-unit id="media.relatedNodes[1]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="da" state="translated">{0} anvendelser</target>
+          <target xml:lang="da">{0} anvendelser</target>
         </trans-unit>
       </group>
-      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
-			<target xml:lang="da" state="translated">Henvisninger til "{asset}"</target><alt-trans><target xml:lang="da">Referencer til "{asset}"</target></alt-trans></trans-unit>
+			<target xml:lang="da">Henvisninger til "{asset}"</target><alt-trans><target xml:lang="da">Referencer til "{asset}"</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

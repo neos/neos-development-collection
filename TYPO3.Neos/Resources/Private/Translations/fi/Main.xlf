@@ -273,15 +273,15 @@
       <trans-unit id="reference" xml:space="preserve" approved="yes">
 				<source>Reference</source>
 			<target xml:lang="fi">Viite</target></trans-unit>
-      <trans-unit id="host" xml:space="preserve">
+      <trans-unit id="host" xml:space="preserve" approved="yes">
 				<source>Host</source>
-			<target xml:lang="fi" state="needs-translation">Host</target></trans-unit>
-      <trans-unit id="scheme" xml:space="preserve">
+			<target xml:lang="fi">Verkko-osoite</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve" approved="yes">
 				<source>Scheme</source>
-			<target xml:lang="fi" state="needs-translation">Scheme</target></trans-unit>
-      <trans-unit id="port" xml:space="preserve">
+			<target xml:lang="fi">Protokolla</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve" approved="yes">
 				<source>Port</source>
-			<target xml:lang="fi" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="fi">Portti</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="fi">Ensisijainen</target></trans-unit>
@@ -322,9 +322,9 @@
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
 			<target xml:lang="fi">Avaa sivu työtilassa</target></trans-unit>
-      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve" approved="yes">
 				<source>Open page in target workspace</source>
-			<target xml:lang="fi" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="fi">Avaa sivu kohdetyötilassa</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve" approved="yes">
 				<source>Discard all</source>
 			<target xml:lang="fi">Hylkää kaikki</target></trans-unit>
@@ -468,7 +468,7 @@
 			<target xml:lang="fi">Anna kelvollinen numero väliltä {{minimum}}-{{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target xml:lang="fi">Syöte ei vastaa mallia ({{pattern}})</target></trans-unit>
+			<target xml:lang="fi">Syöte ei vastaa mallia ({pattern})</target><alt-trans><target xml:lang="fi">Syöte ei vastaa mallia ({{pattern}})</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target xml:lang="fi">Kelvollinen merkkijono vaaditaan.</target></trans-unit>

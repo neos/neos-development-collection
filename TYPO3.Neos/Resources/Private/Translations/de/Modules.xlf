@@ -243,7 +243,7 @@
 			<target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target><alt-trans><target xml:lang="de">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse, die diese Neos-Installation betreffen.</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="de" state="translated">Dies ist kürzlich im Neos geschehen</target><alt-trans><target xml:lang="de">Dies ist kürzlich in Neos geschehen:</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Dies ist kürzlich in Neos geschehen:</target><alt-trans><target xml:lang="de">Dies ist kürzlich im Neos geschehen</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target><alt-trans><target xml:lang="de">Es wurden noch keine Ereignisse aufgezeichnet, die in diesem Verlauf dargestellt werden könnten.</target></alt-trans></trans-unit>
