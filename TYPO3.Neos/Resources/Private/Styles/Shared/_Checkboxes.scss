@@ -68,11 +68,19 @@
 				border-radius: 50%;
 			}
 
-			&:checked + span::after {
+			& + span::after {
 				content: "";
 				position: absolute;
-				background: #fff;
+				background: $textSubtle;
 				border-radius: 50%;
+				width: 8px;
+				height: 8px;
+				left: 7px;
+				top: 7px;
+			}
+
+			&:checked + span::after {
+				background: #fff;
 			}
 		}
 
