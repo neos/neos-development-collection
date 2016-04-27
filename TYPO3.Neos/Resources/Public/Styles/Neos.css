@@ -8484,20 +8484,29 @@
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow {
   width: 38px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow::before, .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow::after {
-  right: 13px;
+.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow:before {
+  top: 6px;
+  right: 38px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow::before {
-  top: -6px;
-}
-.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow::after {
-  top: 2px;
+.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-arrow:after {
+  width: 38px;
+  height: 36px;
+  line-height: 36px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close {
   right: 39px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
-  top: 10px;
+  line-height: 36px;
+}
+.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:before {
+  top: 6px;
+  right: 38px;
+}
+.neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:after {
+  width: 38px;
+  height: 36px;
+  line-height: 36px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified .neos-select2-container .neos-select2-choices {
   border: 2px solid #00a338;
@@ -15818,7 +15827,6 @@ disabled look for disabled choices in the results dropdown
   width: 40px;
   background: none;
   background-image: none !important;
-  border-left: 1px solid #222;
   color: white;
   text-decoration: none;
   border-radius: 0;
@@ -15826,10 +15834,22 @@ disabled look for disabled choices in the results dropdown
 .neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:hover {
   background-color: #00b5ff;
 }
-.neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
+.neos-select2-container .neos-select2-choice .neos-select2-search-choice-close:before {
+  display: block;
+  content: '';
   position: absolute;
-  left: 15px;
-  top: 12px;
+  width: 1px;
+  height: 24px;
+  top: 8px;
+  right: 40px;
+  background-color: #fff;
+  opacity: .15;
+}
+.neos-select2-container .neos-select2-choice .neos-select2-search-choice-close i {
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
+  vertical-align: baseline;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-chosen {
   padding-right: 40px;
@@ -16011,6 +16031,7 @@ disabled look for disabled choices in the results dropdown
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   padding: 0 54px 0 14px;
+  background-image: none !important;
 }
 .neos-select2-with-searchbox .neos-select2-search input:focus {
   outline: none;
