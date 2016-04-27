@@ -62,14 +62,13 @@
 			</tr>
 		</thead>
 		<tbody>
-		<f:alias map="{'dragAndDropOnTagOrCollectionLabel': '{neos:backend.translate(id: \'media.tooltip.dragAndDropOnTagOrCollection\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'editAsset': '{neos:backend.translate(id: \'media.tooltip.editAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
+		<f:alias map="{'dragAndDropOnTagOrCollectionLabel': '{neos:backend.translate(id: \'media.tooltip.dragAndDropOnTagOrCollection\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'editAsset': '{neos:backend.translate(id: \'media.tooltip.editAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'replaceAssetResource': '{neos:backend.translate(id: \'media.tooltip.replaceAssetResource\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
 			<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
 				<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
 					<td>
 						<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{f:if(condition: asset.width, then: '{asset.width} x {asset.height}')}" data-html="true" data-content="{m:thumbnail(asset: asset, preset: 'TYPO3.Neos:Thumbnail', alt: asset.label, async: settings.asyncThumbnails) -> f:format.htmlentities()}">
 							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
-						<i class="icon-move" title="{dragAndDropOnTagOrCollectionLabel}" data-neos-toggle="tooltip"></i>
 					</td>
 					<td class="asset-label"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
 					<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
@@ -81,8 +80,32 @@
 						</f:for>
 					</td>
 					<td class="neos-action">
-						<f:link.action action="edit" title="{editAsset}" class="neos-button neos-button-mini" arguments="{asset: asset}" data="{neos-toggle: 'tooltip'}"><i class="icon-pencil"></i></f:link.action>
-						<button class="neos-button neos-button-mini neos-button-danger" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
+						<div class="neos-dropdown" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
+							<a class="dropdown-toggle neos-button neos-button-mini" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
+								<i class="icon-ellipsis-horizontal"></i>
+							</a>
+							<div class="neos-dropdown-menu-list" role="menu">
+								<ul>
+									<li>
+										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}">
+											<i class="icon-edit icon-white"></i> Edit
+										</f:link.action>
+									</li>
+									<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+										<li>
+											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}">
+												<i class="icon-random icon-white"></i> Replace
+											</f:link.action>
+										</li>
+									</f:security.ifAccess>
+									<li>
+										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
+											<i class="icon-trash icon-white"></i> Delete
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</td>
 				</tr>
 			</f:for>
