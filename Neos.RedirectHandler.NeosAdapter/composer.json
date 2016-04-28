@@ -4,7 +4,8 @@
     "description": "Neos Redirect Handler",
     "license": "GPL-3.0+",
     "require": {
-        "neos/redirecthandler": "*"
+        "neos/redirecthandler": "*",
+        "typo3/neos": "*"
     },
     "autoload": {
         "psr-4": {
