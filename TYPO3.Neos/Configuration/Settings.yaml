@@ -529,6 +529,7 @@ TYPO3:
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
+          - 'TYPO3.Neos.Kickstarter'
           - 'TYPO3.Neos'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
