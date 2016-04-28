@@ -22,7 +22,7 @@ User experience improvements
 Media management improvements
 =============================
 
-Images in CMYK colorspace will be converted into RGB colorspace during the processing of images (not supported when uding GD). The original image will still been kept in the original colorspace. The conversion can be disabled by setting the configuration ``TYPO3.Media.image.convertCMYKToRGB`` to false.
+Images in CMYK colorspace will be converted into RGB colorspace during the processing of images (not supported when using GD). The original image will still been kept in the original colorspace. The conversion can be disabled by setting the configuration ``TYPO3.Media.image.convertCMYKToRGB`` to false.
 
 A new view in the media browser displays information about which nodes an asset is referenced in and where the nodes can actually be found across workspaces, content dimensions and sites.
 
