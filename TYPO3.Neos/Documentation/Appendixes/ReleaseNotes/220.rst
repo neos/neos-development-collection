@@ -32,7 +32,7 @@ Automatic redirects
 ===================
 
 A new **optional** package enables automatic redirects for renamed/moved pages. Redirects will only take
-affect after changes are published to the live workspace. This helps with SEO and user experience
+effect after changes are published to the live workspace. This helps with SEO and user experience
 by avoiding dead links.
 
 Additionally a ``410`` (gone) status code will be given for removed pages instead of ``404`` (not found).
