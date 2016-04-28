@@ -19,11 +19,6 @@ User experience improvements
 - Editors can now `switch between sites without logging in again <https://github.com/neos/neos-development-collection/pull/356>`_.
 - Preview uses the `target workspace instead of live <https://github.com/neos/neos-development-collection/pull/399>`_ if applicable.
 
-Documentation improvements
-==========================
-
-The documentation of Neos and Flow has been improved through a number of bugfixes and additions.
-
 Media management improvements
 =============================
 
@@ -32,6 +27,35 @@ Images in CMYK colorspace will be converted into RGB colorspace during the proce
 A new view in the media browser displays information about which nodes an asset is referenced in and where the nodes can actually be found across workspaces, content dimensions and sites.
 
 The sorting in the media browser is now split in sort by and sort direction to sort the asset list independently.
+
+Automatic redirects
+===================
+
+A new **optional** package enables automatic redirects for renamed/moved pages. Redirects will only take
+affect after changes are published to the live workspace. This helps with SEO and user experience
+by avoiding dead links.
+
+Additionally a ``410`` (gone) status code will be given for removed pages instead of ``404`` (not found).
+
+Redirects can be managed via new commands::
+
+    ./flow redirect:list
+    ./flow redirect:add path/to/old-page path/to/new-page 307
+    ./flow redirect:remove path/to/page
+    ./flow redirect:removeall
+    ./flow redirect:removebyhost hostname.tld
+
+In addition redirects can be imported and exported as ``CSV`` using::
+
+    ./flow redirect:export
+    ./flow redirect:import
+    
+Redirects can only be modified using commands for the time being.
+
+The package can be installed using composer with ``composer require "neos/redirecthandler-neosadapter"``.
+
+Additionally a storage package needs to be installed. A default one for storing redirects in the
+database can be installed using composer with ``composer require "neos/redirecthandler-databasestorage"``.
 
 Cross-site linking
 ==================
@@ -52,6 +76,11 @@ Update to latest Font Awesome
 Neos now ships the Font Awesome, version 4.6. This allows integrators to select from a wider range of icons for node types, inspector groups and other uses.
 
 All icons are prefixed with "icon-" and old icon-names from version 3.2 are still available for backwards compatibility.
+
+Documentation improvements
+==========================
+
+The documentation of Neos and Flow has been improved through a number of bugfixes and additions.
 
 Further additions
 =================
