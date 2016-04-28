@@ -548,6 +548,7 @@ TYPO3:
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
           - 'TYPO3.Neos'
+          - 'Neos.RedirectHandler'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
     references:
