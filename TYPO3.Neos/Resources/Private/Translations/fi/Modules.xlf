@@ -237,7 +237,7 @@
 			<target xml:lang="fi">Tämä moduuli näyttää kaikki tämän Neos-asennuksen tapahtumat.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="fi">Neosin viimeisimmät tapahtumat:</target></trans-unit>
+			<target xml:lang="fi">Neosin viimeisimmät tapahtumat</target><alt-trans><target xml:lang="fi">Neosin viimeisimmät tapahtumat:</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="fi">Historiassa ei vielä ole tapahtumia.</target></trans-unit>
