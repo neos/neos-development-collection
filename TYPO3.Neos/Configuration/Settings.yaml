@@ -533,6 +533,7 @@ TYPO3:
           - 'Neos:FlowSignals'
           - 'Neos:NeosSignals'
           - 'Neos:Typo3CrSignals'
+          - 'Neos:RedirectHandlerSignals'
           - 'Neos:FlowQueryOperations'
           - 'Neos:EelHelpers'
 
@@ -675,6 +676,15 @@ TYPO3:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\TYPO3CR\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      'Neos:RedirectHandlerSignals':
+        title: 'RedirectHandler Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^Neos\\RedirectHandler\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
