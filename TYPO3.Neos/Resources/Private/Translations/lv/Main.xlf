@@ -568,7 +568,7 @@
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
 				<source>In-Place</source>
-			<target xml:lang="lv">Šajā vietā</target></trans-unit>
+			<target xml:lang="lv">Priekšskats</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
 			<target xml:lang="lv">Jēldatu saturs</target></trans-unit>
