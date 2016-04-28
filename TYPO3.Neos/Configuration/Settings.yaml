@@ -513,6 +513,7 @@ TYPO3:
           - 'Neos:MediaValidators'
           - 'Neos:FlowSignals'
           - 'Neos:NeosSignals'
+          - 'Neos:MediaSignals'
           - 'Neos:Typo3CrSignals'
           - 'Neos:FlowQueryOperations'
           - 'Neos:EelHelpers'
@@ -634,6 +635,15 @@ TYPO3:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Media\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
