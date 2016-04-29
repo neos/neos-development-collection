@@ -6,7 +6,6 @@
     "require": {
         "neos/flow-development-collection": "3.2.x-dev",
         "php": ">=5.5.0",
-        "neos/redirecthandler": "~1.0",
         "typo3/flow": "~3.2.0",
         "typo3/imagine": "~2.0",
         "typo3/kickstart": "~3.2.0",
@@ -19,7 +18,6 @@
     },
     "replace": {
         "neos/diff": "self.version",
-        "neos/redirecthandler-neosadapter": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -33,8 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\Diff\\": "Neos.Diff/Classes",
-            "Neos\\RedirectHandler\\NeosAdapter\\": "Neos.RedirectHandler.NeosAdapter/Classes"
+            "Neos\\Diff\\": "Neos.Diff/Classes"
         },
         "psr-0": {
             "TYPO3\\Media": "TYPO3.Media/Classes",
