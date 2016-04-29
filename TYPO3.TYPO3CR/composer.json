@@ -1,12 +1,11 @@
 {
     "name": "typo3/typo3cr",
     "type": "typo3-flow-package",
-    "description": "Content repository based on TYPO3 Flow, specifically made for TYPO3 Neos.",
+    "description": "Content repository based on Flow, specifically made for Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
-        "typo3/eel": "*",
-        "gedmo/doctrine-extensions": "2.3.*",
+        "typo3/flow": "~3.2.0",
+        "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },
     "autoload": {
