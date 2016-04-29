@@ -65,7 +65,7 @@
 			<target xml:lang="nl">Omschrijving</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target xml:lang="nl" state="translated">Hoofd workspace</target></trans-unit>
+			<target xml:lang="nl" state="translated">Basis workspace</target><alt-trans><target xml:lang="nl">Hoofd workspace</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
 			<target xml:lang="nl">Eigenaar</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target xml:lang="nl">De workspace bevat wijzigingen. Om deze te verwijderen dient u eerst de wijzigingen ongedaan te maken.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="nl" state="translated">De workspace kan niet worden verplaatst omdat het nog wijzigingen bevat.</target></trans-unit>
+			<target xml:lang="nl" state="translated">De workspace kan niet worden verplaatst omdat deze nog wijzigingen bevat.</target><alt-trans><target xml:lang="nl">De workspace kan niet worden verplaatst omdat het nog wijzigingen bevat.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target xml:lang="nl" state="translated">De workspace kan niet verwijderd worden omdat andere workspaces van deze workspace afhankelijk zijn.</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target xml:lang="nl">Deze module bevat een overzicht van alle elementen in de huidige workspace en geeft de mogelijkheid de review en publicatie workflow voort te zetten.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target xml:lang="nl" state="translated">Niet gepubliceerde wijzigingen</target><alt-trans><target xml:lang="nl">Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
+			<target xml:lang="nl" state="translated">Niet gepubliceerde wijzigingen in workspace "{0}"</target><alt-trans><target xml:lang="nl">Niet gepubliceerde wijzigingen</target></alt-trans><alt-trans><target xml:lang="nl">Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
 			<target xml:lang="nl">toevoegingen: {new}, wijzigingen: {changed}, verwijderd: {removed}</target></trans-unit>
@@ -180,7 +180,10 @@
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target xml:lang="nl" state="translated">Uw persoonlijke workspace bevat wijzigingen. Publiceert u alstublieft deze wijzigingen of maak ze ongedaan.</target>
+        <target xml:lang="nl" state="translated">Uw persoonlijke workspace bevat wijzigingen. Publiceer deze wijzigingen of maak ze ongedaan.</target>
+        <alt-trans>
+          <target xml:lang="nl">Uw persoonlijke workspace bevat wijzigingen. Publiceert u alstublieft deze wijzigingen of maak ze ongedaan.</target>
+        </alt-trans>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
