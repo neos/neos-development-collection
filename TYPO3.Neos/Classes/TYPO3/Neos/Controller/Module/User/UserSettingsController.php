@@ -163,7 +163,7 @@ class UserSettingsController extends AbstractModuleController
         $user->addElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412374814);
+        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())), 1412374814);
         $this->redirect('edit', null, null, array('user' => $user));
     }
 
@@ -179,7 +179,7 @@ class UserSettingsController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $user->getName()), 1412374678);
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())), 1412374678);
         $this->redirect('edit', null, null, array('user' => $user));
     }
 

@@ -5,11 +5,6 @@
 	&.neos-open {
 		.neos-dropdown-toggle {
 			@include opacity(1);
-
-			&::before {
-				@include rotate(-90deg);
-				left: -3px;
-			}
 		}
 	}
 
@@ -33,7 +28,10 @@
 		background-color: $orange;
 		cursor: pointer;
 		@include opacity(1);
-		@include box-shadow(none);
+
+		&:after {
+			opacity: .25;
+		}
 	}
 
 	.neos-publish-button {
@@ -41,42 +39,68 @@
 		background-color: $green;
 		font-size: $generalFontSize;
 		cursor: default;
-		@include opacity(.5);
-		margin-right: 2px;
+		position: relative;
+		opacity: .5;
+		box-shadow: none;
 
 		&.neos-connection-status-down {
 			background-color: $warning;
 		}
 
-		&[disabled] {
+		&.neos-disabled {
 			cursor: not-allowed;
 		}
 
-		&.neos-publish-menu-active[disabled] {
+		&.neos-publish-menu-active.neos-disabled {
 			@include opacity(.75);
+		}
+
+		.icon-lock {
+			line-height: ($unit / 2) - 1;
+		}
+
+		.neos-badge {
+			background-color: $white;
+			color: $orange;
+			text-shadow: none;
+			position: relative;
+			top: 0;
+			left: 5px;
+			margin-right: 5px;
+		}
+
+		&:after {
+			display: block;
+			content: '';
+			position: absolute;
+			width: 1px;
+			height: $relatedMargin * 3;
+			top: $relatedMargin;
+			right: 0;
+			background-color: #fff;
+			opacity: .5;
 		}
 	}
 
 	.neos-dropdown-toggle {
 		width: $unit;
 		border: 0;
-		@include border-radius(0);
+		border-radius: 0;
 		padding: 0;
 		background-color: $green;
 		line-height: 0;
-		@include box-sizing(content-box);
-		@include opacity(.5);
+		box-sizing: content-box;
+		opacity: .5;
+		box-shadow: none;
+		margin-left: 0;
 
 		&::before {
-			content: "›";
-			font-size: 26px;
-			font-weight: normal;
-			display: inline-block;
+			@include fa-icon();
+			content: $fa-var-caret-down;
 			position: relative;
 			top: 0;
 			line-height: $unit;
-			@include rotate(90deg);
-			left: 3px;
+			font-size: 14px;
 		}
 	}
 
@@ -90,6 +114,11 @@
 					background-color: $grayMedium;
 				}
 			}
+		}
+
+		.icon-review::after {
+			bottom: -5px;
+			right: 5px;
 		}
 
 		.neos-checkbox {
@@ -108,5 +137,24 @@
 .neos-target-workspace-selector ul.neos-select2-results {
 	li:not(.neos-select2-highlighted) {
 		background: $grayLight;
+	}
+
+	li {
+		.neos-select2-result-label {
+			padding-left: $unit / 2;
+		}
+		.neos-select2-result-label .icon {
+			margin-left: -($unit / 2);
+			line-height: ($unit / 2) - 1
+		}
+	}
+
+}
+
+#neos-target-workspace-selector .neos-select2-container .neos-select2-chosen {
+	.icon {
+		line-height: 20px;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }

@@ -1,12 +1,38 @@
+// Hide from screenreaders and browsers
+// Credit: HTML5 Boilerplate
+.neos-hidden {
+	display: none;
+	visibility: hidden;
+}
+
 &.neos-module-management-workspaces {
+
+	.neos-footer p {
+		font-size: $fontSizeSmall;
+		margin-right: 8px;
+	}
+
+	tr.neos-change + tr.neos-change td.neos-content-change {
+		border-top: 1px solid #ddd;
+	}
+
 	td {
 		white-space: nowrap;
 
+		&.description {
+			white-space: normal;
+			line-height: 20px;
+			padding: 10px 0 5px 0;
+		}
+
 		&.node-type {
-			white-space: nowrap;
 			img {
 				vertical-align: baseline;
 			}
+		}
+
+		&.path-caption .neos-aRight {
+			border-right: 1px solid $grayDark;
 		}
 
 		label {
@@ -18,25 +44,62 @@
 		}
 	}
 
-	th,
-	td.actions {
-		white-space: nowrap;
+	td.neos-content-change {
+		background-color: $grayLighter;
+		color: $textOnWhite;
 	}
 
-	td.node-type,
-	td.relpath {
-		color: $textSubtle;
+	.neos-content-diff {
+		line-height: $unit / 1.7;
+
+		table {
+			table-layout: fixed;
+			width: 100%;
+		}
+
+		table.neos-content-diff {
+
+			td, th {
+				height: auto;
+				width: 50%;
+				vertical-align: top;
+				line-height: 20px;
+				padding: 10px 20px 10px 10px !important;
+				border-top: none;
+				white-space: normal;
+				background-color: $grayLighter;
+				color: $textOnWhite;
+
+				img {
+					max-width: 100%;
+					min-width: 50%;
+					max-height: 500px;
+					border: 20px solid $white;
+					box-sizing: border-box;
+				}
+			}
+		}
 	}
 
-	i[class*="icon-"],
-	i.legend {
-		vertical-align: baseline;
-		text-align: center;
+	td.neos-folder {
+		i[class*='icon'] {
+			height: $unit;
+			line-height: $unit;
+			padding: 0 $defaultMargin;
+			margin: 0;
+			text-align: center;
+			font-size: $unit / 4;
+			vertical-align: middle;
+
+			&:hover {
+				background: $blue;
+			}
+		}
 	}
 
-	td.node-type i {
-		text-align: center;
-		padding-right: $tightMargin;
+	.path-caption {
+		padding-left: 15px !important;
+		padding-right: 0;
 	}
 
 	.fold-toggle {
@@ -45,10 +108,20 @@
 		margin-right: 11px;
 	}
 
-	td.legend,
-	th.legend {
-		width: 14px;
-		padding: 0 10px;
+	.legend-edited {
+		border-left: 8px solid $orange;
+	}
+	.legend-deleted {
+		border-left: 8px solid $warning;
+	}
+	.legend-created {
+		border-left: 8px solid $green;
+	}
+	.legend-moved {
+		border-left: 8px solid $blue;
+	}
+	.legend-hidden {
+		border-left: 8px solid $white;
 	}
 
 	td.actions {
@@ -68,5 +141,46 @@
 			text-align: center;
 			padding-right: $tightMargin;
 		}
+	}
+
+	.neos-change-stats {
+		width: 100px;
+		height: 40px;
+		position: relative;
+		display: inline-block;
+
+		span {
+			display: inline-block;
+			height: 8px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.new {
+			background-color: $green;
+		}
+
+		.changed {
+			background-color: $orange;
+		}
+
+		.removed {
+			background-color: $warning;
+		}
+
+		.unchanged {
+			background-color: $grayLight;
+			width: 100%;
+		}
+	}
+
+	ins {
+		color: $green;
+		text-decoration: none;
+	}
+
+	del {
+		color: $red;
+		text-decoration: none;
 	}
 }

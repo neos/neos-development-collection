@@ -35,15 +35,15 @@
 		<div class="neos-dropdown" id="neos-sort-menu">
 			<span title="Sort options" data-neos-toggle="tooltip">
 				<a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
-					<i class="icon-{f:if(condition: '{sort} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+					<i class="icon-{f:if(condition: '{sortBy} == \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
 				</a>
 			</span>
 			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
 				<li>
-					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
+					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
 				</li>
 				<li>
-					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
+					<f:link.action action="index" title="Sort by name" arguments="{sortBy: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
 				</li>
 			</ul>
 		</div>
@@ -98,23 +98,25 @@
 							<button type="submit" class="neos-button-danger" title="Delete collection" data-neos-toggle="tooltip" data-toggle="modal" data-target="#collection-{assetCollection -> f:format.identifier()}"><i class="icon-trash"></i></button>
 						</div>
 						<div class="neos-hide" id="collection-{assetCollection -> f:format.identifier()}">
-							<div class="neos-modal">
-								<div class="neos-modal-header">
-									<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-									<div class="neos-header">Do you really want to delete collection "{assetCollection.title}"?</div>
-									<div>
-										<div class="neos-subheader">
-											<p>This will delete the collection, but not the assets that it contains.<br />This operation cannot be undone.</p>
+							<div class="neos-modal-centered">
+								<div class="neos-modal-content">
+									<div class="neos-modal-header">
+										<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+										<div class="neos-header">Do you really want to delete collection "{assetCollection.title}"?</div>
+										<div>
+											<div class="neos-subheader">
+												<p>This will delete the collection, but not the assets that it contains.<br />This operation cannot be undone.</p>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div class="neos-modal-footer">
-									<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-									<f:form action="deleteAssetCollection" arguments="{assetCollection: assetCollection}" class="neos-inline">
-										<button type="submit" class="neos-button neos-button-danger" title="Delete the collection">
-											Yes, delete the collection
-										</button>
-									</f:form>
+									<div class="neos-modal-footer">
+										<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+										<f:form action="deleteAssetCollection" arguments="{assetCollection: assetCollection}" class="neos-inline">
+											<button type="submit" class="neos-button neos-button-danger" title="Delete the collection">
+												Yes, delete the collection
+											</button>
+										</f:form>
+									</div>
 								</div>
 							</div>
 							<div class="neos-modal-backdrop neos-in"></div>
@@ -160,23 +162,25 @@
 						<button class="neos-button-danger" title="Delete tag" data-neos-toggle="tooltip" data-toggle="modal" data-target="#tag-{tag.tag -> f:format.identifier()}"><i class="icon-trash"></i></button>
 					</div>
 					<div class="neos-hide" id="tag-{tag.tag -> f:format.identifier()}">
-						<div class="neos-modal">
-							<div class="neos-modal-header">
-								<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-								<div class="neos-header">Do you really want to delete tag "{tag.tag.label}"?</div>
-								<div>
-									<div class="neos-subheader">
-										<p>This will delete the tag, but not the assets that has it.<br />This operation cannot be undone.</p>
+						<div class="neos-modal-centered">
+							<div class="neos-modal-content">
+								<div class="neos-modal-header">
+									<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+									<div class="neos-header">Do you really want to delete tag "{tag.tag.label}"?</div>
+									<div>
+										<div class="neos-subheader">
+											<p>This will delete the tag, but not the assets that has it.<br />This operation cannot be undone.</p>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="neos-modal-footer">
-								<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-								<f:form action="deleteTag" arguments="{tag: tag.tag}" class="neos-inline">
-									<button type="submit" class="neos-button neos-button-danger" title="Delete the tag">
-										Yes, delete the tag
-									</button>
-								</f:form>
+								<div class="neos-modal-footer">
+									<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+									<f:form action="deleteTag" arguments="{tag: tag.tag}" class="neos-inline">
+										<button type="submit" class="neos-button neos-button-danger" title="Delete the tag">
+											Yes, delete the tag
+										</button>
+									</f:form>
+								</div>
 							</div>
 						</div>
 						<div class="neos-modal-backdrop neos-in"></div>
@@ -203,7 +207,7 @@
 	</div>
 	<f:if condition="{assets}">
 		<f:then>
-			<f:render partial="{view}View" arguments="{assets: assets, sort: sort}" />
+			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy}" />
 		</f:then>
 		<f:else>
 			<p>No Assets found.</p>

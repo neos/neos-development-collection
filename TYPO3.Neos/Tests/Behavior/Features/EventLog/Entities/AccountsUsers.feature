@@ -19,7 +19,7 @@ Feature: Accounts / User Entity Monitoring
         created: PERSON_CREATED
       data:
         name: '${entity.name.fullName}'
-        electronicAddresses: '${entity.electronicAddresses}'
+        primaryElectronicAddress: '${entity.primaryElectronicAddress}'
     """
 
     # TODO: subclasses in monitorEntities

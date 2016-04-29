@@ -1,0 +1,15 @@
+{
+    "name": "neos/redirecthandler-neosadapter",
+    "type": "neos-package",
+    "description": "Neos Redirect Handler",
+    "license": "GPL-3.0+",
+    "require": {
+        "neos/redirecthandler": "*",
+        "typo3/neos": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\NeosAdapter\\": "Classes"
+        }
+    }
+}

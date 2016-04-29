@@ -13,7 +13,7 @@ define(
 ) {
 	return Ember.View.extend({
 		elementId: 'neos-content-breadcrumb',
-		classNameBindings: ['open:neos-open'],
+		classNameBindings: ['open:neos-open', 'multiple:neos-breadcrumb-multiple'],
 		template: Ember.Handlebars.compile(template),
 		open: false,
 
@@ -30,6 +30,10 @@ define(
 
 		click: function() {
 			this.set('open', !this.get('open'));
-		}
+		},
+
+		multiple: function() {
+			return this.get('nodes').length > 1;
+		}.property('nodes')
 	});
 });

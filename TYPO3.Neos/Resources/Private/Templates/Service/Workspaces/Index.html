@@ -9,8 +9,10 @@
 	<ul class="workspaces"><f:for each="{workspaces}" key="workspaceName" as="workspace">
 		<li class="workspace">
 			<p><label class="workspace-title">{workspace.title}</label>
-			(<span class="workspace-name">{workspace.name}</span>)
-			based on "<span class="workspace-baseworkspace-name">{workspace.baseworkspace.name}</span>"</p>
+				(<span class="workspace-name">{workspace.name}</span>)
+				based on "<span class="workspace-baseworkspace-name">{workspace.baseWorkspace.name}</span>"
+				<f:if condition="{workspace.readonly}"><span class="workspace-readonly">(read-only)</span></f:if>
+			</p>
 		</li></f:for>
 	</ul>
 </div>

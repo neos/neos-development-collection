@@ -1,0 +1,125 @@
+=====
+2.2.0
+=====
+
+
+User experience improvements
+============================
+
+- The styling of the user interface has been improved in many places (`checkboxes <https://github.com/neos/neos-development-collection/pull/457>`_, `dropdowns <https://github.com/neos/neos-development-collection/pull/459>`_, radio buttons, `active inspector tab <https://github.com/neos/neos-development-collection/pull/456>`_, `help message icon <https://github.com/neos/neos-development-collection/pull/453>`_, `error notifications <https://github.com/neos/neos-development-collection/pull/424>`_, …)
+- `Inspector groups can now be assigned icons <https://github.com/neos/neos-development-collection/pull/455>`_ to help identify them more easily.
+- The structure tree has been improved (`configurable loading depth <https://github.com/neos/neos-development-collection/pull/451>`_, `selectable nodes <https://github.com/neos/neos-development-collection/pull/443>`_, `node type changes <https://github.com/neos/neos-development-collection/pull/442>`_, …).
+- `Error notification messages have been improved <https://github.com/neos/neos-development-collection/pull/424>`_ (no more tall orange notifications)
+- `Insert new/paste position selection is more intuitive <https://github.com/neos/neos-development-collection/pull/320>`_ (opens automatically, only one click needed) – additionally the selected position is `shown in the insert new panel <https://github.com/neos/neos-development-collection/pull/426>`_
+- `Additional tooltips and a improved styling them <https://github.com/neos/neos-development-collection/pull/427>`_
+- All `dialogs are centered vertically <https://github.com/neos/neos-development-collection/pull/434>`_ now.
+- The Workspaces module has been improved with better date/time handling, styling fixes, …
+- Insert panel groups `are now collapsible <https://github.com/neos/neos-development-collection/pull/418>`_.
+- `Sortable options in selector editors <https://github.com/neos/neos-development-collection/pull/338>`_  (select, references, asset list).
+- Editors can now `switch between sites without logging in again <https://github.com/neos/neos-development-collection/pull/356>`_.
+- Preview uses the `target workspace instead of live <https://github.com/neos/neos-development-collection/pull/399>`_ if applicable.
+
+Media management improvements
+=============================
+
+Images in CMYK colorspace will be converted into RGB colorspace during the processing of images (not supported when using GD). The original image will still been kept in the original colorspace. The conversion can be disabled by setting the configuration ``TYPO3.Media.image.convertCMYKToRGB`` to false.
+
+A new view in the media browser displays information about which nodes an asset is referenced in and where the nodes can actually be found across workspaces, content dimensions and sites.
+
+The sorting in the media browser is now split in sort by and sort direction to sort the asset list independently.
+
+Automatic redirects
+===================
+
+A new **optional** package enables automatic redirects for renamed/moved pages. Redirects will only take
+effect after changes are published to the live workspace. This helps with SEO and user experience
+by avoiding dead links.
+
+Additionally a ``410`` (gone) status code will be given for removed pages instead of ``404`` (not found).
+
+Redirects can be managed via new commands::
+
+    ./flow redirect:list
+    ./flow redirect:add path/to/old-page path/to/new-page 307
+    ./flow redirect:remove path/to/page
+    ./flow redirect:removeall
+    ./flow redirect:removebyhost hostname.tld
+
+In addition redirects can be imported and exported as ``CSV`` using::
+
+    ./flow redirect:export
+    ./flow redirect:import
+    
+Redirects can only be modified using commands for the time being.
+
+The package can be installed using composer with ``composer require "neos/redirecthandler-neosadapter"``.
+
+Additionally a storage package needs to be installed. A default one for storing redirects in the
+database can be installed using composer with ``composer require "neos/redirecthandler-databasestorage"``.
+
+Cross-site linking
+==================
+
+Options for scheme and port have been added to site domains to enable setting them for cross-site linking. Additionally a primary flag to site domains to enable selecting them as the primary domain for a site has been added.
+
+When linking to a node the primary domain of the site the node belongs to is taking into account. This allows for correct cross-site linking instead of creating an invalid link to a non-existing node with the existing site's URL.
+
+Search nodes by property & exact value in NodeDataRepository
+============================================================
+
+It is no longer only possible to search through the properties by giving a string that matches for any key or value found in the
+jsonified properties field. Instead, the term can also be an array to match exactly on a given key / value combination. See the `PR #1 <https://github.com/neos/neos-development-collection/pull/1>`_ for details.
+
+Update to latest Font Awesome
+=============================
+
+Neos now ships the Font Awesome, version 4.6. This allows integrators to select from a wider range of icons for node types, inspector groups and other uses.
+
+All icons are prefixed with "icon-" and old icon-names from version 3.2 are still available for backwards compatibility.
+
+Documentation improvements
+==========================
+
+The documentation of Neos and Flow has been improved through a number of bugfixes and additions.
+
+Further additions
+=================
+
+In addition to the larger features, lots of small improvements and bugfixes have been included in Neos 2.2, among them:
+
+- `Introduce interface to customize the default TS prototype <https://github.com/neos/neos-development-collection/pull/473>`_
+- `Add settings to customize login screen stylesheets <https://github.com/neos/neos-development-collection/pull/285>`_
+- `Implement new Login-Screen <https://github.com/neos/neos-development-collection/pull/472>`_
+- `Backend fails to load due to RequireJS timeout <https://github.com/neos/neos-development-collection/pull/463>`_
+- `Use and improve node label <https://github.com/neos/neos-development-collection/pull/448>`_
+- `Only update changed model properties <https://github.com/neos/neos-development-collection/pull/450>`_
+- `Improved countByParentAndNodeType performance <https://github.com/neos/neos-development-collection/pull/4>`_
+- `Display node label instead of node type label in workspace overview <https://github.com/neos/neos-development-collection/pull/420>`_
+- `Ignore empty NodeType configurations <https://github.com/neos/neos-development-collection/pull/367>`_
+- `Event logging tweaks & fixes <https://github.com/neos/neos-development-collection/pull/274>`_
+
+
+See also the full `release notes <https://jira.neos.io/jira/secure/ReleaseNote.jspa?projectId=10000&version=11410>`_ and `changelog <http://neos.readthedocs.org/en/2.2/Appendixes/ChangeLogs/220.html>`_
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-2-1-2-2.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- `Set useful defaults for Menu <https://github.com/neos/neos-development-collection/pull/195>`_
+
+   This is breaking if you rely on the previous behavior with no defaults set for the two values.
+
+- The demo site package is now called `Neos.Demo`, watch out if you somehow use the old one.
+
+**Further details can be found in the commit messages of the changes**
+
+.. note::
+
+   Additionally all changes in Flow 3.2 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/3.2/TheDefinitiveGuide/PartV/ReleaseNotes/320.html

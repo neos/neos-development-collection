@@ -5,19 +5,19 @@
 		{{else}}
 			{{view view.NewPositionSelectorButton}}
 
-			<button {{bindAttr title="view._hideToggleTitle" class=":neos-button :action-toggle-hidden view._hidden:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}} tabindex="-1">
+			<button {{bindAttr title="view._hideToggleTitle" class=":neos-button :action-toggle-hidden view._hidden:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}} tabindex="-1" neos-data-tooltip>
 				<i class="icon-eye-close"></i>
 			</button>
-			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} title="{{translate id='cut' fallback='Cut'}}" {{action "cut" target="view"}} tabindex="-1">
+			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} title="{{translate id='cut' fallback='Cut'}}" {{action "cut" target="view"}} tabindex="-1" neos-data-tooltip>
 				<i class="icon-cut"></i>
 			</button>
-			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} title="{{translate id='copy' fallback='Copy'}}" {{action "copy" target="view"}} tabindex="-1">
+			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active" disabled="view.currentFocusedNodeCanBeModified"}} title="{{translate id='copy' fallback='Copy'}}" {{action "copy" target="view"}} tabindex="-1" neos-data-tooltip>
 				<i class="icon-copy"></i>
 			</button>
 
 			{{view view.PastePositionSelectorButton}}
 
-			<button class="neos-button action-remove" title="{{translate id='remove' value='Remove'}}" {{bindAttr disabled="view.currentFocusedNodeCanBeModified"}} {{action "remove" target="view"}} tabindex="-1">
+			<button class="neos-button action-remove" title="{{translate id='delete' fallback='Delete'}}" {{bindAttr disabled="view.currentFocusedNodeCanBeModified"}} {{action "remove" target="view"}} tabindex="-1" neos-data-tooltip>
 				<i class="icon-trash"></i>
 			</button>
 		{{/if}}

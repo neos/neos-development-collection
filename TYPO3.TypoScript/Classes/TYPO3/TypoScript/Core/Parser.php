@@ -32,10 +32,20 @@ class Parser implements ParserInterface
 	/x';
     const SCAN_PATTERN_OPENINGCONFINEMENT = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9():@_\-]*       # first part of a TS path
-		(?:                       # followed by multiple .<tsPathPart> sections:
+		(?:                       # first part of a TS path
+			@?[a-zA-Z0-9:_\-]+              # Unquoted key
+			|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+			|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+			|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
+		)
+		(?:                                 # followed by multiple .<tsPathPart> sections:
 			\.
-			[a-zA-Z0-9():@_\-]*
+			(?:
+				@?[a-zA-Z0-9:_\-]+              # Unquoted key
+				|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+				|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+				|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
+			)
 		)*
 		\s*                       # followed by multiple whitespace
 		\{                        # followed by opening {
@@ -53,8 +63,12 @@ class Parser implements ParserInterface
 		\s*:                      # followed by numerous whitespace and a colon
 	/x';
     const SCAN_PATTERN_OBJECTDEFINITION = '/
-		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9.\\\\$():@_\-]+
+		^\s*                             # beginning of line; with numerous whitespace
+		(?:
+			[a-zA-Z0-9.():@_\-]+         # Unquoted key
+			|"(?:\\\"|[^"])+"            # Double quoted key, supporting more characters like underscore and at sign
+			|\'(?:\\\\\'|[^\'])+\'       # Single quoted key, supporting more characters like underscore and at sign
+		)+
 		\s*
 		(=|<|>)
 	/x';
@@ -62,14 +76,18 @@ class Parser implements ParserInterface
 		^
 			\.?
 			(?:
-				@?[a-zA-Z0-9:_\-]*
-				| prototype\([a-zA-Z0-9.:]+\)
+				@?[a-zA-Z0-9:_\-]+              # Unquoted key
+				|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+				|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+				|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9:_\-]*
-					| prototype\([a-zA-Z0-9.:]+\)
+					@?[a-zA-Z0-9:_\-]+              # Unquoted key
+					|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+					|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+					|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 				)
 			)*
 		$
@@ -106,14 +124,18 @@ class Parser implements ParserInterface
 
 			\.?
 			(?:
-				@?[a-zA-Z0-9:_\-]*
-				|prototype\([a-zA-Z0-9.:]+\)
+				@?[a-zA-Z0-9:_\-]+              # Unquoted key
+				|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+				|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+				|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9:_\-]*
-					|prototype\([a-zA-Z0-9.:]+\)
+					@?[a-zA-Z0-9:_\-]+              # Unquoted key
+					|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
+					|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
+					|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 				)
 			)*
 		)
@@ -127,7 +149,7 @@ class Parser implements ParserInterface
 		)
 		\s*
 		(?P<OpeningConfinement>
-			[^\${]\{              # optionally followed by an opening confinement
+			(?<![${])\{           # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';
@@ -363,19 +385,19 @@ class Parser implements ParserInterface
     {
         if (preg_match(self::SPLIT_PATTERN_COMMENTTYPE, $typoScriptLine, $matches, PREG_OFFSET_CAPTURE) === 1) {
             switch ($matches[1][0]) {
-                case '/*' :
+                case '/*':
                     $this->currentBlockCommentState = true;
                     break;
-                case '*/' :
+                case '*/':
                     if ($this->currentBlockCommentState !== true) {
                         throw new Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
                     }
                     $this->currentBlockCommentState = false;
                     $this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
                     break;
-                case '#' :
-                case '//' :
-                default :
+                case '#':
+                case '//':
+                default:
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
@@ -419,10 +441,10 @@ class Parser implements ParserInterface
         }
 
         switch ($matches['declarationType']) {
-            case 'namespace' :
+            case 'namespace':
                 $this->parseNamespaceDeclaration($matches['declaration']);
                 break;
-            case 'include' :
+            case 'include':
                 $this->parseInclude($matches['declaration']);
                 break;
         }
@@ -444,13 +466,13 @@ class Parser implements ParserInterface
 
         $objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
         switch ($matches['Operator']) {
-            case '=' :
+            case '=':
                 $this->parseValueAssignment($objectPath, $matches['Value']);
                 break;
-            case '>' :
+            case '>':
                 $this->parseValueUnAssignment($objectPath);
                 break;
-            case '<' :
+            case '<':
                 $this->parseValueCopy($matches['Value'], $objectPath);
                 break;
         }
@@ -650,7 +672,7 @@ class Parser implements ParserInterface
                     if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
                         throw new Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
                     }
-                    $objectPathArray[] = $key;
+                    $objectPathArray[] = $this->unquoteString($key);
                 }
             }
         } else {
@@ -856,5 +878,29 @@ class Parser implements ParserInterface
                 $this->objectTree['__prototypes'][$prototypeName]['__prototypeChain'] = $prototypeInheritanceHierarchy;
             }
         }
+    }
+
+    /**
+     * Removes escapings from a given argument string and trims the outermost
+     * quotes.
+     *
+     * This method is meant as a helper for regular expression results.
+     *
+     * @param string $quotedValue Value to unquote
+     * @return string Unquoted value
+     */
+    protected function unquoteString($quotedValue)
+    {
+        switch ($quotedValue[0]) {
+            case '"':
+                $value = str_replace('\\"', '"', preg_replace('/(^"|"$)/', '', $quotedValue));
+                break;
+            case "'":
+                $value = str_replace("\\'", "'", preg_replace('/(^\'|\'$)/', '', $quotedValue));
+                break;
+            default:
+                $value = $quotedValue;
+        }
+        return str_replace('\\\\', '\\', $value);
     }
 }

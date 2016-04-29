@@ -469,7 +469,8 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
 
             $qb = $entityManager->createQueryBuilder();
             $qb->update('TYPO3\Neos\EventLog\Domain\Model\NodeEvent', 'e')
-                ->set('e.parentEvent', $qb->expr()->literal($parentEventIdentifier))
+                ->set('e.parentEvent', ':parentEventIdentifier')
+                ->setParameter('parentEventIdentifier', $parentEventIdentifier)
                 ->where('e.parentEvent IS NULL')
                 ->andWhere('e.workspaceName = :workspaceName')
                 ->setParameter('workspaceName', $documentPublish['workspaceName'])

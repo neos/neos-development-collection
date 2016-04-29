@@ -36,26 +36,29 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 20px;
-				height: 20px;
-				line-height: 20px;
+				width: $unit / 2;
+				height: $unit / 2;
 				background-color: $grayLight;
 				border: 1px solid $textSubtleLight;
-				color: #fff;
+				color: $textSubtle;
 				cursor: pointer;
-				content: '';
+				@include fa-icon();
+				content: $fa-var-check;
+				line-height: $unit / 2;
+				text-align: center;
 			}
 		}
 
 		&:checked {
 			& + span::before {
-				@include font;
 				background-color: $blueLight;
 				border: 1px solid $blueLight;
-				content: '\2713';
-				font-size: 16px;
 				text-align: center;
-				font-weight: bold;
+				color: #fff;
+			}
+
+			&:hover + span::before {
+				background-color: $grayLight;
 			}
 		}
 
@@ -65,20 +68,23 @@
 				border-radius: 50%;
 			}
 
-			&:checked + span::after {
+			& + span::after {
 				content: "";
 				position: absolute;
+				background: $textSubtle;
+				border-radius: 50%;
 				width: 8px;
 				height: 8px;
 				left: 7px;
 				top: 7px;
+			}
+
+			&:checked + span::after {
 				background: #fff;
-				border-radius: 50%;
 			}
 		}
 
-		&:hover + span::before,
-		&:focus + span::before {
+		&:hover + span::before {
 			border-color: $blueLight;
 		}
 

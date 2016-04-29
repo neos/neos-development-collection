@@ -97,7 +97,7 @@ abstract class AbstractNodeData
     /**
      * List of role names which are required to access this node at all
      *
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="flow_json_array")
      * @var array<string>
      */
     protected $accessRoles = array();
@@ -257,7 +257,7 @@ abstract class AbstractNodeData
     public function removeProperty($propertyName)
     {
         if (!is_object($this->contentObjectProxy)) {
-            if (isset($this->properties[$propertyName])) {
+            if (array_key_exists($propertyName, $this->properties)) {
                 unset($this->properties[$propertyName]);
                 $this->addOrUpdate();
             } else {

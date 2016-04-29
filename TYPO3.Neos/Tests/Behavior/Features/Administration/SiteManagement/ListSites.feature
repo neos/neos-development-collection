@@ -5,7 +5,7 @@ Feature: Site management / List sites
   I need a way to list and manage sites
 
   Background:
-    Given I imported the site "TYPO3.NeosDemoTypo3Org"
+    Given I imported the site "Neos.Demo"
     And the following users exist:
       | username | password | firstname | lastname | roles         |
       | jdoe     | password | John      | Doe      | Administrator |

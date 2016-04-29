@@ -90,7 +90,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
         if ($moduleResponse->hasHeader('Location')) {
-            $this->redirectToUri($moduleResponse->getHeader('Location'));
+            $this->redirectToUri($moduleResponse->getHeader('Location'), 0, $moduleResponse->getStatusCode());
         } elseif ($moduleRequest->getFormat() !== 'html') {
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {

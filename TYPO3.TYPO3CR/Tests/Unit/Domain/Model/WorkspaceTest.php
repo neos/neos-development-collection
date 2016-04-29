@@ -81,6 +81,27 @@ class WorkspaceTest extends UnitTestCase
     }
 
     /**
+     * Bug NEOS-1769: Content Collections disappear when publishing to other workspace than "live"
+     *
+     * Under certain circumstances, content collection nodes will be deleted when publishing a document to a workspace which is based on another workspace.
+     *
+     * @test
+     */
+    public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
+    {
+        $liveWorkspace = new Workspace('live');
+        $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('emitBeforeNodePublishing'), array('some-campaign'));
+        $workspace->setBaseWorkspace($liveWorkspace);
+
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+        $workspace->expects($this->never())->method('emitBeforeNodePublishing');
+
+        $workspace->publishNode($mockNode, $workspace);
+    }
+
+    /**
      * @test
      */
     public function verifyPublishingTargetWorkspaceDoesNotThrowAnExceptionIfTargetWorkspaceIsABaseWorkspace()
@@ -168,5 +189,17 @@ class WorkspaceTest extends UnitTestCase
         $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
+    }
+
+    /**
+     * @test
+     */
+    public function isPersonalWorkspaceChecksIfTheWorkspaceNameStartsWithUser()
+    {
+        $liveWorkspace = new Workspace('live');
+        $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
+
+        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
+        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
     }
 }

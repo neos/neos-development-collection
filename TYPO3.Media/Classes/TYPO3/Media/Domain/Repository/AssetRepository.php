@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Repository;
  * source code.
  */
 
+use Doctrine\ORM\Internal\Hydration\IterableResult;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
@@ -61,6 +62,7 @@ class AssetRepository extends Repository
             $constraints[] = $query->contains('tags', $tag);
         }
         $query->matching($query->logicalOr($constraints));
+        $this->addImageVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -94,9 +96,9 @@ class AssetRepository extends Repository
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join mm ON a.persistence_object_identifier = mm.media_asset WHERE mm.media_tag = ?';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_tag = ? AND a.dtype != 'typo3_media_imagevariant'";
         } else {
-            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ?';
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
         }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
@@ -123,9 +125,13 @@ class AssetRepository extends Repository
      */
     public function countAll()
     {
-        $query = $this->createQuery();
-        $this->addImageVariantFilterClause($query);
-        return $query->count();
+        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm->addScalarResult('c', 'c');
+
+        $queryString = "SELECT count(persistence_object_identifier) c FROM typo3_media_domain_model_asset WHERE dtype != 'typo3_media_imagevariant'";
+
+        $query = $this->entityManager->createNativeQuery($queryString, $rsm);
+        return $query->getSingleScalarResult();
     }
 
     /**
@@ -151,11 +157,20 @@ class AssetRepository extends Repository
      */
     public function countUntagged(AssetCollection $assetCollection = null)
     {
-        $query = $this->createQuery();
-        $query->matching($query->isEmpty('tags'));
-        $this->addImageVariantFilterClause($query);
-        $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
-        return $query->count();
+        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm->addScalarResult('c', 'c');
+
+        if ($assetCollection === null) {
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_asset IS NULL AND a.dtype != 'typo3_media_imagevariant'";
+        } else {
+            $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_asset IS NULL AND collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
+        }
+
+        $query = $this->entityManager->createNativeQuery($queryString, $rsm);
+        if ($assetCollection !== null) {
+            $query->setParameter(1, $assetCollection);
+        }
+        return $query->getSingleScalarResult();
     }
 
     /**
@@ -176,12 +191,16 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByAssetCollection(AssetCollection $assetCollection = null)
+    public function countByAssetCollection(AssetCollection $assetCollection)
     {
-        $query = $this->createQuery();
-        $this->addImageVariantFilterClause($query);
-        $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
-        return $query->count();
+        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm->addScalarResult('c', 'c');
+
+        $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";
+
+        $query = $this->entityManager->createNativeQuery($queryString, $rsm);
+        $query->setParameter(1, $assetCollection);
+        return $query->getSingleScalarResult();
     }
 
     /**
@@ -219,5 +238,44 @@ class AssetRepository extends Repository
         $query = $this->createQuery();
         $query->matching($query->equals('resource.sha1', $sha1, false))->setLimit(1);
         return $query->execute()->getFirst();
+    }
+
+    /**
+     * Iterate over an IterableResult and return a Generator
+     *
+     * This method is useful for batch processing huge result set as it clears the object
+     * manager and detaches the current object on each iteration.
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            $object = current($object);
+            yield $object;
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+            $iteration++;
+        }
+    }
+
+    /**
+     * Find all objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findAllIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('a')
+            ->from($this->getEntityClassName(), 'a')
+            ->where('a NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant')
+            ->getQuery()->iterate();
     }
 }

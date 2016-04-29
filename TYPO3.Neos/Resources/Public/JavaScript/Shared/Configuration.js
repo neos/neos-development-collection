@@ -12,8 +12,6 @@ function(Ember, $) {
 	 * @singleton
 	 */
 	return Ember.Object.extend({
-		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
-
 		_data: {},
 
 		init: function() {
@@ -44,8 +42,16 @@ function(Ember, $) {
 						this._data[key] = $('link[rel="neos-menudata"]').attr('href');
 						return this._data[key];
 
+					case 'XliffUri':
+						this._data[key] = $('link[rel="neos-xliff"]').attr('href');
+						return this._data[key];
+
 					case 'EditPreviewDataUri':
 						this._data[key] = $('link[rel="neos-editpreviewdata"]').attr('href');
+						return this._data[key];
+
+					case 'ContentDimensionsUri':
+						this._data[key] = $('link[rel="neos-service-contentdimensions"]').attr('href');
 						return this._data[key];
 				}
 			}

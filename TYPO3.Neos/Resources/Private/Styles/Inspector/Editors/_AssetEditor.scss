@@ -1,28 +1,89 @@
 .neos-inspector-file {
 	min-width: $inspectorWidth - $defaultMargin * 2;
 
-	.neos-button {
-		padding: 0 $relatedMargin;
-		height: $wideMargin;
-		line-height: $wideMargin;
-		font-size: 13px;
-	}
-
 	ul {
-		padding-bottom: 5px;
+		padding-bottom: $defaultMargin;
+
 		li {
-			padding: 5px 0;
+			padding-right: $unit + 1 + $relatedMargin;
+			height: $unit;
+			line-height: $unit;
+			background-color: $grayMedium;
+			position: relative;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+			+ li {
+				border-top: 1px solid $grayDark;
+			}
+
+			span:first-child {
+				background-color: $grayDarker;
+				margin-right: $relatedMargin;
+				height: $unit;
+				width: $unit;
+				position: relative;
+				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-position: center center;
+				background-repeat: no-repeat;
+				overflow: hidden;
+				float: left;
+
+				img {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					@include translate(-50%, -50%);
+					width: auto;
+					height: auto;
+					max-width: 100%;
+					max-height: 100%;
+					background-color: $grayDarker;
+					outline: 3px solid $grayDarker;
+				}
+			}
+
+			.neos-asset-editor-remove {
+				width: $unit;
+				height: $unit;
+				right: 0;
+				position: absolute;
+				background-color: $grayMedium;
+				border-left: 1px solid $grayDark;
+
+				&:hover,
+				&:active {
+					background-color: $blue;
+				}
+
+				&::after {
+					@include fa-icon();
+					content: $fa-var-times;
+					margin-left: -2px;
+				}
+
+				i {
+					line-height: $unit;
+					margin-top: 0;
+				}
+			}
 		}
 	}
 
-	.neos-inspector-file-upload,
-	.neos-inspector-file-width {
+	.neos-inspector-file-upload {
 		padding-bottom: $defaultMargin - $tightMargin;
 
-		.neos-inspector-file-upload-button,
-		.neos-inspector-file-crop-button {
+		.neos-button {
+			padding: 0 $relatedMargin;
+			height: $wideMargin;
+			line-height: $wideMargin;
+			font-size: 13px;
+		}
+
+		.neos-inspector-file-upload-button {
 			float: right;
-			margin-left: 4px;
+			margin-left: $tightMargin;
 		}
 	}
 }

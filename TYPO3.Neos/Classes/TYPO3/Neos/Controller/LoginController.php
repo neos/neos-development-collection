@@ -13,20 +13,22 @@ namespace TYPO3\Neos\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Http\Cookie;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
-use TYPO3\Flow\Mvc\View\JsonView;
 
 /**
  * A controller which allows for logging into the backend
  */
 class LoginController extends AbstractAuthenticationController
 {
+
     /**
      * @Flow\Inject
      * @var SessionInterface
@@ -50,6 +52,18 @@ class LoginController extends AbstractAuthenticationController
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $loginTokenCache;
+
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="session.name")
+     * @var string
+     */
+    protected $sessionName;
 
     /**
      * @var array
@@ -97,7 +111,32 @@ class LoginController extends AbstractAuthenticationController
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findFirstOnline();
-        $this->view->assignMultiple(array('username' => $username, 'site' => $currentSite));
+        $this->view->assignMultiple([
+            'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
+            'username' => $username,
+            'site' => $currentSite
+        ]);
+    }
+
+    /**
+     * Logs a user in if a session identifier is available under the given token in the token cache.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function tokenLoginAction($token)
+    {
+        $sessionId = $this->loginTokenCache->get($token);
+        $this->loginTokenCache->remove($token);
+
+        if ($sessionId === false) {
+            $this->systemLogger->log(sprintf('Token-based login failed, non-existing or expired token %s', $token), LOG_WARNING);
+            $this->redirect('index');
+        } else {
+            $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
+            $this->replaceSessionCookie($sessionId);
+            $this->redirect('index', 'Backend\Backend');
+        }
     }
 
     /**
@@ -108,7 +147,11 @@ class LoginController extends AbstractAuthenticationController
      */
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        if ($this->view instanceof JsonView) {
+            $this->view->assign('value', array('success' => false));
+        } else {
+            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        }
     }
 
     /**
@@ -117,7 +160,7 @@ class LoginController extends AbstractAuthenticationController
      * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
      * @return void
      */
-    public function onAuthenticationSuccess(ActionRequest $originalRequest = null)
+    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', array('success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()));
@@ -166,5 +209,17 @@ class LoginController extends AbstractAuthenticationController
     protected function getErrorFlashMessage()
     {
         return false;
+    }
+
+    /**
+     * Sets the session cookie to the given identifier, overriding an existing cookie.
+     *
+     * @param string $sessionIdentifier
+     * @return void
+     */
+    protected function replaceSessionCookie($sessionIdentifier)
+    {
+        $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
+        $this->response->setCookie($sessionCookie);
     }
 }

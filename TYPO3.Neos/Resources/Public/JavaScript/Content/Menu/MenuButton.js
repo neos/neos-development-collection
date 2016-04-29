@@ -3,17 +3,19 @@ define(
 		'emberjs',
 		'Library/jquery-with-dependencies',
 		'../Components/Button',
-		'./MenuPanelController'
-	], function(Ember, $, Button, MenuPanelController) {
+		'./MenuPanelController',
+		'Shared/I18n'
+	], function(Ember, $, Button, MenuPanelController, I18n) {
 		return Button.extend({
 			elementId: ['neos-menu-button'],
-			title: 'Toggle menu',
 			classNames: ['neos-button'],
 			classNameBindings: ['controller.menuPanelMode:neos-pressed'],
+
 
 			controller: MenuPanelController,
 
 			init: function() {
+				this.set('title', I18n.translate('toggleMenu', 'Toggle menu'));
 				if (this.get('controller.configuration.menuPanelStickyMode') && this.get('controller.configuration.isMenuPanelStickyModeShown')) {
 					this.toggleProperty('controller.menuPanelMode');
 				}
@@ -38,6 +40,10 @@ define(
 				// For more information see
 				// http://ariatemplates.com/blog/2014/05/ghost-clicks-in-mobile-browsers/
 				event.preventDefault();
+			},
+
+			didInsertElement: function() {
+				this.$().tooltip({placement: 'right'});
 			}
 		});
 	}

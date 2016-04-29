@@ -1,13 +1,18 @@
 &.neos-module {
-	@import "Administration/Packages";
 	@import "Administration/Configuration";
-	@import "Management/Workspaces";
+	@import "Administration/Packages";
+	@import "Administration/Sites";
 	@import "Management/History";
+	@import "Management/Workspaces";
 	@include font;
 
 	background-color: $grayDarker;
 	color: #fff;
 	margin: 0;
+
+	&.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
+		width: calc(100% - #{$menuButtonWidth});
+	}
 
 	/* wrapper for dark background */
 	> .neos-module-wrap {
@@ -77,7 +82,7 @@
 			}
 
 			i.icon-user {
-					margin-right: 11px;
+				margin-right: 11px;
 			}
 		}
 	}
@@ -232,35 +237,33 @@
 		&:focus {
 			outline: none;
 
-			&:before,
 			&:after {
 				color: $textOnWhite;
 			}
 		}
 
-		&:before,
+		&:before {
+			display: block;
+			content: '';
+			position: absolute;
+			width: 1px;
+			height: $relatedMargin * 3;
+			top: $relatedMargin;
+			right: $unit + 1;
+			background-color: #fff;
+			opacity: .15;
+		}
+
 		&:after {
+			@include fa-icon();
+			content: $fa-var-caret-down;
 			display: block;
 			position: absolute;
-			right: 0px;
-			top: 0px;
-			font-family: Arial;
-			font-size: 17px;
+			right: 0;
+			top: 0;
 			width: 40px;
 			line-height: $unit;
-			content: "▾";
 			text-align: center;
-		}
-
-		&:before {
-			top: -4px;
-			@include rotate(180deg);
-		}
-
-		&:after {
-			top: 0px;
-			padding-top: 4px;
-			border-left: 1px solid $grayDark
 		}
 
 		select {
@@ -284,7 +287,7 @@
 
 	.neos-footer {
 		position: sticky;
-		height: $unit;
+		height: $unit + ($defaultMargin * 2);
 		background-color: $grayDarker;
 		margin: $unit (-$menuButtonWidth) (-$unit);
 		border-top: 1px solid $grayLight;
@@ -292,6 +295,9 @@
 		font-size: 0;
 		bottom: 0;
 		z-index: 100;
+		overflow: hidden;
+		@include box-sizing(border-box);
+		@include clearfix;
 
 		&.fixedsticky-on {
 			width: 100%;
@@ -403,6 +409,10 @@
 			td.check {
 				padding-right: $relatedMargin !important;
 			}
+
+			.neos-label {
+				background-color: $textSubtle;
+			}
 		}
 
 		&.neos-info-table {
@@ -475,12 +485,17 @@
 				padding-left: 0 !important;
 				padding-right: 0 !important;
 			}
+
+			i {
+				vertical-align: baseline;
+				text-align: center;
+			}
 		}
 
 		td > .neos-button,
 		td > form > .neos-button,
-		td > div.neos-pull-right > .neos-button,
-		td > div.neos-pull-right > form .neos-button {
+		td div.neos-pull-right > .neos-button,
+		td div.neos-pull-right > form .neos-button {
 			background-color: $grayMedium;
 
 			&:not([disabled]),

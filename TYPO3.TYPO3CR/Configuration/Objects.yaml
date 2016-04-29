@@ -14,3 +14,13 @@
   className: TYPO3\TYPO3CR\Domain\Model\FallbackNodeDataLabelGenerator
 'TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface':
   className: TYPO3\TYPO3CR\Domain\Service\NodeService
+
+'TYPO3\TYPO3CR\Domain\Service\NodeTypeManager':
+  properties:
+    fullConfigurationCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_TYPO3CR_FullNodeTypeConfiguration

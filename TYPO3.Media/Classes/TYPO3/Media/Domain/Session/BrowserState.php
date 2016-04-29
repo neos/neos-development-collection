@@ -26,7 +26,8 @@ class BrowserState
     protected $data = array(
         'activeTag' => null,
         'view' => 'Thumbnail',
-        'sort' => 'Modified',
+        'sortBy' => 'Modified',
+        'sortDirection' => 'ASC',
         'filter' => 'All'
     );
 

@@ -106,4 +106,62 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
         $this->assertCount(1, $result);
     }
+
+    /**
+     * @test
+     */
+    public function findNodeByPropertySearch()
+    {
+        $this->createNodesForNodeSearchTest();
+
+        $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(2, $result);
+        $this->assertResultConsistsOfNodes($result, ['test-node-1', 'test-node-2']);
+    }
+
+    /**
+     * @test
+     */
+    public function findNodesByPropertyKeyAndValue()
+    {
+        $this->createNodesForNodeSearchTest();
+
+        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $this->assertCount(1, $result);
+        $this->assertEquals('test-node-2', array_shift($result)->getName());
+    }
+
+    /**
+     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     */
+    protected function createNodesForNodeSearchTest()
+    {
+        $rootNode = $this->context->getRootNode();
+
+        $newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode1->setProperty('test1', 'simpleTestValue');
+
+        $newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test2', 'simpleTestValue');
+
+        $newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2->setProperty('test1', 'otherValue');
+
+        $this->persistenceManager->persistAll();
+    }
+
+
+    /**
+     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeData> $result
+     * @param array $nodeNames
+     */
+    protected function assertResultConsistsOfNodes($result, $nodeNames)
+    {
+        foreach ($result as $node) {
+            $this->assertTrue(in_array($node->getName(), $nodeNames), sprintf('The node with name %s was not part of the result.', $node->getName()));
+            unset($nodeNames[array_search($node->getName(), $nodeNames)]);
+        }
+
+        $this->assertCount(0, $nodeNames, sprintf('The expected node names %s were not part of the result', implode(',', $nodeNames)));
+    }
 }

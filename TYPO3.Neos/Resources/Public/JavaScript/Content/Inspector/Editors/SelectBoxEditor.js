@@ -4,8 +4,10 @@ define([
 	'Shared/HttpClient',
 	'Content/Inspector/InspectorController',
 	'Shared/I18n',
-	'Shared/Utility'
-], function($, Ember, HttpClient, InspectorController, I18n, Utility) {
+	'Shared/Utility',
+	'Shared/MapObject',
+	'Library/sortable/Sortable'
+], function($, Ember, HttpClient, InspectorController, I18n, Utility, MapObject, Sortable) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -85,6 +87,10 @@ define([
 
 		dataSourceIdentifier: null,
 		dataSourceUri: null,
+		dataSourceAdditionalData: {},
+		elementInserted: false,
+		initialLoadDone: false,
+
 		attributeBindings: ['size', 'disabled', 'multiple'],
 		optionLabelPath: 'content.label',
 		optionValuePath: 'content.value',
@@ -92,6 +98,8 @@ define([
 
 		init: function() {
 			this._super();
+			this.set('dataSourceAdditionalData', MapObject.create(this.get('dataSourceAdditionalData')));
+			this.set('elementInserted', false);
 			this.off('didInsertElement', this, this._triggerChange);
 			this.on('change', function() {
 				this._change();
@@ -152,8 +160,11 @@ define([
 			if (this.get('multiple') || (value !== (valuePath ? this.get('selection.' + valuePath) : this.get('selection')))) {
 				this.set('selection', this.get('multiple') ? selection : selection[0]);
 				Ember.run.next(function() {
-					if (that.$()) {
-						that.$().trigger('change');
+					if (that.$() && that.get('multiple')) {
+						var data = value.length > 0 ? value.map(function(val) {
+							return {id: val, text: selection.findBy('value', val).label};
+						}) : null;
+						that.$().select2('data', data);
 					}
 				});
 			}
@@ -165,8 +176,8 @@ define([
 			}
 			var selection = this.get('selection');
 			if (this.get('multiple')) {
-				var selectedValues = selection.length > 0 ? selection.map(function(option) {
-					return option.value;
+				var selectedValues = selection.length > 0 ? this.$().select2('data').map(function(option) {
+					return option.id;
 				}) : null;
 				this.set('value', selectedValues ? JSON.stringify(selectedValues) : '');
 			} else if (selection) {
@@ -176,12 +187,58 @@ define([
 
 		didInsertElement: function() {
 			this._initializeSelect2();
-			if (this.get('dataSourceUri') || this.get('dataSourceIdentifier')) {
-				var that = this,
-					dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier');
-				this._loadValuesFromController(dataSourceUri, function(options) {
-					that.set('values', options);
+			this.set('elementInserted', true);
+		},
+
+		_refreshDataFromDataSource: function() {
+			if (!this.get('elementInserted') || !(this.get('dataSourceUri') || this.get('dataSourceIdentifier'))) {
+				return;
+			}
+
+			var that = this,
+				dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier'),
+				parameters = Utility.getKeyValueArray(this.get('dataSourceAdditionalData').getAllProperties());
+
+			parameters.push({
+				name: 'node',
+				value: InspectorController.nodeSelection.get('selectedNode.nodePath')
+			});
+
+			this._loadValuesFromController(dataSourceUri, parameters, function(options) {
+				that.set('values', options);
+
+				if (that.get('initialLoadDone')) {
+					that._matchValueAgainstOptions(options);
+				} else {
+					that.set('initialLoadDone', true);
+					// trigger listeners that might be registered
+					that.get('inspector').registerPendingChange(that.get('property'), that.get('value'));
+				}
+			});
+		}.observes('elementInserted', 'dataSourceUri', 'dataSourceIdentifier', 'dataSourceAdditionalData.changed'),
+
+		// this is used to remove options no longer available after a data source refresh
+		_matchValueAgainstOptions: function(options) {
+			var value, availableValues, newValue;
+
+			value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value');
+
+			if (this.get('multiple')) {
+				availableValues = options.filter(function (option) {
+					return value.filter(function (value) {
+							return value.value === option.value;
+						}).length > 0
 				});
+				newValue = availableValues.length > 0 ? JSON.stringify(availableValues) : '';
+			} else {
+				newValue = options.filter(
+					function (option) {
+						return option.value === value;
+					}).length > 0 ? value : '';
+			}
+
+			if (newValue !== this.get('value')) {
+				this.set('value', newValue);
 			}
 		},
 
@@ -220,6 +277,27 @@ define([
 			}).on('select2-close', function() {
 				$(this).parent().css('padding-bottom', 0);
 				$('#neos-application').off('click.select2-custom');
+			});
+
+			if (this.get('multiple')) {
+				this._makeSortable();
+			}
+		},
+
+		_makeSortable: function() {
+			var select2Ul, sortable, that = this;
+			select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first().addClass('neos-sortable');
+			sortable = Sortable.create(select2Ul.get(0), {
+				ghostClass: 'neos-sortable-ghost',
+				chosenClass: 'neos-sortable-chosen',
+				draggable: '.neos-select2-search-choice',
+				onUpdate: function (event) {
+					var values = [];
+					select2Ul.find('.neos-select2-search-choice').each(function() {
+						values.push($(this).data('select2-data').id);
+					});
+					that.set('value', JSON.stringify(values));
+				}
 			});
 		},
 

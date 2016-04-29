@@ -22,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\Table(
  *    indexes={
- * 		@ORM\Index(name="eventtype",columns={"eventtype"})
+ *        @ORM\Index(name="eventtype",columns={"eventtype"})
  *    }
  * )
  */
@@ -63,6 +63,7 @@ class Event
     /**
      * Payload of the event.
      *
+     * @ORM\Column(type="flow_json_array")
      * @var array
      */
     protected $data = array();

@@ -17,6 +17,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A service for manipulating sites
@@ -25,6 +26,11 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class SiteService
 {
+    /**
+     * This is the node path of the root for all sites in neos.
+     */
+    const SITES_ROOT_PATH = '/sites';
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
@@ -50,6 +56,12 @@ class SiteService
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      *
      * @param Site $site
@@ -57,7 +69,7 @@ class SiteService
      */
     public function pruneSite(Site $site)
     {
-        $siteNodePath = '/sites/' . $site->getNodeName();
+        $siteNodePath = NodePaths::addNodePathSegment(static::SITES_ROOT_PATH, $site->getNodeName());
         $this->nodeDataRepository->removeAllInPath($siteNodePath);
         $siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
         foreach ($siteNodes as $siteNode) {
@@ -68,27 +80,22 @@ class SiteService
         foreach ($domainsForSite as $domain) {
             $this->domainRepository->remove($domain);
         }
+        $this->persistenceManager->persistAll();
+
         $this->siteRepository->remove($site);
 
         $this->emitSitePruned($site);
     }
 
     /**
-     * Remove all nodes, workspaces, domains and sites.
+     * Remove all sites and their respective nodes and domains
      *
      * @return void
      */
     public function pruneAll()
     {
-        $sites = $this->siteRepository->findAll();
-
-        $this->nodeDataRepository->removeAll();
-        $this->workspaceRepository->removeAll();
-        $this->domainRepository->removeAll();
-        $this->siteRepository->removeAll();
-
-        foreach ($sites as $site) {
-            $this->emitSitePruned($site);
+        foreach ($this->siteRepository->findAll() as $site) {
+            $this->pruneSite($site);
         }
     }
 

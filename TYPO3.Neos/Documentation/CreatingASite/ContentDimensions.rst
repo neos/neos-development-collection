@@ -184,6 +184,20 @@ example:
 While the examples only defined constraints in the ``language`` dimension configuration, it is perfectly possible to
 additionally or exclusively define constraints in ``country`` or other dimensions.
 
+Migration of existing content
+=============================
+
+Adjusting content dimensions configuration can lead to issues for existing content. When a new content dimension is added,
+a corresponding value needs to be added to existing content, otherwise no nodes would be found.
+
+This can be done with a node migration which is included in the ``TYPO3.TYPO3CR`` package::
+
+	./flow node:migrate 20150716212459
+
+This migration adds missing content dimensions by setting the default value on all existing nodes, if not already set.
+
+Alternatively a custom node migration can be created allowing flexibility and constraints. See :ref:`node-migrations`.
+
 Routing
 =======
 
@@ -191,6 +205,36 @@ Neos provides a route-part handler that will include a prefix with the value of 
 dimension preset for all configured dimensions. This means URIs will not contain any prefix by default as long as
 no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``uriSegment`` value
 must not include an underscore.
+
+The default preset can have an empty `uriSegment` value. The following example will lead to URLs that do not contain
+`en` if the `en_US` preset is active, but will show the `uriSegment` for other languages that are defined as well:
+
+.. code-block:: yaml
+
+  TYPO3:
+    TYPO3CR:
+      contentDimensions:
+
+        'language':
+          default: 'en'
+          defaultPreset: 'en_US'
+          label: 'Language'
+          icon: 'icon-language'
+          presets:
+            'en':
+              label: 'English (US)'
+              values: ['en_US']
+              uriSegment: ''
+
+The only limitation is that all segments must be unique across all dimensions. If you need non-unique segments, you can
+switch support for non-empty dimensions off:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos:
+      routing:
+        supportEmptySegmentForDimensions: FALSE
 
 Limitations
 ===========

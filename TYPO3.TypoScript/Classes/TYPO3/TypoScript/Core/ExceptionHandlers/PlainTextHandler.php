@@ -32,14 +32,14 @@ class PlainTextHandler extends AbstractRenderingExceptionHandler
             return sprintf(
                 'Exception while rendering %s: %s (%s)',
                 $this->formatScriptPath($typoScriptPath, "\n\t", false),
-                $exception->getMessage(),
+                strip_tags($exception->getMessage()),
                 $referenceCode
             );
         } else {
             return sprintf(
                 'Exception while rendering %s: %s',
                 $this->formatScriptPath($typoScriptPath, "\n\t", false),
-                $exception->getMessage()
+                strip_tags($exception->getMessage())
             );
         }
     }

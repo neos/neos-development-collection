@@ -2,10 +2,24 @@
 Translating the user interface
 ==============================
 
+Default Language
+================
+The ``availableLanguages`` are defined in ``Packages/Application/TYPO3.Neos/Configuration/Settings.yaml``.
+
+You may override the default language of your installation in ``Configuration/Settings.yaml``:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Neos: 
+      userInterface: 
+        defaultLanguage: 'en'
+
+
 Label Scrambling
 ================
 
-To clearly see the non-translated labels in the Neos backend you can use the
+To help you find labels in the Neos editor interface that you still need to translate, you can use the
 language label scrambling setting in your yaml file. This will replace all translations
 by a string consisting of only `#` characters with the same length as the actual
 translated label. With this setting enabled every still readable string in the backend

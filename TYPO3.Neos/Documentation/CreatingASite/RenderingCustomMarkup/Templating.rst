@@ -454,7 +454,7 @@ This is the concept which makes Fluid extremely versatile and extensible.
 
 If you want to create a view helper which you can call from your template (as a
 tag), you just write a plain PHP class which needs to inherit from
-``TYPO3\Fluid\Core\AbstractViewHelper`` (or its subclasses). You need to implement
+``TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
@@ -573,7 +573,7 @@ have without the ``AbstractTagBasedViewHelper``):
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
+	class ActionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	  public function initializeArguments() {
 		$this->registerArgument('class', 'string', 'CSS class to add to the link');

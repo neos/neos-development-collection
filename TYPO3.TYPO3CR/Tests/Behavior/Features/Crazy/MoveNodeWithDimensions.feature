@@ -170,3 +170,29 @@ Feature: Move node with dimension support
       | Path                              |
       | /sites/typo3cr/company/main/text0 |
       | /sites/typo3cr/company/main/text1 |
+
+  @fixtures
+  Scenario: When a node is moved, this node's node path should change
+    This is needed inside Neos, when moving nodes inside the Node Tree, the system has to return
+    the updated Node Path to the User Interface. Thus, this test effectively checks whether
+    NodeInterface->getPath() can be used to retrieve the updated path after node moving.
+
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    Then I should have the following nodes:
+      | Path                           |
+      | /sites/typo3cr/company/service |
+
+  @fixtures
+  Scenario: When a node is moved, this node's node path should change, even with fallback dimensions configured
+    See the description of the scenario above why this feature is important for Neos. This reproduces bug NEOS-1652.
+
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  | Language |
+      | user-admin | en, de   |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    Then I should have the following nodes:
+      | Path                           |
+      | /sites/typo3cr/company/service |

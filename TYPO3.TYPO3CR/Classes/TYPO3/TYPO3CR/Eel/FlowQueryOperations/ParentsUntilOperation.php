@@ -61,19 +61,15 @@ class ParentsUntilOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
-            $parentNodes = $this->getParents($contextNode, $siteNode);
-
-            if (isset($arguments[0]) && !empty($arguments[0])) {
-                $untilQuery = new FlowQuery($parentNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
-
+            $parentNodes = $this->getParents($contextNode);
+            if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
+                $untilQuery = new FlowQuery(array($parentNodes[0]));
+                $untilQuery->pushOperation('closest', array($arguments[0]));
                 $until = $untilQuery->get();
             }
 
-            if (isset($until) && !empty($until)) {
-                $until = end($until);
-                $parentNodes = $this->getNodesUntil($parentNodes, $until);
+            if (isset($until) && is_array($until) && !empty($until) && isset($until[0])) {
+                $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
             }
 
             if (is_array($parentNodes)) {
@@ -93,10 +89,14 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
+    /**
+     * @param NodeInterface $contextNode
+     * @return array
+     */
+    protected function getParents(NodeInterface $contextNode)
     {
         $parents = array();
-        while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
+        while ($contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;
         }

@@ -95,7 +95,13 @@ By default the following Eel helpers are available in the default context for Ee
 * ``Neos.Array``, exposing ``TYPO3\Neos\TypoScript\Helper\ArrayHelper``
 * ``Neos.Rendering``, exposing ``TYPO3\Neos\TypoScript\Helper\RenderingHelper``
 
+See: :ref:`Eel Helpers Reference`
+
 This is configured via the setting ``TYPO3.TypoScript.defaultContext``.
+
+Additionally, the defaultContext contains the ``request`` object,
+where you have also access to Arguments. e.g.
+``${request.httpRequest.arguments.nameOfYourGetArgument}``
 
 FlowQuery
 =========
