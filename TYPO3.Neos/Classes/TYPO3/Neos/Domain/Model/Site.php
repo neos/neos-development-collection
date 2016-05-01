@@ -221,7 +221,9 @@ class Site
     }
 
     /**
-     * @param \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain> $domains
+     * @param Collection<Domain> $domains
+     * @return void
+     * @api
      */
     public function setDomains($domains)
     {
@@ -232,7 +234,8 @@ class Site
     }
 
     /**
-     * @return Collection<\TYPO3\Neos\Domain\Model\Domain>
+     * @return Collection<Domain>
+     * @api
      */
     public function getDomains()
     {
@@ -250,7 +253,7 @@ class Site
     }
 
     /**
-     * @return Collection
+     * @return Collection<Domain>
      */
     public function getActiveDomains()
     {
@@ -261,7 +264,7 @@ class Site
     }
 
     /**
-     * @return \TYPO3\Neos\Domain\Model\Domain|null
+     * @return Domain|null
      */
     public function getFirstActiveDomain()
     {
@@ -274,6 +277,7 @@ class Site
      *
      * @param Domain $domain The domain
      * @return void
+     * @api
      */
     public function setPrimaryDomain(Domain $domain)
     {
