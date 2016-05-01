@@ -138,6 +138,7 @@ class Site
      * context, do not use the NodeDataRepository!
      *
      * @return string The node name
+     * @api
      */
     public function getNodeName()
     {
@@ -244,6 +245,7 @@ class Site
 
     /**
      * @return boolean TRUE if the site has at least one active domain assigned
+     * @api
      */
     public function hasActiveDomains()
     {
@@ -254,6 +256,7 @@ class Site
 
     /**
      * @return Collection<Domain>
+     * @api
      */
     public function getActiveDomains()
     {
@@ -265,6 +268,7 @@ class Site
 
     /**
      * @return Domain|null
+     * @api
      */
     public function getFirstActiveDomain()
     {
@@ -294,6 +298,7 @@ class Site
      * Returns the primary domain, if one has been defined.
      *
      * @return Domain The primary domain or NULL
+     * @api
      */
     public function getPrimaryDomain()
     {
