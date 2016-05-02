@@ -320,6 +320,34 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I run getNode with the path "([^"]*)" on the current node$/
+     */
+    public function iRunGetNodeWithThePathOnTheCurrentNode($path)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            $node = $this->iShouldHaveOneNode();
+            $retrievedNode = $node->getNode($path);
+            $this->currentNodes = $retrievedNode ? [ $retrievedNode ] : [];
+        }
+    }
+
+    /**
+     * @When /^I retrieve the current site node$/
+     */
+    public function iRetrieveTheCurrentSiteNode()
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            $node = $this->iShouldHaveOneNode();
+            $retrievedNode = $node->getContext()->getCurrentSiteNode();
+            $this->currentNodes = $retrievedNode ? [ $retrievedNode ] : [];
+        }
+    }
+
+    /**
      * @When /^I publish the node$/
      */
     public function iPublishNodeToWorkspaceWithTheFollowingContext()
