@@ -16,10 +16,12 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -40,6 +42,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 class AssetController extends \TYPO3\Media\Controller\AssetController
 {
     use CreateContentContextTrait;
+    use BackendUserTranslationTrait;
 
     /**
      * @Flow\Inject
@@ -137,13 +140,13 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     {
         $relatedNodes = $this->getRelatedNodes($asset);
         if (count($relatedNodes) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->addFlashMessage('media.deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirect('index');
         }
 
         // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, [], 1412375050);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
         $this->redirect('index');
     }
 
@@ -254,5 +257,26 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             $errorMessage .= ' while trying to call %1$s->%2$s()';
         }
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
+    }
+
+    /**
+     * Add a translated flashMessage.
+     *
+     * @param string $messageBody The translation id for the message body.
+     * @param string $messageTitle The translation id for the message title.
+     * @param string $severity
+     * @param array $messageArguments
+     * @param integer $messageCode
+     * @return void
+     */
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
+    {
+        $localeObject = $this->_localizationService->getConfiguration()->getCurrentLocale();
+        if (is_string($messageBody)) {
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, $localeObject, 'Modules', 'TYPO3.Neos');
+        }
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, $localeObject, 'Modules', 'TYPO3.Neos');
+
+        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }
