@@ -13,6 +13,7 @@ namespace TYPO3\Media\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 
 /**
  * A Video asset
@@ -35,10 +36,12 @@ class Video extends Asset
 
     /**
      * Constructs the object and sets default values for width and height
+     *
+     * @param FlowResource $resource
      */
-    public function __construct()
+    public function __construct(FlowResource $resource)
     {
-        parent::__construct();
+        parent::__construct($resource);
 
         $this->width = -1;
         $this->height = -1;
