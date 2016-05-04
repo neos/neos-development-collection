@@ -1,0 +1,1479 @@
+`2.2.0 (2016-05-04) <https://github.com/neos/neos-development-collection/releases/tag/2.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Support empty dimension values for default fallbacks <https://github.com/neos/neos-development-collection/pull/498>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Implement support for empty dimension values (for any number of dimensions) of a node variant.
+This allows to have nodes like ``/sites`` that will always be found, independent from the dimensions
+of the context.
+
+Another case is the transition to new dimensions that will be much easier because existing nodes
+are already visible.
+
+NEOS-1633 #close
+
+* Packages: ``TYPO3CR``
+
+`TASK: Missing \`\`@api\`\` and clean up of Site model <https://github.com/neos/neos-development-collection/pull/495>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Incompatible constructor in Video model <https://github.com/neos/neos-development-collection/pull/499>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The Video model has an incompatible constructor as the Asset
+model require a $resource argument. This change adds the argument
+to the constructor and adds a test to prevent regressions.
+
+* Packages: ``Media``
+
+`BUGFIX: Exclude initialize*Actions from Testing Policy <https://github.com/neos/neos-development-collection/pull/492>`_
+------------------------------------------------------------------------------------------------------------------------
+
+We should always exclude initialize*Actions from method policy
+matchers and this didn't happen in the Testing ``Policy.yaml``.
+For unit and functional tests this does not pose a big problem
+but behat tests fail when trying to call the backend login for
+example.
+
+* Packages: ``Neos``
+
+`BUGFIX: WorkspacesController uses NodeJsonView <https://github.com/neos/neos-development-collection/pull/494>`_
+----------------------------------------------------------------------------------------------------------------
+
+When requesting workspace data in JSON format from the WorkspacesController
+null would be returned, since the controller was configured to use the
+NodeJsonView.
+
+This adds the missing WorkspaceJsonView and configures it to be used.
+
+* Packages: ``Neos``
+
+`TASK: Add fallback path for media package templates <https://github.com/neos/neos-development-collection/pull/481>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This change adds a fallback path to the template path
+of media package like it is already in place for partials
+and layout paths.
+
+* Packages: ``Neos``
+
+`TASK: CodeBlock formating for image configuration examples in media module <https://github.com/neos/neos-development-collection/pull/493>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Add release notes for 2.1 and 2.2 <https://github.com/neos/neos-development-collection/pull/489>`_
+---------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Add \`\`Neos.RedirectHandler\`\` to command reference settings <https://github.com/neos/neos-development-collection/pull/491>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Add ``Neos.RedirectHandler`` to command reference settings so it will be added to the general command reference
+
+* Packages: ``Neos``
+
+`BUGFIX: Use 2.1 branch in .travis.yml <https://github.com/neos/neos-development-collection/pull/490>`_
+-------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Adjust .editorconfig to use tabs for JS files <https://github.com/neos/neos-development-collection/pull/411>`_
+---------------------------------------------------------------------------------------------------------------------
+
+`FEATURE: Automatic redirects for modified nodes <https://github.com/neos/neos-development-collection/pull/323>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This introduces a ``NodeRedirectService`` that is invoked as soon
+as a node is being published to the "live" workspace.
+If the URI for a page node has been changed the ``NodeRedirectService``
+automatically flushes related Routing Caches and creates a Redirect
+from the old URI to the new one.
+
+In addition the service creates a ``410`` redirection for removed nodes so
+that clients get a ``410`` response code rather than ``404`` when trying to
+navigate to a node that has been there before.
+
+Redirects can be managed via new commands::
+
+    ./flow redirect:list
+    ./flow redirect:add source/path target/path 307
+    ./flow redirect:remove source/path
+    ./flow redirect:removeall
+    ./flow redirect:removebyhost hostname.tld
+
+In addition redirects can be imported and exported as ``CSV`` using::
+
+    ./flow redirect:export
+    ./flow redirect:import
+
+NEOS-721 #close
+
+`[TASK] Create .codeclimate.yml <https://github.com/neos/neos-development-collection/pull/6>`_
+----------------------------------------------------------------------------------------------
+
+Adds a codeclimate configuration excluding Migrations, Tests and
+JavaScript libraries.
+
+`BUGFIX: Prevent database constraint violation during site prune with existing domains <https://github.com/neos/neos-development-collection/pull/488>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Deleting a site, e.g. using the ``site:prune`` command, fails due a database constraint violation.
+This is due to Doctrine delete ordering, the site is deleted before the domains.
+
+NEOS-178
+
+* Packages: ``Neos``
+
+`BUGFIX: Placement of initial translation dialog <https://github.com/neos/neos-development-collection/pull/487>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Select box editor unselect styling <https://github.com/neos/neos-development-collection/pull/485>`_
+------------------------------------------------------------------------------------------------------------
+
+Regression from the new dropdown styling.
+
+* Packages: ``Neos``
+
+`BUGFIX: Radio buttons active state <https://github.com/neos/neos-development-collection/pull/484>`_
+----------------------------------------------------------------------------------------------------
+
+Fixes the styling of the radio buttons and synchronizes
+the styling with the new styling for the checkboxes.
+
+* Packages: ``Neos``
+
+`TASK: \`\`LoginController\`\` respects JSON on authentication failure <https://github.com/neos/neos-development-collection/pull/480>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Adds a JSON output of ``"success" => false`` if authentication failed.
+
+NEOS-1510 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Call to getIdentifier on non object in usage references <https://github.com/neos/neos-development-collection/pull/479>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+In the usages overview for assets in the media module a list is rendered
+with a path to the node where an asset is still used. This leads to a
+call to getIdentifier() on a non object if the parent document node
+is removed in the live / current users workspace.
+
+As we can not display the title of the document in the other users workspace
+this change leaves out the breadcrumb to the node in the overview.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust to new Neos.Demo site package <https://github.com/neos/neos-development-collection/pull/478>`_
+--------------------------------------------------------------------------------------------------------------
+
+Adjusts Behat tests and documentation to the new Neos.Demo site package.
+
+* Packages: ``Neos``
+
+`FEATURE: Automatic conversion of images from CMYK into RGB colorspace <https://github.com/neos/neos-development-collection/pull/376>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Images in CMYK colorspace will be converted into RGB colorspace during the processing of images. The original image will still been kept in the original colorspace.
+
+The conversion could be disabled by setting the configuration ``TYPO3.Media.image.convertCMYKToRGB`` to false.
+
+Not applicable when using GD as it doesn't support CMYK.
+
+NEOS-1778 #close
+
+* Packages: ``Media``
+
+`BUGFIX: Editing asset collection <https://github.com/neos/neos-development-collection/pull/476>`_
+--------------------------------------------------------------------------------------------------
+
+Prevents an exception thrown while property mapping for the title constructor parameter.
+
+* Packages: ``Media`` ``TYPO3CR``
+
+`TASK: Add schema definition for the inspector group icons <https://github.com/neos/neos-development-collection/pull/468>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Before that the nodeType validation produced some errors.
+
+* Packages: ``Neos``
+
+`TASK: Polish reference section of documentation <https://github.com/neos/neos-development-collection/pull/465>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The typoscript view-helper is added to the autogenereated neos-reference.  
+Additionally the section names in the reference are made a little more consistent.
+
+* Packages: ``Neos``
+
+`TASK: Introduce interface to customize the default TS prototype <https://github.com/neos/neos-development-collection/pull/473>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This change introduces a new interface ``DefaultPrototypeGeneratorInterface``.
+By implementing this interface you can change the default TypoScript prototypes
+generated by Neos for every NodeType.
+
+* Packages: ``Neos``
+
+`FEATURE: Implement new Login-Screen <https://github.com/neos/neos-development-collection/pull/472>`_
+-----------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Resolve test trait paths relatively <https://github.com/neos/neos-development-collection/pull/7>`_
+----------------------------------------------------------------------------------------------------------
+
+In order to accomodate running the tests with the new joined
+repositories as well as the read-only ones the require path
+must be relative to the current path to avoid passing the
+Application/Neos folder.
+
+
+`BUGFIX: Fix default expression to generate node labels <https://github.com/neos/neos-development-collection/pull/466>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The PR #448 changed the default expression used to generate the label by
+adding a preg_replace. The way the pattern is specified breaks with the
+php-yaml extension.
+
+This changes fixes it by removing the backslash characters before the
+slashes delimiting the pattern.
+
+NEOS-1818 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Free index space at target position if no free index space is available <https://github.com/neos/neos-development-collection/pull/462>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+If a node is inserted at a given position between nodes and no free sorting index is available, the sortindices on
+that level are renumbered. The previous code for that could lead to unexpected node reordering and sortingindex
+value escalation if workspaces or dimensions were used.
+
+The following steps reproduce the error:
+* In dimension A create nodes between other nodes until there are no free sortindices available
+* Create a variant of those nodes in dimension B
+* In dimension B add a new node in a place where no free sort index is available
+
+Since the previous code is only repositioning one item of a given index and does not take workspaces and dimensions
+into account this results in the following unwanted effects:
+* Unwanted reordering of the nodes in dimension A
+* In dimension B two nodes with identical sortingindex occur which makes the order of the nodes random
+* If this is repeated multiple times the sorting indices in dimension A escalate quickly to very high values
+
+This patch resolves this behavior by freeing index space at the target position instead of renumbering the
+whole level by modifying all nodes on the given path and incrementing all sort indices above the reference position
+a consistent behavior across workspaces and dimensions is ensured.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Backend fails to load due to RequireJS timeout <https://github.com/neos/neos-development-collection/pull/463>`_
+------------------------------------------------------------------------------------------------------------------------
+
+On slow internet connections in combination with large documents it can happen that the 
+inspector editors and Aloha timeout while loading. This is solved by increasing the default
+timeout from 7 seconds to 30.
+
+* Packages: ``Neos``
+
+`TASK: Make loadingDepth of structure tree configurable <https://github.com/neos/neos-development-collection/pull/451>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Like the node tree the structure tree has a configurable initial loading
+depth now.
+
+NEOS-1361 #comment Adjust structure tree handling
+
+* Packages: ``Neos``
+
+`TASK: Use and improve node label <https://github.com/neos/neos-development-collection/pull/448>`_
+--------------------------------------------------------------------------------------------------
+
+Use the newly available node label in more parts of the UI and improve how the default node label
+is generated.
+
+NEOS-1811 #close
+
+* Packages: ``Neos``
+
+`FEATURE: Inspector group icon <https://github.com/neos/neos-development-collection/pull/455>`_
+-----------------------------------------------------------------------------------------------
+
+Add icons to inspector groups using a new ``icon`` attribute.
+
+Also includes various improvements related to icons.
+
+NEOS-1406 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Indicate active inspector tab <https://github.com/neos/neos-development-collection/pull/456>`_
+-------------------------------------------------------------------------------------------------------
+
+Fixes an overflow issue caused the border of the active tab not to change.
+
+Additionally adds a hover effect.
+
+* Packages: ``Neos``
+
+`TASK: Improve styling of checkboxes <https://github.com/neos/neos-development-collection/pull/457>`_
+-----------------------------------------------------------------------------------------------------
+
+- Changes the check icon
+- Always show a check icon
+- Improves hover / focus states
+
+* Packages: ``Neos``
+
+`FEATURE: Cross-site linking <https://github.com/neos/neos-development-collection/pull/439>`_
+---------------------------------------------------------------------------------------------
+
+Adds ``scheme`` and ``port`` parameters to site domains to enable setting them for cross-site linking.
+
+Additionally adds a primary flag to site domains to enable selecting the primary domain for a site.
+
+Lastly linking to a node using the ``LinkingService`` the primary domain of the site the node belongs
+to is taking into account. This allows cross-site linking instead of creating an invalid link to a non-existing
+node with the existing site's URL.
+
+NEOS-976 #close
+NEOS-178 #close
+
+* Packages: ``Neos``
+
+`TASK: Only update changed model properties <https://github.com/neos/neos-development-collection/pull/450>`_
+------------------------------------------------------------------------------------------------------------
+
+When updating a properties for a node, only post the properties
+that have actually changed. This improves performance since
+fewer ``setProperty`` calls are needed. The more node properties
+the bigger the impact.
+
+* Packages: ``Neos``
+
+`TASK: Improve & streamline styling of dropdowns <https://github.com/neos/neos-development-collection/pull/459>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Find workspacePosition by comparing names <https://github.com/neos/neos-development-collection/pull/454>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Two places use workspaces in `array_search` to find find the positions of a
+workspace. This fails if two instances of the same workspace are used,
+and even though this should not happen, the error is not "needed". When
+using the name to compare the workspaces, everything works fine (as is to
+be expected, since the name is the identifier).
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Aloha table mode issues <https://github.com/neos/neos-development-collection/pull/447>`_
+-------------------------------------------------------------------------------------------------
+
+Fix broken insert/cut/copy/paste actions when the Aloha table mode is active.
+
+Prevent Aloha table mode from remaining active after selecting a new node
+in the structure tree.
+
+* Packages: ``Neos``
+
+`FEATURE: Center all dialogs vertically <https://github.com/neos/neos-development-collection/pull/434>`_
+--------------------------------------------------------------------------------------------------------
+
+Center all dialogs vertically with flexbox. 
+Dialogs using the old markup will maintain the old positioning as fallback.
+
+* Packages: ``Neos``
+
+`TASK: Make help message icon more visible <https://github.com/neos/neos-development-collection/pull/453>`_
+-----------------------------------------------------------------------------------------------------------
+
+Adds a hover effect and increases the size in the insert new panels
+
+* Packages: ``Neos``
+
+`TASK: Improve exception error notifications <https://github.com/neos/neos-development-collection/pull/424>`_
+-------------------------------------------------------------------------------------------------------------
+
+Generalises and improves the output of exception errors.
+
+Removes unuseful custom AJAX error handling and thus avoids displaying multiple error notifications for a single error.
+
+NEOS-185 #close
+
+* Packages: ``Neos``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as `['key' => 'value']`.
+
+NEOS-1460 #close
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Don't show error notification on cancelled page loads <https://github.com/neos/neos-development-collection/pull/449>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Due to the improved AJAX error handling an error was shown for
+cancelled requests.
+
+* Packages: ``Neos``
+
+`FEATURE: Preview in target workspace instead of live <https://github.com/neos/neos-development-collection/pull/399>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The Neos UI has a button to preview the current page in the live
+workspace. When using nested workspaces, this is not helpful, because
+one usually wants to see the published state in the current target
+workspace.
+
+So this changes the preview to show the current target workspace
+instead.
+
+* Packages: ``Neos``
+
+`[TASK] Improved \`\`countByParentAndNodeType\`\` performance <https://github.com/neos/neos-development-collection/pull/4>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Uses a direct count query to fetch the count of child nodes.
+As we do not need to take care which variant is the better one just
+doing a DISTINCT on the identifier should be fine to get an accurate
+result.
+
+* Resolves: `NEOS-1444 <https://jira.neos.io/browse/NEOS-1444>`_
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Update structure tree when changing node type <https://github.com/neos/neos-development-collection/pull/442>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a node type is changed for a node, the context structure
+tree needs to be updated accordingly.
+
+NEOS-1395 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent tooltips getting stuck on tree moves <https://github.com/neos/neos-development-collection/pull/444>`_
+----------------------------------------------------------------------------------------------------------------------
+
+When moving a page in the trees, the new custom tooltips could get stuck.
+To prevent that the tooltips are hidden and disabled during dragging.
+
+NEOS-1122
+
+* Packages: ``Neos``
+
+`TASK: Make nodes selectable in context structure tree <https://github.com/neos/neos-development-collection/pull/443>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This makes it more clear which structure node is selected and more in sync with the document node tree.
+
+Visually the title is blue instead of just the background being color being lighter.
+This corresponds with the blue outline the selected inline element has.
+
+* Packages: ``Neos``
+
+`TASK: Update to latest Font Awesome 4.6.0 <https://github.com/neos/neos-development-collection/pull/446>`_
+-----------------------------------------------------------------------------------------------------------
+
+Update to Font Awesome version 4.6.0.
+
+* Packages: ``Neos``
+
+`TASK: Remove "CreateNodes" from documentation <https://github.com/neos/neos-development-collection/pull/445>`_
+---------------------------------------------------------------------------------------------------------------
+
+The node migration transformation "CreateNodes" does not exist,
+so it is removed from the documentation.
+
+* Packages: ``Neos``
+
+`TASK: Improve content dimensions documentation <https://github.com/neos/neos-development-collection/pull/432>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Creating new nodes in trees <https://github.com/neos/neos-development-collection/pull/437>`_
+-----------------------------------------------------------------------------------------------------
+
+- Prevent fatal error in node tree if title is undefined
+- Show node type for newly created nodes in trees
+- Editing a title in the node tree displays old title
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent edit / preview rendering path from applying to front-end <https://github.com/neos/neos-development-collection/pull/429>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+When a edit / preview mode with a rendering path is selected it can affect the
+front-end view for the logged in user. To prevent this edit / preview modes now
+only apply in the backend.
+
+NEOS-1758 #close
+
+* Packages: ``Neos``
+
+`TASK: Improve related nodes view for multi-site, dimension and workspaces <https://github.com/neos/neos-development-collection/pull/436>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Improves the asset related nodes view to show where nodes can actually be
+found across workspaces, content dimensions and sites.
+
+Additionally improves the workspaces module changes overview
+
+`TASK: Update PropertyEditorReference.rst <https://github.com/neos/neos-development-collection/pull/435>`_
+----------------------------------------------------------------------------------------------------------
+
+switched from "strings" to "entries" for select box and extended the introduction to clarify that datasources can be used as a source for select boxes
+
+* Packages: ``Neos``
+
+`BUGFIX: Create Content Element Documentation <https://github.com/neos/neos-development-collection/pull/433>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`[TASK] Add trait to avoid duplicate code in ViewHelpers <https://github.com/neos/neos-development-collection/pull/3>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The new ``TypoScriptContextTrait`` can be used to get
+variables from the TypoScript runtime context inside a
+ViewHelper as long as it's used inside a
+``TypoScriptAwareView``. This helps to avoid code duplication
+while avoiding long inheritance chains.
+
+* Packages: ``Neos``
+
+`BUGFIX: Correct timezone offset in node info inspector view <https://github.com/neos/neos-development-collection/pull/441>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The time shown in the `Additional info` box now respects the timezone for the `Created`, `Last modification` and `Last publication` date of a node. Until now the time was shown in UTC and therefore off a couple of hours for most of the world.
+
+NEOS-1807 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Reloading of content elements after update <https://github.com/neos/neos-development-collection/pull/438>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Display node label instead of node type label in workspace overview <https://github.com/neos/neos-development-collection/pull/420>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+The node type label doesn't really represent the actual node making it difficult to identity,
+instead the node label is used and the node type label is available on hover.
+
+* Packages: ``Neos``
+
+`TASK: Add support for array keys in AbstractCollectionImplementation <https://github.com/neos/neos-development-collection/pull/407>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change add ```itemKey``` property to support processing array and get
+the value of the keys:
+
+    prototype(Vendor.Package:PackageRequirements) < prototype(TYPO3.TypoScript:Collection) {
+      itemKey = 'identifier'
+      itemName = 'node'
+    }
+
+In this example, the variable ```identifier``` contain the array key and
+```node``` the array value.
+
+* Packages: ``Neos``
+
+`FEATURE: Media related document nodes <https://github.com/neos/neos-development-collection/pull/396>`_
+-------------------------------------------------------------------------------------------------------
+
+Adds a new view in the media browser to display information about which nodes an asset is referenced in.
+
+NEOS-47 #close
+
+* Packages: ``Neos``
+
+`TASK: Use node label in inspector breadcrumb <https://github.com/neos/neos-development-collection/pull/416>`_
+--------------------------------------------------------------------------------------------------------------
+
+Instead of using the node type name the label of the node is used instead. This helps avoid confusing the breadcrumb in the inspector from a node type selector.
+
+Additionally the label is now updated using the server side rendered label in the inspector breadcrumb, context structure tree and node tree.
+
+NEOS-1141 #comment replaced the node type name with the node label, which should help a little
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Display insert position in insert new panel <https://github.com/neos/neos-development-collection/pull/426>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Display the selected position in the insert new panel header.
+
+NEOS-1121 #close
+
+* Packages: ``Neos``
+
+`TASK: Show tooltips instead of default browser titles <https://github.com/neos/neos-development-collection/pull/427>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+In many cases the icon is not self explanatory and we rely on a title being shown on hover.
+The tooltip styling is improved and tooltips are improved in general.
+
+Tooltips have been inserted on almost every iconic button throughout
+the editing interface as well as in the other modules.
+
+NEOS-1122 #close
+
+* Packages: ``Neos``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as `['key' => 'value']`.
+
+NEOS-1460 #close
+
+* Packages: ``Neos``
+
+`TASK: Display database error for additional exceptions <https://github.com/neos/neos-development-collection/pull/417>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Related: `NEOS-566 <https://jira.neos.io/browse/NEOS-566>`_
+* Packages: ``Neos``
+
+`BUGFIX: Add missing constructor doc block for Tags <https://github.com/neos/neos-development-collection/pull/412>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`FEATURE: Sort direction options in media browser <https://github.com/neos/neos-development-collection/pull/421>`_
+------------------------------------------------------------------------------------------------------------------
+
+More flexible sorting in the media browser. The sorting is now split in sort by and sort direction to sort the asset list independently.
+
+NEOS-1765 #close
+
+`FEATURE: Collapsible insert panel groups <https://github.com/neos/neos-development-collection/pull/418>`_
+----------------------------------------------------------------------------------------------------------
+
+Makes the node type groups in the insert node type panel collapsible.
+The initial state can be configured using configuration::
+
+    TYPO3.Neos.nodeTypes.groups.general.collapsed: true
+
+When the user toggles a group it is remembered and stored in local storage,
+so the user has to toggle the group again to reset it.
+
+Additionally optimizes the sizes of modal windows.
+
+NEOS-786 #close
+NEOS-614 #comment Optimized modals windows
+
+* Packages: ``Neos``
+
+`TASK: Document node type \`\`ui.position\`\` property <https://github.com/neos/neos-development-collection/pull/419>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Use UserService instead of SecurityContext in UserPreferences <https://github.com/neos/neos-development-collection/pull/425>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Page creation without \`\`language\`\` dimension <https://github.com/neos/neos-development-collection/pull/423>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The uninitialized variable ``$language`` results in an exception
+when the user tries to add a page on PHP 7 due to
+``Notice: Undefined variable: language``.
+
+* Packages: ``Neos``
+
+`BUGFIX: Verify DateTime parsing in nodeConverter <https://github.com/neos/neos-development-collection/pull/378>`_
+------------------------------------------------------------------------------------------------------------------
+
+If a DateTime property is not parseable,
+$nodePropertyValue->setTimezone() is called on a none-object.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as `['key' => 'value']`.
+
+NEOS-1460 #close
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/415>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Use correct value in \`\`StringLengthValidator\`\` error message <https://github.com/neos/neos-development-collection/pull/410>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixed maximum string length validation error message
+
+* Packages: ``Neos``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/414>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Cancel previous load page requests <https://github.com/neos/neos-development-collection/pull/409>`_
+------------------------------------------------------------------------------------------------------------
+
+When a page takes long to load it can happen that a new page is requested instead.
+If the new page loads before the previous slow request, the new page is loaded
+first and then replaced with the old request once it finishes. This is a confusing
+to the user and thus the last request should always take precedence.
+
+* Packages: ``Neos``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/413>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Set the application key and name to Neos <https://github.com/neos/neos-development-collection/pull/397>`_
+----------------------------------------------------------------------------------------------------------------
+
+This change sets the application key and application name to TYPO3.Neos
+and Neos respectively.
+
+* Packages: ``Neos``
+
+`BUGFIX: Use stable identifier for auto-created child nodes in repair <https://github.com/neos/neos-development-collection/pull/389>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If auto-created child nodes are added via `node:repair`, the generated identifiers are not the same across different variants. This will cause problems when publishing these node variants later.
+
+This change synchronizes the behavior between `node:repair` and regular node creation.
+
+Running `node:repair` will now check identifiers of auto-created child nodes and adjust them accordingly. This is potentially breaking if a child node was referenced from another node but that should very rarely happen.
+
+NEOS-1783 #close
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Translation file ending <https://github.com/neos/neos-development-collection/pull/406>`_
+-------------------------------------------------------------------------------------------------
+
+This PR is a fixed Version of #402 
+Now agains 2.0 branch :) 
+
+* Packages: ``Neos``
+
+`BUGFIX: Creating pages using non-latin characters <https://github.com/neos/neos-development-collection/pull/394>`_
+-------------------------------------------------------------------------------------------------------------------
+
+When a page is created in the node tree the title is automatically
+transliterated to a valid URL. However when using non-latin characters,
+the characters weren't transliterated. This lead to the pages having
+special characters in their URL, making them inaccessible.
+
+To fix this a new transliteration service is introduced which adds support for Chinese, Japanese,
+Korean, Vietnamese, Khmer, Thai, Arabic, Hebrew, Hindi, Burmese and Greek.
+
+NEOS-1791 #close
+NEOS-1280 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Correct syntax for parameters in translation labels <https://github.com/neos/neos-development-collection/pull/400>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Node constraints for auto created node types in structure tree <https://github.com/neos/neos-development-collection/pull/405>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+The node type was not updated when a new page was loaded, leading to
+incorrect constraints being applied to auto created child nodes.
+
+NEOS-1728 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Image crop selection incorrect on small screens <https://github.com/neos/neos-development-collection/pull/404>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When the cropping area in the secondary inspector isn't wide enough,
+the coordinates of the cropping area are miscalculated. To solve this
+the cropping area now has a minimum width and scroll is added, when
+the area is too small.
+
+NEOS-1787 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing styling in backend modules <https://github.com/neos/neos-development-collection/pull/403>`_
+------------------------------------------------------------------------------------------------------------
+
+When using minified resources.
+
+* Packages: ``Neos``
+
+`TASK: Missing translatable labels <https://github.com/neos/neos-development-collection/pull/387>`_
+---------------------------------------------------------------------------------------------------
+
+NEOS-1064 #close
+NEOS-1499
+
+* Packages: ``Neos``
+
+`TASK: Document baseNodeType setting for node tree <https://github.com/neos/neos-development-collection/pull/398>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+` FEATURE: Sortable options in selector editors (select, references, asset list) <https://github.com/neos/neos-development-collection/pull/338>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Enables drag and drop sorting of selected elements in selector, references and assets list.
+
+All select lists with multiple selections are made sortable.
+
+NEOS-374 #resolve
+NEOS-1521 #resolve
+
+* Packages: ``Neos``
+
+`[TASK] Get all nodes in a single request in ReferencesEditor <https://github.com/neos/neos-development-collection/pull/5>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This change introduce a new method in the NodeSearchServiceInterface
+to find node by identifiers. The NodeController and the
+ReferencesEditor is adapted to use this new method based on the
+given request arguments.
+
+
+* Resolves: `NEOS-1261 <https://jira.neos.io/browse/NEOS-1261>`_
+* Packages: ``Neos``
+
+`BUGFIX: Reset \`\`backendOptions\`\` for TypoScript content cache in testing context <https://github.com/neos/neos-development-collection/pull/383>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug that occurs if there is a custom configuration for ``TYPO3_TypoScript_Content`` cache with ``backendOptions`` set. This fix will unset the ``backendOptions`` in testing context which are not allowed for the ``TYPO3\\Flow\\Cache\\Backend\TransientMemoryBackend`` backend.
+
+NEOS-1781 #close
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Translate process is broken for dimensions without fallbacks <https://github.com/neos/neos-development-collection/pull/392>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue for sites with single or multiple dimensions which
+have no fallback defined. When trying to translate content from an
+existing dimension to a variant which does not exist yet, the
+`NodesController` will fail with a fatal error due to the missing
+Site Node in the respective dimension.
+
+The solution in this change works for the given situation. A more
+generic approach may be implemented as part of #156.
+
+NEOS-1786 #close
+
+* Packages: ``Neos``
+
+`TASK: Document predefined roles in Neos <https://github.com/neos/neos-development-collection/pull/379>`_
+---------------------------------------------------------------------------------------------------------
+
+Documents the roles that are defined in Neos and how to extend them.
+
+* Packages: ``Neos``
+
+`FEATURE: Load \`\`LastVisitedNode.js\`\` asynchronously <https://github.com/neos/neos-development-collection/pull/388>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+`LastVisitedNode.js` should run asynchronously as soon as it is available, since some speed testing tools consider it to be render blocking.
+
+* Packages: ``Neos``
+
+`TASK: Incorrect label id for users module widget action button title <https://github.com/neos/neos-development-collection/pull/390>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+NEOS-1536
+
+* Packages: ``Neos``
+
+`BUGFIX: Additional styles for modules loaded after Neos <https://github.com/neos/neos-development-collection/pull/384>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Via `additionalResources.styleSheets` a map of additional
+stylesheet files can be defined that are loaded in the module
+the configuration was made for. Unfortunately they were loaded
+before the Neos default styles which makes overwriting of some of
+those styles cumbersome and more difficult than necessary.
+
+This change switches the loading order so that the Neos styles
+are loaded before any additional resources.
+
+* Packages: ``Neos``
+
+`BUGFIX: Translate title attribute on module widget action buttons <https://github.com/neos/neos-development-collection/pull/386>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Enables translation of the title attribute used for action buttons in module widgets.
+
+NEOS-1536 #close
+
+* Packages: ``Neos``
+
+`TASK: Migration adjustments <https://github.com/neos/neos-development-collection/pull/382>`_
+---------------------------------------------------------------------------------------------
+
+This merges changes from 1.2 into 2.0 and follows up with some needed
+adjustments.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR``
+
+`TASK: Adjust some leftovers related to TYPO3CR PostgreSQL schema <https://github.com/neos/neos-development-collection/pull/380>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Drops the default value for pathhash and renames one index.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Adjust index names to match Doctrine DBAL 2.5 <https://github.com/neos/neos-development-collection/pull/369>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The use of Doctrine 2.5 (instead of 2.4) exposes the fact that some
+(old) index names in the Neos database schema do not match the names
+that are generated currently.
+
+This adjusts those index names, something that is a one-time adjustment.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Ignore empty NodeType configurations <https://github.com/neos/neos-development-collection/pull/367>`_
+------------------------------------------------------------------------------------------------------------
+
+When a NodeType is unset using ```'My.Package:NodeType': ~``` the
+NodeTypeManager complains the NodeType is undefined.
+
+This change makes the NodeTypeManager ignore NodeType configurations
+which are no array. This way the NodeType does not end up in the schema
+definitions at all meaning a more lightweight UI.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Consistently skip processors if \`\`@if\`\` evaluated to false <https://github.com/neos/neos-development-collection/pull/368>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+NEOS-1777 #close Fixes the issue
+
+* Packages: ``Neos`` ``TypoScript``
+
+`BUGFIX: Translate dimension label in dimension choice dialog <https://github.com/neos/neos-development-collection/pull/373>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The demo site specifies an i18n label but the implementation didn't use
+any client-side translation for the dimension label yet.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix issues with PostgreSQL migrations <https://github.com/neos/neos-development-collection/pull/370>`_
+---------------------------------------------------------------------------------------------------------------
+
+This fixes issues when migrating to 2.1 that affect some, but not all, running PostgreSQL:
+
+- JSON to JSONB column type change not possible
+- column type change on event log not possible
+
+NEOS-1763 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Content Collection nodes vanish when publishing to nested workspace <https://github.com/neos/neos-development-collection/pull/372>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue with the publishing mechanism which can result in
+removed Content Collection nodes when documents are published to a
+workspace other than the live workspace.
+
+The root cause for this issue is that during publishing Neos will publish
+Content Collection nodes twice (the first time because they may exist
+in the personal workspace and the second time because all Content
+Collection nodes are published automatically when a Document node is
+published). Because the workspace of the Content Collection node is
+changed to the target workspace on the first publish iteration, the
+source and target workspace will be the same on the second publish
+iteration. That results in `replaceNodeData()` to remove the "existing"
+Content Collection node, which is actually the very same object like
+the "new" one.
+
+NEOS-1769 #resolve
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`FEATURE: Switch between sites without logging in again <https://github.com/neos/neos-development-collection/pull/356>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This eliminates the need for logging in repeatedly when switching between sites in a multi-site
+setup.
+
+NEOS-248 #close Fixes the issue
+NEOS-240 #comment Solves part two of this issue
+
+* Packages: ``Neos``
+
+`TASK: Document \`\`label\`\` option for NodeTypes.yaml <https://github.com/neos/neos-development-collection/pull/366>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Adds documentation on how to customize the generated label for nodes.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix ObjectAccess to overriden expression value in Fluid proxy <https://github.com/neos/neos-development-collection/pull/365>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+This will check for an overriden value when using object access in a
+Fluid template on a TypoScript path proxy.
+
+NEOS-1776 #close Fixes the issue
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Node property can be null in removeProperty <https://github.com/neos/neos-development-collection/pull/357>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The ``AbstractNodeData::removeProperty()`` method checked
+the existence of the given property with ``isset`` but that
+leads to an exception if the property has a ``null`` value.
+The check has been changed to ``array_key_exists``.
+
+NEOS-1719 #close
+
+* Packages: ``TYPO3CR``
+
+`TASK: Add hint about enabling the event logging <https://github.com/neos/neos-development-collection/pull/360>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Replace "TYPO3 Neos" by "Neos" in documentation <https://github.com/neos/neos-development-collection/pull/361>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix link to Flow documentation <https://github.com/neos/neos-development-collection/pull/359>`_
+--------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix broken link tag in link node view helper docblock <https://github.com/neos/neos-development-collection/pull/358>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fixed a typo in \`\`_InlineEditing.scss\`\` <https://github.com/neos/neos-development-collection/pull/353>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The css property ``inline-offset`` doesn't exist, it should be
+``outline-offset``.
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing breadcrumb node variant calculation more robust <https://github.com/neos/neos-development-collection/pull/354>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The calculation of missing node variants along the breadcrumb to
+the site root is used for the translation "helper" in the Neos UI.
+The old calculation depended on a lot of implicit knowledge about
+nodes and paths, all this was refactored to use appropriate methods
+available resulting in a more robust implementation that will never
+return a value lower or equal 0.
+
+* Packages: ``Neos``
+
+`TASK: <nav> does not need a role attribute <https://github.com/neos/neos-development-collection/pull/355>`_
+------------------------------------------------------------------------------------------------------------
+
+Tweaks the documentation on rendering meta navigation a bit.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`[TASK] Refactor TypoScript Runtime <https://github.com/neos/neos-development-collection/pull/168>`_
+----------------------------------------------------------------------------------------------------
+
+This is a pure code refactoring not changing any behavior.
+The code was split into smaller methods and slightly restructured.
+No new features or behavioral changes were introduced.
+
+* Packages: ``TypoScript``
+
+`[TASK] Reduce node complexity <https://github.com/neos/neos-development-collection/pull/206>`_
+-----------------------------------------------------------------------------------------------
+
+This is mostly a cleanup that tries to split the setPath
+method into smaller parts. On the way the visibility of some
+methods was revised.
+
+* Packages: ``TYPO3CR``
+
+`TASK: Event logging tweaks & fixes <https://github.com/neos/neos-development-collection/pull/274>`_
+----------------------------------------------------------------------------------------------------
+
+Some rather small tweaks and fixes to the event logging and the history module.
+
+* Packages: ``Neos``
+
+`BUGFIX: Content Collection nodes vanish when publishing to nested workspace <https://github.com/neos/neos-development-collection/pull/348>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue with the publishing mechanism which can result in
+removed Content Collection nodes when documents are published to a
+workspace other than the live workspace.
+
+The root cause for this issue is that during publishing Neos will publish
+Content Collection nodes twice (the first time because they may exist
+in the personal workspace and the second time because all Content
+Collection nodes are published automatically when a Document node is
+published). Because the workspace of the Content Collection node is
+changed to the target workspace on the first publish iteration, the
+source and target workspace will be the same on the second publish
+iteration. That results in `replaceNodeData()` to remove the "existing"
+Content Collection node, which is actually the very same object like
+the "new" one.
+
+NEOS-1769 #resolve
+
+* Packages: ``TYPO3CR``
+
+`[TASK] Fix code style in documentation / NodeTypes <https://github.com/neos/neos-development-collection/pull/349>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Workspace review module respects datetime properties <https://github.com/neos/neos-development-collection/pull/350>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Workspace review module will show changes for node properties of type DateTime.
+
+NEOS-1771 #close
+
+* Packages: ``Neos``
+
+`TASK: Update to latest Font Awesome <https://github.com/neos/neos-development-collection/pull/351>`_
+-----------------------------------------------------------------------------------------------------
+
+Update to Font Awesome version 4.5.0.
+
+All icons are prefixed with "icon-" and old icon-names from version 3.2.1 are still available for backwards compatibility.
+
+Changing the prefix later on is easy because it's just defined in a variable.
+
+ NEOS-582 #close Updates FA, but keeps the prefix
+
+* Packages: ``Neos``
+
+`TASK: Tweak PolicyConfigurationEnrichmentAspect <https://github.com/neos/neos-development-collection/pull/352>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This adds a safeguard and some type hints to the aspect.
+
+* Packages: ``Neos``
+
+`BUGFIX: Corrected \\\ to \\ in Security Document <https://github.com/neos/neos-development-collection/pull/347>`_
+----------------------------------------------------------------------------------------------------------------
+
+Otherwise following error appears:
+
+    #1355480641: PHP Fatal error: Class  
+    'TYPO3\\\TYPO3CR\\\Security\\\Authorization\\\Privilege\\\Node\\\ReadNodePrivilege' not found 
+    in /var/www/Neos/Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Security/Authorization/Privilege/PrivilegeTarget.php on line 136
+
+* Packages: ``Neos``
+
+`[!!!][TASK] Set useful defaults for Menu <https://github.com/neos/neos-development-collection/pull/195>`_
+----------------------------------------------------------------------------------------------------------
+
+Menu should have useful defaults for ``entryLevel`` and ``maximumLevels``
+to make it usable in it's default state without changing too much.
+The ``entryLevel`` is therefore set to 1 and maximumLevels to 2.
+Maximum shouldn't be too high to avoid loading a lot of nodes unnecessarily.
+
+This is breaking if you rely on the previous behavior with no defaults
+set for the two values.
+
+* Packages: ``Neos``
+
+`FEATURE: Make position selector appear on hover <https://github.com/neos/neos-development-collection/pull/320>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The position selector for creating or pasting elements used to appear when click-and-holding the button for 300ms. This is not very intuitive for a web interface. Now the option menu will appear on hover after 700ms. The click-and-hold behaviour will still work, so touch support is still given.
+
+NEOS-1691 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Fixed typos and headline in documentation <https://github.com/neos/neos-development-collection/pull/344>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: date renamed in DateTime <https://github.com/neos/neos-development-collection/pull/345>`_
+--------------------------------------------------------------------------------------------------
+
+"date" isn't working anymore, but "DateTime" does.
+
+* Packages: ``Neos``
+
+`BUGFIX: Use correct apostrophe in example <https://github.com/neos/neos-development-collection/pull/346>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: EEL defaultContext contains request Object too <https://github.com/neos/neos-development-collection/pull/340>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Added info about the request object in the EEL defaultContext
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove site logic from parentsUntil operation <https://github.com/neos/neos-development-collection/pull/319>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+There is site logic within the parentsUntil operation inside the TYPO3.CR package. There is a seperate operation especially for Neos now.
+
+NEOS-1628 #close
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Remove site logic from parents operation <https://github.com/neos/neos-development-collection/pull/318>`_
+------------------------------------------------------------------------------------------------------------------
+
+There is site logic within the parents operation inside the TYPO3.CR package. There is a seperate operation especially for Neos now.
+
+NEOS-1628 #resolve
+
+* Packages: ``Neos``
+
+`TASK: Add better help text for \`\`site:export\`\` command <https://github.com/neos/neos-development-collection/pull/337>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Adds a better help text for the `site:export` command when calling `help`
+
+* Packages: ``Neos``
+
+`TASK: Refresh NodeTree if Workspace is switched <https://github.com/neos/neos-development-collection/pull/334>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If you switch the workspace the NodeTree will be reloaded.
+
+NEOS-1753 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Wrong label visibility inspector group <https://github.com/neos/neos-development-collection/pull/333>`_
+----------------------------------------------------------------------------------------------------------------
+
+This change remove the 'i18n' prefix from the inspector group label.
+
+* Packages: ``Neos``
+
+`TASK: Aloha update and fix <https://github.com/neos/neos-development-collection/pull/332>`_
+--------------------------------------------------------------------------------------------
+
+Updates Aloha Editor to closest maintained version (1.1.5 to 1.2.42)
+
+No new features used (only bugfixes)
+
+Additionally fixes a bug with the toolbar buttons overflowing
+
+* Packages: ``Neos``
+
+`BUGFIX: Export resources as BASE64 if no export path defined <https://github.com/neos/neos-development-collection/pull/335>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: Select editor unset button styling <https://github.com/neos/neos-development-collection/pull/326>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Load moved page if moving parent page <https://github.com/neos/neos-development-collection/pull/331>`_
+---------------------------------------------------------------------------------------------------------------
+
+If you move a parent node of the node in the NodeTree you are currently on the node tree
+will break because the pageNodePath for your current node is not set to the new path.
+
+NEOS-1752 #close
+
+* Packages: ``Neos``
+
+`TASK: Streamline styling of clear buttons in node tree <https://github.com/neos/neos-development-collection/pull/327>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Document missing \`\`ConvertUris\`\` property \`\`absolute\`\` <https://github.com/neos/neos-development-collection/pull/330>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Documents a missing property ``absolute`` for the ``ConvertUris`` TypoScript object
+
+* Packages: ``Neos``
+
+`TASK: Fix spelling mistakes in \`\`FeatureList\`\` documentation <https://github.com/neos/neos-development-collection/pull/329>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This fixes some spellings in the FeatureList
+
+* Packages: ``Diff`` ``Media`` ``Neos`` ``TYPO3CR``
+
+`Merge: 2.1 into master <https://github.com/neos/neos-development-collection/pull/325>`_
+----------------------------------------------------------------------------------------
+
+`BUGFIX: Migration for workspaces with empty owners <https://github.com/neos/neos-development-collection/pull/322>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The fixes issued for NEOS-1740 didn't consider the case of an installation
+were previous migrations ran and set the owner of workspaces to an
+empty string instead of NULL which made the first bugfix migration ignore
+those workspaces. This migration now targets those specifically, together
+migrating all workspaces to having the correct ownership.
+
+NEOS-1740 #close
+
+* Packages: ``Neos``
+
+`TASK: Replace visible occurrences of www.typo3.org with www.neos.io <https://github.com/neos/neos-development-collection/pull/321>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces www.typo3.org which is given as an example in the
+"add new domain" dialog by www.neos.io, and also replaces it in a couple
+of unit tests. The VIE namespace is not modified by this change.
+
+* Packages: ``Neos``
+
+`TASK: Reintroduce PublishingService <https://github.com/neos/neos-development-collection/pull/315>`_
+-----------------------------------------------------------------------------------------------------
+
+The PublishingService was moved from TYPO3\\TYPO3CR\\Service to
+the TYPO3\\TYPO3CR\\Domain\\Service namespace in commit
+`23b162fa737cd56eb065b71e76a11ee823cdec7a <https://github.com/neos/neos-development-collection/commit/23b162fa737cd56eb065b71e76a11ee823cdec7a>`_. As the class was annotated
+with @api that change was actually breaking and should not have been
+released in a minor release.
+
+This change introduces the class again and immediately deprecates it
+to be removed in a later version.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Additional Readme badges <https://github.com/neos/neos-development-collection/pull/316>`_
+------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Make personal workspace names explicit domain knowledge <https://github.com/neos/neos-development-collection/pull/314>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Just moves code around to avoid string concatentation all over
+the place. Also uses the ``isPersonalWorkspace()`` in appropriate
+places.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: WorkspacesController uses slugified usernames <https://github.com/neos/neos-development-collection/pull/313>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+NEOS-1740 #comment This PR is a follow up
+NEOS-1742 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: User workspace names should be deterministic <https://github.com/neos/neos-development-collection/pull/311>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This fixes some inconsistencies with the naming of user workspaces,
+which resulted in duplicate workspaces being created for users with
+special characters in their username.
+
+Additionally a migration that can correctly set the owner for users
+with usernames containing special characters was added.
+
+NEOS-1740 #close Fixes the issue with a new migration
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix unicode handling in help messages <https://github.com/neos/neos-development-collection/pull/310>`_
+---------------------------------------------------------------------------------------------------------------
+
+Currently help messages are broken with unicode strings, because
+`DOMDocument::loadHTML` needs correct encoding declaration to handle
+unicode correctly.
+
+Append the encoding declaration to fix this issue.
+
+* Packages: ``Neos``
+
+`TASK: Update TranslatingContent.rst <https://github.com/neos/neos-development-collection/pull/306>`_
+-----------------------------------------------------------------------------------------------------
+
+fixed indentation
+
+* Packages: ``Neos``
+
+`FEATURE: Add settings to customize login screen stylesheets <https://github.com/neos/neos-development-collection/pull/285>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This change adds a new setting to include custom stylesheets in the Neos
+backend login form with documentation.
+
+NEOS-122 #close
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.0...2.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
