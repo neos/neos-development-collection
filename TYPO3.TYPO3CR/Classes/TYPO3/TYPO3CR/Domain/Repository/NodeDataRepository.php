@@ -1166,7 +1166,10 @@ class NodeDataRepository extends Repository
         $count = 0;
         foreach ($dimensions as $dimensionName => $dimensionValues) {
             $dimensionAlias = 'd' . $count;
-            $queryBuilder->andWhere('n IN (SELECT IDENTITY(' . $dimensionAlias . '.nodeData) FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . '))');
+            $queryBuilder->andWhere(
+                'EXISTS (SELECT ' . $dimensionAlias . ' FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.nodeData = n AND ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . ')) ' .
+                'OR NOT EXISTS (SELECT ' . $dimensionAlias . '_c FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . '_c WHERE ' . $dimensionAlias . '_c.nodeData = n AND ' . $dimensionAlias . '_c.name = \'' . $dimensionName . '\')'
+            );
             $queryBuilder->setParameter($dimensionAlias, $dimensionValues);
             $count++;
         }
@@ -1212,9 +1215,15 @@ class NodeDataRepository extends Repository
             }
 
             foreach ($dimensions as $dimensionName => $dimensionValues) {
-                foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
-                    $position = array_search($nodeDimensionValue, $dimensionValues);
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName], $position) : $position;
+                if (isset($nodeDimensions[$dimensionName])) {
+                    foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
+                        $position = array_search($nodeDimensionValue, $dimensionValues);
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
+                            $position) : $position;
+                    }
+                } else {
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
+                            PHP_INT_MAX) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
