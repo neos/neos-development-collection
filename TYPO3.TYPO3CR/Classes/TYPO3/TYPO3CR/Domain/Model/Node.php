@@ -1708,7 +1708,13 @@ class Node implements NodeInterface, CacheAwareInterface
         $contextDimensions = $this->context->getDimensions();
         foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
             if (!isset($dimensions[$dimensionName])) {
-                return false;
+                if ($targetDimensionValue === null) {
+                    continue;
+                } else {
+                    return false;
+                }
+            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === array()) {
+                continue;
             } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
                 $contextDimensionValues = $contextDimensions[$dimensionName];
                 $targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, true);

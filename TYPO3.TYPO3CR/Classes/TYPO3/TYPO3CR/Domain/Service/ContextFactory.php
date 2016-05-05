@@ -228,8 +228,8 @@ class ContextFactory implements ContextFactoryInterface
             if (!isset($contextProperties['dimensions'][$dimensionName])) {
                 throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension "%s" does not exist', $this->contextImplementation, $dimensionName), 1391340781);
             }
-            if (!in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
-                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value %s for dimension %s is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
+            if ($dimensionValue !== null && !in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
+                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value "%s" for dimension "%s" is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
             }
         }
     }

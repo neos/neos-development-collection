@@ -461,7 +461,9 @@ class Context
      */
     public function getTargetDimensionValues()
     {
-        return array_map(function ($value) { return array($value); }, $this->getTargetDimensions());
+        return array_map(function ($value) {
+            return $value === null ? [] : [ $value ];
+        }, $this->getTargetDimensions());
     }
 
     /**

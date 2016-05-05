@@ -802,7 +802,7 @@ class NodeData extends AbstractNodeData
         if ($dimensions !== null) {
             $nodeDimensionValues = $this->dimensionValues;
             foreach ($dimensions as $dimensionName => $dimensionValues) {
-                if (!isset($nodeDimensionValues[$dimensionName]) || array_intersect($nodeDimensionValues[$dimensionName], $dimensionValues) === []) {
+                if (isset($nodeDimensionValues[$dimensionName]) && $nodeDimensionValues[$dimensionName] !== [] && array_intersect($nodeDimensionValues[$dimensionName], $dimensionValues) === []) {
                     return false;
                 }
             }

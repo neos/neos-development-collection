@@ -14,12 +14,10 @@
         "typo3/twitter-bootstrap": "*",
         "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0",
-        "typo3/eel": "*",
-        "gedmo/doctrine-extensions": "2.3.*"
+        "gedmo/doctrine-extensions": "~2.3.0"
     },
     "replace": {
         "neos/diff": "self.version",
-        "neos/redirecthandler-neosadapter": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -35,9 +33,6 @@
         "psr-4": {
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
-            ],
-            "Neos\\RedirectHandler\\NeosAdapter\\": [
-                "Neos.RedirectHandler.NeosAdapter/Classes"
             ]
         },
         "psr-0": {
