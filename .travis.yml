@@ -30,6 +30,7 @@ install:
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --no-progress --no-interaction
   - composer update --no-progress --no-interaction
+  - composer require neos/redirecthandler-databasestorage
   - rm -rf Packages/Neos
   - mv ../neos-development-collection Packages/Neos
 before_script:
