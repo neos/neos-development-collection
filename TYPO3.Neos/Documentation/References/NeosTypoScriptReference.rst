@@ -675,6 +675,69 @@ Overridden presets::
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
 
+.. _TYPO3_Neos__VariantMenu:
+
+VariantMenu
+-----------
+
+Create links to other node variants (e.g. variants of the current node in other dimensions) by using this TypoScript object.
+
+If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
+dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
+variants will be included.
+
+If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
+
+:dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
+:renderHiddenInIndex: (boolean, default **false**) If TRUE, render nodes which are marked as "hidded-in-index"
+
+Minimal Example, outputting a menu with all configured dimension combinations::
+
+	variantMenu = TYPO3.Neos:VariantMenu
+
+This example will create two menus, once for the 'language' and one for the 'country' dimension::
+
+	languageMenu = TYPO3.Neos:VariantMenu {
+		dimension = 'language'
+	}
+	countryMenu = TYPO3.Neos:VariantMenu {
+		dimension = 'country'
+	}
+
+In the template for each item the following data is available:
+
+:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:label: (string) Full label of the node
+:menuLevel: (integer) Menu level the item is rendered on
+:dimensions: (array) Dimension values of the node, indexed by dimension name
+:targetDimensions: (array) The target dimensions as value/label pairs, indexed by dimension name
+
+The following example template renders a menu that includes all variants with a descriptive label:
+
+.. code-block:: html
+
+    {namespace neos=TYPO3\Neos\ViewHelpers}
+    {namespace ts=TYPO3\TypoScript\ViewHelpers}
+    <ul{attributes -> f:format.raw()}>
+    <f:for each="{items}" as="item">
+        <f:if condition="{item.node}">
+            <li {ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+                <neos:link.node node="{item.node}">
+                    {item.label}
+                    <f:for each="{item.targetDimensions}" as="targetDimension">
+                        / {targetDimension.label}
+                    </f:for>
+                </neos:link.node>
+            </li>
+        </f:if>
+    </f:for>
+    </ul>
+
+If a specific dimension has been configured (``language`` in this case), using the dimension preset labels is easy::
+
+    <neos:link.node node="{item.node}">{item.targetDimensions.language.label}</neos:link.node>
+
 .. _TYPO3_Neos__NodeUri:
 
 NodeUri
