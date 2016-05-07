@@ -13,7 +13,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
  * Test case for the "Workspace" domain model

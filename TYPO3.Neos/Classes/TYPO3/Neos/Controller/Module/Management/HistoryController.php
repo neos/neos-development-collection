@@ -13,11 +13,9 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
-use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
 /**

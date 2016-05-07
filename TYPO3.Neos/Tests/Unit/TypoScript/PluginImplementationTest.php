@@ -13,14 +13,8 @@ namespace TYPO3\Neos\Tests\Unit\TypoScript;
 
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Service\LinkingService;
 use TYPO3\Neos\TypoScript\PluginImplementation;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
