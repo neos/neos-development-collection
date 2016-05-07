@@ -22,6 +22,13 @@ use TYPO3\TypoScript\Exception as TypoScriptException;
  */
 class VariantMenuImplementation extends AbstractMenuImplementation
 {
+
+    /**
+     * @Flow\Inject
+     * @var ConfigurationContentDimensionPresetSource
+     */
+    protected $configurationContentDimensionPresetSource;
+
     /**
      * @Flow\Inject
      * @var ContentDimensionCombinator
@@ -43,6 +50,7 @@ class VariantMenuImplementation extends AbstractMenuImplementation
     {
         $menuItems = [];
         $targetDimensionsToMatch = [];
+        $allDimensionPresets = $this->configurationContentDimensionPresetSource->getAllPresets();
 
         if ($this->getDimension() !== null) {
             $targetDimensionsToMatch = $this->currentNode->getContext()->getTargetDimensions();
@@ -65,6 +73,11 @@ class VariantMenuImplementation extends AbstractMenuImplementation
             if ($nodeInDimensions !== null && $this->isNodeHidden($nodeInDimensions)) {
                 $nodeInDimensions = null;
             }
+
+            // determine labels for target dimensions of node
+            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName, $allDimensionPresets) {
+                $dimensionValue = ['value' => $dimensionValue, 'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label']];
+            }, $allDimensionPresets);
 
             $menuItems[] = [
                 'node' => $nodeInDimensions,
