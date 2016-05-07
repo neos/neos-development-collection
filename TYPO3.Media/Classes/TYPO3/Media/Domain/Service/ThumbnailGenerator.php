@@ -13,7 +13,6 @@ namespace TYPO3\Media\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * A thumbnail generation service.

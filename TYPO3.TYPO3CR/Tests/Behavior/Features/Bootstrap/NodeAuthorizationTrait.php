@@ -15,7 +15,6 @@ use Behat\Gherkin\Node\TableNode;
 use TYPO3\Flow\Annotations as Flow;
 use PHPUnit_Framework_Assert as Assert;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
-use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

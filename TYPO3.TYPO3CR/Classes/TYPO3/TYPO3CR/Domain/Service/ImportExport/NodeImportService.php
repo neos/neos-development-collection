@@ -19,7 +19,6 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
 use TYPO3\TYPO3CR\Utility;
 

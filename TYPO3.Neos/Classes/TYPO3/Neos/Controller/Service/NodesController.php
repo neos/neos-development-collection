@@ -21,7 +21,6 @@ use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 

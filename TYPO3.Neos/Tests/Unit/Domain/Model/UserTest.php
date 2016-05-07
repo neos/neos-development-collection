@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\User;
 

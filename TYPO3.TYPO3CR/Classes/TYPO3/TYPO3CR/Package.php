@@ -13,7 +13,6 @@ namespace TYPO3\TYPO3CR;
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
