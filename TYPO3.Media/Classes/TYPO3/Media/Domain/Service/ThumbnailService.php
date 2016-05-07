@@ -81,7 +81,7 @@ class ThumbnailService
      *
      * @param AssetInterface $asset The asset to render a thumbnail for
      * @param ThumbnailConfiguration $configuration
-     * @return Thumbnail
+     * @return ImageInterface
      * @throws \Exception
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
@@ -121,7 +121,9 @@ class ThumbnailService
                     return null;
                 }
 
-                $this->thumbnailRepository->add($thumbnail);
+                if (!$this->persistenceManager->isNewObject($asset)) {
+                    $this->thumbnailRepository->add($thumbnail);
+                }
                 $asset->addThumbnail($thumbnail);
 
                 // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
@@ -182,14 +184,17 @@ class ThumbnailService
     {
         $thumbnail->refresh();
         $this->persistenceManager->whiteListObject($thumbnail);
-        $this->thumbnailRepository->update($thumbnail);
+        if (!$this->persistenceManager->isNewObject($thumbnail)) {
+            $this->thumbnailRepository->update($thumbnail);
+        }
     }
 
     /**
-     * @param Thumbnail $thumbnail
+     * @param ImageInterface $thumbnail
      * @return string
+     * @throws ThumbnailServiceException
      */
-    public function getUriForThumbnail(Thumbnail $thumbnail)
+    public function getUriForThumbnail(ImageInterface $thumbnail)
     {
         $resource = $thumbnail->getResource();
         if ($resource) {
@@ -204,13 +209,6 @@ class ThumbnailService
             ), 1450178437);
         }
 
-        if (preg_match('#^resource://([^/]+)/Public/(.*)#', $staticResource, $matches) !== 1) {
-            throw new ThumbnailServiceException(sprintf(
-                'Invalid static resource path "%s" for static thumbnail "%s".',
-                $staticResource,
-                $this->persistenceManager->getIdentifierByObject($thumbnail)
-            ), 1450188242);
-        }
-        return $this->resourceManager->getPublicPackageResourceUri($matches[1], $matches[2]);
+        return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
     }
 }

@@ -42,7 +42,7 @@ class WorkspacesController extends ActionController
      */
     protected $viewFormatToObjectNameMap = [
         'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Neos\View\Service\NodeJsonView'
+        'json' => 'TYPO3\Neos\View\Service\WorkspaceJsonView'
     ];
 
     /**

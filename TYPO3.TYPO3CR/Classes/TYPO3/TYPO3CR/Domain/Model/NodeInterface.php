@@ -294,17 +294,6 @@ interface NodeInterface
     public function getAccessRoles();
 
     /**
-     * Sets the absolute path of this node
-     *
-     * This method is only for internal use by the content repository. Changing
-     * the path of a node manually may lead to unexpected behavior and bad breath.
-     *
-     * @param string $path
-     * @return void
-     */
-    public function setPath($path);
-
-    /**
      * Returns the path of this node
      *
      * Example: /sites/mysitecom/homepage/about

@@ -32,13 +32,14 @@
 									<td colspan="2" class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
-												<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}: <span title="{document.documentNode.path}"><neos:backend.documentBreadcrumbPath node="{document.documentNode}"/></span></strong>
+												{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:
+												<f:render partial="Module/Shared/DocumentBreadcrumb" arguments="{node: document.documentNode, showIcon: true}"></f:render>
 											</div>
 
 											<div class="neos-span2 neos-pull-right neos-aRight">
 												<f:if condition="{document.documentNode.removed}">
 													<f:else>
-														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"><i class="icon-pencil icon-white" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}"></i></button>
+														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'TYPO3.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="icon-pencil icon-white"></i></button>
 													</f:else>
 												</f:if>
 											</div>
@@ -49,20 +50,20 @@
 									</td>
 								</tr>
 								<f:for each="{document.changes}" key="relativePath" as="change">
-									<tr class="fold-{document.documentNode.identifier}">
+									<tr class="neos-change fold-{document.documentNode.identifier}">
 										<td class="check neos-priority1">
 											<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
 										</td>
-										<td id="change-{change.node.identifier}" {f:render(partial: 'Module/Management/Workspaces/ContentChangeAttributes', arguments: {change: change})}>
-											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change}"/>
+										<td id="change-{change.node.identifier}" {f:render(partial: 'Module/Management/Workspaces/ContentChangeAttributes', arguments: {change: change})} data-neos-toggle="tooltip" data-placement="left" data-container="body">
+											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change, contentDimensions: contentDimensions}"/>
 										</td>
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">
 													<i class="icon-ok icon-white"></i>
 												</button>
 											</f:if>
-											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}">
+											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
 												<i class="icon-trash icon-white"></i>
 											</button>
 										</td>
@@ -77,17 +78,19 @@
 			</f:form>
 
 			<div class="neos-hide" id="discard">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
-						<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
-							<i class="icon-trash icon-white"></i>
-							{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
-						</button>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+						</div>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
+							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
+								<i class="icon-trash icon-white"></i>
+								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>

@@ -8,12 +8,12 @@
 }
 
 .neos-select2-drop-mask {
-	z-index: 10019;
+	z-index: 10024;
 }
 
 .neos-select2-drop {
 	position: fixed;
-	z-index: 10020;
+	z-index: 10025;
 }
 
 .neos-select2-drop {
@@ -179,27 +179,38 @@
 		}
 
 		.neos-select2-search-choice-close {
-			right: 0px;
+			right: $unit + 1px;
 			left: auto;
 			top: 0;
 			height: $unit;
 			width: $unit;
 			background: none;
 			background-image: none !important;
-			border-left: 1px solid $grayDark;
 			color: white;
 			text-decoration: none;
-			right: $unit + 1px;
 			border-radius: 0;
 
 			&:hover {
 				background-color: $blue;
 			}
 
-			i {
+			&:before {
+				display: block;
+				content: '';
 				position: absolute;
-				left: 14px;
-				top: 12px;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				right: $unit;
+				background-color: #fff;
+				opacity: .15;
+			}
+
+			i {
+				width: $unit;
+				line-height: $unit;
+				text-align: center;
+				vertical-align: baseline;
 			}
 		}
 
@@ -217,33 +228,35 @@
 
 		> .neos-select2-arrow {
 			width: $unit;
-			border-left: 1px solid $grayDark;
 			background: none;
 			color: $textOnGray;
+			border-left: none;
 
 			b {
 				display: none;
 				background-image: none;
 			}
 
-			&:before,
+			&:before {
+				display: block;
+				content: '';
+				position: absolute;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				right: $unit + 1;
+				background-color: #fff;
+				opacity: .15;
+			}
+
 			&:after {
+				@include fa-icon();
+				content: $fa-var-caret-down;
 				display: block;
 				position: absolute;
-				right: 15px;
-				font-family: Arial;
-				font-size: 17px;
+				width: $unit;
+				text-align: center;
 				line-height: $unit;
-				content: "▾";
-			}
-
-			&:before {
-				top: -4px;
-				@include rotate(180deg);
-			}
-
-			&:after {
-				top: 4px;
 			}
 		}
 	}
@@ -287,10 +300,10 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $search;
+				content: $fa-var-search;
 				line-height: 100%;
 				font-size: 14px;
-				@include icon-FontAwesome();
+				@include fa-icon();
 				cursor: pointer;
 			}
 		}
@@ -308,6 +321,7 @@
 			border-left: none;
 			border-right: none;
 			border-bottom: 1px solid $grayDark;
+			border-radius: 0;
 
 			div {
 				line-height: $relatedMargin + $defaultMargin;
@@ -348,8 +362,8 @@
 
 				i {
 					position: absolute;
-					left: 14px;
-					top: 13px;
+					left: 13px;
+					top: 12px;
 				}
 			}
 		}
@@ -367,10 +381,10 @@
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;
-			content: $search;
+			content: $fa-var-search;
 			line-height: 100%;
 			font-size: 14px;
-			@include icon-FontAwesome();
+			@include fa-icon();
 			cursor: pointer;
 		}
 
@@ -381,6 +395,7 @@
 			@include font;
 			font-size: 14px;
 			padding: 0 ($defaultMargin - 2px + $unit) 0 ($defaultMargin - 2px);
+			background-image: none !important; // needed to overwrite media queries
 
 			&:focus {
 				outline: none;

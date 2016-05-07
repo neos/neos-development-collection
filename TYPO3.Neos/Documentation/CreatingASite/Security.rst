@@ -39,9 +39,68 @@ As a quick example, a privilege target giving access to a specific part of the n
 
 .. code-block:: yaml
 
-  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\NodeTreePrivilege':
+  'TYPO3\TYPO3CR\Security\Authorization\Privilege\NodeTreePrivilege':
     'YourSite:EditWebsitePart':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
+
+Adjusting and defining roles
+============================
+
+Neos comes with a number of predefined roles that can be assigned to users:
+
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| Role                        | Parent role(s)              | Description                                            |
++=============================+=============================+========================================================+
+| TYPO3.TYPO3CR:Administrator |                             | A no-op role for future use                            |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:AbstractEditor   | TYPO3.TYPO3CR:Administrator | Grants the very basic things needed to use Neos at all |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
+|                             |                             | workspace                                              |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:RestrictedEditor | TYPO3.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
+|                             |                             | workspace                                              |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:Editor           | TYPO3.Neos:AbstractEditor   | Allows to edit and publish content                     |
+|                             |                             |                                                        |
+|                             | TYPO3.Neos:LivePublisher    |                                                        |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+| TYPO3.Neos:Administrator    | TYPO3.Neos:Editor           | Everything the Editor can do, plus admin things        |
++-----------------------------+-----------------------------+--------------------------------------------------------+
+
+To adjust permissions for your editors, you can of course just adjust the existing roles (`TYPO3.Neos:RestrictedEditor`
+and `TYPO3.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own
+custom roles, though.
+
+Those custom roles should inherit from RestrictedEditor or Editor and then grant access to the additional privilege
+targets you define (see below).
+
+Here is an example for a role (limiting editing to a specific language) that shows this:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+      # this privilegeTarget is defined to switch to a "whitelist" approach
+      'Acme.Com:EditAllNodes':
+        matcher: 'TRUE'
+
+      'Acme.Com:EditFinnish':
+        matcher: 'isInDimensionPreset("language", "fi")'
+
+  roles:
+    'TYPO3.Neos:Editor':
+      privileges:
+        -
+          privilegeTarget: 'Acme.Com:EditAllNodes'
+          permission: GRANT
+
+    'Acme.Com:FinnishEditor':
+      parentRoles: ['TYPO3.Neos:RestrictedEditor']
+      privileges:
+        -
+          privilegeTarget: 'Acme.Com:EditFinnish'
+          permission: GRANT
 
 Node Privileges
 ===============
@@ -55,7 +114,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -67,7 +126,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
 
@@ -86,7 +145,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\Neos\\Security\\Authorization\\Privilege\\NodeTreePrivilege':
+    'TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -102,7 +161,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePropertyPrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -120,7 +179,7 @@ Usage example:
 
 .. code-block:: yaml
 
-  'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\ReadNodePropertyPrivilege':
+  'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege':
     'Some.Package:SomeIdentifier':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -136,7 +195,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\RemoveNodePrivilege':
+   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege':
      'Some.Package:SomeIdentifier':
        matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -152,7 +211,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -171,7 +230,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\EditNodePrivilege':
+   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -191,7 +250,7 @@ be hidden from the system unless explicitly granted to the current user (by assi
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\\TYPO3CR\\Security\\Authorization\\Privilege\\Node\\ReadNodePrivilege':
+    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePrivilege':
       'Some.Package:MembersArea':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -300,17 +359,17 @@ target is then granted for the "Editor" role.
   privilegeTargets:
     'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
       # This privilegeTarget must be defined, so that we switch to a "whitelist" approach
-      'TYPO3.NeosDemoTypo3Org:EditAllNodes':
+      'Neos.Demo:EditAllNodes':
         matcher: 'TRUE'
 
-      'TYPO3.NeosDemoTypo3Org:EditGerman':
+      'Neos.Demo:EditGerman':
         matcher: 'isInDimensionPreset("language", "de")'
 
   roles:
-    ‘TYPO3.Neos:Editor’:
+    'TYPO3.Neos:Editor':
       privileges:
         -
-          privilegeTarget: 'TYPO3.NeosDemoTypo3Org:EditGerman'
+          privilegeTarget: 'Neos.Demo:EditGerman'
           permission: GRANT
 
 Restricting Access to Backend Modules

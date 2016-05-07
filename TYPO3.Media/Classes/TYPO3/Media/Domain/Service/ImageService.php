@@ -108,6 +108,12 @@ class ImageService
         }
 
         $imagineImage = $this->imagineService->open($resourceUri);
+
+        $convertCMYKToRGB = $this->getOptionsMergedWithDefaults()['convertCMYKToRGB'];
+        if ($convertCMYKToRGB && $imagineImage->palette() instanceof \Imagine\Image\Palette\CMYK) {
+            $imagineImage->usePalette(new \Imagine\Image\Palette\RGB());
+        }
+
         if ($this->imagineService instanceof \Imagine\Imagick\Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
             $layers = $imagineImage->layers();

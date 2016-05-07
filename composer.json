@@ -5,6 +5,7 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "dev-master",
+        "php": ">=5.5.0",
         "typo3/flow": "*",
         "typo3/imagine": "*",
         "typo3/kickstart": "*",
@@ -12,10 +13,11 @@
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
         "league/commonmark": "^0.12.0",
-        "typo3/eel": "*",
-        "gedmo/doctrine-extensions": "2.3.*"
+        "behat/transliterator": "~1.0",
+        "gedmo/doctrine-extensions": "~2.3.0"
     },
     "replace": {
+        "neos/diff": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -24,16 +26,34 @@
         "typo3/typoscript": "self.version"
     },
     "suggest": {
-        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."
+        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos.",
+        "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "autoload": {
+        "psr-4": {
+            "Neos\\Diff\\": [
+                "Neos.Diff/Classes"
+            ]
+        },
         "psr-0": {
-            "TYPO3\\Media": "TYPO3.Media/Classes",
-            "TYPO3\\Neos\\Kickstarter": "TYPO3.Neos.Kickstarter/Classes",
-            "TYPO3\\Neos\\NodeTypes": "TYPO3.Neos.NodeTypes/Classes",
-            "TYPO3\\Neos": "TYPO3.Neos/Classes",
-            "TYPO3\\TYPO3CR": "TYPO3.TYPO3CR/Classes",
-            "TYPO3\\TypoScript": "TYPO3.TypoScript/Classes"
+            "TYPO3\\Media": [
+                "TYPO3.Media/Classes"
+            ],
+            "TYPO3\\Neos\\Kickstarter": [
+                "TYPO3.Neos.Kickstarter/Classes"
+            ],
+            "TYPO3\\Neos\\NodeTypes": [
+                "TYPO3.Neos.NodeTypes/Classes"
+            ],
+            "TYPO3\\Neos": [
+                "TYPO3.Neos/Classes"
+            ],
+            "TYPO3\\TYPO3CR": [
+                "TYPO3.TYPO3CR/Classes"
+            ],
+            "TYPO3\\TypoScript": [
+                "TYPO3.TypoScript/Classes"
+            ]
         }
     },
     "extra": {

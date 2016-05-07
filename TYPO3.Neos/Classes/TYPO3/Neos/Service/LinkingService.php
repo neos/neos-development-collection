@@ -20,11 +20,15 @@ use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\TYPO3CR\NeosNodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A service for creating URIs pointing to nodes and assets.
@@ -102,6 +106,12 @@ class LinkingService
      * @var NeosNodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
 
     /**
      * @param string|Uri $uri
@@ -272,14 +282,61 @@ class LinkingService
         $uri = $uriBuilder
             ->reset()
             ->setSection($section)
-            ->setCreateAbsoluteUri($absolute)
             ->setArguments($arguments)
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
             ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'TYPO3.Neos');
 
+        $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
+        if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
+            /** @var Site $site */
+            $site = $resolvedNode->getContext()->getCurrentSite();
+        } else {
+            $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
+            list($siteNodeName) = explode('/', $nodePath);
+            $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        }
+
+        if ($site->hasActiveDomains()) {
+            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                return $domain->getHostPattern();
+            })->toArray();
+            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
+                $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
+            } elseif ($absolute === true) {
+                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+            }
+        } elseif ($absolute === true) {
+            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+        }
+
         return $uri;
+    }
+
+    /**
+     * @param ControllerContext $controllerContext
+     * @param Site $site
+     * @return string
+     * @throws NeosException
+     */
+    public function createSiteUri(ControllerContext $controllerContext, Site $site)
+    {
+        $primaryDomain = $site->getPrimaryDomain();
+        if ($primaryDomain === null) {
+            throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
+        }
+        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        $port = $primaryDomain->getPort() ?: $requestUri->getPort();
+        return sprintf(
+            '%s://%s%s%s',
+            $primaryDomain->getScheme() ?: $requestUri->getScheme(),
+            $primaryDomain->getHostPattern(),
+            $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
+            rtrim($baseUri->getPath(), '/') // remove trailing slash, $uri has leading slash already
+        );
     }
 
     /**

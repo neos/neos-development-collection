@@ -24,6 +24,30 @@
   }
 }
 
+//Vendor Prefixes
+// --------------
+@mixin flex() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+@mixin flex-align($position) {
+  -webkit-box-align: $position;
+  -moz-box-align: $position;
+  -ms-flex-align: $position;
+  -webkit-align-items: $position;
+  align-items: $position;
+}
+@mixin flex-justify($position) {
+  -webkit-box-pack: $position;
+  -moz-box-pack: $position;
+  -ms-flex-pack: $position;
+  -webkit-justify-content: $position;
+  justify-content: $position;
+}
+
 // Webkit-style focus
 // ------------------
 @mixin tab-focus() {

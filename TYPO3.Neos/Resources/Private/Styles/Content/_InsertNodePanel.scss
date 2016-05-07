@@ -1,18 +1,71 @@
 .neos-insert-node-panel {
-	.neos-subheader {
-		padding: 0 $defaultMargin $relatedMargin;
-		margin: 0;
-
-		~ .neos-subheader {
-			padding: $defaultMargin $defaultMargin $relatedMargin;
-			border-top: 1px solid $grayLight;
+	.neos-header {
+		i {
+			vertical-align: baseline;
 		}
 	}
 
-	.neos-modal-body {
+	.neos-subheader {
+		height: $unit;
+		line-height: $unit;
+		padding-left: $defaultMargin;
+		margin: 0;
+		position: relative;
 		border-bottom: 1px solid $grayLight;
-		max-height: $unit * 12;
+		overflow: hidden;
+
+		.neos-modal-collapse-group {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: $unit;
+			height: $unit;
+			cursor: pointer;
+			color: #fff;
+
+			&:focus {
+				outline: 1px dotted #fff;
+			}
+
+			&:hover {
+				background-color: $blue;
+				outline: none;
+			}
+
+			&::before {
+				content: "›";
+				font-size: 26px;
+				font-weight: normal;
+				display: inline-block;
+				position: relative;
+				top: 0;
+				line-height: $unit;
+			}
+
+			&.neos-collapsed::before {
+				@include rotate(90deg);
+				left: 19px;
+			}
+
+			&.neos-open::before {
+				@include rotate(-90deg);
+				left: 13px;
+			}
+		}
+	}
+
+	+ ul {
+		margin-bottom: 1px;
+	}
+
+	.neos-modal-body {
+		max-height: calc(100vh - #{$unit * 2 + 52 + 72 + 80});
 		overflow-y: auto;
+	}
+
+	.neos-modal-footer {
+		border-top: 1px solid $grayLight;
+		margin-top: -1px;
 	}
 
 	.neos-content-new-selecttype-button {
@@ -41,11 +94,14 @@
 				vertical-align: baseline;
 			}
 		}
+
 		&:focus, &:hover {
 			background-color: $blue;
+
 			button {
 				outline: none;
 			}
+
 			i {
 				color: #fff;
 			}
@@ -60,8 +116,15 @@
 			position: absolute;
 			top: 0;
 			right: 0;
-			padding: 9px;
+			padding-right: $defaultMargin - $tightMargin;
+			line-height: $unit;
+			vertical-align: middle;
 			cursor: pointer;
+
+			.neos-help-message-icon {
+				font-size: 16px;
+			}
+
 			&:focus {
 				display: inline-block; // so when the hover is gone, the popover doesn't disappear
 			}

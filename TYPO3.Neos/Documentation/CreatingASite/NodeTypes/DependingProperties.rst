@@ -97,7 +97,7 @@ a refresh of the available options from the data source.
           group: product
           editor: 'Content/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            allowEmpty: TRUE
+            allowEmpty: true
             placeholder: 'Service Type'
             dataSourceIdentifier: 'acme-servicetypes'
     contractType:
@@ -108,7 +108,7 @@ a refresh of the available options from the data source.
           group: product
           editor: 'Content/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            allowEmpty: TRUE
+            allowEmpty: true
             placeholder: 'Contract Type'
             dataSourceIdentifier: 'acme-contracttypes'
             dataSourceAdditionalData:
@@ -116,7 +116,7 @@ a refresh of the available options from the data source.
           editorListeners:
             updateForSourceData:
               property: 'serviceType'
-              handler: 'TYPO3.NeosDemoTypo3Org/Handlers/TeaserOptionsHandler'
+              handler: 'Neos.Demo/Handlers/TeaserOptionsHandler'
 
 .. code-block:: js
 

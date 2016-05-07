@@ -33,26 +33,27 @@
 
 		div {
 			width: $unit;
-			border-left: 1px solid $grayDark;
-
-			&:before,
-			&:after {
-				display: block;
-				position: absolute;
-				right: 15px;
-				font-family: Arial;
-				font-size: 17px;
-				line-height: $unit;
-				content: "▾";
-			}
 
 			&:before {
-				top: -4px;
-				@include rotate(180deg);
+				display: block;
+				content: '';
+				position: absolute;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				left: 0;
+				background-color: #fff;
+				opacity: .15;
 			}
 
 			&:after {
-				top: 4px;
+				@include fa-icon();
+				content: $fa-var-caret-down;
+				display: block;
+				position: absolute;
+				width: $unit;
+				text-align: center;
+				line-height: $unit;
 			}
 
 			b {
@@ -62,26 +63,19 @@
 		}
 
 		abbr {
-			background: #fff !important;
-			top: 11px;
-			right: $unit + $relatedMargin;
-			width: 18px;
-			height: 18px;
-			@include border-radius(10px);
+			top: 12px;
+			right: $unit + $relatedMargin + $tightMargin;;
+			color: #fff;
+			font-size: 16px;
+			line-height: 1;
 
 			&:hover {
-				background-color: $blue;
+				color: $blue;
 			}
 
-			&:before {
-				display: block;
-				width: 18px;
-				text-align: center;
-				content: "×";
-				font-size: 17px;
-				font-weight: bold;
-				line-height: 18px;
-				color: $grayDark;
+			&::after {
+				@include fa-icon();
+				content: $fa-var-times-circle;
 			}
 		}
 	}
@@ -98,7 +92,7 @@
 		.chosen-search {
 			padding: 0;
 			color: $black;
-			@include icon-FontAwesome();
+			@include fa-icon();
 			font-size: 0;
 
 			input {
@@ -127,7 +121,7 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $search;
+				content: $fa-var-search;
 				line-height: 100%;
 				font-size: 12px;
 			}

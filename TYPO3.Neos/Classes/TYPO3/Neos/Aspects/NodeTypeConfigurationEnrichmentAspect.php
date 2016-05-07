@@ -77,7 +77,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
 
@@ -96,7 +96,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @throws \TYPO3\Neos\Exception
      * @return void
      */
-    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, &$configuration)
+    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -148,7 +148,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setPropertyLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
             if (!isset($propertyConfiguration['ui'])) {
@@ -175,7 +175,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $propertyConfiguration
      * @return void
      */
-    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, &$propertyConfiguration)
+    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
     {
         $editorName = $propertyConfiguration['ui']['inspector']['editor'];
 
@@ -212,7 +212,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, &$configuration)
+    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, array &$configuration)
     {
         if ($this->shouldFetchTranslation($configuration['ui'])) {
             $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
@@ -222,7 +222,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (!$this->shouldFetchTranslation($elementConfiguration)) {
+                    if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration)) {
                         continue;
                     }
 
@@ -240,7 +240,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
-    protected function shouldFetchTranslation($parentConfiguration, $fieldName = 'label')
+    protected function shouldFetchTranslation(array $parentConfiguration, $fieldName = 'label')
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
@@ -332,7 +332,6 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null)
     {
         $helpMessage = '';
-
         if (isset($configuration['ui']['help'])) {
             // message handling
             if (isset($configuration['ui']['help']['message'])) {
@@ -349,16 +348,16 @@ class NodeTypeConfigurationEnrichmentAspect
                 $thumbnailUrl = '';
                 if (isset($configuration['ui']['help']['thumbnail'])) {
                     $thumbnailUrl = $configuration['ui']['help']['thumbnail'];
-                    $matches = [];
-                    if (preg_match('/resource:\/\/(?P<packageKey>[^\/]+)\/(?P<relativePathAndFilename>.+)/', $thumbnailUrl, $matches) === 1) {
-                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($matches['packageKey'], $matches['relativePathAndFilename']);
+                    if (strpos($thumbnailUrl, 'resource://') === 0) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
                     }
                 } else {
                     # look in well know location
                     $splitPrefix = $this->splitIdentifier($nodeTypeName);
                     $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
-                    if (file_exists('resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename)) {
-                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUri($splitPrefix['packageKey'], $relativePathAndFilename);
+                    $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+                    if (file_exists($resourcePath)) {
+                        $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
                     }
                 }
 
@@ -366,7 +365,6 @@ class NodeTypeConfigurationEnrichmentAspect
                     $helpMessage = '![alt text](' . $thumbnailUrl . ') ' . $helpMessage;
                 }
             }
-
             if ($helpMessage !== '') {
                 $helpMessage = $this->markdownConverter->convertToHtml($helpMessage);
                 $helpMessage = $this->addTargetAttribute($helpMessage);
@@ -384,7 +382,11 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function addTargetAttribute($htmlString)
     {
         $document = new \DOMDocument();
-        $document->loadHTML($htmlString);
+
+        // Force correct unicode handling
+        $document->loadHTML('<?xml encoding="UTF-8">' . $htmlString);
+        $document->encoding = 'UTF-8';
+
         $links = $document->getElementsByTagName('a');
         /** @var \DOMElement $item */
         foreach ($links as $item) {
@@ -419,12 +421,12 @@ class NodeTypeConfigurationEnrichmentAspect
             case 2:
                 $packageKey = $idParts[0];
                 $id = $idParts[1];
-            break;
+                break;
             case 3:
                 $packageKey = $idParts[0];
                 $source = str_replace('.', '/', $idParts[1]);
                 $id = $idParts[2];
-            break;
+                break;
         }
 
         return [

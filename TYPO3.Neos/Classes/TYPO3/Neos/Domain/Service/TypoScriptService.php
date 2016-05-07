@@ -31,6 +31,12 @@ class TypoScriptService
     protected $typoScriptParser;
 
     /**
+     * @Flow\Inject
+     * @var DefaultPrototypeGeneratorInterface
+     */
+    protected $defaultPrototypeGenerator;
+
+    /**
      * Pattern used for determining the TypoScript root file for a site
      *
      * @var string
@@ -193,35 +199,7 @@ class TypoScriptService
      */
     protected function generateTypoScriptForNodeType(NodeType $nodeType)
     {
-        if (strpos($nodeType->getName(), ':') === false) {
-            return '';
-        }
-
-        if ($nodeType->isOfType('TYPO3.Neos:Content')) {
-            $basePrototypeName = 'TYPO3.Neos:Content';
-        } elseif ($nodeType->isOfType('TYPO3.Neos:Document')) {
-            $basePrototypeName = 'TYPO3.Neos:Document';
-        } else {
-            $basePrototypeName = 'TYPO3.TypoScript:Template';
-        }
-
-        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $basePrototypeName . ') {' . chr(10);
-
-        list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
-        $templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
-        $output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
-
-        foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
-            if (isset($propertyName[0]) && $propertyName[0] !== '_') {
-                $output .= "\t" . $propertyName . ' = ${q(node).property("' . $propertyName . '")}' . chr(10);
-                if (isset($propertyConfiguration['type']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['type'] === 'string' && $propertyConfiguration['ui']['inlineEditable'] === true) {
-                    $output .= "\t" . $propertyName . '.@process.convertUris = TYPO3.Neos:ConvertUris' . chr(10);
-                }
-            }
-        }
-
-        $output .= '}' . chr(10);
-        return $output;
+        return $this->defaultPrototypeGenerator->generate($nodeType);
     }
 
     /**

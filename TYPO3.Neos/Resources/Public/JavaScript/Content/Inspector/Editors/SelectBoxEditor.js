@@ -5,8 +5,9 @@ define([
 	'Content/Inspector/InspectorController',
 	'Shared/I18n',
 	'Shared/Utility',
-	'Shared/MapObject'
-], function($, Ember, HttpClient, InspectorController, I18n, Utility, MapObject) {
+	'Shared/MapObject',
+	'Library/sortable/Sortable'
+], function($, Ember, HttpClient, InspectorController, I18n, Utility, MapObject, Sortable) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -159,8 +160,11 @@ define([
 			if (this.get('multiple') || (value !== (valuePath ? this.get('selection.' + valuePath) : this.get('selection')))) {
 				this.set('selection', this.get('multiple') ? selection : selection[0]);
 				Ember.run.next(function() {
-					if (that.$()) {
-						that.$().trigger('change');
+					if (that.$() && that.get('multiple')) {
+						var data = value.length > 0 ? value.map(function(val) {
+							return {id: val, text: selection.findBy('value', val).label};
+						}) : null;
+						that.$().select2('data', data);
 					}
 				});
 			}
@@ -172,8 +176,8 @@ define([
 			}
 			var selection = this.get('selection');
 			if (this.get('multiple')) {
-				var selectedValues = selection.length > 0 ? selection.map(function(option) {
-					return option.value;
+				var selectedValues = selection.length > 0 ? this.$().select2('data').map(function(option) {
+					return option.id;
 				}) : null;
 				this.set('value', selectedValues ? JSON.stringify(selectedValues) : '');
 			} else if (selection) {
@@ -273,6 +277,27 @@ define([
 			}).on('select2-close', function() {
 				$(this).parent().css('padding-bottom', 0);
 				$('#neos-application').off('click.select2-custom');
+			});
+
+			if (this.get('multiple')) {
+				this._makeSortable();
+			}
+		},
+
+		_makeSortable: function() {
+			var select2Ul, sortable, that = this;
+			select2Ul = this.$().select2('container').find('ul.neos-select2-choices').first().addClass('neos-sortable');
+			sortable = Sortable.create(select2Ul.get(0), {
+				ghostClass: 'neos-sortable-ghost',
+				chosenClass: 'neos-sortable-chosen',
+				draggable: '.neos-select2-search-choice',
+				onUpdate: function (event) {
+					var values = [];
+					select2Ul.find('.neos-select2-search-choice').each(function() {
+						values.push($(this).data('select2-data').id);
+					});
+					that.set('value', JSON.stringify(values));
+				}
 			});
 		},
 

@@ -141,23 +141,29 @@ define(
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
 				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
 				nodeType = clipboard.nodeType,
-				localXhr = this._prepareXhr();
+				localXhr = this._prepareXhr(),
+				action = 'moveAndRender',
+				args = [
+					clipboard.nodePath,
+					referenceNode.get('nodePath'),
+					position,
+					typoScriptPath
+				];
 
-			var action = clipboard.type === 'cut' ? 'moveAndRender' : 'copyAndRender';
-			LoadingIndicator.start();
-			NodeEndpoint[action].call(
-				that,
-				clipboard.nodePath,
-				referenceNode.get('nodePath'),
-				position,
-				typoScriptPath,
-				'',
-				{
-					xhr: function() {
-						return localXhr;
-					}
+			if (clipboard.type === 'copy') {
+				action = 'copyAndRender';
+				// Add empty node name argument
+				args.push('');
+			}
+
+			args.push({
+				xhr: function() {
+					return localXhr;
 				}
-			).then(
+			});
+
+			LoadingIndicator.start();
+			NodeEndpoint[action].apply(that, args).then(
 				function(result) {
 					if (clipboard.type === 'cut') {
 						that.set('clipboard', null);
@@ -174,8 +180,6 @@ define(
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);
@@ -258,8 +262,6 @@ define(
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);

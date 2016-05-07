@@ -42,7 +42,7 @@ for this NodeTypes you have to add the following configuration to the Settings.y
             'Vendor.Site': ['NodeTypes/*']
 
 
-Inside of the xliff file **Resources/Private/Translations/en/NodeTypes/YourContentElementName.xliff** the
+Inside of the xliff file **Resources/Private/Translations/en/NodeTypes/YourContentElementName.xlf** the
 translated labels for ``help``, ``properties``, ``groups``, ``tabs`` and ``views`` are defined in the xliff
 as follows:
 
@@ -81,7 +81,7 @@ For adding properties to existing NodeTypes the use of mixins is encouraged.
 .. code-block:: yaml
 
   Vendor.Site:YourNodetypeMixin:
-    abstract: TRUE
+    abstract: true
     properties:
       demoProperty:
         type: string
@@ -90,10 +90,10 @@ For adding properties to existing NodeTypes the use of mixins is encouraged.
 
   TYPO3.Neos:Page:
     superTypes:
-      'Vendor.Site:YourNodetypeMixin': TRUE
+      'Vendor.Site:YourNodetypeMixin': true
 
 That way you can add the translations for the added properties to the file
-**Resources/Private/Translations/en/NodeTypes/YourNodetypeMixin.xliff**.
+**Resources/Private/Translations/en/NodeTypes/YourNodetypeMixin.xlf**.
 
 Override Translations
 ---------------------
@@ -128,7 +128,7 @@ To validate that all labels are translated Neos has the following setting in *Se
   TYPO3:
     Neos:
       UserInterface:
-        scrambleTranslatedLabels: TRUE
+        scrambleTranslatedLabels: true
 
 If that setting is enabled all already translated labels are replaced with ###### -- that way you can easily identify the labels that still lack translations.
 

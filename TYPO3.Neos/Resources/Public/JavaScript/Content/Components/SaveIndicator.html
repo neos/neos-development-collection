@@ -1,7 +1,7 @@
 {{#if view.saveRunning}}
-	<button class="neos-button neos-indicator neos-indicator-saving"><span class="icon-white icon-refresh"></span> {{translate id="saving" value="Saving..."}}</button>
+	<button class="neos-button neos-indicator neos-indicator-saving"><span class="icon-white icon-refresh"></span> {{translate id="saving" fallback="Saving..."}}</button>
 {{else}}
 	{{#if view.lastSuccessfulTransfer}}
-		<button class="neos-button neos-indicator neos-indicator-saved" {{bindAttr title="view.lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> {{translate id="saved" value="Saved"}}</button>
+		<button class="neos-button neos-indicator neos-indicator-saved" {{bindAttr title="view.lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> {{translate id="saved" fallback="Saved"}}</button>
 	{{/if}}
 {{/if}}

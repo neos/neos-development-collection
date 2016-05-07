@@ -6,7 +6,7 @@ Custom Edit/Preview-Modes
 From the beginning the Neos backend was designed to be extensible with different rendering modes users can switch
 depending on their use-case. In-place editing and the raw-content-editing-mode are only a small glimpse of what is possible.
 
-It is encouraged to add custom edit- or preview modes. Use-cases could be the preview of the content in Search Engines or
+It is encouraged to add custom edit- or preview modes. Use-cases could be the preview of the content in search engines or
 on mobile devices.
 
 Add a custom Preview Mode
@@ -31,8 +31,8 @@ Edit/preview modes are added to the Neos-Backend via *Settings.yaml*.
             # show after the existing modes
             position: 200
 
-The Settings ``isEditingMode`` and ``isPreviewMode`` are controlling whether then mode will show up in the section "Edit"
-or "Peview" of the Neos Backend. The major difference between both sections is that inside "Preview" section the inline
+The settings ``isEditingMode`` and ``isPreviewMode`` are controlling whether the mode will show up in the section "Edit"
+or "Preview" of the Neos-Backend. The major difference between both sections is that inside "Preview" section the inline
 editing options are not activated.
 
 The actual rendering of the edit/preview mode is configured in TypoScript::
@@ -47,7 +47,7 @@ The actual rendering of the edit/preview mode is configured in TypoScript::
 					media = 'all'
 					rel = 'stylesheet'
 					href = TYPO3.TypoScript:ResourceUri {
-						path = 'resource://TYPO3.NeosDemoTypo3Org/Public/Styles/Print.css'
+						path = 'resource://Neos.Demo/Public/Styles/Print.css'
 					}
 				}
 			}
@@ -57,10 +57,10 @@ The actual rendering of the edit/preview mode is configured in TypoScript::
 In this example the default rendering as defined in the path ``page`` is used and altered to include the Print.css for
 all media.
 
-Add a custom Preview Mode
+Add a custom Editing Mode
 -------------------------
 
-To add a an editing mode instead of a preview mode the configuration in *Settings.yaml* has to be changed.
+To add an editing mode instead of a preview mode the configuration in *Settings.yaml* has to be changed.
 
  .. code-block:: yaml
 

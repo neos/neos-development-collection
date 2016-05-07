@@ -21,10 +21,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
 
     'TYPO3.Neos:BackendLogin':
-      matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
+      matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
     'TYPO3.Neos:Backend.GeneralAccess':
-      matcher: 'method(TYPO3\Neos\Controller\Backend\BackendController->(index|xliffAsJson)Action()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
+      matcher: 'method(TYPO3\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
 
     #
     # Content access and publishing
@@ -104,7 +104,7 @@ privilegeTargets:
     #
 
     'TYPO3.Neos:Backend.Module.Media.ManageAssets':
-      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
 
     'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections':
       matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'

@@ -41,7 +41,7 @@ root {
 	editPreviewMode {
 		@position = 'end 9996'
 		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.typoScriptPath}
-		condition = ${this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
+		condition = ${documentNode.context.inBackend && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
 		renderPath = ${'/' + this.possibleEditPreviewModePath}
 	}
 

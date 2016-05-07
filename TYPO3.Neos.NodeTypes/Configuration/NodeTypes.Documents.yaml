@@ -42,4 +42,5 @@
           label: i18n
         layout:
           label: i18n
+          icon: 'icon-paint-brush'
           position: 150

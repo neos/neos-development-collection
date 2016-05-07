@@ -4,12 +4,14 @@
 define(
   [
     'emberjs',
+    'Library/jquery-with-dependencies',
     'Content/Model/NodeSelection',
     './TargetWorkspaceController',
     'Content/Model/PublishableNodes',
     './DirtyWorkspaceDialog',
     'text!./TargetWorkspaceSelector.html'
   ], function (Ember,
+               $,
                NodeSelection,
                TargetWorkspaceController,
                PublishableNodes,
@@ -42,6 +44,7 @@ define(
         var that = this;
 
         Ember.run.next(this, function () {
+          var $publishMenu = $('#neos-publish-menu');
           that.set('controller.targetWorkspaceLabel', this.get('controller.targetWorkspace.label'));
           that.$('select').select2('destroy').select2({
             maximumSelectionSize: 1,
@@ -60,13 +63,18 @@ define(
             }
           }).on('change', function (event) {
             if (!that.get('controller.workspaceRebasePending')) {
-              $('#neos-publish-menu').removeClass('neos-open open');
+              $publishMenu.removeClass('neos-open open');
               that.get('controller').setTargetWorkspace(event.val);
             }
           }).select2('data', {
             id: that.get('controller.targetWorkspace.name'),
             text: that.get('controller.targetWorkspace.label')
-          })
+          });
+          $('.neos-dropdown-toggle', $publishMenu).off('click.target-workspace-selector').on('click.target-workspace-selector', function() {
+            if (!$publishMenu.hasClass('neos-open')) {
+              that.$('select').select2('close');
+            }
+          });
         });
       }.observes('controller.workspaces')
 

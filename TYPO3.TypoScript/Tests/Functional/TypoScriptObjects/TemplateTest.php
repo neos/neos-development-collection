@@ -66,4 +66,14 @@ class TemplateTest extends AbstractTypoScriptObjectTest
         $view->setTypoScriptPath('template/offsetAccessException');
         $this->assertStringStartsWith('Test TemplateException while rendering template', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function expressionCanBeOverridenWithSimpleValueForTemplate()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('template/overrideWithSimpleValueInTemplate');
+        $this->assertSame('3', $view->render(), 'JSON encoded value should be a number');
+    }
 }

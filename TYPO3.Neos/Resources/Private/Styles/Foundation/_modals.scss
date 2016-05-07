@@ -54,6 +54,7 @@
 	.neos-modal-header {
 		padding: 0px;
 		border: 0px;
+
 		// Heading
 		h3 {
 			margin: 0;
@@ -72,11 +73,11 @@
 			border-left: none;
 			@include text-shadow(none);
 			@include opacity(1);
-			@include icon-FontAwesome();
+			@include fa-icon();
 			@include box-sizing(border-box);
 
 			&:before {
-				content: $remove;
+				content: $fa-var-times;
 			}
 
 			&:hover {
@@ -119,6 +120,58 @@
 			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
 		}
 	}
+}
+
+// Base modal flexbox container
+.neos-modal-centered {
+	@include flex();
+	@include flex-align(center);
+	@include flex-justify(center);
+	position: fixed;
+	z-index: $zindexModal;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+
+	&.neos-modal-wide {
+		width: 100%;
+		left: 0;
+
+		.neos-modal-content {
+			max-width: $unit * 24;
+		}
+	}
+
+	&.neos-modal-fixed {
+		@include flex-align(flex-start);
+		top: 120px;
+	}
+
+	&.neos-fade {
+		@include transition(opacity .3s linear, top .3s ease-out);
+		top: -25%;
+	}
+
+	&.neos-fade.neos-in {
+		top: 0;
+
+		&.neos-modal-fixed {
+			top: 120px;
+		}
+	}
+}
+
+// Base modal flexbox content
+.neos-modal-content {
+	@extend .neos-modal;
+	position: static;
+	top: 0;
+	left: 0;
+	width: calc(100vw - #{$unit * 2});
+	max-width: $unit * 16;
+	margin: 0;
+	z-index: auto;
 }
 
 // Remove bottom margin if need be

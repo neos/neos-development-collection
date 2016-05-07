@@ -226,6 +226,7 @@ define(
 						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
+						$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
 					}
 				}));
 
@@ -275,7 +276,14 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
+				} else {
+					// if the current viewed page is a children of the moved page load it
+					var explodedPath = node.data.key.split('@');
+					if (this.get('pageNodePath').indexOf(explodedPath[0]) === 0) {
+						ContentModule.loadPage(node.data.href);
+					}
 				}
+
 				EventDispatcher.trigger('nodeMoved', node);
 			},
 
@@ -346,25 +354,23 @@ define(
 							}
 						).then(
 							function(result) {
-								if (result !== null && result.success === true) {
-									node.data.href = result.data.nextUri;
-									node.setLazyNodeStatus(that.statusCodes.ok);
-									var nodeEntity = NodeSelection.getNode(node.data.key),
-										selectedNodeEntity = NodeSelection.get('selectedNode');
-									if (nodeEntity) {
-										nodeEntity.setAttribute('title', title);
-										nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
-										if (nodeEntity === selectedNodeEntity) {
-											InspectorController.set('cleanProperties.title', title);
-											InspectorController.set('nodeProperties.title', title);
-										}
-										ContentModule.loadPage(node.data.href);
+								node.data.href = result.data.nextUri;
+								node.setLazyNodeStatus(that.statusCodes.ok);
+								var nodeEntity = NodeSelection.getNode(node.data.key),
+									selectedNodeEntity = NodeSelection.get('selectedNode');
+								if (nodeEntity) {
+									nodeEntity.setAttribute('title', title);
+									nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+									if (nodeEntity === selectedNodeEntity) {
+										InspectorController.set('cleanProperties.title', title);
+										InspectorController.set('nodeProperties.title', title);
 									}
-									EventDispatcher.trigger('nodeUpdated');
-								} else {
-									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
-									node.setLazyNodeStatus(that.statusCodes.error);
+									ContentModule.loadPage(node.data.href);
 								}
+								EventDispatcher.trigger('nodeUpdated');
+							},
+							function(error) {
+								node.setLazyNodeStatus(that.statusCodes.error);
 							}
 						);
 					}
@@ -377,9 +383,11 @@ define(
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var that = this,
+					nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
 					data = {
 						title: title,
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3_neos-page neos-matched',
 						iconClass: iconClass,
 						expand: false
@@ -396,7 +404,7 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				var prevTitle = newNode.data.tooltip,
+				var prevTitle = newNode.data.fullTitle,
 					tree = newNode.tree;
 
 				if (position === 'into') {
@@ -437,6 +445,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
+						newNode.data.fullTitle = title;
 						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});
@@ -492,7 +501,6 @@ define(
 									node.addChild(result.data);
 								} else {
 									node.setLazyNodeStatus(that.statusCodes.error);
-									Notification.error('Node Tree loading error.');
 								}
 							}
 						}

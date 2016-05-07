@@ -1,5 +1,7 @@
-Validators
-==========
+.. _neos-validator-reference:
+
+Validator Reference
+===================
 
 .. toctree::
 	:maxdepth: 2

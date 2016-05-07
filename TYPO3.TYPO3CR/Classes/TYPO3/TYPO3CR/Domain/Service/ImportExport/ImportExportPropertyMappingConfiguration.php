@@ -66,7 +66,7 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
             return StringConverter::ARRAY_FORMAT_JSON;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_RESOURCE_EXPORT_TYPE) {
+        if ($this->resourceLoadSavePath !== null && $typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_RESOURCE_EXPORT_TYPE) {
             return ArrayConverter::RESOURCE_EXPORT_TYPE_FILE;
         }
 

@@ -219,8 +219,7 @@ class NodeConverter extends AbstractTypeConverter
                     }
                 break;
                 case 'DateTime':
-                    if ($nodePropertyValue !== '') {
-                        $nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue);
+                    if ($nodePropertyValue !== '' && ($nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue)) !== false) {
                         $nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
                     } else {
                         $nodePropertyValue = null;

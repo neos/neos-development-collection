@@ -11,10 +11,17 @@ define([
 		Popover
 	) {
 		return Popover.extend({
+			template: Ember.Handlebars.compile('<i {{bindAttr class="view.hovered:icon-question-circle-o:icon-question-circle :neos-help-message-icon"}}></i>'),
 			tagName: 'a',
 			classNames: ['neos-help-message-button'],
-			anchorContent: '<i class="icon-question-sign neos-help-message-icon"></i>',
-			placement: 'bottom'
+			placement: 'bottom',
+			hovered: false,
+			mouseEnter: function() {
+				this.set('hovered', true);
+			},
+			mouseLeave: function() {
+				this.set('hovered', false);
+			}
 		});
 	}
 );

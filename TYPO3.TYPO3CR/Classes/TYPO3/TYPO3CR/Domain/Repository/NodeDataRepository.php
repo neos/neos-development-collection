@@ -334,8 +334,8 @@ class NodeDataRepository extends Repository
                     // there is free space left between $referenceNode and preceding sibling.
                     $newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
                 } else {
-                    // there is no free space left between $referenceNode and following sibling -> we need to re-number!
-                    $this->renumberIndexesInLevel($parentPath);
+                    // there is no free space left between $referenceNode and following sibling -> we have to make room!
+                    $this->openIndexSpace($parentPath, $referenceIndex);
                     $referenceIndex = $referenceNode->getIndex();
                     $nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
                     if ($nextLowerIndex === null) {
@@ -359,9 +359,8 @@ class NodeDataRepository extends Repository
                     // $referenceNode is not last node, but there is free space left between $referenceNode and following sibling.
                     $newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
                 } else {
-                    // $referenceNode is not last node, and no free space is left -> we need to re-number!
-                    $this->renumberIndexesInLevel($parentPath);
-                    $referenceIndex = $referenceNode->getIndex();
+                    // $referenceNode is not last node, and no free space is left -> we have to make room after the reference node!
+                    $this->openIndexSpace($parentPath, $referenceIndex + 1);
                     $nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
                     if ($nextHigherIndex === null) {
                         $newIndex = $referenceIndex + 100;
@@ -614,20 +613,16 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Renumbers the indexes of all nodes directly below the node specified by the
-     * given path.
+     * Make room in the sortindex-index space of a given path in preparation to inserting a node.
+     * All indices that are greater or equal to the given referenceIndex are incremented by 100
      *
-     * Note that renumbering must happen in-memory and can't be optimized by a clever
-     * query executed directly by the database because sorting indexes of new or
-     * modified nodes need to be considered.
-     *
-     * @param string $parentPath Path to the parent node
-     * @return void
+     * @param string $parentPath
+     * @param integer $referenceIndex
      * @throws Exception\NodeException
      */
-    protected function renumberIndexesInLevel($parentPath)
+    protected function openIndexSpace($parentPath, $referenceIndex)
     {
-        $this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
+        $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
 
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
@@ -636,33 +631,30 @@ class NodeDataRepository extends Repository
         $nodesOnLevel = array();
         /** @var $node NodeData */
         foreach ($query->getArrayResult() as $node) {
-            $nodesOnLevel[$node['index']] = array(
+            $nodesOnLevel[] = array(
                 'identifier' => $node['identifier'],
-                'path' => $node['path']
+                'path' => $node['path'],
+                'index' => $node['index']
             );
         }
 
         /** @var $node NodeData */
         foreach ($this->addedNodes as $node) {
             if ($node->getParentPath() === $parentPath) {
-                $index = $node->getIndex();
-                if (isset($nodesOnLevel[$index])) {
-                    throw new Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
-                }
-                $nodesOnLevel[$index] = array(
+                $nodesOnLevel[] = array(
                     'addedNode' => $node,
-                    'path' => $node->getPath()
+                    'path' => $node->getPath(),
+                    'index' => $node->getIndex()
                 );
             }
         }
 
-            // We need to sort the nodes now, to take unpersisted node orderings into account.
-            // This fixes bug #34291
-        ksort($nodesOnLevel);
-
-        $newIndex = 100;
         $query = $this->entityManager->createQuery('UPDATE TYPO3\TYPO3CR\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
         foreach ($nodesOnLevel as $node) {
+            if ($node['index'] < $referenceIndex) {
+                continue;
+            }
+            $newIndex = $node['index'] + 100;
             if ($newIndex > self::INDEX_MAXIMUM) {
                 throw new Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node['path']), 1317140402);
             }
@@ -676,7 +668,6 @@ class NodeDataRepository extends Repository
                 $query->setParameter('identifier', $node['identifier']);
                 $query->execute();
             }
-            $newIndex += 100;
         }
     }
 
@@ -915,7 +906,7 @@ class NodeDataRepository extends Repository
      *
      * This method is internal and will be replaced with better search capabilities.
      *
-     * @param string $term Search term
+     * @param string|array $term Search term
      * @param string $nodeTypeFilter Node type filter
      * @param Workspace $workspace
      * @param array $dimensions
@@ -925,7 +916,7 @@ class NodeDataRepository extends Repository
     public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
     {
         $pathStartingPoint = strtolower($pathStartingPoint);
-        if (strlen($term) === 0) {
+        if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $workspaces = array();
@@ -937,8 +928,19 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
-        // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
-        $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+
+        if (is_array($term)) {
+            if (count($term) !== 1) {
+                throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported.', 1460437584);
+            }
+
+            // Build the like parameter as "key": "value" to search by a specific key and value
+            $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
+        } else {
+            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+        }
+
         $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
@@ -1164,7 +1166,10 @@ class NodeDataRepository extends Repository
         $count = 0;
         foreach ($dimensions as $dimensionName => $dimensionValues) {
             $dimensionAlias = 'd' . $count;
-            $queryBuilder->andWhere('n IN (SELECT IDENTITY(' . $dimensionAlias . '.nodeData) FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . '))');
+            $queryBuilder->andWhere(
+                'EXISTS (SELECT ' . $dimensionAlias . ' FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.nodeData = n AND ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . ')) ' .
+                'OR NOT EXISTS (SELECT ' . $dimensionAlias . '_c FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . '_c WHERE ' . $dimensionAlias . '_c.nodeData = n AND ' . $dimensionAlias . '_c.name = \'' . $dimensionName . '\')'
+            );
             $queryBuilder->setParameter($dimensionAlias, $dimensionValues);
             $count++;
         }
@@ -1177,6 +1182,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
@@ -1188,9 +1194,15 @@ class NodeDataRepository extends Repository
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException('Node workspace not found in allowed workspaces, this could result from a detached workspace entity in the context.', 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
@@ -1203,9 +1215,15 @@ class NodeDataRepository extends Repository
             }
 
             foreach ($dimensions as $dimensionName => $dimensionValues) {
-                foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
-                    $position = array_search($nodeDimensionValue, $dimensionValues);
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName], $position) : $position;
+                if (isset($nodeDimensions[$dimensionName])) {
+                    foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
+                        $position = array_search($nodeDimensionValue, $dimensionValues);
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
+                            $position) : $position;
+                    }
+                } else {
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
+                            PHP_INT_MAX) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
@@ -1237,7 +1255,13 @@ class NodeDataRepository extends Repository
         foreach ($nodes as $node) {
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspacePosition = array_search($node->getWorkspace(), $workspaces);
+            $workspaceNames = array_map(
+                function (Workspace $workspace) {
+                    return $workspace->getName();
+                },
+                $workspaces
+            );
+            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
 
             $uniqueNodeDataIdentity = $node->getIdentifier() . '|' . $node->getDimensionsHash();
             if (!isset($minimalPositionByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {
