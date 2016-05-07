@@ -2,10 +2,10 @@
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
 <ul{attributes -> f:format.raw()}>
 <f:for each="{items}" as="item">
-		<f:if condition="{item.node}">
-			<li {ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
-				<neos:link.node node="{item.node}">{item.label}</neos:link.node>
-			</li>
-		</f:if>
+	<f:if condition="{item.node}">
+		<li {ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+			<neos:link.node node="{item.node}">{item.label}</neos:link.node>
+		</li>
+	</f:if>
 </f:for>
 </ul>
