@@ -456,8 +456,8 @@ define(
 				reloadPage = false,
 				selectedNode = this.get('selectedNode'),
 				propertyValuePostprocessPromises = [],
-				propertyPromise;
-
+				propertyPromise,
+				changedAttributes = {};
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
 				var valueOrPromise = that.get('nodeProperties').get(key);
@@ -473,7 +473,7 @@ define(
 
 				propertyValuePostprocessPromises.push(propertyPromise.then(function(value) {
 					if (value !== cleanPropertyValue) {
-						selectedNode.setAttribute(key, value, {validate: false});
+						changedAttributes[key] = value;
 						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadPageIfChanged')) {
 							reloadPage = true;
 						} else if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
@@ -484,6 +484,7 @@ define(
 			});
 
 			Ember.RSVP.all(propertyValuePostprocessPromises).then(function() {
+				selectedNode.setAttributes(changedAttributes, {validate: false});
 				var entity = that.get('selectedNode._vieEntity');
 				if (entity.isValid() !== true) {
 					return;
@@ -513,7 +514,7 @@ define(
 						} else if (reloadElement === true) {
 							if (result && result.data && result.data.collectionContent) {
 								LoadingIndicator.done();
-								var id = entity.id.substring(1, entity.id.length - 1),
+								var id = entity.id.slice(1, -1);
 									$element = $('[about="' + id + '"]').first(),
 									content = $(result.data.collectionContent).find('[about="' + xhr.getResponseHeader('X-Neos-AffectedNodePath') + '"]').first();
 								if (content.length === 0) {
@@ -545,6 +546,8 @@ define(
 				that.set('cleanProperties', cleanProperties);
 				that.set('nodeProperties', Ember.Object.create(cleanProperties));
 				SecondaryInspectorController.hide();
+			}).fail(function(error) {
+				console.error(error);
 			});
 		},
 

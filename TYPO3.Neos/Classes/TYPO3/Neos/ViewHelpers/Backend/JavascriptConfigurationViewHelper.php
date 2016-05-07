@@ -21,6 +21,7 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -75,6 +76,12 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $backendAssetsUtility;
 
     /**
+     * @Flow\Inject
+     * @var DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -108,6 +115,10 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
             $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
+        }
+
+        if ($activeDomain = $this->domainRepository->findOneByActiveRequest()) {
+            $configuration[] = 'window.T3Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
         }
 
         return implode("\n", $configuration);
@@ -182,7 +193,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             }
             $settings[] = array(
                 'name' => $nodeTypeGroupName,
-                'label' => $nodeTypeGroupSettings['label']
+                'label' => $nodeTypeGroupSettings['label'],
+                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
             );
         }
 

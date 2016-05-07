@@ -133,12 +133,21 @@ To execute the update scripts method you'll need:
    which are used in the Cakefile in hallo root dir. Replace "sed -i ..." with "sed -i '' ..." or "sed -ibak ..." to ignore backup files.
 
 
-Font Awesome v3.0
-http://fortawesome.github.io/Font-Awesome/3.2.1/
+Font Awesome v4.6.0
+http://fontawesome.io
 
-* Changed $fontAwesomePath in sass/font-awesome.scss
-* Wrapped everything in .neos sass/font-awesome.scss
-* Removed the background of twitter-bootstrap icons before include (General.scss)
+* Changed $fa-font-path in sass/_variables.scss
+* Changed $fa-css-prefix in sass/_variables.scss
+* Wrapped everything in .neos sass/_animated.scss
+* Wrapped everything in .neos sass/_border-pulled.scss
+* Wrapped everything in .neos sass/_core.scss
+* Wrapped everything in .neos sass/_fixed-width.scss
+* Wrapped everything in .neos sass/_icons.scss
+* Wrapped everything in .neos sass/_larger.scss
+* Wrapped everything in .neos sass/_list.scss
+* Wrapped everything in .neos sass/_rotated-flipped.scss
+* Wrapped everything in .neos sass/_stacked.scss
+* Included old icon names from Font Awesome v3.2.1 in sass/_font-awesome.scss
 
 
 Bootstrap Notify

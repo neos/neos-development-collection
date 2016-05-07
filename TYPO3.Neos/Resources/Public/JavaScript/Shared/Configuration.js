@@ -12,8 +12,6 @@ function(Ember, $) {
 	 * @singleton
 	 */
 	return Ember.Object.extend({
-		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
-
 		_data: {},
 
 		init: function() {

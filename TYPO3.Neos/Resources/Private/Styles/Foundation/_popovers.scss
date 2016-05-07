@@ -5,9 +5,9 @@ $popoverSizeDefault: 236px;
 $popoverSizeForHelpMessages: 366px;
 
 $popoverBorderColor: $grayLight;
-$popoverBackground: $grayDark;
-$popoverTitleBackground: $grayDarker;
-$popoverArrowColor: $grayDark;
+$popoverBackground: $grayMedium;
+$popoverTitleBackground: $grayDark;
+$popoverArrowColor: $grayMedium;
 $popoverArrowOuterColor: $grayLight;
 
 .neos-popover {
@@ -33,11 +33,11 @@ $popoverArrowOuterColor: $grayLight;
 
 .neos-popover-title {
 	margin: 0; // reset heading margin
-	padding: $relatedMargin;
-	font-size: 14px;
+	padding: ($defaultMargin - 3) ($defaultMargin - $tightMargin);
+	font-size: $generalFontSize;
+	line-height: $generalFontSize;
 	font-weight: bold;
 	color: $textOnGray;
-	line-height: 18px;
 	background-color: $popoverTitleBackground;
 	border-bottom: 1px solid $popoverBorderColor;
 
@@ -47,10 +47,11 @@ $popoverArrowOuterColor: $grayLight;
 }
 
 .neos-popover-content {
-	padding: $relatedMargin;
+	padding: $relatedMargin ($relatedMargin + $tightMargin);
 	max-height: $popoverSizeDefault;
 	overflow-y: auto;
 	white-space: normal;
+	line-height: 1.2;
 
 	p, ul, ol {
 		margin-bottom: 0.4rem; // same padding as for content padding inside popover
@@ -121,9 +122,9 @@ $popoverArrowOuterColor: $grayLight;
 	hr {
 		border-color: $grayLight;
 	}
-  img {
-    margin: auto auto 0.4rem auto;
-  }
+	img {
+		margin: auto auto 0.4rem auto;
+	}
 }
 
 // Arrows
@@ -173,7 +174,7 @@ $popoverArrowOuterColor: $grayLight;
 		left: 50%;
 		margin-left: -$popoverArrowWidth;
 		border-width: 0 $popoverArrowWidth $popoverArrowWidth;
-		border-bottom-color: $popoverArrowColor;
+		border-bottom-color: $popoverTitleBackground;
 		&:after {
 			border-width: 0 $popoverArrowOuterWidth $popoverArrowOuterWidth;
 			border-bottom-color: $popoverArrowOuterColor;

@@ -34,6 +34,7 @@ use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -599,6 +600,28 @@ class UserService
     }
 
     /**
+     * Checks if the current user may read the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanReadWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return true;
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if the current user may manage the given workspace according to one the roles of the user's accounts
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
@@ -749,7 +772,7 @@ class UserService
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
-        $userWorkspaceName = 'user-' . $account->getAccountIdentifier();
+        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
         $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
@@ -774,7 +797,7 @@ class UserService
      */
     protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);

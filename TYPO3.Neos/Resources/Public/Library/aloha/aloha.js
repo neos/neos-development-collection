@@ -606,7 +606,11 @@ define('util/json2', [], function () {
 				testRange.detach();
 			}
 
-			var body = isHostObject(document, "body") ? document.body : document.getElementsByTagName("body")[0];
+			// this was patched due to a performance problem in IE: When creating a TextRange for a body that contains
+			// lots of DOM elements, calculating the bounding rectangle (or getting the bounding... properties) is
+			// extremely slow (starting with IE8 and up to and including IE11)
+//			var body = isHostObject(document, "body") ? document.body : document.getElementsByTagName("body")[0];
+			var body = document.createElement("body");
 
 			if (body && isHostMethod(body, "createTextRange")) {
 				testRange = body.createTextRange();
@@ -4719,6 +4723,12 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		listElements: ['li', 'ol', 'ul'],
 
 		/**
+		 * List of nodenames of table elements
+		 * @hide
+		 */
+		tableElements: ['caption', 'colgroup', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td'],
+
+		/**
 		 * Splits a DOM element at the given position up until the limiting object(s), so that it is valid HTML again afterwards.
 		 * @param {RangeObject} range Range object that indicates the position of the splitting.
 		 *				This range will be updated, so that it represents the same range as before the split.
@@ -5030,9 +5040,15 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * @param {GENTICS.Utils.RangeObject} rangeObject range from which the markup shall be removed
 		 * @param {jQuery} markup markup to be removed as jQuery object
 		 * @param {jQuery} limit Limiting node(s) as jQuery object
+		 * @param {boolean} removeNonEditables Whether to remove nodes which are
+		 *		not content editable (default: true)
 		 * @method
 		 */
-		removeMarkup: function (rangeObject, markup, limit) {
+		removeMarkup: function (rangeObject, markup, limit, removeNonEditables) {
+			if (typeof removeNonEditables == 'undefined') {
+				removeNonEditables = true;
+			}
+
 			var nodeName = markup.get(0).nodeName,
 				startSplitLimit = this.findHighestElement(rangeObject.startContainer, nodeName, limit),
 				endSplitLimit = this.findHighestElement(rangeObject.endContainer, nodeName, limit),
@@ -5073,7 +5089,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				rangeTree = rangeObject.getRangeTree(root);
 
 				// remove the markup from the range tree
-				this.recursiveRemoveMarkup(rangeTree, markup);
+				this.recursiveRemoveMarkup(rangeTree, markup, removeNonEditables);
 
 				// cleanup DOM
 				this.doCleanup({
@@ -5088,28 +5104,39 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * Recursive helper method to remove the given markup from the range
 		 * @param rangeTree rangetree at the current level
 		 * @param markup markup to be applied
+		 * @param removeNonEditables whether to remove nodes which are not
+		 *		content editable.
 		 * @hide
 		 */
-		recursiveRemoveMarkup: function (rangeTree, markup) {
+		recursiveRemoveMarkup: function (rangeTree, markup, removeNonEditables) {
 			var i, rangeLength, content;
+			var nodeName = markup[0].nodeName;
+
 			// iterate over the rangetree objects of this level
 			for (i = 0, rangeLength = rangeTree.length; i < rangeLength; ++i) {
+				var curTree = rangeTree[i];
+				var obj = curTree.domobj;
+
 				// check whether the object is the markup to be removed and is fully into the range
-				if (rangeTree[i].type == 'full' && rangeTree[i].domobj.nodeName == markup.get(0).nodeName) {
+				if (curTree.type == 'full'
+						&& obj.nodeName == nodeName
+						&& (removeNonEditables || this.isEditable(obj))) {
+					var $obj = jQuery(obj);
+
 					// found the markup, so remove it
-					content = jQuery(rangeTree[i].domobj).contents();
+					content = $obj.contents();
 					if (content.length > 0) {
 						// when the object has children, we unwrap them
 						content.first().unwrap();
 					} else {
 						// obj has no children, so just remove it
-						jQuery(rangeTree[i].domobj).remove();
+						$obj.remove();
 					}
 				}
 
-				// if the object has children, we do the recursion now
-				if (rangeTree[i].children) {
-					this.recursiveRemoveMarkup(rangeTree[i].children, markup);
+				// if the object has children, we do the recurTreesion now
+				if (curTree.children) {
+					this.recursiveRemoveMarkup(curTree.children, markup, removeNonEditables);
 				}
 			}
 		},
@@ -5404,6 +5431,22 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		},
 
 		/**
+		 * Check whether the given node is a table element
+		 * @param {DOMObject} node node to check
+		 * @return {boolean} true if yes, false if not (or null)
+		 * @method
+		 */
+		isTableElement: function (node) {
+			if (!node) {
+				return false;
+			}
+			if (node.nodeType === 1 && jQuery.inArray(node.nodeName.toLowerCase(), this.tableElements) >= 0) {
+				return true;
+			}
+			return false;
+		},
+
+		/**
 		 * Check whether the given node is a linebreak element
 		 * @param {DOMObject} node node to check
 		 * @return {boolean} true for linebreak elements, false for everything else
@@ -5414,6 +5457,19 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				return false;
 			}
 			return node.nodeType === 1 && node.nodeName.toLowerCase() == 'br';
+		},
+
+		/**
+		 * Check whether the given node is a hr element
+		 * @param {DOMObject} node node to check
+		 * @return {boolean} true for hr elements, false for everything else
+		 * @method
+		 */
+		isHorizontalRulerElement: function (node) {
+			if (!node) {
+				return false;
+			}
+			return node.nodeType === 1 && node.nodeName.toLowerCase() == 'hr';
 		},
 
 		/**
@@ -5452,11 +5508,16 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * - blocklevel (default: true)
 		 * - list (default: true)
 		 * - linebreak (default: true)
+		 * - table (default: true)
+		 * </pre>
+		 * @param {object} options additional options to guide the search. May contain the following properties
+		 * <pre>
+		 * - acceptUntrimmed (default: false): accept a text node even if it only contains whitespace
 		 * </pre>
 		 * @return {DOMObject} the found text node or false if none found
 		 * @method
 		 */
-		searchAdjacentTextNode: function (parent, index, searchleft, stopat) {
+		searchAdjacentTextNode: function (parent, index, searchleft, stopat, options) {
 			if (!parent || parent.nodeType !== 1 || index < 0 || index > parent.childNodes.length) {
 				return false;
 			}
@@ -5465,7 +5526,8 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				stopat = {
 					'blocklevel': true,
 					'list': true,
-					'linebreak': true
+					'linebreak': true,
+					'table': true
 				};
 			}
 
@@ -5478,10 +5540,15 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			if (typeof stopat.linebreak === 'undefined') {
 				stopat.linebreak = true;
 			}
+			if (typeof stopat.table === 'undefined') {
+				stopat.table = true;
+			}
 
 			if (typeof searchleft === 'undefined') {
 				searchleft = true;
 			}
+
+			options = jQuery.extend({ acceptUntrimmed: false }, options);
 
 			var nextNode,
 			    currentParent = parent;
@@ -5504,6 +5571,10 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 						// do not leave block level elements
 						return false;
 					}
+					if (stopat.table && this.isTableElement(currentParent)) {
+						// do not leave table level elements
+						return false;
+					}
 					if (stopat.list && this.isListElement(currentParent)) {
 						// do not leave list elements
 						return false;
@@ -5512,7 +5583,8 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					nextNode = searchleft ? currentParent.previousSibling : currentParent.nextSibling;
 					currentParent = currentParent.parentNode;
 					continue;
-				} else if (nextNode.nodeType === 3 && jQuery.trim(nextNode.data).length > 0) {
+				} else if (nextNode.nodeType === 3
+						&& (options.acceptUntrimmed ? nextNode.data : jQuery.trim(nextNode.data)).length > 0) {
 					// we are lucky and found a notempty text node
 					return nextNode;
 				}
@@ -5520,7 +5592,11 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					// we found a blocklevel element, stop here
 					return false;
 				}
-				if (stopat.linebreak && this.isLineBreakElement(nextNode)) {
+				if (stopat.table && this.isTableElement(nextNode)) {
+					// we found a table element, stop here
+					return false;
+				}
+				if (stopat.linebreak && (this.isLineBreakElement(nextNode) || this.isHorizontalRulerElement(nextNode))) {
 					// we found a linebreak, stop here
 					return false;
 				}
@@ -5609,6 +5685,11 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					if (atEnd) {
 						container = range.endContainer;
 						offset = range.endOffset;
+					}
+					// Sometimes the offset can be greater than the length of the
+					// container contents due to a bug. In that case adjust the offset.
+					if (offset > jQuery(container).contents().length) {
+						offset = jQuery(container).contents().length;
 					}
 					if (offset === 0) {
 						// insert right before the first element in the container
@@ -6109,9 +6190,10 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * Get the first visible child of the given node.
 		 * @param node node
 		 * @param includeNode when set to true, the node itself may be returned, otherwise only children are allowed
+		 * @param stopElements optional list of node names (upper case) of elements where to stop searching
 		 * @return first visible child or null if none found
 		 */
-		getFirstVisibleChild: function (node, includeNode) {
+		getFirstVisibleChild: function (node, includeNode, stopElements) {
 			// no node -> no child
 			if (!node) {
 				return null;
@@ -6127,10 +6209,15 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				return includeNode ? node : null;
 			}
 
+			// when we find one of the stop elements, we return it
+			if (jQuery.isArray(stopElements) && jQuery.inArray(node.nodeName, stopElements) >= 0) {
+				return includeNode ? node : null;
+			}
+
 			// otherwise traverse through the children
 			var i;
 			for (i = 0; i < node.childNodes.length; ++i) {
-				var visibleChild = this.getFirstVisibleChild(node.childNodes[i], true);
+				var visibleChild = this.getFirstVisibleChild(node.childNodes[i], true, stopElements);
 				if (visibleChild != null) {
 					return visibleChild;
 				}
@@ -6143,9 +6230,10 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * Get the last visible child of the given node.
 		 * @param node node
 		 * @param includeNode when set to true, the node itself may be returned, otherwise only children are allowed
+		 * @param stopElements optional list of node names (upper case) of elements where to stop searching
 		 * @return last visible child or null if none found
 		 */
-		getLastVisibleChild: function (node, includeNode) {
+		getLastVisibleChild: function (node, includeNode, stopElements) {
 			// no node -> no child
 			if (!node) {
 				return null;
@@ -6161,10 +6249,15 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				return includeNode ? node : null;
 			}
 
+			// when we find one of the stop elements, we return it
+			if (jQuery.isArray(stopElements) && jQuery.inArray(node.nodeName, stopElements) >= 0) {
+				return includeNode ? node : null;
+			}
+
 			// otherwise traverse through the children
 			var i;
 			for (i = node.childNodes.length - 1; i >= 0; --i) {
-				var visibleChild = this.getLastVisibleChild(node.childNodes[i], true);
+				var visibleChild = this.getLastVisibleChild(node.childNodes[i], true, stopElements);
 				if (visibleChild != null) {
 					return visibleChild;
 				}
@@ -6190,6 +6283,44 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				offsetHeight = node.offsetHeight;
 			}
 			return offsetHeight;
+		},
+
+		/**
+		 * Check whether the given node is an empty block level element.
+		 * A block level element is considered empty, if it does not contain other children than
+		 * <ol>
+		 * <li>empty text nodes</li>
+		 * <li>a final break</li>
+		 * </ol>
+		 * @param {DOMObject} node to check
+		 * @return {boolean} true for empty block level elements
+		 */
+		isEmptyBlockLevelElement: function (node) {
+			if (!this.isBlockLevelElement(node)) {
+				return false;
+			}
+
+			if (!node.childNodes) {
+				return true;
+			}
+
+			var len = node.childNodes.length, breakFound = false, i, child;
+			for (i = 0; i < len; i++) {
+				child = node.childNodes[i];
+				if (child.nodeName === 'BR') {
+					if (breakFound) {
+						// we found another break, so the element is not empty
+						return false;
+					} else {
+						// first break found, no harm done (so far)
+						breakFound = true;
+					}
+				} else if (!this.isEmpty(child)) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 	});
 
@@ -6479,9 +6610,7 @@ define('aloha/core',[
 	 *                   dialog element.
 	 */
 	function originatesFromDialog($event) {
-		var $target = $($event.target);
-		return $target.is('.aloha-dialog')
-			|| $target.closest('.aloha').length;
+		return $($event.target).closest('.aloha-dialog').length > 0;
 	}
 
 	/**
@@ -6539,6 +6668,20 @@ define('aloha/core',[
 			Aloha.OSName = 'Unix';
 		} else if (navigator.appVersion.indexOf('Linux') !== -1) {
 			Aloha.OSName = 'Linux';
+		}
+
+		// Fix inconsistent browser behavior in Internet Explorer:
+		// per default the Internet Explorer's own feature AutoUrlDetect is turned on.
+		// When this feature is active the "editor will automatically create a hyperlink
+		// for any text that is formatted as a URL."
+		// https://msdn.microsoft.com/en-us/library/aa769893(v=vs.85).aspx
+		// http://blogs.msdn.com/b/ieinternals/archive/2010/09/15/ie9-beta-minor-change-list.aspx
+		//
+		// Since this behavior is different to all other browsers we will
+		// turn this feature off in Internet Explorer >= 9 (turning it off is supported
+		// starting from IE9)
+		if (Aloha.browser.msie && parseFloat(Aloha.browser.version) >= 9.0 && typeof document.execCommand === 'function') {
+			document.execCommand('AutoUrlDetect', false, false);
 		}
 
 		registerEvents();
@@ -7022,6 +7165,30 @@ define('aloha/core',[
 		},
 
 		/**
+		 * Disable native table editing
+		 */
+		disableInlineTableEditing: function () { // enableInlineTableEditing
+			try {
+				// This will disable browsers native table editing facilities in
+				// order to disable resize handles.
+				var supported;
+				try {
+					supported = document.queryCommandSupported('enableInlineTableEditing');
+				} catch (e) {
+					supported = false;
+					Aloha.Log.log('enableInlineTableEditing is not supported.');
+				}
+				if (supported) {
+					document.execCommand('enableInlineTableEditing', false, false);
+					Aloha.Log.log('enableInlineTableEditing disabled.');
+				}
+			} catch (e2) {
+				Aloha.Log.error(e2, 'Could not disable enableInlineTableEditing');
+				// this is just for others, who will not support disabling enableInlineTableEditing
+			}
+		},
+
+		/**
 		 * Human-readable string representation of this.
 		 *
 		 * @hide
@@ -7043,6 +7210,8 @@ define('aloha/core',[
 					/(webkit)[ \/]([\w.]+)/.exec(ua) ||
 					/(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
 					/(msie) ([\w.]+)/.exec(ua) ||
+					// IE11 will only identify itself via its Trident rendering engine
+					/(trident)(?:.*? rv:([\w.]+))/.exec(ua) ||
 					(ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua)) || [];
 
 				return {
@@ -7064,6 +7233,10 @@ define('aloha/core',[
 				browser.webkit = true;
 			} else if (browser.webkit) {
 				browser.safari = true;
+			}
+			// Browsers using the Trident rendering engine are also Internet Explorer
+			if (browser.trident) {
+				browser.msie = true;
 			}
 
 			return browser;
@@ -7938,14 +8111,14 @@ define('util/range',[
 					if (this.startOffset > 0 && this.startContainer.childNodes[this.startOffset - 1].nodeType === 1) {
 						// search for the next text node to the left
 						adjacentTextNode = GENTICS.Utils.Dom.searchAdjacentTextNode(this.startContainer, this.startOffset, true);
-						if (adjacentTextNode) {
+						if (adjacentTextNode && jQuery(adjacentTextNode.parentNode).contentEditable()) {
 							this.startContainer = this.endContainer = adjacentTextNode;
 							this.startOffset = this.endOffset = adjacentTextNode.data.length;
 							return;
 						}
 						// search for the next text node to the right
 						adjacentTextNode = GENTICS.Utils.Dom.searchAdjacentTextNode(this.startContainer, this.startOffset, false);
-						if (adjacentTextNode) {
+						if (adjacentTextNode && jQuery(adjacentTextNode.parentNode).contentEditable()) {
 							this.startContainer = this.endContainer = adjacentTextNode;
 							this.startOffset = this.endOffset = 0;
 							return;
@@ -7968,9 +8141,15 @@ define('util/range',[
 					adjacentTextNode = GENTICS.Utils.Dom.searchAdjacentTextNode(this.startContainer.parentNode, GENTICS.Utils.Dom.getIndexInParent(this.startContainer), true);
 					//only move the selection if the adjacentTextNode is inside the current editable
 					//the cursor should not be outside the editable
-					if (adjacentTextNode && Aloha.activeEditable && jQuery(adjacentTextNode).closest(Aloha.activeEditable.obj).length > 0) {
+					if (adjacentTextNode && Aloha.activeEditable && jQuery(adjacentTextNode.parentNode).contentEditable() && jQuery(adjacentTextNode).closest(Aloha.activeEditable.obj).length > 0) {
 						this.startContainer = this.endContainer = adjacentTextNode;
 						this.startOffset = this.endOffset = adjacentTextNode.data.length;
+					}
+				} else if (this.startContainer.nodeType === 3 && (!jQuery(this.startContainer.parentNode).contentEditable())) {
+					adjacentTextNode = GENTICS.Utils.Dom.searchAdjacentTextNode(this.startContainer.parentNode, GENTICS.Utils.Dom.getIndexInParent(this.startContainer) + 1, false, {}, { acceptUntrimmed: true });
+					if (adjacentTextNode && Aloha.activeEditable && jQuery(adjacentTextNode.parentNode).contentEditable() && jQuery(adjacentTextNode).closest(Aloha.activeEditable.obj).length > 0) {
+						this.startContainer = this.endContainer = adjacentTextNode;
+						this.startOffset = this.endOffset = 0;
 					}
 				}
 			} else {
@@ -9224,12 +9403,31 @@ define('util/strings',['jquery'], function ($) {
 		return "" === str || null == str;
 	}
 
+	/**
+	 * Parse a boolean value from a string or any other type
+	 * this function returns true when the passed value is either
+	 * 'true', 'TRUE', '1', 1 (number) or true (boolean)
+	 *
+	 * @param  mixed value the value to parse
+	 * @return boolean     true if the value is considerd as "true"
+	 */
+	function parseBoolean(value) {
+		if (value === true || value === 1) {
+			return true;
+		} else if (typeof value === 'string' || value instanceof String) {
+			value = value.toLowerCase();
+			return value === 'true' || value === '1';
+		}
+		return false;
+	}
+
 	return {
 		words: words,
 		dashesToCamelCase: dashesToCamelCase,
 		camelCaseToDashes: camelCaseToDashes,
 		splitIncl: splitIncl,
-		empty: empty
+		empty: empty,
+		parseBoolean: parseBoolean
 	};
 });
 
@@ -9412,18 +9610,29 @@ define('util/dom2',[
 	 */
 	function attrs(elem) {
 		var as = [];
+		var visited = {};
 		var names = attrNames(elem);
 		var i;
 		var len;
 		for (i = 0, len = names.length; i < len; i++) {
 			var name = names[i];
 			var value = $.attr(elem, name);
+			//IE9 Fix, "lang" value not in attributes
+			if (name === "lang") {
+				if (elem.lang) {
+					value = elem.lang;
+				}
+			}
 			if (null == value) {
 				value = "";
 			} else {
 				value = value.toString();
 			}
-			as.push([name, value]);
+			//filter duplicates. IE 10 doesn't take care of duplicates
+			if (!visited.hasOwnProperty(name)) {
+				as.push([name, value]);
+				visited[name] = true;
+			}
 		}
 		return as;
 	}
@@ -10343,7 +10552,8 @@ define('aloha/content-rules',[
 
 	/**
 	 * Add default rules for some elements.
-	 * @returns {Object.<string, Array.<string>>}
+	 * @param {Object.<string, Array.<string>>}
+	 * @return {Object.<string, Array.<string>>}
 	 */
 	function addDefaultRules(mapRules) {
 		var selector;
@@ -10351,11 +10561,13 @@ define('aloha/content-rules',[
 			if (mapRules.hasOwnProperty(selector)) {
 				if (Arrays.contains(mapRules[selector], 'ol') || Arrays.contains(mapRules[selector], 'ul')) {
 					mapRules[selector] = Arrays.concat(mapRules[selector], LIST_WHITELIST_NODE_NAMES);
-				} else if (Arrays.contains(mapRules[selector], 'table')) {
+				}
+				if (Arrays.contains(mapRules[selector], 'table')) {
 					mapRules[selector] = Arrays.concat(mapRules[selector], TABLE_WHITELIST_NODE_NAMES);
 				}
 			}
 		}
+		return mapRules;
 	}
 
 	/**
@@ -10526,25 +10738,30 @@ define('aloha/content-rules',[
 		container.innerHTML = content;
 		var node = Dom.forward(container);
 		while (node) {
-			var translation = translate(editable, node.nodeName);
-			if (translation !== node.nodeName) {
-				var replacement = doc.createElement(translation);
-				replacement.innerHTML = node.innerHTML;
-				node.parentNode.replaceChild(replacement, node);
-				node = replacement;
-			}
-			if (isAllowed(editable, node.nodeName)) {
-				node = Dom.forward(node);
-			} else if (GROUP_CONTAINERS[node.nodeName] || GROUPED_ELEMENTS[node.nodeName]) {
-				// Because `node` is being entirely removed, we skip over, and
-				// do not descend its subtree
-				var prev = Dom.backward(node);
-				node.parentNode.removeChild(node);
-				node = Dom.forward(prev);
+			//skip over node if it is a aloha-block, because we want to keep elements inside
+			if ($(node).hasClass('aloha-block')) {
+				node = node.nextSibling || Dom.forward(node.lastChild || node);
 			} else {
-				var next = Dom.forward(node);
-				Dom.removeShallow(node);
-				node = next;
+				var translation = translate(editable, node.nodeName);
+				if (translation !== node.nodeName) {
+					var replacement = doc.createElement(translation);
+					replacement.innerHTML = node.innerHTML;
+					node.parentNode.replaceChild(replacement, node);
+					node = replacement;
+				}
+				if (isAllowed(editable, node.nodeName)) {
+					node = Dom.forward(node);
+				} else if (GROUP_CONTAINERS[node.nodeName] || GROUPED_ELEMENTS[node.nodeName]) {
+					// Because `node` is being entirely removed, we skip over, and
+					// do not descend its subtree
+					var prev = Dom.backward(node);
+					node.parentNode.removeChild(node);
+					node = Dom.forward(prev);
+				} else {
+					var next = Dom.forward(node);
+					Dom.removeShallow(node);
+					node = next;
+				}
 			}
 		}
 		return container.innerHTML;
@@ -11782,6 +11999,7 @@ define('aloha/engine',[
 		rangeObject.endContainer = range.endContainer;
 		rangeObject.endOffset = range.endOffset;
 
+		rangeObject.correctRange();
 		rangeObject.select();
 	}
 
@@ -12138,7 +12356,7 @@ define('aloha/engine',[
 			ref.contentEditable = 'false';
 		}
 
-		var origHeight = ref.offsetHeight;
+		var origHeight = Dom.getOffsetHeight(ref);
 		if (origHeight == 0) {
 			throw "isExtraneousLineBreak: original height is zero, bug?";
 		}
@@ -15468,7 +15686,7 @@ define('aloha/engine',[
 			return;
 		}
 
-		if (!Aloha.browser.msie) {
+		if (!Aloha.browser.msie || parseInt(Aloha.browser.version, 10) >= 11) {
 			// for normal browsers, the end-br will do
 			container.appendChild(createEndBreak());
 		} else if (Aloha.browser.msie && Aloha.browser.version <= 7 && isHtmlElementInArray(container, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "blockquote"])) {
@@ -16292,6 +16510,76 @@ define('aloha/engine',[
 		}
 	}
 
+	/**
+	 * Remove the node if it doesn't have any children or 1 empty text node.
+	 * This function doesn't handle all cases of unrendered nodes.
+	 * In the following cases the node will not be removed:
+	 * * The node contains multiple empty nodes
+	 * * The child text node contains zero width characters
+	 * * The child text node contains unrendered characters
+	 *
+	 * @param  {Text}  node   The node to check
+	 * @param  {Element}  range  Range object to set the position
+	 * @return {boolean} True if node got removed, false otherwise
+	 */
+	function removeNodeIfEmptyAndCorrectRange(node, range) {
+		var
+			removeNode = false,
+			parentNode,
+			nodeChildNodesLength,
+			offsetInParent,
+			firstChildNode;
+
+		if (!node || !range) {
+			return false;
+		}
+
+		if (isEditingHost(node)) {
+			return false;
+		}
+
+		parentNode = node.parentNode;
+
+		if (!parentNode) {
+			return false;
+		}
+
+		// Check if the node is empty
+		nodeChildNodesLength = node.childNodes.length;
+		if (nodeChildNodesLength === 0) {
+			removeNode = true;
+		}
+
+		// If the inline node only contains an empty text node,
+		// it is also considered being empty.
+		if (nodeChildNodesLength === 1) {
+			firstChildNode = node.childNodes[0];
+
+			if (firstChildNode.nodeType === $_.Node.TEXT_NODE
+					&& firstChildNode.nodeValue.length === 0) {
+				removeNode = true;
+			}
+		}
+
+		// Don't continue if node should not be removed or has no parent
+		if (!removeNode) {
+			return false;
+		}
+
+		// Before removing, remember the offset of node in its parent
+		offsetInParent = Dom.getIndexInParent(node);
+
+		// I'm not gonna comment this, it's clear what it does.
+		parentNode.removeChild(node);
+
+		// Now the cursor has to be set at the position where the
+		// removed parent was before.
+		range.setStart(parentNode, offsetInParent);
+		range.setEnd(parentNode, offsetInParent);
+
+		return true;
+	}
+
 	//@}
 	///// Deleting the contents of a range /////
 	//@{
@@ -16490,11 +16778,16 @@ define('aloha/engine',[
 			// "Canonicalize whitespace at (start node, start offset)."
 			canonicalizeWhitespace(startNode, startOffset);
 
-			// "Set range's end to its start."
-			// Ok, also set the range's start to its start, because modifying the text
-			// might have somehow corrupted the range
-			range.setStart(range.startContainer, range.startOffset);
-			range.setEnd(range.startContainer, range.startOffset);
+			// Remove the parent node, if it is an inline node and empty
+			// If the node is inline and empty, range correction will happen inside
+			// removeNodeIfEmptyAndCorrectRange, otherwise it'will be done below.
+			if (!isInlineNode(parent_) || !removeNodeIfEmptyAndCorrectRange(parent_, range)) {
+				// "Set range's end to its start."
+				// Ok, also set the range's start to its start, because modifying the text
+				// might have somehow corrupted the range
+				range.setStart(range.startContainer, range.startOffset);
+				range.setEnd(range.startContainer, range.startOffset);
+			}
 
 			// "Restore states and values from overrides."
 			restoreStatesAndValues(overrides, range);
@@ -16565,6 +16858,11 @@ define('aloha/engine',[
 		// it."
 		if (isEditable(endNode) && endNode.nodeType == $_.Node.TEXT_NODE) {
 			endNode.deleteData(0, endOffset);
+		}
+
+		// Remove parentNode, if it is an empty inline node
+		if (isInlineNode(startNode.parentNode)) {
+			removeNodeIfEmptyAndCorrectRange(startNode.parentNode, range);
 		}
 
 		// "Canonicalize whitespace at range's start."
@@ -17583,12 +17881,12 @@ define('aloha/engine',[
 	 */
 	commands["delete"] = {
 		action: function (value, range) {
-			var i;
+			var
+				i,
+				deleteContentsRange;
 
-			// special behaviour for skipping zero-width whitespaces in IE7
-			if (Aloha.browser.msie && Aloha.browser.version <= 7) {
-				moveOverZWSP(range, false);
-			}
+			// special behaviour for skipping zero-width whitespaces
+			moveOverZWSP(range, false);
 
 			// "If the active range is not collapsed, delete the contents of the
 			// active range and abort these steps."
@@ -17666,21 +17964,25 @@ define('aloha/engine',[
 				}
 			}
 
-			// if the previous node is an aloha-table we want to delete it
-			var delBlock = getBlockAtPreviousPosition(node, offset);
-			if (delBlock) {
-				delBlock.parentNode.removeChild(delBlock);
-				return;
-			}
-
 			// "If node is a Text node and offset is not zero, call collapse(node,
 			// offset) on the Selection. Then delete the contents of the range with
 			// start (node, offset − 1) and end (node, offset) and abort these
 			// steps."
 			if (node.nodeType == $_.Node.TEXT_NODE && offset != 0) {
+				// if the place we found is not editable, we stop here
+				if (!isEditable(node)) {
+					return;
+				}
+
 				range.setStart(node, offset - 1);
 				range.setEnd(node, offset - 1);
-				deleteContents(node, offset - 1, node, offset);
+				deleteContentsRange = deleteContents(node, offset - 1, node, offset);
+				if (deleteContentsRange) {
+					// The new range position can only be determined inside deleteContents,
+					// that's why it's necessary to take over the range if one was returned.
+					range.setStart(deleteContentsRange.startContainer, deleteContentsRange.startOffset);
+					range.setEnd(deleteContentsRange.endContainer, deleteContentsRange.endOffset);
+				}
 				return;
 			}
 
@@ -18169,10 +18471,9 @@ define('aloha/engine',[
 	//@{
 	commands.forwarddelete = {
 		action: function (value, range) {
-			// special behaviour for skipping zero-width whitespaces in IE7
-			if (Aloha.browser.msie && Aloha.browser.version <= 7) {
-				moveOverZWSP(range, true);
-			}
+			var deleteContentsRange;
+			// special behaviour for skipping zero-width whitespaces
+			moveOverZWSP(range, true);
 
 			// "If the active range is not collapsed, delete the contents of the
 			// active range and abort these steps."
@@ -18185,11 +18486,54 @@ define('aloha/engine',[
 			// range's start offset)."
 			canonicalizeWhitespace(range.startContainer, range.startOffset);
 
+			// small selection hack: If the selection is in an empty text node, we move it after the text node
+			if (range.startContainer.nodeType === 3 && range.startContainer.data.length === 0) {
+				range.startOffset = range.endOffset = Dom.getIndexInParent(range.startContainer) + 1;
+				range.startContainer = range.endContainer = range.startContainer.parentNode;
+			}
+
 			// "Let node and offset be the active range's start node and offset."
 			var node = range.startContainer;
 			var offset = range.startOffset;
 			var isBr = false;
 			var isHr = false;
+
+			// special behaviour: if we are in an empty block-level element (empty, but for the single ending br), we just remove that
+			// this will fix situations where it was not possible to delete an empty block level element right before a non-editable part
+			// but never delete the editing host itself
+			if (Dom.isEmptyBlockLevelElement(node) && !isEditingHost(node)) {
+				range.startContainer = node.parentElement;
+				range.startOffset = Dom.getIndexInParent(node);
+				range.endContainer = node.parentElement;
+				range.endOffset = range.startOffset + 1;
+				deleteContents(range);
+
+				// currently, the selection would probably be put in between two paragraphs, which is not suitable
+				// try to move the cursor into the next text node
+				var nextText = Dom.searchAdjacentTextNode(range.startContainer, range.startOffset, false, {blocklevel: false, list: false});
+				if (nextText) {
+					range.startContainer = range.endContainer = nextText;
+					range.startOffset = range.endOffset = 0;
+					return;
+				}
+
+				// check whether the next element is an editable blocklevel element, if yes, put the cursor into it
+				var nextElement = range.startContainer.childNodes.length > range.startOffset ? range.startContainer.childNodes[range.startOffset] : null;
+				if (Dom.isBlockLevelElement(nextElement) && Dom.isEditable(nextElement)) {
+					range.startContainer = range.endContainer = nextElement;
+					range.startOffset = range.endOffset = 0;
+					return;
+				}
+
+				// try the previous text node
+				nextText = Dom.searchAdjacentTextNode(range.startContainer, range.startOffset, true, {blocklevel: false, list: false});
+				if (nextText) {
+					range.startContainer = range.endContainer = nextText;
+					range.startOffset = range.endOffset = nextText.data.length;
+				}
+
+				return;
+			}
 
 			// "Repeat the following steps:"
 			while (true) {
@@ -18245,16 +18589,14 @@ define('aloha/engine',[
 			// collapse whitespace in the node, if it is a text node
 			canonicalizeWhitespace(range.startContainer, range.startOffset);
 
-			// if the next node is an aloha-table we want to delete it
-			var delBlock = getBlockAtNextPosition(node, offset);
-			if (delBlock) {
-				delBlock.parentNode.removeChild(delBlock);
-				return;
-			}
-
 			var endOffset;
 			// "If node is a Text node and offset is not node's length:"
 			if (node.nodeType == $_.Node.TEXT_NODE && offset != getNodeLength(node)) {
+				// if the place we found (which we want to delete) is not editable, we stop here
+				if (!isEditable(node)) {
+					return;
+				}
+
 				// "Call collapse(node, offset) on the Selection."
 				range.setStart(node, offset);
 				range.setEnd(node, offset);
@@ -18276,8 +18618,14 @@ define('aloha/engine',[
 
 				// "Delete the contents of the range with start (node, offset) and
 				// end (node, end offset)."
-				deleteContents(node, offset, node, endOffset);
+				deleteContentsRange = deleteContents(node, offset, node, endOffset);
 
+				if (deleteContentsRange) {
+					// The new range position can only be determined inside deleteContents,
+					// that's why it's necessary to take over the range if one was returned.
+					range.setStart(deleteContentsRange.startContainer, deleteContentsRange.startOffset);
+					range.setEnd(deleteContentsRange.endContainer, deleteContentsRange.endOffset);
+				}
 				// "Abort these steps."
 				return;
 			}
@@ -18362,6 +18710,10 @@ define('aloha/engine',[
 				// invisible, remove it from end node."
 				if (isEditable(endNode.childNodes[endOffset]) && isInvisible(endNode.childNodes[endOffset])) {
 					endNode.removeChild(endNode.childNodes[endOffset]);
+
+					// prevent deleting non-editable elements
+				} else if (!isEditable(endNode.childNodes[endOffset]) || jQuery(endNode.childNodes[endOffset]).hasClass('aloha-table-wrapper')) {
+					return;
 
 					// "Otherwise, set end node to its child with index end offset and
 					// set end offset to zero."
@@ -20368,6 +20720,21 @@ define('aloha/selection',[
 				window.clearTimeout(this.updateSelectionTimeout);
 			}
 
+			// We get no valid selection from IE it the event target was
+			// a text input element, so the following setTimeout() approach
+			// would never terminate. We let the browser handle all events
+			// in such elements, but we still have to make sure the
+			// editable containing the event target is active.
+			if (event && (event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA')) {
+				var editable = Aloha.getEditableHost(objectClicked);
+
+				if (editable && Aloha.activeEditable !== editable) {
+					editable.activate();
+				}
+
+				return;
+			}
+
 			// We have to update the selection in a timeout due to an IE
 			// bug that is is caused by selecting some text and then
 			// clicking once inside the selection (which collapses the
@@ -20386,6 +20753,12 @@ define('aloha/selection',[
 					}
 					return;
 				} else {
+					// activate the editable host of the selection
+					var editable = Aloha.getEditableHost(jQuery(range.startContainer));
+					if (editable) {
+						editable.activate();
+					}
+
 					// And yet another IE workaround. Somehow the caret is not
 					// positioned inside the clicked editable. This occures only
 					// when switching editables in IE. In those cases the caret is
@@ -20470,9 +20843,11 @@ define('aloha/selection',[
 		 * @hide
 		 */
 		_updateSelection: function (event, range) {
-			if (event && event.originalEvent &&
-					true === event.originalEvent.stopSelectionUpdate) {
-				return false;
+			if (event) {
+				if (event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA'
+						|| (event.originalEvent && true === event.originalEvent.stopSelectionUpdate)) {
+					return false;
+				}
 			}
 
 			if (typeof range === 'undefined') {
@@ -20502,14 +20877,16 @@ define('aloha/selection',[
 						jQuery(range.commonAncestorContainer)
 							.closest('.aloha-editable').length > 0;
 
-				if (inEditable && !rangeStartInBlock(range)) {
+				// we only will move the selection out of the non-editable area (in an editable)
+				// if the range is collapsed (blinking cursor)
+				if (inEditable && range.isCollapsed()) {
 					var validStartPosition = this._validEditablePosition(range.startContainer);
 					var validEndPosition = this._validEditablePosition(range.endContainer);
 					var newPos;
 					// when we are moving down (with the cursor down key), we want to position the
 					// cursor AFTER the non-editable area
 					// otherwise BEFORE the non-editable area
-					var movingDown = event && (event.keyCode === 40);
+					var movingDown = event && (event.keyCode === 40 || event.keyCode === 39);
 
 					if (!validStartPosition) {
 						newPos = this._getNearestEditablePosition(range.startContainer, movingDown);
@@ -21093,13 +21470,14 @@ define('aloha/selection',[
 					}
 
 					// setting the focus is needed for mozilla and IE 7 to have a working rangeObject.select()
-					if (Aloha.activeEditable && Aloha.browser.mozilla) {
+					if (Aloha.activeEditable && Aloha.browser.mozilla && document.activeElement !== Aloha.activeEditable.obj[0]) {
 						Aloha.activeEditable.obj.focus();
 					}
 
 					if (Engine.isEditable(rangeObject.startContainer)) {
 						Engine.copyAttributes(rangeObject.startContainer, newMarkup[0]);
 						jQuery(rangeObject.startContainer).after(newMarkup[0]).remove();
+						Engine.ensureContainerEditable(newMarkup[0]);
 					} else if (Engine.isEditingHost(rangeObject.startContainer)) {
 						jQuery(rangeObject.startContainer).append(newMarkup[0]);
 						Engine.ensureContainerEditable(newMarkup[0]);
@@ -22451,6 +22829,85 @@ define('aloha/selection',[
 		return window.rangy.createRange(givenWindow);
 	};
 
+	/**
+	 * Method to scroll the window to move the current collapsed selection into
+	 * the viewport. If the selection is not collapsed or some browser functionality
+	 * for detecting the position of the current selection is not available, nothing
+	 * will be done. This applies e.g. to older IE versions.
+	 */
+	Aloha.scrollToSelection = function () {
+		var sel = Aloha.getSelection();
+		// no selection, do nothing
+		if (sel.getRangeCount() === 0) {
+			return;
+		}
+		var range = sel.getRangeAt(0);
+		if (!range.collapsed) {
+			return;
+		}
+
+		// check for necessary browser functionality
+		if (!range.nativeRange) {
+			return;
+		}
+		if (!range.nativeRange.getClientRects) {
+			return;
+		}
+
+		// determine the position of the current selection as close as possible
+		var rect, top, bottom, prev, next;
+		if (range.nativeRange.getClientRects().length === 0) {
+			if (range.startContainer.nodeType === 3) {
+				rect = range.startContainer.parentNode.getBoundingClientRect();
+				top = rect.top;
+				bottom = rect.bottom;
+			} else {
+				// the start container is not a text node, so we get the bounding rectangle of the start container itself
+				rect = range.startContainer.getBoundingClientRect();
+				top = rect.top;
+				bottom = rect.bottom;
+
+				// we refine the top and bottom positions by getting the bounding rectangles of the previous and next elements
+				if (range.startOffset > 0) {
+					prev = range.startContainer.childNodes[range.startOffset - 1];
+					next = prev.nextSibling;
+				} else {
+					next = range.startContainer.firstChild;
+				}
+				if (prev && prev.nodeType === 1) {
+					top = prev.getBoundingClientRect().bottom;
+				}
+				if (next && next.nodeType === 1) {
+					bottom = next.getBoundingClientRect().top;
+				}
+			}
+		} else {
+			rect = range.nativeRange.getClientRects()[0];
+			top = rect.top;
+			bottom = rect.bottom;
+		}
+
+		// scroll the window if necessary
+		var $win = jQuery(window);
+		if (top < 0) {
+			$win.scrollTop($win.scrollTop() + top);
+		} else if (bottom > $win.height()) {
+			$win.scrollTop($win.scrollTop() + (bottom - $win.height()));
+		}
+
+		var $scrollable = jQuery(range.startContainer).closest(':hasScroll(y)');
+		if ($scrollable.length > 0 && !$scrollable.is($win) && !$scrollable.is(jQuery('html'))) {
+			var scrollRect = $scrollable[0].getBoundingClientRect();
+			if (top < scrollRect.top) {
+				// scroll up
+				$scrollable.scrollTop($scrollable.scrollTop() - (scrollRect.top - top));
+			} else if (bottom > scrollRect.bottom) {
+				// scroll down
+				$scrollable.scrollTop($scrollable.scrollTop() + (bottom - scrollRect.bottom));
+			}
+		}
+	};
+
 	var selection = new Selection();
 	Aloha.Selection = selection;
 
@@ -22644,7 +23101,8 @@ define('aloha/markup',[
 	'jquery',
 	'aloha/ecma5shims',
 	'aloha/console',
-	'aloha/block-jump'
+	'aloha/block-jump',
+	'aloha/content-rules'
 ], function (
 	Aloha,
 	Class,
@@ -22652,7 +23110,8 @@ define('aloha/markup',[
 	jQuery,
 	shims,
 	console,
-	BlockJump
+	BlockJump,
+	ContentRules
 ) {
 	
 
@@ -22832,7 +23291,7 @@ define('aloha/markup',[
 		var sibling = isGoingLeft ? prevVisibleNode(block) : nextVisibleNode(block);
 
 		if (!sibling || isBlock(sibling)) {
-			var $landing = jQuery('<div>&nbsp;</div>');
+			var $landing = jQuery('<div class="aloha-placeholder aloha-editing-div">&nbsp;</div>');
 
 			if (isGoingLeft) {
 				jQuery(block).before($landing);
@@ -23066,6 +23525,13 @@ define('aloha/markup',[
 		 * @return "Aloha.Selection"
 		 */
 		preProcessKeyStrokes: function (event) {
+			if (event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA') {
+				// Just let the browser handle all events on input fields.
+				event.stopImmediatePropagation();
+
+				return true;
+			}
+
 			if (event.type !== 'keydown') {
 				return false;
 			}
@@ -23108,6 +23574,14 @@ define('aloha/markup',[
 				return true;
 			}
 
+			// Internet Explorer hack: IE would allow to move the cursor into non-editable areas.
+			// we cannot prevent this, without breaking the selection & copy/paste functionality.
+			// so we simply prevent any keypress events that would insert text into non-editable areas
+			// keypresses with the ctrl-key are allowed, because they trigger functionality like copying
+			if (Aloha.browser.msie && !Aloha.Selection.isSelectionEditable() && !event.ctrlKey) {
+				return false;
+			}
+
 			// BACKSPACE
 			if (event.keyCode === 8) {
 				event.preventDefault(); // prevent history.back() even on exception
@@ -23123,13 +23597,18 @@ define('aloha/markup',[
 
 			// ENTER
 			if (event.keyCode === 13) {
-				if (!event.shiftKey && Html.allowNestedParagraph(Aloha.activeEditable)) {
+				if (!event.shiftKey && Html.allowNestedParagraph(Aloha.activeEditable) && ContentRules.isAllowed(Aloha.activeEditable.obj, 'p')) {
 					Aloha.execCommand('insertparagraph', false);
 					return false;
 				// if the shift key is pressed, or if the active editable is not allowed
 				// to contain paragraphs, a linebreak is inserted instead
-				} else {
+				} else if (ContentRules.isAllowed(Aloha.activeEditable.obj, 'br')) {
 					Aloha.execCommand('insertlinebreak', false);
+					return false;
+				} else if (Html.allowNestedParagraph(Aloha.activeEditable) && ContentRules.isAllowed(Aloha.activeEditable.obj, 'p')) {
+					Aloha.execCommand('insertparagraph', false);
+					return false;
+				} else {
 					return false;
 				}
 			}
@@ -23198,7 +23677,7 @@ define('aloha/markup',[
 				Aloha.Selection.rangeObject.select();
 
 				// Mozilla needs this fix or else the selection will not work
-				if (Aloha.activeEditable && jQuery.browser.mozilla) {
+				if (Aloha.activeEditable && jQuery.browser.mozilla && document.activeElement !== Aloha.activeEditable.obj[0]) {
 					Aloha.activeEditable.obj.focus();
 				}
 
@@ -23243,7 +23722,7 @@ define('aloha/markup',[
 				Aloha.Selection.rangeObject.select();
 
 				// Mozilla needs this fix or else the selection will not work
-				if (Aloha.activeEditable && jQuery.browser.mozilla) {
+				if (Aloha.activeEditable && jQuery.browser.mozilla && document.activeElement !== Aloha.activeEditable.obj[0]) {
 					Aloha.activeEditable.obj.focus();
 				}
 
@@ -23349,7 +23828,7 @@ define('aloha/markup',[
 						return true;
 					}
 
-				} else {
+				} else if (node.childNodes.length > 0) {
 					node = node.childNodes[offset === nodeLength(node) ? offset - 1 : offset];
 				}
 
@@ -24853,7 +25332,15 @@ define('util/trees',['jquery'], function ($) {
 /**
  * Contains miscellaneous utility functions that don't fit anywhere else.
  */
-define('util/misc',[], function () {
+define('util/misc',[
+	'jquery',
+	'aloha/engine',
+	'util/dom'
+], function (
+	jQuery,
+	Engine,
+	Dom
+) {
 	
 
 	/**
@@ -24871,8 +25358,75 @@ define('util/misc',[], function () {
 		return false;
 	}
 
+	/**
+	 * Add editing helpers, if necessary
+	 *
+	 * @param {jQuery} $field object where to add the editing helpers
+	 */
+	function addEditingHelpers($field) {
+		// check whether the editable contains a non-editable block
+		// element. as first or last element (not counting whitespace
+		// nodes) if so, we need to add br's at the end and/or start so
+		// that the user could enter text. Note that inline blocks
+		// will be padded by the block plugin, so we ignore them here.
+		var firstChild = Dom.getFirstVisibleChild($field[0], false, ["TABLE"]);
+		var $firstChild = jQuery(firstChild);
+
+		if (Dom.isBlockNode(firstChild)
+				&& (!$firstChild.contentEditable() || firstChild.nodeName === 'TABLE')) {
+			var startP = jQuery('<p class="aloha-editing-p"></p>');
+
+			$field.prepend(startP);
+
+			if (0 === Dom.getOffsetHeight(startP[0])) {
+				startP.append(jQuery('<br class="aloha-end-br"/>'));
+			}
+		}
+
+		var lastChild = Dom.getLastVisibleChild($field[0], false, ["TABLE"]);
+		var $lastChild = jQuery(lastChild);
+
+		if (Dom.isBlockNode(lastChild)
+				&& (!jQuery(lastChild).contentEditable() || lastChild.nodeName === 'TABLE')) {
+			var endP = jQuery('<p class="aloha-editing-p"></p>');
+
+			$field.append(endP);
+			if (0 === Dom.getOffsetHeight(endP[0])) {
+				endP.append(jQuery('<br class="aloha-end-br"/>'));
+			}
+		}
+	}
+
+	/**
+	 * Removes helper-breaks in paragraphs inserted to be able to target editables
+	 * with uneditable block-elements, and either removes the paragraphs (if empty)
+	 * or their editing attribute (otherwise)
+	 *
+	 * @param {jQuery} $field specifies the area in which to look for editing helpers
+	 */
+	function removeEditingHelpers($field) {
+		// remove the editing br's
+		$field.find('p.aloha-editing-p > br.aloha-end-br').remove();
+
+		$field.find('p.aloha-editing-p').each(function (index, elem) {
+			if (Dom.isEmpty(elem) &&
+				// blocks may remain empty until the user fills them with content
+					!jQuery(elem).find('.aloha-block').length) {
+				jQuery(elem).remove();
+			} else {
+				// if the p shall remain, we remove the class aloha-editing-p
+				jQuery(elem).removeClass('aloha-editing-p');
+				// use the Engine to add an end br, if necessary
+				Engine.ensureContainerEditable(elem);
+			}
+		});
+	}
+
+
 	return {
-		anyRx: anyRx
+		anyRx: anyRx,
+		addEditingHelpers: addEditingHelpers,
+		removeEditingHelpers: removeEditingHelpers
 	};
 });
 
@@ -25642,6 +26196,8 @@ define('aloha/command',[
 				rangeObject.select();
 			}
 
+			Aloha.scrollToSelection();
+
 			Aloha.trigger('aloha-command-executed', commandId);
 		},
 
@@ -25961,6 +26517,7 @@ define('aloha/editable',[
 	'aloha/block-jump',
 	'aloha/ephemera',
 	'util/dom2',
+	'util/browser',
 	'PubSub',
 	'aloha/copypaste',
 	'aloha/command',
@@ -25978,6 +26535,7 @@ define('aloha/editable',[
 	BlockJump,
 	Ephemera,
 	Dom,
+	Browser,
 	PubSub,
 	CopyPaste,
 	Command,
@@ -26101,21 +26659,10 @@ define('aloha/editable',[
 	function registerEvents(editable) {
 		var $editable = editable.obj;
 
-		$editable.mousedown(function (event) {
-			if (!Aloha.eventHandled) {
-				Aloha.eventHandled = true;
-				if (Aloha.activeEditable == null || typeof Aloha.activeEditable === 'undefined' || $editable[0] !== Aloha.activeEditable.obj[0]) {
-					Aloha.mouseEventChangedEditable = true;
-				}
-				return editable.activate(event);
-			}
-		});
-		$editable.mouseup(function (event) {
+		$editable.mousedown(function () {
+			Aloha.eventHandled = true;
+		}).mouseup(function () {
 			Aloha.eventHandled = false;
-		});
-
-		$editable.focus(function (event) {
-			return editable.activate(event);
 		});
 
 		$editable.keydown(function (event) {
@@ -26136,6 +26683,12 @@ define('aloha/editable',[
 			Aloha.activeEditable.smartContentChange(event);
 		});
 
+		// native drag and drop adds unwanted style elements so we need to
+		// disable it
+		$editable.on('dragstart', function (event) {
+			return false;
+		});
+
 		$editable.keyup(function (event) {
 			if (event.keyCode === 27) {
 				Aloha.deactivateEditable();
@@ -26150,6 +26703,98 @@ define('aloha/editable',[
 			}
 			return $editable;
 		});
+	}
+
+	/**
+	 * Helper function for safely removing a placeholder that is a div
+	 * @private
+	 * @param {Element} placeholder DOM Element
+	 */
+	function removeDivPlaceholder(placeholder) {
+		var $placeholder = $(placeholder);
+		var child = placeholder.firstChild;
+
+		if (!child) {
+			$placeholder.remove();
+			return;
+		}
+
+		if (!Dom.isTextNode(child) || child.data.indexOf('\u00A0') === -1) {
+			child = placeholder.lastChild;
+		}
+
+		if (Dom.isTextNode(child)) {
+			child.data = child.data.replace(/(^(\u00A0)+)|((\u00A0)+$)/g, '');
+		}
+
+		if (!$placeholder.is(':empty')) {
+			Dom.removeShallow(placeholder);
+		} else {
+			$placeholder.remove();
+		}
+	}
+
+	/**
+	 * Checks if the element given is an unmodified aloha placeholder
+	 *
+	 * @private
+	 * @param {HTMLElement} node
+	 * @return {Boolean} True if the given element is an aloha-editing-paragraph.
+	 */
+	function isUnmodifiedAlohaEditingP(node) {
+		return Browser.ie
+		       ? (node.className === 'aloha-editing-p aloha-placeholder'
+		         && node.children.length === 0
+		         && (!node.firstChild || node.firstChild.data === '\u2060'))
+		       : (node.className === 'aloha-editing-p aloha-placeholder'
+		         && node.children.length >= 1
+		         && node.children[0].nodeName === 'BR'
+		         && node.children[0].className === 'aloha-end-br');
+	}
+
+	/**
+	 * Helper function for safely removing a placeholder that is a paragraph
+	 *
+	 * @private
+	 * @param {Element} placeholder DOM Element
+	 */
+	function removePPlaceholder(placeholder) {
+		var $placeholder = $(placeholder);
+		if (isUnmodifiedAlohaEditingP(placeholder)) {
+			$placeholder.remove();
+		} else {
+			$placeholder.removeClass('aloha-editing-p');
+			$placeholder.removeClass('aloha-placeholder');
+			if (Browser.ie) {
+				//remove trailing or leading word joiner
+				var child = $placeholder[0].firstChild;
+				if (child && Dom.isTextNode(child) && child.data.indexOf('\u2060') >= -1) {
+					child.data = child.data.replace(/(^(\u2060)+)|((\u2060)+$)/g, '');
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Safely removes a placeholder and leaves its content at its place.
+	 * This function is a helper to be passed to a jQuery each() invocation.
+	 *
+	 * @private
+	 * @param {index}   index (Unused) index of placeholder element in jQuery collection.
+	 * @param {Element} placeholder DOM Element
+	 */
+	function removePlaceholder(index, placeholder) {
+		var $placeholder = $(placeholder);
+		if ($placeholder.hasClass('aloha-editing-div')) {
+			removeDivPlaceholder(placeholder);
+			return;
+		}
+		if ($placeholder.hasClass('aloha-editing-p')) {
+			removePPlaceholder(placeholder);
+			return;
+		}
+		$placeholder.remove();
 	}
 
 	$(document).keydown(onKeydown);
@@ -26310,12 +26955,13 @@ define('aloha/editable',[
 
 				me.ready = true;
 
-				// disable object resizing.
+				// disable object resizing and inline table editing.
 				// we do this in here and with a slight delay, because
 				// starting with FF 15, this would cause a JS error
 				// if done before the first DOM object is made contentEditable.
 				window.setTimeout(function () {
 					Aloha.disableObjectResizing();
+					Aloha.disableInlineTableEditing();
 				}, 20);
 
 				// throw a new event when the editable has been created
@@ -26497,12 +27143,12 @@ define('aloha/editable',[
 					range = new Selection.SelectionRange();
 					range.startContainer = range.endContainer = obj.get(0);
 					range.startOffset = range.endOffset = 0;
-					jQuery('.' + placeholderClass, obj).remove();
+					obj.find('.' + placeholderClass).each(removePlaceholder);
 					range.select();
 
 				}, 100);
 			} else {
-				jQuery('.' + placeholderClass, obj).remove();
+				obj.find('.' + placeholderClass).each(removePlaceholder);
 			}
 		},
 
@@ -26827,20 +27473,14 @@ define('aloha/editable',[
 		 */
 		smartContentChange: function (event) {
 			var me = this,
-				uniChar = null,
-				re,
-				match;
+				uniChar = null;
 
 			// ignore meta keys like crtl+v or crtl+l and so on
 			if (event && (event.metaKey || event.crtlKey || event.altKey)) {
 				return false;
 			}
 
-			if (event && event.originalEvent) {
-				// regex to strip unicode
-				re = new RegExp("U\\+(\\w{4})");
-				match = re.exec(event.originalEvent.keyIdentifier);
-
+			if (event) {
 				// Use among browsers reliable which http://api.jquery.com/keypress
 				uniChar = (this.keyCodeMap[this.keyCode] || String.fromCharCode(event.which) || 'unknown');
 			}
@@ -26898,17 +27538,33 @@ define('aloha/editable',[
 				handleSmartContentChange(me);
 
 			} else if (event && event.type === 'block-change') {
-				Aloha.trigger('aloha-smart-content-changed', {
-					'editable': me,
-					'keyIdentifier': null,
-					'keyCode': null,
-					'char': null,
-					'triggerType': 'block-change',
-					'getSnapshotContent': getSnapshotContent
-				});
-				handleSmartContentChange(me);
+				clearTimeout(this.sccTimerIdle);
+				clearTimeout(this.sccTimerDelay);
+
+				this.sccTimerDelay = window.setTimeout(function () {
+					Aloha.trigger('aloha-smart-content-changed', {
+						'editable': me,
+						'keyIdentifier': null,
+						'keyCode': null,
+						'char': null,
+						'triggerType': 'block-change',
+						'getSnapshotContent': getSnapshotContent
+					});
+					handleSmartContentChange(me);
+
+				}, this.sccDelay);
 
 			} else if (uniChar !== null) {
+				var range = Aloha.Selection.getRangeObject();
+
+				if (range.startContainer == range.endContainer) {
+					var $children = $(range.startContainer).children();
+
+					if ($children.length == 1 && $children.is('br')) {
+						$children.remove();
+					}
+				}
+
 				// in the rare case idle time is lower then delay time
 				clearTimeout(this.sccTimerDelay);
 				clearTimeout(this.sccTimerIdle);
@@ -27617,6 +28273,49 @@ define('aloha/jquery.aloha',[
 		// Return the modified object
 		return target;
 	};
+
+	/**
+	 * Check whether element has scrollbars visible
+	 */
+	function hasScroll(el, index, match) {
+		if (!el.style) {
+			return false;
+		}
+		var $el = jQuery(el), sX = $el.css('overflow-x'), sY = $el
+			.css('overflow-y'), hidden = 'hidden', visible = 'visible',
+			scroll = 'scroll', axis = match[3];
+
+		if (!axis) {
+			if (sX === sY && (sY === hidden || sY === visible)) {
+				return false;
+			}
+			if (sX === scroll || sY === scroll) {
+				return true;
+			}
+		} else if (axis === 'x') {
+			if (sX === hidden || sX === visible) {
+				return false;
+			}
+			if (sX === scroll) {
+				return true;
+			}
+		} else if (axis === 'y') {
+			if (sY === hidden || sY === visible) {
+				return false;
+			}
+			if (sY === scroll) {
+				return true;
+			}
+		}
+
+		// Compare client and scroll dimensions to see if a scrollbar is
+		// needed
+
+		return $el.innerHeight() < el.scrollHeight
+				|| $el.innerWidth() < el.scrollWidth;
+	}
+
+	jQuery.expr[':'].hasScroll = hasScroll;
 
 	/*
 	 * jQuery Hotkeys Plugin
@@ -31499,38 +32198,6 @@ define('ui/tab',[
 	var idCounter = 0;
 	var slottedComponents = {};
 
-	function hasVisibleComponents(tab) {
-		var i, slot, component, hasVisible = false;
-
-		// the problem is, a container component had a button to expand the options
-		if ($(
-				'button:not(.aloha-multisplit-toggle)',
-				tab.panel
-			).length !== 0
-		) {
-			hasVisible = true;
-		}
-
-		/*
-		// @todo this algorithm must be enhanced, asking each component if is visible
-		// this is the longest aproach, I iterate the components registered in
-		// this tab
-		for (i = 0; i < tab._slotsList.length; i++){
-			if(undefined !== slottedComponents[slotName]){
-				if($(
-						'button:not(.aloha-multisplit-toggle)',
-						slottedComponents[slotName].element
-					).length !== 0
-				){
-					hasVisible = true;
-					break;
-				}
-			}
-		}
-		*/
-		return hasVisible;
-	}
-
 	/**
 	 * Defines a Container object that represents a collection of related
 	 * component groups to be rendered together on the toolbar.  Tabs are
@@ -31706,7 +32373,7 @@ define('ui/tab',[
 		 * @override
 		 */
 		show: function () {
-			if (!this.list.children().length || !hasVisibleComponents(this)) {
+			if (!this.list.children().length || !this.hasVisibleComponents()) {
 				return;
 			}
 
@@ -32532,12 +33199,18 @@ define('ui/floating',[
 		var top = offset.top;
 		var left = offset.left;
 		var scrollTop = $WINDOW.scrollTop();
+		var scrollLeft = $WINDOW.scrollLeft();
 		var availableSpace = top - scrollTop - topGutter;
+		// consider horizontal scrolling (important for rtl pages that are scrolled to the left)
+		left = left - scrollLeft;
 		var horizontalOverflow = left + $surface.width() - $WINDOW.width();
 
 		if (horizontalOverflow > 0) {
 			left = Math.max(0, left - horizontalOverflow);
 		}
+
+		// never ever float outside of the visible area (to the left)
+		left = Math.max(0, left);
 
 		if (availableSpace >= $surface.height()) {
 			floatAbove($surface, {
@@ -32547,7 +33220,7 @@ define('ui/floating',[
 		} else if (availableSpace + $surface.height() >
 		           availableSpace + editable.obj.height()) {
 			floatBelow($surface, {
-				top: top + editable.obj.height(),
+				top: top + editable.obj.height() - scrollTop,
 				left: left
 			}, duration, callback);
 		} else {
@@ -34063,7 +34736,8 @@ define('ui/port-helper-attribute-field',[
 			.bind("focus", onFocus)
 			.bind("blur", onBlur)
 			.bind("keydown", onKeyDown)
-			.bind("keyup", onKeyup);
+			.bind("keyup", onKeyup)
+			.bind("change", onChange);
 
 		setPlaceholder();
 
@@ -34071,6 +34745,25 @@ define('ui/port-helper-attribute-field',[
 		// is deactivated and the toolbar disappears (other browsers do).
 		// TODO unbind, otherwise mermory leak
 		Aloha.bind('aloha-editable-deactivated', onBlur);
+
+		/**
+		 * Update the attribute in the target element
+		 */
+		function updateTarget() {
+			// If this attribute field currently refers to a repository
+			// item, and the user edits the contents of the input field,
+			// this attribute field seizes to refer to the repository item.
+			if (resourceItem && resourceValue !== getValue()) {
+				resourceItem = null;
+				resourceValue = null;
+			}
+
+			// This handles attribute updates for non-repository, literal urls typed into the input field.
+			// Input values that refer to a repository item are handled via setItem().
+			if ( ! resourceItem ) {
+				setAttribute(targetAttribute, getValue());
+			}
+		}
 
 		function onSelect(event, ui) {
 			if (ui.item) {
@@ -34112,25 +34805,17 @@ define('ui/port-helper-attribute-field',[
 		}
 
 		function onKeyup(event) {
-			// If this attribute field currently refers to a repository
-			// item, and the user edits the contents of the input field,
-			// this attribute field seizes to refer to the repository item.
-			if (resourceItem && resourceValue !== getValue()) {
-				resourceItem = null;
-				resourceValue = null;
-			}
-
-			// This handles attribute updates for non-repository, literal urls typed into the input field.
-			// Input values that refer to a repository item are handled via setItem().
-			if ( ! resourceItem ) {
-				setAttribute(targetAttribute, getValue());
-			}
+			updateTarget();
 
 			if ( ( event.keyCode == 13 || event.keyCode == 27 ) ) {
 				// Set focus to link element and select the object
 				Selection.getRangeObject().select();
 				finishEditing();
 			}
+		}
+
+		function onChange(event) {
+			updateTarget();
 		}
 
 		function finishEditing() {
@@ -34280,11 +34965,11 @@ define('ui/port-helper-attribute-field',[
 				resourceValue = v;
 				setAttribute(targetAttribute, item[valueField]);
 				RepositoryManager.markObject(targetObject, item);
-				
-				element.trigger('item-change');
 			} else {
 				resourceValue = null;
 			}
+			
+			element.trigger('item-change');
 		}
 
 		function getItem() {
@@ -34301,12 +34986,12 @@ define('ui/port-helper-attribute-field',[
 		function setAttribute(attr, value, regex, reference) {
 			if (targetObject) {
 				// check if a reference value is submitted to check against with a regex
-				if (typeof reference !== 'undefined' && !reference.match(new RegExp(regex))) {
-					$(targetObject).removeAttr(attr);
-				} else {
+				if (typeof reference === 'undefined' || reference.match(new RegExp(regex))) {
 					executeForTargets(function (target) {
 						target.attr(attr, value);
 					});
+				} else {
+					$(targetObject).removeAttr(attr);
 				}
 			}
 		}
@@ -34318,26 +35003,40 @@ define('ui/port-helper-attribute-field',[
 		 * @void
 		 */
 		function setTargetObject(obj, attr) {
+			var $obj = $(obj); // Just to be sure, we have a jQuery object.
 			targetObject = obj;
 			targetAttribute = attr;
 			additionalTargetObjects = [];
-
-			setItem(null);
 			
 			if (obj && attr) {
-				lastAttributeValue = $(obj).attr(attr);
-				setValue($(targetObject).attr(targetAttribute));
+				lastAttributeValue = $obj.attr(attr);
+				setValue(lastAttributeValue);
+
+				setItem(null);
 			} else {
 				setValue('');
+
+				setItem(null);
+
 				return;
 			}
+
+			var ignoreAutoValues = $obj.attr('data-ignore-auto-values');
 
 			// check whether a repository item is linked to the object
 			RepositoryManager.getObject( obj, function ( items ) {
 				if (items && items.length > 0) {
+					if (ignoreAutoValues) {
+						$obj.attr('data-ignore-auto-values', ignoreAutoValues);
+					}
+
 					setItem(items[0]);
+
+					if (ignoreAutoValues) {
+						$obj.removeAttr('data-ignore-auto-values');
+					}
 				}
-			} );
+			});
 		}
 
 		function addAdditionalTargetObject(targetObj) {
@@ -34473,7 +35172,7 @@ function (jQuery, Component, Utils) {
 			Utils.makeButton(this.buttonElement, this)
 				.uibutton('widget')
 				.tooltip({
-					tooltipClass: 'aloha aloha-ui-tooltip',
+					placement: 'bottom',
 					position: {
 						my: 'left top',
 						at: 'right bottom'
@@ -34496,7 +35195,7 @@ function (jQuery, Component, Utils) {
 
 		closeTooltip: function () {
 			// 'close', /*event*/, /*force*/
-			this.buttonElement.tooltip('close', null, true);
+			this.buttonElement.tooltip('hide');
 		},
 
 		/**
@@ -39421,6 +40120,36 @@ define('link/link-plugin',[
 		editable.obj.unbind('.aloha-link.meta-click-link');
 	}
 
+	/**
+	 * Get the translation from the given i18n object.
+	 * The object should be composed like:
+	 * {
+	 *   "en": "Path",
+	 *   "de": "Pfad"
+	 * }
+	 * 
+	 * If the translation in the current language is not found,
+	 * the first translation will be returned
+	 * @param i18nObject {Object} i18n Object
+	 * @return translation {String}
+	 */
+	function _i18n(i18nObject) {
+		if (!i18nObject) {
+			return '';
+		}
+		if (i18nObject.hasOwnProperty(Aloha.settings.locale)) {
+			return i18nObject[Aloha.settings.locale];
+		}
+
+		for (var lang in i18nObject) {
+			if (i18nObject.hasOwnProperty(lang)) {
+				return i18nObject[lang];
+			}
+		}
+
+		return '';
+	}
+
 	return Plugin.create('link', {
 		/**
 		 * Default configuration allows links everywhere
@@ -39484,7 +40213,7 @@ define('link/link-plugin',[
 		 * to ignore one selectionchanged event when we set our own selection.
 		 */
 		ignoreNextSelectionChangedEvent: false,
-		
+
 		/**
 		 * Internal update interval reference to work around an ExtJS bug
 		 */
@@ -39585,6 +40314,13 @@ define('link/link-plugin',[
 				onInit: function () {
 					initHrefLang(pl, this);
 
+					var infoFields = '';
+					if (jQuery.isArray(pl.settings.sidebar)) {
+						jQuery.each(pl.settings.sidebar, function () {
+							infoFields += '<div class="' + pl.nsClass('title-container') + '"><fieldset><legend>' + _i18n(this.title) + '</legend><span class="' + pl.nsClass( this.attr ) + '"></span></fieldset></div>';
+						});
+					}
+
 					 var that = this,
 						 content = this.setContent(
 							'<div class="' + pl.nsClass( 'target-container' ) + '"><fieldset><legend>' + i18n.t( 'link.target.legend' ) + '</legend><ul><li><input type="radio" name="targetGroup" class="' + pl.nsClass( 'radioTarget' ) + '" value="_self" /><span>' + i18n.t( 'link.target.self' ) + '</span></li>' + 
@@ -39594,7 +40330,8 @@ define('link/link-plugin',[
 							'<li><input type="radio" name="targetGroup" class="' + pl.nsClass( 'radioTarget' ) + '" value="framename" /><span>' + i18n.t( 'link.target.framename' ) + '</span></li>' + 
 							'<li><input type="text" class="' + pl.nsClass( 'framename' ) + '" /></li></ul></fieldset></div>' + 
 							'<div class="' + pl.nsClass( 'title-container' ) + '" ><fieldset><legend>' + i18n.t( 'link.title.legend' ) + '</legend><input type="text" class="' + pl.nsClass( 'linkTitle' ) + '" /></fieldset></div>' +
-							'<div class="' + pl.nsClass( 'href-lang-container' ) + '" ><fieldset><legend>' + i18n.t( 'href.lang.legend' ) + '</legend></fieldset></div>'
+							'<div class="' + pl.nsClass( 'href-lang-container' ) + '" ><fieldset><legend>' + i18n.t( 'href.lang.legend' ) + '</legend></fieldset></div>' +
+							infoFields
 						).content; 
 					 
 					 jQuery(hrefLangField.getInputElem()).addClass(pl.nsClass( 'hrefLang' ));
@@ -39725,38 +40462,42 @@ define('link/link-plugin',[
 				setupMetaClickLink(message.editable);
 			});
 
-			var insideLinkScope = false;
-
 			PubSub.sub('aloha.selection.context-change', function (message) {
 				if (!Aloha.activeEditable) {
+					plugin.lastActiveLink = false;
 					return;
 				}
-				var enteredLinkScope = false;
+				var activeLink = false;
 				if (configurations[Aloha.activeEditable.getId()]) {
-					enteredLinkScope = selectionChangeHandler(plugin, message.range);
+					activeLink = selectionChangeHandler(plugin, message.range);
 					// Only foreground the tab containing the href field the
 					// first time the user enters the link scope to avoid
 					// intefering with the user's manual tab selection
-					if (enteredLinkScope && insideLinkScope !== enteredLinkScope) {
-						plugin.hrefField.foreground();
+					if (activeLink !== false && activeLink !== plugin.lastActiveLink) {
+						// put the field into foreground with a timeout, so that this
+						// overrules other plugins that change the active toolbar tab
+						// by setting the scope
+						setTimeout(function () {
+							plugin.hrefField.foreground();
+						}, 10);
 					}
 				}
-				insideLinkScope = enteredLinkScope;
+				plugin.lastActiveLink = activeLink;
 			});
 
 			// Fixes problem: if one clicks from inside an aloha link outside
 			// the editable and thereby deactivates the editable, the link scope
 			// will remain active
 			PubSub.sub('aloha.editable.deactivated', function (message) {
-				if (insideLinkScope) {
+				if (plugin.lastActiveLink !== false) {
 					// Leave the link scope lazily to avoid flickering when
 					// switching between anchor element editables
 					setTimeout(function () {
-						if (!insideLinkScope) {
+						if (!plugin.lastActiveLink) {
 							plugin.toggleLinkScope(false);
 						}
 					}, 100);
-					insideLinkScope = false;
+					plugin.lastActiveLink = false;
 				}
 				teardownMetaClickLink(message.editable);
 			});
@@ -39777,7 +40518,19 @@ define('link/link-plugin',[
 			}
 			this._isScopeActive = show;
 			this._isScopeActive_editableId = Aloha.activeEditable && Aloha.activeEditable.getId();
-			if ( show ) {
+			if (!configurations[this._isScopeActive_editableId]) {
+				this.hrefField.hide();
+				this._insertLinkButton.hide();
+				this._removeLinkButton.hide();
+				this._formatLinkButton.setState(false);
+				// The calls to enterScope and leaveScope by the link
+				// plugin are not balanced.
+				// When the selection is changed from one link to
+				// another, the link scope is incremented more than
+				// decremented, which necessitates the force=true
+				// argument to leaveScope.
+				Scopes.leaveScope(this.name, 'link', true);
+			} else if ( show ) {
 				this.hrefField.show();
 				this._insertLinkButton.hide();
 				// Never show the removeLinkButton when the link itself
@@ -40169,8 +40922,12 @@ define('link/link-plugin',[
 		 * Updates the link object depending on the src field
 		 */
 		hrefChange: function () {
+			var hrefTargetObject = jQuery(this.hrefField.getTargetObject());
+			var setAutoValues = hrefTargetObject && !hrefTargetObject.attr('data-ignore-auto-values');
 			var that = this;
 
+			// No need to check setAutoValues here, since the title will not be
+			// changed anyway once a custom title has been set.
 			this.automaticallySetTitle(
 				this.hrefField,
 				this.title,
@@ -40180,7 +40937,7 @@ define('link/link-plugin',[
 			// For now hard coded attribute handling with regex.
 			// Avoid creating the target attribute, if it's unnecessary, so
 			// that XSS scanners (AntiSamy) don't complain.
-			if ( this.target != '' ) {
+			if (setAutoValues && this.target) {
 				this.hrefField.setAttribute(
 					'target',
 					this.target,
@@ -40188,8 +40945,8 @@ define('link/link-plugin',[
 					this.hrefField.getValue()
 				);
 			}
-			
-			if (null != this.cssclassregex) {
+
+			if (setAutoValues && this.cssclassregex) {
 				this.hrefField.setAttribute(
 					'class',
 					this.cssclass,
@@ -40240,6 +40997,19 @@ define('link/link-plugin',[
 				hrefLangField.setValue('');
 				hrefLangField.disableInput();
 			}
+
+			Aloha.Sidebar.right.checkActivePanels(Aloha.Selection.getRangeObject());
+
+			// fill all info fields
+			if (jQuery.isArray(that.settings.sidebar)) {
+				jQuery.each(that.settings.sidebar, function () {
+					if (hrefFieldItem && hrefFieldItem.hasOwnProperty(this.attr)) {
+						jQuery(that.nsSel(this.attr)).text(hrefFieldItem[this.attr]);
+					} else {
+						jQuery(that.nsSel(this.attr)).text("");
+					}
+				});
+			}
 		}
 	});
 
@@ -40262,7 +41032,7 @@ define('link/link-plugin',[
 	 *
 	 * @param {LinkPlugin} that This Link Plugin object
 	 * @param {RangeObject} rangeObject Selection Range
-	 * @returns {boolean} True if the link Scope was activated,
+	 * @returns {boolean|DomObject} The Dom Object if a link was selected,
 	 *                    False otherwise
 	 */
 	function selectionChangeHandler(that, rangeObject) {
@@ -40276,13 +41046,15 @@ define('link/link-plugin',[
 			Aloha.Selection.isSelectionEditable() &&
 			Aloha.activeEditable != null ) {
 			
-			foundMarkup = that.findLinkMarkup(rangeObject);
+			foundMarkup = jQuery(that.findLinkMarkup(rangeObject));
 
-			if (foundMarkup) {
+			if (foundMarkup.length > 0) {
 				that.toggleLinkScope(true);
 
 				// now we are ready to set the target object
+				foundMarkup.attr('data-ignore-auto-values', 'true');
 				that.hrefField.setTargetObject(foundMarkup, 'href');
+				foundMarkup.removeAttr('data-ignore-auto-values');
 				addAdditionalTargetObject(rangeObject, that.hrefField);
 				// if the selection-changed event was raised by the first click interaction on this page
 				// the hrefField component might not be initialized. When the user switches to the link
@@ -40320,7 +41092,7 @@ define('link/link-plugin',[
 		}
 		
 		that.ignoreNextSelectionChangedEvent = false;
-		return enteredLinkScope;
+		return enteredLinkScope ? foundMarkup.length > 0 : false;
 	}
 } );
 
@@ -40373,10 +41145,11 @@ define('ui/dialog',[
 
 	function makeDialogProps(props, defaultTitle) {
 		// All root elements of widgets added to the page by aloha should have the class 'aloha'.
+		// All ui elements should have the class aloha-ui.
 		// aloha-dialog is used for a hack to prevent a click in the
 		// dialog from bluggin the editable search for aloha-dialog in
 		// the aloha core for more information.
-		var cls = 'aloha aloha-dialog';
+		var cls = 'aloha aloha-dialog aloha-ui';
 		if (props.cls) {
 			cls += ' ' + props.cls;
 		}
@@ -40594,6 +41367,7 @@ define('ui/multiSplit',[
 
 			if (0 === buttons.length) {
 				element.hide();
+				this.visible = false;
 			}
 
 			for (var i = 0; i < buttons.length; i++) {
@@ -40731,6 +41505,7 @@ define('ui/multiSplit',[
 				this.buttons[name].visible = true;
 				// since we show at least one button now, we need to show the multisplit button
 				this.element.show();
+				this.visible = true;
 			}
 		},
 
@@ -40754,6 +41529,7 @@ define('ui/multiSplit',[
 					if (this.buttons.hasOwnProperty(button)) {
 						if (this.buttons[button].visible) {
 							this.element.show();
+							this.visible = true;
 							visible = true;
 							break;
 						}
@@ -40762,6 +41538,7 @@ define('ui/multiSplit',[
 
 				if (!visible) {
 					this.element.hide();
+					this.visible = false;
 				}
 			}
 		}
@@ -41678,13 +42455,17 @@ define('table/table-cell',[
 	'aloha/jquery',
 	'aloha/ephemera',
 	'table/table-plugin-utils',
-	'util/browser'
+	'util/browser',
+	'util/misc',
+	'util/dom'
 ], function (
 	Aloha,
 	jQuery,
 	Ephemera,
 	Utils,
-	Browser
+	Browser,
+	Misc,
+	Dom
 ) {
 	/**
 	 * Constructs a TableCell.
@@ -41748,7 +42529,7 @@ define('table/table-cell',[
 		Ephemera.markWrapper($wrapper);
 
 		// attach events to the editable div-object
-		$wrapper.bind('focus', function ($event) {
+		$wrapper.on('focus', function ($event) {
 			// activate the button for splitting cells if the clicked cell has an active row- or colspan
 			if (Utils.colspan(cell.obj) > 1 || Utils.rowspan(cell.obj) > 1) {
 				cell.tableObj.tablePlugin._splitcellsButton.enable(true);
@@ -41766,12 +42547,17 @@ define('table/table-cell',[
 			cell._editableFocus($event);
 		});
 
-		$wrapper.bind('mousedown', function ($event) {
+		$wrapper.on('mousedown', function ($event) {
 			// ugly workaround for ext-js-adapter problem in ext-jquery-adapter-debug.js:1020
 			if ($event.currentTarget) {
 				$event.currentTarget.indexOf = function () {
 					return -1;
 				};
+			}
+
+			// prevent cell selection, if mousedown was on a block handle
+			if (jQuery($event.target).hasClass('aloha-block-draghandle')) {
+				return;
 			}
 
 			cell._editableMouseDown($event);
@@ -41808,6 +42594,7 @@ define('table/table-cell',[
 				var grid = Utils.makeGrid($rows);
 
 				table.selection.selectedCells = [];
+				table.selection.currentRectangle = rect;
 				var selectClass = table.get('classCellSelected');
 				Utils.walkGrid(grid, function (cellInfo, j, i) {
 					if (Utils.containsDomCell(cellInfo)) {
@@ -41828,16 +42615,19 @@ define('table/table-cell',[
 			}
 		});
 
-		$wrapper.bind('blur', function ($event) {
+		$wrapper.on('blur', function ($event) {
 			cell._editableBlur($event);
 		});
-		$wrapper.bind('keyup', function ($event) {
+		$wrapper.on('keyup', function ($event) {
 			cell._editableKeyUp($event);
 		});
-		$wrapper.bind('keydown', function ($event) {
+		$wrapper.on('keydown', function ($event) {
 			cell._editableKeyDown($event);
 		});
-		$wrapper.bind('mouseover', function ($event) {
+		$wrapper.on('mouseover', function ($event) {
+			cell._selectCellRange();
+		});
+		$elem.on('mouseover', function ($event) {
 			cell._selectCellRange();
 		});
 
@@ -41847,34 +42637,110 @@ define('table/table-cell',[
 			return $wrapper;
 		});
 
-		$elem.bind('mousedown', function ($event) {
+		$elem.on('mousedown', function ($event) {
+			// prevent cell selection, if mousedown was on a block handle
+			if (jQuery($event.target).hasClass('aloha-block-draghandle')) {
+				return;
+			}
+
+			// when clicked on something nested, prevent selection of whole cell
+			if ($event.target != $elem[0]) {
+				$event.stopPropagation();
+				return;
+			}
+
 			window.setTimeout(function () {
 				// Select the entire cell's content.
 				cell.wrapper.trigger('focus');
 				cell._selectAll($wrapper);
 			}, 1);
-			if (!$event.shiftKey) {
-				cell.tableObj.selection.unselectCells();
+			cell.tableObj.selection.baseCellPosition = [cell._virtualY(), cell._virtualX()];
+
+			if (!cell.tableObj.selection.lastBaseCellPosition) {
+				cell.tableObj.selection.lastBaseCellPosition = cell.tableObj.selection.baseCellPosition;
+			}
+
+			if ($event.shiftKey) {
+				// shift-click to select a coherent cell range
+				//
+				// in IE it's not possible to select multiple cells when you "select+drag" over other cells
+				// click into the first cell and then "shift-click" into the last cell of the coherent cell range you want to select
+				var right = cell.tableObj.selection.lastBaseCellPosition[1];
+				var bottom = cell.tableObj.selection.lastBaseCellPosition[0];
+				var topLeft = cell.tableObj.selection.baseCellPosition;
+				var left = topLeft[1];
+				if (left > right) {
+					left = right;
+					right = topLeft[1];
+				}
+				var top = topLeft[0];
+				if (top > bottom) {
+					top = bottom;
+					bottom = topLeft[0];
+				}
+				var rect = {
+					"top": top,
+					"right": right,
+					"bottom": bottom,
+					"left": left
+				};
+
+				var table = cell.tableObj;
+				var $rows = table.obj.children().children('tr');
+				var grid = Utils.makeGrid($rows);
+
+				table.selection.selectedCells = [];
+				var selectClass = table.get('classCellSelected');
+				table.selection.currentRectangle = rect;
+				Utils.walkGrid(grid, function (cellInfo, j, i) {
+					if (Utils.containsDomCell(cellInfo)) {
+						if (i >= rect.top && i <= rect.bottom && j >= rect.left && j <= rect.right) {
+							jQuery(cellInfo.cell).addClass(selectClass);
+							table.selection.selectedCells.push(cellInfo.cell);
+						} else {
+							jQuery(cellInfo.cell).removeClass(selectClass);
+						}
+					}
+				});
+
+				table.selection.notifyCellsSelected();
+			} else {
+				cell.tableObj.selection.lastBaseCellPosition = cell.tableObj.selection.baseCellPosition;
 				cell._startCellSelection();
 			}
 			$event.stopPropagation();
 		});
 
-		if ($elem.get(0)) {
-			$elem.get(0).onselectstart = function () {
+		if ($elem[0]) {
+			$elem[0].onselectstart = function () {
 				return false;
 			};
 		}
 
+		$elem.on('mouseenter', function (evt) {
+			Misc.addEditingHelpers($wrapper);
+		});
+		$elem.on('mouseleave', function (evt) {
+			Misc.removeEditingHelpers($wrapper);
+		});
+
+		Aloha.bind('aloha-smart-content-changed', function (event, data) {
+			if (data.editable.isActive && data.triggerType === 'block-change') {
+				Misc.addEditingHelpers($wrapper);
+			}
+		});
+
 		// set contenteditable wrapper div
-		this.wrapper = $elem.children();
-		if (this.wrapper.get(0)) {
-			this.wrapper.get(0).onselectstart = function () {
+		this.wrapper = $wrapper;
+		if ($wrapper[0]) {
+			var wrapper = $wrapper[0];
+
+			wrapper.onselectstart = function () {
 				window.event.cancelBubble = true;
 			};
 			// Disabled the dragging of content, since it makes cell selection
 			// difficult.
-			this.wrapper.get(0).ondragstart = function () {
+			wrapper.ondragstart = function () {
 				return false
 			};
 		}
@@ -41892,6 +42758,8 @@ define('table/table-cell',[
 		var wrapper = jQuery(this.obj.children('.aloha-table-cell-editable'));
 
 		if (wrapper.length) {
+			Misc.removeEditingHelpers(wrapper);
+
 			// unwrap cell contents without re-creating dom nodes
 			wrapper.parent().append(
 				wrapper.contents()
@@ -41904,6 +42772,9 @@ define('table/table-cell',[
 			// remove the click event of the
 			this.obj.unbind('click');
 			this.obj.unbind('mousedown');
+			this.obj.unbind('mouseenter');
+			this.obj.unbind('mouseleave');
+			this.obj.get(0).onselectstart = null;
 
 			if (jQuery.trim(this.obj.attr('class')) == '') {
 				this.obj.removeAttr('class');
@@ -41964,6 +42835,18 @@ define('table/table-cell',[
 
 		// remove "active class"
 		this.obj.removeClass('aloha-table-cell_active');
+
+		// if the editable wrapper in the table cell only contains a single, empty
+		// paragraph, we remove that paragraph
+		if (this.wrapper.children().length === 1) {
+			this.wrapper.find('p').filter(function (index) {
+				var clone = jQuery(this).clone();
+				// the last br in the paragraph does not count, so we remove
+				// it before checking the paragraph for emptiness
+				clone.find('br:last-child').remove();
+				return Dom.isEmpty(clone[0]);
+			}).remove();
+		}
 	};
 
 	/**
@@ -42044,7 +42927,7 @@ define('table/table-cell',[
 			"left": left
 		};
 	};
-
+	
 	/**
 	 * Toggles selection of cell.
 	 * This works only when cell selection mode is active.
@@ -42055,18 +42938,27 @@ define('table/table-cell',[
 		}
 
 		var rect = this._getSelectedRect();
-
 		var table = this.tableObj;
+		// if the range contains a single cell only, and no cells were selected before,
+		// we do not select the whole cell. This enables selecting text in a single cell
+		// without selecting the whole cell, even if - while selecting the text - the user
+		// moves the mouse out of the text wrapper into the cell itself
+		if (rect.top === rect.bottom && rect.left === rect.right && table.selection.selectedCells.length === 0) {
+			return;
+		}
+
 		var $rows = table.obj.children().children('tr');
 		var grid = Utils.makeGrid($rows);
 
 		table.selection.selectedCells = [];
+		table.selection.currentRectangle = rect;
 		var selectClass = table.get('classCellSelected');
 		Utils.walkGrid(grid, function (cellInfo, j, i) {
 			if (Utils.containsDomCell(cellInfo)) {
 				if (i >= rect.top && i <= rect.bottom && j >= rect.left && j <= rect.right) {
 					jQuery(cellInfo.cell).addClass(selectClass);
 					table.selection.selectedCells.push(cellInfo.cell);
+
 				} else {
 					jQuery(cellInfo.cell).removeClass(selectClass);
 				}
@@ -42276,6 +43168,12 @@ define('table/table-selection',[
 			));
 	}
 
+	var POSSIBLE_SELECTION_TYPES = [ 'cell', 'column', 'row' ];
+
+	TableSelection.getPossibleSelectionTypes = function () {
+		return POSSIBLE_SELECTION_TYPES;
+	};
+
 	/**
 	 * Gives the type of the cell-selection
 	 * possible values are "cell", "row", "column" or "all".
@@ -42284,19 +43182,24 @@ define('table/table-selection',[
 	TableSelection.prototype.selectionType = undefined;
 
 	/**
+	 * Stores the currently selected rectangle
+	 * @type {Object} the rectangle object
+	 */
+	TableSelection.prototype.currentRectangle = {};
+	/**
 	 * Holds all currently selected table cells as an array of DOM "td" representations
 	 */
-	TableSelection.prototype.selectedCells = new Array();
+	TableSelection.prototype.selectedCells = [];
 
 	/**
 	 * Holds all table columnIdx if selectiontype is column
 	 */
-	TableSelection.prototype.selectedColumnIdxs = new Array();
+	TableSelection.prototype.selectedColumnIdxs = [];
 
 	/**
 	 * Holds all table rowIds if selectiontype is column
 	 */
-	TableSelection.prototype.selectedRowIdxs = new Array();
+	TableSelection.prototype.selectedRowIdxs = [];
 
 	/**
 	 * Holds the active/disabled state of cell selection mode 
@@ -42340,7 +43243,7 @@ define('table/table-selection',[
 				}
 			}
 		}
-
+		this.currentRectangle.columns = this.selectedColumnIdxs;
 		this.selectionType = 'column';
 	};
 	
@@ -42355,7 +43258,6 @@ define('table/table-selection',[
 		var rows = this.table.getRows();
 		
  	    rowsToSelect.sort( function ( a, b ) { return a - b; } );
-
 		for (var i = 0; i < rowsToSelect.length; i++) {
 			if ( rows[ rowsToSelect[i] ] ) {
 				// check if this row is already selected.
@@ -42373,6 +43275,7 @@ define('table/table-selection',[
 			    }
 			}
 		}
+		this.currentRectangle.rows = this.selectedRowIdxs;
 
 	    this.selectionType = 'row';
 	};
@@ -42455,9 +43358,10 @@ define('table/table-selection',[
 				$(cells[i]).removeClass(classCellSelected);
 			}
 
-			this.selectedCells = new Array();
-			this.selectedColumnIdxs = new Array();
-			this.selectedRowIdxs = new Array();
+			this.selectedCells = [];
+			this.selectedColumnIdxs = [];
+			this.selectedRowIdxs = [];
+			this.currentRectangle = {};
 
 			//we keep 'cell' as the default selection type instead of
 			//unsetting the selectionType to avoid an edge-case where a
@@ -42690,7 +43594,7 @@ define('table/table-selection',[
 					splitable++;
 				}
 			});
-			
+
 			if ( splitable > 0 ) {
 				return true;
 			} else {
@@ -42699,6 +43603,51 @@ define('table/table-selection',[
 		} else {
 			return false;
 		}
+	};
+
+	/**
+	 * Gets the currenty active selection type from the selected
+	 * rectangle or the selected rows/columns.
+	 * The first element in the array is the selection type which is
+	 * most likely to be the most important one to the user.
+	 * (e.g. "table" if a whole table was selected or "row" when the whole row was selected)
+	 *
+	 * @return {array} an array of currently active selection types
+	 */
+	TableSelection.prototype.getCurrentSelectionTypes = function () {
+		var rect = this.currentRectangle;
+		var table = this.table;
+		var selectionTypes = [];
+
+		// check if a whole row was selected with row or cell selection
+		if (rect.rows || (rect.left === 1 && rect.right >= table.numCols)) {
+			selectionTypes.push('row');
+		}
+		// check if a whole column was selected with column or cell selection
+		if (rect.columns || (rect.top === 1 && rect.bottom >= table.numRows)) {
+			selectionTypes.push('column');
+		}
+		// if all rows and columns are selected using row, column or cell selection mark the whole table as selected
+		// put the "cell" selection type on the first position in the array to make sure it is selected
+		// as active tab in the toolbar
+		if (
+			// check if the whole table is selected with row selection
+			(rect.rows && rect.rows.length === table.numRows) ||
+			// check if the whole table is selected with column selection
+			(rect.columns && rect.columns.length === table.numCols) ||
+			// check if the whole table is selected with cell selection
+			($.inArray('row', selectionTypes) !== -1 && $.inArray('column', selectionTypes) !== -1)
+		) {
+			selectionTypes.unshift('cell');
+		// if row and column selection was not used, we know the cell selection was used and need to add this type in the array
+		} else if (!rect.rows && !rect.columns) {
+			selectionTypes.push('cell');
+		}
+		// as fallback use the selection type set with the old logic
+		if (selectionTypes.length === 0) {
+			selectionTypes.push(this.selectionType);
+		}
+		return selectionTypes;
 	};
 
 	return TableSelection;
@@ -42729,7 +43678,7 @@ define('table/table',[
 	'table/table-plugin-utils',
 	'aloha/ephemera',
 	'util/html',
-	'util/dom2',
+	'util/dom',
 	'aloha/console'
 ], function (
 	Aloha,
@@ -43105,7 +44054,32 @@ define('table/table',[
 
 		var that = this,
 		    htmlTableWrapper,
-		    tableWrapper, eventContainer;
+		    tableWrapper, eventContainer, range = new Aloha.Selection.SelectionRange(true);
+
+		// check whether the current selection is in this table
+		if (jQuery(range.startContainer).closest('table').is(this.obj)
+				|| jQuery(range.endContainer).closest('table').is(
+						this.obj)) {
+			// if the startContainer or endContainer are a tr, we move into the next td
+			if (range.startContainer
+					&& range.startContainer.nodeType === 1
+					&& range.startContainer.nodeName.toLowerCase() === 'tr') {
+				if (range.startOffset < range.startContainer.childNodes.length) {
+					range.startContainer = range.startContainer.childNodes[range.startOffset];
+					range.startOffset = 0;
+				}
+			}
+			if (range.endContainer
+					&& range.endContainer.nodeType === 1
+					&& range.endContainer.nodeName.toLowerCase() === 'tr') {
+				if (range.endOffset < range.endContainer.childNodes.length) {
+					range.endContainer = range.endContainer.childNodes[range.endOffset];
+					range.endOffset = 0;
+				}
+			}
+		} else {
+			range = null;
+		}
 
 		// alter the table attributes
 		this.obj.addClass( this.get( 'className' ) );
@@ -43134,108 +44108,6 @@ define('table/table',[
 			}
 		} );
 
-		function isNotUnrenderedNode(node) {
-			return !Html.isUnrenderedNode(node);
-		}
-
-		/**
-		 * @param {WrappedRange} range
-		 */
-		function isRangeVisiblyAtLeftBoundary(range) {
-			var offset = range.startOffset;
-			var node = range.startContainer;
-			if (0 === offset) {
-				return true;
-			}
-			if (1 === node.nodeType) {
-				return !Html.findNodeRight(
-					node.childNodes[offset - 1],
-					isNotUnrenderedNode
-				);
-			}
-			if (3 === node.nodeType) {
-				return Html.isWSPorZWSPText(node.data.substr(0, offset));
-			}
-			return false;
-		}
-
-		/**
-		 * @param {WrappedRange} range
-		 */
-		function isRangeVisiblyAtRightBoundary(range) {
-			var offset = range.startOffset;
-			var node = range.startContainer;
-			if (Dom.nodeLength(node) === offset) {
-				return true;
-			}
-			if (1 === node.nodeType) {
-				return !Html.findNodeLeft(
-					node.childNodes[offset - 1],
-					isNotUnrenderedNode
-				);
-			}
-			if (3 === node.nodeType) {
-				return Html.isWSPorZWSPText(node.data.substr(offset));
-			}
-			return false;
-		}
-
-		Aloha.bind('aloha-command-will-execute', function (_, event){
-			var range = Aloha.getSelection().getRangeAt(0);
-			var adjacent;
-			if ('forwarddelete' === event.commandId) {
-				if (!range.collapsed || !isRangeVisiblyAtRightBoundary(range)) {
-					return;
-				}
-				var node = range.commonAncestorContainer;
-				if (3 === node.nodeType) {
-					adjacent = node.parentNode
-					        && Html.findNodeLeft(
-								node.parentNode.nextSibling,
-								isNotUnrenderedNode
-							);
-				} else if (1 === node.nodeType) {
-					adjacent = Html.findNodeLeft(
-						node.nextSibling,
-						isNotUnrenderedNode
-					);
-				}
-				if (adjacent === that.tableWrapper) {
-					event.preventDefault = true;
-					Aloha.getSelection().collapse(
-						getNewSelectedElement('first', that.obj),
-						0
-					);
-				}
-			} else if ('delete' === event.commandId) {
-				if (!range.collapsed || !isRangeVisiblyAtLeftBoundary(range)) {
-					return;
-				}
-				var node = range.commonAncestorContainer;
-				if (3 === node.nodeType) {
-					adjacent = node.parentNode
-					        && Html.findNodeRight(
-								node.parentNode.previousSibling,
-								isNotUnrenderedNode
-							);
-				} else if (1 === node.nodeType) {
-					adjacent = Html.findNodeRight(
-						node.previousSibling,
-						isNotUnrenderedNode
-					);
-				}
-				if (adjacent === that.tableWrapper) {
-					var nodeToSelect = getNewSelectedElement('last', that.obj);
-					event.preventDefault = true;
-					Aloha.getSelection().collapse(
-						nodeToSelect,
-						Dom.nodeLength(nodeToSelect)
-					);
-				}
-			}
-		});
-
-
 		this.obj.on('keydown', function (jqEvent) {
 			// Delete button
 			if (jqEvent.keyCode === 46) {
@@ -43243,6 +44115,8 @@ define('table/table',[
 					that.deleteRows();
 				} else if (that.selection.selectionType === 'column') {
 					that.deleteColumns();
+				} else {
+					return;
 				}
 
 				// jqEvent.stopPropagation doesn't support cancelBubble
@@ -43423,6 +44297,33 @@ define('table/table',[
 		this.checkWai();
 		this.isActive = true;
 
+		// when we stored the range, it was in the current table,
+		// so we need to re-select (because we changed the DOM structure around the table)
+		if (range) {
+			// check whether the startContainer and/or endContainer are one of the table's cells.
+			// if yes, replace the container with the editable wrapper
+			jQuery(this.cells).each(function() {
+				if (this.obj.is(range.startContainer)) {
+					if (this.wrapper.contents().length === 0) {
+						this.wrapper.html('&nbsp;');
+					}
+					range.startContainer = this.wrapper.contents().get(0);
+					range.startOffset = 0;
+				}
+				if (this.obj.is(range.endContainer)) {
+					if (this.wrapper.contents().length === 0) {
+						this.wrapper.html('&nbsp;');
+					}
+					range.endContainer = this.wrapper.contents().get(0);
+					range.endOffset = 0;
+				}
+			});
+			this.focus();
+			window.setTimeout( function() {
+				range.select();
+			}, 1);
+		}
+
 		Aloha.trigger( 'aloha-table-activated' );
 	};
 
@@ -43453,7 +44354,6 @@ define('table/table',[
 		thisWai.removeClass(waiGreen + ' ' + waiRed);
 
 		// Y U NO explain why we must check that summary is longer than 5 characters?
-		// http://cdn3.knowyourmeme.com/i/000/089/665/original/tumblr_l96b01l36p1qdhmifo1_500.jpg
 
 		if (jQuery.trim(this.obj[0].summary) !== '') {
 			thisWai.addClass(waiGreen);
@@ -43976,10 +44876,31 @@ define('table/table',[
 
 		var grid = Utils.makeGrid(rows);
 		var selectColWidth = 1; //width of the select-row column
+		var selectedColumnIdxs = this.selection.selectedColumnIdxs;
+		// if at least on whole table column was selected using cell selection
+		// it should also be possible to delete the column
+		// therefore we need to determine which columns are selected using the 
+		// current rectangle 
+		if (
+			(!selectedColumnIdxs || selectedColumnIdxs.length === 0) &&
+			// check if the current rectangle is active
+			this.selection.currentRectangle &&
+			// check if a whole column is selected
+			this.selection.currentRectangle.top === 1 &&
+			this.selection.currentRectangle.bottom >= this.numRows &&
+			// check if there are really meaningful values in the rectangle
+			this.selection.currentRectangle.right > 0 &&
+			this.selection.currentRectangle.left > 0
+		) {
+			selectedColumnIdxs = [];
+			for (var l = this.selection.currentRectangle.left; l <= this.selection.currentRectangle.right; l++) {
+				selectedColumnIdxs.push(l);
+			}
+		}
 
 		// if all columns should be deleted, remove the WHOLE table
 		// delete the whole table
-		if ( this.selection.selectedColumnIdxs.length == grid[0].length - selectColWidth ) {
+		if ( selectedColumnIdxs.length == grid[0].length - selectColWidth ) {
 
 			Dialog.confirm({
 				title : i18n.t('Table'),
@@ -43998,7 +44919,8 @@ define('table/table',[
 			//x-index is selected and deleted.
 
 			//sorted so we delete from right to left to minimize interfernce of deleted rows
-			var gridColumns = this.selection.selectedColumnIdxs.sort(function(a,b){ return b - a; });
+			
+			var gridColumns = selectedColumnIdxs.sort(function(a,b){ return b - a; });
 			for (var i = 0; i < gridColumns.length; i++) {
 				var gridColumn = gridColumns[i];
 				for (var j = 0; j < rows.length; j++) {
@@ -44044,6 +44966,7 @@ define('table/table',[
 	 * @return void
 	 */
 	Table.prototype.deleteTable = function() {
+
 		var deleteIndex = -1;
 		for (var i = 0; i < this.tablePlugin.TableRegistry.length; i++){
 			if (this.tablePlugin.TableRegistry[i].obj.attr('id') == this.obj.attr('id')) {
@@ -44064,13 +44987,18 @@ define('table/table',[
 			newRange.endContainer = this.obj.get(0).parentNode;
 			newRange.startContainer = newRange.endContainer;
 
-			newRange.endOffset = GENTICS.Utils.Dom.getIndexInParent(this.obj.get(0));
+			newRange.endOffset = Dom.getIndexInParent(this.obj.get(0));
 			newRange.startOffset = newRange.endOffset;
 
 			newRange.clearCaches();
 
 			this.obj.remove();
-			this.parentEditable.obj.focus();
+
+			// IE needs a timeout to work properly
+			window.setTimeout( function() {
+				this.parentEditable.obj.focus();
+			}, 5);
+
 			// select the new range
 			newRange.correctRange();
 			newRange.select();
@@ -44412,8 +45340,6 @@ define('table/table',[
 
 		this.selection.notifyCellsSelected();
 		this._removeCursorSelection();
-
-		Scopes.setScope(this.tablePlugin.name + '.column');
 	};
 
 	/**
@@ -44440,8 +45366,6 @@ define('table/table',[
 
 		this.selection.notifyCellsSelected();
 		this._removeCursorSelection();
-
-		Scopes.setScope(this.tablePlugin.name + '.row');
 	};
 
 	/**
@@ -44553,24 +45477,17 @@ define('table/table',[
 			});
 		};
 
-		cell.bind('mousedown.resize', function() {
+		cell.bind('mousedown.resize', function($event) {
+			// prevent cell resizing, if mousedown was on a block handle
+			if (jQuery($event.target).hasClass('aloha-block-draghandle')) {
+				return;
+			}
 
-			// create a guide
-			var guide = jQuery( '<div></div>' );
-			var $cell = jQuery(cell);
-			var width = $cell.outerWidth() - $cell.innerWidth();
-			var height = $cell.closest( 'tbody' ).innerHeight();
-			guide.css({
-				'height': (height < 1) ? 1 : height,
-				'width': (width < 1) ? 1 : width,
-				'top': $cell.closest( 'tbody' ).offset().top,
-				'left': $cell.offset().left,
-				'position': 'absolute',
-				'background-color': '#80B5F2'
-			});
-			jQuery('body').append(guide);
+			var $guide = jQuery('<div></div>');
+			var isResizing = false;
 
 			Utils.getCellResizeBoundaries(gridId, rows, function(maxPageX, minPageX) {
+				isResizing = true;
 
 				// unset the selection type
 				that.selection.resizeMode = true;
@@ -44579,7 +45496,7 @@ define('table/table',[
 				jQuery( 'body' ).bind( 'mousemove.dnd_col_resize', function(e) {
 					// limit the maximum resize
 					if ( e.pageX > minPageX && e.pageX < maxPageX ) {
-						guide.css( 'left', e.pageX );
+						$guide.css('left', e.pageX);
 					}
 				});
 
@@ -44605,11 +45522,25 @@ define('table/table',[
 					// unset the selection resize mode
 					that.selection.resizeMode = false;
 
-					guide.remove();
+					$guide.remove();
 				});
-
 			});
 
+			if (!isResizing) {
+				return;
+			}
+
+			var $cell = jQuery(cell);
+			var width = $cell.outerWidth() - $cell.innerWidth();
+			var height = $cell.closest('tbody').innerHeight();
+			$guide.css({
+				'height': (height < 1) ? 1 : height,
+				'width': (width < 1) ? 1 : width,
+				'top': $cell.closest('tbody').offset().top,
+				'left': $cell.offset().left,
+				'position': 'absolute',
+				'background-color': '#80B5F2'
+			}).appendTo('body');
 		});
 
 	};
@@ -44647,7 +45578,11 @@ define('table/table',[
 			expandingRow.css( 'height', expandToHeight );
 		};
 
-		cell.bind( 'mousedown.resize', function(){
+		cell.bind('mousedown.resize', function($event) {
+			// prevent cell selection, if mousedown was on a block handle
+			if (jQuery($event.target).hasClass('aloha-block-draghandle')) {
+				return;
+			}
 
 			// create a guide
 			var guide = jQuery( '<div></div>' );
@@ -44904,6 +45839,7 @@ define('table/table-plugin',[
 	'table/table-create-layer',
 	'table/table',
 	'table/table-plugin-utils',
+	'table/table-selection',
 	'util/dom',
 	'aloha/ephemera',
 	'aloha/console'
@@ -44926,6 +45862,7 @@ define('table/table-plugin',[
 	CreateLayer,
 	Table,
 	Utils,
+	TableSelection,
 	Dom,
 	Ephemera,
 	Console
@@ -45295,6 +46232,7 @@ define('table/table-plugin',[
 
 			// this case probably occurs when the selection is empty?
 			if (!range.startContainer || !editable) {
+				TablePlugin.leaveTableScopes();
 				return;
 			}
 
@@ -45306,6 +46244,7 @@ define('table/table-plugin',[
 			}
 
 			if (!that.activeTable) {
+				TablePlugin.leaveTableScopes();
 				return;
 			}
 
@@ -45317,6 +46256,7 @@ define('table/table-plugin',[
 				TablePlugin.updateFloatingMenuScope();
 				TablePlugin.setActiveCellStyle();
 			} else {
+				TablePlugin.leaveTableScopes();
 				that.activeTable.selection.cellSelectionMode = false;
 				that.activeTable.selection.baseCellPosition = null;
 				that.activeTable.selection.lastSelectionRange = null;
@@ -46169,6 +47109,12 @@ define('table/table-plugin',[
 			var tableObj = createNewTable(tableReloadedFromDOM);
 
 			if (tableObj) {
+				var range = Aloha.Selection.getRangeObject();
+
+				range.startContainer = range.endContainer = tableObj.cells[0].wrapper[0];
+				range.startOffset = range.endOffset = 0;
+				range.select();
+
 				// Because without the 10ms delay, we cannot place the cursor
 				// automatically into the first cell in IE.
 				if ($.browser.msie) {
@@ -46179,6 +47125,8 @@ define('table/table-plugin',[
 					tableObj.cells[0].wrapper.get(0).focus();
 				}
 			}
+
+			Aloha.activeEditable.smartContentChange({type: 'block-change'});
 
 			// The selection starts out in the first cell of the new
 			// table. The table tab/scope has to be activated
@@ -46341,9 +47289,56 @@ define('table/table-plugin',[
 		return this.prefix;
 	};
 
+	/**
+	 * Leaves all possible TableScopes in the floating menu
+	 * expect those in the retainScopes array
+	 *
+	 * @param  {array} retainScopes the name of the scopes which should not be left
+	 */
+	TablePlugin.leaveTableScopes = function(retainScopes, force) {
+		var i = 0,
+			scopes = [];
+		retainScopes = $.isArray(retainScopes) ? retainScopes : [];
+
+		scopes = TableSelection.getPossibleSelectionTypes();
+		for (i = 0; i < scopes.length; i++) {
+			// leave all possible scopes expect those in the retainScopes array
+			if ($.inArray(scopes[i], retainScopes) === -1) {
+				// always force leaving the scope because otherwise we need to keep track of how
+				// often we entered the scope and leave it accordingly
+				Scopes.leaveScope(TablePlugin.name + '.' + scopes[i], undefined, true);
+			}
+		}
+	}
+	/**
+	 * Update the current floating menu scope according to the
+	 * selected cells
+	 */
 	TablePlugin.updateFloatingMenuScope = function() {
-		if ( null != TablePlugin.activeTable && null != TablePlugin.activeTable.selection.selectionType ) {
-			Scopes.setScope(TablePlugin.name + '.' + TablePlugin.activeTable.selection.selectionType);
+		var i = 0,
+			primaryScope,
+			scopes;
+		if (
+			null != TablePlugin.activeTable &&
+			null != TablePlugin.activeTable.selection.selectionType
+		) {
+			// save the primary scope
+			primaryScope = Scopes.getPrimaryScope(),
+			// get the new scopes
+			scopes = TablePlugin.activeTable.selection.getCurrentSelectionTypes();
+			// leave all scopes except the the current ones
+			TablePlugin.leaveTableScopes(scopes);
+			// Enter all needed table scopes
+			for (i = 0; i < scopes.length; i++) {
+				Scopes.enterScope(TablePlugin.name + '.' + scopes[i]);
+			}
+			// Check if the primaryScope changed and set the first scope as the currently active one
+			if (scopes[0] !== primaryScope) {
+				Scopes.setScope(TablePlugin.name + '.' + scopes[0]);
+			}
+		} else {
+			// leave all scopes
+			TablePlugin.leaveTableScopes();
 		}
 	};
 
@@ -46582,7 +47577,9 @@ define('format/format-plugin', [
 	'util/arrays',
 	'util/html',
 	'util/dom',
+	'util/browser',
 	'util/maps',
+	'util/strings',
 	'ui/ui',
 	'ui/toggleButton',
 	'ui/port-helper-multi-split',
@@ -46599,7 +47596,9 @@ define('format/format-plugin', [
 	Arrays,
 	Html,
 	Dom,
+	Browser,
 	Maps,
+	Strings,
 	Ui,
 	ToggleButton,
 	MultiSplitButton,
@@ -46684,7 +47683,7 @@ define('format/format-plugin', [
 	function expandRange(range) {
 		var cac = range.commonAncestorContainer;
 
-		if (isInlineNode(cac)) {
+		if (isInlineNode(cac) && cac.parentNode) {
 			var parent = cac.parentNode;
 			range.startContainer = parent;
 			range.endContainer = parent;
@@ -46765,39 +47764,44 @@ define('format/format-plugin', [
 		var nextNodes = jQuery(range.endContainer.parentNode).nextAll();
 		var listName = range.startContainer.parentNode.parentNode.nodeName;
 
-		// first list item
-		if (selectedNodes.length === 1 && prevNodes.length === 0) { 
-			selectedNodes.each(function(){
-				jQuery(this).addClass('_moved');
-			}).remove().insertBefore(nextNodes.parent());
-		}
-		// last list item
-		else if (selectedNodes.length === 1 && nextNodes.length === 0) {
-			selectedNodes.each(function(){
-				jQuery(this).addClass('_moved');
-			}).remove().insertAfter(prevNodes.parent());
-		} 
-		// one list item in middle
-		else if (selectedNodes.length === 1 && nextNodes.length > 1) {
-			selectedNodes.each(function(){
-				jQuery(this).addClass('_moved');
-			}).remove().insertAfter(prevNodes.parent());
-			jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(jQuery(range.endContainer));
+		// Only one item selected
+		if (selectedNodes.length == 1) {
+			// Last item in list
+			if (prevNodes.length == 0 && nextNodes.length == 0) {
+				// The first unwrap removes the parent list tag,
+				// the second one the list item tag.
+				selectedNodes.unwrap().contents().unwrap().wrap('<p>');
+			}
+			// first list item
+			else if (prevNodes.length === 0) {
+				selectedNodes.addClass('_moved').remove().insertBefore(nextNodes.parent());
+			}
+			// last list item
+			else if (nextNodes.length === 0) {
+				selectedNodes.addClass('_moved').remove().insertAfter(prevNodes.parent());
+			}
+			// one list item in middle
+			else {
+				selectedNodes.addClass('_moved').remove().insertAfter(prevNodes.parent());
+				jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(selectedNodes);
+			}
 		}
 		// multiple list items up to whole list
 		else {
-			selectedNodes.each(function(){
-				jQuery(this).addClass('_moved');
-			}).remove().insertAfter(cac);
+			selectedNodes.addClass('_moved').remove().insertAfter(cac);
 			if (nextNodes.length > 0) {
-				jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(jQuery(range.endContainer));
+				jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(selectedNodes.last());
 			}
 		}
 
 
 		// unwrap moved list elements
 		jQuery('._moved').each(function() {
-			jQuery(this).contents().unwrap().wrap('<p>');
+			var $p = jQuery('<p>');
+			var $this = jQuery(this);
+
+			$this.after($p);
+			$this.contents().unwrap().appendTo($p);
 		});
 
 
@@ -46850,7 +47854,7 @@ define('format/format-plugin', [
 		formatPlugin.changeMarkup( button );
 
 		// setting the focus is needed for mozilla to have a working rangeObject.select()
-		if (Aloha.activeEditable && jQuery.browser.mozilla) {
+		if (Aloha.activeEditable && jQuery.browser.mozilla && document.activeElement !== Aloha.activeEditable.obj[0]) {
 			Aloha.activeEditable.obj.focus();
 		}
 		
@@ -46923,6 +47927,13 @@ define('format/format-plugin', [
 		if (config.length === 0) {
 			return;
 		}
+
+		// The warning class should only be used with header tags, but the
+		// insertparagraph command for example, copies all attributes, to
+		// the new element, so the plugin has to remove them again.
+		parent.find(":not(h1,h2,h3,h4,h5,h6)").each(function() {
+			$(this).removeClass("aloha-heading-hierarchy-violated");
+		});
 
 		//set startheading to heading with smallest number available in the config
 		for (var i = 0; i < config.length; i++){
@@ -47092,6 +48103,67 @@ define('format/format-plugin', [
 				formatPlugin.multiSplitButton.setActiveItem(null);
 			}
 		}
+
+		handlePreformattedText(rangeObject.commonAncestorContainer);
+	}
+	/**
+	 * Handles preformatted text.
+	 * Adds empty paragraphs as landing stripes before and after a preformatted text.
+	 *
+	 * @private
+	 * @param {Element} element a Dom element
+	 */
+	function handlePreformattedText(element) {
+		var $element = jQuery(element);
+
+		if ($element.is('.aloha-editing-p.aloha-placeholder')) {
+			//remove all other placeholders
+			$element[0].className = '';
+			removePlaceholders();
+			$element[0].className = 'aloha-editing-p aloha-placeholder';
+			return;
+		}
+
+		removePlaceholders();
+
+		if ($element.is('pre')) {
+			//add placeholder before and after the preformatted text element
+			var nextSibling = $element[0].nextSibling;
+			var previousSibling = $element[0].previousSibling;
+			if (!previousSibling || !nextSibling) {
+				if (!previousSibling) {
+					$element.before(createLanding());
+				}
+				if (!nextSibling) {
+					$element.after(createLanding());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Helper function to create the placeholder jQuery element
+	 *
+	 * @private
+	 * @returns {Object} the landing jQuery element
+	 */
+	function createLanding() {
+		//IE: add a "word joiner" character instead of a <br>
+		var landing = Browser.ie
+		            ? '<p class="aloha-editing-p aloha-placeholder">&#x2060;</p>'
+		            : '<p class="aloha-editing-p aloha-placeholder"><br class="aloha-end-br"></p>';
+		return jQuery(landing);
+	}
+
+	/**
+	 * Remove editing placeholders
+	 *
+	 * @private
+	 */
+	function removePlaceholders(){
+		if (Aloha.activeEditable) {
+			Aloha.activeEditable.removePlaceholder(Aloha.activeEditable.obj);
+		}
 	}
 
 	/**
@@ -47149,7 +48221,7 @@ define('format/format-plugin', [
 				me.initSidebar(Aloha.Sidebar.right);
 			});
 
-			var shouldCheckHeadingHierarchy = (true === this.settings.checkHeadingHierarchy);
+			var shouldCheckHeadingHierarchy = Strings.parseBoolean(this.settings.checkHeadingHierarchy);
 
 			var checkHeadings = function () {
 				checkHeadingHierarchy(me.formatOptions);
@@ -47258,7 +48330,10 @@ define('format/format-plugin', [
 			len = this.multiSplitItems.length;
 			for (i = 0; i < len; i++) {
 				var name = this.multiSplitItems[i].name;
-				if (!ContentRules.isAllowed(editable, name)) {
+
+				// Currently removeFormat is the only button, that would not
+				// insert tags, and can therefore ignore the content rules.
+				if (name != 'removeFormat' && !ContentRules.isAllowed(editable, name)) {
 					this.multiSplitButton.hideItem(name);
 				} else if (jQuery.inArray(name, config) !== -1) {
 					this.multiSplitButton.showItem(name);
@@ -47397,9 +48472,10 @@ define('format/format-plugin', [
 		 */
 		removeFormat: function() {
 			var formats = [
-				'u', 'strong', 'em', 'b', 'i', 'q', 'del', 's', 'code', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'quote', 'blockquote',
-				'section', 'article', 'aside', 'header', 'footer', 'address', 'main', 'hr', 'figure', 'figcaption', 'div', 'small', 'cite', 'dfn',
-				'abbr', 'data', 'time', 'var', 'samp', 'kbd', 'mark', 'span', 'wbr', 'ins'
+				'u', 'strong', 'em', 'b', 'i', 'q', 'del', 's', 'code', 'sub', 'sup',
+				'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'quote', 'blockquote',
+				'address', 'small', 'cite', 'dfn',
+				'abbr', 'time', 'var', 'samp', 'kbd', 'mark', 'span', 'ins'
 				],
 			    rangeObject = Selection.rangeObject,
 			    i;
@@ -47414,7 +48490,11 @@ define('format/format-plugin', [
 			}
 
 			for (i = 0; i < formats.length; i++) {
-				Dom.removeMarkup(rangeObject, jQuery('<' + formats[i] + '>'), Aloha.activeEditable.obj);
+				Dom.removeMarkup(
+					rangeObject,
+					jQuery('<' + formats[i] + '>'),
+					Aloha.activeEditable.obj,
+					false);
 			}
 			unformatList(rangeObject);
 
@@ -47492,12 +48572,34 @@ define('ui/menuButton',[
 			      .addClass('aloha-ui-menubutton-single');
 		}
 
+		if (props.tooltip) {
+			wrapper.children('[title]').removeAttr('title').end()
+				.attr('title', props.tooltip)
+				.tooltip({
+					placement: 'bottom',
+					position: {
+						my: 'left top',
+						at: 'right bottom'
+					}
+				});
+
+			if (props.menu) {
+				wrapper.on('menushown', function() {
+					wrapper.tooltip('hide');
+				});
+				wrapper.on('menuhidden', function() {
+					wrapper.tooltip('show');
+				});
+			}
+		}
+
 		if (!props.menu) {
 			return wrapper.append(action);
 		}
 
 		function hideMenu(menu) {
 			menu.hide().parent().removeClass('aloha-ui-menubutton-pressed');
+			wrapper.trigger('menuhidden');
 		}
 
 		expand.click(function () {
@@ -47523,6 +48625,7 @@ define('ui/menuButton',[
 					at: 'left bottom',
 					of: action || expand
 				});
+				wrapper.trigger('menushown');
 
 				// In order to prevent the floating menu from being partially
 				// covered by the ribbon, we use "position: relative" and an
@@ -47537,13 +48640,20 @@ define('ui/menuButton',[
 				menu.css('top', target.height() + target.offset().top + bodyOffset);
 				*/
 
-				$(document).bind('click', function (event) {
-					$(this).unbind(event);
-					menu.hide();
-					wrapper.removeClass('aloha-ui-menubutton-pressed');
-				});
+				// This click event will bubble up to the document (preventing
+				// this would leave a menu open when clicking on another menu
+				// button), but this one event should be ignored. So we wrap
+				// the actual handler, that will close the menu in a separate
+				// click handler.
+				var $doc = $(document);
 
-				return false;
+				$doc.one('click', function () {
+					$doc.one('click', function() {
+						menu.hide();
+						wrapper.removeClass('aloha-ui-menubutton-pressed')
+							.trigger('menuhidden');
+					});
+				});
 			});
 
 		wrapper.append(buttonset || expand).append(menu);
@@ -47608,8 +48718,9 @@ define('list/nls/i18n',{
 	"root":  {
 		"button.createulist.tooltip": "Insert Unordered List",
 		"button.createolist.tooltip": "Insert Ordered List",
-		"button.indentlist.tooltip": "Indent List",
-		"button.outdentlist.tooltip": "Outdent List",
+		"button.createdlist.tooltip": "Insert Definition List",
+		"button.indentlist.tooltip": "Increase Indent",
+		"button.outdentlist.tooltip": "Decrease Indent",
 		"floatingmenu.tab.list": "Lists"
 	},
 		"ca": true,
@@ -47679,6 +48790,7 @@ define('list/list-plugin',[
 					click: function () {
 						plugin.transformList('dl');
 					},
+					tooltip: i18n.t('button.createdlist.tooltip'),
 					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-definitionlist"></span>',
 					menu: (plugin.definitionListStyleButtons.length) ? plugin.definitionListStyleButtons : null
 				}
@@ -47697,6 +48809,7 @@ define('list/list-plugin',[
 					click: function () {
 						plugin.transformList('ol');
 					},
+					tooltip: i18n.t('button.createolist.tooltip'),
 					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-orderedlist"></span>',
 					menu: (plugin.orderedListStyleButtons.length) ? plugin.orderedListStyleButtons : null
 				}
@@ -47715,6 +48828,7 @@ define('list/list-plugin',[
 					click: function () {
 						plugin.transformList('ul');
 					},
+					tooltip: i18n.t('button.createulist.tooltip'),
 					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-unorderedlist"></span>',
 					menu: (plugin.unorderedListStyleButtons.length) ? plugin.unorderedListStyleButtons : null
 				}
@@ -47752,11 +48866,11 @@ define('list/list-plugin',[
 			}
 		});
 
-		var $dlIcon = $('.aloha-icon-definitionlist').parent('.aloha-ui-menubutton-container');
-		var $olIcon = $('.aloha-icon-orderedlist').parent('.aloha-ui-menubutton-container');
-		var $ulIcon = $('.aloha-icon-unorderedlist').parent('.aloha-ui-menubutton-container');
-
 		PubSub.sub('aloha.selection.context-change', function (message) {
+			var $dlIcon = $('.aloha-icon-definitionlist').parents('.aloha-ui-menubutton-container');
+			var $olIcon = $('.aloha-icon-orderedlist').parents('.aloha-ui-menubutton-container');
+			var $ulIcon = $('.aloha-icon-unorderedlist').parents('.aloha-ui-menubutton-container');
+
 			$dlIcon.removeClass('aloha-button-active');
 			$olIcon.removeClass('aloha-button-active');
 			$ulIcon.removeClass('aloha-button-active');
@@ -48265,12 +49379,14 @@ define('list/list-plugin',[
 			var editable;
 			var range;
 			var selection;
+			Aloha.Selection.updateSelection();
+
 			// wrap a paragraph around the selection
 			Aloha.Selection.changeMarkupOnSelection(jQuery('<p></p>'));
 			var domToTransform = this.getStartingDomObjectToTransform();
 
 			if (!domToTransform) {
-				if ( Aloha.Selection.rangeObject.startContainer.contentEditable ) {
+				if ( jQuery(Aloha.Selection.rangeObject.startContainer).contentEditable() ) {
 					// create a new list with an empty item
 					switch (listtype) {
 						case 'ol':
@@ -48288,23 +49404,21 @@ define('list/list-plugin',[
 					}
 
 					jqList.append(jqNewEl);
-
 					el = jqNewEl.get(0);
-					editable = Aloha.getActiveEditable().obj;
-					//IE7 requires an (empty or non-empty) text node
-					//inside the li for the selection to work.
 					el.appendChild(document.createTextNode(""));
 
-					editable.append(jqList);
-					editable.focus();
-
-					range = Aloha.createRange();
-					selection = Aloha.getSelection();
-					range.setStart( el.firstChild, 0 );
-					range.setEnd( el.firstChild, 0 );
-					selection.removeAllRanges();
-					selection.addRange( range );
-					Aloha.Selection.updateSelection();
+					if (Dom.insertIntoDOM(jqList, Aloha.Selection.rangeObject)) {
+						range = Aloha.createRange();
+						selection = Aloha.getSelection();
+						range.setStart( el.firstChild, 0 );
+						range.setEnd( el.firstChild, 0 );
+						selection.removeAllRanges();
+						selection.addRange( range );
+						Aloha.Selection.updateSelection();
+						domToTransform = jqList.get(0);
+					} else {
+						Aloha.Log.error(this, 'Could not transform selection into a list');
+					}
 				} else {
 					Aloha.Log.error(this, 'Could not transform selection into a list');
 				}
@@ -48326,8 +49440,13 @@ define('list/list-plugin',[
 			this._outdentListButton.show(true);
 			this._indentListButton.show(true);
 
-			if (!domToTransform) {
+			if (!domToTransform || !domToTransform.parentNode) {
 				domToTransform = this.prepareNewList(listtype);
+				this.refreshSelection();
+
+				if (domToTransform && domToTransform.nodeName.toLowerCase() === listtype) {
+					return;
+				}
 			}
 
 			// check the dom object
@@ -48837,21 +49956,17 @@ define('list/list-plugin',[
  * provided you include this license notice and a URL through which
  * recipients can access the Corresponding Source.
  */
+/*global serialize,serializeElement */
 /**
  * Provides public utility methods to convert DOM nodes to XHTML.
  */
-define('dom-to-xhtml/dom-to-xhtml',[
-	'jquery',
+define('util/dom-to-xhtml',[
 	'util/dom2',
-	'util/misc',
 	'util/browser',
 	'aloha/ephemera',
 	'aloha/console'
-],
-function (
-	$,
+], function (
 	Dom,
-	Misc,
 	Browser,
 	Ephemera,
 	console
@@ -48963,11 +50078,11 @@ function (
 	function makeAttrString(element, ephemera) {
 		var attrs = Dom.attrs(element);
 		var str = "";
-		var i, len;
+		var i, len, bool;
 		// Dom.attrs() doesn't support some boolean attributes on IE7
 		// which we have to compensate for.
 		if (Browser.ie7) {
-			for (var bool in booleanAttrs) {
+			for (bool in booleanAttrs) {
 				if (booleanAttrs.hasOwnProperty(bool) && element[bool]) {
 					// We don't want to add duplicate attributes
 					for (i = 0, len = attrs.length; i < len; i++) {
@@ -49132,7 +50247,7 @@ function (
 						' value=' + node.nodeValue);
 		}
 	}
-	
+
 	return {
 		/**
 		 * Serializes a number of DOM nodes in an array-like object to an XHTML string.
@@ -49264,7 +50379,7 @@ define('dom-to-xhtml/dom-to-xhtml-plugin',[
 	'jquery',
 	'aloha/plugin',
 	'aloha/ephemera',
-	'dom-to-xhtml/dom-to-xhtml'
+	'util/dom-to-xhtml'
 ], function (
 	Aloha,
 	$,
@@ -49418,7 +50533,7 @@ define('contenthandler/wordcontenthandler',[
 	 * @type {RexExp}
 	 * @const
 	 */
-	var MSO = /mso/;
+	var MSO = /mso/i;
 
 	/**
 	 * Matches string starting with "#".
@@ -49427,6 +50542,38 @@ define('contenthandler/wordcontenthandler',[
 	 * @const
 	 */
 	var HASH_HREF = /^#(.*)/;
+
+	/**
+	 * Matches numbering or bullet
+	 *
+	 * @type {RegExp}
+	 * @const
+	 */
+	var NUMBER_OR_BULLET = /^(([0-9]{1,3}\.)|([0-9]{1,3}\))|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\))|(.))$/;
+
+	/**
+	 * Matches numbering
+	 *
+	 * @type {RegExp}
+	 * @const
+	 */
+	var NUMBER = /^([0-9]{1,3}\.)|([0-9]{1,3}\)|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\)))$/
+
+	/**
+	 * Class used to mark span's that contain the bullet info
+	 *
+	 * @type {String}
+	 * @const
+	 */
+	var BULLET_CLASS = 'aloha-list-bullet';
+
+	/**
+	 * Class used to mark list items
+	 *
+	 * @type {String}
+	 * @const
+	 */
+	var LIST_ELEMENT_CLASS = 'aloha-list-element';
 
 	/**
 	 * Checks whether the given node is empty, ignoring white spaces.
@@ -49513,19 +50660,42 @@ define('contenthandler/wordcontenthandler',[
 			$node = $nodes.eq(i);
 			nodeName = $node[0].nodeName.toLowerCase();
 
-			if ('a' === nodeName) {
-
-				// Because when a href starts with #, it's the link to an
-				// anchor and should be removed.
-				href = $node.attr('href');
-				if (href && HASH_HREF.test($.trim(href))) {
-					$node.contents().unwrap();
-				}
-			} else if ('div' === nodeName || 'span' === nodeName) {
+			if ('div' === nodeName || 'span' === nodeName) {
 
 				// Because footnotes for example are wrapped in divs and should
 				// be unwrap.
 				$node.contents().unwrap();
+			} else if ('ul' === nodeName || 'ol' === nodeName) {
+				/*
+				 * Word renders nested lists as
+				 *
+				 * <ul>
+				 *   <li>Foo</li>
+				 *   <ul>
+				 *     <li>Bar</li>
+				 *   </ul>
+				 * </ul>
+				 *
+				 * instead of
+				 *
+				 * <ul>
+				 *   <li>Foo
+				 *     <ul>
+				 *       <li>Bar</li>
+				 *     </ul>
+				 *   </li>
+				 * </ul>
+				 *
+				 * Since the markup is not valid, the nested lists would be removed by
+				 * the generic content handler.
+				 */
+				if ($node.parent().is('ul,ol')) {
+					var prev = $node.prev('li');
+
+					if (prev.length > 0) {
+						prev.append($node)
+					}
+				}
 			} else if ('td' !== nodeName && isEmpty($node)) {
 
 				// Because any empty element (like spaces wrapped in spans) are
@@ -49586,6 +50756,72 @@ define('contenthandler/wordcontenthandler',[
 			// otherwise check for a number, letter or '(' as first character
 			return $.trim(listSpan.text()).match(/^([0-9]{1,3}\.)|([0-9]{1,3}\)|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\)))$/) ? true : false;
 		},
+		
+		/**
+		 * Checks if the specified node is enclosed in a <!--[if !supportLists]--> comment.
+		 * @param node The Node, whose position should be checked.
+		 * @param stopAt An ancestor Node of node, where the search will be stopped (this node will not be searched any more).
+		 * @return true if the node is enclosed in a <!--[if !supportLists]--> comment within the stopAt node, otherwise false.
+		 */
+		checkElementIsEnclosedInListsComment: function (node, stopAt) {
+			while (node && node !== stopAt) {
+				var sibling = node;
+				while ((sibling = sibling.previousSibling) !== null) {
+					if (Node.COMMENT_NODE === sibling.nodeType && $.trim(sibling.textContent) === '[if !supportLists]') {
+						return true;
+					}
+				}
+				node = node.parentNode;
+			}
+			return false;
+		},
+
+		/**
+		 * Try to detect the list type (ordered or bulleted).
+		 * Remove the elements that were used to render the numbering or bullets
+		 * @param {jQuery.<HTMLElement>} jqElem
+		 * @return true for numbered list, false for bulleted list
+		 */
+		detectListType: function (jqElem) {
+			var ordered = false;
+			var removeSpan = true;
+			// get the first span in the element
+			var firstSpan = jQuery(jqElem.find('span.' + BULLET_CLASS));
+			if (firstSpan.length === 0) {
+				firstSpan = jqElem.find('span').filter(function() {
+					var $this = $(this);
+					var style = $this.attr('style') || '';
+					return style.indexOf('mso-list: Ignore') >= 0 || style.indexOf('mso-list:Ignore') >= 0;
+				});
+			}
+			if (firstSpan.length === 0) {
+				firstSpan = jqElem.find('span').eq(0);
+				if (firstSpan.length > 0) {
+					removeSpan = WordContentHandler.checkElementIsEnclosedInListsComment(firstSpan.get(0), jqElem.get(0));
+				}
+			}
+			if ($.trim(firstSpan.text()).length !== 0) {
+				// use the span to detect whether the list shall be ordered or unordered
+				ordered = this.isOrderedList(firstSpan);
+				// finally remove the span (numbers, bullets are rendered by the browser)
+				if (removeSpan) {
+					firstSpan.remove();
+				}
+			} else {
+				firstSpan.remove();
+				var f = function (index) {
+					var el = jQuery(this);
+					if (NUMBER_OR_BULLET.test($.trim(el.text()))) {
+						ordered = NUMBER.test($.trim(el.text()));
+						el.remove();
+						return false;
+					}
+					el.contents().each(f);
+				};
+				jqElem.contents().each(f);
+			}
+			return ordered;
+		},
 
 		/**
 		 * Transform lists pasted from word
@@ -49594,11 +50830,7 @@ define('contenthandler/wordcontenthandler',[
 		transformListsFromWord: function (content) {
 			var that = this,
 				negateDetectionFilter, detectionFilter, spans,
-				paragraphs, bulletClass, listElementClass;
-
-			// this will be the class to mark paragraphs that will be transformed to lists
-			listElementClass = 'aloha-list-element';
-			bulletClass = 'aloha-list-bullet';
+				paragraphs;
 
 			// first step is to find all paragraphs which will be converted into list elements and mark them by adding the class 'aloha-list-element'
 			detectionFilter = 'p.MsoListParagraphCxSpFirst,p.MsoListParagraphCxSpMiddle,p.MsoListParagraphCxSpLast,p.MsoListParagraph,p span';
@@ -49611,15 +50843,15 @@ define('contenthandler/wordcontenthandler',[
 
 				// detect special classes
 				if (jqElem.hasClass('MsoListParagraphCxSpFirst') || jqElem.hasClass('MsoListParagraph')) {
-					jqElem.addClass(listElementClass);
+					jqElem.addClass(LIST_ELEMENT_CLASS);
 				} else if (fontFamily.indexOf('Symbol') >= 0) {
-					jqElem.closest('p').addClass(listElementClass);
+					jqElem.closest('p').addClass(LIST_ELEMENT_CLASS);
 				} else if (fontFamily.indexOf('Wingdings') >= 0) {
-					jqElem.closest('p').addClass(listElementClass);
+					jqElem.closest('p').addClass(LIST_ELEMENT_CLASS);
 				} else if (msoList !== '') {
-					jqElem.closest('p').addClass(listElementClass);
+					jqElem.closest('p').addClass(LIST_ELEMENT_CLASS);
 				} else if (style.indexOf('mso-list') >= 0) {
-					jqElem.closest('p').addClass(listElementClass);
+					jqElem.closest('p').addClass(LIST_ELEMENT_CLASS);
 				}
 			});
 
@@ -49644,15 +50876,15 @@ define('contenthandler/wordcontenthandler',[
 					// I.
 					// i.
 					// o § (or any other single character)
-					if (outerText.match(/^([0-9]{1,3}\.)|([0-9]{1,3}\))|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\))|(.)$/)) {
-						jqElem.closest('p').addClass(listElementClass);
-						jqElem.parent().parent().addClass(bulletClass);
+					if (NUMBER_OR_BULLET.test(outerText)) {
+						jqElem.closest('p').addClass(LIST_ELEMENT_CLASS);
+						jqElem.parent().parent().addClass(BULLET_CLASS);
 					}
 				}
 			});
 
 			// no detect all marked paragraphs and transform into lists
-			detectionFilter = 'p.' + listElementClass;
+			detectionFilter = 'p.' + LIST_ELEMENT_CLASS;
 			// We also have to include font because if IE9
 			negateDetectionFilter = ':not(' + detectionFilter + ', font)';
 			paragraphs = content.find(detectionFilter);
@@ -49662,7 +50894,7 @@ define('contenthandler/wordcontenthandler',[
 					var jqElem = jQuery(this),
 						jqNewLi, jqList, ordered, firstSpan, following, lists, margin, nestLevel;
 
-					jqElem.removeClass(listElementClass);
+					jqElem.removeClass(LIST_ELEMENT_CLASS);
 					// first remove all font tags
 					jqElem.find('font').each(function () {
 						jQuery(this).contents().unwrap();
@@ -49681,15 +50913,7 @@ define('contenthandler/wordcontenthandler',[
 					// get all following list elements
 					following = jqElem.nextUntil(negateDetectionFilter);
 
-					// get the first span in the element
-					firstSpan = jQuery(jqElem.find('span.' + bulletClass));
-					if (firstSpan.length === 0) {
-						firstSpan = jqElem.find('span').eq(0);
-					}
-					// use the span to detect whether the list shall be ordered or unordered
-					ordered = that.isOrderedList(firstSpan);
-					// finally remove the span (numbers, bullets are rendered by the browser)
-					firstSpan.remove();
+					ordered = that.detectListType(jqElem);
 
 					// create the list element
 					jqList = jQuery(ordered ? '<ol></ol>' : '<ul></ul>');
@@ -49697,10 +50921,13 @@ define('contenthandler/wordcontenthandler',[
 
 					// add a new list item
 					jqNewLi = jQuery('<li></li>');
+
 					// add the li into the list
 					jqList.append(jqNewLi);
+
 					// append the contents of the old dom element to the li
 					jqElem.contents().appendTo(jqNewLi);
+
 					// replace the old dom element with the new list
 					jqElem.replaceWith(jqList);
 
@@ -49724,17 +50951,8 @@ define('contenthandler/wordcontenthandler',[
 						if (isNaN(newMargin)) {
 							newMargin = 0;
 						}
-						
-						// get the first span
-						firstSpan = jQuery(jqElem.find('span.' + bulletClass));
-						if (firstSpan.length === 0) {
-							firstSpan = jqElem.find('span').eq(0);
-						}
-						// ... and use it to detect ordered/unordered list elements (this
-						// information will only be used at the start of a new list anyway)
-						ordered = that.isOrderedList(firstSpan);
-						// remove the span
-						firstSpan.remove();
+
+						ordered = that.detectListType(jqElem);
 
 						// check for nested lists by comparing the margins
 						if (newMargin > margin) {
@@ -49762,6 +50980,7 @@ define('contenthandler/wordcontenthandler',[
 						jqNewLi = jQuery('<li></li>');
 						// add the li into the list
 						jqList.append(jqNewLi);
+
 						// append the contents of the old dom element to the li
 						jqElem.contents().appendTo(jqNewLi);
 						// remove the old dom element
@@ -49770,7 +50989,7 @@ define('contenthandler/wordcontenthandler',[
 				});
 			}
 		},
-		
+
 		/**
 		 * Remove paragraph numbering from TOC feature
 		 * @param content
@@ -49971,6 +51190,22 @@ define('contenthandler/genericcontenthandler',[
 		);
 	}
 
+	/**
+	 * Replaces unnecessary new line characters within text nodes in Word HTML
+	 * with a space.
+	 *
+	 * @param {jQuery.<HTMLElement>} $content
+	 */
+	function replaceNewlines($content) {
+		$content.contents().each(function (index, node) {
+			if (3 === node.nodeType) {
+				node.nodeValue = node.nodeValue.replace(/[\r\n]+/gm, ' ');
+			} else {
+				replaceNewlines($(node));
+			}
+		});
+	}
+
 	var GenericContentHandler = Manager.createHandler({
 
 		/**
@@ -50016,6 +51251,8 @@ define('contenthandler/genericcontenthandler',[
 			    this.transformFormattings($content);
 			}
 
+			replaceNewlines($content);
+
 			return $content.html();
 		},
 
@@ -50032,6 +51269,18 @@ define('contenthandler/genericcontenthandler',[
 		 */
 		cleanLists: function ($content) {
 			$content.find('ul,ol').find('>:not(li)').remove();
+
+			// Remove paragraphs inside list elements, if they are
+			// the only child. e.g.: li > p > text
+			// This has been observed to happen with Word documents
+			$content.find("li").each(function() {
+				var $li = $(this);
+				var $children = $li.children();
+				if ($children.length === 1 && $children.is("p")) {
+					$children.contents().appendTo($li);
+					$children.remove();
+				}
+			});
 		},
 
 		/**
@@ -51074,7 +52323,7 @@ define('block/block-utils',[
 		return 'SPAN' === node.nodeName &&
 			(node.childNodes.length === 0 || node.innerHTML === '&nbsp;');
 	}
-	
+
 	/**
 	 * Creates unique class name for `$blockELement`.
 	 */
@@ -51087,13 +52336,34 @@ define('block/block-utils',[
 	 * @return {HTMLElement}
 	 */
 	function createLandingElement($blockElement) {
-		var node = document.createElement('span');
+		var node;
+
+		// This is a bit of an ugly hack, but since we allow tags
+		// consisting of inline-block DIVs we have to wrap those
+		// with other DIVs to ensure valid HTML markup and not
+		// disturb for example the autoparagraph plugin.
+		if ($blockElement.is('div')) {
+			node = document.createElement('div');
+			node.style.display = 'inline-block';
+		} else {
+			node = document.createElement('span');
+		}
+
 		node.className = createLandingClassName($blockElement);
 		node.appendChild(document.createTextNode('\u00A0'));
-		
+
 		Ephemera.markWhiteSpaceWrapper(node);
-		
+
 		return node;
+	}
+
+	/**
+	 * Check if a node is an Aloha-Block
+	 * @param  {HTMLElement}  node the HTML-node to check
+	 * @return {boolean}      true if the node is a block
+	 */
+	function isAlohaBlock(node) {
+		return $(node).data('aloha-block-type') || false;
 	}
 
 	function isVisibleNode(node) {
@@ -51101,8 +52371,40 @@ define('block/block-utils',[
 			!Html.isUnrenderedNode(node);
 	}
 
+	/**
+	 * Go forward in the dom while ignoring the starting node completely
+	 *
+	 * @param  {HTMLElement} node the element to start from
+	 * @return {HTMLElement}      the next element
+	 */
 	function skipNodeForward(node) {
-		return Dom.forward(node.lastChild || node);
+		if (node.lastChild) {
+			return skipNodeForward(node.lastChild);
+		} else {
+			return Dom.forward(node);
+		}
+	}
+
+	/**
+	 * When creating the padding for inline blocks this function is used to determine how far to go
+	 * forward or backward in the dom structure.
+	 *
+	 * @param  {HTMLElement} node the HTML-node to check
+	 * @return {boolean}      true if the node is line-break ('br'), a block element or the editing host itself
+	 */
+	function untilNode(node) {
+		return /^(br|td|th)$/.test(node.nodeName.toLowerCase()) || Html.isBlock(node) || DomLegacy.isEditingHost(node);
+	}
+
+	/**
+	 * When creating the padding for inline blocks this function is used to determine how far to go
+	 * forward in the dom structure. This function calls untilNode() internally.
+	 *
+	 * @param  {HTMLElement} node the HTML-node to check
+	 * @return {boolean}      true if untilNode() returns true or the node is an Aloha-Block
+	 */
+	function untilNodeForward(node) {
+		return untilNode(node) || node.nodeName.toLowerCase() === 'li' || (node.previousSibling && DomLegacy.isEditingHost(node.previousSibling)) || isAlohaBlock(node);
 	}
 
 	/**
@@ -51113,28 +52415,33 @@ define('block/block-utils',[
 	 * @param {jQuery<DOMElement>} $block
 	 */
 	function pad($block) {
-		var previous = Dom.findBackward(
-			Dom.backward($block[0]),
-			isVisibleNode,
-			function (node) {
-				return Html.isBlock(node) || DomLegacy.isEditingHost(node);
-			}
-		);
-		if (!previous) {
-			$block.before(createLandingElement($block));
+		if (DomLegacy.isBlockNode($block[0])) {
+			return;
 		}
-		var next = Dom.findForward(
-			skipNodeForward($block[0]),
-			isVisibleNode,
-			function (node) {
-				return Html.isBlock(node) || DomLegacy.isEditingHost(node) || (
-					node.previousSibling &&
-					DomLegacy.isEditingHost(node.previousSibling)
-				);
+
+		// first check, whether the padding already exists (previous or next sibling with
+		// the a class named landingClassName)
+		var landingClassName = createLandingClassName($block), previous, next;
+
+		if ($block.prev('.' + landingClassName).length === 0) {
+			previous = Dom.findBackward(
+					Dom.backward($block[0]),
+					isVisibleNode,
+					untilNode
+			);
+			if (!previous) {
+				$block.before(createLandingElement($block));
 			}
-		);
-		if (!next) {
-			$block.after(createLandingElement($block));
+		}
+		if ($block.next('.' + landingClassName).length === 0) {
+			next = Dom.findForward(
+					skipNodeForward($block[0]),
+					isVisibleNode,
+					untilNodeForward
+			);
+			if (!next) {
+				$block.after(createLandingElement($block));
+			}
 		}
 	}
 
@@ -51430,6 +52737,47 @@ define('block/blockmanager',[
 		_registerEventHandlersForBlockDeletion: function () {
 			var that = this;
 
+			/**
+			 * A block selection is a 'virtual selection' (ie: not a real
+			 * browser selection on the document). We can be certain that we
+			 * have the entire block selected when there is an activeBlock but
+			 * no document selection.
+			 *
+			 * However, IE tends to set the selection to the document body when
+			 * we programmatically deselect everything. We need to detect this
+			 * situation and treat it as though there is no browser selection.
+			 * This check is designed to double check against this false
+			 * positive.
+			 *
+			 * @private
+			 * @param  {!Selection} selection
+			 * @return {boolean}
+			 */
+			function checkIsOnlyBlockSelected(selection) {
+				if (selection.getRangeCount() === 0) {
+					return true;
+				}
+				if (!$.browser.msie) {
+					return false;
+				}
+				var range = selection.getRangeAt(0);
+				var sc = range.startContainer;
+				var ec = range.endContainer;
+				if (sc !== ec) {
+					return false;
+				}
+				// IE has placed the selection on the body element
+				if ($('body').is(sc)) {
+					return true;
+				}
+				// IE has placed the selection around the selected block?
+				if (range.startOffset + 1 === range.endOffset && 1 === node.nodeType) {
+					var node = node.childNodes[range.startOffset];
+					return $(node).is('.aloha-block');
+				}
+				return false;
+			}
+
 			// This case executes in:
 			// - Chrome
 			// - Firefox
@@ -51438,30 +52786,31 @@ define('block/blockmanager',[
 			// it does NOT execute in the following cases:
 			// - IE7+8 for block-level blocks which are NOT part of a bigger selection. This case is handled separately below.
 			Aloha.bind('aloha-command-will-execute', function (e, data) {
-				var commandId = data.commandId;
+				// workaround for selection problem in tables: we never delete table blocks this way
+				if (that._activeBlock && that._activeBlock.$element.hasClass('aloha-table-wrapper')) {
+					return true;
+				}
 
-				// Internet Explorer *magically* sets the range to the "Body" object after deselecting everything. yeah :-D
-				var selection = Aloha.getSelection(),
-				    rangeCount = selection.getRangeCount(),
-				    range = selection.getRangeAt(0),
-				    rangeEndContainer = range.endContainer,
-				    rangeStartContainer = range.startContainer,
+				var cmd = data.commandId;
+				var selection = Aloha.getSelection();
+				var isOnlyBlockSelected = checkIsOnlyBlockSelected(selection);
+				var isDeleteOperation = 'delete' === cmd || 'forwarddelete' === cmd;
 
-				    onlyBlockSelected = (rangeCount === 0) || // Firefox / Chrome
-					       (rangeCount === 1 && rangeEndContainer === rangeStartContainer && rangeEndContainer === jQuery('body')[0]) || // Internet explorer: Inline Elements
-					       (rangeCount === 1 && rangeEndContainer === rangeStartContainer && range.startOffset + 1 === range.endOffset); // Internet explorer: Block level elements
-
-				if (that._activeBlock && (commandId === 'delete' || commandId === 'forwarddelete') && onlyBlockSelected) {
-					// Deletion when a block is currently selected
-
+				if (that._activeBlock && isDeleteOperation && isOnlyBlockSelected) {
 					// In this case, the default command shall not be executed.
 					data.preventDefault = true;
 					that._activeBlock.destroy();
-				} else if (!that._activeBlock && (commandId === 'delete' || commandId === 'forwarddelete') && rangeCount === 1 && range.collapsed === false) {
-					// Deletion when a block is inside a bigger selection currently
-					// In this case, we check if we find an aloha-block. If yes, we delete it right away as the browser does not delete it correctly by default
-					var traverseSelectionTree;
-					traverseSelectionTree = function (selectionTree) {
+				} else if (
+					!that._activeBlock &&
+					isDeleteOperation &&
+					selection.getRangeCount() === 1 &&
+					selection.getRangeAt(0).collapsed === false
+				) {
+					// Deletion when a block is inside a bigger selection
+					// currently In this case, we check if we find an
+					// aloha-block. If yes, we delete it right away as the
+					// browser does not delete it correctly by default
+					(function traverseSelectionTree(selectionTree) {
 						var el;
 						for (var i = 0, l = selectionTree.length; i < l; i++) {
 							el = selectionTree[i];
@@ -51474,8 +52823,7 @@ define('block/blockmanager',[
 								}
 							}
 						}
-					};
-					traverseSelectionTree(Aloha.Selection.getSelectionTree());
+					}(Aloha.Selection.getSelectionTree()));
 				}
 			});
 
@@ -52059,8 +53407,9 @@ define('block/block',[
 	'util/class',
 	'PubSub',
 	'block/block-utils',
-	'util/html',
-	'util/functions'
+	'util/dom',
+	'util/functions',
+	'aloha/engine'
 ], function (
 	Aloha,
 	jQuery,
@@ -52070,8 +53419,9 @@ define('block/block',[
 	Class,
 	PubSub,
 	BlockUtils,
-	Html,
-	Fn
+	Dom,
+	Fn,
+	Engine
 ) {
 	
 
@@ -52203,6 +53553,14 @@ define('block/block',[
 				if (jQuery(event.target).closest('.aloha-block').get(0) === that.$element.get(0)) {
 					that._fixScrollPositionBugsInIE();
 					that.activate(event.target, event);
+					// remove the selection, if the clicked element itself is not editable, but don't do this, if the clicked
+					// element is the active table cell, because in that case, the selection is in the editable wrapper of the
+					// cell (which is ok). We also leave the selection alone if the target was a text input element.
+					var $target = jQuery(event.target);
+
+					if (!$target.is('textarea, input') && !$target.contentEditable() && !$target.hasClass("aloha-table-cell_active")) {
+						Aloha.getSelection().removeAllRanges();
+					}
 				}
 			};
 
@@ -52221,11 +53579,21 @@ define('block/block',[
 
 			// Only for inline element.
 			// It is not possible to insert text after or before a Block span
-			// when after or before the Block there is not elements
-			if (Html.isInlineFormattable($element[0])) {
+			// when there are not elements after or before the Block.
+			if (!Dom.isBlockNode($element[0])) {
 				if ($element.closest('.aloha-editable-active').length > 0) {
 					BlockUtils.pad(that.$element);
 				}
+
+				Aloha.bind('aloha-smart-content-changed', function (event, data) {
+					if (data.editable.isActive) {
+						var $block = data.editable.obj.find('#' + that.id);
+
+						if ($block.length > 0) {
+							BlockUtils.pad(that.$element);
+						}
+					}
+				});
 
 				Aloha.bind('aloha-editable-activated', function ($event, data) {
 					if (data.editable) {
@@ -52267,8 +53635,9 @@ define('block/block',[
 		 * NOTE: Purely internal, "this" is not available inside this method!
 		 */
 		_preventSelectionChangedEventHandler: function ($event) {
-			if (('dblclick' !== $event.type) && 
-				!jQuery($event.target).is('.aloha-editable')) {
+			var $editable = jQuery($event.target).closest('.aloha-editable');
+
+			if ('dblclick' !== $event.type && !this.contains($editable[0])) {
 				Aloha.Selection.preventSelectionChanged();
 			}
 		},
@@ -52374,11 +53743,11 @@ define('block/block',[
 		 * @return {Boolean} true of destruction should happen, false otherwise
 		 */
 		shouldDestroy: function () {
-			var $closest = this.$element.parent().closest('.aloha-block,.aloha-editable,.aloha-block-collection');
+			var $closest = this.$element.parent().closest('.aloha-block,.aloha-editable,.aloha-table-cell-editable,.aloha-block-collection');
 			if ($closest.hasClass('aloha-block-collection') && this.$element[0].tagName.toLowerCase() === 'div') {
 				return true;
 			} else {
-				return $closest.hasClass('aloha-editable');
+				return $closest.hasClass('aloha-editable') || $closest.hasClass('aloha-table-cell-editable');
 			}
 		},
 
@@ -52544,7 +53913,16 @@ define('block/block',[
 			// However, when the user clicked inside a nested editable, we will not remove the cursor (as the user wants to start typing then)
 			// small HACK: we also do not deactivate if we are inside an aloha-table-cell-editable.
 			if (jQuery(eventTarget).closest('.aloha-editable,.aloha-block,.aloha-table-cell-editable,.aloha-table-cell_active').first().hasClass('aloha-block')) {
-				this._isInsideNestedEditable = false;
+				var range = new Aloha.Selection.SelectionRange(true);
+				// we check whether the start of the selection was inside an editable
+				// this handles situations, where the user started selecting inside an editable (in a block)
+				// and stopped selecting outside the editable but still inside the block
+				if (jQuery(range.startContainer).closest('.aloha-editable,.aloha-block,.aloha-table-cell-editable,.aloha-table-cell_active').first().hasClass('aloha-editable') && event) {
+					this._isInsideNestedEditable = true;
+					Aloha.Selection.updateSelection(event);
+				} else {
+					this._isInsideNestedEditable = false;
+				}
 			} else {
 				this._isInsideNestedEditable = true;
 				if (event) {
@@ -52552,6 +53930,15 @@ define('block/block',[
 					Aloha.Selection.updateSelection(event);
 				}
 			}
+
+			// activate the editable host of the block
+			if (!this._isInsideNestedEditable) {
+				var editable = Aloha.getEditableHost(this.$element);
+				if (editable) {
+					editable.activate();
+				}
+			}
+
 			// Trigger block activate & selection change events.
 			BlockManager.trigger('block-activate', highlightedBlocks);
 			BlockManager.trigger('block-selection-change', highlightedBlocks);
@@ -52657,7 +54044,6 @@ define('block/block',[
 		_postProcessElementIfNeeded: function () {
 			this.createEditablesIfNeeded();
 			this._checkThatNestedBlocksAreStillConsistent();
-			this._makeNestedBlockCollectionsSortable();
 
 			this.renderBlockHandlesIfNeeded();
 			if (this.isDraggable()) {
@@ -52692,28 +54078,11 @@ define('block/block',[
 		},
 
 		/**
-		 * If a nested element is marked as "aloha-block-collection",
-		 * we want to make it sortable, by calling the appropriate Block Manager
-		 * function.
-		 */
-		_makeNestedBlockCollectionsSortable: function () {
-			var that = this;
-			this.$element.find('.aloha-block-collection').each(function () {
-				var $blockCollection = jQuery(this);
-				if ($blockCollection.closest('.aloha-block').get(0) === that.$element.get(0)) {
-					// We are only responsible for one-level-down Block Collections, not
-					// for nested ones.
-					BlockManager.createBlockLevelSortableForEditableOrBlockCollection($blockCollection);
-				}
-			});
-		},
-
-		/**
 		 * Helper which disables the ugly IE drag handles. They are still shown, but at
 		 * least they do not work anymore
 		 */
 		_disableUglyInternetExplorerDragHandles: function () {
-			if (jQuery.browser.msie) {
+			if (Aloha.browser.msie) {
 				var $elem = this.$element.get(0);
 				$elem.onresizestart = Fn.returnFalse;
 				$elem.oncontrolselect = Fn.returnFalse;
@@ -52803,12 +54172,11 @@ define('block/block',[
 			var dropFn = function () {
 				if (lastHoveredCharacter) {
 					// the user recently hovered over a character
-					var $dropReferenceNode = jQuery(lastHoveredCharacter);
+					var $dropReferenceNode = jQuery(lastHoveredCharacter), oldParent = $currentDraggable[0].parentNode;
 
 					if ($dropReferenceNode.is('.aloha-block-dropInlineElementIntoEmptyBlock')) {
 						// the user wanted to drop INTO an empty block!
-						$dropReferenceNode.children().remove();
-						$dropReferenceNode.append($currentDraggable);
+						$dropReferenceNode.prepend($currentDraggable);
 					} else if ($dropReferenceNode.is('.aloha-block-droppable-right')) {
 						$dropReferenceNode.html($dropReferenceNode.html() + ' ');
 
@@ -52826,18 +54194,37 @@ define('block/block',[
 						$dropReferenceNode.before($currentDraggable);
 					}
 
+					Engine.ensureContainerEditable(oldParent);
+
 					$currentDraggable.removeClass('ui-draggable').css({'left': 0, 'top': 0}); // Remove "draggable" options... somehow "Destroy" does not work
 					that._fixScrollPositionBugsInIE();
 				}
 				jQuery('.aloha-block-dropInlineElementIntoEmptyBlock').removeClass('aloha-block-dropInlineElementIntoEmptyBlock');
 
-                // clear the created droppables
-                $createdDroppables.droppable("destroy");
-                $createdDroppables = null;
+				// clear the created droppables
+				if ($createdDroppables) {
+					$createdDroppables.filter(":data(droppable)").droppable("destroy");
+					$createdDroppables = null;
+				}
 
-                blockDroppedProperly = true;
+				blockDroppedProperly = true;
 			};
 			var editablesWhichNeedToBeCleaned = [];
+
+			// Prevent the prevention of drag inside a cell
+			var element = this.$element.get(0);
+			element.ondragstart = function (e) {
+				if (e) {
+					if (typeof e.stopPropagation === 'function') {
+						e.stopPropagation();
+					} else {
+						e.cancelBubble = true;
+					}
+				} else {
+					window.event.cancelBubble = true;
+				}
+			};
+
 			this.$element.draggable({
 				handle: '.aloha-block-draghandle',
 				scope: 'aloha-block-inlinedragdrop',
@@ -52853,11 +54240,26 @@ define('block/block',[
 					jQuery.each(editablesWhichNeedToBeCleaned, function () {
 						that._dd_traverseDomTreeAndRemoveSpans(this);
 					});
+
+					if ($currentDraggable) {
+						BlockUtils.unpad($currentDraggable);
+					}
+
 					$currentDraggable = null;
 
 					editablesWhichNeedToBeCleaned = [];
+
+					// deactivate the current editable and activate the editable,
+					// the block has been dropped into. This will do necessary initializations that
+					// happen on activation of the editable
+					Aloha.deactivateEditable();
+					var editable = Aloha.getEditableHost(that.$element);
+					if (editable) {
+						editable.activate();
+					}
 				},
 				start: function () {
+					lastHoveredCharacter = null;
 					blockDroppedProperly = false;
 					editablesWhichNeedToBeCleaned = [];
 
@@ -52891,7 +54293,7 @@ define('block/block',[
 
 							if (jQuery(this).is(':empty') ||
 								hasOnlyProppingBr ||
-								jQuery(this).html() === '&nbsp;') {
+								jQuery.trim(jQuery(this).text()) === '') {
 								// The user is hovering over an empty
 								// container; simply highlight the container.
 								jQuery(this).addClass(
@@ -52942,9 +54344,15 @@ define('block/block',[
 					};
 
 					$createdDroppables = jQuery(".aloha-editable.aloha-block-dropzone").children(":not(.aloha-block)");
-					$createdDroppables.droppable(droppableCfg);
+
+					// add empty editables
+					$createdDroppables = $createdDroppables.add(".aloha-editable:not(:has(*))");
+
 					// Small HACK: Also make table cells droppable
-					jQuery('.aloha-table-cell-editable').droppable(droppableCfg);
+					$createdDroppables = $createdDroppables.add('.aloha-table-cell-editable');
+					$createdDroppables = $createdDroppables.add(jQuery('.aloha-editable.aloha-block-dropzone .aloha-table-cell-editable').children(":not(.aloha-block)"));
+
+					$createdDroppables.droppable(droppableCfg);
 				}
 			});
 		},
@@ -53826,13 +55234,17 @@ define('block/dragbehavior',[
 	'aloha',
 	'PubSub',
 	'aloha/copypaste',
-	'block/block-utils'
+	'block/block-utils',
+	'aloha/console',
+	'ui/scopes'
 ], function (
 	$,
 	Aloha,
 	PubSub,
 	CopyPaste,
-	BlockUtils
+	BlockUtils,
+	Console,
+	Scopes
 ) {
 	
 
@@ -53902,7 +55314,11 @@ define('block/dragbehavior',[
 		this.blockObject = blockObject;
 		this.$element = blockObject.$element;
 		this.insertBeforeOrAfterMode = false;
-		this.setDraggable();
+		if (this.$element[0].nodeName === 'DIV') {
+			// this drag/drop behaviour is only suitable for DIV-blocks
+			// inline drag/drop is initialized somewhere else (block.js)
+			this.setDraggable();
+		}
 	}
 
 	PubSub.sub('aloha.block.initialized', function (data) {
@@ -54025,7 +55441,7 @@ define('block/dragbehavior',[
 				IESelectionState.save();
 			})
 			.on('mouseup', function () {
-				dragBehavior._getHiglightElement().hide();
+				dragBehavior._getHiglightElement().appendTo('body').css({position: 'absolute'}).hide();
 				dragBehavior.stopListenMouseOver();
 			});
 
@@ -54037,7 +55453,10 @@ define('block/dragbehavior',[
 				top: -10
 			},
 			start: function (event, ui) {
+				// set the empty scope, so that the toolbar will be hidden while dragging
+				Scopes.setScope('Aloha.empty');
 				ui.helper.css('zIndex', 100000);
+				dragBehavior._fillEmptyEditables();
 				dragBehavior.listenMouseOver();
 				event.stopImmediatePropagation();
 			},
@@ -54045,9 +55464,10 @@ define('block/dragbehavior',[
 				event.stopImmediatePropagation();
 			},
 			stop: function (event, ui) {
-				dragBehavior._getHiglightElement().hide();
+				dragBehavior._getHiglightElement().appendTo('body').css({position: 'absolute'}).hide();
 				dragBehavior.stopListenMouseOver();
 				dragBehavior.onDragStop();
+				dragBehavior._removeFillers();
 				ui.helper.remove();
 				IESelectionState.restore();
 				return true;
@@ -54071,6 +55491,32 @@ define('block/dragbehavior',[
 		return $(elms);
 	};
 
+	/**
+	 * Fill a "filler" element into every completely empty editable.
+	 * This enables dropping blocks into empty editables (before or after the filler)
+	 */
+	DragBehavior.prototype._fillEmptyEditables = function () {
+		var i, editable, filler;
+		for (i = 0; i < Aloha.editables.length; i++) {
+			editable = Aloha.editables[i];
+			if (editable.obj.contents().length === 0) {
+				filler = $("<div class='aloha-block aloha-dragdrop-filler' style='height:inherit; min-height:inherit'></div>");
+				filler.contentEditable(false);
+				editable.obj.append(filler);
+			}
+		}
+	};
+
+	/**
+	 * Remove the "filler" elements
+	 */
+	DragBehavior.prototype._removeFillers = function () {
+		var i, editable;
+		for (i = 0; i < Aloha.editables.length; i++) {
+			editable = Aloha.editables[i];
+			editable.obj.children('.aloha-dragdrop-filler').remove();
+		}
+	};
 
 	/**
 	 * Listen the mouseOver events over all elements in the editables, since the
@@ -54106,18 +55552,36 @@ define('block/dragbehavior',[
 	 * @return {Boolean}
 	 */
 	DragBehavior.prototype.onMouseover = function (elm, event) {
-		this.disableInsertBeforeOrAfter(this.$overElement);
-		this.$overElement = $(elm);
-		if (!this._isAllowedOverElement(elm)) {
-			this.enableInsertBeforeOrAfter(elm);
-
-			return true; // to continue bubbling to find a element where can insert the block
-		} else {
-			this.highlightElement(elm);
+		if (this.$element.find(elm).length || this.$element.is(elm)) {
+			// The mouse is still over the element which is
+			// being dragged.
 			event.stopImmediatePropagation();
+
 			return false;
 		}
 
+		var $elm = $(elm);
+
+		if (!this._isAllowedOverElement(elm)) {
+			this.disableInsertBeforeOrAfter(this.$overElement);
+			this.enableInsertBeforeOrAfter(elm);
+			this.$overElement = $elm;
+
+			// Let the event bubble up to find a better place for a drop.
+			return true;
+		}
+
+		if (!$elm.is('.aloha-editable, .aloha-table-cell-editable') || !$elm.children().length) {
+			// We only do this for non-editables, because otherwise
+			// the whole editable would be marked as a drop zone.
+			this.disableInsertBeforeOrAfter(this.$overElement);
+			this.$overElement = $elm;
+			this.highlightElement(elm);
+		}
+
+		event.stopImmediatePropagation();
+
+		return false;
 	};
 
 	/**
@@ -54136,7 +55600,7 @@ define('block/dragbehavior',[
 		}
 
 		var $elm = $(elm),
-			$hElm = this._getHiglightElement().show();
+			$hElm = this._getHiglightElement().appendTo('body').css({position: 'absolute'}).show();
 
 
 		$hElm
@@ -54196,23 +55660,21 @@ define('block/dragbehavior',[
 	 */
 	DragBehavior.prototype.highlightEdge = function (elm) {
 		var $elm = $(elm),
-			$hElm = this._getHiglightElement().show(),
-			offset;
+			$hElm = this._getHiglightElement().css({position: 'relative', top: 'auto', left: 'auto'}).show(),
+			edgeHeight = 4;
 
 		if (this.insertBeforeOrAfterMode === 'BEFORE') {
 			$hElm
 				.css('zIndex', parseInt($elm.zIndex(), 10) + 1)
-				.offset($elm.offset())
 				.width($elm.outerWidth())
-				.height(10);
+				.height(edgeHeight);
+			$elm.before($hElm);
 		} else {
-			offset = $elm.offset();
-			offset.top = (offset.top + $elm.outerHeight()) - 10;
 			$hElm
 				.css('zIndex', parseInt($elm.zIndex(), 10) + 1)
-				.offset(offset)
 				.width($elm.outerWidth())
-				.height(10);
+				.height(edgeHeight);
+			$elm.after($hElm);
 		}
 	};
 
@@ -54260,6 +55722,11 @@ define('block/dragbehavior',[
 			if (this.$overElement &&
 				!this._isAllowedOverElement(this.$overElement[0])) {
 				this.enableInsertBeforeOrAfter(this.$overElement[0]);
+				// prevent dragging the block into a position, where it should not be
+				// when _isAllowedOverElement() return false, insertBeforeOrAfterMode must not be false
+				if (this.insertBeforeOrAfterMode === false) {
+					this.insertBeforeOrAfterMode = 'AFTER';
+				}
 			}
 
 			if (this.insertBeforeOrAfterMode !== false) {
@@ -54270,6 +55737,15 @@ define('block/dragbehavior',[
 				}
 			} else {
 				this.$element.appendTo(this.$overElement);
+			}
+
+			// deactivate the current editable and activate the editable,
+			// the block has been dropped into. This will do necessary initializations that
+			// happen on activation of the editable
+			Aloha.deactivateEditable();
+			var editable = Aloha.getEditableHost(this.$element);
+			if (editable) {
+				editable.activate();
 			}
 		}
 
@@ -54352,6 +55828,7 @@ define('block/nls/i18n',{
 define('block/block-plugin',[
 	'aloha',
 	'aloha/plugin',
+	'aloha/ephemera',
 	'jquery',
 	'aloha/contenthandlermanager',
 	'block/blockmanager',
@@ -54369,6 +55846,7 @@ define('block/block-plugin',[
 ], function (
 	Aloha,
 	Plugin,
+	Ephemera,
 	jQuery,
 	ContentHandlerManager, 
 	BlockManager,
@@ -54407,6 +55885,9 @@ define('block/block-plugin',[
 				this.settings.rootTags = defaultRootTags;
 			}
 
+			Ephemera.classes('aloha-block-active');
+			Ephemera.classes('aloha-block-highlighted');
+
 			// Register default block types			
 			BlockManager.registerBlockType('DebugBlock', block.DebugBlock);
 			BlockManager.registerBlockType('DefaultBlock', block.DefaultBlock);
@@ -54440,6 +55921,17 @@ define('block/block-plugin',[
 			// set the dropzones for the initialized editable
 			Aloha.bind('aloha-editable-created', function (e, editable) {
 				that.setDropzones(editable.obj);
+
+				// Because we don't want non-contentEditable regions inside of
+				// editables to be resizable through the browser-built
+				// interfaces. IE 11 requires this additional muzzling to be
+				// done on the body in order to thoroughly prevent
+				// objectResizing.
+				// @see Block._disableUglyInternetExplorerDragHandles
+				// @see https://connect.microsoft.com/IE/feedback/details/742593/please-respect-execcommand-enableobjectresizing-in-contenteditable-elements
+				editable.obj.on('mscontrolselect', function (event) {
+					event.preventDefault();
+				});
 			});
 
 			// apply specific configuration if an editable has been activated
@@ -54627,6 +56119,16 @@ define('block/block-plugin',[
 					jQuery(this).removeClass("aloha-block-draghandle");
 				}
 			});
+		},
+
+		/**
+		 * Make the given jQuery object (representing an editable) clean for saving
+		 * Remove classes marking draggable aloha blocks
+		 */
+		makeClean: function (obj) {
+			// these classes are not made ephemeral, because this would remove them from every DOM node
+			// we only want to remove those classes from root elements of blocks.
+			obj.find(".aloha-block").removeClass('ui-draggable ui-draggable-disabled');
 		}
 	});
 
@@ -55453,7 +56955,9 @@ define('paste/paste-plugin',[
 	 */
 	function restoreSelection(range) {
 		var editable = CopyPaste.getEditableAt(range);
-		if (editable) {
+
+		// setting the focus is needed for mozilla to have a working rangeObject.select()
+		if (editable && Aloha.browser.mozilla && document.activeElement !== editable.obj[0]) {
 			editable.obj.focus();
 		}
 		CopyPaste.setSelectionAt(range);
@@ -55710,6 +57214,13 @@ define('paste/paste-plugin',[
 		var doc = $editable[0].ownerDocument;
 		if (isIEorDocModeGreater9(doc)) {
 			$editable.bind('beforepaste', function ($event) {
+				if ($event.target.nodeName === 'INPUT' ||
+						$event.target.nodeName === 'TEXTAREA') {
+					// We have to let the browser handle most events concerning
+					// text input telements.
+					return;
+				}
+
 				scrollPositionBeforePaste.x = window.scrollX ||
 					document.documentElement.scrollLeft;
 				scrollPositionBeforePaste.y = window.scrollY ||
@@ -55721,6 +57232,11 @@ define('paste/paste-plugin',[
 			});
 		} else {
 			$editable.bind('paste', function ($event) {
+				if ($event.target.nodeName === 'INPUT' ||
+						$event.target.nodeName === 'TEXTAREA') {
+					return;
+				}
+
 				scrollPositionBeforePaste.x = window.scrollX ||
 					document.documentElement.scrollLeft;
 				scrollPositionBeforePaste.y = window.scrollY ||
@@ -56257,6 +57773,8 @@ define('formatlesspaste/formatlesspaste-plugin',[
 					pasteButton.setState(false);
 					FormatlessPasteHandler.enabled = false;
 				}
+
+				FormatlessPasteHandler.strippedElements = config.strippedElements || Html.TEXT_LEVEL_SEMANTIC_ELEMENTS;
 
 				pasteButton.show(false !== config.button);
 			});

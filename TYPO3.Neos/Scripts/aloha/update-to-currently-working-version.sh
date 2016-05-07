@@ -11,4 +11,4 @@ fi
 
 cd src
 git fetch
-git checkout alohaeditor-1.1.5
+git checkout alohaeditor-1.2.42

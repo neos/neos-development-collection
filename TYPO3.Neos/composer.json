@@ -4,6 +4,7 @@
     "license": "GPL-3.0+",
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
+        "neos/diff": "*",
         "typo3/flow": "*",
         "typo3/media": "*",
         "typo3/party": "*",
@@ -11,10 +12,12 @@
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "*",
         "typo3/typoscript": "*",
-        "league/commonmark": "^0.12.0"
+        "league/commonmark": "^0.12.0",
+        "behat/transliterator": "~1.0"
     },
     "suggest": {
-        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."
+        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos.",
+        "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "autoload": {
         "psr-0": {

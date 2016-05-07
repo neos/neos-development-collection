@@ -1,18 +1,20 @@
-<div class="neos-modal" id="discardAllDialog">
-	<div class="neos-modal-header">
-		<button data-dismiss="modal" class="neos-close neos-button icon-remove" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="content-components-discardAllDialog-discardAllChangesHeader" fallback="Discard all changes"}}</div>
-		<div>
-			<div class="neos-subheader">
-				{{translate id="content-components-discardAllDialog-discardAllChangesSubheader" fallback="Are you sure that you want to discard all changes in this workspace?"}}
+<div class="neos-modal-centered" id="discardAllDialog">
+	<div class="neos-modal-content">
+		<div class="neos-modal-header">
+			<button data-dismiss="modal" class="neos-close neos-button icon-remove" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}}></button>
+			<div class="neos-header">{{translate id="content.components.discardAllDialog.discardAllChangesHeader" fallback="Discard all changes"}}</div>
+			<div>
+				<div class="neos-subheader">
+					{{translate id="content.components.discardAllDialog.discardAllChangesSubheader" fallback="Are you sure that you want to discard all changes in this workspace?"}}
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="neos-modal-footer">
-		<button class="neos-button" title="{{translate id='cancel' value='Cancel'}}" {{action "cancel" target="view"}}>
-			{{translate id="cancel" fallback="Cancel"}}
-		</button>
-		<button class="neos-button neos-button-success" title="{{translate id='discard' value='Discard'}}" {{action "discard" target="view"}}>{{translate id="discard" fallback="Discard"}}</button>
+		<div class="neos-modal-footer">
+			<button class="neos-button" title="{{translate id='cancel' fallback='Cancel'}}" {{action "cancel" target="view"}}>
+				{{translate id="cancel" fallback="Cancel"}}
+			</button>
+			<button class="neos-button neos-button-success" title="{{translate id='discard' fallback='Discard'}}" {{action "discard" target="view"}}>{{translate id="discard" fallback="Discard"}}</button>
+		</div>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Neos CMS'
+project = u'Neos Media'
 copyright = u'2006 and onwards by the authors'
 author = u'Neos Team and Contributors'
 

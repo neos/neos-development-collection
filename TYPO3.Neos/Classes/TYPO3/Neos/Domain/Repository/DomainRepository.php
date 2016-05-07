@@ -47,7 +47,7 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository
      *
      * Their order is determined by how well they match, best match first.
      *
-     * @param string $host Host the domain should match with (eg. "localhost" or "www.typo3.org")
+     * @param string $host Host the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
      * @return array An array of matching domains
      * @api
@@ -61,7 +61,7 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository
     /**
      * Find the best matching active domain for the given host.
      *
-     * @param string $host Host the domain should match with (eg. "localhost" or "www.typo3.org")
+     * @param string $host Host the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
      * @return \TYPO3\Neos\Domain\Model\Domain
      * @api

@@ -200,7 +200,6 @@
 
 			i {
 				margin-right: $tightMargin;
-				line-height: $unit;
 				vertical-align: middle;
 			}
 		}
@@ -395,8 +394,8 @@
 								}
 
 								&::after {
-									@include icon-FontAwesome();
-									content: $arrow-down;
+									@include fa-icon();
+									content: $fa-var-arrow-down;
 									position: absolute;
 									right: $relatedMargin + $tightMargin;
 								}
@@ -591,8 +590,8 @@
 					}
 
 					&::after {
-						@include icon-FontAwesome();
-						content: $move;
+						@include fa-icon();
+						content: $fa-var-arrows;
 						display: block;
 						position: absolute;
 						left: 0;
@@ -747,7 +746,7 @@
 		}
 	}
 
-	table.neos-table {
+	table.neos-table.asset-list {
 		th {
 			white-space: nowrap;
 
@@ -803,6 +802,11 @@
 		.neos-popover {
 			width: auto;
 			height: auto;
+			border-color: $grayMedium;
+
+			.neos-popover-title {
+				border-color: $grayMedium;
+			}
 
 			.neos-popover-content {
 				width: 250px;
@@ -813,6 +817,7 @@
 				background-position: center center;
 				background-repeat: no-repeat;
 				overflow: hidden;
+				background-color: $grayDarker;
 
 				img {
 					position: absolute;
@@ -823,9 +828,16 @@
 					height: auto;
 					max-width: 100%;
 					max-height: 100%;
-					background-color: $grayDark;
-					outline: 3px solid $grayDark;
+					background-color: $grayDarker;
+					outline: 3px solid $grayDarker;
 				}
+			}
+
+			&.neos-top .neos-arrow {
+				border-top-color: $grayDarker;
+			}
+			&.neos-bottom .neos-arrow {
+				border-bottom-color: $grayDark;
 			}
 		}
 
@@ -833,12 +845,6 @@
 			float: left;
 			line-height: $unit;
 			padding-left: $relatedMargin + $tightMargin;
-		}
-
-		.tags {
-			.neos-label {
-				background-color: $textSubtle;
-			}
 		}
 
 		.neos-action {
@@ -852,6 +858,10 @@
 		}
 	}
 
+	table.neos-info-table i {
+		vertical-align: baseline;
+	}
+
 	.draggable-asset {
 		cursor: move;
 	}
@@ -861,6 +871,12 @@
 			tbody tr:hover td {
 				background-color: $blue;
 				cursor: pointer;
+
+				.neos-label {
+					background-color: #fff;
+					color: $blue;
+					text-shadow: none;
+				}
 			}
 
 			.icon-move {
@@ -947,5 +963,9 @@
 		visibility: hidden;
 		position: absolute;
 		left: -9999px;
+	}
+
+	.fold-toggle {
+		cursor: pointer;
 	}
 }

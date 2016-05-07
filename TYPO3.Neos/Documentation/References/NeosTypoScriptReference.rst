@@ -1,8 +1,8 @@
 .. _neos-typoscript-reference:
 
-=========================
-Neos TypoScript Reference
-=========================
+====================
+TypoScript Reference
+====================
 
 TYPO3.TypoScript
 ================
@@ -101,6 +101,7 @@ Render each item in ``collection`` using ``itemRenderer``.
 
 :collection: (array/Iterable, **required**) The array or iterable to iterate over
 :itemName: (string, **required**) Context variable name for each item
+:itemKey: (string) Context variable name for each item key, when working with array
 :iterationName: (string) If set, a context variable with iteration information will be availble under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
 :itemRenderer: (string) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
 
@@ -751,6 +752,7 @@ overriding the target attribute for external links and resource links.
 :externalLinkTarget: (string) Override the target attribute for external links, defaults to ``_blank``. Can be disabled with an empty value.
 :resourceLinkTarget: (string) Override the target attribute for resource links, defaults to ``_blank``. Can be disabled with an empty value.
 :forceConversion: (boolean) Whether to convert URIs in a non-live workspace, defaults to ``FALSE``
+:absolute: (boolean) Can be used to convert node URIs to absolute links, defaults to ``FALSE``
 
 Example::
 

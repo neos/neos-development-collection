@@ -74,8 +74,6 @@ define(
 					});
 
 					that.set('configuration', configuration);
-				}, function(error) {
-					console.error('Failed loading workspaces data.', error);
 				});
 			},
 
@@ -156,6 +154,8 @@ define(
 				HttpRestClient.updateResource('neos-service-workspaces', this.get('userWorkspace.name'), options).then(function(result) {
 					that._loadConfiguration();
 					ContentModule.reloadPage();
+					EventDispatcher.trigger('nodesInvalidated');
+					EventDispatcher.trigger('contentChanged');
 					that.set('workspaceRebasePending', false);
 				}, function(error) {
 					console.error('Failed updating base workspace.', error);

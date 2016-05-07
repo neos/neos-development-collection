@@ -116,6 +116,12 @@ module.exports = function (grunt) {
 						src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 						src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
 
+						// tooltips
+						src = src.replace(/tooltipClass: 'aloha aloha-ui-tooltip',/g, "placement: 'bottom',");
+						src = src.replace(".tooltip('close', null, true);", ".tooltip('hide');");
+						src = src.replace(".tooltip('disable');", ".tooltip('hide');");
+						src = src.replace(".tooltip('enable');", ".tooltip('show');");
+
 						return src;
 					}
 				}
@@ -152,6 +158,7 @@ module.exports = function (grunt) {
 						// Tooltip
 						src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 						src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
+						src = src.replace('delay: 0', "delay: { 'show': 500, 'hide': 100 }");
 
 						// Popover
 						src = src.replace(/fade top bottom left right in/g, 'neos-fade neos-top neos-bottom neos-left neos-right neos-in');

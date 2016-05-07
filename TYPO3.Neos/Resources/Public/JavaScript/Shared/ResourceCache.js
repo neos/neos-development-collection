@@ -35,7 +35,10 @@ function(Ember, SessionStorage, HttpClient) {
 					function() {
 						resourceRequests[resourceUri].reject(arguments);
 					}
-				);
+				).fail(function(error) {
+					Notification.error('An error occurred.');
+					console.error('An error occurred:', error);
+				});
 			} else {
 				resourceRequests[resourceUri].resolve(data);
 			}

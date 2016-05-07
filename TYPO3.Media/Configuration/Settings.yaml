@@ -39,6 +39,7 @@ TYPO3:
       defaultOptions:
         # Image quality, from 0 to 100
         'quality': 90
+        convertCMYKToRGB: true
 
     thumbnailGenerators:
 

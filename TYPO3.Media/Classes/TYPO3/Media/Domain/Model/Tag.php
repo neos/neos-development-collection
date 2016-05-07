@@ -37,6 +37,9 @@ class Tag
      */
     protected $assetCollections;
 
+    /**
+     * @param string $label
+     */
     public function __construct($label)
     {
         $this->label = $label;

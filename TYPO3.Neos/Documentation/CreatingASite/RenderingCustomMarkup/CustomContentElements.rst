@@ -38,6 +38,7 @@ in your site package or in a package dedicated to content elements, if reuse is 
 	         groups:
 	           video:
 	             label: 'Video'
+	             icon: 'icon-film'
 	     properties:
 	       videoUrl:
 	         type: string
@@ -263,6 +264,8 @@ Registering 2 new groups could look like::
 	        special:
 	          position: 50
 	          label: 'Special elements'
+	          collapsed: true
+	          icon: 'icon-fort-awesome'
 
 The groups are ordered by the position argument.
 

@@ -14,6 +14,10 @@ TYPO3:
       globalObjects:
         userInformation: TYPO3\Neos\Service\UserService
 
+    core:
+      applicationPackageKey: 'TYPO3.Neos'
+      applicationName: 'Neos'
+
     security:
       authentication:
         providers:
@@ -56,7 +60,10 @@ TYPO3:
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
           'databaseConnectionExceptions':
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            matchingExceptionClassNames:
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseStructureException'
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
@@ -118,17 +125,26 @@ TYPO3:
         general:
           position: 'start'
           label: 'TYPO3.Neos:Main:nodeTypes.groups.general'
+          collapsed: false
         structure:
           position: 100
           label: 'TYPO3.Neos:Main:nodeTypes.groups.structure'
+          collapsed: false
         plugins:
           position: 200
           label: 'TYPO3.Neos:Main:nodeTypes.groups.plugins'
+          collapsed: true
 
     userInterface:
       # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
+
+      # The number of seconds to wait before giving up on loading a script.
+      # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
+      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
+      requireJsWaitSeconds: 30
 
       # Switch on to see all translated labels getting scrambled. You now can localize
       # everything that is still readable.
@@ -178,7 +194,13 @@ TYPO3:
 
           presets:
             default:
+              # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
+              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'TYPO3.Neos:Document'
+        structureTree:
+          # number of levels inside the structure tree which shall be loaded eagerly, at start.
+          # 0 means unlimited
+          loadingDepth: 4
 
       inspector:
         dataTypes:
@@ -304,6 +326,11 @@ TYPO3:
           title: 'TYPO3.Neos:Main:editPreviewModes.desktop'
           position: 100
 
+      backendLoginForm:
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        stylesheets:
+          'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
+
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:
@@ -396,6 +423,20 @@ TYPO3:
             accountIdentifier: '${entity.accountIdentifier}'
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
+
+    transliterationRules:
+      da:
+        'Å': 'Aa'
+        'Ø': 'Oe'
+        'å': 'aa'
+        'ø': 'oe'
+      de:
+        'Ä': 'Ae'
+        'Ö': 'Oe'
+        'Ü': 'Ue'
+        'ä': 'ae'
+        'ö': 'oe'
+        'ü': 'ue'
 
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
@@ -491,13 +532,14 @@ TYPO3:
           - 'Neos:MediaValidators'
           - 'Neos:FlowSignals'
           - 'Neos:NeosSignals'
+          - 'Neos:MediaSignals'
           - 'Neos:Typo3CrSignals'
           - 'Neos:FlowQueryOperations'
           - 'Neos:EelHelpers'
 
     commandReferences:
       'Neos:NeosCommands':
-        title: 'Neos Command Reference'
+        title: 'Command Reference'
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
@@ -506,6 +548,7 @@ TYPO3:
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
+          - 'TYPO3.Neos.Kickstarter'
           - 'TYPO3.Neos'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
@@ -569,6 +612,18 @@ TYPO3:
             namespaces:
               f: 'TYPO3\Fluid\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
+      'Neos:TypoScriptViewHelpers':
+        title: 'TypoScript ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+              ts: 'TYPO3\TypoScript\ViewHelpers'
 
       # Validators
       'Neos:FlowValidators':
@@ -612,6 +667,15 @@ TYPO3:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Media\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'

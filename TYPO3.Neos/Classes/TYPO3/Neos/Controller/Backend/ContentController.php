@@ -16,7 +16,6 @@ use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
-use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
@@ -178,7 +177,9 @@ class ContentController extends ActionController
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
-        $this->assetRepository->add($asset);
+        if ($this->persistenceManager->isNewObject($asset)) {
+            $this->assetRepository->add($asset);
+        }
 
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         // This will not be sent as "application/json" as we need the JSON string and not the single variables.
@@ -233,14 +234,23 @@ class ContentController extends ActionController
      */
     protected function getImagePreviewData(Image $image)
     {
-        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Preview'));
-        $imageProperties = array(
+        $imageProperties = [
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
-            'previewImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()),
-            'originalDimensions' => array('width' => $image->getWidth(), 'height' => $image->getHeight(), 'aspectRatio' => $image->getAspectRatio()),
-            'previewDimensions' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight()),
+            'originalDimensions' => [
+                'width' => $image->getWidth(),
+                'height' => $image->getHeight(),
+                'aspectRatio' => $image->getAspectRatio()
+            ],
             'mediaType' => $image->getResource()->getMediaType()
-        );
+        ];
+        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Preview'));
+        if ($thumbnail !== null) {
+            $imageProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
+            $imageProperties['previewDimensions'] = [
+                'width' => $thumbnail->getWidth(),
+                'height' => $thumbnail->getHeight()
+            ];
+        }
         return $imageProperties;
     }
 
@@ -287,13 +297,16 @@ class ContentController extends ActionController
      */
     protected function getAssetProperties(Asset $asset)
     {
-        $thumbnail = $this->thumbnailService->getStaticThumbnailForAsset($asset, 16, 16);
-        $assetProperties = array(
+        $assetProperties = [
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
-            'filename' => $asset->getResource()->getFilename(),
-            'previewImageResourceUri' => $this->resourceManager->getPublicPackageResourceUri($thumbnail['package'], $thumbnail['src']),
-            'previewSize' => array('w' => $thumbnail['width'], 'h' => $thumbnail['height'])
-        );
+            'filename' => $asset->getResource()->getFilename()
+        ];
+        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:Thumbnail'));
+        if ($thumbnail !== null) {
+            $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
+            $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];
+        }
+
         return $assetProperties;
     }
 

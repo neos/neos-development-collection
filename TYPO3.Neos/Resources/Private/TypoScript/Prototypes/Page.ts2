@@ -158,6 +158,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			src = TYPO3.TypoScript:ResourceUri {
 				path = 'resource://TYPO3.Neos/Public/JavaScript/LastVisitedNode.js'
 			}
+			async = true
 		}
 	}
 

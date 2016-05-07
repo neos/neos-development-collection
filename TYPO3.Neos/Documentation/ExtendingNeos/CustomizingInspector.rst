@@ -22,6 +22,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         groups:
           advanced:
             label: 'Advanced'
+            icon: 'icon-fort-awesome'
             position: 2
     properties:
       hideSubheadline:
@@ -79,6 +80,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
           advanced:
             label: 'Advanced'
             position: 2
+            icon: 'icon-fort-awesome'
     properties:
       articleType:
         type: string

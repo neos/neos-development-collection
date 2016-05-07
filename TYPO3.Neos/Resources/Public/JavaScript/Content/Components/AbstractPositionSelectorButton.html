@@ -1,7 +1,7 @@
 <i {{bindAttr class="view.iconClass"}}></i>
 <div class="neos-arrow"></div>
 <div class="neos-position-selector-position">
-	{{view view.PositionSelectorOption position="before" }}
-	{{view view.PositionSelectorOption position="into" }}
-	{{view view.PositionSelectorOption position="after" }}
+	{{view view.PositionSelectorOption position="before" typeBinding="view.type"}}
+	{{view view.PositionSelectorOption position="into" typeBinding="view.type"}}
+	{{view view.PositionSelectorOption position="after" typeBinding="view.type"}}
 </div>

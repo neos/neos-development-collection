@@ -18,7 +18,7 @@
 										'TYPO3.Neos:Shortcut',
 										'TYPO3.Neos.NodeTypes:Page',
 										'TYPO3.Neos:Page',
-										'TYPO3.NeosDemoTypo3Org:Chapter',
+										'Neos.Demo:Chapter',
 										'TYPO3.NonExisting:NodeType'
 									]
 								}
@@ -28,7 +28,7 @@
 								'TYPO3.Neos:Shortcut': {},
 								'TYPO3.Neos.NodeTypes:Page': {},
 								'TYPO3.Neos:Page': {},
-								'TYPO3.NeosDemoTypo3Org:Chapter': {}
+								'Neos.Demo:Chapter': {}
 							}
 						});
 						return result;
@@ -49,7 +49,7 @@
 					assert.ok(documentSubNodeTypes['TYPO3.Neos:Shortcut'], 'TYPO3.Neos:Shortcut');
 					assert.ok(documentSubNodeTypes['TYPO3.Neos.NodeTypes:Page'], 'TYPO3.Neos.NodeTypes:Page');
 					assert.ok(documentSubNodeTypes['TYPO3.Neos:Page'], 'TYPO3.Neos:Page');
-					assert.ok(documentSubNodeTypes['TYPO3.NeosDemoTypo3Org:Chapter'], 'TYPO3.NeosDemoTypo3Org:Chapter');
+					assert.ok(documentSubNodeTypes['Neos.Demo:Chapter'], 'Neos.Demo:Chapter');
 
 					assert.ok(!documentSubNodeTypes['TYPO3.NonExisting:NodeType'], 'TYPO3.NonExisting:NodeType');
 				});

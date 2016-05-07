@@ -12,6 +12,10 @@
 		margin-right: 8px;
 	}
 
+	tr.neos-change + tr.neos-change td.neos-content-change {
+		border-top: 1px solid #ddd;
+	}
+
 	td {
 		white-space: nowrap;
 
@@ -27,6 +31,10 @@
 			}
 		}
 
+		&.path-caption .neos-aRight {
+			border-right: 1px solid $grayDark;
+		}
+
 		label {
 			padding: 0;
 			margin-bottom: 0;
@@ -37,7 +45,6 @@
 	}
 
 	td.neos-content-change {
-		border-top: 1px solid #ddd;
 		background-color: $grayLighter;
 		color: $textOnWhite;
 	}
@@ -72,11 +79,6 @@
 				}
 			}
 		}
-	}
-
-	i[class*="icon-"] {
-		vertical-align: baseline;
-		text-align: center;
 	}
 
 	td.neos-folder {
@@ -168,6 +170,7 @@
 
 		.unchanged {
 			background-color: $grayLight;
+			width: 100%;
 		}
 	}
 

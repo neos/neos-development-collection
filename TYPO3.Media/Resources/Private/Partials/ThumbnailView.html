@@ -11,23 +11,25 @@
 					<span class="neos-caption"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
 				</f:link.action>
 				<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
-					<div class="neos-modal">
-						<div class="neos-modal-header">
-							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">Do you really want to delete asset "{asset.label}"?</div>
-							<div>
-								<div class="neos-subheader">
-									<p>This will delete the asset.<br />This operation cannot be undone.</p>
+					<div class="neos-modal-centered">
+						<div class="neos-modal-content">
+							<div class="neos-modal-header">
+								<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+								<div class="neos-header">Do you really want to delete asset "{asset.label}"?</div>
+								<div>
+									<div class="neos-subheader">
+										<p>This will delete the asset.<br />This operation cannot be undone.</p>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="neos-modal-footer">
-							<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-							<f:form action="delete" method="post" object="{asset}" objectName="asset" class="neos-inline">
-								<button type="submit" title="Delete asset" class="neos-button neos-button-mini neos-button-danger">
-									Yes, delete the asset
-								</button>
-							</f:form>
+							<div class="neos-modal-footer">
+								<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+								<f:form action="delete" method="post" object="{asset}" objectName="asset" class="neos-inline">
+									<button type="submit" title="Delete asset" class="neos-button neos-button-mini neos-button-danger">
+										Yes, delete the asset
+									</button>
+								</f:form>
+							</div>
 						</div>
 					</div>
 					<div class="neos-modal-backdrop neos-in"></div>

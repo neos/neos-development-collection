@@ -23,19 +23,29 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
 
     /**
-     * @param NodeInterface $node A document node
-     * @return string
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * @param NodeInterface $node A node
+     * @return array of document nodes
      */
     public function render(NodeInterface $node)
     {
-        $output = '/' . $node->getLabel();
+        $documentNodes = [];
         $flowQuery = new FlowQuery(array($node));
-        $nodes = $flowQuery->parents('[instanceof TYPO3.Neos:Document]')->get();
+        $nodes = array_reverse($flowQuery->parents('[instanceof TYPO3.Neos:Document]')->get());
         /** @var NodeInterface $node */
-        foreach ($nodes as $node) {
-            $output = '/' . $node->getLabel() . $output;
+        foreach ($nodes as $documentNode) {
+            $documentNodes[] = $documentNode;
         }
-
-        return $output;
+        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+            $documentNodes[] = $node;
+        }
+        $this->templateVariableContainer->add('documentNodes', $documentNodes);
+        $content = $this->renderChildren();
+        $this->templateVariableContainer->remove('documentNodes');
+        return $content;
     }
 }

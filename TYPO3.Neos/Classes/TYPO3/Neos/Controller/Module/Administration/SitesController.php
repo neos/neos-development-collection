@@ -288,7 +288,7 @@ class SitesController extends AbstractModuleController
      */
     public function editDomainAction(Domain $domain)
     {
-        $this->view->assign('domain', $domain);
+        $this->view->assignMultiple(['domain' => $domain, 'schemes' => [null => '', 'http' => 'HTTP', 'https' => 'HTTPS']]);
     }
 
     /**
@@ -301,7 +301,7 @@ class SitesController extends AbstractModuleController
     public function updateDomainAction(Domain $domain)
     {
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())), 1412373069);
+        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373069);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -317,7 +317,8 @@ class SitesController extends AbstractModuleController
     {
         $this->view->assignMultiple(array(
             'domain' => $domain,
-            'site' => $site
+            'site' => $site,
+            'schemes' => [null => '', 'http' => 'HTTP', 'https' => 'HTTPS']
         ));
     }
 
@@ -331,7 +332,7 @@ class SitesController extends AbstractModuleController
     public function createDomainAction(Domain $domain)
     {
         $this->domainRepository->add($domain);
-        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())), 1412373192);
+        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373192);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -345,7 +346,7 @@ class SitesController extends AbstractModuleController
     public function deleteDomainAction(Domain $domain)
     {
         $this->domainRepository->remove($domain);
-        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())), 1412373310);
+        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373310);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -353,13 +354,14 @@ class SitesController extends AbstractModuleController
      * Activates a domain
      *
      * @param Domain $domain Domain to activate
+     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
     public function activateDomainAction(Domain $domain)
     {
         $domain->setActive(true);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())), 1412373539);
+        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373539);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 
@@ -367,13 +369,14 @@ class SitesController extends AbstractModuleController
      * Deactivates a domain
      *
      * @param Domain $domain Domain to deactivate
+     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
     public function deactivateDomainAction(Domain $domain)
     {
         $domain->setActive(false);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array(htmlspecialchars($domain->getHostPattern())), 1412373425);
+        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373425);
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
     }
 

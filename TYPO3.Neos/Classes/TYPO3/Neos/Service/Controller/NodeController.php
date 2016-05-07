@@ -43,7 +43,7 @@ class NodeController extends AbstractServiceController
      */
     protected $viewFormatToObjectNameMap = array(
         'html' => 'TYPO3\Neos\Service\View\NodeView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'json' => 'TYPO3\Neos\Service\View\NodeView'
     );
 
     /**
@@ -251,7 +251,7 @@ class NodeController extends AbstractServiceController
     public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
     {
         $this->nodeOperations->move($node, $targetNode, $position);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $this->redirectToRenderNode($node, $typoScriptPath);
     }
 
     /**
@@ -302,8 +302,8 @@ class NodeController extends AbstractServiceController
      */
     public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
     {
-        $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+        $this->redirectToRenderNode($copiedNode, $typoScriptPath);
     }
 
     /**
@@ -331,7 +331,14 @@ class NodeController extends AbstractServiceController
         $q = new FlowQuery(array($node));
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
         $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
-        $this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => true));
+        $this->view->assign('value', array(
+            'data' => array(
+                'workspaceNameOfNode' => $node->getWorkspace()->getName(),
+                'labelOfNode' => $node->getLabel(),
+                'nextUri' => $nextUri
+            ),
+            'success' => true
+        ));
     }
 
     /**

@@ -1,0 +1,187 @@
+`2.1.6 (2016-04-20) <https://github.com/neos/neos-development-collection/releases/tag/2.1.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Indicate active inspector tab <https://github.com/neos/neos-development-collection/pull/456>`_
+-------------------------------------------------------------------------------------------------------
+
+Fixes an overflow issue caused the border of the active tab not to change.
+
+Additionally adds a hover effect.
+
+* Packages: ``Neos``
+
+`BUGFIX: Update structure tree when changing node type <https://github.com/neos/neos-development-collection/pull/442>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a node type is changed for a node, the context structure
+tree needs to be updated accordingly.
+
+NEOS-1395 #close
+
+* Packages: ``Neos``
+
+`TASK: Remove "CreateNodes" from documentation <https://github.com/neos/neos-development-collection/pull/445>`_
+---------------------------------------------------------------------------------------------------------------
+
+The node migration transformation "CreateNodes" does not exist,
+so it is removed from the documentation.
+
+* Packages: ``Neos``
+
+`TASK: Improve content dimensions documentation <https://github.com/neos/neos-development-collection/pull/432>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent edit / preview rendering path from applying to front-end <https://github.com/neos/neos-development-collection/pull/429>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+When a edit / preview mode with a rendering path is selected it can affect the
+front-end view for the logged in user. To prevent this edit / preview modes now
+only apply in the backend.
+
+NEOS-1758 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Create Content Element Documentation <https://github.com/neos/neos-development-collection/pull/433>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Correct timezone offset in node info inspector view <https://github.com/neos/neos-development-collection/pull/441>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The time shown in the `Additional info` box now respects the timezone for the `Created`, `Last modification` and `Last publication` date of a node. Until now the time was shown in UTC and therefore off a couple of hours for most of the world.
+
+NEOS-1807 #close
+
+* Packages: ``Neos``
+
+`TASK: Display node label instead of node type label in workspace overview <https://github.com/neos/neos-development-collection/pull/420>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+The node type label doesn't really represent the actual node making it difficult to identity,
+instead the node label is used and the node type label is available on hover.
+
+* Packages: ``Neos``
+
+`BUGFIX: Add missing constructor doc block for Tags <https://github.com/neos/neos-development-collection/pull/412>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`TASK: Document node type \`\`ui.position\`\` property <https://github.com/neos/neos-development-collection/pull/419>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Page creation without \`\`language\`\` dimension <https://github.com/neos/neos-development-collection/pull/423>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The uninitialized variable ``$language`` results in an exception
+when the user tries to add a page on PHP 7 due to
+``Notice: Undefined variable: language``.
+
+* Packages: ``Neos``
+
+`BUGFIX: Verify DateTime parsing in nodeConverter <https://github.com/neos/neos-development-collection/pull/378>`_
+------------------------------------------------------------------------------------------------------------------
+
+If a DateTime property is not parseable,
+$nodePropertyValue->setTimezone() is called on a none-object.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/415>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Use correct value in \`\`StringLengthValidator\`\` error message <https://github.com/neos/neos-development-collection/pull/410>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixed maximum string length validation error message
+
+* Packages: ``Neos``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/414>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Cancel previous load page requests <https://github.com/neos/neos-development-collection/pull/409>`_
+------------------------------------------------------------------------------------------------------------
+
+When a page takes long to load it can happen that a new page is requested instead.
+If the new page loads before the previous slow request, the new page is loaded
+first and then replaced with the old request once it finishes. This is a confusing
+to the user and thus the last request should always take precedence.
+
+* Packages: ``Neos``
+
+`TASK: Adjust unit tests mocks to new errors <https://github.com/neos/neos-development-collection/pull/413>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since ``phpunit-mock-objects`` 3.1.0 errors are thrown when a mocked
+method is not allowed, non-existing, final or private.
+
+This change adjusts to that change by getting rid of such mistakes in
+the tests, which are made visible due to the change.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Use stable identifier for auto-created child nodes in repair <https://github.com/neos/neos-development-collection/pull/389>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If auto-created child nodes are added via `node:repair`, the generated identifiers are not the same across different variants. This will cause problems when publishing these node variants later.
+
+This change synchronizes the behavior between `node:repair` and regular node creation.
+
+Running `node:repair` will now check identifiers of auto-created child nodes and adjust them accordingly. This is potentially breaking if a child node was referenced from another node but that should very rarely happen.
+
+NEOS-1783 #close
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Translation file ending <https://github.com/neos/neos-development-collection/pull/406>`_
+-------------------------------------------------------------------------------------------------
+
+This PR is a fixed Version of #402 
+Now agains 2.0 branch :) 
+
+* Packages: ``Neos``
+
+`BUGFIX: Creating pages using non-latin characters <https://github.com/neos/neos-development-collection/pull/394>`_
+-------------------------------------------------------------------------------------------------------------------
+
+When a page is created in the node tree the title is automatically
+transliterated to a valid URL. However when using non-latin characters,
+the characters weren't transliterated. This lead to the pages having
+special characters in their URL, making them inaccessible.
+
+To fix this a new transliteration service is introduced which adds support for Chinese, Japanese,
+Korean, Vietnamese, Khmer, Thai, Arabic, Hebrew, Hindi, Burmese and Greek.
+
+NEOS-1791 #close
+NEOS-1280 #close
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.5...2.1.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -52,12 +52,12 @@
 		border: 1px solid $grayLight;
 		z-index: 10015;
 		@include opacity(1);
-		@include icon-FontAwesome();
+		@include fa-icon();
 		@include transition-property(top, right);
 		@include transition-duration(.2s);
 
 		&:before {
-			content: $remove;
+			content: $fa-var-times;
 		}
 
 		&:hover {
@@ -86,17 +86,30 @@
 }
 
 .neos-secondary-inspector-image-crop {
-	> img {
-		visibility: hidden;
-	}
+	overflow: auto;
 
-	.jcrop-holder {
-		margin: $defaultMargin auto;
+	.neos-image-editor-crop-area {
+		padding: 0 $defaultMargin;
+
+		> img {
+			max-width: none;
+			visibility: hidden;
+		}
+
+		.jcrop-holder {
+			margin: 0 auto;
+		}
+
+		.jcrop-vline,
+		.jcrop-hline {
+			background: url('../Library/jcrop/css/Jcrop.gif') #fff;
+		}
 	}
 
 	.neos-image-editor-crop-aspect-ratio {
-		margin: $unit auto 0;
 		width: 600px;
+		margin: 0 auto;
+		padding: $unit $defaultMargin $defaultMargin;
 
 		> span {
 			line-height: $unit;

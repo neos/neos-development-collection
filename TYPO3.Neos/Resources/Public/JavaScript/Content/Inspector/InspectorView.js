@@ -100,6 +100,20 @@ define(
 		 */
 		_showUnappliedDialog: function() {
 			UnappliedChangesDialog.create();
+		},
+
+		didInsertElement: function() {
+			this.scheduleTooltips();
+		},
+
+		scheduleTooltips: function() {
+			Ember.run.scheduleOnce('afterRender', this, this.activateTooltips);
+		}.observes('controller.selectedNode').on('init'),
+
+		activateTooltips: function() {
+			if (this.$()) {
+				this.$('[data-neos-tooltip]').tooltip({container: '#neos-application'});
+			}
 		}
 	});
 });

@@ -14,7 +14,7 @@ A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'TYPO3.Neos:Content': true
 	  ui:
 	    label: 'Special Headline'
 	    group: 'general'
@@ -23,7 +23,7 @@ A node type definition can look as follows::
 	      type: 'string'
 	      defaultValue: 'My Headline Default'
 	      ui:
-	        inlineEditable: TRUE
+	        inlineEditable: true
 	      validation:
 	        'TYPO3.Neos/Validation/StringLengthValidator':
 	          minimum: 1
@@ -36,11 +36,11 @@ The following options are allowed:
 
     'TYPO3.Neos:Document':
       superTypes:
-        'Acme.Demo.ExtraMixin': TRUE
+        'Acme.Demo.ExtraMixin': true
 
     'TYPO3.Neos:Shortcut':
       superTypes:
-        'Acme.Demo.ExtraMixin': FALSE
+        'Acme.Demo.ExtraMixin': false
 
 
 ``constraints``
@@ -50,10 +50,10 @@ The following options are allowed:
     constraints:
       nodeTypes:
         # ALLOW text, DISALLOW Image
-        'TYPO3.Neos.NodeTypes:Text': TRUE
-        'TYPO3.Neos.NodeTypes:Image': FALSE
+        'TYPO3.Neos.NodeTypes:Text': true
+        'TYPO3.Neos.NodeTypes:Image': false
         # DISALLOW as Fallback (for not-explicitely-listed node types)
-        '*': FALSE
+        '*': false
 
 ``childNodes``
   A list of child nodes that are automatically created if a node of this type is created.
@@ -67,8 +67,8 @@ The following options are allowed:
         constraints:
           nodeTypes:
             # only allow images in this ContentCollection
-            'TYPO3.Neos.NodeTypes:Image': TRUE
-            '*': FALSE
+            'TYPO3.Neos.NodeTypes:Image': true
+            '*': false
 
   By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
   An example may look like::
@@ -84,6 +84,24 @@ The following options are allowed:
   The position setting follows the same sorting logic used in TypoScript
   (see the :ref:`neos-typoscript-reference`).
 
+``label``
+  When displaying a node inside the Neos UI (e.g. tree view, link editor, workspace module) the ``label`` option will
+  be used to generate a human readable text for a specific node instance (in contrast to the ``ui.label``
+  which is used for all nodes of that type).
+
+  The label option accepts an Eel expression that has access to the current node using the ``node`` context variable.
+  It is recommended to customize the `label` option for node types that do not yield a sufficient description
+  using the default configuration.
+
+  Example::
+
+    'Neos.Demo:Flickr':
+      label: ${'Flickr plugin (' + q(node).property('tags') + ')'}
+
+  ``generatorClass``
+    Alternatively the class of a node label generator implementing
+    ``TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 
@@ -95,6 +113,10 @@ The following options are allowed:
     It can only be created through the user interface if ``group`` is defined and it is valid.
 
     All valid groups are given in the ``TYPO3.Neos.nodeTypes.groups`` setting
+
+  ``position``
+    Position inside the group this content element is grouped into for the 'New Content Element' dialog.
+    Small numbers are sorted on top.
 
   ``icon``
     This setting define the icon to use in the Neos UI for the node type
@@ -129,8 +151,8 @@ The following options are allowed:
        the help text to flow around it.
 
   ``inlineEditable``
-    If TRUE, it is possible to interact with this Node directly in the content view.
-    If FALSE, an overlay is shown preventing any interaction with the node.
+    If `true`, it is possible to interact with this Node directly in the content view.
+    If `false`, an overlay is shown preventing any interaction with the node.
     If not given, checks if any property is marked as ``ui.inlineEditable``.
 
   ``inspector``
@@ -160,6 +182,9 @@ The following options are allowed:
       ``position``
         Position of the inspector group, small numbers are sorted on top
 
+      ``icon``
+        This setting define the icon to use in the Neos UI for the group
+
       ``tab``
         The tab the group belongs to. If left empty the group is added to the ``default`` tab.
 
@@ -168,6 +193,9 @@ The following options are allowed:
 
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
+
+  .. note:: Your own property names should never start with an underscore ``_`` as that is used for internal
+            properties or as an internal prefix.
 
   ``type``
     Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
@@ -193,17 +221,17 @@ The following options are allowed:
         be translated (see :ref:`translate-nodetypes`).
 
     ``reloadIfChanged``
-      If TRUE, the whole content element needs to be re-rendered on the server side if the value
+      If `true`, the whole content element needs to be re-rendered on the server side if the value
       changes. This only works for properties which are displayed inside the property inspector,
       i.e. for properties which have a ``group`` set.
 
     ``reloadPageIfChanged``
-      If TRUE, the whole page needs to be re-rendered on the server side if the value
+      If `true`, the whole page needs to be re-rendered on the server side if the value
       changes. This only works for properties which are displayed inside the property inspector,
       i.e. for properties which have a ``group`` set.
 
     ``inlineEditable``
-      If TRUE, this property is inline editable, i.e. edited directly on the page through Aloha.
+      If `true`, this property is inline editable, i.e. edited directly on the page through Aloha.
 
     ``aloha``
       This section controls the text formatting options the user has available for this property.
@@ -211,39 +239,39 @@ The following options are allowed:
 
         aloha:
           'format': # Enable specific formatting options.
-            'strong': TRUE
-            'b': FALSE
-            'em': TRUE
-            'i': FALSE
-            'u': TRUE
-            'sub': TRUE
-            'sup': TRUE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'h4': FALSE
-            'h5': FALSE
-            'h6': FALSE
-            'code': FALSE
-            'removeFormat': TRUE
+            'strong': true
+            'b': false
+            'em': true
+            'i': false
+            'u': true
+            'sub': true
+            'sup': true
+            'p': true
+            'h1': true
+            'h2': true
+            'h3': true
+            'h4': false
+            'h5': false
+            'h6': false
+            'code': false
+            'removeFormat': true
           'table':
-            'table': TRUE
+            'table': true
           'link':
-            'a': TRUE
+            'a': true
           'list':
-            'ul': TRUE
-            'ol': TRUE
+            'ul': true
+            'ol': true
           'alignment':
-            'left': TRUE
-            'center': TRUE
-            'right': TRUE
-            'justify': TRUE
+            'left': true
+            'center': true
+            'right': true
+            'justify': true
           'formatlesspaste':
-            'button': TRUE # Show toggle button for formatless pasting.
-            'formatlessPasteOption': FALSE # Whether the format less pasting should be enable by default.
+            'button': true # Show toggle button for formatless pasting.
+            'formatlessPasteOption': false # Whether the format less pasting should be enable by default.
             'strippedElements': ['a'] # If not set the default setting is used.
-            'autoparagraph': TRUE # Automatically wrap non-wrapped text blocks in paragraph blocks.
+            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 
@@ -254,8 +282,8 @@ The following options are allowed:
           'list': []
           'alignment': []
           'formatlesspaste':
-            'button': FALSE
-            'formatlessPasteOption': TRUE
+            'button': false
+            'formatlessPasteOption': true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.
@@ -284,13 +312,13 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
-.. tip:: Unset a property by setting the property configuration to null (~).
+.. tip:: Unset a property by setting the property configuration to null (``~``).
 
 Here is one of the standard Neos node types (slightly shortened)::
 
 	'TYPO3.Neos.NodeTypes:Image':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'TYPO3.Neos:Content': true
 	  ui:
 	    label: 'Image'
 	    icon: 'icon-picture'
@@ -298,13 +326,14 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      groups:
 	        image:
 	          label: 'Image'
+	          icon: 'icon-image'
 	          position: 5
 	  properties:
 	    image:
 	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	    alignment:
@@ -312,7 +341,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      defaultValue: ''
 	      ui:
 	        label: 'Alignment'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
@@ -331,7 +360,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      type: string
 	      ui:
 	        label: 'Alternative text'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	      validation:
@@ -342,13 +371,13 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      type: boolean
 	      ui:
 	        label: 'Enable caption'
-	        reloadIfChanged: TRUE
+	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
 	    caption:
 	      type: string
 	      defaultValue: '<p>Enter caption here</p>'
 	      ui:
-	        inlineEditable: TRUE
+	        inlineEditable: true
 
 

@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * The Neos Backend controller
@@ -21,6 +23,7 @@ use TYPO3\Flow\I18n\Locale;
  */
 class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Neos\Service\BackendRedirectionService
@@ -32,6 +35,24 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var \TYPO3\Neos\Service\XliffService
      */
     protected $xliffService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Service\LinkingService
+     */
+    protected $linkingService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $loginTokenCache;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Session\SessionInterface
+     */
+    protected $currentSession;
 
     /**
      * Default action of the backend controller.
@@ -48,6 +69,24 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
+     * Redirects to the Neos backend on the given site, passing a one-time login token
+     *
+     * @param Site $site
+     * @return void
+     */
+    public function switchSiteAction($site)
+    {
+        $token = Algorithms::generateRandomToken(32);
+        $this->loginTokenCache->set($token, $this->currentSession->getId());
+        $siteUri = $this->linkingService->createSiteUri($this->controllerContext, $site);
+
+        $loginUri = $this->controllerContext->getUriBuilder()
+            ->reset()
+            ->uriFor('tokenLogin', ['token' => $token], 'Login', 'TYPO3.Neos');
+        $this->redirectToUri($siteUri . $loginUri);
+    }
+
+    /**
      * Returns the cached json array with the xliff labels
      *
      * @param string $locale
@@ -56,6 +95,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
+
         return $this->xliffService->getCachedJson(new Locale($locale));
     }
 }
