@@ -17,7 +17,6 @@ use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Persistence\Doctrine\Query;
-use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;
 

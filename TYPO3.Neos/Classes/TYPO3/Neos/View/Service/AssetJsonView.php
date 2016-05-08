@@ -13,7 +13,6 @@ namespace TYPO3\Neos\View\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Media\Domain\Model\AssetInterface;
 
 /**
  * A view specialised on a JSON representation of Assets.
