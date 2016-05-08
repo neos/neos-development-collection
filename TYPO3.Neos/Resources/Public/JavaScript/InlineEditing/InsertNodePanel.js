@@ -62,14 +62,21 @@ function(
 					helpMessage = type.metadata.ui.help.message;
 				}
 
-				var groupName = type.metadata.ui.group || 'general';
-				nodeTypeGroups.findBy('name', groupName).get('nodeTypes').pushObject({
-					'nodeType': nodeTypeName,
-					'label': I18n.translate(type.metadata.ui.label),
-					'helpMessage': helpMessage,
-					'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
-					'position': type.metadata.ui.position
-				});
+				var groupName = 'group' in type.metadata.ui ? type.metadata.ui.group : 'general';
+				if (groupName) {
+					var group = nodeTypeGroups.findBy('name', groupName);
+					if (group) {
+						group.get('nodeTypes').pushObject({
+							'nodeType': nodeTypeName,
+							'label': I18n.translate(type.metadata.ui.label),
+							'helpMessage': helpMessage,
+							'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
+							'position': type.metadata.ui.position
+						});
+					} else {
+						window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "TYPO3.Neos.nodeTypes.groups"');
+					}
+				}
 			});
 		},
 
