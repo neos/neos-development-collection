@@ -12,7 +12,6 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
  * This converter transforms to \TYPO3\Media\Domain\Model\ImageVariant objects.
