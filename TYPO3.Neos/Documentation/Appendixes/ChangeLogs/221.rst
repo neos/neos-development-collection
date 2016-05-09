@@ -1,0 +1,44 @@
+`2.2.1 (2016-05-09) <https://github.com/neos/neos-development-collection/releases/tag/2.2.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Translate flash messages for asset management <https://github.com/neos/neos-development-collection/pull/502>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This change translates flash messages for the AssetController by
+translation id. The Neos backend module controller first resolves to
+translations in the Modules.xlf of the TYPO3.Neos package, if no
+translation is found transaltions are done based on the TYPO3.Media
+package translations.
+
+The Neos module take the users language preference into account.
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Handle missing node type group gracefully <https://github.com/neos/neos-development-collection/pull/505>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Gracefully handle a node type configured configured with a non-existing
+node type group.
+
+Additionally changes the behavior when the group is set to null,
+making it possible to hide the node type. If the group is not set,
+it will default to the "general" group as previously.
+
+Regression of `54aa91f19c8776a96003a631c23d8c1556fb33fe <https://github.com/neos/neos-development-collection/commit/54aa91f19c8776a96003a631c23d8c1556fb33fe>`_
+
+NEOS-786 #comment Fix regression
+
+* Packages: ``Neos``
+
+`BUGFIX: Close insert node panel when pressing esc button <https://github.com/neos/neos-development-collection/pull/504>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Regression of `8ec441266bd7fac9a99539bc78c6ae36d382a1b9 <https://github.com/neos/neos-development-collection/commit/8ec441266bd7fac9a99539bc78c6ae36d382a1b9>`_
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.0...2.2.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
