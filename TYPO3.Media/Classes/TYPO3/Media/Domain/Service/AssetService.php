@@ -21,6 +21,7 @@ use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Repository\AssetRepository;
@@ -210,6 +211,9 @@ class AssetService
      */
     public function validateRemoval(AssetInterface $asset)
     {
+        if ($asset instanceof ImageVariant) {
+            return;
+        }
         if ($this->isInUse($asset)) {
             throw new AssetServiceException('Asset could not be deleted, because it is still in use.', 1462196420);
         }
