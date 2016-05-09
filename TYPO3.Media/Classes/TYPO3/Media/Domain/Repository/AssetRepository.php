@@ -19,6 +19,7 @@ use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Persistence\Doctrine\Query;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Service\AssetService;
 
 /**
  * A repository for Assets
@@ -40,6 +41,12 @@ class AssetRepository extends Repository
      * @var array
      */
     protected $defaultOrderings = array('lastModified' => QueryInterface::ORDER_DESCENDING);
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * Find assets by title or given tags
@@ -276,5 +283,31 @@ class AssetRepository extends Repository
             ->from($this->getEntityClassName(), 'a')
             ->where('a NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant')
             ->getQuery()->iterate();
+    }
+
+    /**
+     * Remove an asset while first validating if the object can be removed or
+     * if removal is blocked because the asset is still in use.
+     *
+     * @param AssetInterface $object
+     * @return void
+     */
+    public function remove($object)
+    {
+        $this->assetService->validateRemoval($object);
+        parent::remove($object);
+    }
+
+    /**
+     * Remove the asset even if it is still in use. Use with care, it is probably
+     * better to first make sure the asset is not used anymore and then use
+     * the remove() method for removal.
+     *
+     * @param AssetInterface $object
+     * @return void
+     */
+    public function removeWithoutUsageChecks($object)
+    {
+        parent::remove($object);
     }
 }

@@ -14,6 +14,7 @@ namespace TYPO3\Media\Controller;
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Repository\AudioRepository;
@@ -24,6 +25,8 @@ use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 
 /**
@@ -63,6 +66,12 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var \TYPO3\Media\Domain\Session\BrowserState
      */
     protected $browserState;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * @var array
@@ -392,8 +401,13 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     public function deleteAction(Asset $asset)
     {
-        $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', htmlspecialchars($asset->getLabel())));
+        try {
+            $this->assetRepository->remove($asset);
+            $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', htmlspecialchars($asset->getLabel())));
+        } catch (AssetServiceException $exception) {
+            $this->addFlashMessage('Asset could not be deleted.', '', Message::SEVERITY_WARNING, [], 1462196565);
+        }
+
         $this->redirect('index');
     }
 
