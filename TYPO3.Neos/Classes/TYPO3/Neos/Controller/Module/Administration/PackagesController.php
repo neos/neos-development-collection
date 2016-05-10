@@ -44,7 +44,7 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
             $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
             $packageGroups[$packageGroup][$package->getPackageKey()] = array(
                 'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
-                'version' => $package->getInstalledVersion(),
+                'version' => $package->getInstalledVersion() ? $package->getInstalledVersion() : $package->getPackageMetaData()->getVersion(),
                 'name' => $package->getComposerManifest('name'),
                 'type' => $package->getComposerManifest('type'),
                 'description' => $package->getPackageMetaData()->getDescription(),
