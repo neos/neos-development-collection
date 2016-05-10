@@ -86,4 +86,14 @@ interface ContentDimensionPresetSourceInterface
      * @return boolean
      */
     public function isPresetCombinationAllowedByConstraints(array $dimensionsNamesAndPresetIdentifiers);
+
+    /**
+     * Finds for each configured dimension the best matching preset based on given target value for that dimension.
+     *
+     * The $targetValues array should habe the dimension as key and the target value (single value) as value.
+     *
+     * @param array $targetValues
+     * @return array
+     */
+    public function findPresetsByTargetValues(array $targetValues);
 }

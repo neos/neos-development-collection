@@ -54,8 +54,10 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
         if (isset($this->configuration[$dimensionName]['defaultPreset']) && isset($this->configuration[$dimensionName]['presets'][$this->configuration[$dimensionName]['defaultPreset']])) {
             $preset = $this->configuration[$dimensionName]['presets'][$this->configuration[$dimensionName]['defaultPreset']];
             $preset['identifier'] = $this->configuration[$dimensionName]['defaultPreset'];
+
             return $preset;
         }
+
         return null;
     }
 
@@ -68,10 +70,12 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             foreach ($this->configuration[$dimensionName]['presets'] as $presetIdentifier => $presetConfiguration) {
                 if (isset($presetConfiguration['values']) && $presetConfiguration['values'] === $dimensionValues) {
                     $presetConfiguration['identifier'] = $presetIdentifier;
+
                     return $presetConfiguration;
                 }
             }
         }
+
         return null;
     }
 
@@ -89,7 +93,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             return null;
         }
 
-        $dimensionConfiguration = array($dimensionName => $this->configuration[$dimensionName]);
+        $dimensionConfiguration = [$dimensionName => $this->configuration[$dimensionName]];
         $sorter = new PositionalArraySorter($dimensionConfiguration[$dimensionName]['presets']);
         $dimensionConfiguration[$dimensionName]['presets'] = $sorter->toArray();
 
@@ -130,6 +134,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
                 }
             }
         }
+
         return true;
     }
 
@@ -155,6 +160,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
         if (array_key_exists('*', $constraints[$dimensionName])) {
             return (boolean)$constraints[$dimensionName]['*'];
         }
+
         return true;
     }
 
@@ -172,5 +178,60 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             }
         }
         $this->configuration = $configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findPresetsByTargetValues(array $targetValues)
+    {
+        $matchingPresets = [];
+        $allPresets = $this->getAllPresets();
+
+        foreach ($targetValues as $dimensionName => $dimensionValues) {
+            $matchingPresets[$dimensionName] = array_reduce($allPresets[$dimensionName]['presets'], function ($primaryPreset, $presetForDimension) use ($dimensionValues) {
+                return $this->comparePresetsForTargetValue($presetForDimension, $dimensionValues, $primaryPreset);
+            }, null);
+
+            if ($matchingPresets[$dimensionName] !== null) {
+                continue;
+            }
+
+            $matchingPresets[$dimensionName] = [
+                'label' => reset($dimensionValues),
+                'values' =>  $dimensionValues
+            ];
+        }
+
+        return $matchingPresets;
+    }
+
+    /**
+     * @param array $possibleBetterPreset
+     * @param array $targetValues
+     * @param array $currentBestPreset
+     * @return array
+     */
+    protected function comparePresetsForTargetValue(array $possibleBetterPreset, $targetValues, array $currentBestPreset = null)
+    {
+        if (!isset($possibleBetterPreset['values'][0])) {
+            return $currentBestPreset;
+        }
+
+        if ($possibleBetterPreset['values'] === $targetValues) {
+            return $possibleBetterPreset;
+        }
+
+        if ($possibleBetterPreset['values'][0] === reset($targetValues)) {
+            return $possibleBetterPreset;
+        }
+
+        foreach ($targetValues as $targetValue) {
+            if ($currentBestPreset === null && in_array($targetValue, $possibleBetterPreset['values'])) {
+                return $possibleBetterPreset;
+            }
+        }
+
+        return $currentBestPreset;
     }
 }
