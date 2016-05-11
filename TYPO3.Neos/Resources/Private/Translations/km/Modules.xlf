@@ -26,37 +26,37 @@
 			<target xml:lang="km" state="translated">លំហរការងារ</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
-			<target xml:lang="km" state="needs-translation">Details for "{0}"</target></trans-unit>
+			<target xml:lang="km" state="translated">ពត៌មានលំអិត "{០}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="km" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតតំបន់ការងារថ្មី</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target xml:lang="km" state="needs-translation">Create workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតតំបន់ការងារ</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
-			<target xml:lang="km" state="needs-translation">Delete workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">លុបតំបន់ការងារ</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace</source>
-			<target xml:lang="km" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">កែសម្រួលតំបន់ការងារ</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
 			<target xml:lang="km" state="needs-translation">Yes, delete the workspace</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="km" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">កែសម្រួលតំបន់ការងារ</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target xml:lang="km" state="needs-translation">Personal workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់ការងារផ្ទាល់ខ្លួន</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
-			<target xml:lang="km" state="needs-translation">Private workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់ការងារឯកជន</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
-			<target xml:lang="km" state="needs-translation">Internal workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់ការងារផ្ទៃក្នុង</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
-			<target xml:lang="km" state="needs-translation">Read-only workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់ធ្វើការបានតែអាន</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="km" state="translated">ចំណងជើង</target></trans-unit>
@@ -65,7 +65,7 @@
 			<target xml:lang="km" state="translated">ពិពណ៍នា</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target xml:lang="km" state="needs-translation">Base workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់ការងារមូលដ្ឋាន</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			<target xml:lang="km" state="translated">ម្ចាស់</target></trans-unit>
@@ -75,16 +75,16 @@
 ដែលអាចមើលឃើញ</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="km" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="km" state="translated">ឯកជន</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="km" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">មាន​តែអ្នក​ត្រួត​ពិនិត្យនិងអ្នកគ្រប់គ្រងអាចចូលដំណើរការនិងកែប្រែតំបន់ការងារនេះ</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="km" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្ទៃក្នុង</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="km" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
+			<target xml:lang="km" state="translated">រាល់ការចូលទេនៅក្នុងកម្មវិធីនិពន្ធអាចមើលឃើញនិងកែប្រែតំបន់ការងារនេះ</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target xml:lang="km" state="translated">ផ្លាស់ប្ដូរ</target></trans-unit>
@@ -93,25 +93,25 @@
 			<target xml:lang="km" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="km" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះគឺជាតំបន់​ការងារផ្ទាល់ខ្លួនរបស់អ្នកដែលអ្នកមិនអាចលុប</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="km" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់​ការងារនេះមានការផ្លាស់ប្តូរ។ លុប, បោះបង់ការផ្លាស់ប្តូរជាលើកដំបូង។</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="km" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
+			<target xml:lang="km" state="translated">កន្លែងធ្វើការមិនអាចត្រូវបាន rebased នៅលើតំបន់​ការងារផ្សេងគ្នាដោយសារតែវានៅតែមានការផ្លាស់ប្តូរ។</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="km" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់​ការងារនេះមិនអាចត្រូវបានលុបបានទេព្រោះតំបន់ធ្វើការផ្សេងទៀតពឹងផ្អែកលើវា។</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="km" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
+			<target xml:lang="km" state="translated">អ្នកមិនមានសិទ្ធិដើម្បីលុបតំបន់​ការងារនេះ។</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target xml:lang="km" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបតំបន់ធ្វើការ "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="km" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="km" state="translated">វានឹងលុបតំបន់ធ្វើការរួម​ទាំង​ខ្លឹមសារដែលមិនបានផ្សព្វផ្សាយទាំងអស់។ ប្រតិបត្តិការនេះមិនអាចមិនធ្វើ​វិញ​ទេ។</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="km" state="translated">ម៉ូឌុលនេះផ្ទុកទិដ្ឋភាពទូទៅនៃទាំងអស់នៅក្នុងតំបន់ធ្វើការធាតុនាពេលបច្ចុប្បន្ននេះហើយវាអនុញ្ញាតឱ្យបន្តការពិនិត្យនិងការបោះពុម្ពផ្សាយលំហូរការងារសម្រាប់ពួកគេ។</target></trans-unit>
@@ -120,10 +120,10 @@
 			<target xml:lang="km" state="translated">ការផ្លាស់ប្តូរដែលមិនទាន់ដាក់ផ្សាយ</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target xml:lang="km" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
+			<target xml:lang="km" state="translated">ការបន្ថែម: {ថ្មី}, ការផ្លាស់ប្តូរ: {ផ្លាស់ប្តូរ} ដកចេញ: {យកចេញ}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target xml:lang="km" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="km" state="translated">ពិនិត្យឡើងវិញ</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="km" state="translated">បេាះបង់ចោលការកែតម្រូវ</target></trans-unit>
@@ -138,10 +138,10 @@
 			<target xml:lang="km" state="translated">ផ្សាយរាល់ការផ្លាស់ប្តូរ</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="km" state="needs-translation">Publish all changes to {0}</target></trans-unit>
+			<target xml:lang="km" state="translated">បោះពុម្ពផ្សាយការផ្លាស់ប្តូរទាំងអស់ទៅ {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="km" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្លាស់ប្តូរខ្លឹមសារ</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="km" state="translated">ត្រូវបានលប់</target><alt-trans><target xml:lang="km">ការលប់</target></alt-trans><alt-trans><target xml:lang="km">លប់</target></alt-trans></trans-unit>
@@ -165,28 +165,28 @@
 			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់បោះបង់កំនែរនៅក្នុង កន្លែងការងារ "{0}"</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
-        <target xml:lang="km" state="needs-translation">A workspace with this title already exists.</target>
+        <target xml:lang="km" state="translated">តំបន់​ការងារដែល​មាន​ចំណង​ជើងនេះមានរួចហើយ។</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
-        <target xml:lang="km" state="needs-translation">The workspace "{0}" has been updated.</target>
+        <target xml:lang="km" state="translated">តំបន់ធ្វើការ "{0}" ត្រូវបានធ្វើឱ្យទាន់សម័យ។</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target xml:lang="km" state="needs-translation">Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</target>
+        <target xml:lang="km" state="translated">កន្លែងធ្វើការ "{0}" មិនអាចលុបដោយសារតែការតំបន់​ធ្វើការខាងក្រោមនេះត្រូវបានផ្អែកលើវា: {១}</target>
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
-        <target xml:lang="km" state="needs-translation">An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</target>
+        <target xml:lang="km" state="translated">កំហុសមួយបានកើតឡើងខណៈពេលទៅយកថ្នាំងដែលមិនបានផ្សព្វផ្សាយពីតំបន់​ការងារ "{0}" គ្មានអ្វីត្រូវបានលុប។</target>
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target xml:lang="km" state="needs-translation">Your personal workspace contains changes, please publish or discard them first.</target>
+        <target xml:lang="km" state="translated">តំបន់​ការងារផ្ទាល់ខ្លួនរបស់អ្នកមានការផ្លាស់ប្តូរ, សូមបោះពុម្ពផ្សាយឬមិនរក្សាទុកពួកជាលើកដំបូង។</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="km" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+          <target xml:lang="km" state="translated">មិនបានលុបតំបន់​ការងារ "{0}" ពីព្រោះវានាពេលបច្ចុប្បន្ននេះមាន {១} ថ្នាំង។</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
