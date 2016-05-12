@@ -58,3 +58,44 @@ Example Strategy
 	        return $this->firstlevelCache[$assetIdentifier];
 	    }
 	}
+
+Extend Asset Validation
+-----------------------
+
+Imagine you need to extend the validation of assets. For example to prevent
+duplicate file names or to run copyright checks on images. You can do so
+by creating your own custom validator. If you make sure that your validator
+implements the ``\TYPO3\Media\Domain\Validator\AssetValidatorInterface`` it
+will be loaded on object validation. The added errors in your validator will
+be merged into the model validator of assets.
+
+Example validator
+*****************
+
+.. code-block:: php
+
+	<?php
+	namespace My\Package;
+
+	use TYPO3\Flow\Validation\Valwidator\AbstractValidator;
+	use TYPO3\Media\Domain\Model\AssetInterface;
+	use TYPO3\Media\Domain\Validator\AssetValidatorInterface;
+
+	class CustomValidator extends AbstractValidator implements AssetValidatorInterface
+	{
+
+	    /**
+	     * Check if $value is valid. If it is not valid, needs to add an error
+	     * to the result.
+	     *
+	     * @param AssetInterface $value
+	     * @return void
+	     */
+	    protected function isValid($value)
+	    {
+	        // Your object validation
+	        if ($errors) {
+	            $this->addError('Some error', 0123456789);
+	        }
+	    }
+	}
