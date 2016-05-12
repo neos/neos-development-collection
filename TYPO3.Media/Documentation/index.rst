@@ -17,3 +17,4 @@ This version of the documentation covering Neos Media |release| has been rendere
    ThumbnailGenerator/index
    ConfigureImageGeneration
    DeveloperInformation/index
+   DeveloperInformation/index
