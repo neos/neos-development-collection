@@ -8,10 +8,10 @@
 			<target xml:lang="km" state="translated">ចុះផ្សាយស្វ័យប្រវត្តិ</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="km" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="km" state="translated">ដើម្បីបោះពុម្ពផ្សាយដោយស្វ័យប្រវត្តិ {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="km" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="km" state="translated">ការផ្លាស់ប្តូរពិនិត្យឡើងវិញ</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="km" state="translated">អនុវត្ត</target></trans-unit>
@@ -35,7 +35,7 @@
 			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="km" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="km" state="translated">ថ្នាំង</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
 			<target xml:lang="km" state="translated">មើលអត្ថបទ</target></trans-unit>
@@ -86,16 +86,16 @@
 			<target xml:lang="km" state="translated">លាក់</target><alt-trans><target xml:lang="km">កំបាំង</target></alt-trans></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="km" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="km" state="translated">កុំ​លាក់</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="km" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="km" state="translated">ទៅក្នុង</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="km" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="km" state="translated">មុន</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="km" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="km" state="translated">បន្ទាប់</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target xml:lang="km" state="translated">កំពុងតម្លើង</target></trans-unit>
@@ -140,16 +140,16 @@
 			<target xml:lang="km" state="translated">ដាក់ផ្សាយ</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="km" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="km" state="translated">បោះពុម្ពផ្សាយទៅ {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
 			<target xml:lang="km" state="translated">ចុះផ្សាយរាល់ការផ្លាស់ប្ដូរសម្រាប់ទំព័រនេះ</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="km" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="km" state="translated">មិនអាចផ្សាយបានទេព្រោះតំបន់ការងារគោលដៅត្រូវតែអាន</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="km" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">ជ្រើសតំបន់ការងារគោលដៅ</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target xml:lang="km" state="translated">កំពុងចុះផ្សាយ</target></trans-unit>
@@ -158,13 +158,13 @@
 			<target xml:lang="km" state="translated">បានចុះផ្សាយ</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="km" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="km" state="translated">បិទបើកម៉ឺនុយបោះពុម្ពផ្សាយ</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="km" state="translated">ចូលទៅកាន់កន្លែងការងារ</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="km" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">ចន្លោះការងារបច្ចុប្បន្ន</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target xml:lang="km" state="translated">លុបចេញ</target></trans-unit>
@@ -209,7 +209,7 @@
 			<target xml:lang="km" state="translated">ទីតាំងប្រែប្រួល</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="km" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="km" state="translated">កំណែ</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="km" state="translated">ប្រតិបត្តិការនេះមិនអាចមិនធ្វើវិញ។</target></trans-unit>
@@ -218,13 +218,13 @@
 			<target xml:lang="km" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="km" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="km" state="translated">បានបង្កើត</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="km" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="km" state="translated">ការកែប្រែចុងក្រោយនេះ</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="km" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="km" state="translated">ការបោះពុម្ភលើកចុងក្រោយ</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="km" state="translated">អត្តសញ្ញាណ</target></trans-unit>
@@ -239,10 +239,10 @@
 			<target xml:lang="km" state="translated">រចនាសម្ព័ន្ធ</target><alt-trans><target xml:lang="km">រចនាសម្ព័ន</target></alt-trans></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="km" state="needs-translation">Toggle context structure</target></trans-unit>
+			<target xml:lang="km" state="translated">បិទបើករចនាសម្ព័បរិបទ</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="km" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="km" state="translated">តម្រង</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
 			<target xml:lang="km" state="needs-translation">Toggle menu</target></trans-unit>
