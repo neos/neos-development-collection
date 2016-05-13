@@ -90,7 +90,7 @@ interface ContentDimensionPresetSourceInterface
     /**
      * Finds for each configured dimension the best matching preset based on given target value for that dimension.
      *
-     * The $targetValues array should habe the dimension as key and the target value (single value) as value.
+     * The $targetValues array should have the dimension as key and the target value (single value) as value.
      *
      * @param array $targetValues
      * @return array
