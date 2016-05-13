@@ -59,17 +59,6 @@ Remember to add the Media Package in your package ``composer.json``` to load the
         ...
     }
 
-Disabling
----------
-
-To disable an existing Generator use the ``disable`` configuration option for the desired Generator::
-
-    TYPO3:
-      Media:
-        thumbnailGenerators:
-          'TYPO3\Media\Domain\Model\ThumbnailGenerator\IconThumbnailGenerator':
-            disable: true
-
 Community supported Generators
 ==============================
 
