@@ -215,7 +215,7 @@
 			<target xml:lang="km" state="translated">ប្រតិបត្តិការនេះមិនអាចមិនធ្វើវិញ។</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="km" state="needs-translation">Asset</target></trans-unit>
+			<target xml:lang="km" state="translated">កន្លែងដាក់អក្សរ</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target xml:lang="km" state="translated">បានបង្កើត</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="km" state="translated">ឈ្មោះ</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="km" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">កន្លែងផ្ទុកការងារ</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="km" state="translated">រចនាសម្ព័ន្ធ</target><alt-trans><target xml:lang="km">រចនាសម្ព័ន</target></alt-trans></trans-unit>
@@ -245,43 +245,43 @@
 			<target xml:lang="km" state="translated">តម្រង</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="km" state="needs-translation">Toggle menu</target></trans-unit>
+			<target xml:lang="km" state="translated">ម៉ឺនុយបិទបើក</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="km" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្ទុកកំហុស!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="km" state="needs-translation">You have to select a node</target></trans-unit>
+			<target xml:lang="km" state="translated">អ្នកត្រូវតែជ្រើសថ្នាំង</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="km" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target xml:lang="km" state="translated">ថ្នាំង root មិនអាចត្រូវបានលុប។</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="km" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="km" state="translated">អ្នកមិនអាចចម្លងថ្នាំងនេះ</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="km" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="km" state="translated">អ្នកមិនអាចកាត់បន្ថយថ្នាំងនេះ</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target xml:lang="km" state="needs-translation">Content Dimensions</target></trans-unit>
+			<target xml:lang="km" state="translated">វិមាត្រមាតិកា</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="km" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="km" state="translated">តំបន់បណ្តាញ</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
 			<target xml:lang="km" state="translated">ឯកសារ</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="km" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="km" state="translated">ឯកសារយោង</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="km" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="km" state="translated">ម៉ាស៊ីន</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="km" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="km" state="translated">គ្រោងការណ៍</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="km" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="km" state="translated">ផត</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="km" state="translated">ចម្បង</target></trans-unit>
@@ -324,7 +324,7 @@
 			<target xml:lang="km" state="translated">បើកពំព័រនៅក្នុងលំហរការងារផ្ទាល់</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="km" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">បើកទំព័រក្នុងកន្លែការងាគោលដៅ</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="km" state="translated">បេាះបង់ចោល</target></trans-unit>
@@ -415,7 +415,7 @@
 ដែលអាចមើលឃើញ</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="km" state="needs-translation">Document options</target></trans-unit>
+			<target xml:lang="km" state="translated">ជម្រើសឯកសារ</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target xml:lang="km" state="translated">ប្រវែងនៃអត្ថបទនេះត្រូវតែនៅចន្លោះ {{អប្បរមា}} និង {{អតិបរមា}} តួអក្សរ។</target></trans-unit>
@@ -481,34 +481,34 @@
 			<target xml:lang="km" state="translated">ការផ្ដល់ឲ្យនូវប្រធានបទគឺមិនមែនជាការ UUID ត្រឹមត្រូវ។</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="km" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
+			<target xml:lang="km" state="translated">បិទបើកការជ្រើសវិមាត្រមាតិកា</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="km" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+			<target xml:lang="km" state="translated">ការចាប់ផ្តើមជាមួយនឹងឯកសារទទេឬមុនដែលពោរពេញទៅមួយ?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="km" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="km" state="translated">នេះ {nodeTypeLabel} មិនមាននៅឡើយទេនៅក្នុងជម្រើសទំហំ​​ ​​​{currentDimensionChoiceText}</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="km" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="km" state="translated">អ្នកអាចបង្កើតវាឥឡូវនេះបានចាប់ផ្តើមជាមួយនឹងការទទេទាំង {nodeTypeLabel} ឬចម្លងទាំងអស់ពេលមើលឃើញបច្ចុប្បន្ន {nodeTypeLabel}​ ក្នុង {currentDocumentDimensionChoiceText}</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="km" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target xml:lang="km" state="translated">លើសពីនេះទៀតវាមាន {numberOfNodesMissingInRootline}​ ចំនួនឯកសារដែលសល់ចាស់ៗមិនមានការខុសប្លែកគ្នាទាំងនៅលើអ្នករើសតាំង នឹងត្រូវបានបង្កើតផងដែរ</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="km" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតទទេ</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="km" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="km" state="translated">បង្កើតនិងចម្លង</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="km" state="translated">អត្ថបទ</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="km" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="km" state="translated">បិទបើកម៉ឺនុយ</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="km" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="km" state="translated">ម៉ឺនុយបិទបើកជាប់តាមរបៀប</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបមែនហ៎</target></trans-unit>
@@ -550,7 +550,7 @@
 			<target xml:lang="km" state="translated">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ </target><alt-trans><target xml:lang="km">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ</target></alt-trans></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="km" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="km" state="translated">កន្លែងផ្ទុកការងារ</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="km" state="translated">លំហរការងារ</target></trans-unit>
@@ -575,7 +575,7 @@
 			<target xml:lang="km" state="translated">អត្ថបទជួរដេក</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="km" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="km" state="translated">របៀបមាតិកា</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="km" state="translated">
@@ -592,10 +592,10 @@
 			<target xml:lang="km" state="translated">ចាកចេញ</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="km" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="km" state="translated">ឈ្មោះអ្នកប្រើឬពាក្យសម្ងាត់បានបញ្ចូលគឺខុស</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="km" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="km" state="translated">ការចូលរបស់អ្នកបានផុតកំណត់សូមចូលម្តងទៀត</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -632,23 +632,23 @@
 			<target xml:lang="km" state="translated">ការកំណត់រចនាសម្ព័ន្ធត្រូវបានសន្មត់ថា NodeType ត្រូវបានបង្ហាញនៅទីនេះមិនអាចរកបាន។ ប្រហែលជាអ្នកបានប្ដូរឈ្មោះ NodeType និងត្រូវបានខកខាន migration ឬអ្នកសរសេរមិនបានត្រឹមត្រូវ។</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="km" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target xml:lang="km" state="translated">កំហុសដែលមិនរំពឹងទុកខណៈពេលដែលការបង្កើតអក្សរ</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="km" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="km" state="translated">កំហុសដែលមិនរំពឹងទុកខណៈពេលដែលការលុបអក្សរ</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="km" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="km" state="translated">កំហុសដែលមិនរំពឹងទុកខណៈពេលដែលការបង្កើតអក្សរជាថ្មី</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="km" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target xml:lang="km" state="translated">កំហុសដែលមិនរំពឹងទុកខណៈពេលដែលការផ្លាស់ប្ដូរអក្សរ</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="km" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="km" state="translated">កំហុសអក្សរពេលកំពុងលេាត</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="km" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="km" state="translated">ឈ្មោះអ្នកប្រើឬពាក្យសម្ងាត់បានបញ្ចូលគឺខុស</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
@@ -656,16 +656,16 @@
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="km" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="km" state="translated">អក្សរ</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="km" state="translated">បង្ហាញ</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="km" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="km" state="translated">អក្សរនេះមិនអាចត្រូវបានចូលដំណើរការបានតាមរយៈ URL ដែលជាសាធារណៈ</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="km" state="needs-translation">Node Properties</target></trans-unit>
+			<target xml:lang="km" state="translated">លក្ខណរបស់អក្សរ</target></trans-unit>
     </body>
   </file>
 </xliff>
