@@ -116,6 +116,13 @@
         label: i18n
         inspector:
           group: 'options'
+    startingPoint:
+      type: 'reference'
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
     maximumLevels:
       type: string
       defaultValue: '1'
