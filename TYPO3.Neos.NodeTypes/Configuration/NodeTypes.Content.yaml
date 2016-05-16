@@ -117,7 +117,7 @@
         inspector:
           group: 'options'
     startingPoint:
-      type: 'references'
+      type: 'reference'
       ui:
         reloadIfChanged: TRUE
         label: i18n
