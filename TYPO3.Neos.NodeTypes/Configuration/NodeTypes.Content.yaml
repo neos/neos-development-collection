@@ -123,8 +123,6 @@
         label: i18n
         inspector:
           group: 'options'
-          editorOptions:
-            nodeTypes: ['TYPO3.Neos:Document']
     maximumLevels:
       type: string
       defaultValue: '1'
