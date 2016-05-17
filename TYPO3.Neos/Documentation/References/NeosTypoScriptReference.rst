@@ -711,7 +711,7 @@ In the template for each item the following data is available:
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :dimensions: (array) Dimension values of the node, indexed by dimension name
-:targetDimensions: (array) The target dimensions as value/label pairs, indexed by dimension name
+:targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
 
 The following example template renders a menu that includes all variants with a descriptive label:
 
