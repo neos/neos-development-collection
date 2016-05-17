@@ -4,11 +4,12 @@
     "description": "Node type configuration for TYPO3 Neos",
     "license": "GPL-3.0+",
     "require": {
+        "typo3/form": "*",
         "typo3/neos": "*"
     },
-    "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos\\NodeTypes": "Classes"
+    "extra": {
+        "neos": {
+            "package-key": "TYPO3.Neos.NodeTypes"
         }
     }
 }
