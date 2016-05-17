@@ -52,9 +52,10 @@ class VariantMenuImplementation extends AbstractMenuImplementation
         $targetDimensionsToMatch = [];
         $allDimensionPresets = $this->configurationContentDimensionPresetSource->getAllPresets();
 
-        if ($this->getDimension() !== null) {
+        $pinnedDimensionName = $this->getDimension();
+        if ($pinnedDimensionName !== null) {
             $targetDimensionsToMatch = $this->currentNode->getContext()->getTargetDimensions();
-            unset($targetDimensionsToMatch[$this->getDimension()]);
+            unset($targetDimensionsToMatch[$pinnedDimensionName]);
         }
 
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $allowedCombination) {
@@ -74,9 +75,13 @@ class VariantMenuImplementation extends AbstractMenuImplementation
                 $nodeInDimensions = null;
             }
 
-            // determine labels for target dimensions of node
-            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName, $allDimensionPresets) {
-                $dimensionValue = ['value' => $dimensionValue, 'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label']];
+            // determine metadata for target dimensions of node
+            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName, $allDimensionPresets) use ($pinnedDimensionName) {
+                $dimensionValue = [
+                    'value' => $dimensionValue,
+                    'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label'],
+                    'isPinnedDimension' => ($pinnedDimensionName === null || $dimensionName == $pinnedDimensionName) ? true : false
+                ];
             }, $allDimensionPresets);
 
             $menuItems[] = [
@@ -84,7 +89,8 @@ class VariantMenuImplementation extends AbstractMenuImplementation
                 'state' => $this->calculateItemState($nodeInDimensions),
                 'label' => $nodeInDimensions === null ? '' : $nodeInDimensions->getLabel(),
                 'dimensions' => $allowedCombination,
-                'targetDimensions' => $targetDimensions
+                'targetDimensions' => $targetDimensions,
+                'pinnedDimensionName' => $pinnedDimensionName
             ];
         }
 
