@@ -8,8 +8,7 @@ include: Prototypes/Shortcut.ts2
 # Note: The TYPO3.Neos:Breadcrumb prototype only exists for backwards compatibility and will be removed in a future version.
 include: Prototypes/Breadcrumb.ts2
 include: Prototypes/BreadcrumbMenu.ts2
-include: Prototypes/DimensionMenu.ts2
-include: Prototypes/VariantMenu.ts2
+include: Prototypes/DimensionsMenu.ts2
 include: Prototypes/Menu.ts2
 include: Prototypes/Plugin.ts2
 include: Prototypes/PluginView.ts2
