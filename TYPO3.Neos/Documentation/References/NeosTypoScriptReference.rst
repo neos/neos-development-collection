@@ -660,6 +660,7 @@ variants will be included.
 If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
 
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
+:presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :labelExpression: (string) Eel expression used to render the item label if ``dimension`` is not set, by default renders the node label
 :renderHiddenInIndex: (boolean, default **false**) If TRUE, render nodes which are marked as "hidded-in-index"
 
@@ -674,6 +675,16 @@ This example will create two menus, one for the 'language' and one for the 'coun
 	}
 	countryMenu = TYPO3.Neos:DimensionMenu {
 		dimension = 'country'
+	}
+
+If you only want to render a subset of the available presets or manually define a specific order for a menu,
+you can override the "presets":
+
+Overridden presets::
+
+	languageMenu = TYPO3.Neos:DimensionMenu {
+		dimension = 'language'
+		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
 
 In the template for each item the following data is available:
