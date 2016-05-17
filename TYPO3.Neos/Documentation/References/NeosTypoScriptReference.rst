@@ -647,9 +647,10 @@ Example::
 	breadcrumb = BreadcrumbMenu
 
 .. _TYPO3_Neos__DimensionMenu:
+.. _TYPO3_Neos__DimensionsMenu:
 
-DimensionMenu
--------------
+DimensionsMenu
+--------------
 
 Create links to other node variants (e.g. variants of the current node in other dimensions) by using this TypoScript object.
 
@@ -664,16 +665,18 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :labelExpression: (string) Eel expression used to render the item label if ``dimension`` is not set, by default renders the node label
 :renderHiddenInIndex: (boolean, default **false**) If TRUE, render nodes which are marked as "hidded-in-index"
 
+.. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
+
 Minimal Example, outputting a menu with all configured dimension combinations::
 
-	variantMenu = TYPO3.Neos:DimensionMenu
+	variantMenu = TYPO3.Neos:DimensionsMenu
 
 This example will create two menus, one for the 'language' and one for the 'country' dimension::
 
-	languageMenu = TYPO3.Neos:DimensionMenu {
+	languageMenu = TYPO3.Neos:DimensionsMenu {
 		dimension = 'language'
 	}
-	countryMenu = TYPO3.Neos:DimensionMenu {
+	countryMenu = TYPO3.Neos:DimensionsMenu {
 		dimension = 'country'
 	}
 
@@ -682,7 +685,7 @@ you can override the "presets":
 
 Overridden presets::
 
-	languageMenu = TYPO3.Neos:DimensionMenu {
+	languageMenu = TYPO3.Neos:DimensionsMenu {
 		dimension = 'language'
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
