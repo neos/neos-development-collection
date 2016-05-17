@@ -101,8 +101,6 @@ prototype(TYPO3.Neos.NodeTypes:Form) {
 	}
 }
 
-prototype(TYPO3.Neos.NodeTypes:AssetList).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScriptObjects\\AssetListImplementation'
-
 # "Insert content references" TS Object
 prototype(TYPO3.Neos.NodeTypes:ContentReferences) {
 	@context.referenceNodesArray = ${q(node).property('references')}
