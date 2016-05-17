@@ -2,6 +2,7 @@
 namespace TYPO3\Neos\TypoScript;
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -36,11 +37,31 @@ class VariantMenuImplementation extends AbstractMenuImplementation
     protected $contentDimensionCombinator;
 
     /**
+     * @Flow\Inject(lazy=false)
+     * @var \TYPO3\Eel\EelEvaluatorInterface
+     */
+    protected $eelEvaluator;
+
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.TYPO3CR", path="labelGenerator.eel.defaultContext")
+     * @var array
+     */
+    protected $defaultContextConfiguration;
+
+    /**
      * @return string
      */
     public function getDimension()
     {
         return $this->tsValue('dimension');
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabelExpression()
+    {
+        return $this->tsValue('labelExpression');
     }
 
     /**
@@ -84,10 +105,16 @@ class VariantMenuImplementation extends AbstractMenuImplementation
                 ];
             }, $allDimensionPresets);
 
+            if ($pinnedDimensionName === null) {
+                $itemLabel = Utility::evaluateEelExpression($this->getLabelExpression(), $this->eelEvaluator, array('node' => $nodeInDimensions), $this->defaultContextConfiguration);
+            } else {
+                $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
+            }
+
             $menuItems[] = [
                 'node' => $nodeInDimensions,
                 'state' => $this->calculateItemState($nodeInDimensions),
-                'label' => $nodeInDimensions === null ? '' : $nodeInDimensions->getLabel(),
+                'label' => $itemLabel,
                 'dimensions' => $allowedCombination,
                 'targetDimensions' => $targetDimensions,
                 'pinnedDimensionName' => $pinnedDimensionName
