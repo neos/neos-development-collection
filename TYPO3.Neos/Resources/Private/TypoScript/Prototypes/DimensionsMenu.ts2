@@ -13,6 +13,9 @@ prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
 	# Example:
 	# name of the dimension to use (optional)
 	# dimension = 'language'
+
+	# list of presets, if the default order should be overridden, only used with "dimension" set
+	# presets = ${['en_US']}
 }
 
 # included for backwards-compatibility only

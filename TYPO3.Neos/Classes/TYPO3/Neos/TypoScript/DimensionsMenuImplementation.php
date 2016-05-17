@@ -20,6 +20,7 @@ use TYPO3\TypoScript\Exception as TypoScriptException;
  *
  * Main Options:
  * - dimension (optional, string): name of the dimension which this menu should be limited to. Example: "language".
+ * - presets (optional, array): If set, the presets are not loaded from the Settings, but instead taken from this property. Must be used with "dimension" set.
  * - labelExpression (string): Expression to use for label generation if "dimension" is not set.
  */
 class DimensionsMenuImplementation extends AbstractMenuImplementation
@@ -58,6 +59,14 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     }
 
     /**
+     * @return array
+     */
+    public function getPresets()
+    {
+        return $this->tsValue('presets');
+    }
+
+    /**
      * @return string
      */
     public function getLabelExpression()
@@ -73,6 +82,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         $menuItems = [];
         $targetDimensionsToMatch = [];
         $allDimensionPresets = $this->configurationContentDimensionPresetSource->getAllPresets();
+        $pinnedDimensionValues = $this->getPresets();
 
         $pinnedDimensionName = $this->getDimension();
         if ($pinnedDimensionName !== null) {
@@ -82,6 +92,12 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $allowedCombination) {
             $targetDimensions = $this->calculateTargetDimensionsForCombination($allowedCombination);
+
+            if ($pinnedDimensionName !== null && is_array($pinnedDimensionValues)) {
+                if (!in_array($targetDimensions[$pinnedDimensionName], $pinnedDimensionValues)) {
+                    continue;
+                }
+            }
 
             // skip variants not matching the current target dimensions (except the dimension this menu covers)
             if ($targetDimensionsToMatch !== []) {
@@ -120,6 +136,20 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 'targetDimensions' => $targetDimensions,
                 'pinnedDimensionName' => $pinnedDimensionName
             ];
+        }
+
+        // sort/limit according to configured "presets" if needed
+        if ($pinnedDimensionName !== null && is_array($pinnedDimensionValues)) {
+            $sortedMenuItems = [];
+            foreach ($pinnedDimensionValues as $pinnedDimensionValue) {
+                foreach ($menuItems as $menuItemKey => $menuItem) {
+                    if ($menuItem['targetDimensions'][$pinnedDimensionName]['value'] === $pinnedDimensionValue) {
+                        $sortedMenuItems[$menuItemKey] = $menuItem;
+                    }
+                }
+            }
+
+            return $sortedMenuItems;
         }
 
         return $menuItems;
