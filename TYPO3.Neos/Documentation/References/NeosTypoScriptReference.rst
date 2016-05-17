@@ -651,35 +651,6 @@ Example::
 DimensionMenu
 -------------
 
-Create links to other node variants (e.g. variants of the current node in another dimension) by using this TypoScript object.
-All presets of the configured dimension will be included as menu item. If no node variant exists for the preset, a
-``NULL`` node will be included in the item with a state ``'absent'``.
-
-:dimension: (required, string): name of the dimension which this menu should be based on. Example: "language".
-:presets: (optional, array): If set, the presets are not loaded from the Settings, but instead taken from this property
-:renderHiddenInIndex: (boolean, default **false**) If TRUE, render nodes which are marked as "hidded-in-index"
-
-Minimal Example, outputting a language menu with all configured dimensions::
-
-	languageMenu = TYPO3.Neos:DimensionMenu {
-		dimension = 'language'
-	}
-
-If you only want to render a subset of the available dimensions or manually define a specific order for this language menu,
-you can override the "presets":
-
-Overridden presets::
-
-	languageMenu = TYPO3.Neos:DimensionMenu {
-		dimension = 'language'
-		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
-	}
-
-.. _TYPO3_Neos__VariantMenu:
-
-VariantMenu
------------
-
 Create links to other node variants (e.g. variants of the current node in other dimensions) by using this TypoScript object.
 
 If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
@@ -694,14 +665,14 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 
 Minimal Example, outputting a menu with all configured dimension combinations::
 
-	variantMenu = TYPO3.Neos:VariantMenu
+	variantMenu = TYPO3.Neos:DimensionMenu
 
 This example will create two menus, one for the 'language' and one for the 'country' dimension::
 
-	languageMenu = TYPO3.Neos:VariantMenu {
+	languageMenu = TYPO3.Neos:DimensionMenu {
 		dimension = 'language'
 	}
-	countryMenu = TYPO3.Neos:VariantMenu {
+	countryMenu = TYPO3.Neos:DimensionMenu {
 		dimension = 'country'
 	}
 

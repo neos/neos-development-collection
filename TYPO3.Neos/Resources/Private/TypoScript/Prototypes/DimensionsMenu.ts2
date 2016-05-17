@@ -1,0 +1,19 @@
+# TYPO3.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
+prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
+	@class = 'TYPO3\\Neos\\TypoScript\\DimensionsMenuImplementation'
+
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/DimensionsMenu.html'
+
+	renderHiddenInIndex = TRUE
+	labelExpression = ${node ? node.label : ''}
+	absent.attributes = TYPO3.TypoScript:Attributes {
+		class = 'normal'
+	}
+
+	# Example:
+	# name of the dimension to use (optional)
+	# dimension = 'language'
+}
+
+# included for backwards-compatibility only
+prototype(TYPO3.Neos:DimensionMenu) < prototype(TYPO3.Neos:DimensionsMenu)
