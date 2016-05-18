@@ -6229,6 +6229,9 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.neos .neos-buffer-below {
+  margin-bottom: 1em;
+}
 @media (min-width: 1200px) {
   .neos .neos-row {
     margin-left: -30px;
@@ -13467,7 +13470,7 @@
   font-size: 0;
   margin-left: 0;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li {
   margin-left: 0;
   margin-right: 16px;
   -webkit-box-sizing: border-box;
@@ -13478,108 +13481,108 @@
   vertical-align: top;
 }
 @media (max-width: 479px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px) / 2);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(2n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(2n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(2n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(2n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(2n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(2n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(2n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(2n):after {
     clear: both;
   }
 }
 @media (min-width: 480px) and (max-width: 767px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px * 2) / 3);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):after {
     clear: both;
   }
 }
 @media (min-width: 768px) and (max-width: 1023px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px * 2) / 3);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(3n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(3n):after {
     clear: both;
   }
 }
 @media (min-width: 1024px) and (max-width: 1199px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px * 3) / 4);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(4n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(4n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(4n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(4n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(4n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(4n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(4n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(4n):after {
     clear: both;
   }
 }
 @media (min-width: 1200px) and (max-width: 1599px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px * 4) / 5);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(5n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(5n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(5n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(5n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(5n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(5n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(5n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(5n):after {
     clear: both;
   }
 }
 @media (min-width: 1600px) {
-  .neos.media-browser .neos-media-assets .neos-thumbnails li {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li {
     width: calc((100% - 16px * 5) / 6);
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(6n) {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(6n) {
     margin-right: 0;
     *zoom: 1;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(6n):before, .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(6n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(6n):before, .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(6n):after {
     display: table;
     content: "";
     line-height: 0;
   }
-  .neos.media-browser .neos-media-assets .neos-thumbnails li:nth-child(6n):after {
+  .neos.media-browser .neos-media-assets .neos-thumbnails > li:nth-child(6n):after {
     clear: both;
   }
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-container {
   position: relative;
   padding-bottom: 100%;
   height: 0;
@@ -13593,60 +13596,15 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container:hover .neos-media-delete, .neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container:hover::after {
-  opacity: .9;
-}
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container.ui-draggable-dragging {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-container.ui-draggable-dragging {
   width: 250px;
   height: 250px;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container img {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-container img {
   background-color: #141414;
   outline: 3px solid #141414;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container .neos-media-delete {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: #222;
-  opacity: .5;
-}
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container .neos-media-delete:hover {
-  background-color: #ff460d;
-}
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-img-container::after {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 40px;
-  height: 40px;
-  background-color: #222;
-  opacity: .5;
-  color: #fff;
-  font-size: 16px;
-  text-align: center;
-  line-height: 40px;
-  cursor: move;
-}
-.neos.media-browser .neos-media-assets .neos-thumbnails li .neos-caption {
-  padding: 0;
-  display: block;
-  font-size: 12px;
-  line-height: 1.2;
-  color: #adadad;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.neos.media-browser .neos-media-assets .neos-thumbnails li > a {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li > a {
   border: 0;
   border-radius: 0;
   display: block;
@@ -13654,11 +13612,11 @@
   position: relative;
   padding: 0;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li > a:hover {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li > a:hover {
   box-shadow: none;
   text-decoration: none;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails li > a img {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li > a .neos-img-container > img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13671,6 +13629,24 @@
   width: auto;
   max-height: 100%;
   max-width: 100%;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
+  padding: 0 0 1rem .5rem;
+  position: relative;
+  font-size: 12px;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-caption {
+  padding: 0 0 0 .5rem;
+  margin-right: 2rem;
+  display: block;
+  line-height: 1.2;
+  color: #adadad;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label > img {
+  float: left;
 }
 @media (max-width: 540px) {
   .neos.media-browser .neos-media-assets .page-navigation ul li {
@@ -13722,6 +13698,10 @@
 .neos.media-browser .neos-row-fluid .neos-image-inputs .neos-button {
   margin-right: 8px;
   margin-bottom: 32px;
+}
+.neos.media-browser .neos-media-content-help {
+  font-style: italic;
+  padding-bottom: 1em;
 }
 .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example label {
   text-align: right;
@@ -13849,15 +13829,14 @@
 .neos.media-browser table.neos-table.asset-list .neos-popover.neos-bottom .neos-arrow {
   border-bottom-color: #222;
 }
-.neos.media-browser table.neos-table.asset-list .icon-move {
-  float: left;
-  line-height: 40px;
-  padding-left: 12px;
-}
 .neos.media-browser table.neos-table.asset-list .neos-action {
   width: 10%;
   font-size: 0;
   text-align: right;
+}
+.neos.media-browser table.neos-table.asset-list .neos-action .neos-dropdown {
+  display: inline-block;
+  font-size: 12px;
 }
 .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal, .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal-content {
   text-align: left;
@@ -13865,22 +13844,19 @@
 .neos.media-browser table.neos-info-table i {
   vertical-align: baseline;
 }
-.neos.media-browser .draggable-asset {
-  cursor: move;
-}
-.neos.media-browser:not(.media-module) table.neos-table tbody tr:hover td {
+.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) tbody tr:hover td {
   background-color: #00b5ff;
   cursor: pointer;
 }
-.neos.media-browser:not(.media-module) table.neos-table tbody tr:hover td .neos-label {
+.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) tbody tr:hover td .neos-label {
   background-color: #fff;
   color: #00b5ff;
   text-shadow: none;
 }
-.neos.media-browser:not(.media-module) table.neos-table .icon-move {
+.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .icon-move {
   cursor: move;
 }
-.neos.media-browser:not(.media-module) table.neos-table .neos-action {
+.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .neos-action {
   display: none;
 }
 .neos.media-browser .neos-upload-area {
