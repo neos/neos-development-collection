@@ -527,6 +527,7 @@ TYPO3:
           - 'Neos:FormViewHelpers'
           - 'Neos:NeosViewHelpers'
           - 'Neos:Typo3CrViewHelpers'
+          - 'Neos:TypoScriptViewHelpers'
           - 'Neos:FlowValidators'
           - 'Neos:PartyValidators'
           - 'Neos:MediaValidators'
