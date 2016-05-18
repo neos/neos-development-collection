@@ -16,10 +16,14 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Mvc\Exception\InvalidArgumentValueException;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
@@ -134,6 +138,35 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         }
 
         $this->redirect('index');
+    }
+
+    /**
+     * Update the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @throws InvalidArgumentValueException
+     * @return void
+     */
+    public function updateResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
+        $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
+
+        // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
+        if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
+            $this->addFlashMessage(
+                'Resources of type "%s" can only be replaced by a similar resource. Got type "%s"',
+                '',
+                Message::SEVERITY_WARNING,
+                [$sourceMediaType['type'], $resource->getMediaType()],
+                1462308179
+            );
+            $this->redirect('index');
+        }
+
+        parent::updateResourceAction($asset, $resource, $options);
     }
 
     /**
