@@ -160,11 +160,15 @@ define([
 			if (this.get('multiple') || (value !== (valuePath ? this.get('selection.' + valuePath) : this.get('selection')))) {
 				this.set('selection', this.get('multiple') ? selection : selection[0]);
 				Ember.run.next(function() {
-					if (that.$() && that.get('multiple')) {
-						var data = value.length > 0 ? value.map(function(val) {
-							return {id: val, text: selection.findBy('value', val).label};
-						}) : null;
-						that.$().select2('data', data);
+					if (that.$()) {
+						if (that.get('multiple')) {
+							var data = value.length > 0 ? value.map(function (val) {
+								return {id: val, text: selection.length > 0 ? selection.findBy('value', val).label : val};
+							}) : null;
+							that.$().select2('data', data);
+						} else {
+							that.$().trigger('change');
+						}
 					}
 				});
 			}
