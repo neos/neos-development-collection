@@ -501,6 +501,28 @@ a property using the ``@if`` meta-property::
 
 Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
 
+Debugging
+=========
+
+To show the result of TypoScript Expressions directly you can use the TYPO3.TypoScript:Debug TypoScript-Object::
+
+	debugObject = Debug {
+		# optional: set title for the debug output
+		# title = 'Debug'
+
+		# optional: show result as plaintext
+		# plaintext = TRUE
+
+		# If only the value-key is given it is debugged directly,
+		# otherwise all keys except title an plaintext are debugged.
+		value = "hello neos world"
+
+		# Additional values for debugging
+		documentTitle = ${q(documentNode).property('title')}
+		documentPath = ${documentNode.path}
+	}
+	# the value of this object is the formated debug output of all keys given to the object
+
 .. Important TypoScript objects and patterns
 .. =========================================
 .. - page, template, content collection, menu, value (TODO ChristianM)
