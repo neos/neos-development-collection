@@ -16,8 +16,11 @@ use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -61,6 +64,12 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var AssetCollectionRepository
      */
     protected $assetCollectionRepository;
+
+    /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
 
     /**
      * @Flow\Inject(lazy = false)
@@ -256,6 +265,42 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
         ));
+    }
+
+    /**
+     * @param Asset $asset
+     * @return void
+     */
+    public function replaceAssetResourceAction(Asset $asset)
+    {
+        $maximumFileUploadSize = $this->maximumFileUploadSize();
+        $this->view->assignMultiple(array(
+            'asset' => $asset,
+            'maximumFileUploadSize' => $maximumFileUploadSize,
+            'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
+        ));
+    }
+
+    /**
+     * Replace the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @return void
+     */
+    public function updateResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        try {
+            $this->assetService->replaceAssetResource($asset, $resource, $options);
+        } catch (\Exception $exception) {
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->forwardToReferringRequest();
+        }
+
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->redirect('index');
     }
 
     /**

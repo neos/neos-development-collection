@@ -209,6 +209,13 @@
 				<source>All changes from workspace "{0}" have been discarded.</source>
 			</trans-unit>
 
+			<trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop image on a collection / tag to add them to it.</source>
+			</trans-unit>
+			<trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			</trans-unit>
+
 			<trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			</trans-unit>
@@ -674,6 +681,9 @@
 			<trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			</trans-unit>
+			<trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			</trans-unit>
 			<trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			</trans-unit>
@@ -700,6 +710,9 @@
 			</trans-unit>
 			<trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
+			</trans-unit>
+			<trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
 			</trans-unit>
 			<trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
