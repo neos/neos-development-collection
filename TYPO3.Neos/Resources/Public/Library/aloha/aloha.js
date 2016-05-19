@@ -16470,7 +16470,14 @@ define('aloha/engine',[
 		// node follows a line break, and false otherwise. non-breaking end is true
 		// if end offset is end node's length and end node precedes a line break,
 		// and false otherwise."
-		var replacementWhitespace = canonicalSpaceSequence(length, startOffset == 0 && followsLineBreak(startNode), endOffset == getNodeLength(endNode) && precedesLineBreak(endNode));
+		// Correction: The above specification rule has been implemented slightly different,
+		// because the line breaks at start/end should not be taken in account if startNode
+		// or endNode are editing hosts.
+		var isNonBreakingStart    = startOffset == 0 &&
+				(followsLineBreak(startNode) || isEditingHost(startNode));
+		var isNonBreakingEnd      = endOffset == getNodeLength(endNode)
+				&& (precedesLineBreak(endNode) || isEditingHost(endNode));
+		var replacementWhitespace = canonicalSpaceSequence(length, isNonBreakingStart, isNonBreakingEnd);
 
 		// "While (start node, start offset) is before (end node, end offset):"
 		while (getPosition(startNode, startOffset, endNode, endOffset) == "before") {
@@ -22293,6 +22300,14 @@ define('aloha/selection',[
 		},
 
 		/**
+		 * Sets prevStartContext & prevEndContext to null
+		 */
+		resetPrevSelectionContexts: function () {
+			prevStartContext = null;
+			prevEndContext   = null;
+		},
+
+		/**
 		 * String representation
 		 * @return "Aloha.Selection"
 		 * @hide
@@ -26919,6 +26934,8 @@ define('aloha/editable',[
 				Aloha.settings.contentHandler.initEditable = Aloha.defaults.contentHandler.initEditable;
 			}
 
+			Ephemera.markAttr(me.obj, 'style');
+
 			var content = me.obj.html();
 			content = ContentHandlerManager.handleContent(content, {
 				contenthandler: Aloha.settings.contentHandler.initEditable,
@@ -27364,6 +27381,8 @@ define('aloha/editable',[
 			Aloha.activeEditable.smartContentChange({
 				type: 'blur'
 			}, null);
+
+			Selection.resetPrevSelectionContexts();
 		},
 
 		/**
@@ -27557,11 +27576,15 @@ define('aloha/editable',[
 			} else if (uniChar !== null) {
 				var range = Aloha.Selection.getRangeObject();
 
-				if (range.startContainer == range.endContainer) {
-					var $children = $(range.startContainer).children();
+				//Remove break in otherwise empty children in IE and Mozilla
+				//This is done automatically in Chrome and would lead to errors
+				if (Browser.ie || Browser.mozilla) {
+					if (range.startContainer == range.endContainer) {
+						var $children = $(range.startContainer).children();
 
-					if ($children.length == 1 && $children.is('br')) {
-						$children.remove();
+						if ($children.length == 1 && $children.is('br')) {
+							$children.remove();
+						}
 					}
 				}
 
@@ -40473,7 +40496,7 @@ define('link/link-plugin',[
 					// Only foreground the tab containing the href field the
 					// first time the user enters the link scope to avoid
 					// intefering with the user's manual tab selection
-					if (activeLink !== false && activeLink !== plugin.lastActiveLink) {
+					if (activeLink !== false && !activeLink.is(plugin.lastActiveLink)) {
 						// put the field into foreground with a timeout, so that this
 						// overrules other plugins that change the active toolbar tab
 						// by setting the scope
@@ -40698,6 +40721,15 @@ define('link/link-plugin',[
 					range.startContainer = range.endContainer;
 					range.startOffset = range.endOffset;
 					range.select();
+
+					// At least Mozilla still has the focus on the href input field.
+					// TODO: Should Range.select() perhaps ensure that the editable
+					// actually has the focus?
+					var editable = $(range.startContainer).closest('.aloha-editable,.aloha-table-cell-editable');
+
+					if (editable.length > 0 && Aloha.browser.mozilla && document.activeElement !== editable[0]) {
+						editable.focus();
+					}
 
 					var hrefValue = jQuery( that.hrefField.getInputElem() ).attr( 'value' );
 					
@@ -41092,7 +41124,7 @@ define('link/link-plugin',[
 		}
 		
 		that.ignoreNextSelectionChangedEvent = false;
-		return enteredLinkScope ? foundMarkup.length > 0 : false;
+		return enteredLinkScope ? foundMarkup : false;
 	}
 } );
 
@@ -54048,9 +54080,12 @@ define('block/block',[
 			this.renderBlockHandlesIfNeeded();
 			if (this.isDraggable()) {
 				var nodeName = this.$element[0].nodeName;
-				if (nodeName === 'SPAN') {
+				if (nodeName === 'SPAN' && !this.$element.data('dd-setup-done')) {
+					// Unfortunately _setupDragDropForInlineElements() is not
+					// idempotent because $.draggable() isn't.
 					this._setupDragDropForInlineElements();
 					this._disableUglyInternetExplorerDragHandles();
+					this.$element.data('dd-setup-done', true);
 				} else if (nodeName === 'DIV') {
 					this._setupDragDropForBlockElements();
 					this._disableUglyInternetExplorerDragHandles();
@@ -55017,13 +55052,23 @@ function (jQuery, Observable, Class) {
 
 		/**
 		 * Render the label and form element
+		 *
 		 * @return {jQuery}
 		 */
 		render: function () {
 			var $wrapper = jQuery('<div class="aloha-block-editor" />');
 			var guid = GENTICS.Utils.guid();
-			$wrapper.append(this.renderLabel().attr('id', guid));
-			$wrapper.append(this.renderFormElement().attr('id', guid));
+			var $label = this.renderLabel().attr('id', guid);
+			var $formElement = this.renderFormElement().attr('id', guid);
+
+			if (this.schema.fieldsetLabel) {
+				// When using a fieldset, the actual input element has to be
+				// placed in that instead of the wrapper element.
+				$label.append($formElement).appendTo($wrapper);
+			} else {
+				$wrapper.append($label).append($formElement);
+			}
+
 			return $wrapper;
 		},
 
@@ -55031,11 +55076,21 @@ function (jQuery, Observable, Class) {
 		 * Render the label for the editor, by using the "label" property
 		 * from the schema.
 		 *
+		 * When <code>this.schema.fieldsetLabel</code> is true the
+		 * label will be rendered as a <code>legend</code> tag inside
+		 * a <code>fieldset</code>.
+		 *
 		 * @return {jQuery}
 		 */
 		renderLabel: function () {
-			var element = jQuery('<label />');
-			element.html(this.schema.label);
+			var element;
+
+			if (this.schema.fieldsetLabel) {
+				element = jQuery('<fieldset>').append(jQuery('<legend>', { text: this.schema.label }));
+			} else {
+				element = jQuery('<label>', { text: this.schema.label });
+			}
+
 			return element;
 		},
 
@@ -55172,6 +55227,42 @@ function (jQuery, Observable, Class) {
 	});
 
 	/**
+	 * @name block.editor.RadioButtonEditor
+	 * @class An editor for a radio button group
+	 * @extends block.editor.AbstractFormElementEditor
+	 */
+	var RadioButtonEditor = AbstractFormElementEditor.extend(
+	/** @lends block.editor.RadioButtonEditor */
+	{
+			formInputElementDefinition: '<ul />',
+			afterRenderFormElement: function ($formElement) {
+				var groupName = 'rb_' + GENTICS.Utils.guid();
+
+				jQuery.each(this.schema.values, function (idx, el) {
+					var inputId = groupName + '_' + el.key;
+					var $input = $('<input>', {
+						type: 'radio',
+						value: el.key,
+						name: groupName,
+						id: inputId
+					});
+					var $label = $('<label>', {
+						'for': inputId,
+						'class': 'input-label',
+						text: el.label
+					});
+
+					$('<li>').append($input).append($label).appendTo($formElement);
+				})
+			},
+			getValue: function () {
+				return this._$formInputElement.find(':checked').val();
+			},
+			setValue: function (value) {
+				this._$formInputElement.find('[value=' + value + ']').prop('checked', true);
+			}
+	});
+	/**
 	 * @name block.editor.ButtonEditor
 	 * @class An editor for buttons, executing a custom supplied callback "callback"
 	 * @extends block.editor.AbstractFormElementEditor
@@ -55198,6 +55289,7 @@ function (jQuery, Observable, Class) {
 		UrlEditor: UrlEditor,
 		EmailEditor: EmailEditor,
 		SelectEditor: SelectEditor,
+		RadioButtonEditor: RadioButtonEditor,
 		ButtonEditor: ButtonEditor
 	}
 });
@@ -55561,6 +55653,21 @@ define('block/dragbehavior',[
 		}
 
 		var $elm = $(elm);
+		var $srcEditable = this.$element.closest('.aloha-editable');
+		var $dstEditable = $elm.closest('.aloha-editable');
+		var dropzones = ($srcEditable.data('block-dropzones') || ['.aloha-editable']).join();
+
+		if (!$dstEditable.is(dropzones)) {
+			if (Aloha.Log.isDebugEnabled()) {
+				Aloha.Log.debug(
+					'block-plugin',
+					'Preventing drop because of defined dropzones: [ ' + dropzones + ' ]');
+			}
+
+			event.stopImmediatePropagation();
+
+			return false;
+		}
 
 		if (!this._isAllowedOverElement(elm)) {
 			this.disableInsertBeforeOrAfter(this.$overElement);
@@ -55899,6 +56006,7 @@ define('block/block-plugin',[
 			EditorManager.register('url', editor.UrlEditor);
 			EditorManager.register('email', editor.EmailEditor);
 			EditorManager.register('select', editor.SelectEditor);
+			EditorManager.register('radio', editor.RadioButtonEditor);
 			EditorManager.register('button', editor.ButtonEditor);
 
 			// register content handler for block plugin
