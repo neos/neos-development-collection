@@ -4,13 +4,17 @@ prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
 
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/DimensionsMenu.html'
 
-	renderHiddenInIndex = TRUE
-	labelExpression = ${node ? node.label : ''}
+	# the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
 	absent.attributes = TYPO3.TypoScript:Attributes {
 		class = 'normal'
 	}
 
-	# Example:
+	# if documents which are hidden in index should be rendered or not
+	renderHiddenInIndex = TRUE
+
+	# the expression used to generate item labels if "dimension" is not set
+	labelExpression = ${node ? node.label : ''}
+
 	# name of the dimension to use (optional)
 	# dimension = 'language'
 
