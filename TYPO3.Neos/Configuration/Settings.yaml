@@ -164,6 +164,7 @@ TYPO3:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
         'TYPO3.Neos/Inspector/Handlers': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Handlers/'
+        'TYPO3.Neos/Inspector/Views': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Views/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: 'en'
