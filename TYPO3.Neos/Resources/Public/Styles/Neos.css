@@ -6230,7 +6230,7 @@
   box-sizing: border-box;
 }
 .neos .neos-buffer-below {
-  margin-bottom: 1em;
+  margin-bottom: 16px;
 }
 @media (min-width: 1200px) {
   .neos .neos-row {
@@ -13631,13 +13631,12 @@
   max-width: 100%;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
-  padding: 0 0 1rem .5rem;
+  padding: 0 0 16px 4px;
   position: relative;
   font-size: 12px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-caption {
-  padding: 0 0 0 .5rem;
-  margin-right: 2rem;
+  margin-right: 32px;
   display: block;
   line-height: 1.2;
   color: #adadad;
@@ -13855,9 +13854,6 @@
 }
 .neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .icon-move {
   cursor: move;
-}
-.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .neos-action {
-  display: none;
 }
 .neos.media-browser .neos-upload-area {
   text-align: center;

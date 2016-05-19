@@ -597,13 +597,12 @@
 				}
 
 				.neos-img-label {
-					padding: 0 0 1rem .5rem;
+					padding: 0 0 $defaultMargin $tightMargin;
 					position: relative;
 					font-size: 12px;
 
 					.neos-caption {
-						padding: 0 0 0 .5rem;
-						margin-right: 2rem;
+						margin-right: $wideMargin;
 						display: block;
 						line-height: 1.2;
 						color: $textSubtleLight;
@@ -854,10 +853,6 @@
 
 			.icon-move {
 				cursor: move;
-			}
-
-			.neos-action {
-				display: none;
 			}
 		}
 	}
