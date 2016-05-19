@@ -662,6 +662,7 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
+:includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
 :labelExpression: (string) Eel expression used to render the item label if ``dimension`` is not set, by default renders the node label
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
 
@@ -700,7 +701,32 @@ you can override the "presets"::
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
 
+In some cases, it can be good to ignore the availability of variants when rendering a dimensions menu. Consider a
+situation with two independent menus for country and language, where the following variants of a node exist
+(language / country):
 
+- english / Germany
+- german / Germany
+- english / UK
+
+If the user selects UK, only english will be linked in the language selector. German is only available again, if the
+user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
+
+	languageMenu = TYPO3.Neos:DimensionsMenu {
+		dimension = 'language'
+		includeAllPresets = true
+	}
+
+Now the language menu will try to find nodes for all languages, if needed the menu items will point to a different
+country than currently selected. The menu tries to find a node to link to by using the current preset for the language
+(in this example) and the default presets for any other dimensions. So if fallback rules are in place and a node can be
+found, it is used.
+
+.. note:: The ``item.targetDimensions`` will contain the "intended" dimensions, so that information can be used to
+   inform the user about the potentially unexpected change of dimensions when following  such a link.
+
+Only if the current node is not available at all (even after considering default presets with their fallback rules),
+no node be assigned (so no link will be created and the items will have the ``absent`` state.)
 
 .. _TYPO3_Neos__NodeUri:
 

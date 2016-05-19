@@ -67,6 +67,14 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     }
 
     /**
+     * @return array
+     */
+    public function getIncludeAllPresets()
+    {
+        return $this->tsValue('includeAllPresets');
+    }
+
+    /**
      * @return string
      */
     public function getLabelExpression()
@@ -82,6 +90,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         $menuItems = [];
         $targetDimensionsToMatch = [];
         $allDimensionPresets = $this->configurationContentDimensionPresetSource->getAllPresets();
+        $includeAllPresets = $this->getIncludeAllPresets();
         $pinnedDimensionValues = $this->getPresets();
 
         $pinnedDimensionName = $this->getDimension();
@@ -109,6 +118,22 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
             }
 
             $nodeInDimensions = $this->getNodeInDimensions($allowedCombination, $targetDimensions);
+
+            // no match, so we look further...
+            if ($nodeInDimensions === null && $includeAllPresets) {
+                foreach ($allowedCombination[$pinnedDimensionName] as $allowedPresetIdentifier) {
+                    $acceptableCombination = [$pinnedDimensionName => $allDimensionPresets[$pinnedDimensionName]['presets'][$allowedPresetIdentifier]['values']];
+                    $allowedAdditionalPresets = $this->configurationContentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection('country', [$pinnedDimensionName => $allowedPresetIdentifier]);
+                    foreach ($allowedAdditionalPresets as $allowedAdditionalDimensionName => $allowedAdditionalPreset) {
+                        $acceptableCombination[$allowedAdditionalDimensionName] = $allowedAdditionalPreset['presets'][$allowedAdditionalPreset['defaultPreset']]['values'];
+                    }
+                    $nodeInDimensions = $this->getNodeInDimensions($acceptableCombination, []);
+                    if ($nodeInDimensions !== null) {
+                        continue;
+                    }
+                }
+            }
+
             if ($nodeInDimensions !== null && $this->isNodeHidden($nodeInDimensions)) {
                 $nodeInDimensions = null;
             }
@@ -167,12 +192,10 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     {
         $q = new FlowQuery([$this->currentNode]);
 
-        return $q->context(
-            [
-                'dimensions' => $dimensions,
-                'targetDimensions' => $targetDimensions
-            ]
-        )->get(0);
+        return $q->context([
+            'dimensions' => $dimensions,
+            'targetDimensions' => $targetDimensions
+        ])->get(0);
     }
 
     /**
