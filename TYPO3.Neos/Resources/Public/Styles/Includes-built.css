@@ -13489,26 +13489,26 @@ disabled look for disabled choices in the results dropdown
 .ui-widget { font-family: Arial,sans-serif; font-size: 1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Arial,sans-serif; font-size: 1em; }
-.ui-widget-content { border: 1px solid #373737; background: #373737 url(images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; color: #dddddd; }
+.ui-widget-content { border: 1px solid #373737; background: #373737 url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; color: #dddddd; }
 .ui-widget-content a { color: #dddddd; }
-.ui-widget-header { border: 1px solid #2d2d2d; background: #2d2d2d url(images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; color: #dddddd; font-weight: bold; }
+.ui-widget-header { border: 1px solid #2d2d2d; background: #2d2d2d url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; color: #dddddd; font-weight: bold; }
 .ui-widget-header a { color: #dddddd; }
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #2d2d2d; background: #2d2d2d url(images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #aaaaaa; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #2d2d2d; background: #2d2d2d url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #aaaaaa; }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #aaaaaa; text-decoration: none; }
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #373737; background: #373737 url(images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #373737; background: #373737 url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
 .ui-state-hover a, .ui-state-hover a:hover { color: #ffffff; text-decoration: none; }
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #373737; background: #373737 url(images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #373737; background: #373737 url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_373737_40x100.png) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #ffffff; text-decoration: none; }
 .ui-widget :active { outline: none; }
 
 /* Interaction Cues
 ----------------------------------*/
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight  {border: 1px solid #ff8700; background: #ff8700 url(images/ui-bg_flat_100_ff8700_40x100.png) 50% 50% repeat-x; color: #ffffff; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight  {border: 1px solid #ff8700; background: #ff8700 url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_ff8700_40x100.png) 50% 50% repeat-x; color: #ffffff; }
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a { color: #ffffff; }
-.ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {border: 1px solid #ffffff; background: #be0027 url(images/ui-bg_flat_100_be0027_40x100.png) 50% 50% repeat-x; color: #ffffff; }
+.ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {border: 1px solid #ffffff; background: #be0027 url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_be0027_40x100.png) 50% 50% repeat-x; color: #ffffff; }
 .ui-state-error a, .ui-widget-content .ui-state-error a, .ui-widget-header .ui-state-error a { color: #ffffff; }
 .ui-state-error-text, .ui-widget-content .ui-state-error-text, .ui-widget-header .ui-state-error-text { color: #ffffff; }
 .ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary { font-weight: bold; }
@@ -13519,14 +13519,14 @@ disabled look for disabled choices in the results dropdown
 ----------------------------------*/
 
 /* states and images */
-.ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_dddddd_256x240.png); }
-.ui-widget-content .ui-icon {background-image: url(images/ui-icons_dddddd_256x240.png); }
-.ui-widget-header .ui-icon {background-image: url(images/ui-icons_dddddd_256x240.png); }
-.ui-state-default .ui-icon { background-image: url(images/ui-icons_aaaaaa_256x240.png); }
-.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
-.ui-state-active .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
-.ui-state-highlight .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
-.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
+.ui-icon { width: 16px; height: 16px; background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_dddddd_256x240.png); }
+.ui-widget-content .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_dddddd_256x240.png); }
+.ui-widget-header .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_dddddd_256x240.png); }
+.ui-state-default .ui-icon { background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_aaaaaa_256x240.png); }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_ffffff_256x240.png); }
+.ui-state-active .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_ffffff_256x240.png); }
+.ui-state-highlight .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_ffffff_256x240.png); }
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(../Library/jquery-ui/css/custom-theme/images/ui-icons_ffffff_256x240.png); }
 
 /* positioning */
 .ui-icon-carat-1-n { background-position: 0 0; }
@@ -13716,8 +13716,8 @@ disabled look for disabled choices in the results dropdown
 .ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br { -moz-border-radius-bottomright: 0px; -webkit-border-bottom-right-radius: 0px; -khtml-border-bottom-right-radius: 0px; border-bottom-right-radius: 0px; }
 
 /* Overlays */
-.ui-widget-overlay { background: #2d2d2d url(images/ui-bg_diagonals-thick_40_2d2d2d_40x40.png) 50% 50% repeat; opacity: .30;filter:Alpha(Opacity=30); }
-.ui-widget-shadow { margin: -2px 0 0 -2px; padding: 2px; background: #2d2d2d url(images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; opacity: .10;filter:Alpha(Opacity=10); -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }/*
+.ui-widget-overlay { background: #2d2d2d url(../Library/jquery-ui/css/custom-theme/images/ui-bg_diagonals-thick_40_2d2d2d_40x40.png) 50% 50% repeat; opacity: .30;filter:Alpha(Opacity=30); }
+.ui-widget-shadow { margin: -2px 0 0 -2px; padding: 2px; background: #2d2d2d url(../Library/jquery-ui/css/custom-theme/images/ui-bg_flat_100_2d2d2d_40x100.png) 50% 50% repeat-x; opacity: .10;filter:Alpha(Opacity=10); -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }/*
  * jQuery UI Resizable 1.8.16
  *
  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
@@ -14013,7 +14013,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 /* Selection Border */
 .jcrop-vline,
 .jcrop-hline {
-  background: #ffffff url("Jcrop.gif");
+  background: #ffffff url("../Library/jcrop/css/Jcrop.gif");
   font-size: 0;
   position: absolute;
 }
