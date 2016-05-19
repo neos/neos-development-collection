@@ -20,6 +20,9 @@ prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
 
 	# list of presets, if the default order should be overridden, only used with "dimension" set
 	# presets = ${['en_US']}
+
+	# if true, items for all presets will be included, ignoring dimension constraints
+	includeAllPresets = FALSE
 }
 
 # included for backwards-compatibility only
