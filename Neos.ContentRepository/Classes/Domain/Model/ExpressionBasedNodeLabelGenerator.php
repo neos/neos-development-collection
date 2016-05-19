@@ -68,14 +68,20 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
     /**
      * Render a node label based on an eel expression or return the expression if it is not valid eel.
      *
-     * @param \Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node
-     * @return string
      * @throws \Neos\Eel\Exception
      */
     public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node): string
     {
-        if (Utility::parseEelExpression($this->getExpression()) === null) {
-            return $this->getExpression();
+        $expression = $this->getExpression();
+        if ($node->isAutoCreated()) {
+            $parentNode = $node->getParent();
+            $property = 'childNodes.' . $node->getName() . '.label';
+            if ($parentNode?->getNodeType()->hasConfiguration($property)) {
+                $expression = $parentNode->getNodeType()->getConfiguration($property);
+            }
+        }
+        if (Utility::parseEelExpression($expression) === null) {
+            return $expression;
         }
         return (string)Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
     }
