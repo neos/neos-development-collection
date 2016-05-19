@@ -1,0 +1,59 @@
+`2.0.12 (2016-05-19) <https://github.com/neos/neos-development-collection/releases/tag/2.0.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Aloha bugfix update <https://github.com/neos/neos-development-collection/pull/523>`_
+-------------------------------------------------------------------------------------------
+
+Updates Aloha Editor to latest release of ``1.2`` (``1.2.42`` to ``1.2.47``)
+
+Additionally includes an important bugfix only included in currently maintained versions (``1.3``/``1.4``)
+
+NEOS-1822 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Aloha list style class not sanitized <https://github.com/neos/neos-development-collection/pull/522>`_
+--------------------------------------------------------------------------------------------------------------
+
+When using Aloha list styles, the class attribute was sanitized automatically making the feature unusable.
+
+NEOS-854
+
+* Packages: ``Neos``
+
+`BUGFIX: Use correct relative paths in built CSS files <https://github.com/neos/neos-development-collection/pull/524>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The built CSS file concatenated library CSS files without
+rewriting the relative URLs, leading to missing assets.
+
+One example is the missing down caret for the Aloha list styles.
+
+NEOS-1618 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Publishable Node Context considers dimension fallbacks <https://github.com/neos/neos-development-collection/pull/512>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The Context created for Nodes in a workspace in the ``PublishingService``
+was derived from the ``NodeData`` entities dimension values, which should only
+be the target values of the context but (wrongly) doesn't consider fallbacks
+configured in presets.
+
+To solve this a new method in the PresetSource allows to find best matching
+presets based on target values for dimensions. Those are then used to
+get a ``Context`` with fallback rules for dimensions, avoiding errors with
+missing nodes in the root path as these might only exist within a ``Context``
+that considers fallback rules.
+
+The ``ContentDimensionPresetSourceInterface`` is not declared public ``@api``
+so the change is not marked breaking.
+
+* Packages: ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.11...2.0.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
