@@ -29,7 +29,7 @@
         nodeInfo:
           label: i18n
           group: 'nodeInfo'
-          view: 'Content/Inspector/Views/NodeInfoView'
+          view: 'TYPO3.Neos/Inspector/Views/NodeInfoView'
   properties:
     _removed:
       type: boolean
