@@ -147,29 +147,32 @@ define(
 				if (value && value !== currentValue) {
 					// Remove all items so they don't appear multiple times.
 					that.set('content', []);
-					var parameters = {
-						nodeIdentifiers: JSON.parse(value),
-						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
-						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
-					};
-					HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
-						$(result.resource).find('li').each(function(index, value) {
-							var nodeIdentifier = $('.node-identifier', value).text().trim(),
-								label = $('.node-label', value).text().trim(),
-								icon = $('.node-icon', value).text().trim();
-
-							var item = Ember.Object.extend({
-								id: nodeIdentifier
-							}).create();
-
-							item.set('text', $('.node-label', value).text().trim());
-							item.set('data', {identifier: $('.node-identifier', value).text(), path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()});
-
-							that.get('content').pushObject(item);
-						});
-						that._updateSelect2();
-					});
 					that._updateSelect2();
+					var nodeIdentifiers = JSON.parse(value);
+					if (nodeIdentifiers.length > 0) {
+						var parameters = {
+							nodeIdentifiers: nodeIdentifiers,
+							workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+							dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+						};
+						HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
+							$(result.resource).find('li').each(function(index, value) {
+								var nodeIdentifier = $('.node-identifier', value).text().trim(),
+									label = $('.node-label', value).text().trim(),
+									icon = $('.node-icon', value).text().trim();
+	
+								var item = Ember.Object.extend({
+									id: nodeIdentifier
+								}).create();
+	
+								item.set('text', $('.node-label', value).text().trim());
+								item.set('data', {identifier: $('.node-identifier', value).text(), path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()});
+	
+								that.get('content').pushObject(item);
+							});
+							that._updateSelect2();
+						});
+					}
 				}
 				return currentValue;
 			}.property('content.@each')
