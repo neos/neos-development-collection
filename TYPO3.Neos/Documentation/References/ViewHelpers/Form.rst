@@ -335,9 +335,6 @@ typo3.form:render
 
 Main Entry Point to render a Form into a Fluid Template
 
-Usage
-=====
-
 <pre>
 {namespace form=TYPO3\Form\ViewHelpers}
 <form:render factoryClass="NameOfYourCustomFactoryClass" />
