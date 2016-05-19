@@ -547,7 +547,7 @@
 			<target xml:lang="km" state="translated">បណ្ដោយ</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="km" state="translated">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ </target><alt-trans><target xml:lang="km">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ</target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated">បាត់លក្ខណៈសម្បត្តិដែលត្រូវការ </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="km" state="translated">កន្លែងផ្ទុកការងារ</target></trans-unit>
