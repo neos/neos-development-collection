@@ -7504,10 +7504,6 @@
 .neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-holder {
   margin: 0 auto;
 }
-.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-vline,
-.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-area .jcrop-hline {
-  background: url("../Library/jcrop/css/Jcrop.gif") #fff;
-}
 .neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio {
   width: 600px;
   margin: 0 auto;
