@@ -1,3 +1,4 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:if condition="{referenceNodes}">
 	<f:then>
 		<div{attributes -> f:format.raw()}>
@@ -7,7 +8,7 @@
 	<f:else>
 		<f:if condition="{neos:rendering.inEditMode()}">
 			<div{attributes -> f:format.raw()}>
-				<p>No references selected</p>
+				<p>{f:translate(id: 'content.noReferencesSelected', package: 'TYPO3.Neos.NodeTypes', source: 'NodeTypes/ContentReferences')}</p>
 			</div>
 		</f:if>
 	</f:else>

@@ -9,7 +9,7 @@
 				</a>
 			</f:then>
 			<f:else>
-				<f:render section="ImageRendering" arguments="{_all}" />
+				<f:render section="imageRendering" arguments="{_all}" />
 			</f:else>
 		</f:if>
 	</f:then>
@@ -23,5 +23,5 @@
 <f:section name="imageRendering">
 	<media:image asset="{image}" alt="{alternativeText}" title="{title}" width="{width}"
 				 maximumWidth="{maximumWidth}" height="{height}" maximumHeight="{maximumHeight}"
-				 allowUpScaling="{allowUpScaling}" />
+				 allowUpScaling="{allowUpScaling}" allowCropping="{allowCropping}" />
 </f:section>
