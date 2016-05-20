@@ -11,6 +11,7 @@ define(
 	'Shared/Configuration',
 	'Shared/ResourceCache',
 	'Shared/Notification',
+	'Shared/EventDispatcher',
 	'Content/LoadingIndicator',
 	'./EditingMode',
 	'./PreviewMode',
@@ -22,6 +23,7 @@ define(
 	Configuration,
 	ResourceCache,
 	Notification,
+	EventDispatcher,
 	LoadingIndicator,
 	EditingMode,
 	PreviewMode,
@@ -33,8 +35,12 @@ define(
 		previousActiveMode: null,
 
 		configuration: null,
+		nodeType: 'TYPO3.Neos:Document',
 		editingModes: [],
 		previewModes: [],
+
+		neosEditingFrameClass: 'neos-edit',
+		neosPreviewFrameClass: 'neos-preview',
 
 		_deactivatePreviouslyActiveMode: function() {
 			if (this.get('currentlyActiveMode')) {
@@ -80,17 +86,25 @@ define(
 			);
 		}.observes('currentlyActiveMode'),
 
-		init: function() {
+		_initialize: function() {
 			var that = this;
-			ResourceCache.getItem(Configuration.get('EditPreviewDataUri')).then(
+			EventDispatcher.on('nodesUpdated', function() {
+				that._load();
+			});
+		}.on('init'),
+
+		_load: function() {
+			var nodeType = $('#neos-document-metadata').data('node-_nodeType');
+			this.set('nodeType', nodeType);
+			var item = Configuration.get('EditPreviewDataUri') + '&nodeType=' + encodeURIComponent(nodeType);
+			var that = this;
+			ResourceCache.getItem(item).then(
 				function(data) {
 					that.set('configuration', data);
 				}
 			);
 
-			if (LocalStorage.getItem('editPreviewPanelMode') === true) {
-				this.toggleEditPreviewPanelMode();
-			}
+			this.set('editPreviewPanelMode', LocalStorage.getItem('editPreviewPanelMode'));
 		},
 
 		toggleEditPreviewPanelMode: function() {
@@ -128,12 +142,24 @@ define(
 			this.set('editingModes', editingModes);
 			this.set('previewModes', previewModes);
 
+			if (editingModes.length > 0) {
+				this.set('neosEditingFrameClass', 'neos-edit');
+			} else {
+				this.set('neosEditingFrameClass', 'neos-edit neos-hide');
+			}
+			if (previewModes.length > 0) {
+				this.set('neosPreviewFrameClass', 'neos-edit');
+			} else {
+				this.set('neosPreviewFrameClass', 'neos-edit neos-hide');
+			}
+
 			currentlyActiveMode = currentlyActiveMode ? currentlyActiveMode : editingModes[0];
 			if (!currentlyActiveMode) {
 				return;
 			}
 			this.set('currentlyActiveMode', currentlyActiveMode);
 			Ember.sendEvent(currentlyActiveMode, 'activateOnPageLoad');
+			EventDispatcher.trigger('editPreviewModeConfigurationChanged');
 		}.observes('configuration').on('init'),
 
 		_editPreviewPanelModeChanged: function() {

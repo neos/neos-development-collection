@@ -91,6 +91,9 @@ class UserInterfaceModeService
      */
     public function findModeByName($modeName)
     {
+        if (strpos($modeName, ':') === false) {
+            $modeName = 'TYPO3.Neos:' . $modeName;
+        }
         if (isset($this->editPreviewModes[$modeName])) {
             if ($this->editPreviewModes[$modeName] instanceof UserInterfaceMode) {
                 $mode = $this->editPreviewModes[$modeName];

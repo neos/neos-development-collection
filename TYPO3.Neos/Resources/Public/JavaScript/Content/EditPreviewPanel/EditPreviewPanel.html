@@ -1,4 +1,4 @@
-<div class="neos-edit">
+<div {{bindAttr class="neosEditingFrameClass"}}>
 	<div class="neos-edit-preview-panel-title">{{translate id="content.components.editPreviewPanel.modes" fallback="Editing Modes"}}</div>
 	<div class="neos-scroll-container">
 		<div class="neos-frame">
@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<div class="neos-preview">
+<div {{bindAttr class="neosPreviewFrameClass"}}>
 	<div class="neos-edit-preview-panel-title">{{translate id="content.components.editPreviewPanel.previewCentral" fallback="Preview Central"}}</div>
 	<div class="neos-scroll-container">
 		<div class="neos-frame">

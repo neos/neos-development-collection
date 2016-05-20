@@ -41,6 +41,21 @@ define(
 		}.observes('controller.editPreviewPanelMode').on('init'),
 
 		didInsertElement: function() {
+			this._initializeSliders();
+			var that = this;
+			this.$().get(0).addEventListener('transitionend', function() {
+				that._reloadSliders();
+			}, false);
+			window.addEventListener('resize', _.debounce(function() {
+				that._reloadSliders();
+			}, 200), false);
+
+			EventDispatcher.on('editPreviewModeConfigurationChanged', function() {
+				that._reloadSliders();
+			});
+		},
+
+		_initializeSliders: function() {
 			var editModes = this.get('controller.editingModes'),
 				previewModes = this.get('controller.previewModes'),
 				activeItems = [
@@ -71,13 +86,6 @@ define(
 					startAt: activeItems[index]
 				});
 			});
-			var that = this;
-			this.$().get(0).addEventListener('transitionend', function() {
-				that._reloadSliders();
-			}, false);
-			window.addEventListener('resize', _.debounce(function() {
-				that._reloadSliders();
-			}, 200), false);
 		},
 
 		_reloadSliders: function() {

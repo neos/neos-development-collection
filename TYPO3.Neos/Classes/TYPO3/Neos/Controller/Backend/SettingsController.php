@@ -12,21 +12,51 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\PositionalArraySorter;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * @Flow\Scope("singleton")
  */
-class SettingsController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class SettingsController extends ActionController
 {
     /**
+     * @var NodeTypeManager
+     * @Flow\Inject
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @param string $nodeType
      * @return string
      */
-    public function editPreviewAction()
+    public function editPreviewAction($nodeType)
     {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
+        $settings = Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes');
+
+        $allowedPreviewModes = $editPreviewModes = [];
+        if ($nodeType->hasConfiguration('editPreviewModes') && is_array($nodeType->getConfiguration('editPreviewModes'))) {
+            $editPreviewModes = array_filter($nodeType->getConfiguration('editPreviewModes'));
+            $allowedPreviewModes = array_keys($editPreviewModes);
+        }
+        
+        if ($editPreviewModes !== []) {
+            foreach ($settings as $name => $configuration) {
+                if (!in_array($name, $allowedPreviewModes)) {
+                    unset($settings[$name]);
+                }
+                if (isset($editPreviewModes[$name]) && is_int($editPreviewModes[$name])) {
+                    $settings[$name]['position'] = $editPreviewModes[$name];
+                }
+            }
+        }
+
+        $configuration = new PositionalArraySorter($settings);
+
         $this->response->setHeader('Content-Type', 'application/json');
-        $configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
         return json_encode($configuration->toArray());
     }
 }
