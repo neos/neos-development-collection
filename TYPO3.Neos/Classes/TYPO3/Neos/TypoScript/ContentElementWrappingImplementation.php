@@ -49,7 +49,6 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject
      * Evaluate this TypoScript object and return the result
      *
      * @return mixed
-     * @throws \TYPO3\Neos\Domain\Exception
      */
     public function evaluate()
     {
