@@ -13645,18 +13645,21 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
   padding: 0 0 16px 4px;
   position: relative;
-  font-size: 12px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-caption {
   margin-right: 32px;
   padding-left: 4px;
   padding-right: 4px;
   display: block;
+  font-size: 12px;
   line-height: 32px;
   color: #adadad;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-dropdown {
+  font-size: 14px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label > img {
   float: left;
@@ -13849,7 +13852,7 @@
 }
 .neos.media-browser table.neos-table.asset-list .neos-action .neos-dropdown {
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
 }
 .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal, .neos.media-browser table.neos-table.asset-list .neos-action .neos-modal-content {
   text-align: left;
