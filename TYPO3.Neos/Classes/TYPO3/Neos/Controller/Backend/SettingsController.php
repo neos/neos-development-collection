@@ -38,8 +38,9 @@ class SettingsController extends ActionController
         $settings = Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes');
 
         $allowedPreviewModes = $editPreviewModes = [];
-        if ($nodeType->hasConfiguration('editPreviewModes') && is_array($nodeType->getConfiguration('editPreviewModes'))) {
-            $editPreviewModes = array_filter($nodeType->getConfiguration('editPreviewModes'));
+        $configurationPath = 'ui.editPreviewModes';
+        if ($nodeType->hasConfiguration($configurationPath) && is_array($nodeType->getConfiguration($configurationPath))) {
+            $editPreviewModes = array_filter($nodeType->getConfiguration($configurationPath));
             $allowedPreviewModes = array_keys($editPreviewModes);
         }
         

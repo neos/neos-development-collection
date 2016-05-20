@@ -126,10 +126,6 @@
     nodeTypes:
       '*': FALSE
       'TYPO3.Neos:Document': TRUE
-  editPreviewModes:
-    'TYPO3.Neos:inPlace': TRUE
-    'TYPO3.Neos:rawContent': TRUE
-    'TYPO3.Neos:desktop': TRUE
   ui:
     label: 'Document'
     search:
@@ -140,6 +136,10 @@
           label: i18n
           position: 10
           icon: 'icon-file'
+    editPreviewModes:
+      'TYPO3.Neos:inPlace': TRUE
+      'TYPO3.Neos:rawContent': TRUE
+      'TYPO3.Neos:desktop': TRUE
   properties:
     _nodeType:
       ui:
@@ -197,10 +197,10 @@
       groups:
         document:
           label: i18n
-  editPreviewModes:
-    'TYPO3.Neos:inPlace': TRUE
-    'TYPO3.Neos:rawContent': FALSE
-    'TYPO3.Neos:desktop': FALSE
+    editPreviewModes:
+      'TYPO3.Neos:inPlace': TRUE
+      'TYPO3.Neos:rawContent': FALSE
+      'TYPO3.Neos:desktop': FALSE
   properties:
     targetMode:
       type: string
