@@ -230,7 +230,7 @@ function(
 						'ol': ['class']
 					},
 					protocols: {
-						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset']},
+						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset', 'tel', 'callto']},
 						'blockquote': {'cite': ['http', 'https', '__relative__']},
 						'q': {'cite': ['http', 'https', '__relative__']}
 					}
