@@ -183,16 +183,11 @@
         <target xml:lang="fr">Votre espace de travail personnel contient des modifications, s'il vous plaît publier ou jetez-les tout d'abord.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="fr">Impossible de supprimer l'espace de travail « {0} » parce qu'elle contient actuellement le {1} nœud.</target>
-          <alt-trans>
-            <target xml:lang="fr">Impossible de supprimer l'espace de travail « {0} » parce qu'elle contient actuellement le nœud {1}.</target>
-          </alt-trans>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="fr">Impossible de supprimer l'espace de travail « {0} » parce qu'elle contient actuellement le {1} nœuds.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -223,6 +218,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="fr">Toutes les modifications d'espace de travail « {0} » ont été ignorées.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="fr" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="fr" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="fr">Média</target></trans-unit>
@@ -679,6 +680,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="fr">Editer la ressource numérique</target><alt-trans><target xml:lang="fr">Éditer la ressource numérique</target></alt-trans><alt-trans><target xml:lang="fr">Editer la ressource multimédia</target></alt-trans></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="fr" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="fr">Effacer la ressource numérique</target><alt-trans><target xml:lang="fr">Effacer la ressource multimédia</target></alt-trans></trans-unit>
@@ -706,6 +710,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fr">Annuler</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="fr" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="fr">Enregistrer</target></trans-unit>
@@ -905,19 +912,11 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="fr">Actifs ne peuvent pas être supprimés, parce qu'il y a toujours un ou plusieurs noeuds en relation</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]" approved="yes">
+        <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="fr">{0} utilisation(s)</target>
-          <alt-trans>
-            <target xml:lang="fr">{0} référence(s)</target>
-          </alt-trans>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
+        <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="fr">{0} utilisation(s)</target>
-          <alt-trans>
-            <target xml:lang="fr">{0} référence(s)</target>
-          </alt-trans>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
