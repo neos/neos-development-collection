@@ -107,7 +107,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
 
     'TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource':
-      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(replaceAssetResource|updateResource)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(replaceAssetResource|updateAssetResource)Action())'
 
     'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections':
       matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
