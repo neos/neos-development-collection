@@ -121,17 +121,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
             // no match, so we look further...
             if ($nodeInDimensions === null && $includeAllPresets) {
-                foreach ($allowedCombination[$pinnedDimensionName] as $allowedPresetIdentifier) {
-                    $acceptableCombination = [$pinnedDimensionName => $allDimensionPresets[$pinnedDimensionName]['presets'][$allowedPresetIdentifier]['values']];
-                    $allowedAdditionalPresets = $this->configurationContentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection('country', [$pinnedDimensionName => $allowedPresetIdentifier]);
-                    foreach ($allowedAdditionalPresets as $allowedAdditionalDimensionName => $allowedAdditionalPreset) {
-                        $acceptableCombination[$allowedAdditionalDimensionName] = $allowedAdditionalPreset['presets'][$allowedAdditionalPreset['defaultPreset']]['values'];
-                    }
-                    $nodeInDimensions = $this->getNodeInDimensions($acceptableCombination, []);
-                    if ($nodeInDimensions !== null) {
-                        continue;
-                    }
-                }
+                $nodeInDimensions = $this->findAcceptableNode($allowedCombination, $allDimensionPresets);
             }
 
             if ($nodeInDimensions !== null && $this->isNodeHidden($nodeInDimensions)) {
@@ -158,8 +148,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 'state' => $this->calculateItemState($nodeInDimensions),
                 'label' => $itemLabel,
                 'dimensions' => $allowedCombination,
-                'targetDimensions' => $targetDimensions,
-                'pinnedDimensionName' => $pinnedDimensionName
+                'targetDimensions' => $targetDimensions
             ];
         }
 
@@ -196,6 +185,30 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
             'dimensions' => $dimensions,
             'targetDimensions' => $targetDimensions
         ])->get(0);
+    }
+
+    /**
+     *
+     * @param array $allowedCombination
+     * @param $allDimensionPresets
+     * @return null|NodeInterface
+     */
+    protected function findAcceptableNode(array $allowedCombination, array $allDimensionPresets)
+    {
+        $pinnedDimensionName = $this->getDimension();
+        foreach ($allowedCombination[$pinnedDimensionName] as $allowedPresetIdentifier) {
+            $acceptableCombination = [$pinnedDimensionName => $allDimensionPresets[$pinnedDimensionName]['presets'][$allowedPresetIdentifier]['values']];
+            $allowedAdditionalPresets = $this->configurationContentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection('country', [$pinnedDimensionName => $allowedPresetIdentifier]);
+            foreach ($allowedAdditionalPresets as $allowedAdditionalDimensionName => $allowedAdditionalPreset) {
+                $acceptableCombination[$allowedAdditionalDimensionName] = $allowedAdditionalPreset['presets'][$allowedAdditionalPreset['defaultPreset']]['values'];
+            }
+            $nodeInDimensions = $this->getNodeInDimensions($acceptableCombination, []);
+            if ($nodeInDimensions !== null) {
+                return $nodeInDimensions;
+            }
+        }
+
+        return null;
     }
 
     /**
