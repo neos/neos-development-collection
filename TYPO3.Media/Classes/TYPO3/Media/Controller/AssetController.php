@@ -290,7 +290,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @param array $options
      * @return void
      */
-    public function updateResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
     {
         try {
             $this->assetService->replaceAssetResource($asset, $resource, $options);

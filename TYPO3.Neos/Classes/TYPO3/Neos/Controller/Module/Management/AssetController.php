@@ -149,7 +149,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      * @throws InvalidArgumentValueException
      * @return void
      */
-    public function updateResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
     {
         $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
         $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
@@ -166,16 +166,16 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             $this->redirect('index');
         }
 
-        parent::updateResourceAction($asset, $resource, $options);
+        parent::updateAssetResourceAction($asset, $resource, $options);
     }
 
     /**
      * Get Related Nodes for an asset
      *
-     * @param Asset $asset
+     * @param AssetInterface $asset
      * @return void
      */
-    public function relatedNodesAction(Asset $asset)
+    public function relatedNodesAction(AssetInterface $asset)
     {
         $userWorkspace = $this->userService->getPersonalWorkspace();
 

@@ -210,7 +210,7 @@
 			</trans-unit>
 
 			<trans-unit id="media.dragHelp" xml:space="preserve">
-				<source>Drag and drop image on a collection / tag to add them to it.</source>
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
 			</trans-unit>
 			<trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
