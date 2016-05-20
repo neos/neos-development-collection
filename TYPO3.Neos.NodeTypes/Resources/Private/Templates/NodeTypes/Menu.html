@@ -9,7 +9,7 @@
 	</f:then>
 	<f:else>
 		<f:if condition="{neos:rendering.inEditMode()}">
-			<p>Empty menu</p>
+			<p>{f:translate(id: 'content.emptyMenu', package: 'TYPO3.Neos.NodeTypes', source: 'NodeTypes/Menu')}</p>
 		</f:if>
 	</f:else>
 </f:if>
@@ -17,7 +17,7 @@
 
 <f:section name="itemsList">
 	<f:for each="{items}" as="item">
-		<li{ts:render(path:'{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+		<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
 		<neos:link.node node="{item.node}">{item.label}</neos:link.node>
 		<f:if condition="{item.subItems}">
 			<ul>

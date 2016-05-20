@@ -10,7 +10,9 @@
 	<f:else>
 		<f:if condition="{neos:rendering.inEditMode()}">
 			<ul{attributes -> f:format.raw()}>
-				<li>Empty asset list</li>
+				<li>
+					{f:translate(id: 'content.emptyAssetList', package: 'TYPO3.Neos.NodeTypes', source: 'NodeTypes/AssetList')}
+				</li>
 			</ul>
 		</f:if>
 	</f:else>
