@@ -7,7 +7,7 @@
 			<target xml:lang="zh-CN" state="translated">开启标题</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="zh-CN" state="translated"><![CDATA[<p>在这里输入标题</p>]]></target><alt-trans><target xml:lang="zh-CN"><![CDATA[在这里输入标题]]></target></alt-trans></trans-unit>
+			<target xml:lang="zh-CN" state="translated"><![CDATA[<p>在这里输入标题</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

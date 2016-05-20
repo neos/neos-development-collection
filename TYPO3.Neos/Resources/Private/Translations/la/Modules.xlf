@@ -185,11 +185,9 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="la-LA">crwdns619:0{0}crwdnd619:0{1}crwdne619:0</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="la-LA">crwdns620:0{0}crwdnd620:0{1}crwdne620:0</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -220,6 +218,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="la-LA">crwdns627:0{0}crwdne627:0</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="la-LA">crwdns763:0crwdne763:0</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="la-LA">crwdns764:0{0}crwdne764:0</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="la-LA">crwdns127:0crwdne127:0</target></trans-unit>
@@ -676,6 +680,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="la-LA">crwdns403:0crwdne403:0</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="la-LA">crwdns765:0crwdne765:0</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="la-LA">crwdns404:0crwdne404:0</target></trans-unit>
@@ -703,6 +710,9 @@
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="la-LA">crwdns412:0crwdne412:0</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="la-LA">crwdns766:0crwdne766:0</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="la-LA">crwdns413:0crwdne413:0</target></trans-unit>
@@ -904,11 +914,9 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="la-LA">crwdns740:0{0}crwdne740:0</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="la-LA">crwdns741:0{0}crwdne741:0</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">

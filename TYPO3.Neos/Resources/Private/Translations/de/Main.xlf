@@ -546,7 +546,7 @@
 			<target xml:lang="de">Breite</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="de">Erforderlicher Wert fehlt: </target><alt-trans><target xml:lang="de">Erforderlicher Wert fehlt:</target></alt-trans></trans-unit>
+			<target xml:lang="de">Erforderlicher Wert fehlt: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
 			<target xml:lang="de">Arbeitsbereich</target></trans-unit>

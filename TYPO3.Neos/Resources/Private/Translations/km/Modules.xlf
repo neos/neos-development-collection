@@ -186,11 +186,9 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="km" state="translated">មិនបានលុបតំបន់​ការងារ "{0}" ពីព្រោះវានាពេលបច្ចុប្បន្ននេះមាន {១} ថ្នាំង។</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="km" state="translated">មិនបានលុបចន្លោះការងារ "{0}" ពីព្រោះវានាពេលបច្ចុប្បន្ននេះមាន {1} ថ្នាំង។</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -221,6 +219,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="km" state="translated">ការផ្លាស់ប្តូរទាំងអស់ពីតំបន់ធ្វើការ "{0}" ត្រូវបានបោះបង់។</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="km" state="translated">អូសនិងរូបភាពធ្លាក់ចុះនៅលើការប្រមូល / ស្លាកដើម្បីបន្ថែមពួកវាទៅវា។</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="km" state="translated">រក្សាឈ្មោះឯកសារ "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="km" state="translated">ប្រព័ន្ធផ្សព្វផ្សាយ</target></trans-unit>
@@ -679,6 +683,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="km" state="translated">កែសម្រួលទ្រព្យសម្បត្តិ</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="km" state="translated">ជំនួស</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="km" state="translated">លុបទ្រព្យសម្បត្តិ</target></trans-unit>
@@ -706,6 +713,9 @@
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="km" state="translated">ជំនួស</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="km" state="translated">សន្សំ រឺ រក្សាទុក</target></trans-unit>
@@ -909,11 +919,9 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="km" state="translated">{0} ការប្រើប្រាស់</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="km" state="translated">{0} ការប្រើប្រាស់</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
