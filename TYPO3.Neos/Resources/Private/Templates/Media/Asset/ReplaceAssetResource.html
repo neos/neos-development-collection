@@ -52,7 +52,8 @@
             </div>
         </div>
         <div class="neos-footer">
-            <f:link.action action="index" title="Cancel editing" class="neos-button">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+            <!-- TODO: Find a nicer way to send the referer for a get request -->
+            <a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'cancel', source: 'Modules')}</a>
             <f:form.submit id="replace" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}" />
         </div>
     </f:form>
