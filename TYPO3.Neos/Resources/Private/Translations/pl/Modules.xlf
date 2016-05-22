@@ -218,12 +218,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="pl">Wszystkie zmiany z obszaru roboczego "{0}" zostały odrzucone.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve">
+      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="pl" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+			<target xml:lang="pl">Przeciągnij i upuść zasób na kolekcję / tag aby dodać go do niego.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="pl" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target xml:lang="pl">Zachowaj nazwę pliku "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="pl">Pliki</target></trans-unit>
@@ -680,9 +680,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="pl">Edytuj zasób</target></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace</source>
-			<target xml:lang="pl" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="pl">Zastąp</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="pl">Usuń zasób</target></trans-unit>
@@ -710,9 +710,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="pl">Anuluj</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace</source>
-			<target xml:lang="pl" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="pl">Zastąp</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="pl">Zapisz</target></trans-unit>
