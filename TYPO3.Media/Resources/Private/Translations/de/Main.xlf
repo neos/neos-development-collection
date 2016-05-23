@@ -46,7 +46,7 @@
 			<target xml:lang="de" state="translated">Sammlung "{0}" wurde gelöscht.</target></trans-unit>
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="de" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="de" state="translated">Erstelle Redirects von der Original-URL auf die Neue</target></trans-unit>
     </body>
   </file>
 </xliff>
