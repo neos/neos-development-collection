@@ -392,6 +392,56 @@ To sum it up: When implementing a TypoScript object, it should not access its co
 directly, but instead use a property. In the TypoScript object's prototype, a default mapping
 between a context variable and the prototype can be set up.
 
+Default Context Variables
+=========================
+
+Neos exposes some default variables to the TypoScript context that can be used to control page rendering
+in a more granular way.
+
+* ``node`` can be used to get access to the current node in the node tree and read its properties.
+  It is of type ``NodeInterface`` and can be used to work with node data, such as::
+
+    # Make the node available in the template
+    node = ${node}
+
+    # Expose the "backgroundImage" property to the rendering using FlowQuery
+    backgroundImage = ${q(node).property('backgroundImage')}
+
+  To see what data is available on the node, you can expose it to the template as above and wrap it in a debug view helper::
+
+    {node -> f:debug()}
+
+* ``documentNode`` contains the closest parent document node - broadly speaking, it is the page the current node is on.
+  Just like ``node``, it is a ``NodeInterface`` and can be provided to the rendering in the same way::
+
+    # Expose the document node to the template
+    documentNode = ${documentNode}
+
+    # Display the document node path
+    nodePath = ${documentNode.path}
+
+  ``documentNode`` is in the end just a shorthand to get the current document node faster. It could be replaced with::
+
+    # Expose the document node to the template using FlowQuery and a Fizzle operator
+    documentNode = ${q(node).closest('[instanceof TYPO3.Neos:Document]').get(0)}
+
+* ``request`` is an instance of ``TYPO3\Flow\Mvc\ActionRequest`` and allows you to access the current request from within TypoScript.
+  Use it to provide request variables to the template::
+
+    # This would provide the value sent by an input field with name="username".
+    userName = ${request.arguments.username}
+
+    # request.format contains the format string of the request, such as "html" or "json"
+    requestFormat = ${request.format}
+
+  Another use case is to trigger an action, e.g. a search, via a custom Eel helper::
+
+    searchResults = ${Search.query(site).fulltext(request.arguments.searchword).execute()}
+
+  A word of caution: You should never trigger write operations from TypoScript, since it can be called multiple times (or not at all, because of caching)
+  during a single page render. If you want a request to trigger a persistent change on your site, it's better to use a Plugin.
+
+
 Manipulating the TypoScript Context
 -----------------------------------
 
