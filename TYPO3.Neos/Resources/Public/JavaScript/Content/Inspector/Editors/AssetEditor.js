@@ -134,7 +134,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				assetIdentifiers = [$.parseJSON(value)];
 			}
 
-			if (assetIdentifiers.length > 0) {
+			if (assetIdentifiers.length > 0 && assetIdentifiers[0] != null) {
 				this.set('_showLoadingIndicator', true);
 				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '?' + $.param({assets: assetIdentifiers})).then(
 					function(result) {
