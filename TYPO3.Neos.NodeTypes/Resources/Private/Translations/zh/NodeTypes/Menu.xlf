@@ -53,6 +53,9 @@
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target xml:lang="zh-CN" state="translated">最大层次</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve">
+				<source>Empty Menu</source>
+			<target xml:lang="zh-CN" state="needs-translation">Empty Menu</target></trans-unit>
     </body>
   </file>
 </xliff>
