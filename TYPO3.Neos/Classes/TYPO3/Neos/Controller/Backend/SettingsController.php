@@ -40,17 +40,18 @@ class SettingsController extends ActionController
         $allowedPreviewModes = $editPreviewModes = [];
         $configurationPath = 'ui.editPreviewModes';
         if ($nodeType->hasConfiguration($configurationPath) && is_array($nodeType->getConfiguration($configurationPath))) {
-            $editPreviewModes = array_filter($nodeType->getConfiguration($configurationPath));
-            $allowedPreviewModes = array_keys($editPreviewModes);
+            $editPreviewModes = $nodeType->getConfiguration($configurationPath);
+            $allowedPreviewModes = array_keys(array_filter($editPreviewModes, function ($mode) {
+                return isset($mode['enabled']) && $mode['enabled'] === true;
+            }));
         }
-        
         if ($editPreviewModes !== []) {
             foreach ($settings as $name => $configuration) {
                 if (!in_array($name, $allowedPreviewModes)) {
                     unset($settings[$name]);
                 }
-                if (isset($editPreviewModes[$name]) && is_int($editPreviewModes[$name])) {
-                    $settings[$name]['position'] = $editPreviewModes[$name];
+                if (isset($editPreviewModes[$name]['position'])) {
+                    $settings[$name]['position'] = (integer)$editPreviewModes[$name]['position'];
                 }
             }
         }

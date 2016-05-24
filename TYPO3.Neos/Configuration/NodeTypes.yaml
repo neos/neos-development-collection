@@ -137,9 +137,12 @@
           position: 10
           icon: 'icon-file'
     editPreviewModes:
-      'TYPO3.Neos:inPlace': TRUE
-      'TYPO3.Neos:rawContent': TRUE
-      'TYPO3.Neos:desktop': TRUE
+      'TYPO3.Neos:inPlace':
+        enabled: TRUE
+      'TYPO3.Neos:rawContent':
+        enabled: TRUE
+      'TYPO3.Neos:desktop':
+        enabled: TRUE
   properties:
     _nodeType:
       ui:
@@ -198,9 +201,12 @@
         document:
           label: i18n
     editPreviewModes:
-      'TYPO3.Neos:inPlace': TRUE
-      'TYPO3.Neos:rawContent': FALSE
-      'TYPO3.Neos:desktop': FALSE
+      'TYPO3.Neos:inPlace':
+        enabled: TRUE
+      'TYPO3.Neos:rawContent':
+        enabled: FALSE
+      'TYPO3.Neos:desktop':
+        enabled: FALSE
   properties:
     targetMode:
       type: string
