@@ -129,6 +129,9 @@ module.exports = function (grunt) {
 						src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 						src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
 
+						// fix https://github.com/alohaeditor/Aloha-Editor/issues/1525
+						src = src.replace('RepositoryManager.markObject(targetObject, item);', 'executeForTargets(function (target) { RepositoryManager.markObject(target, item); });');
+
 						return src;
 					}
 				}
