@@ -29,9 +29,9 @@
 				<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</label>
 				<f:for each="{availableRoles}" as="role" iteration="rolesIteration">
 					<div class="neos-controls">
-						<label for="roles-{rolesIteration.cycle}" class="neos-checkbox">
+						<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
 							<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" checked="{f:security.ifHasRole(role: role, account: account, then: true, else: false)}"/><span></span>
-							{role.name} <span class="neos-help-inline">({role.packageKey})</span>
+							{role.name}
 						</label>
 					</div>
 				</f:for>
