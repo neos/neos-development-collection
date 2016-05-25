@@ -55,7 +55,8 @@ class AssetRepository extends Repository
 
         $constraints = array(
             $query->like('title', '%' . $searchTerm . '%'),
-            $query->like('resource.filename', '%' . $searchTerm . '%')
+            $query->like('resource.filename', '%' . $searchTerm . '%'),
+            $query->like('caption', '%' . $searchTerm . '%')
         );
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
