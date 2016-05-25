@@ -28,7 +28,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
      *
      * @var array
      */
-    protected $configuration;
+    protected $configuration = [];
 
     /**
      * {@inheritdoc}
