@@ -135,7 +135,7 @@ function(
 							}
 						}
 						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage + errorDetails);
-					} else {
+					} else if (that.get('_isLoadingPage')) {
 						that._handlePageNotFoundError(that.getCurrentUri());
 					}
 					LoadingIndicator.done();
