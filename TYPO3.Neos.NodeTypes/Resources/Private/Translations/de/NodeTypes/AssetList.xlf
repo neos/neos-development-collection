@@ -13,7 +13,7 @@
 			<target xml:lang="de">Assets</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target xml:lang="de" state="needs-translation">Empty asset list</target></trans-unit>
+			<target xml:lang="de" state="translated">Leere Asset Liste</target></trans-unit>
     </body>
   </file>
 </xliff>
