@@ -16,7 +16,7 @@
 			<target xml:lang="lv">Atzīmējiet formas Id</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="lv" state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lūdzu atlasiet derīgu formas identifikatoru inspektorā.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -13,7 +13,7 @@
 			<target xml:lang="lv">Izvēlēties</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="lv" state="needs-translation">No references selected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav iezīmētas atsauces</target></trans-unit>
     </body>
   </file>
 </xliff>

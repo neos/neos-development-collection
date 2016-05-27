@@ -13,7 +13,7 @@
 			<target xml:lang="de">Auswählen</target><alt-trans><target xml:lang="de">Bitte wählen</target></alt-trans></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="de" state="needs-translation">No references selected</target></trans-unit>
+			<target xml:lang="de" state="translated">Keine ausgewählten Verweise</target><alt-trans><target xml:lang="de">Keine ausgewählten Referenzen</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

@@ -223,7 +223,7 @@
 			<target xml:lang="lv" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="lv" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saglabāt faila nosaukumu "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="lv">Mēdiji</target></trans-unit>
@@ -682,7 +682,7 @@
 			<target xml:lang="lv">Rediģētu aktīvu</target></trans-unit>
       <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="lv" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="lv" state="translated">Apmainīt</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="lv">Dzēst aktīvu</target></trans-unit>
@@ -712,7 +712,7 @@
 			<target xml:lang="lv">Atcelt</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="lv" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="lv" state="translated">Apmainīt</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="lv">Saglabāt</target></trans-unit>

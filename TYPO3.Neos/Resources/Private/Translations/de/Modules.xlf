@@ -223,7 +223,7 @@
       </trans-unit>
       <trans-unit id="media.dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="de" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target xml:lang="de" state="translated">Drag&amp;Drop ein Asset auf eine Sammlung / Tag um sie hinzuzufügen.</target></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
 			<target xml:lang="de">Den Dateinamen "{0}" beibehalten</target></trans-unit>
