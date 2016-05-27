@@ -11,5 +11,10 @@
         "neos": {
             "package-key": "TYPO3.Neos.NodeTypes"
         }
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Neos\\NodeTypes": "Classes"
+        }
     }
 }
