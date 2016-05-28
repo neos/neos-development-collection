@@ -4795,6 +4795,9 @@ body {
   -webkit-box-shadow: 0 0 0 50px #fff inset;
   -webkit-text-fill-color: #252525;
 }
+.neos[style] #neos-login-footer p {
+  text-align: center;
+}
 .neos[style] #neos-login-footer p,
 .neos[style] #neos-login-footer a {
   color: rgba(255, 255, 255, 0.75);
