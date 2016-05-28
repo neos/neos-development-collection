@@ -24,6 +24,18 @@ Or alternatively add a custom stylesheet::
     In this case ``Your.Package:CustomStyles`` is a simple key, used only internally.
 
 
+You can also change the logo displayed above login form. To change the logo you can adjust the ``PartialRootPathPattern``
+inside a ``Views.yaml`` to include your custom logo partial::
+
+  # Login - Screen
+  -
+    requestFilter: 'isPackage("TYPO3.Neos") && isController("Login") && isAction("index")'
+    options:
+      partialRootPathPattern: resource://Neos.Demo/Private/Partials
+
+
+With this example Neos would assume a logo in ``Packages/Sites/Neos.Demo/Resources/Private/Partials/Login/Logo.hml``
+
 How to disable a stylesheet ?
 =============================
 
