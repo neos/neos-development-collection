@@ -290,6 +290,39 @@ class AssetService
     }
 
     /**
+     * Signals that an asset was added.
+     *
+     * @Flow\Signal
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function emitAssetCreated(AssetInterface $asset)
+    {
+    }
+
+    /**
+     * Signals that an asset was removed.
+     *
+     * @Flow\Signal
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function emitAssetRemoved(AssetInterface $asset)
+    {
+    }
+
+    /**
+     * Signals that an asset was updated.
+     *
+     * @Flow\Signal
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function emitAssetUpdated(AssetInterface $asset)
+    {
+    }
+
+    /**
      * Signals that a resource on an asset has been replaced
      *
      * @param AssetInterface $asset

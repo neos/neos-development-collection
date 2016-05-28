@@ -412,6 +412,8 @@ class Asset implements AssetInterface
 
     /**
      * Signals that an asset was created.
+     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * Use AssetService::emitAssetCreated signal instead.
      *
      * @Flow\Signal
      * @param AssetInterface $asset
