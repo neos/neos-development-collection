@@ -7,7 +7,7 @@
 			<target xml:lang="ru">Включить подпись</target><alt-trans><target xml:lang="ru">Включить надпись</target></alt-trans></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="ru"><![CDATA[<p>Введите подпись</p>]]></target><alt-trans><target xml:lang="ru"><![CDATA[Введите подпись]]></target></alt-trans></trans-unit>
+			<target xml:lang="ru"><![CDATA[<p>Введите подпись</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

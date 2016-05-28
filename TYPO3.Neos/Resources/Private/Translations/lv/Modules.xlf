@@ -183,13 +183,11 @@
         <target xml:lang="lv">Jūsu personīgā darba virsma satur izmaiņas, lūdzu publicējiet vai atceliet tās vispirms.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="lv">Nevar izdzēst darba virsmu "{0}", jo tā satur {1} mezglu.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="lv">Nevar izdzēst darba virsmu "{0}", jo tā satur {1} mezglus.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -220,6 +218,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="lv">Visas izmaiņas no darba virsmas "{0}" ir atceltas.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="lv" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="lv" state="translated">Saglabāt faila nosaukumu "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="lv">Mēdiji</target></trans-unit>
@@ -676,6 +680,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="lv">Rediģētu aktīvu</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="lv" state="translated">Apmainīt</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="lv">Dzēst aktīvu</target></trans-unit>
@@ -703,6 +710,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="lv">Atcelt</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="lv" state="translated">Apmainīt</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="lv">Saglabāt</target></trans-unit>
@@ -902,13 +912,11 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="lv" state="translated">Aktīvu nevar izdzēst, jo pastāv mezgli, kas to izmanto</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]" approved="yes">
+        <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="lv">{0} lietojums</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
+        <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="lv">{0} lietojums</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">

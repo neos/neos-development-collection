@@ -185,11 +185,9 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="pt-BR" state="translated">Espaço de trabalho "{0}" não foi apagado porque atualmente contém {1} nó.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="pt-BR" state="translated">Espaço de trabalho "{0}" não foi apagado porque atualmente contém {1} nós.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -223,6 +221,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="pt-BR" state="translated">Todas as alterações do espaço de trabalho "{0}" foram descartadas.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="pt-BR" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="pt-BR" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="pt-BR" state="translated">Mídia</target></trans-unit>
@@ -679,6 +683,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="pt-BR" state="translated">Editar item</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="pt-BR" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="pt-BR" state="translated">Excluir item</target></trans-unit>
@@ -706,6 +713,9 @@
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="pt-BR" state="translated">Cancelar</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="pt-BR" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="pt-BR" state="translated">Salvar</target></trans-unit>
@@ -907,11 +917,9 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="pt-BR" state="translated">usos {0}</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="pt-BR" state="translated">usos {0}</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
