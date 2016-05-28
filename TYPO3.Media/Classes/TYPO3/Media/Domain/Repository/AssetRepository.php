@@ -286,7 +286,6 @@ class AssetRepository extends Repository
             ->getQuery()->iterate();
     }
 
-
     /**
      * Remove an asset while first validating if the object can be removed or
      * if removal is blocked because the asset is still in use.
@@ -298,7 +297,7 @@ class AssetRepository extends Repository
     {
         $this->assetService->validateRemoval($object);
         parent::remove($object);
-        $this->emitAssetRemoved($object);
+        $this->assetService->emitAssetRemoved($object);
     }
 
     /**
@@ -312,7 +311,7 @@ class AssetRepository extends Repository
     public function removeWithoutUsageChecks($object)
     {
         parent::remove($object);
-        $this->emitAssetRemoved($object);
+        $this->assetService->emitAssetRemoved($object);
     }
 
     /**
@@ -322,7 +321,7 @@ class AssetRepository extends Repository
     public function add($object)
     {
         parent::add($object);
-        $this->emitAssetAdded($object);
+        $this->assetService->emitAssetCreated($object);
     }
 
     /**
@@ -332,39 +331,6 @@ class AssetRepository extends Repository
     public function update($object)
     {
         parent::update($object);
-        $this->emitAssetUpdated($object);
-    }
-
-    /**
-     * Signals that an asset was added.
-     *
-     * @Flow\Signal
-     * @param AssetInterface $asset
-     * @return void
-     */
-    public function emitAssetAdded(AssetInterface $asset)
-    {
-    }
-
-    /**
-     * Signals that an asset was removed.
-     *
-     * @Flow\Signal
-     * @param AssetInterface $asset
-     * @return void
-     */
-    public function emitAssetRemoved(AssetInterface $asset)
-    {
-    }
-
-    /**
-     * Signals that an asset was updated.
-     *
-     * @Flow\Signal
-     * @param AssetInterface $asset
-     * @return void
-     */
-    public function emitAssetUpdated(AssetInterface $asset)
-    {
+        $this->assetService->emitAssetUpdated($object);
     }
 }
