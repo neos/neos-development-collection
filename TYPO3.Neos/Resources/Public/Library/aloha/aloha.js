@@ -34987,7 +34987,7 @@ define('ui/port-helper-attribute-field',[
 				// store the value to be the "reference" value for the currently selected resource item
 				resourceValue = v;
 				setAttribute(targetAttribute, item[valueField]);
-				RepositoryManager.markObject(targetObject, item);
+				executeForTargets(function (target) { RepositoryManager.markObject(target, item); });
 			} else {
 				resourceValue = null;
 			}
