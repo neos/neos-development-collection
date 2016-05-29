@@ -134,11 +134,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			var that = this;
 
-			var assetIdentifiers;
-			if (this.multiple) {
-				assetIdentifiers = $.parseJSON(value);
-			} else {
-				assetIdentifiers = [$.parseJSON(value)];
+			var assetIdentifiers = JSON.parse(value);
+			if (!this.multiple) {
+				assetIdentifiers = assetIdentifiers !== null ? [assetIdentifiers] : [];
 			}
 
 			if (assetIdentifiers.length > 0) {
