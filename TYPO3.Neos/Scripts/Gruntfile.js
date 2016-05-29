@@ -135,6 +135,9 @@ module.exports = function (grunt) {
 						src = src.replace(".tooltip('disable');", ".tooltip('hide');");
 						src = src.replace(".tooltip('enable');", ".tooltip('show');");
 
+						// fix https://github.com/alohaeditor/Aloha-Editor/issues/1525
+						src = src.replace('RepositoryManager.markObject(targetObject, item);', 'executeForTargets(function (target) { RepositoryManager.markObject(target, item); });');
+
 						return src;
 					}
 				}
