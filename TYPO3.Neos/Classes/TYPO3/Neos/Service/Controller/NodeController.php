@@ -81,6 +81,12 @@ class NodeController extends AbstractServiceController
     protected $nodeOperations;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
      * Select special error action
      *
      * @return void
@@ -299,6 +305,7 @@ class NodeController extends AbstractServiceController
     /**
      * Search a page, needed for internal links.
      *
+     * @deprecated will be removed with 3.0, use Service/NodesController->indexAction() instead
      * @param string $query
      * @return void
      */
@@ -318,6 +325,7 @@ class NodeController extends AbstractServiceController
     /**
      * Get the page by the node path, needed for internal links.
      *
+     * @deprecated will be removed with 3.0, use Service/NodesController->indexAction() instead
      * @param string $nodePath
      * @return void
      */
@@ -357,6 +365,12 @@ class NodeController extends AbstractServiceController
         $contextProperties = array(
             'workspaceName' => $workspaceName
         );
+
+        $currentDomain = $this->domainRepository->findOneByActiveRequest();
+        if ($currentDomain !== null) {
+            $contextProperties['currentSite'] = $currentDomain->getSite();
+            $contextProperties['currentDomain'] = $currentDomain;
+        }
 
         return $this->contextFactory->create($contextProperties);
     }
