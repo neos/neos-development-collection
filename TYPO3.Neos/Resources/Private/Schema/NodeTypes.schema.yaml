@@ -4,7 +4,7 @@ additionalProperties:
   type: dictionary
   properties:
     'properties':
-      type: ['dictionary', 'null']
+      type: dictionary
       additionalProperties:
         # for each property...
         type: dictionary
