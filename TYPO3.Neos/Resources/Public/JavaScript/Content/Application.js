@@ -95,7 +95,7 @@ function(
 				}
 				if (xhr === undefined || xhr.status !== 404) {
 					Notification.error('Server communication ' + status + ': ' + message);
-				} else {
+				} else if (that.get('_isLoadingPage')) {
 					that._handlePageNotFoundError(that.getCurrentUri());
 				}
 				LoadingIndicator.done();
