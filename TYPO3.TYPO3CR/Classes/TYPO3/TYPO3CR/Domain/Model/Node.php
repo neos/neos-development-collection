@@ -549,13 +549,13 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node before the given node
      *
      * @param NodeInterface $referenceNode
-     * @return void
+     * @param string $newName
+     * @throws NodeConstraintException if a node constraint prevents moving the node
      * @throws NodeException if you try to move the root node
      * @throws NodeExistsException
-     * @throws NodeConstraintException if a node constraint prevents moving the node
      * @api
      */
-    public function moveBefore(NodeInterface $referenceNode)
+    public function moveBefore(NodeInterface $referenceNode, $newName = null)
     {
         if ($referenceNode === $this) {
             return;
@@ -573,9 +573,10 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
         }
 
+        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
+            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
             $this->nodeDataRepository->persistEntities();
         } else {
             if (!$this->isNodeDataMatchingContext()) {
@@ -593,13 +594,13 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node after the given node
      *
      * @param NodeInterface $referenceNode
-     * @return void
-     * @throws NodeExistsException
-     * @throws NodeException
+     * @param string $newName
      * @throws NodeConstraintException if a node constraint prevents moving the node
+     * @throws NodeException
+     * @throws NodeExistsException
      * @api
      */
-    public function moveAfter(NodeInterface $referenceNode)
+    public function moveAfter(NodeInterface $referenceNode, $newName = null)
     {
         if ($referenceNode === $this) {
             return;
@@ -617,9 +618,10 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
         }
 
+        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
+            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
             $this->nodeDataRepository->persistEntities();
         } else {
             if (!$this->isNodeDataMatchingContext()) {
@@ -637,13 +639,13 @@ class Node implements NodeInterface, CacheAwareInterface
      * Moves this node into the given node
      *
      * @param NodeInterface $referenceNode
-     * @return void
-     * @throws NodeExistsException
-     * @throws NodeException
+     * @param string $newName
      * @throws NodeConstraintException
+     * @throws NodeException
+     * @throws NodeExistsException
      * @api
      */
-    public function moveInto(NodeInterface $referenceNode)
+    public function moveInto(NodeInterface $referenceNode, $newName = null)
     {
         if ($referenceNode === $this || $referenceNode === $this->getParent()) {
             return;
@@ -661,8 +663,9 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
         }
 
+        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $this->getName()));
+        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $name));
         $this->nodeDataRepository->persistEntities();
 
         $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
