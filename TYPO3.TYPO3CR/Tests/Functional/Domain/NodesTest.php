@@ -1068,7 +1068,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
@@ -1087,7 +1089,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
@@ -1140,7 +1144,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
@@ -1161,7 +1167,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
@@ -1416,7 +1424,9 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return [$value];
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1444,7 +1454,9 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return [$value];
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
