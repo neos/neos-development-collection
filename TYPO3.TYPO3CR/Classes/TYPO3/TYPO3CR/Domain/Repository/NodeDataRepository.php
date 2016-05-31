@@ -537,7 +537,9 @@ class NodeDataRepository extends Repository
         /** @var $removedNode NodeData */
         foreach ($this->removedNodes as $removedNode) {
             if ($removedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($removedNode->getPath()) === $parentPath && in_array($removedNode->getWorkspace(), $workspaces)) {
-                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
+                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) {
+                    return $nodeData !== $removedNode;
+                });
             }
         }
 
@@ -779,14 +781,14 @@ class NodeDataRepository extends Repository
     protected function sortNodesByIndex(array $nodes)
     {
         usort($nodes, function (NodeData $node1, NodeData $node2) {
-                if ($node1->getIndex() < $node2->getIndex()) {
-                    return -1;
-                } elseif ($node1->getIndex() > $node2->getIndex()) {
-                    return 1;
-                } else {
-                    return strcmp($node1->getIdentifier(), $node2->getIdentifier());
-                }
-            });
+            if ($node1->getIndex() < $node2->getIndex()) {
+                return -1;
+            } elseif ($node1->getIndex() > $node2->getIndex()) {
+                return 1;
+            } else {
+                return strcmp($node1->getIdentifier(), $node2->getIdentifier());
+            }
+        });
         return $nodes;
     }
 
