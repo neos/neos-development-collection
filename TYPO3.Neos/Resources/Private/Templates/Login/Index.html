@@ -13,7 +13,7 @@
 <f:section name="body">
 	<f:if condition="{settings.userInterface.backendLoginForm.backgroundImage}">
 		<f:then>
-			<body class="neos"{f:if(condition: settings.userInterface.backendLoginForm.backgroundImage, then: ' style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});"')}>
+			<body class="neos" style="background-image:url({f:uri.resource(path: settings.userInterface.backendLoginForm.backgroundImage)});">
 		</f:then>
 		<f:else>
 			<body class="neos">
