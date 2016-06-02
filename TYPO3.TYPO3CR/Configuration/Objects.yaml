@@ -6,6 +6,10 @@
   className: TYPO3\TYPO3CR\Service\PublishingService
 'TYPO3\TYPO3CR\Domain\Model\NodeInterface':
   className: TYPO3\TYPO3CR\Domain\Model\Node
+'TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource':
+  properties:
+    configuration:
+      setting: 'TYPO3.TYPO3CR.contentDimensions'
 'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':
   className: TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource
 'TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface':
