@@ -61,14 +61,6 @@ trait CreateContentContextTrait
             }, $dimensions);
         }
 
-        $currentDomain = $this->_domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->_siteRepository->findFirstOnline();
-        }
-
         return $this->_contextFactory->create($contextProperties);
     }
 
