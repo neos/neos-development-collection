@@ -30,6 +30,18 @@ use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 class ContentContextFactory extends ContextFactory
 {
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
      * The context implementation this factory will create
      *
      * @var string
@@ -81,6 +93,14 @@ class ContentContextFactory extends ContextFactory
             'currentSite' => null,
             'currentDomain' => null
         );
+
+        $currentDomain = $this->domainRepository->findOneByActiveRequest();
+        if ($currentDomain !== null) {
+            $defaultContextProperties['currentSite'] = $currentDomain->getSite();
+            $defaultContextProperties['currentDomain'] = $currentDomain;
+        } else {
+            $defaultContextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+        }
 
         $mergedProperties = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, true);
 
