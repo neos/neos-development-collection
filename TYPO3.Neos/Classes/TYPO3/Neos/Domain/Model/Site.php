@@ -279,15 +279,21 @@ class Site
     /**
      * Sets (and adds if necessary) the primary domain of this site.
      *
-     * @param Domain $domain The domain
+     * @param Domain|null $domain The domain
      * @return void
      * @api
      */
-    public function setPrimaryDomain(Domain $domain)
+    public function setPrimaryDomain(Domain $domain = null)
     {
+        if ($domain === null) {
+            $this->primaryDomain = null;
+            return;
+        }
+
         if (!$domain->getActive()) {
             return;
         }
+
         $this->primaryDomain = $domain;
         if (!$this->domains->contains($domain)) {
             $this->domains->add($domain);
