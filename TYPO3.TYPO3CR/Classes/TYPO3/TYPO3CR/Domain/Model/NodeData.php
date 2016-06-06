@@ -982,15 +982,11 @@ class NodeData extends AbstractNodeData
      * @param string $path The (new) path of the node data
      * @param Workspace $workspace
      * @param array $dimensionValues
-     * @return NodeData
+     * @return NodeData|null
      */
     protected function getExistingShadowNodeData($path, $workspace, $dimensionValues)
     {
-        $existingShadowNode = $this->nodeDataRepository->findOneByPath($path, $workspace, $dimensionValues, true);
-        if ($existingShadowNode !== null && $existingShadowNode->getMovedTo() !== null) {
-            return $existingShadowNode;
-        }
-        return null;
+        return $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
     }
 
     /**
