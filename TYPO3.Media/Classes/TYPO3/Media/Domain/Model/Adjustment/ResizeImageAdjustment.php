@@ -32,54 +32,19 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
     protected $position = 20;
 
     /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @var array
      */
-    protected $width;
+    protected $configuration = [
+        'height' => null,
+        'width' => null,
+        'maximumWidth' => null,
+        'maximumHeight' => null,
+        'minimumWidth' => null,
+        'minimumHeight' => null,
+        'ratioMode' => null,
+        'allowUpScaling' => null
+    ];
 
-    /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $height;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $maximumWidth;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $maximumHeight;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $minimumWidth;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $minimumHeight;
-
-    /**
-     * One of the ImagineImageInterface::RATIOMODE_* constants
-     *
-     * @var string
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $ratioMode;
-
-    /**
-     * @var boolean
-     * @ORM\Column(nullable = TRUE)
-     */
-    protected $allowUpScaling;
 
     /**
      * Sets maximumHeight
@@ -90,7 +55,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setMaximumHeight($maximumHeight)
     {
-        $this->maximumHeight = $maximumHeight;
+        $this->setConfigurationValue('maximumHeight', $maximumHeight);
     }
 
     /**
@@ -101,7 +66,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getMaximumHeight()
     {
-        return $this->maximumHeight;
+        return $this->getConfigurationValue('maximumHeight');
     }
 
     /**
@@ -113,7 +78,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setMaximumWidth($maximumWidth)
     {
-        $this->maximumWidth = $maximumWidth;
+        $this->setConfigurationValue('maximumWidth', $maximumWidth);
     }
 
     /**
@@ -124,7 +89,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getMaximumWidth()
     {
-        return $this->maximumWidth;
+        return $this->getConfigurationValue('maximumWidth');
     }
 
     /**
@@ -136,7 +101,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setHeight($height)
     {
-        $this->height = $height;
+        $this->setConfigurationValue('height', $height);
     }
 
     /**
@@ -147,7 +112,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getHeight()
     {
-        return $this->height;
+        return $this->getConfigurationValue('height');
     }
 
     /**
@@ -159,7 +124,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setWidth($width)
     {
-        $this->width = $width;
+        $this->setConfigurationValue('width', $width);
     }
 
     /**
@@ -170,7 +135,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getWidth()
     {
-        return $this->width;
+        return $this->getConfigurationValue('width');
     }
 
     /**
@@ -182,7 +147,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setMinimumHeight($minimumHeight)
     {
-        $this->minimumHeight = $minimumHeight;
+        $this->setConfigurationValue('minimumHeight', $minimumHeight);
     }
 
     /**
@@ -193,7 +158,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getMinimumHeight()
     {
-        return $this->minimumHeight;
+        return $this->getConfigurationValue('minimumHeight');
     }
 
     /**
@@ -205,7 +170,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setMinimumWidth($minimumWidth)
     {
-        $this->minimumWidth = $minimumWidth;
+        $this->setConfigurationValue('minimumWidth', $minimumWidth);
     }
 
     /**
@@ -216,7 +181,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getMinimumWidth()
     {
-        return $this->minimumWidth;
+        return $this->getConfigurationValue('minimumWidth');
     }
 
     /**
@@ -228,7 +193,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setRatioMode($ratioMode)
     {
-        $this->ratioMode = $ratioMode;
+        $this->setConfigurationValue('ratioMode', $ratioMode);
     }
 
     /**
@@ -239,17 +204,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getRatioMode()
     {
-        return $this->ratioMode;
-    }
-
-    /**
-     * Returns allowUpScaling
-     *
-     * @return boolean
-     */
-    public function getAllowUpScaling()
-    {
-        return (boolean)$this->allowUpScaling;
+        return $this->getConfigurationValue('ratioMode');
     }
 
     /**
@@ -260,7 +215,17 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setAllowUpScaling($allowUpScaling)
     {
-        $this->allowUpScaling = $allowUpScaling;
+        $this->setConfigurationValue('allowUpScaling', $allowUpScaling);
+    }
+
+    /**
+     * Returns allowUpScaling
+     *
+     * @return boolean
+     */
+    public function getAllowUpScaling()
+    {
+        return (boolean)$this->getConfigurationValue('allowUpScaling');
     }
 
     /**
@@ -285,7 +250,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function applyToImage(ImagineImageInterface $image)
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
+        $ratioMode = $this->getRatioMode() ?: ImageInterface::RATIOMODE_INSET;
         return $this->resize($image, $ratioMode);
     }
 
@@ -302,26 +267,26 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
 
         switch (true) {
             // height and width are set explicitly:
-            case ($this->width !== null && $this->height !== null):
-                $newDimensions = $this->calculateWithFixedDimensions($originalDimensions, $this->width, $this->height);
+            case ($this->getWidth() !== null && $this->getHeight() !== null):
+                $newDimensions = $this->calculateWithFixedDimensions($originalDimensions, $this->getWidth(), $this->getHeight());
                 break;
             // only width is set explicitly:
-            case ($this->width !== null):
-                $newDimensions = $this->calculateScalingToWidth($originalDimensions, $this->width);
+            case ($this->getWidth() !== null):
+                $newDimensions = $this->calculateScalingToWidth($originalDimensions, $this->getWidth());
                 break;
             // only height is set explicitly:
-            case ($this->height !== null):
-                $newDimensions = $this->calculateScalingToHeight($originalDimensions, $this->height);
+            case ($this->getHeight() !== null):
+                $newDimensions = $this->calculateScalingToHeight($originalDimensions, $this->getHeight());
                 break;
         }
 
         // We apply maximum dimensions and scale the new dimensions proportionally down to fit into the maximum.
-        if ($this->maximumWidth !== null && $newDimensions->getWidth() > $this->maximumWidth) {
-            $newDimensions = $newDimensions->widen($this->maximumWidth);
+        if ($this->getMaximumWidth() !== null && $newDimensions->getWidth() > $this->getMaximumWidth()) {
+            $newDimensions = $newDimensions->widen($this->getMaximumWidth());
         }
 
-        if ($this->maximumHeight !== null && $newDimensions->getHeight() > $this->maximumHeight) {
-            $newDimensions = $newDimensions->heighten($this->maximumHeight);
+        if ($this->getMaximumHeight() !== null && $newDimensions->getHeight() > $this->getMaximumHeight()) {
+            $newDimensions = $newDimensions->heighten($this->getMaximumHeight());
         }
 
         return $newDimensions;
@@ -335,7 +300,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     protected function calculateWithFixedDimensions(BoxInterface $originalDimensions, $requestedWidth, $requestedHeight)
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
+        $ratioMode = $this->getRatioMode() ?: ImageInterface::RATIOMODE_INSET;
 
         if ($ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
             return $this->calculateOutboundBox($originalDimensions, $requestedWidth, $requestedHeight);

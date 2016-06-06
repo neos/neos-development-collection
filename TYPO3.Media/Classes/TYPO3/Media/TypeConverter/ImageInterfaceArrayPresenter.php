@@ -93,10 +93,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
             $adjustments = array();
             foreach ($source->getAdjustments() as $adjustment) {
                 $index = TypeHandling::getTypeForValue($adjustment);
-                $adjustments[$index] = array();
-                foreach (\TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
-                    $adjustments[$index][$propertyName] = $propertyValue;
-                }
+                $adjustments[$index] = $adjustment->getConfiguration();
             }
             $data['adjustments'] = $adjustments;
         }
