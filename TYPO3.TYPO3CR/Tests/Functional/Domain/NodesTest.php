@@ -967,7 +967,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('fluss', 'baz', 'flux'), $names->names);
     }
 
@@ -986,7 +988,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('baz', 'fluss', 'flux'), $names->names);
     }
 
@@ -1039,7 +1043,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
     }
 
@@ -1060,7 +1066,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
     }
 
@@ -1304,7 +1312,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return array($value);
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1332,7 +1342,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return array($value);
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
