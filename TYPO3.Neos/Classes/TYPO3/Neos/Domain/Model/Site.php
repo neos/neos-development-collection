@@ -233,7 +233,9 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function ($index, $domain) { return $domain->getActive(); });
+        return $this->domains->exists(function ($index, $domain) {
+            return $domain->getActive();
+        });
     }
 
     /**
@@ -241,7 +243,9 @@ class Site
      */
     public function getFirstActiveDomain()
     {
-        $activeDomains = $this->domains->filter(function ($domain) { return $domain->getActive(); });
+        $activeDomains = $this->domains->filter(function ($domain) {
+            return $domain->getActive();
+        });
         return $activeDomains->first();
     }
 
