@@ -91,7 +91,14 @@ prototype(TYPO3.Neos.NodeTypes:FourColumn) < prototype(TYPO3.Neos.NodeTypes:Mult
 
 # Form TS Object
 prototype(TYPO3.Neos.NodeTypes:Form) {
+	@context.formIdentifier = ${q(node).property('formIdentifier')}
+
 	presetName = 'default'
+	formSelected = ${!String.isBlank(formIdentifier)}
+	formIdentifier = ${String.endsWith(formIdentifier, 'FormFactory') ? NULL : formIdentifier}
+	factoryClass = ${String.endsWith(formIdentifier, 'FormFactory') ? formIdentifier : 'TYPO3\\Form\\Factory\\ArrayFormFactory'}
+	overrideConfiguration = TS:RawArray
+
 	@cache {
 		mode = 'uncached'
 		context {
