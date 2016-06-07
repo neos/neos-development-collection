@@ -197,6 +197,8 @@ class Thumbnail implements ImageInterface
 
     /**
      * Signals that a thumbnail was created.
+     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * Use ThumbnailService::emitThumbnailCreated signal instead.
      *
      * @Flow\Signal
      * @param Thumbnail $thumbnail
