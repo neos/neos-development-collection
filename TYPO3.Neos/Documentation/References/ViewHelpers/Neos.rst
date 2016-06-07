@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -113,6 +113,19 @@ neos:backend.cssBuiltVersion
 Returns a shortened md5 of the built CSS file
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
+
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.interfaceLanguage`:
+
+neos:backend.interfaceLanguage
+------------------------------
+
+ViewHelper for rendering the current backend users interface language.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
 
 
 
@@ -275,6 +288,20 @@ Arguments
 *********
 
 * ``format`` (string, *optional*): Supported are "fullFirstName" and "initials
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.xliffCacheVersion`:
+
+neos:backend.xliffCacheVersion
+------------------------------
+
+ViewHelper for rendering the current version identifier for the
+xliff cache.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\XliffCacheVersionViewHelper
+
 
 
 
@@ -620,7 +647,7 @@ Expected result::
 
 **Generating a link with an absolute URI**::
 
-	<neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
+	<neos:link.node absolute="{true}">bookmark this page</neos:link.node>
 
 
 Expected result::
