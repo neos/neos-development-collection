@@ -34,7 +34,8 @@ inside a ``Views.yaml`` to include your custom logo partial::
       partialRootPathPattern: resource://Neos.Demo/Private/Partials
 
 
-With this example Neos would assume a logo in ``Packages/Sites/Neos.Demo/Resources/Private/Partials/Login/Logo.hml``
+With this example Neos would assume a logo in ``Packages/Sites/Neos.Demo/Resources/Private/Partials/Login/Logo.html``
+Note: Depending on your logo you might want to adjust the height for the css class ``.neos[style] .neos-background-image-clone``
 
 How to disable a stylesheet ?
 =============================
