@@ -3,7 +3,7 @@
 Party Validator Reference
 =========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Party Validator Reference: AimAddressValidator`:
@@ -107,6 +107,13 @@ Checks if the given value is a valid Skype name.
 The Skype website says: "It must be between 6-32 characters, start with
 a letter and contain only letters and numbers (no spaces or special
 characters)."
+
+Nevertheless dash and underscore are allowed as special characters.
+Furthermore, account names can contain a colon if they were auto-created
+trough a connected Microsoft or Facebook profile. In this case, the syntax
+is as follows:
+- live:john.due
+- Facebook:john.doe
 
 We added period and minus as additional characters because they are
 suggested by Skype during registration.
