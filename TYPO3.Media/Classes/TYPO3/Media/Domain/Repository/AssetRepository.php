@@ -316,7 +316,6 @@ class AssetRepository extends Repository
 
     /**
      * @param AssetInterface $object
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function add($object)
     {
@@ -326,7 +325,6 @@ class AssetRepository extends Repository
 
     /**
      * @param AssetInterface $object
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function update($object)
     {
