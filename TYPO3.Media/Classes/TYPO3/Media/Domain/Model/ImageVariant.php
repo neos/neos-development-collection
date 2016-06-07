@@ -16,9 +16,11 @@ use TYPO3\Flow\Annotations as Flow;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment;
+use TYPO3\Media\Domain\Model\Adjustment\ConfigurationBasedAdjustmentInterface;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 
 /**
@@ -301,7 +303,15 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 
         foreach ($this->adjustments as $existingAdjustment) {
             if (TypeHandling::getTypeForValue($existingAdjustment) === $newAdjustmentClassName) {
-                $existingAdjustment->setConfiguration($adjustment->getConfiguration());
+                if ($existingAdjustment instanceof ConfigurationBasedAdjustmentInterface
+                    && $adjustment instanceof ConfigurationBasedAdjustmentInterface
+                ) {
+                    $existingAdjustment->setConfiguration($adjustment->getConfiguration());
+                } else {
+                    foreach (ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
+                        ObjectAccess::setProperty($existingAdjustment, $propertyName, $propertyValue);
+                    }
+                }
                 $existingAdjustmentFound = true;
             }
         }

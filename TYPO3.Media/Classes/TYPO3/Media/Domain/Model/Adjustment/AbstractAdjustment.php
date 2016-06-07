@@ -18,7 +18,7 @@ use TYPO3\Flow\Utility\Arrays;
 /**
  * An abstract adjustment which provides a constructor for setting options
  */
-abstract class AbstractAdjustment implements AdjustmentInterface, \ArrayAccess
+abstract class AbstractAdjustment implements AdjustmentInterface, ConfigurationBasedAdjustmentInterface, \ArrayAccess
 {
 
     /**
@@ -145,6 +145,7 @@ abstract class AbstractAdjustment implements AdjustmentInterface, \ArrayAccess
         $this->unsetConfigurationValue($offset);
     }
 
+
     /**
      * @return void
      */
@@ -152,5 +153,4 @@ abstract class AbstractAdjustment implements AdjustmentInterface, \ArrayAccess
     {
         $this->configurationHash = md5(json_encode($this->configuration));
     }
-
 }

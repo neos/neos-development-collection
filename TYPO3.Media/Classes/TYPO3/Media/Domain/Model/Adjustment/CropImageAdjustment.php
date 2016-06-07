@@ -174,8 +174,8 @@ class CropImageAdjustment extends AbstractImageAdjustment
      */
     public function refit(ImageInterface $image)
     {
-        $this->x = 0;
-        $this->y = 0;
+        $this->setX(0);
+        $this->setY(0);
 
         $ratio = $this->getWidth() / $image->getWidth();
         $this->setWidth($image->getWidth());

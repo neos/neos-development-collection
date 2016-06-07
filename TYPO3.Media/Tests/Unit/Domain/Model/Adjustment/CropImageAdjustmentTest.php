@@ -77,10 +77,10 @@ class CropImageAdjustmentTest extends UnitTestCase
         $mockImage->expects($this->any())->method('getHeight')->will($this->returnValue($newImageHeight));
 
         $mockCropImageAdjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\CropImageAdjustment', ['dummy'], [], '', false);
-        $mockCropImageAdjustment->_set('x', $cropX);
-        $mockCropImageAdjustment->_set('y', $cropY);
-        $mockCropImageAdjustment->_set('width', $cropWidth);
-        $mockCropImageAdjustment->_set('height', $cropHeight);
+        $mockCropImageAdjustment->setConfigurationValue('x', $cropX);
+        $mockCropImageAdjustment->setConfigurationValue('y', $cropY);
+        $mockCropImageAdjustment->setConfigurationValue('width', $cropWidth);
+        $mockCropImageAdjustment->setConfigurationValue('height', $cropHeight);
 
         $mockCropImageAdjustment->refit($mockImage);
 
