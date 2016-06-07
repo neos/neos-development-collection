@@ -590,7 +590,9 @@ class NodeDataRepository extends Repository
             }
             /** @var $removedNode NodeData */
             foreach ($this->removedNodes as $removedNode) {
-                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
+                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) {
+                    return $nodeData !== $removedNode;
+                });
             }
         } else {
             $childNodeDepth = substr_count($parentPath, '/') + 1;
@@ -603,7 +605,9 @@ class NodeDataRepository extends Repository
             /** @var $removedNode NodeData */
             foreach ($this->removedNodes as $removedNode) {
                 if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-                    $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
+                    $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) {
+                        return $nodeData !== $removedNode;
+                    });
                 }
             }
         }
