@@ -3,7 +3,7 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Flow Validator Reference: AlphanumericValidator`:
@@ -63,6 +63,8 @@ Arguments
 *********
 
 * ``elementValidator`` (string, *optional*): The validator type to use for the collection elements
+
+* ``elementValidatorOptions`` (array, *optional*): The validator options to use for the collection elements
 
 * ``elementType`` (string, *optional*): The type of the elements in the collection
 
