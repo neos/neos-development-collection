@@ -594,7 +594,7 @@ class Parser implements ParserInterface
         if (preg_match('#([^\*]*)\*\*/\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Exception(sprintf('The path %s does not point to a non-directory.', $basePath), 1415033179);
+                throw new Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033179);
             }
             $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
             $iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
@@ -602,7 +602,7 @@ class Parser implements ParserInterface
         } elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Exception(sprintf('The path %s does not point to a non-directory.', $basePath), 1415033180);
+                throw new Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033180);
             }
             $iterator = new \DirectoryIterator($basePath);
         }
