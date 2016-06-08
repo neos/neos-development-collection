@@ -3,7 +3,7 @@
 TypoScript ViewHelper Reference
 ===============================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2016-06-08
 
 
 .. _`TypoScript ViewHelper Reference: ts:render`:
