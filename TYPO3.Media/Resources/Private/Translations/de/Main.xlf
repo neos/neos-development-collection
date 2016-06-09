@@ -25,7 +25,7 @@
 			<target xml:lang="de">Asset "{0}" wurde ersetzt.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde der Sammlung hinzugefügt.</target><alt-trans><target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde zur Sammlung hinzugefügt.</target></alt-trans></trans-unit>
+			<target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde zur Sammlung hinzugefügt.</target><alt-trans><target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde der Sammlung hinzugefügt.</target></alt-trans></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been created.</source>
 			<target xml:lang="de">Tag "{0}" wurde erstellt.</target></trans-unit>
@@ -44,9 +44,9 @@
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been deleted.</source>
 			<target xml:lang="de">Sammlung "{0}" wurde gelöscht.</target></trans-unit>
-      <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
+      <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve" approved="yes">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="de" state="translated">Erstelle Redirects von der Original-URL auf die Neue</target></trans-unit>
+			<target xml:lang="de">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target xml:lang="de">Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
