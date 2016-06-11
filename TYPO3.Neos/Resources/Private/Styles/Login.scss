@@ -42,7 +42,6 @@ html,
 			position: relative;
 			overflow: hidden;
 
-			// Background image
 			&.background-image-active {
 				&:before,
 				&:after {
@@ -57,7 +56,7 @@ html,
 				}
 
 				&:before {
-					//the `background-image` property is set within the template
+					// the `background-image` property is set within the template
 					background-size: cover;
 					background-repeat: no-repeat;
 					background-position: center;
@@ -156,17 +155,17 @@ html,
 	}
 
 	.neos-modal-centered {
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		@include flex();
+		@include flex-align(center);
+		@include flex-justify(center);
 		flex-direction: column;
 		min-height: 100vh;
 	}
 
 	.neos-login-main {
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		@include flex();
+		@include flex-align(center);
+		@include flex-justify(center);
 		flex: 1 0 auto;
 		width: 100%;
 	}
