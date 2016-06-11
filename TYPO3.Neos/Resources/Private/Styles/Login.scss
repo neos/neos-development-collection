@@ -69,6 +69,13 @@ body {
 					background: rgba(#fff, .25);
 				}
 			}
+			&-logo {
+				margin: 0 0 $unit/2 0;
+				&-resource {
+					margin: 0 auto 0 auto;
+					display: block;
+				}
+			}
 		}
 
 		input[type="text"],
