@@ -21,9 +21,9 @@ class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
-        $siteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $firstLevelNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $secondLevelNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $firstLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $secondLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
