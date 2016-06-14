@@ -222,7 +222,7 @@ Querying for nodes of two or more different nodetypes
 
 .. code-block:: text
 
-	elements = ${q(node).filter('[instanceof TYPO3.Neos.NodeTypes:Text][instanceof TYPO3.Neos.NodeTypes:Text]').get()}
+	elements = ${q(node).filter('[instanceof TYPO3.Neos.NodeTypes:Text][instanceof TYPO3.Neos.NodeTypes:TextWithImage]').get()}
 
 
 Fizzle
