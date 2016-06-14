@@ -282,7 +282,7 @@ for being of the specified type. For any other strings the value is used as
 class name with the PHP instanceof operation to check if the value matches.
 
 Using Multiple Filters
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 It is possible to combine multiple filters:
 
