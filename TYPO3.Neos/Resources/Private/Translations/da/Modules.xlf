@@ -183,13 +183,13 @@
         <target xml:lang="da">Dit personlige arbejdsrum indeholder ændringer, venligst publicér eller kassér dem først.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="da" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+          <target xml:lang="da">Slettede ikke arbejdsrummet "{0}", fordi det i øjeblikket indeholder {1} ændring.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="da" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="da">Slettede ikke arbejdsrummet "{0}", fordi det i øjeblikket indeholder {1} ændringer.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -914,13 +914,13 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="da">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target xml:lang="da">Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
+        <trans-unit id="media.relatedNodes[0]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="da" state="needs-translation">{0} usages</target>
+          <target xml:lang="da">{0} anvendelser</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="da" state="needs-translation">{0} usages</target>
+          <target xml:lang="da" state="translated">{0} anvendelser</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
