@@ -3,7 +3,7 @@
 Media Signals Reference
 =======================
 
-This reference was automatically generated from code on 2016-06-09
+This reference was automatically generated from code on 2016-06-14
 
 
 .. _`Media Signals Reference: Asset (``TYPO3\Media\Domain\Model\Asset``)`:

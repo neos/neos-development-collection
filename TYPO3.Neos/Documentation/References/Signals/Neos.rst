@@ -3,7 +3,7 @@
 Neos Signals Reference
 ======================
 
-This reference was automatically generated from code on 2016-06-09
+This reference was automatically generated from code on 2016-06-14
 
 
 .. _`Neos Signals Reference: ContentContext (``TYPO3\Neos\Domain\Service\ContentContext``)`:
