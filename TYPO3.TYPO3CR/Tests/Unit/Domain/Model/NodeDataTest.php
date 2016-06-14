@@ -52,7 +52,7 @@ class NodeDataTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $this->nodeData = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
 
         $this->mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
@@ -154,7 +154,7 @@ class NodeDataTest extends UnitTestCase
     public function setWorkspacesAllowsForSettingTheWorkspaceForInternalPurposes()
     {
         /** @var Workspace|\PHPUnit_Framework_MockObject_MockObject $newWorkspace */
-        $newWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $newWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
         $this->assertSame($this->mockWorkspace, $this->nodeData->getWorkspace());
 
@@ -251,7 +251,7 @@ class NodeDataTest extends UnitTestCase
      */
     public function removePropertyDoesNotTouchAContentObject()
     {
-        $this->inject($this->nodeData, 'persistenceManager', $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
+        $this->inject($this->nodeData, 'persistenceManager', $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
 
         $className = uniqid('Test');
         eval('class ' .$className . ' {
@@ -271,7 +271,7 @@ class NodeDataTest extends UnitTestCase
      */
     public function propertyFunctionsUseAContentObjectIfOneHasBeenDefined()
     {
-        $this->inject($this->nodeData, 'persistenceManager', $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
+        $this->inject($this->nodeData, 'persistenceManager', $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
 
         $className = uniqid('Test');
         eval('
@@ -370,10 +370,10 @@ class NodeDataTest extends UnitTestCase
     {
         $this->marktestIncomplete('Should be refactored to a contextualized node test.');
 
-        $context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('countByParentAndNodeType', 'add'), array(), '', false);
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('countByParentAndNodeType', 'add'))->getMock();
         $nodeDataRepository->expects($this->once())->method('countByParentAndNodeType')->with('/', null, $this->mockWorkspace)->will($this->returnValue(0));
         $nodeDataRepository->expects($this->once())->method('add');
         $nodeDataRepository->expects($this->any())->method('getContext')->will($this->returnValue($context));
@@ -397,12 +397,12 @@ class NodeDataTest extends UnitTestCase
      */
     public function createNodeThrowsNodeExceptionIfPathAlreadyExists()
     {
-        $mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
         $oldNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo', $this->mockWorkspace));
 
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPath', 'getContext'), array(), '', false);
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByPath', 'getContext'))->getMock();
         $nodeDataRepository->expects($this->any())->method('findOneByPath')->with('/foo', $this->mockWorkspace)->will($this->returnValue($oldNode));
 
         /** @var NodeData|\PHPUnit_Framework_MockObject_MockObject $currentNode */
@@ -414,18 +414,33 @@ class NodeDataTest extends UnitTestCase
     }
 
     /**
+     * @ test
+     */
+    public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist()
+    {
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByPath', 'getContext'))->getMock();
+        $nodeDataRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $this->mockWorkspace)->will($this->returnValue(null));
+
+        $currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('normalizePath', 'getContext'), array('/foo/baz', $this->mockWorkspace));
+        $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
+        $currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
+
+        $this->assertNull($currentNode->getNode('/foo/quux'));
+    }
+
+    /**
      * @test
      */
     public function getChildNodeDataFindsUnreducedNodeDataChildren()
     {
-        $childNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/bar', $this->mockWorkspace));
-        $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array('mynodetype', array(), array()));
+        $childNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->setConstructorArgs(array('/foo/bar', $this->mockWorkspace))->getMock();
+        $nodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->setConstructorArgs(array('mynodetype', array(), array()))->getMock();
         $childNodeData->setNodeType($nodeType);
         $childNodeDataResults = array(
             $childNodeData
         );
 
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array(), array(), '', false);
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
         $nodeDataRepository->expects($this->at(0))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will($this->returnValue($childNodeDataResults));
         $nodeDataRepository->expects($this->at(1))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will($this->returnValue(array()));
 
@@ -442,9 +457,9 @@ class NodeDataTest extends UnitTestCase
      */
     public function removeFlagsTheNodeAsRemoved()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $workspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
         $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('setRemoved', 'update', 'remove'), array(), '', false);
         $this->inject($nodeDataRepository, 'entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
@@ -465,9 +480,9 @@ class NodeDataTest extends UnitTestCase
      */
     public function removeRemovesTheNodeFromRepositoryIfItsWorkspaceHasNoOtherBaseWorkspace()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $workspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(null));
 
         $nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove', 'update'), array(), '', false);
@@ -529,7 +544,7 @@ class NodeDataTest extends UnitTestCase
     public function isAccessibleReturnsTrueIfSecurityContextCannotBeInitialized()
     {
         /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $mockSecurityContext->expects($this->once(0))->method('canBeInitialized')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->never())->method('hasRole');
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
@@ -544,7 +559,7 @@ class NodeDataTest extends UnitTestCase
     public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles()
     {
         /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(false));
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
@@ -559,7 +574,7 @@ class NodeDataTest extends UnitTestCase
     public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles()
     {
         /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(true));
@@ -575,7 +590,7 @@ class NodeDataTest extends UnitTestCase
     public function isAccessibleReturnsTrueIfRoleIsEveryone()
     {
         /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('Everyone')->will($this->returnValue(true));
@@ -591,7 +606,7 @@ class NodeDataTest extends UnitTestCase
     public function createNodeCreatesNodeDataWithExplicitWorkspaceIfGiven()
     {
         /** @var NodeDataRepository|\PHPUnit_Framework_MockObject_MockObject $nodeDataRepository */
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $nodeDataRepository = $this->createMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
         $this->inject($this->nodeData, 'nodeDataRepository', $nodeDataRepository);
 
         $nodeDataRepository->expects($this->atLeastOnce())->method('setNewIndex');
@@ -607,7 +622,7 @@ class NodeDataTest extends UnitTestCase
         /** @var $sourceNode NodeData */
         $sourceNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
         $this->inject($sourceNode, 'nodeTypeManager', $this->mockNodeTypeManager);
-        $sourceNode->_set('nodeDataRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
+        $sourceNode->_set('nodeDataRepository', $this->createMock('TYPO3\Flow\Persistence\RepositoryInterface'));
 
         $this->nodeData->setProperty('someProperty', 'somePropertyValue');
         $this->nodeData->setProperty('someOtherProperty', 'someOtherPropertyValue');

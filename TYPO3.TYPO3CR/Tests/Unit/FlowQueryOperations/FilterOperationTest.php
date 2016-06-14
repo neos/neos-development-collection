@@ -21,8 +21,8 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterWithIdentifierUsesNodeIdentifier()
     {
-        $node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node1 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node2 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
 
         $context = array($node1, $node2);
@@ -39,8 +39,8 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node1 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node2 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $context = array($node1, $node2);
         $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
