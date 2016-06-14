@@ -37,24 +37,4 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter
      * @var integer
      */
     protected $priority = 3;
-
-    /**
-     * Additionally add the current site and domain to the Context properties.
-     *
-     * {@inheritdoc}
-     */
-    protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
-    {
-        $contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
-
-        return $contextProperties;
-    }
 }
