@@ -53,9 +53,9 @@
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
 			<target xml:lang="da">Maksimumsniveau</target><alt-trans><target xml:lang="da">Maksimum niveau</target></alt-trans></trans-unit>
-      <trans-unit id="content.emptyMenu" xml:space="preserve">
+      <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
 				<source>Empty Menu</source>
-			<target xml:lang="da" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="da">Menuen er tom</target><alt-trans><target xml:lang="da">Tom menu</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
