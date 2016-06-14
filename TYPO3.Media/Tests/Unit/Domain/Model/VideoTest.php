@@ -24,7 +24,7 @@ class VideoTest extends UnitTestCase
      */
     public function dimensionsDefaultToMinusOneOnConstruct()
     {
-        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource');
+        $mockResource = $this->createMock('TYPO3\Flow\Resource\Resource');
 
         $video = new Video($mockResource);
 
