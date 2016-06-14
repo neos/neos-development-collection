@@ -218,6 +218,13 @@ the nodes are again filtered by a check for their property ``spam`` being false.
 	comments.collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ?
 		q(node).children("[spam = false]") : q(node).children(this.getNodePath()).children("[spam = false]")}
 
+Querying for nodes of two or more different nodetypes
+
+.. code-block:: text
+
+	elements = ${q(node).filter('[instanceof TYPO3.Neos.NodeTypes:Text][instanceof TYPO3.Neos.NodeTypes:Text]').get()}
+
+
 Fizzle
 ======
 
