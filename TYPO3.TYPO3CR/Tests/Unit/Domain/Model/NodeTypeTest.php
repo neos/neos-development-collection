@@ -385,5 +385,9 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
+
+        $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('TYPO3.TYPO3CR:Base')->getAutoCreatedChildNodes();
+
+        $this->assertArrayHasKey('nodename', $autoCreatedChildNodes);
     }
 }

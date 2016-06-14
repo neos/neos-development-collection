@@ -75,12 +75,15 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->with('TYPO3\Media\Domain\Model\Image', 'TYPO3\Flow\Annotations\ValueObject')->will($this->returnValue(true));
-        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array()));
-        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array('resource' => 'bar')));
+        $this->mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback(function ($objectType) {
+            return $objectType;
+        }));
+        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        $configuration->setTypeConverterOption('TYPO3\Media\TypeConverter\ImageInterfaceConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+
+        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array(), $configuration));
     }
 }
