@@ -27,13 +27,13 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->converter = new \TYPO3\Media\TypeConverter\ImageInterfaceConverter();
-        $this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
@@ -52,7 +52,7 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canConvertFromDataProvider()
     {
-        $dummyResource = $this->getMock('TYPO3\Flow\Resource\Resource');
+        $dummyResource = $this->createMock('TYPO3\Flow\Resource\Resource');
         return array(
             array(array('resource' => $dummyResource), 'TYPO3\Media\Domain\Model\Image', true),
             array(array('__identity' => 'foo'), 'TYPO3\Media\Domain\Model\Image', false),

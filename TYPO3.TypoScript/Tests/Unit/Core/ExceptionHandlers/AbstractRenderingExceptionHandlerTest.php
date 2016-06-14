@@ -38,7 +38,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     protected function setUp()
     {
         $this->handler = new AbstractRenderingExceptionHandler();
-        $runtimeMock = $this->getMock('\TYPO3\TypoScript\Core\Runtime', array(), array(), '', false);
+        $runtimeMock = $this->getMockBuilder('\TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
         $this->handler->setRuntime($runtimeMock);
     }
 

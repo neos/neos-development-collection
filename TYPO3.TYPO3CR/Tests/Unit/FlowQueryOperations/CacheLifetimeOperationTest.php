@@ -60,7 +60,7 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $result = $this->operation->canEvaluate(array($mockNode));
         $this->assertTrue($result);
@@ -147,7 +147,7 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $contextValues = array();
         foreach ($nodes as $nodeProperties) {
-            $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+            $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
             $mockNode->expects($this->any())->method('getHiddenBeforeDateTime')->will($this->returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
             $mockNode->expects($this->any())->method('getHiddenAfterDateTime')->will($this->returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
 
