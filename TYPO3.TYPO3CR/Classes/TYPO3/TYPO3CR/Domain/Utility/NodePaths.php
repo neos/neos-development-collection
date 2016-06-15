@@ -92,7 +92,9 @@ abstract class NodePaths
     public static function parseDimensionValueStringToArray($dimensionValueString)
     {
         parse_str($dimensionValueString, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+        $dimensions = array_map(function ($commaSeparatedValues) {
+            return explode(',', $commaSeparatedValues);
+        }, $dimensions);
 
         return $dimensions;
     }
