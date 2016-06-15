@@ -1718,7 +1718,9 @@ class Node implements NodeInterface, CacheAwareInterface
             } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
                 $contextDimensionValues = $contextDimensions[$dimensionName];
                 $targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, true);
-                $nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) { return array_search($value, $contextDimensionValues, true); }, $dimensions[$dimensionName]));
+                $nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) {
+                    return array_search($value, $contextDimensionValues, true);
+                }, $dimensions[$dimensionName]));
 
                 $val = $targetPositionInContext !== false && $nodePositionInContext !== false && $targetPositionInContext >= $nodePositionInContext;
                 if ($val === false) {
