@@ -264,7 +264,6 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
         return array_merge($nodes, $addedNodes);
-
     }
 
     /**
