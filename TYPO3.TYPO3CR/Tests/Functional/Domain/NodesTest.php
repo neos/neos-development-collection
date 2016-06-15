@@ -1585,4 +1585,51 @@ class NodesTest extends FunctionalTestCase
         $node->createNode('text', $imageNodeType);
         $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
     }
+
+    /**
+     * @test
+     */
+    public function nodesInPathAreHiddenIfBetterVariantInOtherPathExists()
+    {
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
+                'default' => 'a'
+            ]
+        ]);
+
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+
+        $container1 = $variantContextA->getRootNode()->createNode('container1');
+        $variantContextA->getRootNode()->createNode('container2');
+
+        $container1->createNode('node-with-variant');
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        $nodeWithVariantOriginal = $variantContextB->getNode('/container1/node-with-variant');
+        $variantContextB->getNode('/container2')->createNode('node-with-variant', null, $nodeWithVariantOriginal->getIdentifier());
+
+        $this->persistenceManager->persistAll();
+        $this->contextFactory->reset();
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        // Both containers should be available due to fallbacks
+        $this->assertCount(2, $variantContextB->getRootNode()->getChildNodes());
+
+        // This should NOT find the node created in variantContextA as
+        // a better matching (with "b" dimension value) variant (same identifier) exists in container two
+        $this->assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
+        // This is the better matching variant and should be found.
+        $this->assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
+    }
 }

@@ -184,10 +184,8 @@
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
-          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-        </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target xml:lang="zh-TW" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -914,9 +912,7 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-        </trans-unit>
-        <trans-unit id="media.relatedNodes[1]">
-          <source>{0} usages</source>
+          <target xml:lang="zh-TW" state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">

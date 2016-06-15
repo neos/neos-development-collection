@@ -484,15 +484,15 @@
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="de">Mit leerem oder bereits ausgefülltem Dokument beginnen?</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve" approved="yes">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="de" state="translated">Dieses {nodeTypeLabel} existiert noch nicht in {currentDimensionChoiceText}.</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+			<target xml:lang="de">Dieses Element ({nodeTypeLabel}) existiert noch nicht in {currentDimensionChoiceText}.</target><alt-trans><target xml:lang="de">Dieses {nodeTypeLabel} existiert noch nicht in {currentDimensionChoiceText}.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="de" state="translated">Sie können es jetzt erstellen, indem Sie entweder mit einem leeren {nodeTypeLabel} beginnen oder indem Sie alle Inhalte von dem aktuell sichtbaren {nodeTypeLabel} in {currentDocumentDimensionChoiceText} kopieren.</target></trans-unit>
-      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
+			<target xml:lang="de">Sie können es jetzt erstellen, indem Sie entweder mit einem leeren {nodeTypeLabel}-Element beginnen oder indem Sie alle Inhalte von dem aktuell sichtbaren {nodeTypeLabel}-Element in {currentDocumentDimensionChoiceText} kopieren.</target><alt-trans><target xml:lang="de">Sie können es jetzt erstellen, indem Sie entweder mit einem leeren {nodeTypeLabel} beginnen oder indem Sie alle Inhalte von dem aktuell sichtbaren {nodeTypeLabel} in {currentDocumentDimensionChoiceText} kopieren.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve" approved="yes">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="de" state="translated">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} übergeordnete Elemente die bei diesem Vorgang auch erstellt werden.</target><alt-trans><target xml:lang="de">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} Elternelemente die bei diesem Vorgang auch erstellt werden.</target></alt-trans></trans-unit>
+			<target xml:lang="de">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} übergeordnete Elemente die bei diesem Vorgang auch erstellt werden.</target><alt-trans><target xml:lang="de">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} übergeordnete Elemente, die noch nicht existieren und bei diesem Vorgang erstellt werden.</target></alt-trans><alt-trans><target xml:lang="de">In der gewählten Variante gibt es {numberOfNodesMissingInRootline} Elternelemente die bei diesem Vorgang auch erstellt werden.</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve" approved="yes">
 				<source>Create empty</source>
 			<target xml:lang="de">Leer erstellen</target><alt-trans><target xml:lang="de">Leeres erstellen</target></alt-trans></trans-unit>
@@ -628,21 +628,21 @@
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
 			<target xml:lang="de">Die Konfiguration des Kontentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target><alt-trans><target xml:lang="de">Die Konfiguration des Knotentyps, der hier dargestellt werden soll, ist nicht verfügbar. Wahrscheinlich haben Sie den Knotentyp umbenannt und es fehlt eine Migration oder Sie haben sich einfach verschrieben.</target></alt-trans></trans-unit>
-      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="de" state="translated">Unerwarteter Fehler beim Erstellen des Knotens</target></trans-unit>
-      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+			<target xml:lang="de">Unerwarteter Fehler beim Erstellen des Knotens</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="de" state="translated">Unerwarteter Fehler beim Löschen den Knotens</target></trans-unit>
-      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+			<target xml:lang="de">Unerwarteter Fehler beim Löschen des Knotens</target><alt-trans><target xml:lang="de">Unerwarteter Fehler beim Löschen den Knotens</target></alt-trans></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="de" state="translated">Unerwarteter Fehler beim Aktualisieren des Knotens</target></trans-unit>
-      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+			<target xml:lang="de">Unerwarteter Fehler beim Aktualisieren des Knotens</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="de" state="translated">Unerwarteter Fehler beim Verschieben des Knotens</target></trans-unit>
-      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+			<target xml:lang="de">Unerwarteter Fehler beim Verschieben des Knotens</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve" approved="yes">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="de" state="translated">Beim dem Laden des Nodetrees trat ein Fehler auf.</target></trans-unit>
+			<target xml:lang="de">Beim Laden des Nodetrees trat ein Fehler auf.</target><alt-trans><target xml:lang="de">Beim dem Laden des Nodetrees trat ein Fehler auf.</target></alt-trans></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>

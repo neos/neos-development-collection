@@ -46,7 +46,7 @@ class NodeTypeManagerTest extends UnitTestCase
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
-        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, [], [], '', false);
+        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('get')->willReturn(null);
         $this->inject($this->nodeTypeManager, 'fullConfigurationCache', $mockCache);
 
