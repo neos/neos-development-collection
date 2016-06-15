@@ -231,7 +231,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
 
         $changedNodePathsCollection = array_map(function ($nodeData) use ($destinationPath, $originalPath, $recursiveCall) {
-           return $this->moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall);
+            return $this->moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall);
         }, $nodeDataVariantsAndChildren);
 
         return array_filter($changedNodePathsCollection);
