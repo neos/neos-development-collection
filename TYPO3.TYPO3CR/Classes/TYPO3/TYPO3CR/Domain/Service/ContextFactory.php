@@ -310,7 +310,9 @@ class ContextFactory implements ContextFactoryInterface
     public function parseDimensionValueStringToArray($dimensionPartOfContext)
     {
         parse_str($dimensionPartOfContext, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+        $dimensions = array_map(function ($commaSeparatedValues) {
+            return explode(',', $commaSeparatedValues);
+        }, $dimensions);
 
         return $dimensions;
     }
