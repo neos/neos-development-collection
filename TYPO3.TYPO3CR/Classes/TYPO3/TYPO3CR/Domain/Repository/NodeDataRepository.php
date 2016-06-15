@@ -264,7 +264,6 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
         return array_merge($nodes, $addedNodes);
-
     }
 
     /**
@@ -580,7 +579,9 @@ class NodeDataRepository extends Repository
         /** @var $removedNode NodeData */
         foreach ($this->removedNodes as $removedNode) {
             if ($removedNode->getDepth() === $childNodeDepth && NodePaths::getParentPath($removedNode->getPath()) === $parentPath && in_array($removedNode->getWorkspace(), $workspaces)) {
-                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) { return $nodeData !== $removedNode; });
+                $foundNodes = array_filter($foundNodes, function ($nodeData) use ($removedNode) {
+                    return $nodeData !== $removedNode;
+                });
             }
         }
 
