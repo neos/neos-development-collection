@@ -363,7 +363,7 @@ class RenderingTest extends AbstractNodeTest
         $request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
         $response = new \TYPO3\Flow\Http\Response();
         /** @var \TYPO3\Flow\Mvc\Controller\Arguments $mockArguments */
-        $mockArguments = $this->getMock(\TYPO3\Flow\Mvc\Controller\Arguments::class, array(), array(), '', false);
+        $mockArguments = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Arguments::class)->disableOriginalConstructor()->getMock();
         $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 
         $controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
@@ -371,7 +371,7 @@ class RenderingTest extends AbstractNodeTest
             $response,
             $mockArguments,
             $uriBuilder,
-            $this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
+            $this->createMock('TYPO3\Flow\Mvc\FlashMessageContainer')
         );
         return $controllerContext;
     }

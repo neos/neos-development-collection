@@ -51,7 +51,7 @@ class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function invalidOptionsTests(array $options)
     {
         $validator = new \TYPO3\Media\Validator\ImageSizeValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
         $validator->validate($image);
     }
 
@@ -99,7 +99,7 @@ class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function validatorTests(array $options, $imageWidth, $imageHeight, $isValid)
     {
         $validator = new \TYPO3\Media\Validator\ImageSizeValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
         $image->expects($this->any())->method('getWidth')->will($this->returnValue($imageWidth));
         $image->expects($this->any())->method('getHeight')->will($this->returnValue($imageHeight));
 

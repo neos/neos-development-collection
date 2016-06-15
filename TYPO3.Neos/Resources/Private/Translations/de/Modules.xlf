@@ -186,11 +186,13 @@
         <target xml:lang="de">Ihr persönlicher Arbeitsbereich enthält Änderungen, bitte veröffentlichen oder verwerfen Sie diese zuerst.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target xml:lang="de">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Element enthält.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target xml:lang="de">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Elemente enthält.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -221,9 +223,9 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="de">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden verworfen.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve">
+      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="de" state="translated">Drag&amp;Drop ein Asset auf eine Sammlung / Tag um sie hinzuzufügen.</target></trans-unit>
+			<target xml:lang="de">Asset per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target><alt-trans><target xml:lang="de">Drag&amp;Drop ein Asset auf eine Sammlung / Tag um sie hinzuzufügen.</target></alt-trans></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
 			<target xml:lang="de">Den Dateinamen "{0}" beibehalten</target></trans-unit>
@@ -915,11 +917,13 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="de">Asset konnte nicht gelöscht werden, da es noch von Knoten verwendet wird</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
+        <trans-unit id="media.relatedNodes[0]" approved="yes">
           <source>{0} usages</source>
+          <target xml:lang="de">{0} mal verwendet</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]">
+        <trans-unit id="media.relatedNodes[1]" approved="yes">
           <source>{0} usages</source>
+          <target xml:lang="de">{0} mal verwendet</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">

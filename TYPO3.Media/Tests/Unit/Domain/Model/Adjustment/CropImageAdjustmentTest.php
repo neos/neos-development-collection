@@ -72,7 +72,7 @@ class CropImageAdjustmentTest extends UnitTestCase
      */
     public function refitFitsCropPropertionWithinImageSizeConstraints($cropX, $cropY, $cropWidth, $cropHeight, $newImageWidth, $newImageHeight, $expectedX, $expectedY, $expectedWidth, $expectedHeight)
     {
-        $mockImage = $this->getMock('TYPO3\Media\Domain\Model\Image', [], [], '', false);
+        $mockImage = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
         $mockImage->expects($this->any())->method('getWidth')->will($this->returnValue($newImageWidth));
         $mockImage->expects($this->any())->method('getHeight')->will($this->returnValue($newImageHeight));
 

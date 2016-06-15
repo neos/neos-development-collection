@@ -48,7 +48,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->assertTrue($result);
 
         /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
+        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -114,7 +114,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->assertTrue($result);
 
         /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
+        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -167,7 +167,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->assertTrue($result);
 
         /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
+        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -334,7 +334,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->assertTrue($result);
 
         /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService', array('persistNodeData'));
+        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 

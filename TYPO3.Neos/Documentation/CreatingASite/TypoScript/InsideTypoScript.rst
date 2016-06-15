@@ -351,10 +351,9 @@ Fully qualified identifiers can be used everywhere an identifier is used::
 In Neos TypoScript a ``default`` namespace of ``TYPO3.Neos`` is set. So whenever ``Page`` is used in
 TypoScript within Neos, it is a shortcut for ``TYPO3.Neos:Page``.
 
-Custom namespace aliases can be defined for the scope of the current TypoScript file using the
-following syntax::
+Custom namespace aliases can be defined using the following syntax::
 
-	namespace Foo = Acme.Demo
+	namespace: Foo = Acme.Demo
 
 	# the following two lines are equivalent now
 	video = Acme.Demo:YouTube
