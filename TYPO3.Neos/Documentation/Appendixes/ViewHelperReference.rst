@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-15
 
 
 neos:backend.configurationCacheVersion
@@ -477,7 +477,7 @@ Expected result::
 
 **Generating a link with an absolute URI**::
 
-	<neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
+	<neos:link.node absolute="{true}">bookmark this page</neos:link.node>
 
 
 Expected result::
