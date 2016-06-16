@@ -546,7 +546,7 @@
 			<target xml:lang="uk" state="translated">Ширина</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="uk" state="translated">Відсутня обов'язкова властивість : </target><alt-trans><target xml:lang="uk">Відсутня обов'язкова властивість :</target></alt-trans></trans-unit>
+			<target xml:lang="uk" state="translated">Відсутня обов'язкова властивість : </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="uk" state="needs-translation">Workspace</target></trans-unit>

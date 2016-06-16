@@ -106,11 +106,11 @@ Feature: Move node with dimension support
 
     And I get a node by path "/sites/typo3cr/company/service" with the following context:
       | Workspace | Language |
-      | admin     | en       |
+      | live      | en       |
     Then I should have one node
     And I get a node by path "/sites/typo3cr/company/service" with the following context:
       | Workspace | Language |
-      | admin     | de       |
+      | live      | de       |
     Then I should have one node
 
   @fixtures

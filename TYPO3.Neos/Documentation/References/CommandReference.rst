@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-10-09
+The following reference was automatically generated from code on 2016-06-14
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -1160,6 +1160,20 @@ Read a PEM formatted private key from stdin and import it into the
 RSAWalletService. The public key will be automatically extracted and stored
 together with the private key as a key pair.
 
+You can generate the same fingerprint returned from this using these commands:
+
+ssh-keygen -yf my-key.pem > my-key.pub
+ssh-keygen -lf my-key.pub
+
+To create a private key to import using this method, you can use:
+
+ssh-keygen -t rsa -f my-key
+./flow security:importprivatekey < my-key
+
+Again, the fingerprint can also be generated using:
+
+ssh-keygen -lf my-key.pub
+
 
 
 Options
@@ -1582,11 +1596,44 @@ Package *TYPO3.MEDIA*
 ``typo3.media:media:clearthumbnails``
 *************************************
 
-**Remove all thumbnail objects and resources**
+**Remove thumbnails**
+
+Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
+matching a specific thumbnail preset configuration.
+
+
+
+Options
+^^^^^^^
+
+``--preset``
+  Preset name, if provided only thumbnails matching that preset are cleared
 
 
 
 
+
+.. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:createthumbnails`:
+
+``typo3.media:media:createthumbnails``
+**************************************
+
+**Create thumbnails**
+
+Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
+thumbnails for a specific thumbnail preset configuration.
+
+Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+
+
+
+Options
+^^^^^^^
+
+``--preset``
+  Preset name, if not provided thumbnails are created for all presets
+``--async``
+  Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
 
 
 
@@ -1610,6 +1657,28 @@ Options
 
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
+
+
+
+
+
+.. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:renderthumbnails`:
+
+``typo3.media:media:renderthumbnails``
+**************************************
+
+**Render ungenerated thumbnails**
+
+Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
+thumbnails to be rendered to avoid memory exhaustion.
+
+
+
+Options
+^^^^^^^
+
+``--limit``
+  Limit the amount of thumbnails to be rendered to avoid memory exhaustion
 
 
 
@@ -2150,6 +2219,8 @@ Options
   Human friendly title of the workspace, for example "Christmas Campaign
 ``--description``
   A description explaining the purpose of the new workspace
+``--owner``
+  The identifier of a User to own the workspace
 
 
 
@@ -2349,6 +2420,35 @@ Arguments
   Name of the workspace to rebase, for example "user-john
 ``--base-workspace``
   Name of the new base workspace
+
+
+
+
+
+
+
+.. _`Neos Command Reference: TYPO3.NEOS.KICKSTARTER`:
+
+Package *TYPO3.NEOS.KICKSTARTER*
+--------------------------------
+
+
+.. _`Neos Command Reference: TYPO3.NEOS.KICKSTARTER typo3.neos.kickstarter:kickstart:site`:
+
+``typo3.neos.kickstarter:kickstart:site``
+*****************************************
+
+**Kickstart a new site package**
+
+This command generates a new site package with basic TypoScript and Sites.xml
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The packageKey for your site
+``--site-name``
+  The siteName of your site
 
 
 
