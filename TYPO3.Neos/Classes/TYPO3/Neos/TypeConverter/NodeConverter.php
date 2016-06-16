@@ -12,6 +12,7 @@ namespace TYPO3\Neos\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * An Object Converter for nodes which can be used for routing (but also for other
@@ -43,17 +44,12 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter
      *
      * {@inheritdoc}
      */
-    protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
+    protected function prepareContextProperties($nodePath, $workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
     {
-        $contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
+        $contextProperties = parent::prepareContextProperties($nodePath, $workspaceName, $configuration, $dimensions);
+        $site = $this->siteRepository->findOneByNodePath($nodePath);
+        $contextProperties['currentSite'] = $site;
+        $contextProperties['currentDomain'] = $site->getFirstActiveDomain();
 
         return $contextProperties;
     }

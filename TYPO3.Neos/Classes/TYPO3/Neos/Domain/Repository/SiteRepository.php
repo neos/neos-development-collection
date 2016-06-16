@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Site Repository
@@ -50,5 +52,26 @@ class SiteRepository extends \TYPO3\Flow\Persistence\Repository
     public function findFirstOnline()
     {
         return $this->findOnline()->getFirst();
+    }
+
+    /**
+     * Find the matching site for a given Node
+     *
+     * @param string $nodePath
+     * @return Site
+     */
+    public function findOneByNodePath($nodePath)
+    {
+        if (!NodePaths::isSubPathOf('/sites', $nodePath)) {
+            return null;
+        }
+
+        $nodePathParts =explode('/', $nodePath);
+        if (!isset($nodePathParts[2])) {
+            return null;
+        }
+
+        $siteNodeName = $nodePathParts[2];
+        return $this->findOneByNodeName($siteNodeName);
     }
 }

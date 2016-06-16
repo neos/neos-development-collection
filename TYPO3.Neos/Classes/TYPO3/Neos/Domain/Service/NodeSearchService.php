@@ -13,10 +13,13 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Find nodes based on a fulltext search
@@ -44,6 +47,18 @@ class NodeSearchService implements NodeSearchServiceInterface
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
+
+    /**
      * Search all properties for given $term
      *
      * TODO: Implement a better search when Flow offer the possibility
@@ -62,8 +77,16 @@ class NodeSearchService implements NodeSearchServiceInterface
         $searchResult = array();
         $nodeTypeFilter = implode(',', $searchNodeTypes);
         $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
+        $baseContextProperties = $context->getProperties();
+        /** @var NodeData $nodeData */
         foreach ($nodeDataRecords as $nodeData) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+            $site = $this->siteRepository->findOneByNodePath($nodeData->getPath());
+            $contextProperties = array_merge($baseContextProperties, [
+                'currentSite' => $site,
+                'currentDomain' => $site->getFirstActiveDomain()
+            ]);
+            $nodeContext = $this->contextFactory->create($contextProperties);
+            $node = $this->nodeFactory->createFromNodeData($nodeData, $nodeContext);
             if ($node !== null) {
                 $searchResult[$node->getPath()] = $node;
             }

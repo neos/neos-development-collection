@@ -149,7 +149,7 @@ class NodeConverter extends AbstractTypeConverter
             return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
         }
 
-        $context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
+        $context = $this->contextFactory->create($this->prepareContextProperties($nodePath, $workspaceName, $configuration, $dimensions));
         $workspace = $context->getWorkspace(false);
         if (!$workspace) {
             return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
@@ -267,12 +267,13 @@ class NodeConverter extends AbstractTypeConverter
     /**
      * Prepares the context properties for the nodes based on the given workspace and dimensions
      *
+     * @param string $nodePath
      * @param string $workspaceName
      * @param PropertyMappingConfigurationInterface $configuration
      * @param array $dimensions
      * @return array
      */
-    protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
+    protected function prepareContextProperties($nodePath, $workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
     {
         $contextProperties = array(
             'workspaceName' => $workspaceName,
