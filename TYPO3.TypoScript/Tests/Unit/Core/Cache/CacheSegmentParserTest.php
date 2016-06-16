@@ -45,9 +45,9 @@ class CacheSegmentParserTest extends UnitTestCase
 
     protected $expectedOuterContent = "
 		outer content
-		\x02123456789\x03
+		\x02CONTENT_CACHE123456789\x03CONTENT_CACHE
 		with some text
-		\x026789012345\x03
+		\x02CONTENT_CACHE6789012345\x03CONTENT_CACHE
 	";
 
     protected $expectedEntries = array(
@@ -74,7 +74,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
         '4567890123' => array(
             'content' => "dolor
-				\x025678901234\x03
+				\x02CONTENT_CACHE5678901234\x03CONTENT_CACHE
 			sit",
             'identifier' => '4567890123',
             'type' => 'cached',
@@ -85,9 +85,9 @@ class CacheSegmentParserTest extends UnitTestCase
             'identifier' => '123456789',
             'type' => 'cached',
             'content' => "foo bar baz
-			bar bar \x022345678901\x03
-			foo foo \x023456789012\x03
-			baz baz \x024567890123\x03",
+			bar bar \x02CONTENT_CACHE2345678901\x03CONTENT_CACHE
+			foo foo \x02CONTENT_CACHE3456789012\x03CONTENT_CACHE
+			baz baz \x02CONTENT_CACHE4567890123\x03CONTENT_CACHE",
             'metadata' => 'AllDocumentNodes'
         ),
 
@@ -141,16 +141,16 @@ class CacheSegmentParserTest extends UnitTestCase
 
     protected $expectedOuterContentWithUncachedSegments = "
 		outer content
-		\x02123456789\x03
+		\x02CONTENT_CACHE123456789\x03CONTENT_CACHE
 		with some text
-		\x02eval=bar/baz\x1f{\"node\":\"/sites/demo/home\"}\x03
-		\x026789012345\x03
+		\x02CONTENT_CACHEeval=bar/baz\x1fCONTENT_CACHE{\"node\":\"/sites/demo/home\"}\x03CONTENT_CACHE
+		\x02CONTENT_CACHE6789012345\x03CONTENT_CACHE
 	";
 
     protected $expectedEntriesWithUncachedSegments = array(
         '4567890123' => array(
             'content' => "dolor
-				\x02eval=foo/bar\x1f{}\x03
+				\x02CONTENT_CACHEeval=foo/bar\x1fCONTENT_CACHE{}\x03CONTENT_CACHE
 			sit",
             'identifier' => '4567890123',
             'type' => 'cached',
@@ -161,7 +161,7 @@ class CacheSegmentParserTest extends UnitTestCase
             'identifier' => '123456789',
             'type' => 'cached',
             'content' => "foo bar baz
-			baz baz \x024567890123\x03",
+			baz baz \x02CONTENT_CACHE4567890123\x03CONTENT_CACHE",
             'metadata' => 'AllDocumentNodes'
         ),
 
