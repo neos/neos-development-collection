@@ -96,7 +96,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
 
-        $this->mockLinkingService = $this->getMock('TYPO3\Neos\Service\LinkingService');
+        $this->mockLinkingService = $this->createMock('TYPO3\Neos\Service\LinkingService');
         $this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
 
         $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();

@@ -29,6 +29,19 @@ module.exports = function (grunt) {
 		},
 		concat: {
 			css: {
+				options: {
+					process: function (src, filepath) {
+						if (filepath.indexOf('jcrop') !== -1) {
+							console.log('jcrop', filepath);
+							src = src.replace('url("', 'url("../Library/jcrop/css/');
+						}
+						if (filepath.indexOf('jquery-ui') !== -1) {
+							console.log('jcrop', filepath);
+							src = src.replace(/url\(/g, 'url(../Library/jquery-ui/css/custom-theme/');
+						}
+						return src;
+					}
+				},
 				src: [
 					path.join(packagePath, 'Resources/Public/Styles/Neos.css'),
 					path.join(libraryPath, 'jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css'),
@@ -115,6 +128,9 @@ module.exports = function (grunt) {
 						// add "code" element
 						src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 						src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
+
+						// fix https://github.com/alohaeditor/Aloha-Editor/issues/1525
+						src = src.replace('RepositoryManager.markObject(targetObject, item);', 'executeForTargets(function (target) { RepositoryManager.markObject(target, item); });');
 
 						return src;
 					}
