@@ -1,0 +1,88 @@
+`2.2.5 (2016-06-17) <https://github.com/neos/neos-development-collection/releases/tag/2.2.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/576>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/zRPZYK.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: correct documentation mistakes regarding the usage of namespaces <https://github.com/neos/neos-development-collection/pull/570>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+1) Missing colon in namespace definition
+2) Namespaces are defined globally, and not for the scope of the current file
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove double negative from error message <https://github.com/neos/neos-development-collection/pull/568>`_
+-------------------------------------------------------------------------------------------------------------------
+
+When writing `include: NodeTypes/**/*` in `Root.ts2` a misleading exception shows up, if the directory does not exist.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`BUGFIX: Node fallbacks not properly checking for variants <https://github.com/neos/neos-development-collection/pull/559>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This adds a check for better matching node variants to path traversal
+queries of the NodeDataRepository to prevent fallbacks showing up
+even if a better matching variant exists.
+
+NEOS-1841 #resolve
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/561>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/zGPEL2
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Add missing default configuration <https://github.com/neos/neos-development-collection/pull/556>`_
+-----------------------------------------------------------------------------------------------------------
+
+The ConfigurationContentDimensionPresetSource in TYPO3CR did not have its
+configuration set by default (as opposed to the Neos implementation).
+
+* Packages: ``TYPO3CR``
+
+`TASK: Update content cache docs <https://github.com/neos/neos-development-collection/pull/552>`_
+-------------------------------------------------------------------------------------------------
+
+Update content cache documentation to include a remark that the
+node identifier of the current node should be included in most cases.
+
+* Packages: ``Neos``
+
+`TASK: Removed duplicate condition in Login template <https://github.com/neos/neos-development-collection/pull/550>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Service NodeController does not set all context properties <https://github.com/neos/neos-development-collection/pull/548>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The service `NodeController` does not add the `currentSite` and `currentDomain` properties to the node context if a page is searched with `searchPageAction()`. Without them the uri can not be resolved.
+This methos is also marked as deprecated with this change since it is never used and will be removed with 3.0
+
+* Packages: ``Neos``
+
+`BUGFIX: Service/NodeController does not set all context properties <https://github.com/neos/neos-development-collection/pull/542>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The service `NodeController` does not add the `currentSite` and `currentDomain` properties to the node context if a page is searched with `searchPageAction()`. Without them the uri can not be resolved.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.4...2.2.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
