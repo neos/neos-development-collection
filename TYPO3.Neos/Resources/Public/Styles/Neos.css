@@ -9831,6 +9831,9 @@
   background-color: transparent;
   border-color: transparent;
 }
+.neos.neos-module .neos-select option {
+  background-color: #3f3f3f;
+}
 .neos.neos-module .neos-footer {
   position: sticky;
   height: 40px;
