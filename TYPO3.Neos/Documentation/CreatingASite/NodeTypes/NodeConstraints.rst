@@ -79,5 +79,5 @@ To sum it up, the following rules apply:
   allowed/disallowed. To constraint subtypes you must be more specific for those types.
 - The default is to *always deny* (in case "*" is not specified).
 
-.. note:: Node type constraints are cached in the browser's session storage. After making changes, it's a good idea to run
-          `sessionStorage.clear();` in the browser console to remove the old configuration.
+.. note:: Node type constraints are cached in the browser's session storage. After making changes, it's a good idea
+          to run `sessionStorage.clear();` in the browser console to remove the old configuration.
