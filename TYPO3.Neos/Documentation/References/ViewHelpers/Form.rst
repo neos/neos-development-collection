@@ -3,7 +3,7 @@
 Form ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2016-06-20
 
 
 .. _`Form ViewHelper Reference: typo3.form:form`:
@@ -334,9 +334,6 @@ typo3.form:render
 -----------------
 
 Main Entry Point to render a Form into a Fluid Template
-
-Usage
-=====
 
 <pre>
 {namespace form=TYPO3\Form\ViewHelpers}
