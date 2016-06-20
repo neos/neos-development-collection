@@ -201,6 +201,10 @@ class RuntimeContentCache
      */
     public function postProcess(array $evaluateContext, $tsObject, $output)
     {
+        if ($this->enableContentCache && is_string($output)) {
+            $output = $this->cleanContentFromExcessCacheMarkers($output);
+        }
+
         if ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
@@ -340,5 +344,44 @@ class RuntimeContentCache
     public function getEnableContentCache()
     {
         return $this->enableContentCache;
+    }
+
+    /**
+     * Cleans incoming content from our cache segment tokens \x02, \x03 and \x1f by replacing valid cache parts temporarily
+     * and then replacing leftover tokens.
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function cleanContentFromExcessCacheMarkers($content)
+    {
+        // This is just a random string that is hard to imagine happening naturally.
+        $cachePlaceholderTemplate = '###~%/{[($§!NEOS_CACHE_PLACEHOLDER_' . \TYPO3\Flow\Utility\Algorithms::generateRandomString(32) . ')]}\%~###';
+
+        $cacheParts = array();
+        $counter = 0;
+
+        $cacheSegmentReplacer = function ($match) use (&$cacheParts, &$counter, $cachePlaceholderTemplate) {
+            $counter++;
+            $cachePlaceholder = $cachePlaceholderTemplate . $counter . $cachePlaceholderTemplate;
+            $cacheParts[$cachePlaceholder] = $match[0];
+            return $cachePlaceholder;
+        };
+
+        $nestingLevel = 0;
+        do {
+            $nestingLevel++;
+            $content = preg_replace_callback("/\x02[^\x02\x1f\x03]+\x1f[^\x02\x1f\x03]*\x1f[^\x02\x1f\x03]*\x03/u", $cacheSegmentReplacer, $content, -1, $replacements);
+        } while ($replacements > 0);
+
+        // After removing all valid cache parts, we can safely remove all leftover cache segment tokens.
+        $content = str_replace(array(ContentCache::CACHE_SEGMENT_START_TOKEN, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, ContentCache::CACHE_SEGMENT_END_TOKEN), '', $content);
+
+        while ($nestingLevel > 0) {
+            $content = str_replace(array_keys($cacheParts), array_values($cacheParts), $content);
+            $nestingLevel--;
+        }
+
+        return $content;
     }
 }
