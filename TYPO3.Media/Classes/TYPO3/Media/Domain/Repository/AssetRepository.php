@@ -297,6 +297,7 @@ class AssetRepository extends Repository
     {
         $this->assetService->validateRemoval($object);
         parent::remove($object);
+        $this->assetService->emitAssetRemoved($object);
     }
 
     /**
@@ -310,5 +311,24 @@ class AssetRepository extends Repository
     public function removeWithoutUsageChecks($object)
     {
         parent::remove($object);
+        $this->assetService->emitAssetRemoved($object);
+    }
+
+    /**
+     * @param AssetInterface $object
+     */
+    public function add($object)
+    {
+        parent::add($object);
+        $this->assetService->emitAssetCreated($object);
+    }
+
+    /**
+     * @param AssetInterface $object
+     */
+    public function update($object)
+    {
+        parent::update($object);
+        $this->assetService->emitAssetUpdated($object);
     }
 }
