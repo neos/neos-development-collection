@@ -185,7 +185,7 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="lv" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="lv" state="translated">Nevar izdzēst darba virsmu "{0}", jo tā satur mezglu {1}.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
@@ -226,7 +226,7 @@
       </trans-unit>
       <trans-unit id="media.dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="lv" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Velciet un ievietojiet elementu kolekcijā / izvēlieties tam tagu.</target></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
 			<target xml:lang="lv" state="translated">Saglabāt faila nosaukumu "{0}"</target></trans-unit>
@@ -920,11 +920,11 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="lv" state="needs-translation">{0} usages</target>
+          <target xml:lang="lv" state="translated">{0} lietojums</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="lv" state="needs-translation">{0} usages</target>
+          <target xml:lang="lv" state="translated">{0} lietojums</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[2]">
           <source>{0} usages</source>
