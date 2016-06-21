@@ -73,6 +73,19 @@ class FirstLevelNodeCache
     }
 
     /**
+     * @param string $path
+     * @return $this
+     */
+    public function unsetByPath($path)
+    {
+        if (isset($this->nodesByPath[$path])) {
+            unset($this->nodesByPath[$path]);
+        }
+
+        return $this;
+    }
+
+    /**
      * If the cache contains a node with the given identifier, it is returned.
      *
      * Otherwise FALSE is returned.
@@ -103,6 +116,19 @@ class FirstLevelNodeCache
         if ($node !== null) {
             $this->nodesByPath[$node->getPath()] = $node;
         }
+    }
+
+    /**
+     * @param string $identifier
+     * @return $this
+     */
+    public function unsetByIdentifier($identifier)
+    {
+        if (isset($this->nodesByIdentifier[$identifier])) {
+            unset($this->nodesByIdentifier[$identifier]);
+        }
+
+        return $this;
     }
 
     /**
@@ -143,6 +169,17 @@ class FirstLevelNodeCache
         }
 
         $this->childNodesByPathAndNodeTypeFilter[$path][$nodeTypeFilter] = $nodes;
+    }
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    public function unsetChildNodesByPath($path)
+    {
+        $this->childNodesByPathAndNodeTypeFilter[$path] = [];
+
+        return $this;
     }
 
     /**

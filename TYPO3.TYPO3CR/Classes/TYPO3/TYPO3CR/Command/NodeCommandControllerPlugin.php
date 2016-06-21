@@ -26,6 +26,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
+use TYPO3\TYPO3CR\Service\NodeTreeService;
 use TYPO3\TYPO3CR\Utility;
 
 /**
@@ -78,6 +79,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var \Doctrine\Common\Persistence\ObjectManager
      */
     protected $entityManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTreeService
+     */
+    protected $nodeTreeService;
 
     /**
      * @Flow\Inject
@@ -478,25 +485,30 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         $nodeExceptionCount = 0;
         $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
             try {
-                foreach ($node->getChildNodes() as $childNode) {
-                    /** @var $childNode NodeInterface */
-                    if (!$childNode->isAutoCreated() && !$node->isNodeTypeAllowedAsChildNode($childNode->getNodeType())) {
-                        $nodes[] = $childNode;
-                        $parent = $node->isAutoCreated() ? $node->getParent() : $node;
-                        $this->output->outputLine('Found disallowed node named "%s" (%s) in "%s", child of node "%s" (%s)', array($childNode->getName(), $childNode->getNodeType()->getName(), $childNode->getPath(), $parent->getName(), $parent->getNodeType()->getName()));
-                    } else {
-                        $removeDisallowedChildNodes($childNode);
-                    }
+                $parent = $node->getParent();
+                if (!$node->isAutoCreated() && !$parent->isNodeTypeAllowedAsChildNode($node->getNodeType())) {
+                    $nodes[] = $node;
+                    $ancestor = $parent->isAutoCreated() ? $parent->getParent() : $parent;
+                    $this->output->outputLine(
+                        'Found disallowed node named "%s" (%s) in "%s", child of node "%s" (%s)',
+                        array($node->getName(), $node->getNodeType()->getName(), $node->getPath(), $ancestor->getName(), $ancestor->getNodeType()->getName())
+                    );
+
+                    return false;
+                } else {
+                    return true;
                 }
             } catch (\Exception $e) {
                 $nodeExceptionCount++;
+
+                return false;
             }
         };
 
         // TODO: Performance could be improved by a search for all child node data instead of looping over all contexts
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionConfiguration) {
             $context = $this->createContext($workspace->getName(), $dimensionConfiguration);
-            $removeDisallowedChildNodes($context->getRootNode());
+            $this->nodeTreeService->traverseTree($context->getRootNode(), $removeDisallowedChildNodes);
         }
 
         $disallowedChildNodesCount = count($nodes);

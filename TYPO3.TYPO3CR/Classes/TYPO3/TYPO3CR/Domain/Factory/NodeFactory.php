@@ -70,7 +70,7 @@ class NodeFactory
             return null;
         }
 
-        $internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
+        $internalNodeIdentifier = $this->getInternalIdentifier($nodeData, $context);
 
         // In case there is a Node with an internal NodeData (because the NodeData was changed in the meantime) we need to flush it.
         if (isset($this->nodes[$internalNodeIdentifier]) && $this->nodes[$internalNodeIdentifier]->getNodeData()->isInternal()) {
@@ -91,6 +91,27 @@ class NodeFactory
     }
 
     /**
+     * @param NodeInterface $node
+     */
+    public function removeNodeFromCache(NodeInterface $node)
+    {
+        $internalNodeIdentifier = $this->getInternalIdentifier($node->getNodeData(), $node->getContext());
+        if (isset($this->nodes[$internalNodeIdentifier])) {
+            unset($this->nodes[$internalNodeIdentifier]);
+        }
+    }
+
+    /**
+     * @param NodeData $nodeData
+     * @param Context $context
+     * @return string
+     */
+    protected function getInternalIdentifier(NodeData $nodeData, Context $context)
+    {
+        return $nodeData->getIdentifier() . spl_object_hash($context);
+    }
+
+    /**
      * Get all NodeInterface implementations to check if a configured node class is in there.
      *
      * @param ObjectManagerInterface $objectManager
@@ -101,6 +122,7 @@ class NodeFactory
     {
         $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
         $nodeImplementations = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface');
+
         return $nodeImplementations;
     }
 
@@ -117,16 +139,19 @@ class NodeFactory
         $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $context) {
             if (!$context->isRemovedContentShown() && $node->isRemoved()) {
                 $node = null;
+
                 return;
             }
             if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
                 $node = null;
+
                 return;
             }
             if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
                 $node = null;
             }
         });
+
         return $node;
     }
 
