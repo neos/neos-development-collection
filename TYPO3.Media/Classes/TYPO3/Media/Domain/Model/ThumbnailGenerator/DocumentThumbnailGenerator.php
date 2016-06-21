@@ -66,13 +66,22 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
-            $im->setImageAlphaChannel(\Imagick::ALPHACHANNEL_RESET);
+            if (defined('\Imagick::ALPHACHANNEL_OFF')) {
+                // ImageMagick >= 7.0, Imagick >= 3.4.3RC1
+                // @see https://pecl.php.net/package/imagick/3.4.3RC1
+                $im->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OFF);
+            } else {
+                $im->setImageAlphaChannel(\Imagick::ALPHACHANNEL_RESET);
+            }
             $im->thumbnailImage($width, $height, true);
 
-            $im->flattenImages();
-            // Replace flattenImages in imagick 3.3.0
-            // @see https://pecl.php.net/package/imagick/3.3.0RC2
-            // $im->mergeImageLayers(\Imagick::LAYERMETHOD_MERGE);
+            if (method_exists($im, 'mergeImageLayers')) {
+                // Replace flattenImages in imagick 3.3.0
+                // @see https://pecl.php.net/package/imagick/3.3.0RC2
+                $im->mergeImageLayers(\Imagick::LAYERMETHOD_MERGE);
+            } else {
+                $im->flattenImages();
+            }
 
             $resource = $this->resourceManager->importResourceFromContent($im->getImageBlob(), $filenameWithoutExtension . '.png');
             $im->destroy();
