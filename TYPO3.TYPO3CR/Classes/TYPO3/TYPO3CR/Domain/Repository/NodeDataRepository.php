@@ -999,10 +999,12 @@ class NodeDataRepository extends Repository
             $pathStartingPoint = strtolower($pathStartingPoint);
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orx()
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
-                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash')))
-                ->setParameter('parentPath', $pathStartingPoint . '/%')
-                ->setParameter('pathHash', md5($pathStartingPoint));
+                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
+                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                ->setParameter('parentPathHash', md5($pathStartingPoint))
+                ->setParameter('pathHash', md5($pathStartingPoint))
+                ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
         }
 
         $query = $queryBuilder->getQuery();
@@ -1487,7 +1489,7 @@ class NodeDataRepository extends Repository
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
                     ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
                 ->setParameter('parentPathHash', md5($parentPath))
-                ->setParameter('parentPath', $parentPath . '/%');
+                ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
     }
 
@@ -1508,7 +1510,7 @@ class NodeDataRepository extends Repository
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
                     ->add($queryBuilder->expr()->like('n.path', ':path')))
                 ->setParameter('pathHash', md5($path))
-                ->setParameter('path', $path . '/%');
+                ->setParameter('path', rtrim($path, '/') . '/%');
         }
     }
 
