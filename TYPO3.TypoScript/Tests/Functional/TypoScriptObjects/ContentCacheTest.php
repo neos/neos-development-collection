@@ -66,32 +66,6 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     /**
      * @test
      */
-    public function cacheUsesContextValuesAsDefaultCacheIdentifier()
-    {
-        $object1 = new TestModel(42, 'Object value 1');
-        $object2 = new TestModel(21, 'Object value 2');
-
-        $view = $this->buildView();
-        $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/cachedSegment');
-
-        $view->assign('object', $object1);
-        $firstRenderResult = $view->render();
-            // Render again to use the cached segment (assert that the Runtime needs to be in a correct state for the next render)
-        $secondRenderResult = $view->render();
-
-        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
-        $this->assertSame($firstRenderResult, $secondRenderResult);
-
-        $view->assign('object', $object2);
-        $anotherObjectRenderResult = $view->render();
-
-        $this->assertSame('Cached segment|Object value 2', $anotherObjectRenderResult);
-    }
-
-    /**
-     * @test
-     */
     public function nestedCacheSegmentsAreFetchedFromCache()
     {
         $object = new TestModel(42, 'Object value 1');
@@ -498,6 +472,44 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
                 'tags' => array('site1')
             ),
             'a932d6d5860b204e82079255e224c613' => array(
+                'tags' => array('site2')
+            ),
+        ), $entriesWritten);
+    }
+
+    /**
+     * @test
+     */
+    public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
+    {
+        $entriesWritten = array();
+        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
+        $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
+        $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+            $entriesWritten[$entryIdentifier] = array(
+                'tags' => $tags
+            );
+        }));
+        $this->inject($this->contentCache, 'cache', $mockCache);
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->setTypoScriptPath('contentCache/globalIdentifiersAreUsedWithBlankEntryIdentifiers');
+
+        $view->assign('site', 'site1');
+
+        $firstRenderResult = $view->render();
+
+        $view->assign('site', 'site2');
+        $secondRenderResult = $view->render();
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+        $this->assertCount(2, $entriesWritten);
+        $this->assertEquals(array(
+            'd9deea3648c9bfb24afdcb26bab8c023' => array(
+                'tags' => array('site1')
+            ),
+            '00e5aff1779f8f65ec4abf801834a682' => array(
                 'tags' => array('site2')
             ),
         ), $entriesWritten);
