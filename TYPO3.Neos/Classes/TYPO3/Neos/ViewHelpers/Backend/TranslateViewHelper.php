@@ -14,8 +14,8 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception;
-use TYPO3\Fluid\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
-use TYPO3\Fluid\Core\ViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper;
 
 /**
  * Returns translated message using source message or key ID.

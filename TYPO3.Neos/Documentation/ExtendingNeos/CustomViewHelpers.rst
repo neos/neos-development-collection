@@ -14,13 +14,13 @@ Create A ViewHelper Class
 
 If you want to create a ViewHelper that you can call from your template (as a
 tag), you write a php class which has to inherit from
-``\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
+``\Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
 
 	namespace Vendor\Site\ViewHelpers;
-	class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+	class TitleViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 		public function render() {
 			return 'Hello World';
 		}
@@ -50,14 +50,14 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+		class TitleViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 			/**
 			 * Render the title and apply some magic
 			 *
 			 * @param string $title the title
 			 * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
 			 * @return string Translated label or source label / ID key
-			 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+			 * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
 			 */
 			public function render($title, $flag = FALSE) {
 
@@ -75,7 +75,7 @@ There exist two ways to pass arguments to a ViewHelper that can be combined:
 
 		namespace Vendor\Site\ViewHelpers;
 
-		class TitleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+		class TitleViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 
 			/**
 			 * Initialize arguments

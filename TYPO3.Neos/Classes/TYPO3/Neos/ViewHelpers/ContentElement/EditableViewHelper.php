@@ -13,8 +13,8 @@ namespace TYPO3\Neos\ViewHelpers\ContentElement;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;

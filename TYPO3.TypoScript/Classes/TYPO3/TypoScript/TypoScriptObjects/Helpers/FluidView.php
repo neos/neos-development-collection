@@ -12,10 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  */
 
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Fluid\Core\Parser\Configuration;
-use TYPO3\Fluid\Core\Parser\Interceptor\Escape;
-use TYPO3\Fluid\Core\Parser\Interceptor\Resource;
-use TYPO3\Fluid\View\StandaloneView;
+use Neos\FluidAdaptor\View\StandaloneView;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
@@ -65,28 +62,5 @@ class FluidView extends StandaloneView implements TypoScriptAwareViewInterface
     public function getTypoScriptObject()
     {
         return $this->typoScriptObject;
-    }
-
-    /**
-     * Build parser configuration
-     *
-     * @return Configuration
-     */
-    protected function buildParserConfiguration()
-    {
-        /** @var Configuration $parserConfiguration */
-        $parserConfiguration = $this->objectManager->get(Configuration::class);
-        /** @var Escape $escapeInterceptor */
-        $escapeInterceptor = $this->objectManager->get(Escape::class);
-        $parserConfiguration->addEscapingInterceptor($escapeInterceptor);
-        if (in_array($this->controllerContext->getRequest()->getFormat(), array('html', null))) {
-            /** @var Resource $resourceInterceptor */
-            $resourceInterceptor = $this->objectManager->get(Resource::class);
-            if ($this->resourcePackage !== null) {
-                $resourceInterceptor->setDefaultPackageKey($this->resourcePackage);
-            }
-            $parserConfiguration->addInterceptor($resourceInterceptor);
-        }
-        return $parserConfiguration;
     }
 }

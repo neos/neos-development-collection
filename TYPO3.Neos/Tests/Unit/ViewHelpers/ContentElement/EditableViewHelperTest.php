@@ -11,11 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-require_once(FLOW_PATH_PACKAGES . 'Framework/TYPO3.Fluid/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
-
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -145,7 +143,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
     {
@@ -156,7 +154,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
     {

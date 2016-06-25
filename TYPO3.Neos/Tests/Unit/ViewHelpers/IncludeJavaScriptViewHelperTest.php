@@ -14,7 +14,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Fluid\Core\Rendering\RenderingContext;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper;
 
 /**
