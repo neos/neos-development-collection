@@ -13,7 +13,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception;
-use TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
+use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 use TYPO3\TypoScript\Exception\UnsupportedProxyMethodException;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;

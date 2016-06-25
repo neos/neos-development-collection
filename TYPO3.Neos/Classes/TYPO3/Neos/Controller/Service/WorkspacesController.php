@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Fluid\View\TemplateView;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Neos\View\Service\WorkspaceJsonView;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;

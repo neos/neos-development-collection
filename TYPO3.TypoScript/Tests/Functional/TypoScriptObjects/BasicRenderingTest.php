@@ -10,7 +10,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Fluid\View\Exception\InvalidTemplateResourceException;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 
 /**
  * Testcase for basic TypoScript rendering
@@ -47,7 +47,7 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest
      * TODO: test different exception handlers
      *
      * @test
-     * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
+     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function basicRenderingCrashing()
     {

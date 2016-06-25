@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @deprecated This ViewHelper is deprecated with no replacement as of version 1.3 and will be removed in 3 versions from now.
  */
-class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class IncludeJavaScriptViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var boolean
