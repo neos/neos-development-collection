@@ -180,7 +180,7 @@ class NodeDataRepository extends Repository
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions);
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions, $removedNodes);
         $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
 
         if ($foundNodes !== []) {
@@ -552,7 +552,7 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $removedNodes);
         $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
 
         return $foundNodes;
@@ -953,7 +953,7 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $includeRemovedNodes);
 
         if ($includeRemovedNodes === false) {
             $foundNodes = $this->filterRemovedNodes($foundNodes, false);
@@ -1232,6 +1232,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
@@ -1520,9 +1521,10 @@ class NodeDataRepository extends Repository
      * @param array $nodeDataObjects
      * @param Workspace $workspace
      * @param array $dimensions
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
      * @return array
      */
-    protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions)
+    protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nonPersistedNodes = [];
@@ -1549,14 +1551,18 @@ class NodeDataRepository extends Repository
         } else {
             $dimensions = [];
         }
-        $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+        if ($includeRemovedNodes === false) {
+            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+        } else {
+            $queryBuilder->andWhere('n.movedTo IS NULL');
+        }
         $queryBuilder->andWhere('n.identifier IN (:identifier)')
             ->setParameter('identifier', $nodeIdentifier);
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
         $foundNodes = array_merge($nodes, $nonPersistedNodes);
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        $foundNodes = $this->filterRemovedNodes($foundNodes, $includeRemovedNodes);
 
         /** @var NodeData $nodeData */
         return array_filter($nodeDataObjects, function (NodeData $nodeData) use ($foundNodes) {
