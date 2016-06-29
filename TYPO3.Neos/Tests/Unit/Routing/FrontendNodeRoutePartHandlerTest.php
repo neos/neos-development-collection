@@ -315,30 +315,6 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * @test
-     */
-    public function matchCreatesContextForCurrentDomainIfOneIsFound()
-    {
-        $mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-
-        $mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-        $mockDomain->expects($this->any())->method('getSite')->will($this->returnValue($mockSite));
-
-        $this->mockDomainRepository->expects($this->atLeastOnce())->method('findOneByActiveRequest')->will($this->returnValue($mockDomain));
-
-        $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $mockSite;
-        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-
-        $this->assertNull($mockContext->getCurrentDomain());
-
-        $routePath = '';
-        $this->routePartHandler->match($routePath);
-
-        $this->assertSame($mockDomain, $mockContext->getCurrentDomain());
-    }
-
-    /**
-     * @test
      * @dataProvider contextPathsAndRequestPathsDataProvider
      */
     public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath)
@@ -524,34 +500,6 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = array('node' => '/sites/examplecom/home@user-johndoe');
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-    }
-
-    /**
-     * @test
-     */
-    public function resolveCreatesContextForCurrentDomainIfGivenValueIsAStringAndADomainIsFound()
-    {
-        $mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
-        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-        $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-        $mockContext->mockSiteNode = $mockSiteNode;
-
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSiteNode) {
-            return ($nodePath === '/sites/examplecom') ? $mockSiteNode : null;
-        }));
-
-        $mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-        $this->mockDomainRepository->expects($this->atLeastOnce())->method('findOneByActiveRequest')->will($this->returnValue($mockDomain));
-
-        $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext, $mockDomain) {
-            // The important assertion:
-            $that->assertSame($mockDomain, $contextProperties['currentDomain']);
-            return $mockContext;
-        }));
-
-        $routeValues = array('node' => '/sites/examplecom');
         $this->assertTrue($this->routePartHandler->resolve($routeValues));
     }
 

@@ -30,6 +30,18 @@ use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 class ContentContextFactory extends ContextFactory
 {
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
      * The context implementation this factory will create
      *
      * @var string
@@ -82,6 +94,10 @@ class ContentContextFactory extends ContextFactory
             'currentDomain' => null
         );
 
+        if (!isset($contextProperties['currentSite'])) {
+            $defaultContextProperties = $this->setDefaultSiteAndDomainFromCurrentRequest($defaultContextProperties);
+        }
+
         $mergedProperties = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, true);
 
         $this->mergeDimensionValues($contextProperties, $mergedProperties);
@@ -89,6 +105,27 @@ class ContentContextFactory extends ContextFactory
 
         return $mergedProperties;
     }
+
+    /**
+     * Determines the current domain and site from the request and sets the resulting values as
+     * as defaults.
+     *
+     * @param array $defaultContextProperties
+     * @return array
+     */
+    protected function setDefaultSiteAndDomainFromCurrentRequest(array $defaultContextProperties)
+    {
+        $currentDomain = $this->domainRepository->findOneByActiveRequest();
+        if ($currentDomain !== null) {
+            $defaultContextProperties['currentSite'] = $currentDomain->getSite();
+            $defaultContextProperties['currentDomain'] = $currentDomain;
+        } else {
+            $defaultContextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+        }
+
+        return $defaultContextProperties;
+    }
+
 
     /**
      * This creates the actual identifier and needs to be overridden by builders extending this.
