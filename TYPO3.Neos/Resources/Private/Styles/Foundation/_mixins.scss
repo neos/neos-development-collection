@@ -47,6 +47,11 @@
   -webkit-justify-content: $position;
   justify-content: $position;
 }
+@mixin flex-direction($direction) {
+  -webkit-flex-direction: $direction;
+  -ms-flex-direction: $direction;
+  flex-direction: $direction;
+}
 
 // Webkit-style focus
 // ------------------
