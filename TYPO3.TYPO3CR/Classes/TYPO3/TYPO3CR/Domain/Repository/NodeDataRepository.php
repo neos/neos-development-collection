@@ -533,7 +533,7 @@ class NodeDataRepository extends Repository
      * @param boolean $recursive
      * @return array
      */
-    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes, $recursive)
+    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
@@ -986,7 +986,6 @@ class NodeDataRepository extends Repository
         if (strlen($term) === 0) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
-        $pathStartingPoint = strtolower($pathStartingPoint);
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
@@ -997,13 +996,15 @@ class NodeDataRepository extends Repository
         $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
-            $pathConstraint = $queryBuilder->expr()->orx()
-                ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
-                ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'));
-            $queryBuilder
-                ->setParameter('parentPath', $pathStartingPoint . '%')
-                ->setParameter('pathHash', md5($pathStartingPoint));
-            $queryBuilder->getDQLPart('where')->add($pathConstraint);
+            $pathStartingPoint = strtolower($pathStartingPoint);
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orx()
+                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
+                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                ->setParameter('parentPathHash', md5($pathStartingPoint))
+                ->setParameter('pathHash', md5($pathStartingPoint))
+                ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
         }
 
         $query = $queryBuilder->getQuery();
@@ -1484,8 +1485,12 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
                 ->setParameter('parentPathHash', md5($parentPath));
         } else {
-            $queryBuilder->andWhere('n.parentPath LIKE :parentPath')
-                ->setParameter('parentPath', $parentPath . '%');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX()
+                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                ->setParameter('parentPathHash', md5($parentPath))
+                ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
     }
 
@@ -1501,8 +1506,12 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($path));
         } else {
-            $queryBuilder->andWhere('n.path LIKE :path')
-                ->setParameter('path', $path . '%');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX()
+                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
+                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                ->setParameter('pathHash', md5($path))
+                ->setParameter('path', rtrim($path, '/') . '/%');
         }
     }
 
