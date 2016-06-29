@@ -63,9 +63,11 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Content) {
 	layout = ${q(node).property('layout')}
 	attributes.class = ${'container columns-' + q(node).property('layout')}
 	columns = TYPO3.TypoScript:Collection {
+		@context.columnLayout = ${q(node).property('layout')}
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 		itemRenderer = TYPO3.Neos.NodeTypes:MultiColumnItem
 		itemName = 'node'
+		iterationName = 'columnIteration'
 	}
 }
 
