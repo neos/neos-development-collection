@@ -55,7 +55,8 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         ]);
 
         $this->generateSitesXml($packageKey, $siteName);
-        $this->generateSitesFusion($packageKey, $siteName);
+        $this->generateSitesRootFusion($packageKey, $siteName);
+        $this->generateSitesPageFusion($packageKey, $siteName);
         $this->generateDefaultTemplate($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
@@ -88,13 +89,13 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     }
 
     /**
-     * Generate basic Fusion files.
+     * Generate basic root Fusion file.
      *
      * @param string $packageKey
      * @param string $siteName
      * @return void
      */
-    protected function generateSitesFusion($packageKey, $siteName)
+    protected function generateSitesRootFusion($packageKey, $siteName)
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/Root.fusion';
 
@@ -106,8 +107,31 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
-        $this->generateFile($sitesFusionPathAndFilename, $fileContent);
+        $sitesRootFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
+        $this->generateFile($sitesRootFusionPathAndFilename, $fileContent);
+    }
+
+    /**
+     * Generate basic Fusion documentNode file.
+     *
+     * @param string $packageKey
+     * @param string $siteName
+     * @return void
+     */
+    protected function generateSitesPageFusion($packageKey, $siteName)
+    {
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.ts2';
+
+        $contextVariables = array();
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['siteName'] = $siteName;
+        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
+        $contextVariables['siteNodeName'] = $packageKeyDomainPart;
+
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $sitesPageFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/NodeTypes/Page.ts2';
+        $this->generateFile($sitesPageFusionPathAndFilename, $fileContent);
     }
 
     /**
