@@ -76,6 +76,9 @@ class SiteService
             $this->nodeDataRepository->remove($siteNode);
         }
 
+        $site->setPrimaryDomain(null);
+        $this->siteRepository->update($site);
+
         $domainsForSite = $this->domainRepository->findBySite($site);
         foreach ($domainsForSite as $domain) {
             $this->domainRepository->remove($domain);

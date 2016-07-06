@@ -18,10 +18,16 @@ body {
 	background-attachment: fixed;
 }
 
+body,
+html,
+.neos-modal-centered {
+	// IE 10+ needs this to work in combination with `flex: 1 0 auto` to make the footer stick to the bottom
+	height: 100%;
+}
+
 .neos {
 	// CSS Reset
 	@import "Foundation/reset";
-
 	@import "Foundation/grid";
 	@import "Foundation/forms";
 	@import "Foundation/tooltip";
@@ -29,28 +35,53 @@ body {
 
 	@include font;
 
-	// Background image
-	&[style] {
-		.neos-background-image-clone {
-			position: relative;
-			right: -($loginBoxWidth / 2) - $unit - 5;
-			width: $loginBoxWidth + 10;
-			height: 398px;
-			padding: $unit;
-			background-size: cover;
-			background-repeat: no-repeat;
-			background-position: center;
-			background-attachment: fixed;
-			-webkit-filter: blur(10px); /* Chrome, Opera, etc. */
-			filter: url('../../Public/Images/blur.svg#blur'); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
-			filter: blur(10px); /* Firefox 35+, eventually all */
-		}
 
-		#neos-login-box {
-			background: rgba(#fff, .25);
+	&[style] {
+		.neos-login-box {
 			padding: $unit;
 			position: relative;
-			left: -($loginBoxWidth / 2) - $unit;
+			overflow: hidden;
+
+			&.background-image-active {
+				&:before,
+				&:after {
+					z-index: -1;
+					display: block;
+					position: absolute;
+					content: ' ';
+					top: 0;
+					left: 0;
+					height: 100%;
+					width: 100%;
+				}
+
+				&:before {
+					// the `background-image` property is set within the template
+					background-size: cover;
+					background-repeat: no-repeat;
+					background-position: center;
+					background-attachment: fixed;
+					-webkit-filter: blur(10px); /* Chrome, Opera, etc. */
+					-moz-filter: blur(10px);
+					-o-filter: blur(10px);
+					-ms-filter: blur(10px);
+					filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
+					filter: url('../Images/blur.svg#blur'); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
+					filter: blur(10px); /* Firefox 35+, eventually all */
+					padding: $unit;
+				}
+
+				&:after {
+					background: rgba(#fff, .25);
+				}
+			}
+			&-logo {
+				margin: 0 0 $unit/2 0;
+				&-resource {
+					margin: 0 auto 0 auto;
+					display: block;
+				}
+			}
 		}
 
 		input[type="text"],
@@ -75,7 +106,7 @@ body {
 			}
 		}
 
-		#neos-login-footer {
+		.neos-login-footer {
 			text-align: center;
 			p,
 			a {
@@ -125,17 +156,22 @@ body {
 	}
 
 	.neos-modal-centered {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		@include flex();
+		@include flex-align(center);
+		@include flex-justify(center);
+		@include flex-direction(column);
+		min-height: 100vh;
 	}
 
-	#neos-login-box {
+	.neos-login-main {
+		@include flex();
+		@include flex-align(center);
+		@include flex-justify(center);
+		flex: 1 0 auto;
+		width: 100%;
+	}
+
+	.neos-login-box {
 		background: transparent;
 		border: none;
 		width: $loginBoxWidth;
@@ -255,11 +291,9 @@ body {
 		}
 	}
 
-	#neos-login-footer {
-		width: 100%;
-		position: absolute;
-		bottom: 4%;
-		padding: 0 $unit;
+	.neos-login-footer {
+		width: 50%;
+		padding: $unit /2;
 		@include font;
 		@include box-sizing(border-box);
 
@@ -272,7 +306,6 @@ body {
 
 		a {
 			color: #535353;
-
 			&:hover {
 				text-decoration: none;
 			}
@@ -280,44 +313,42 @@ body {
 	}
 }
 
-@media (min-width: 320px) and (max-width: 480px) {
+@media (max-width: 1400px) {
 	.neos {
-
-		.neos-background-image-clone,
-		.neos-modal-centered {
-			align-items: flex-start;
-		}
-
-		#neos-login-box {
-			top: 0;
-			margin-top: $unit;
-			margin-left: 0;
-			padding-left: $unit;
-			padding-right: $unit;
-			width: 100%;
-			height: auto;
-			@include box-sizing(border-box);
-		}
-
-		#neos-login-footer {
-			margin-top: $unit;
-			margin-bottom: 20px;
+		&[style] {
+			.neos-login-footer {
+				width: 70%;
+			}
 		}
 	}
 }
 
-@media (min-width: 1000px) {
-	.neos #neos-login-footer {
-		width: 70%;
-		left: 50%;
-		margin-left: -35%;
+@media (max-width: 1000px) {
+	.neos {
+		&[style] {
+			.neos-login-footer {
+				width: 90%;
+			}
+		}
 	}
 }
 
-@media (min-width: 1500px) {
-	.neos #neos-login-footer {
-		width: 50%;
-		left: 50%;
-		margin-left: -25%;
+@media (max-width: 480px) {
+	.neos {
+		&[style] {
+			.neos-login-box {
+				width: 100%;
+				padding: $unit/2;
+			}
+
+			.neos-login-footer {
+				width: 100%;
+			}
+		}
+
+		input[type="text"],
+		input[type="password"] {
+			min-width: 0;
+		}
 	}
 }
