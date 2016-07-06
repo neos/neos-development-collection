@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Service;
  * source code.
  */
 
-use Imagine\Image\Box;
+use TYPO3\Media\Imagine\Box;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Resource\Resource as FlowResource;
