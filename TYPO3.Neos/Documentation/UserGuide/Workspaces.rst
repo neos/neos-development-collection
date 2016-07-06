@@ -30,7 +30,7 @@ Private Workspace
   administrator role). They can be used to shelve work temporarily, for example.
 Personal Workspace
   Every editor has exactly one personal workspace. Any editing goes to that workspace first, no matter what.
-  This personal workspace is only accessible by it's owner.
+  This personal workspace is only accessible by its owner.
 
 Managing Workspaces
 ===================

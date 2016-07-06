@@ -12,7 +12,7 @@ namespace TYPO3\Media\Domain\Model\Adjustment;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Imagine\Image\Box;
+use TYPO3\Media\Imagine\Box;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
 use Imagine\Image\Point;
