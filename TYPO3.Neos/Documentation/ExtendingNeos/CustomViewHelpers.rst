@@ -106,7 +106,7 @@ used for further processing:
 .. code-block:: php
 
 	public function render($title = NULL) {
-		if ($title = NULL) {
+		if ($title === NULL) {
 			$title = $this->renderChildren();
 		}
 		return '<h1>' . $title . '</h1>';

@@ -269,6 +269,7 @@
 
 		select {
 			@include appearance(none);
+			-webkit-border-radius: 0px;
 			-o-appearance: window;
 			-moz-appearance: window;
 			background-color: transparent;
@@ -283,6 +284,12 @@
 				background-color: transparent;
 				border-color: transparent;
 			}
+		}
+
+		option {
+			@include appearance(none);
+			-webkit-border-radius: 0px;
+			background-color: $grayLight;
 		}
 	}
 

@@ -181,7 +181,7 @@ class NodeDataRepository extends Repository
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions);
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions, $removedNodes);
         $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
 
         if ($foundNodes !== []) {
@@ -525,7 +525,7 @@ class NodeDataRepository extends Repository
      * @param boolean $recursive
      * @return array
      */
-    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes, $recursive)
+    protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
@@ -544,7 +544,7 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $removedNodes);
         $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
 
         return $foundNodes;
@@ -930,7 +930,7 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions);
+        $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $includeRemovedNodes);
 
         if ($includeRemovedNodes === false) {
             $foundNodes = $this->filterRemovedNodes($foundNodes, false);
@@ -963,7 +963,6 @@ class NodeDataRepository extends Repository
         if (strlen($term) === 0) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
-        $pathStartingPoint = strtolower($pathStartingPoint);
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
@@ -974,13 +973,15 @@ class NodeDataRepository extends Repository
         $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
-            $pathConstraint = $queryBuilder->expr()->orx()
-                ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
-                ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'));
-            $queryBuilder
-                ->setParameter('parentPath', $pathStartingPoint . '%')
-                ->setParameter('pathHash', md5($pathStartingPoint));
-            $queryBuilder->getDQLPart('where')->add($pathConstraint);
+            $pathStartingPoint = strtolower($pathStartingPoint);
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orx()
+                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
+                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                ->setParameter('parentPathHash', md5($pathStartingPoint))
+                ->setParameter('pathHash', md5($pathStartingPoint))
+                ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
         }
 
         $query = $queryBuilder->getQuery();
@@ -1209,6 +1210,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @param array $dimensions
      * @return array Array of unique node results indexed by identifier
+     * @throws Exception\NodeException
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
@@ -1460,8 +1462,12 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
                 ->setParameter('parentPathHash', md5($parentPath));
         } else {
-            $queryBuilder->andWhere('n.parentPath LIKE :parentPath')
-                ->setParameter('parentPath', $parentPath . '%');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX()
+                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                ->setParameter('parentPathHash', md5($parentPath))
+                ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
     }
 
@@ -1477,8 +1483,12 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($path));
         } else {
-            $queryBuilder->andWhere('n.path LIKE :path')
-                ->setParameter('path', $path . '%');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX()
+                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
+                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                ->setParameter('pathHash', md5($path))
+                ->setParameter('path', rtrim($path, '/') . '/%');
         }
     }
 
@@ -1497,9 +1507,10 @@ class NodeDataRepository extends Repository
      * @param array $nodeDataObjects
      * @param Workspace $workspace
      * @param array $dimensions
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
      * @return array
      */
-    protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions)
+    protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nonPersistedNodes = [];
@@ -1526,14 +1537,18 @@ class NodeDataRepository extends Repository
         } else {
             $dimensions = [];
         }
-        $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+        if ($includeRemovedNodes === false) {
+            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+        } else {
+            $queryBuilder->andWhere('n.movedTo IS NULL');
+        }
         $queryBuilder->andWhere('n.identifier IN (:identifier)')
             ->setParameter('identifier', $nodeIdentifier);
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
         $foundNodes = array_merge($nodes, $nonPersistedNodes);
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        $foundNodes = $this->filterRemovedNodes($foundNodes, $includeRemovedNodes);
 
         /** @var NodeData $nodeData */
         return array_filter($nodeDataObjects, function (NodeData $nodeData) use ($foundNodes) {

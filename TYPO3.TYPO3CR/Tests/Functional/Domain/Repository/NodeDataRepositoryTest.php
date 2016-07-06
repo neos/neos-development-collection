@@ -10,6 +10,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -64,14 +66,14 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->nodeTypeManager = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
         $this->liveWorkspace = new Workspace('live');
-        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
         $this->workspaceRepository->add($this->liveWorkspace);
         $this->persistenceManager->persistAll();
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
+        $this->nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
     }
 
     /**
@@ -80,7 +82,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**
@@ -98,12 +100,112 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $relationMap = array(
-            'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image' => array($this->persistenceManager->getIdentifierByObject($testImage))
-        );
+        $relationMap = [
+            Fixtures\Image::class => [$this->persistenceManager->getIdentifierByObject($testImage)]
+        ];
 
         $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 
         $this->assertCount(1, $result);
+    }
+
+    protected function setUpNodes()
+    {
+        $rootNode = $this->context->getRootNode();
+        $rootNode->createNode('test-123')->createNode('below-123')->setProperty('testProperty', 'Vibiemme');
+        $rootNode->getNode('test-123')->createNode('also-below-123')->setProperty('testProperty', 'Vibiemme');
+        $rootNode->createNode('test-123456')->createNode('below-123456')->setProperty('testProperty', 'Vibiemme');
+        $rootNode->getNode('test-123456')->createNode('also-below-123456')->setProperty('testProperty', 'Vibiemme');
+        $this->persistenceManager->persistAll();
+    }
+
+    /**
+     * Tests findByProperties, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByPropertiesLimitsToStartingPointCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByProperties('Vibiemme', 'unstructured', $workspace, [], '/test-123');
+
+        $this->assertCount(2, $foundNodes);
+    }
+
+    /**
+     * Tests findByProperties, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByPropertiesLimitsToRootNodeCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByProperties('Vibiemme', 'unstructured', $workspace, [], '/');
+
+        $this->assertCount(4, $foundNodes);
+    }
+
+    /**
+     * Tests addParentPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByParentAndNodeTypeLimitsToStartingPointCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByParentAndNodeType('/test-123', 'unstructured', $workspace, [], false, true);
+
+        $this->assertCount(2, $foundNodes);
+    }
+
+    /**
+     * Tests addParentPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByParentAndNodeTypeLimitsToRootNodeCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByParentAndNodeType('/', 'unstructured', $workspace, [], false, true);
+
+        $this->assertCount(6, $foundNodes);
+    }
+
+    /**
+     * Tests addPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByPathWithoutReduceLimitsToStartingPointCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByPathWithoutReduce('/test-123', $workspace, false, true);
+
+        $this->assertCount(3, $foundNodes);
+    }
+
+    /**
+     * Tests addPathConstraintToQueryBuilder, see https://jira.neos.io/browse/NEOS-1849
+     *
+     * @test
+     */
+    public function findByPathWithoutReduceLimitsToRootNodeCorrectly()
+    {
+        $this->setUpNodes();
+
+        $workspace = $this->context->getWorkspace();
+        $foundNodes = $this->nodeDataRepository->findByPathWithoutReduce('/', $workspace, false, true);
+
+        $this->assertCount(7, $foundNodes);
     }
 }
