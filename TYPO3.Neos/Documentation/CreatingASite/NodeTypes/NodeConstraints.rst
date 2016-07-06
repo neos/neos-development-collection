@@ -78,3 +78,7 @@ To sum it up, the following rules apply:
 - Inheritance is taking into account, so if allowing/disallowing "Foo", the subtypes of "Foo" are automatically
   allowed/disallowed. To constraint subtypes you must be more specific for those types.
 - The default is to *always deny* (in case "*" is not specified).
+
+.. note:: Node type constraints are cached in the browser's session storage. During development, it's a good idea
+          to run `sessionStorage.clear();` in the browser console to remove the old configuration after you make
+          changes.
