@@ -43,4 +43,25 @@ class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $output = $q->getContext();
         $this->assertEquals(array($siteNode, $firstLevelNode), $output);
     }
+
+    /**
+     * @test
+     */
+    public function canEvaluateChecksForContentContext()
+    {
+        $operation = new \TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation();
+
+        $mockNode = $this->createMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+        $mockContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+        $context = array($mockNode);
+
+        $this->assertTrue($operation->canEvaluate($context), 'Must accept ContentContext');
+
+        $mockNode = $this->createMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+        $mockContext = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Service\Context::class)->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+        $context = array($mockNode);
+        $this->assertFalse($operation->canEvaluate($context), 'Must not accept Context');
+    }
 }
