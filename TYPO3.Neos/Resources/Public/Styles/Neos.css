@@ -7179,6 +7179,7 @@
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 24px;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -7211,6 +7212,7 @@
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 24px;
   cursor: pointer;
   font-size: 16px;
 }
@@ -12225,6 +12227,7 @@
 .neos.neos-module .neos-select select {
   -moz-appearance: none;
   -webkit-appearance: none;
+  -webkit-border-radius: 0px;
   -o-appearance: window;
   -moz-appearance: window;
   background-color: transparent;
@@ -12238,6 +12241,12 @@
   color: #fff;
   background-color: transparent;
   border-color: transparent;
+}
+.neos.neos-module .neos-select option {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+  background-color: #3f3f3f;
 }
 .neos.neos-module .neos-footer {
   position: sticky;
