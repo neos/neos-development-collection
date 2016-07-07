@@ -18,7 +18,8 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 /**
  * SortOperation test
  */
-class SortOperationTest extends FunctionalTestCase {
+class SortOperationTest extends FunctionalTestCase
+{
     /**
      * @var \TYPO3\TYPO3CR\Domain\Service\Context
      */
@@ -42,7 +43,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @return void
      */
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
         $workspaceRepository->add(new Workspace('live'));
@@ -65,7 +67,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @return void
      */
-    public function tearDown() {
+    public function tearDown()
+    {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', array());
     }
@@ -73,7 +76,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function callWithoutArgumentsCausesException() {
+    public function callWithoutArgumentsCausesException()
+    {
         $this->expectException('\TYPO3\Eel\FlowQuery\FlowQueryException');
         $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
@@ -83,7 +87,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function invalidSortDirectionCausesException() {
+    public function invalidSortDirectionCausesException()
+    {
         $this->expectException('\TYPO3\Eel\FlowQuery\FlowQueryException');
         $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
@@ -93,7 +98,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function sortByStringAscending() {
+    public function sortByStringAscending()
+    {
         $nodesToSort = [
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array()),
@@ -114,7 +120,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function sortByStringDescending() {
+    public function sortByStringDescending()
+    {
         $nodesToSort = [
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array()),
@@ -135,7 +142,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function sortByDateTimeAscending() {
+    public function sortByDateTimeAscending()
+    {
         $nodesToSort = [
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array()),
@@ -156,7 +164,8 @@ class SortOperationTest extends FunctionalTestCase {
     /**
      * @test
      */
-    public function sortByDateTimeDescending() {
+    public function sortByDateTimeDescending()
+    {
         $nodesToSort = [
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array()),

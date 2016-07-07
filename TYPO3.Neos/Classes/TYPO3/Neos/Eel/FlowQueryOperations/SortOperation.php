@@ -21,21 +21,22 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * "sort" operation working on TYPO3CR nodes.
  * Sorts nodes by specified node properties.
  */
-class SortOperation extends AbstractOperation {
+class SortOperation extends AbstractOperation
+{
 
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    static protected $shortName = 'sort';
+    protected static $shortName = 'sort';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    static protected $priority = 1;
+    protected static $priority = 1;
 
     /**
      * {@inheritdoc}
@@ -45,7 +46,8 @@ class SortOperation extends AbstractOperation {
      * @param mixed $context
      * @return boolean
      */
-    public function canEvaluate($context) {
+    public function canEvaluate($context)
+    {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
@@ -59,7 +61,8 @@ class SortOperation extends AbstractOperation {
      * @param array $arguments the arguments for this operation.
      * @return mixed
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments) {
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
         $nodes = $flowQuery->getContext();
 
         // Check sort property
