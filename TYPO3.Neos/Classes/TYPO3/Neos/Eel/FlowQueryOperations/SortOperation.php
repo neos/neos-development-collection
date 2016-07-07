@@ -103,7 +103,7 @@ class SortOperation extends AbstractOperation
         // Create the sort sequence
         if ($sortOrder === 'DESC') {
             arsort($sortSequence);
-        } else if ($sortOrder === 'ASC') {
+        } elseif ($sortOrder === 'ASC') {
             asort($sortSequence);
         }
 
