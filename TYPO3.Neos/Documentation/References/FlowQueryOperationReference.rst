@@ -640,3 +640,23 @@ value contained in the context are sliced with offset and length.
 
 
 
+
+.. _`FlowQuery Operation Reference: sort`:
+
+sort
+----
+
+Sort operation, working on TYPO3CR nodes. Takes two arguments:
+
+* The node property to sort by. Internal arguments can be prefixed with an
+  underscore, like in ``property()``.
+* The sort direction. Can be ``DESC`` or ``ASC``.
+
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\SortOperation
+:Priority: 1
+:Final: No
+:Returns: void
+
+
+
+
