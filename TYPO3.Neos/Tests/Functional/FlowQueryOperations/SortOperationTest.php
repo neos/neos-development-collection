@@ -75,6 +75,28 @@ class SortOperationTest extends FunctionalTestCase
 
     /**
      * @test
+     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     */
+    public function callWithoutArgumentsCausesException()
+    {
+        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
+        $operation = new SortOperation();
+        $operation->evaluate($flowQuery, []);
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     */
+    public function invalidSortDirectionCausesException()
+    {
+        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
+        $operation = new SortOperation();
+        $operation->evaluate($flowQuery, ['title', 'FOO']);
+    }
+
+    /**
+     * @test
      */
     public function sortByStringAscending()
     {
