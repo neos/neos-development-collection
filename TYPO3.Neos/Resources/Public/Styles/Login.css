@@ -3330,6 +3330,12 @@ body {
   background-attachment: fixed;
 }
 
+body,
+html,
+.neos-modal-centered {
+  height: 100%;
+}
+
 .neos {
   /* Allow for input prepend/append in search forms */
   font-family: 'Noto Sans', sans-serif;
@@ -4749,28 +4755,47 @@ body {
   -webkit-animation-timing-function: step-start;
   animation-timing-function: step-start;
 }
-.neos[style] .neos-background-image-clone {
-  position: relative;
-  right: -205px;
-  width: 330px;
-  height: 398px;
+.neos[style] .neos-login-box {
   padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.neos[style] .neos-login-box.background-image-active:before, .neos[style] .neos-login-box.background-image-active:after {
+  z-index: -1;
+  display: block;
+  position: absolute;
+  content: ' ';
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+.neos[style] .neos-login-box.background-image-active:before {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
   -webkit-filter: blur(10px);
   /* Chrome, Opera, etc. */
-  filter: url("../../Public/Images/blur.svg#blur");
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
+  filter: url("../Images/blur.svg#blur");
   /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
   filter: blur(10px);
   /* Firefox 35+, eventually all */
-}
-.neos[style] #neos-login-box {
-  background: rgba(255, 255, 255, 0.25);
   padding: 40px;
-  position: relative;
-  left: -200px;
+}
+.neos[style] .neos-login-box.background-image-active:after {
+  background: rgba(255, 255, 255, 0.25);
+}
+.neos[style] .neos-login-box-logo {
+  margin: 0 0 20px 0;
+}
+.neos[style] .neos-login-box-logo-resource {
+  margin: 0 auto 0 auto;
+  display: block;
 }
 .neos[style] input[type="text"],
 .neos[style] input[type="password"] {
@@ -4795,8 +4820,8 @@ body {
   -webkit-box-shadow: 0 0 0 50px #fff inset;
   -webkit-text-fill-color: #252525;
 }
-.neos[style] #neos-login-footer p,
-.neos[style] #neos-login-footer a {
+.neos[style] .neos-login-footer p,
+.neos[style] .neos-login-footer a {
   color: rgba(255, 255, 255, 0.75);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.75);
 }
@@ -4850,16 +4875,46 @@ body {
   -webkit-text-fill-color: #252525;
 }
 .neos .neos-modal-centered {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
   justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-height: 100vh;
 }
-.neos #neos-login-box {
+.neos .neos-login-main {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  flex: 1 0 auto;
+  width: 100%;
+}
+.neos .neos-login-box {
   background: transparent;
   border: none;
   width: 320px;
@@ -4871,26 +4926,26 @@ body {
   -moz-border-radius: none;
   border-radius: none;
 }
-.neos #neos-login-box svg {
+.neos .neos-login-box svg {
   margin: 0 auto;
   display: block;
 }
-.neos #neos-login-box header {
+.neos .neos-login-box header {
   color: #fff;
   font-size: 16px;
   margin-bottom: 16px;
   text-align: center;
 }
-.neos #neos-login-box .neos-login-body {
+.neos .neos-login-box .neos-login-body {
   padding: 0;
   overflow: visible;
 }
-.neos #neos-login-box .neos-actions {
+.neos .neos-login-box .neos-actions {
   bottom: 0;
   width: 100%;
   height: 40px;
 }
-.neos #neos-login-box .neos-actions button {
+.neos .neos-login-box .neos-actions button {
   height: 40px;
   color: #fff;
   border: none;
@@ -4906,26 +4961,26 @@ body {
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.neos #neos-login-box .neos-actions button:focus {
+.neos .neos-login-box .neos-actions button:focus {
   outline: none;
 }
-.neos #neos-login-box .neos-actions button.neos-login-btn {
+.neos .neos-login-box .neos-actions button.neos-login-btn {
   background-color: #00b5ff;
   width: 100%;
 }
-.neos #neos-login-box .neos-actions button.neos-hidden {
+.neos .neos-login-box .neos-actions button.neos-hidden {
   display: none;
 }
-.neos #neos-login-box .neos-actions button.neos-disabled {
+.neos .neos-login-box .neos-actions button.neos-disabled {
   cursor: not-allowed;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
   opacity: 0.65;
 }
-.neos #neos-login-box .neos-controls {
+.neos .neos-login-box .neos-controls {
   height: 40px;
   margin-bottom: 15px;
 }
-.neos #neos-login-box .neos-tooltip {
+.neos .neos-login-box .neos-tooltip {
   left: -4px;
   top: 0;
   width: 100%;
@@ -4933,20 +4988,20 @@ body {
   clear: both;
   float: none;
 }
-.neos #neos-login-box .neos-tooltip.neos-bottom {
+.neos .neos-login-box .neos-tooltip.neos-bottom {
   padding: 8px 0 0 0;
   margin-left: 4px;
   margin-top: -1px;
 }
-.neos #neos-login-box .neos-tooltip.neos-in {
+.neos .neos-login-box .neos-tooltip.neos-in {
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
-.neos #neos-login-box .neos-tooltip .neos-tooltip-arrow {
+.neos .neos-login-box .neos-tooltip .neos-tooltip-arrow {
   margin-left: -8px;
   border-width: 0 8px 8px 8px;
 }
-.neos #neos-login-box .neos-tooltip .neos-tooltip-inner {
+.neos .neos-login-box .neos-tooltip .neos-tooltip-inner {
   max-width: 320px;
   font-size: 13px;
   color: #fff;
@@ -4957,75 +5012,60 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-login-box .neos-tooltip-error .neos-tooltip-arrow {
+.neos .neos-login-box .neos-tooltip-error .neos-tooltip-arrow {
   border-bottom-color: #ff460d;
 }
-.neos #neos-login-box .neos-tooltip-error .neos-tooltip-inner {
+.neos .neos-login-box .neos-tooltip-error .neos-tooltip-inner {
   background-color: #ff460d;
 }
-.neos #neos-login-box .neos-tooltip-notice .neos-tooltip-arrow {
+.neos .neos-login-box .neos-tooltip-notice .neos-tooltip-arrow {
   border-bottom-color: #00a338;
 }
-.neos #neos-login-box .neos-tooltip-notice .neos-tooltip-inner {
+.neos .neos-login-box .neos-tooltip-notice .neos-tooltip-inner {
   background-color: #00a338;
 }
-.neos #neos-login-footer {
-  width: 100%;
-  position: absolute;
-  bottom: 4%;
-  padding: 0 40px;
+.neos .neos-login-footer {
+  width: 50%;
+  padding: 20px;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-login-footer p {
+.neos .neos-login-footer p {
   font-size: 12px;
   color: #535353;
   line-height: 1.3em;
   margin: 0;
 }
-.neos #neos-login-footer a {
+.neos .neos-login-footer a {
   color: #535353;
 }
-.neos #neos-login-footer a:hover {
+.neos .neos-login-footer a:hover {
   text-decoration: none;
 }
 
-@media (min-width: 320px) and (max-width: 480px) {
-  .neos .neos-background-image-clone,
-  .neos .neos-modal-centered {
-    align-items: flex-start;
-  }
-  .neos #neos-login-box {
-    top: 0;
-    margin-top: 40px;
-    margin-left: 0;
-    padding-left: 40px;
-    padding-right: 40px;
-    width: 100%;
-    height: auto;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  .neos #neos-login-footer {
-    margin-top: 40px;
-    margin-bottom: 20px;
-  }
-}
-@media (min-width: 1000px) {
-  .neos #neos-login-footer {
+@media (max-width: 1400px) {
+  .neos[style] .neos-login-footer {
     width: 70%;
-    left: 50%;
-    margin-left: -35%;
   }
 }
-@media (min-width: 1500px) {
-  .neos #neos-login-footer {
-    width: 50%;
-    left: 50%;
-    margin-left: -25%;
+@media (max-width: 1000px) {
+  .neos[style] .neos-login-footer {
+    width: 90%;
+  }
+}
+@media (max-width: 480px) {
+  .neos[style] .neos-login-box {
+    width: 100%;
+    padding: 20px;
+  }
+  .neos[style] .neos-login-footer {
+    width: 100%;
+  }
+  .neos input[type="text"],
+  .neos input[type="password"] {
+    min-width: 0;
   }
 }
