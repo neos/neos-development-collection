@@ -34,13 +34,6 @@ class SortOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @var integer
-     */
-    protected static $priority = 1;
-
-    /**
-     * {@inheritdoc}
-     *
      * We can only handle TYPO3CR Nodes.
      *
      * @param mixed $context
@@ -73,8 +66,8 @@ class SortOperation extends AbstractOperation
         }
 
         // Check sort direction
-        if (isset($arguments[1]) && !empty($arguments[1]) && in_array($arguments[1], array('ASC', 'DESC'))) {
-            $sortOrder = $arguments[1];
+        if (isset($arguments[1]) && !empty($arguments[1]) && in_array(strtolower($arguments[1]), array('asc', 'desc'))) {
+            $sortOrder = strtolower($arguments[1]);
         } else {
             throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
@@ -101,9 +94,9 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
-        if ($sortOrder === 'DESC') {
+        if ($sortOrder === 'desc') {
             arsort($sortSequence);
-        } elseif ($sortOrder === 'ASC') {
+        } elseif ($sortOrder === 'asc') {
             asort($sortSequence);
         }
 
