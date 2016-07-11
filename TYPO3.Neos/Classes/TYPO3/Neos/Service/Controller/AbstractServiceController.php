@@ -14,7 +14,6 @@ namespace TYPO3\Neos\Service\Controller;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response as HttpResponse;
-use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\RequestInterface;

@@ -14,7 +14,6 @@ namespace TYPO3\TYPO3CR\Command;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * An interface for plugins for the NodeCommandController

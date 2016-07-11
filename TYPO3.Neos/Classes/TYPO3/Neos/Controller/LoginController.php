@@ -134,6 +134,7 @@ class LoginController extends AbstractAuthenticationController
             $this->redirect('index');
         } else {
             $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
+            $this->session->putData('lastVisitedNode', null);
             $this->replaceSessionCookie($sessionId);
             $this->redirect('index', 'Backend\Backend');
         }

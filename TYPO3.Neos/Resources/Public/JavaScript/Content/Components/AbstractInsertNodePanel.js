@@ -43,6 +43,7 @@ define([
 		},
 
 		didInsertElement: function() {
+			this._super();
 			this.$().find('[data-neos-tooltip]').tooltip();
 		},
 

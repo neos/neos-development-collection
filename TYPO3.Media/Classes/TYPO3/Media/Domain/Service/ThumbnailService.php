@@ -114,6 +114,7 @@ class ThumbnailService
         if ($thumbnail === null) {
             try {
                 $thumbnail = new Thumbnail($asset, $configuration, $async);
+                $this->emitThumbnailCreated($thumbnail);
 
                 // If the thumbnail strategy failed to generate a valid thumbnail
                 if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
@@ -210,5 +211,16 @@ class ThumbnailService
         }
 
         return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
+    }
+
+    /**
+     * Signals that a thumbnail was created.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    {
     }
 }

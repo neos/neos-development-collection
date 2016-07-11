@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="kk">
+    <body>
+      <!-- general translations like button -->
+      <trans-unit id="autoPublish" xml:space="preserve">
+				<source>Auto-Publish</source>
+			<target xml:lang="kk" state="needs-translation">Auto-Publish</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="kk" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve">
+				<source>Review changes</source>
+			<target xml:lang="kk" state="needs-translation">Review changes</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="kk" state="needs-translation">Apply</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			<target xml:lang="kk" state="needs-translation">Apply changes</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="kk" state="needs-translation">Cancel</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			<target xml:lang="kk" state="needs-translation">Back</target></trans-unit>
+      <trans-unit id="choose" xml:space="preserve">
+				<source>Choose</source>
+			<target xml:lang="kk" state="needs-translation">Choose</target></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve">
+				<source>Type to search</source>
+			<target xml:lang="kk" state="needs-translation">Type to search</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="kk" state="needs-translation">Content</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+			<target xml:lang="kk" state="needs-translation">Node</target></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve">
+				<source>Content View</source>
+			<target xml:lang="kk" state="needs-translation">Content View</target></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve">
+				<source>Create after</source>
+			<target xml:lang="kk" state="needs-translation">Create after</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+			<target xml:lang="kk" state="needs-translation">Create new</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			<target xml:lang="kk" state="needs-translation">Close</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve">
+				<source>Copy</source>
+			<target xml:lang="kk" state="needs-translation">Copy</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve">
+				<source>Cut</source>
+			<target xml:lang="kk" state="needs-translation">Cut</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			<target xml:lang="kk" state="needs-translation">Delete</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve">
+				<source>Yes, delete the element</source>
+			<target xml:lang="kk" state="needs-translation">Yes, delete the element</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve">
+				<source>Delete the element</source>
+			<target xml:lang="kk" state="needs-translation">Delete the element</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve">
+				<source>Discard</source>
+			<target xml:lang="kk" state="needs-translation">Discard</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve">
+				<source>Discard changes</source>
+			<target xml:lang="kk" state="needs-translation">Discard changes</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve">
+				<source>Edit title</source>
+			<target xml:lang="kk" state="needs-translation">Edit title</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve">
+				<source>Edit / Preview</source>
+			<target xml:lang="kk" state="needs-translation">Edit / Preview</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+			<target xml:lang="kk" state="needs-translation">Hide / Unhide</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve">
+				<source>Hide</source>
+			<target xml:lang="kk" state="needs-translation">Hide</target></trans-unit>
+      <trans-unit id="unhide" xml:space="preserve">
+				<source>Unhide</source>
+			<target xml:lang="kk" state="needs-translation">Unhide</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve">
+				<source>into</source>
+			<target xml:lang="kk" state="needs-translation">into</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve">
+				<source>before</source>
+			<target xml:lang="kk" state="needs-translation">before</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve">
+				<source>after</source>
+			<target xml:lang="kk" state="needs-translation">after</target></trans-unit>
+      <trans-unit id="loading" xml:space="preserve">
+				<source>Loading</source>
+			<target xml:lang="kk" state="needs-translation">Loading</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve">
+				<source>New After</source>
+			<target xml:lang="kk" state="needs-translation">New After</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve">
+				<source>New Before</source>
+			<target xml:lang="kk" state="needs-translation">New Before</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve">
+				<source>New Into</source>
+			<target xml:lang="kk" state="needs-translation">New Into</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+			<target xml:lang="kk" state="needs-translation">Navigate</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+			<target xml:lang="kk" state="needs-translation">OK</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve">
+				<source>Page</source>
+			<target xml:lang="kk" state="needs-translation">Page</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve">
+				<source>Paste</source>
+			<target xml:lang="kk" state="needs-translation">Paste</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve">
+				<source>Paste After</source>
+			<target xml:lang="kk" state="needs-translation">Paste After</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve">
+				<source>Paste Before</source>
+			<target xml:lang="kk" state="needs-translation">Paste Before</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve">
+				<source>Paste Into</source>
+			<target xml:lang="kk" state="needs-translation">Paste Into</target></trans-unit>
+      <trans-unit id="password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="kk" state="needs-translation">Password</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			<target xml:lang="kk" state="needs-translation">Preview</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+			<target xml:lang="kk" state="needs-translation">Publish</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve">
+				<source>Publish to {0}</source>
+			<target xml:lang="kk" state="needs-translation">Publish to {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="kk" state="needs-translation">Publish all changes for current page</target></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="kk" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+				<source>Select target workspace</source>
+			<target xml:lang="kk" state="needs-translation">Select target workspace</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve">
+				<source>Publishing</source>
+			<target xml:lang="kk" state="needs-translation">Publishing</target></trans-unit>
+      <trans-unit id="published" xml:space="preserve">
+				<source>Published</source>
+			<target xml:lang="kk" state="needs-translation">Published</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve">
+				<source>Toggle publish menu</source>
+			<target xml:lang="kk" state="needs-translation">Toggle publish menu</target></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve">
+				<source>Target workspace</source>
+			<target xml:lang="kk" state="needs-translation">Target workspace</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve">
+				<source>Current workspace</source>
+			<target xml:lang="kk" state="needs-translation">Current workspace</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+			<target xml:lang="kk" state="needs-translation">Remove</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+			<target xml:lang="kk" state="needs-translation">Refresh</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="kk" state="needs-translation">Save</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve">
+				<source>Saving</source>
+			<target xml:lang="kk" state="needs-translation">Saving</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve">
+				<source>Saved</source>
+			<target xml:lang="kk" state="needs-translation">Saved</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve">
+				<source>Search</source>
+			<target xml:lang="kk" state="needs-translation">Search</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve">
+				<source>Toggle inspector</source>
+			<target xml:lang="kk" state="needs-translation">Toggle inspector</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="kk" state="needs-translation">Username</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve">
+				<source>You</source>
+			<target xml:lang="kk" state="needs-translation">You</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve">
+				<source>[no title]</source>
+			<target xml:lang="kk" state="needs-translation">[no title]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve">
+				<source>Label</source>
+			<target xml:lang="kk" state="needs-translation">Label</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve">
+				<source>Content Type</source>
+			<target xml:lang="kk" state="needs-translation">Content Type</target></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+				<source>Path</source>
+			<target xml:lang="kk" state="needs-translation">Path</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+				<source>Relative Path</source>
+			<target xml:lang="kk" state="needs-translation">Relative Path</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve">
+				<source>Version</source>
+			<target xml:lang="kk" state="needs-translation">Version</target></trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="kk" state="needs-translation">This operation cannot be undone.</target></trans-unit>
+      <trans-unit id="asset" xml:space="preserve">
+				<source>Asset</source>
+			<target xml:lang="kk" state="needs-translation">Asset</target></trans-unit>
+      <trans-unit id="created" xml:space="preserve">
+				<source>Created</source>
+			<target xml:lang="kk" state="needs-translation">Created</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve">
+				<source>Last modification</source>
+			<target xml:lang="kk" state="needs-translation">Last modification</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve">
+				<source>Last publication</source>
+			<target xml:lang="kk" state="needs-translation">Last publication</target></trans-unit>
+      <trans-unit id="identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="kk" state="needs-translation">Identifier</target></trans-unit>
+      <trans-unit id="name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="kk" state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="kk" state="needs-translation">Workspace</target></trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="kk" state="needs-translation">Structure</target></trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve">
+				<source>Toggle context structure</source>
+			<target xml:lang="kk" state="needs-translation">Toggle context structure</target></trans-unit>
+      <trans-unit id="filter" xml:space="preserve">
+				<source>Filter</source>
+			<target xml:lang="kk" state="needs-translation">Filter</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve">
+				<source>Toggle menu</source>
+			<target xml:lang="kk" state="needs-translation">Toggle menu</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve">
+				<source>Load error!</source>
+			<target xml:lang="kk" state="needs-translation">Load error!</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
+				<source>You have to select a node</source>
+			<target xml:lang="kk" state="needs-translation">You have to select a node</target></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
+				<source>The Root node cannot be deleted.</source>
+			<target xml:lang="kk" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve">
+				<source>You cannot copy this node</source>
+			<target xml:lang="kk" state="needs-translation">You cannot copy this node</target></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve">
+				<source>You cannot cut this node</source>
+			<target xml:lang="kk" state="needs-translation">You cannot cut this node</target></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve">
+				<source>Content Dimensions</source>
+			<target xml:lang="kk" state="needs-translation">Content Dimensions</target></trans-unit>
+      <trans-unit id="site" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="kk" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="kk" state="needs-translation">Document</target></trans-unit>
+      <trans-unit id="reference" xml:space="preserve">
+				<source>Reference</source>
+			<target xml:lang="kk" state="needs-translation">Reference</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve">
+				<source>Host</source>
+			<target xml:lang="kk" state="needs-translation">Host</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve">
+				<source>Scheme</source>
+			<target xml:lang="kk" state="needs-translation">Scheme</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve">
+				<source>Port</source>
+			<target xml:lang="kk" state="needs-translation">Port</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve">
+				<source>Primary</source>
+			<target xml:lang="kk" state="needs-translation">Primary</target></trans-unit>
+      <!-- node types -->
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
+				<source>General</source>
+			<target xml:lang="kk" state="needs-translation">General</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
+				<source>Structure</source>
+			<target xml:lang="kk" state="needs-translation">Structure</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
+				<source>Plugins</source>
+			<target xml:lang="kk" state="needs-translation">Plugins</target></trans-unit>
+      <!-- shortcuts -->
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+				<source>Click {0} to continue to the page.</source>
+			<target xml:lang="kk" state="needs-translation">Click {0} to continue to the page.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+				<source>Click {0} to see the file.</source>
+			<target xml:lang="kk" state="needs-translation">Click {0} to see the file.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+				<source>Click {0} to open the link.</source>
+			<target xml:lang="kk" state="needs-translation">Click {0} to open the link.</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+				<source>(no target has been selected)</source>
+			<target xml:lang="kk" state="needs-translation">(no target has been selected)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="kk" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="kk" state="needs-translation">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+      <!-- javascript -->
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
+				<source>Full Screen</source>
+			<target xml:lang="kk" state="needs-translation">Full Screen</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
+			<target xml:lang="kk" state="needs-translation">Open page in live workspace</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
+				<source>Open page in target workspace</source>
+			<target xml:lang="kk" state="needs-translation">Open page in target workspace</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve">
+				<source>Discard all</source>
+			<target xml:lang="kk" state="needs-translation">Discard all</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+				<source>Discard all changes</source>
+			<target xml:lang="kk" state="needs-translation">Discard all changes</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			<target xml:lang="kk" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve">
+				<source>Publish all</source>
+			<target xml:lang="kk" state="needs-translation">Publish all</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+				<source>Publish all changes</source>
+			<target xml:lang="kk" state="needs-translation">Publish all changes</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+				<source>Are you sure that you want to publish all changes?</source>
+			<target xml:lang="kk" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
+				<source>Pending changes</source>
+			<target xml:lang="kk" state="needs-translation">Pending changes</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
+				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
+			<target xml:lang="kk" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
+				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
+			<target xml:lang="kk" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+				<source>Editing Modes</source>
+			<target xml:lang="kk" state="needs-translation">Editing Modes</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+				<source>Preview Central</source>
+			<target xml:lang="kk" state="needs-translation">Preview Central</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+				<source>You still have changes. What do you want to do with them?</source>
+			<target xml:lang="kk" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+				<source>Selected element</source>
+			<target xml:lang="kk" state="needs-translation">Selected element</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+				<source>There are fields that are not correctly filled in.</source>
+			<target xml:lang="kk" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			<target xml:lang="kk" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+				<source>Continue editing</source>
+			<target xml:lang="kk" state="needs-translation">Continue editing</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+				<source>Throw away</source>
+			<target xml:lang="kk" state="needs-translation">Throw away</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="kk" state="needs-translation">Apply</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
+				<source>Select a Plugin</source>
+			<target xml:lang="kk" state="needs-translation">Select a Plugin</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
+				<source>No plugin configured</source>
+			<target xml:lang="kk" state="needs-translation">No plugin configured</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+				<source>view is displayed on page</source>
+			<target xml:lang="kk" state="needs-translation">view is displayed on page</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+				<source>view is displayed on current page</source>
+			<target xml:lang="kk" state="needs-translation">view is displayed on current page</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
+				<source>No date set</source>
+			<target xml:lang="kk" state="needs-translation">No date set</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
+				<source>Edit code</source>
+			<target xml:lang="kk" state="needs-translation">Edit code</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
+				<source>Paste a link, or type to search</source>
+			<target xml:lang="kk" state="needs-translation">Paste a link, or type to search</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
+				<source>Unable to load sub node types of:</source>
+			<target xml:lang="kk" state="needs-translation">Unable to load sub node types of:</target></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve">
+				<source>Change type</source>
+			<target xml:lang="kk" state="needs-translation">Change type</target></trans-unit>
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
+				<source>Additional info</source>
+			<target xml:lang="kk" state="needs-translation">Additional info</target></trans-unit>
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
+				<source>Visibility</source>
+			<target xml:lang="kk" state="needs-translation">Visibility</target></trans-unit>
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve">
+				<source>Document options</source>
+			<target xml:lang="kk" state="needs-translation">Document options</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
+				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
+			<target xml:lang="kk" state="needs-translation">The length of this text must be between {minimum} and {maximum} characters.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
+				<source>This field must contain at least {minimum} characters.</source>
+			<target xml:lang="kk" state="needs-translation">This field must contain at least {minimum} characters.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
+				<source>This text may not exceed {maximum} characters.</source>
+			<target xml:lang="kk" state="needs-translation">This text may not exceed {maximum} characters.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="kk" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
+				<source>The given subject was not countable.</source>
+			<target xml:lang="kk" state="needs-translation">The given subject was not countable.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
+				<source>The count must be between {minimum} and {maximum}.</source>
+			<target xml:lang="kk" state="needs-translation">The count must be between {minimum} and {maximum}.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
+				<source>The given value was not a valid date.</source>
+			<target xml:lang="kk" state="needs-translation">The given value was not a valid date.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
+			<target xml:lang="kk" state="needs-translation">The given date must be between {formatEarliestDate} and {formatLatestDate}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+				<source>The given date must be after {formatEarliestDate}</source>
+			<target xml:lang="kk" state="needs-translation">The given date must be after {formatEarliestDate}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+				<source>The given date must be before {formatLatestDate}</source>
+			<target xml:lang="kk" state="needs-translation">The given date must be before {formatLatestDate}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
+				<source>Please specify a valid email address.</source>
+			<target xml:lang="kk" state="needs-translation">Please specify a valid email address.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
+				<source>A valid float number is expected.</source>
+			<target xml:lang="kk" state="needs-translation">A valid float number is expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
+				<source>A valid integer number is expected.</source>
+			<target xml:lang="kk" state="needs-translation">A valid integer number is expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
+			<target xml:lang="kk" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
+				<source>This property is required.</source>
+			<target xml:lang="kk" state="needs-translation">This property is required.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
+				<source>A valid number is expected.</source>
+			<target xml:lang="kk" state="needs-translation">A valid number is expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
+				<source>Please enter a valid number between {minimum} and {maximum}</source>
+			<target xml:lang="kk" state="needs-translation">Please enter a valid number between {minimum} and {maximum}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
+				<source>The given subject did not match the pattern ({pattern})</source>
+			<target xml:lang="kk" state="needs-translation">The given subject did not match the pattern ({pattern})</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
+				<source>A valid string is expected.</source>
+			<target xml:lang="kk" state="needs-translation">A valid string is expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
+				<source>Valid text without any XML tags is expected.</source>
+			<target xml:lang="kk" state="needs-translation">Valid text without any XML tags is expected.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
+				<source>The given subject is not a valid UUID.</source>
+			<target xml:lang="kk" state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="kk" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
+				<source>Start with an empty or pre-filled document?</source>
+			<target xml:lang="kk" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			<target xml:lang="kk" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			<target xml:lang="kk" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			<target xml:lang="kk" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
+				<source>Create empty</source>
+			<target xml:lang="kk" state="needs-translation">Create empty</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
+				<source>Create and copy</source>
+			<target xml:lang="kk" state="needs-translation">Create and copy</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="kk" state="needs-translation">Content</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
+				<source>Toggle menu group</source>
+			<target xml:lang="kk" state="needs-translation">Toggle menu group</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="kk" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="kk" state="needs-translation">Do you really want to delete</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+				<source>This will delete the element</source>
+			<target xml:lang="kk" state="needs-translation">This will delete the element</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+				<source>and it's children</source>
+			<target xml:lang="kk" state="needs-translation">and it's children</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="kk" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve">
+				<source>Height</source>
+			<target xml:lang="kk" state="needs-translation">Height</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="kk" state="needs-translation">Do you really want to delete</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+				<source>this element</source>
+			<target xml:lang="kk" state="needs-translation">this element</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+				<source>This will delete the element.</source>
+			<target xml:lang="kk" state="needs-translation">This will delete the element.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="kk" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+      <trans-unit id="media" xml:space="preserve">
+				<source>Media</source>
+			<target xml:lang="kk" state="needs-translation">Media</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve">
+				<source>Crop</source>
+			<target xml:lang="kk" state="needs-translation">Crop</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve">
+				<source>Width</source>
+			<target xml:lang="kk" state="needs-translation">Width</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve">
+				<source>Missing required property: </source>
+			<target xml:lang="kk" state="needs-translation">Missing required property: </target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+			<target xml:lang="kk" state="needs-translation">Workspace</target></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve">
+				<source>Workspaces</source>
+			<target xml:lang="kk" state="needs-translation">Workspaces</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			<target xml:lang="kk" state="needs-translation">An error occurred during saving</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="kk" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			<target xml:lang="kk" state="needs-translation">Reload the backend</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			<target xml:lang="kk" state="needs-translation">Reload</target></trans-unit>
+      <!-- Edit / preview modes -->
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
+				<source>In-Place</source>
+			<target xml:lang="kk" state="needs-translation">In-Place</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
+				<source>Raw Content</source>
+			<target xml:lang="kk" state="needs-translation">Raw Content</target></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve">
+				<source>Raw Content Mode</source>
+			<target xml:lang="kk" state="needs-translation">Raw Content Mode</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
+				<source>Desktop</source>
+			<target xml:lang="kk" state="needs-translation">Desktop</target></trans-unit>
+      <!-- Login -->
+      <trans-unit id="login.index.title" xml:space="preserve">
+				<source>Login to</source>
+			<target xml:lang="kk" state="needs-translation">Login to</target></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve">
+				<source>Authenticating</source>
+			<target xml:lang="kk" state="needs-translation">Authenticating</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="kk" state="needs-translation">Logout</target></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="kk" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve">
+				<source>Your login has expired. Please log in again.</source>
+			<target xml:lang="kk" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+      <!-- Error handlers -->
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+				<source>Go to setup</source>
+			<target xml:lang="kk" state="needs-translation">Go to setup</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+				<source>Missing Homepage</source>
+			<target xml:lang="kk" state="needs-translation">Missing Homepage</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			<target xml:lang="kk" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			<target xml:lang="kk" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+				<source>Database Error</source>
+			<target xml:lang="kk" state="needs-translation">Database Error</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="kk" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="kk" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+				<source>Page Not Found</source>
+			<target xml:lang="kk" state="needs-translation">Page Not Found</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="kk" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
+				<source>Invalid NodeType</source>
+			<target xml:lang="kk" state="needs-translation">Invalid NodeType</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			<target xml:lang="kk" state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve">
+				<source>Unexpected error while creating node</source>
+			<target xml:lang="kk" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
+				<source>Unexpected error while deleting node</source>
+			<target xml:lang="kk" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve">
+				<source>Unexpected error while updating node</source>
+			<target xml:lang="kk" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve">
+				<source>Unexpected error while moving node</source>
+			<target xml:lang="kk" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve">
+				<source>Node Tree loading error.</source>
+			<target xml:lang="kk" state="needs-translation">Node Tree loading error.</target></trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="kk" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="kk" state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve">
+				<source>Nodes</source>
+			<target xml:lang="kk" state="needs-translation">Nodes</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="kk" state="needs-translation">Show</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="kk" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
+				<source>Node Properties</source>
+			<target xml:lang="kk" state="needs-translation">Node Properties</target></trans-unit>
+    </body>
+  </file>
+</xliff>
