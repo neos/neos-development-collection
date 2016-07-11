@@ -34,7 +34,14 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			// Create new instance per asset editor to avoid side effects
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>'),
+				didInsertElement: function() {
+					this.$().find('iframe').on('load', function(event) {
+						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
+							window.Typo3MediaBrowserCallbacks.onLoad(event);
+						}
+					});
+				}
 			}));
 
 			this.set('assets', Ember.A());
@@ -127,11 +134,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			var that = this;
 
-			var assetIdentifiers;
-			if (this.multiple) {
-				assetIdentifiers = $.parseJSON(value);
-			} else {
-				assetIdentifiers = [$.parseJSON(value)];
+			var assetIdentifiers = JSON.parse(value);
+			if (!this.multiple) {
+				assetIdentifiers = assetIdentifiers !== null ? [assetIdentifiers] : [];
 			}
 
 			if (assetIdentifiers.length > 0) {

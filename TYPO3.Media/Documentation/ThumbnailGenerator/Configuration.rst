@@ -21,6 +21,17 @@ You can change the priority (higher is better) for an existing Generator, by edi
           'TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
             priority: 100
 
+Disabling an existing Generator
+-------------------------------
+
+To disable an existing Generator use the ``disable`` configuration option for the desired Generator::
+
+    TYPO3:
+      Media:
+        thumbnailGenerators:
+          'TYPO3\Media\Domain\Model\ThumbnailGenerator\IconThumbnailGenerator':
+            disable: true
+
 Specific configuration
 ======================
 

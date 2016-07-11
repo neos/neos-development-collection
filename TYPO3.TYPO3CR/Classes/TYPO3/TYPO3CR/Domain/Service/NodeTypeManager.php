@@ -14,7 +14,6 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Utility\Environment;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
 use TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException;

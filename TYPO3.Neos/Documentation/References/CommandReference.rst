@@ -1,7 +1,7 @@
-.. _`Neos Command Reference`:
+.. _`Command Reference`:
 
-Neos Command Reference
-======================
+Command Reference
+=================
 
 .. note:
 
@@ -19,16 +19,16 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-10-09
+The following reference was automatically generated from code on 2016-06-07
 
 
-.. _`Neos Command Reference: TYPO3.FLOW`:
+.. _`Command Reference: TYPO3.FLOW`:
 
 Package *TYPO3.FLOW*
 --------------------
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:cache:flush`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:cache:flush`:
 
 ``typo3.flow:cache:flush``
 **************************
@@ -67,7 +67,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:cache:flushone`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:cache:flushone`:
 
 ``typo3.flow:cache:flushone``
 *****************************
@@ -102,7 +102,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:cache:warmup`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:cache:warmup`:
 
 ``typo3.flow:cache:warmup``
 ***************************
@@ -127,7 +127,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:configuration:generateschema`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:configuration:generateschema`:
 
 ``typo3.flow:configuration:generateschema``
 *******************************************
@@ -154,7 +154,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:configuration:listtypes`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:configuration:listtypes`:
 
 ``typo3.flow:configuration:listtypes``
 **************************************
@@ -169,7 +169,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:configuration:show`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:configuration:show`:
 
 ``typo3.flow:configuration:show``
 *********************************
@@ -195,7 +195,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:configuration:validate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:configuration:validate`:
 
 ``typo3.flow:configuration:validate``
 *************************************
@@ -227,7 +227,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:core:migrate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:core:migrate`:
 
 ``typo3.flow:core:migrate``
 ***************************
@@ -273,7 +273,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:core:setfilepermissions`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:core:setfilepermissions`:
 
 ``typo3.flow:core:setfilepermissions``
 **************************************
@@ -299,7 +299,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:core:shell`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:core:shell`:
 
 ``typo3.flow:core:shell``
 *************************
@@ -316,7 +316,7 @@ additionally supports autocompletion and a user-based command history.
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:database:setcharset`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:database:setcharset`:
 
 ``typo3.flow:database:setcharset``
 **********************************
@@ -369,7 +369,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:create`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:create`:
 
 ``typo3.flow:doctrine:create``
 ******************************
@@ -401,7 +401,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:dql`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:dql`:
 
 ``typo3.flow:doctrine:dql``
 ***************************
@@ -430,7 +430,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:entitystatus`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:entitystatus`:
 
 ``typo3.flow:doctrine:entitystatus``
 ************************************
@@ -449,6 +449,8 @@ Options
 
 ``--dump-mapping-data``
   If set, the mapping data will be output
+``--entity-class-name``
+  If given, the mapping data for just this class will be output
 
 
 
@@ -460,7 +462,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrate`:
 
 ``typo3.flow:doctrine:migrate``
 *******************************
@@ -496,11 +498,11 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationexecute`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationexecute`:
 
 ``typo3.flow:doctrine:migrationexecute``
 ****************************************
@@ -539,11 +541,11 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationgenerate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationgenerate`:
 
 ``typo3.flow:doctrine:migrationgenerate``
 *****************************************
@@ -552,8 +554,15 @@ Related commands
 
 If $diffAgainstCurrent is TRUE (the default), it generates a migration file
 with the diff between current DB structure and the found mapping metadata.
-
 Otherwise an empty migration skeleton is generated.
+
+Only includes tables/sequences matching the $filterExpression regexp when
+diffing models and existing schema. Include delimiters in the expression!
+The use of
+
+--filter-expression '/^acme_com/'
+
+would only create a migration touching tables starting with "acme_com".
 
 
 
@@ -562,6 +571,8 @@ Options
 
 ``--diff-against-current``
   Whether to base the migration on the current schema structure
+``--filter-expression``
+  Only include tables/sequences matching the filter expression regexp
 
 
 
@@ -575,11 +586,11 @@ Related commands
 ``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationstatus`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationstatus`:
 
 ``typo3.flow:doctrine:migrationstatus``
 ***************************************
@@ -590,6 +601,14 @@ Displays the migration configuration as well as the number of
 available, executed and pending migrations.
 
 
+
+Options
+^^^^^^^
+
+``--show-migrations``
+  Output a list of all migrations and their status
+``--show-descriptions``
+  Show descriptions for the migrations (enables versions display)
 
 
 
@@ -603,16 +622,16 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationversion`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationversion`:
 
 ``typo3.flow:doctrine:migrationversion``
 ****************************************
 
-**Mark/unmark a migration as migrated**
+**Mark/unmark migrations as migrated**
 
 If *all* is given as version, all available migrations are marked
 as requested.
@@ -649,7 +668,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:update`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:update`:
 
 ``typo3.flow:doctrine:update``
 ******************************
@@ -682,7 +701,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:doctrine:validate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:doctrine:validate`:
 
 ``typo3.flow:doctrine:validate``
 ********************************
@@ -708,7 +727,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:help:help`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:help:help`:
 
 ``typo3.flow:help:help``
 ************************
@@ -730,7 +749,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:activate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:activate`:
 
 ``typo3.flow:package:activate``
 *******************************
@@ -757,7 +776,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:create`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:create`:
 
 ``typo3.flow:package:create``
 *****************************
@@ -791,7 +810,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:deactivate`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:deactivate`:
 
 ``typo3.flow:package:deactivate``
 *********************************
@@ -818,7 +837,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:delete`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:delete`:
 
 ``typo3.flow:package:delete``
 *****************************
@@ -839,7 +858,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:freeze`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:freeze`:
 
 ``typo3.flow:package:freeze``
 *****************************
@@ -879,7 +898,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:list`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:list`:
 
 ``typo3.flow:package:list``
 ***************************
@@ -903,7 +922,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:refreeze`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:refreeze`:
 
 ``typo3.flow:package:refreeze``
 *******************************
@@ -938,7 +957,22 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:package:unfreeze`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:rescan`:
+
+``typo3.flow:package:rescan``
+*****************************
+
+**Rescan package availability and recreates the PackageStates configuration.**
+
+
+
+
+
+
+
+
+
+.. _`Command Reference: TYPO3.FLOW typo3.flow:package:unfreeze`:
 
 ``typo3.flow:package:unfreeze``
 *******************************
@@ -972,7 +1006,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:resource:clean`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:resource:clean`:
 
 ``typo3.flow:resource:clean``
 *****************************
@@ -994,7 +1028,7 @@ This command will ask you interactively what to do before deleting anything.
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:resource:copy`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:resource:copy`:
 
 ``typo3.flow:resource:copy``
 ****************************
@@ -1029,7 +1063,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:resource:publish`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:resource:publish`:
 
 ``typo3.flow:resource:publish``
 *******************************
@@ -1051,7 +1085,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:routing:getpath`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:routing:getpath`:
 
 ``typo3.flow:routing:getpath``
 ******************************
@@ -1085,7 +1119,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:routing:list`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:routing:list`:
 
 ``typo3.flow:routing:list``
 ***************************
@@ -1100,7 +1134,7 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:routing:routepath`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:routing:routepath`:
 
 ``typo3.flow:routing:routepath``
 ********************************
@@ -1128,7 +1162,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:routing:show`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:routing:show`:
 
 ``typo3.flow:routing:show``
 ***************************
@@ -1149,7 +1183,34 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:security:importprivatekey`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:generatekeypair`:
+
+``typo3.flow:security:generatekeypair``
+***************************************
+
+**Generate a public/private key pair and add it to the RSAWalletService**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--used-for-passwords``
+  If the private key should be used for passwords
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:security:importprivatekey``
+  Import a private key
+
+
+
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:importprivatekey`:
 
 ``typo3.flow:security:importprivatekey``
 ****************************************
@@ -1159,6 +1220,20 @@ Arguments
 Read a PEM formatted private key from stdin and import it into the
 RSAWalletService. The public key will be automatically extracted and stored
 together with the private key as a key pair.
+
+You can generate the same fingerprint returned from this using these commands:
+
+ssh-keygen -yf my-key.pem > my-key.pub
+ssh-keygen -lf my-key.pub
+
+To create a private key to import using this method, you can use:
+
+ssh-keygen -t rsa -f my-key
+./flow security:importprivatekey < my-key
+
+Again, the fingerprint can also be generated using:
+
+ssh-keygen -lf my-key.pub
 
 
 
@@ -1175,10 +1250,12 @@ Related commands
 
 ``typo3.flow:security:importpublickey``
   Import a public key
+``typo3.flow:security:generatekeypair``
+  Generate a public/private key pair and add it to the RSAWalletService
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:security:importpublickey`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:importpublickey`:
 
 ``typo3.flow:security:importpublickey``
 ***************************************
@@ -1200,7 +1277,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:security:showeffectivepolicy`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:showeffectivepolicy`:
 
 ``typo3.flow:security:showeffectivepolicy``
 *******************************************
@@ -1227,7 +1304,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:security:showmethodsforprivilegetarget`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:showmethodsforprivilegetarget`:
 
 ``typo3.flow:security:showmethodsforprivilegetarget``
 *****************************************************
@@ -1250,7 +1327,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:security:showunprotectedactions`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:security:showunprotectedactions`:
 
 ``typo3.flow:security:showunprotectedactions``
 **********************************************
@@ -1265,7 +1342,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:server:run`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:server:run`:
 
 ``typo3.flow:server:run``
 *************************
@@ -1292,7 +1369,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.FLOW typo3.flow:typeconverter:list`:
+.. _`Command Reference: TYPO3.FLOW typo3.flow:typeconverter:list`:
 
 ``typo3.flow:typeconverter:list``
 *********************************
@@ -1308,13 +1385,13 @@ source type first and target type second.
 
 
 
-.. _`Neos Command Reference: TYPO3.FLUID`:
+.. _`Command Reference: TYPO3.FLUID`:
 
 Package *TYPO3.FLUID*
 ---------------------
 
 
-.. _`Neos Command Reference: TYPO3.FLUID typo3.fluid:documentation:generatexsd`:
+.. _`Command Reference: TYPO3.FLUID typo3.fluid:documentation:generatexsd`:
 
 ``typo3.fluid:documentation:generatexsd``
 *****************************************
@@ -1347,13 +1424,13 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART`:
+.. _`Command Reference: TYPO3.KICKSTART`:
 
 Package *TYPO3.KICKSTART*
 -------------------------
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:actioncontroller`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:actioncontroller`:
 
 ``typo3.kickstart:kickstart:actioncontroller``
 **********************************************
@@ -1412,7 +1489,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:commandcontroller`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:commandcontroller`:
 
 ``typo3.kickstart:kickstart:commandcontroller``
 ***********************************************
@@ -1448,7 +1525,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:documentation`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:documentation`:
 
 ``typo3.kickstart:kickstart:documentation``
 *******************************************
@@ -1469,7 +1546,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:model`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:model`:
 
 ``typo3.kickstart:kickstart:model``
 ***********************************
@@ -1506,7 +1583,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:package`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:package`:
 
 ``typo3.kickstart:kickstart:package``
 *************************************
@@ -1536,7 +1613,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:repository`:
+.. _`Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:repository`:
 
 ``typo3.kickstart:kickstart:repository``
 ****************************************
@@ -1571,28 +1648,61 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.MEDIA`:
+.. _`Command Reference: TYPO3.MEDIA`:
 
 Package *TYPO3.MEDIA*
 ---------------------
 
 
-.. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:clearthumbnails`:
+.. _`Command Reference: TYPO3.MEDIA typo3.media:media:clearthumbnails`:
 
 ``typo3.media:media:clearthumbnails``
 *************************************
 
-**Remove all thumbnail objects and resources**
+**Remove thumbnails**
+
+Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
+matching a specific thumbnail preset configuration.
+
+
+
+Options
+^^^^^^^
+
+``--preset``
+  Preset name, if provided only thumbnails matching that preset are cleared
 
 
 
 
 
+.. _`Command Reference: TYPO3.MEDIA typo3.media:media:createthumbnails`:
+
+``typo3.media:media:createthumbnails``
+**************************************
+
+**Create thumbnails**
+
+Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
+thumbnails for a specific thumbnail preset configuration.
+
+Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+
+
+
+Options
+^^^^^^^
+
+``--preset``
+  Preset name, if not provided thumbnails are created for all presets
+``--async``
+  Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
 
 
 
 
-.. _`Neos Command Reference: TYPO3.MEDIA typo3.media:media:importresources`:
+
+.. _`Command Reference: TYPO3.MEDIA typo3.media:media:importresources`:
 
 ``typo3.media:media:importresources``
 *************************************
@@ -1615,13 +1725,35 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS`:
+.. _`Command Reference: TYPO3.MEDIA typo3.media:media:renderthumbnails`:
+
+``typo3.media:media:renderthumbnails``
+**************************************
+
+**Render ungenerated thumbnails**
+
+Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
+thumbnails to be rendered to avoid memory exhaustion.
+
+
+
+Options
+^^^^^^^
+
+``--limit``
+  Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+
+
+
+
+
+.. _`Command Reference: TYPO3.NEOS`:
 
 Package *TYPO3.NEOS*
 --------------------
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:activate`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:activate`:
 
 ``typo3.neos:domain:activate``
 ******************************
@@ -1642,7 +1774,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:add`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:add`:
 
 ``typo3.neos:domain:add``
 *************************
@@ -1661,11 +1793,19 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--scheme``
+  The scheme for linking (http/https)
+``--port``
+  The port for linking (0-49151)
 
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:deactivate`:
+
+.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:deactivate`:
 
 ``typo3.neos:domain:deactivate``
 ********************************
@@ -1686,7 +1826,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:delete`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:delete`:
 
 ``typo3.neos:domain:delete``
 ****************************
@@ -1707,7 +1847,7 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:domain:list`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:list`:
 
 ``typo3.neos:domain:list``
 **************************
@@ -1728,12 +1868,12 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:export`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:site:export`:
 
 ``typo3.neos:site:export``
 **************************
 
-**Export sites content**
+**Export sites content (e.g. site:export --package-key &quot;Neos.Demo&quot;)**
 
 This command exports all or one specific site with all its content into an XML format.
 
@@ -1766,7 +1906,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:import`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:site:import`:
 
 ``typo3.neos:site:import``
 **************************
@@ -1796,7 +1936,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:list`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:site:list`:
 
 ``typo3.neos:site:list``
 ************************
@@ -1811,7 +1951,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:site:prune`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:site:prune`:
 
 ``typo3.neos:site:prune``
 *************************
@@ -1832,7 +1972,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:activate`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:activate`:
 
 ``typo3.neos:user:activate``
 ****************************
@@ -1863,7 +2003,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:addrole`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:addrole`:
 
 ``typo3.neos:user:addrole``
 ***************************
@@ -1899,7 +2039,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:create`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:create`:
 
 ``typo3.neos:user:create``
 **************************
@@ -1943,7 +2083,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:deactivate`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:deactivate`:
 
 ``typo3.neos:user:deactivate``
 ******************************
@@ -1974,7 +2114,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:delete`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:delete`:
 
 ``typo3.neos:user:delete``
 **************************
@@ -2011,7 +2151,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:list`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:list`:
 
 ``typo3.neos:user:list``
 ************************
@@ -2026,7 +2166,7 @@ This command lists all existing Neos users.
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:removerole`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:removerole`:
 
 ``typo3.neos:user:removerole``
 ******************************
@@ -2059,7 +2199,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:setpassword`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:setpassword`:
 
 ``typo3.neos:user:setpassword``
 *******************************
@@ -2092,7 +2232,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:user:show`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:user:show`:
 
 ``typo3.neos:user:show``
 ************************
@@ -2124,7 +2264,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:create`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:create`:
 
 ``typo3.neos:workspace:create``
 *******************************
@@ -2150,12 +2290,14 @@ Options
   Human friendly title of the workspace, for example "Christmas Campaign
 ``--description``
   A description explaining the purpose of the new workspace
+``--owner``
+  The identifier of a User to own the workspace
 
 
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:delete`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:delete`:
 
 ``typo3.neos:workspace:delete``
 *******************************
@@ -2189,7 +2331,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:discard`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:discard`:
 
 ``typo3.neos:workspace:discard``
 ********************************
@@ -2218,7 +2360,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:discardall`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:discardall`:
 
 ``typo3.neos:workspace:discardall``
 ***********************************
@@ -2251,7 +2393,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:list`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:list`:
 
 ``typo3.neos:workspace:list``
 *****************************
@@ -2266,7 +2408,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:publish`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:publish`:
 
 ``typo3.neos:workspace:publish``
 ********************************
@@ -2298,7 +2440,7 @@ Options
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:publishall`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:publishall`:
 
 ``typo3.neos:workspace:publishall``
 ***********************************
@@ -2331,7 +2473,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.NEOS typo3.neos:workspace:rebase`:
+.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:rebase`:
 
 ``typo3.neos:workspace:rebase``
 *******************************
@@ -2356,13 +2498,42 @@ Arguments
 
 
 
-.. _`Neos Command Reference: TYPO3.TYPO3CR`:
+.. _`Command Reference: TYPO3.NEOS.KICKSTARTER`:
+
+Package *TYPO3.NEOS.KICKSTARTER*
+--------------------------------
+
+
+.. _`Command Reference: TYPO3.NEOS.KICKSTARTER typo3.neos.kickstarter:kickstart:site`:
+
+``typo3.neos.kickstarter:kickstart:site``
+*****************************************
+
+**Kickstart a new site package**
+
+This command generates a new site package with basic TypoScript and Sites.xml
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The packageKey for your site
+``--site-name``
+  The siteName of your site
+
+
+
+
+
+
+
+.. _`Command Reference: TYPO3.TYPO3CR`:
 
 Package *TYPO3.TYPO3CR*
 -----------------------
 
 
-.. _`Neos Command Reference: TYPO3.TYPO3CR typo3.typo3cr:node:autocreatechildnodes`:
+.. _`Command Reference: TYPO3.TYPO3CR typo3.typo3cr:node:autocreatechildnodes`:
 
 ``typo3.typo3cr:node:autocreatechildnodes``
 *******************************************
@@ -2397,7 +2568,7 @@ Related commands
 
 
 
-.. _`Neos Command Reference: TYPO3.TYPO3CR typo3.typo3cr:node:repair`:
+.. _`Command Reference: TYPO3.TYPO3CR typo3.typo3cr:node:repair`:
 
 ``typo3.typo3cr:node:repair``
 *****************************

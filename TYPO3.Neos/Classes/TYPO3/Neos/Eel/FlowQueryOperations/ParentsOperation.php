@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Eel\FlowQueryOperations;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -45,7 +46,7 @@ class ParentsOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface) && ($context[0]->getContext() instanceof ContentContext));
     }
 
     /**

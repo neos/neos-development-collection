@@ -53,7 +53,7 @@ class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function invalidOptionsTests(array $options)
     {
         $validator = new \TYPO3\Media\Validator\ImageOrientationValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
         $validator->validate($image);
     }
 
@@ -81,7 +81,7 @@ class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function validatorTests(array $options, $imageOrientation, $isValid)
     {
         $validator = new \TYPO3\Media\Validator\ImageOrientationValidator($options);
-        $image = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
         $image->expects($this->any())->method('getOrientation')->will($this->returnValue($imageOrientation));
 
         $validationResult = $validator->validate($image);
