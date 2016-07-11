@@ -11,7 +11,6 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
-
 use TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\ArrayConverter;

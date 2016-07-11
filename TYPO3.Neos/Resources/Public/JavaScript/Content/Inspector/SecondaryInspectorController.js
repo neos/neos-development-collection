@@ -62,6 +62,9 @@ function(Ember, Button) {
 		 * Always hide the given view class
 		 */
 		hide: function() {
+			if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.close) {
+				window.Typo3MediaBrowserCallbacks.close();
+			}
 			this.set('_visible', false);
 		}
 	}).create();

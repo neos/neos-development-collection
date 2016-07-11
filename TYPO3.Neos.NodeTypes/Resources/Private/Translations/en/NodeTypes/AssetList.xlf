@@ -11,6 +11,9 @@
 			<trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
 			</trans-unit>
+			<trans-unit id="content.emptyAssetList" xml:space="preserve">
+				<source>Empty asset list</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

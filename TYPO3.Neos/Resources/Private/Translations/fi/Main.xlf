@@ -546,7 +546,7 @@
 			<target xml:lang="fi">Leveys</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target xml:lang="fi">Vaadittu ominaisuus puuttuu: </target><alt-trans><target xml:lang="fi">Vaadittu ominaisuus puuttuu:</target></alt-trans></trans-unit>
+			<target xml:lang="fi">Vaadittu ominaisuus puuttuu: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
 			<target xml:lang="fi">Työtila</target></trans-unit>

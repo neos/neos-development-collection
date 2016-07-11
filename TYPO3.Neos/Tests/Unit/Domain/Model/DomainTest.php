@@ -32,7 +32,7 @@ class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setSiteSetsTheSiteTheDomainIsPointingTo()
     {
-        $mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', false);
+        $mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 
         $domain = new \TYPO3\Neos\Domain\Model\Domain;
         $domain->setSite($mockSite);

@@ -11,6 +11,9 @@
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
 			<target xml:lang="la-LA">crwdns318:0crwdne318:0</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve">
+				<source>No references selected</source>
+			<target xml:lang="la-LA">crwdns773:0crwdne773:0</target></trans-unit>
     </body>
   </file>
 </xliff>

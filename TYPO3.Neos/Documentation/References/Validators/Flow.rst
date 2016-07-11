@@ -3,7 +3,25 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-07
+
+
+.. _`Flow Validator Reference: AggregateBoundaryValidator`:
+
+AggregateBoundaryValidator
+--------------------------
+
+A validator which will not validate Aggregates that are lazy loaded and uninitialized.
+Validation over Aggregate Boundaries can hence be forced by making the relation to
+other Aggregate Roots eager loaded.
+
+Note that this validator is not part of the public API and you should not use it manually.
+
+Checks if the given value is valid according to the property validators.
+
+.. note:: A value of NULL or an empty string ('') is considered valid
+
+
 
 
 .. _`Flow Validator Reference: AlphanumericValidator`:
@@ -63,6 +81,8 @@ Arguments
 *********
 
 * ``elementValidator`` (string, *optional*): The validator type to use for the collection elements
+
+* ``elementValidatorOptions`` (array, *optional*): The validator options to use for the collection elements
 
 * ``elementType`` (string, *optional*): The type of the elements in the collection
 

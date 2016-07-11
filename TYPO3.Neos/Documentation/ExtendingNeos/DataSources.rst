@@ -35,7 +35,7 @@ Then implement the ``getData`` method, with the following signature:
 
 The return value of the method will be JSON encoded.
 
-Data sources are available with the following URI pattern ``/neos/data-source/<identifier>``, which can be linked to
+Data sources are available with the following URI pattern ``/neos/service/data-source/<identifier>``, which can be linked to
 using the follow parameters:
 
 - ``@package``:    'TYPO3.Neos'

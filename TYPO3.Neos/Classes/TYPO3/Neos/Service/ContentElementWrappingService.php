@@ -12,12 +12,9 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
+use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
@@ -31,18 +28,6 @@ use TYPO3\TYPO3CR\Service\AuthorizationService;
  */
 class ContentElementWrappingService
 {
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -63,86 +48,171 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var EntityToIdentityConverter
+     * @var NodePropertyConverterService
      */
-    protected $entityToIdentityConverter;
+    protected $nodePropertyConverterService;
 
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
      * @param NodeInterface $node
-     * @param string $typoScriptPath
      * @param string $content
-     * @param boolean $renderCurrentDocumentMetadata When this flag is set we will render the global metadata for the current document
+     * @param string $typoScriptPath
      * @return string
      */
-    public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content, $renderCurrentDocumentMetadata = false)
+    public function wrapContentObject(NodeInterface $node, $content, $typoScriptPath)
     {
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
+        if ($this->needsMetadata($node, false) === false) {
             return $content;
         }
-        $nodeType = $node->getNodeType();
-        $attributes = array();
-        $attributes['typeof'] = 'typo3:' . $nodeType->getName();
-        $attributes['about'] = $node->getContextPath();
 
-        $classNames = array();
-        if ($renderCurrentDocumentMetadata === true) {
-            $attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
-            $attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
-            // Add the workspace of the TYPO3CR context to the attributes
-            $attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
-            $attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
+        $attributes = [];
+        $attributes['data-node-__typoscript-path'] = $typoScriptPath;
+        $attributes['tabindex'] = 0;
+        $attributes = $this->addGenericEditingMetadata($attributes, $node);
+        $attributes = $this->addNodePropertyAttributes($attributes, $node);
+        $attributes = $this->addCssClasses($attributes, $node, $this->collectEditingClassNames($node));
 
-            if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-                $attributes['data-node-__read-only'] = 'true';
-                $attributes['data-nodedatatype-__read-only'] = 'boolean';
-            }
-        } else {
-            if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-                return $content;
-            }
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', array('typeof'));
+    }
 
-
-            if ($node->isRemoved()) {
-                $classNames[] = 'neos-contentelement-removed';
-            }
-
-            if ($node->isHidden()) {
-                $classNames[] = 'neos-contentelement-hidden';
-            }
-
-            if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
-                $attributes['rel'] = 'typo3:content-collection';
-                // This is needed since the backend relies on this class (should not be necessary)
-                $classNames[] = 'neos-contentcollection';
-            } else {
-                $classNames[] = 'neos-contentelement';
-            }
-
-            $uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
-            if ((isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== true) || (!isset($uiConfiguration['inlineEditable']) && !$this->hasInlineEditableProperties($node))) {
-                $classNames[] = 'neos-not-inline-editable';
-            }
-
-            $attributes['tabindex'] = 0;
+    /**
+     * @param NodeInterface $node
+     * @param string $content
+     * @param string $typoScriptPath
+     * @return string
+     */
+    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $typoScriptPath)
+    {
+        if ($this->needsMetadata($node, true) === false) {
+            return $content;
         }
 
+        $attributes = [];
+        $attributes['data-node-__typoscript-path'] = $typoScriptPath;
+        $attributes = $this->addGenericEditingMetadata($attributes, $node);
+        $attributes = $this->addNodePropertyAttributes($attributes, $node);
+        $attributes = $this->addDocumentMetadata($attributes, $node);
+        $attributes = $this->addCssClasses($attributes, $node, []);
+
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
+    }
+
+    /**
+     * Adds node properties to the given $attributes collection and returns the extended array
+     *
+     * @param array $attributes
+     * @param NodeInterface $node
+     * @return array the merged attributes
+     */
+    protected function addNodePropertyAttributes(array $attributes, NodeInterface $node)
+    {
+        foreach (array_keys($node->getNodeType()->getProperties()) as $propertyName) {
+            $attributes = array_merge($attributes, $this->renderNodePropertyAttribute($node, $propertyName));
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Renders data attributes needed for the given node property.
+     *
+     * @param NodeInterface $node
+     * @param string $propertyName
+     * @return array
+     */
+    protected function renderNodePropertyAttribute(NodeInterface $node, $propertyName)
+    {
+        $attributes = [];
+        /** @var $contentContext ContentContext */
+        $contentContext = $node->getContext();
+        // skip the node name of the site node - TODO: Why do we need this?
+        if ($propertyName === '_name' && $node === $contentContext->getCurrentSiteNode()) {
+            return $attributes;
+        }
+
+        $dataType = $node->getNodeType()->getPropertyType($propertyName);
+        $dasherizedPropertyName = $this->dasherize($propertyName);
+
+        $propertyValue = $this->nodePropertyConverterService->getProperty($node, $propertyName);
+        $propertyValue = $propertyValue === null ? '' : $propertyValue;
+        $propertyValue = !is_string($propertyValue) ? json_encode($propertyValue) : $propertyValue;
+
+        if ($dataType !== 'string') {
+            $attributes['data-nodedatatype-' . $dasherizedPropertyName] = 'xsd:' . $dataType;
+        }
+
+        $attributes['data-node-' . $dasherizedPropertyName] = $propertyValue;
+
+        return $attributes;
+    }
+
+    /**
+     * Add required CSS classes to the attributes.
+     *
+     * @param array $attributes
+     * @param NodeInterface $node
+     * @param array $initialClasses
+     * @return array
+     */
+    protected function addCssClasses(array $attributes, NodeInterface $node, array $initialClasses = [])
+    {
+        $classNames = $initialClasses;
+        // FIXME: The `dimensionsAreMatchingTargetDimensionValues` method should become part of the NodeInterface if it is used here .
         if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
             $classNames[] = 'neos-contentelement-shine-through';
         }
 
-        if (count($classNames) > 0) {
+        if ($classNames !== []) {
             $attributes['class'] = implode(' ', $classNames);
         }
 
-        // Add the actual workspace of the node, the node identifier and the TypoScript path to the attributes
+        return $attributes;
+    }
+
+    /**
+     * Collects metadata for the Neos backend specifically for document nodes.
+     *
+     * @param array $attributes
+     * @param NodeInterface $node
+     * @return array
+     */
+    protected function addDocumentMetadata(array $attributes, NodeInterface $node)
+    {
+        /** @var ContentContext $contentContext */
+        $contentContext = $node->getContext();
+        $attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
+        $attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
+        // Add the workspace of the content repository context to the attributes
+        $attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
+        $attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
+
+        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+            $attributes['data-node-__read-only'] = 'true';
+            $attributes['data-nodedatatype-__read-only'] = 'boolean';
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Collects metadata attributes used to allow editing of the node in the Neos backend.
+     *
+     * @param array $attributes
+     * @param NodeInterface $node
+     * @return array
+     */
+    protected function addGenericEditingMetadata(array $attributes, NodeInterface $node)
+    {
+        $attributes['typeof'] = 'typo3:' . $node->getNodeType()->getName();
+        $attributes['about'] = $node->getContextPath();
         $attributes['data-node-_identifier'] = $node->getIdentifier();
         $attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
-        $attributes['data-node-__typoscript-path'] = $typoScriptPath;
         $attributes['data-node-__label'] = $node->getLabel();
+
+        if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+            $attributes['rel'] = 'typo3:content-collection';
+        }
 
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints
         // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
@@ -162,145 +232,79 @@ class ContentElementWrappingService
             $attributes['data-node-__grandparent-node-type'] = $node->getParent()->getParent()->getNodeType()->getName();
         }
 
-        $attributes = $this->addNodePropertyAttributes($node, $attributes);
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', array('typeof'));
-    }
-
-    /**
-     * Adds node properties to the given $attributes collection and returns the extended array
-     *
-     * @param NodeInterface $node
-     * @param array $attributes
-     * @return array the merged attributes
-     */
-    public function addNodePropertyAttributes(NodeInterface $node, array $attributes)
-    {
-        foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {
-            if (substr($propertyName, 0, 2) === '__') {
-                // skip fully-private properties
-                continue;
-            }
-            /** @var $contentContext ContentContext */
-            $contentContext = $node->getContext();
-            if ($propertyName === '_name' && $node === $contentContext->getCurrentSiteNode()) {
-                // skip the node name of the site node
-                continue;
-            }
-            // Serialize objects to JSON strings
-            $dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
-            $dasherizedPropertyName = $this->dasherize($propertyName);
-            $attributes['data-node-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
-            if ($dataType !== 'string') {
-                $prefixedDataType = $dataType === 'jsonEncoded' ? 'typo3:jsonEncoded' : 'xsd:' . $dataType;
-                $attributes['data-nodedatatype-' . $dasherizedPropertyName] = $prefixedDataType;
-            }
-        }
         return $attributes;
     }
 
     /**
-     * TODO This implementation is directly linked to the inspector editors, since they need the actual values,
-     * this should change to use TypeConverters
+     * Collects CSS class names used for styling editable elements in the Neos backend.
      *
      * @param NodeInterface $node
-     * @param string $propertyName
-     * @param string $dataType
-     * @return string
+     * @return array
      */
-    protected function getNodeProperty(NodeInterface $node, $propertyName, &$dataType)
+    protected function collectEditingClassNames(NodeInterface $node)
     {
-        if (substr($propertyName, 0, 1) === '_') {
-            $propertyValue = ObjectAccess::getProperty($node, substr($propertyName, 1));
+        $classNames = [];
+
+        if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+            // This is needed since the backend relies on this class (should not be necessary)
+            $classNames[] = 'neos-contentcollection';
         } else {
-            $propertyValue = $node->getProperty($propertyName);
+            $classNames[] = 'neos-contentelement';
         }
 
-        // Enforce an integer value for integer properties as otherwise javascript will give NaN and VIE converts it to an array containing 16 times 'NaN'
-        if ($dataType === 'integer') {
-            $propertyValue = (integer)$propertyValue;
+        if ($node->isRemoved()) {
+            $classNames[] = 'neos-contentelement-removed';
         }
 
-        // Serialize boolean values to String
-        if ($dataType === 'boolean') {
-            return $propertyValue ? 'true' : 'false';
+        if ($node->isHidden()) {
+            $classNames[] = 'neos-contentelement-hidden';
         }
 
-        // Serialize array values to String
-        if ($dataType === 'array') {
-            return $propertyValue ? json_encode($propertyValue, JSON_UNESCAPED_UNICODE) : null;
+        if ($this->isInlineEditable($node) === false) {
+            $classNames[] = 'neos-not-inline-editable';
         }
 
-        // Serialize date values to String
-        if ($dataType === 'DateTime') {
-            if (!$propertyValue instanceof \DateTimeInterface) {
-                return '';
-            }
-            $value = clone $propertyValue;
-            return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C);
-        }
-
-        // Serialize node references to node identifiers
-        if ($dataType === 'references') {
-            $nodeIdentifiers = array();
-            if (is_array($propertyValue)) {
-                /** @var $subNode NodeInterface */
-                foreach ($propertyValue as $subNode) {
-                    $nodeIdentifiers[] = $subNode->getIdentifier();
-                }
-            }
-            return json_encode($nodeIdentifiers);
-        }
-
-        // Serialize node reference to node identifier
-        if ($dataType === 'reference') {
-            if ($propertyValue instanceof NodeInterface) {
-                return $propertyValue->getIdentifier();
-            } else {
-                return '';
-            }
-        }
-
-        if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
-            $propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-            return json_encode($this->entityToIdentityConverter->convertFrom($propertyValue, 'array', array(), $propertyMappingConfiguration));
-        }
-
-        // Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)
-        if ($dataType === ltrim('TYPO3\Media\Domain\Model\Asset', '\\') && $propertyValue !== null) {
-            if ($propertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
-                return json_encode($this->persistenceManager->getIdentifierByObject($propertyValue));
-            }
-        }
-
-        // Serialize an array of Assets to JSON
-        if (is_array($propertyValue)) {
-            $parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($dataType);
-            if ($parsedType['elementType'] === ltrim('TYPO3\Media\Domain\Model\Asset', '\\')) {
-                $convertedValues = array();
-                foreach ($propertyValue as $singlePropertyValue) {
-                    if ($singlePropertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
-                        $convertedValues[] = $this->persistenceManager->getIdentifierByObject($singlePropertyValue);
-                    }
-                }
-                return json_encode($convertedValues);
-            }
-        }
-        return $propertyValue === null ? '' : $propertyValue;
+        return $classNames;
     }
 
     /**
+     * Determine if the Node or one of it's properties is inline editable.
+     *
+     * @param NodeInterface $node
+     * @return boolean
+     */
+    protected function isInlineEditable(NodeInterface $node)
+    {
+        $uiConfiguration = $node->getNodeType()->hasConfiguration('ui') ? $node->getNodeType()->getConfiguration('ui') : [];
+        return (
+            (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] === true) ||
+            $this->hasInlineEditableProperties($node)
+        );
+    }
+
+    /**
+     * Checks if the given Node has any properties configured as 'inlineEditable'
+     *
      * @param NodeInterface $node
      * @return boolean
      */
     protected function hasInlineEditableProperties(NodeInterface $node)
     {
-        foreach (array_values($node->getNodeType()->getProperties()) as $propertyConfiguration) {
-            if (isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === true) {
-                return true;
-            }
-        }
-        return false;
+        return array_reduce(array_values($node->getNodeType()->getProperties()), function ($hasInlineEditableProperties, $propertyConfiguration) {
+            return ($hasInlineEditableProperties || (isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === true));
+        }, false);
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @param boolean $renderCurrentDocumentMetadata
+     * @return boolean
+     */
+    protected function needsMetadata(NodeInterface $node, $renderCurrentDocumentMetadata)
+    {
+        /** @var $contentContext ContentContext */
+        $contentContext = $node->getContext();
+        return ($contentContext->isInBackend() === true && ($renderCurrentDocumentMetadata === true || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true));
     }
 
     /**

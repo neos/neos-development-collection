@@ -62,7 +62,8 @@ class AssetRepository extends Repository
 
         $constraints = array(
             $query->like('title', '%' . $searchTerm . '%'),
-            $query->like('resource.filename', '%' . $searchTerm . '%')
+            $query->like('resource.filename', '%' . $searchTerm . '%'),
+            $query->like('caption', '%' . $searchTerm . '%')
         );
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
@@ -296,6 +297,7 @@ class AssetRepository extends Repository
     {
         $this->assetService->validateRemoval($object);
         parent::remove($object);
+        $this->assetService->emitAssetRemoved($object);
     }
 
     /**
@@ -309,5 +311,24 @@ class AssetRepository extends Repository
     public function removeWithoutUsageChecks($object)
     {
         parent::remove($object);
+        $this->assetService->emitAssetRemoved($object);
+    }
+
+    /**
+     * @param AssetInterface $object
+     */
+    public function add($object)
+    {
+        parent::add($object);
+        $this->assetService->emitAssetCreated($object);
+    }
+
+    /**
+     * @param AssetInterface $object
+     */
+    public function update($object)
+    {
+        parent::update($object);
+        $this->assetService->emitAssetUpdated($object);
     }
 }

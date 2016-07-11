@@ -19,6 +19,7 @@ use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
+use TYPO3\Neos\Service\ContentElementEditableService;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
@@ -47,6 +48,12 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @var AuthorizationService
      */
     protected $nodeAuthorizationService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentElementEditableService
+     */
+    protected $contentElementEditableService;
 
     /**
      * @return void
@@ -89,20 +96,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
         $this->tag->setContent($content);
 
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
-            return $this->tag->render();
-        }
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            return $this->tag->render();
-        }
-
-        $this->tag->addAttribute('property', 'typo3:' . $property);
-        $this->tag->addAttribute('data-neos-node-type', $node->getNodeType()->getName());
-        $this->tag->addAttribute('class', $this->tag->hasAttribute('class') ? 'neos-inline-editable ' . $this->tag->getAttribute('class') : 'neos-inline-editable');
-        return $this->tag->render();
+        return $this->contentElementEditableService->wrapContentProperty($node, $property, $this->tag->render());
     }
 
     /**

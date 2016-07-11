@@ -69,6 +69,6 @@ class WrapViewHelper extends AbstractViewHelper
         if ($node === null) {
             $node = $currentContext['node'];
         }
-        return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptObject->getPath(), $this->renderChildren());
+        return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $typoScriptObject->getPath());
     }
 }

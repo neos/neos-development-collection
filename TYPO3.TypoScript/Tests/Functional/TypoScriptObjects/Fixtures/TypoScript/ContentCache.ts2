@@ -462,6 +462,18 @@ contentCache.entryIdentifiersAreMergedWithGlobalIdentifiers < contentCache.cache
 	}
 }
 
+contentCache.globalIdentifiersAreUsedWithBlankEntryIdentifiers < contentCache.cachedSegment {
+	prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryTags {
+			1 = ${site}
+		}
+	}
+}
+
 contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegment {
 	prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
 		site = ${site}
@@ -477,7 +489,6 @@ contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegme
 		}
 	}
 }
-
 
 contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = TYPO3.TypoScript:Array {
 	5 = 'Outer segment|'

@@ -37,7 +37,7 @@ Afterwards you have to register the namespace of your ViewHelper in the template
 	<!-- inline syntax -->
 	{site:title()}
 
-.. note:: Please look at the :ref:`Templating` Documentation for an in-depth explanation of fluid templating.
+.. note:: Please look at the :ref:`templating` documentation for an in-depth explanation of Fluid templating.
 
 Declare View Helper Arguments
 -----------------------------
@@ -106,7 +106,7 @@ used for further processing:
 .. code-block:: php
 
 	public function render($title = NULL) {
-		if ($title = NULL) {
+		if ($title === NULL) {
 			$title = $this->renderChildren();
 		}
 		return '<h1>' . $title . '</h1>';

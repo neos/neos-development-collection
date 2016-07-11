@@ -238,6 +238,9 @@
 	</div>
 	<f:if condition="{assets}">
 		<f:then>
+			<div class="neos-media-content-help">
+				<i class="icon-info-circle"></i> {neos:backend.translate(id: 'media.dragHelp', source: 'Modules', package: 'TYPO3.Neos')}
+			</div>
 			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy, sortDirection: sortDirection}" />
 			<div class="neos-hide" id="delete-asset-modal">
 				<div class="neos-modal-centered">
@@ -278,6 +281,10 @@
 	<script type="text/javascript">
 		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
 		var maximumFileUploadSize = {maximumFileUploadSize};
+
+		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks && window.parent.Typo3MediaBrowserCallbacks.refreshThumbnail) {
+			window.parent.Typo3MediaBrowserCallbacks.refreshThumbnail();
+		}
 	</script>
 	<f:form action="tagAsset" id="tag-asset-form" format="json">
 		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />

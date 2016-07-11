@@ -47,9 +47,15 @@
       <trans-unit id="properties.selection" xml:space="preserve">
 				<source>Selection</source>
 			<target xml:lang="pt-PT" state="needs-translation">Selection</target></trans-unit>
+      <trans-unit id="properties.startingPoint" xml:space="preserve">
+				<source>Starting Point</source>
+			<target xml:lang="pt-PT" state="needs-translation">Starting Point</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target xml:lang="pt-PT" state="needs-translation">Maximum Levels</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve">
+				<source>Empty Menu</source>
+			<target xml:lang="pt-PT" state="needs-translation">Empty Menu</target></trans-unit>
     </body>
   </file>
 </xliff>
