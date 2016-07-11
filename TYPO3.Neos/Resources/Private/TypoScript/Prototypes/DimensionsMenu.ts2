@@ -12,9 +12,6 @@ prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
 	# if documents which are hidden in index should be rendered or not
 	renderHiddenInIndex = TRUE
 
-	# the expression used to generate item labels if "dimension" is not set
-	labelExpression = ${node ? node.label : ''}
-
 	# name of the dimension to use (optional)
 	# dimension = 'language'
 

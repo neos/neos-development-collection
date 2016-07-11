@@ -2,7 +2,6 @@
 namespace TYPO3\Neos\TypoScript;
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -21,7 +20,6 @@ use TYPO3\TypoScript\Exception as TypoScriptException;
  * Main Options:
  * - dimension (optional, string): name of the dimension which this menu should be limited to. Example: "language".
  * - presets (optional, array): If set, the presets are not loaded from the Settings, but instead taken from this property. Must be used with "dimension" set.
- * - labelExpression (string): Expression to use for label generation if "dimension" is not set.
  */
 class DimensionsMenuImplementation extends AbstractMenuImplementation
 {
@@ -37,18 +35,6 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      * @var ContentDimensionCombinator
      */
     protected $contentDimensionCombinator;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var \TYPO3\Eel\EelEvaluatorInterface
-     */
-    protected $eelEvaluator;
-
-    /**
-     * @Flow\InjectConfiguration(package="TYPO3.TYPO3CR", path="labelGenerator.eel.defaultContext")
-     * @var array
-     */
-    protected $defaultContextConfiguration;
 
     /**
      * @return string
@@ -72,14 +58,6 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     public function getIncludeAllPresets()
     {
         return $this->tsValue('includeAllPresets');
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabelExpression()
-    {
-        return $this->tsValue('labelExpression');
     }
 
     /**
@@ -138,7 +116,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
             }, $allDimensionPresets);
 
             if ($pinnedDimensionName === null) {
-                $itemLabel = Utility::evaluateEelExpression($this->getLabelExpression(), $this->eelEvaluator, array('node' => $nodeInDimensions), $this->defaultContextConfiguration);
+                $itemLabel = $nodeInDimensions->getLabel();
             } else {
                 $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
             }
