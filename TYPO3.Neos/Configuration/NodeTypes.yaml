@@ -51,7 +51,7 @@
         inspector:
           group: 'type'
           position: 100
-          editor: 'Content/Inspector/Editors/NodeTypeEditor'
+          editor: 'TYPO3.Neos/Inspector/Editors/NodeTypeEditor'
           editorOptions:
             placeholder: 'Loading ...'
             baseNodeType: ''
