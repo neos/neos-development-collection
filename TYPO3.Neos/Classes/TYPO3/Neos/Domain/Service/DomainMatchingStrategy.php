@@ -24,12 +24,12 @@ class DomainMatchingStrategy
     const NOMATCH = -300;
 
     /**
-     * Returns those of the given domains which match the specified host.
+     * Returns those of the given domains which match the specified hostname.
      *
      * The domains are sorted by their match exactness.
      * If none really matches an empty array is returned.
      *
-     * @param string $hostnameToMatch The host name to match against (eg. "localhost" or "www.neos.io")
+     * @param string $hostnameToMatch The hostname to match against (eg. "localhost" or "www.neos.io")
      * @param array<\TYPO3\Neos\Domain\Model\Domain> $domains The domains to check
      * @return array The matching domains
      */
