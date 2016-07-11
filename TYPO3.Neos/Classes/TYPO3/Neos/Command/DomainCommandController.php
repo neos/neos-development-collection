@@ -47,7 +47,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
-     * @param string $hostname The host name to match on, e.g. "neos.typo3.org"
+     * @param string $hostname The hostname to match on, e.g. "neos.typo3.org"
      * @param string $scheme The scheme for linking (http/https)
      * @param integer $port The port for linking (0-49151)
      * @return void
@@ -88,13 +88,13 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
 
         $this->domainRepository->add($domain);
 
-        $this->outputLine('Domain created.');
+        $this->outputLine('Domain entry created.');
     }
 
     /**
      * Display a list of available domain records
      *
-     * @param string $hostname An optional host name to search for
+     * @param string $hostname An optional hostname to search for
      * @return void
      */
     public function listCommand($hostname = null)
@@ -124,7 +124,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     }
 
     /**
-     * Delete a host (domain) record
+     * Delete a domain record by hostname
      *
      * @param string $hostname The hostname to remove
      * @return void
@@ -142,7 +142,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     }
 
     /**
-     * Activate a host (domain) record
+     * Activate a domain record by hostname
      *
      * @param string $hostname The hostname to activate
      * @return void
@@ -161,7 +161,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     }
 
     /**
-     * Deactivate a host (domain) record
+     * Deactivate a domain record by hostname
      *
      * @param string $hostname The hostname to deactivate
      * @return void

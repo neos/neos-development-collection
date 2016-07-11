@@ -66,6 +66,7 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
      *
      * @param string $hostname
      * @return void
+     * @api
      */
     public function setHostname($hostname)
     {
@@ -89,6 +90,7 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
      * Returns the hostname
      *
      * @return string
+     * @api
      */
     public function getHostname()
     {
