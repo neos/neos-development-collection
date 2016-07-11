@@ -45,12 +45,12 @@ class AssetServiceTest extends UnitTestCase
      */
     public function getRepositoryReturnsRepositoryForGivenAsset($modelClassName, $expectedRepositoryClassName)
     {
-        $mockAsset = $this->getMock($modelClassName, [], [], '', false);
+        $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())
             ->method('get')
-            ->will($this->returnValue($this->getMock($expectedRepositoryClassName)));
+            ->will($this->returnValue($this->createMock($expectedRepositoryClassName)));
 
         $mockAssetService = $this->getAccessibleMock(AssetService::class, ['dummy'], [], '', false);
         $this->inject($mockAssetService, 'objectManager', $mockObjectManager);

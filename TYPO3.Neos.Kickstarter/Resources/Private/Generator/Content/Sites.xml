@@ -24,19 +24,6 @@
       </dimensions>
       <accessRoles __type="array"/>
      </variant>
-     <node nodeName="text1">
-      <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Text" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-       <dimensions>
-       <f:for each="{dimensions}" as="dimension">
-        <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
-       </f:for>
-       </dimensions>
-       <accessRoles __type="array"/>
-       <properties>
-        <text __type="string">&lt;p&gt;This is the homepage&lt;/p&gt;</text>
-       </properties>
-      </variant>
-     </node>
     </node>
    </node>
   </nodes>

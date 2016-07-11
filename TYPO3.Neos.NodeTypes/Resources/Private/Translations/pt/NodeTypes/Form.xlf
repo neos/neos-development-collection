@@ -14,6 +14,9 @@
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
 			<target xml:lang="pt-PT" state="needs-translation">Select the Form identifier</target></trans-unit>
+      <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
+				<source>Please select a valid Form identifier in the inspector.</source>
+			<target xml:lang="pt-PT" state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
     </body>
   </file>
 </xliff>

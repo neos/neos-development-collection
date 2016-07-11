@@ -345,9 +345,14 @@ class SitesController extends AbstractModuleController
      */
     public function deleteDomainAction(Domain $domain)
     {
+        $site = $domain->getSite();
+        if ($site->getPrimaryDomain() === $domain) {
+            $site->setPrimaryDomain(null);
+            $this->siteRepository->update($site);
+        }
         $this->domainRepository->remove($domain);
         $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array(htmlspecialchars($domain)), 1412373310);
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $domain->getSite()));
+        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, array('site' => $site));
     }
 
     /**

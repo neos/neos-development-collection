@@ -60,6 +60,8 @@ class Package extends BasePackage
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodeMove', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 
+        $dispatcher->connect('TYPO3\Media\Domain\Service\AssetService', 'assetResourceReplaced', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerAssetResourceChange');
+
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($bootstrap) {

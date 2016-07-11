@@ -47,9 +47,15 @@
       <trans-unit id="properties.selection" xml:space="preserve">
 				<source>Selection</source>
 			<target xml:lang="la-LA">crwdns352:0crwdne352:0</target></trans-unit>
+      <trans-unit id="properties.startingPoint" xml:space="preserve">
+				<source>Starting Point</source>
+			<target xml:lang="la-LA">crwdns761:0crwdne761:0</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target xml:lang="la-LA">crwdns353:0crwdne353:0</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve">
+				<source>Empty Menu</source>
+			<target xml:lang="la-LA">crwdns775:0crwdne775:0</target></trans-unit>
     </body>
   </file>
 </xliff>

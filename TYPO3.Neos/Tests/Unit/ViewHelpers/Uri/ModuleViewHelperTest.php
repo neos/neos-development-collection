@@ -34,8 +34,8 @@ class ModuleViewHelperTest extends UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper', array('setMainRequestToUriBuilder'));
-        $this->uriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+        $this->viewHelper = $this->getMockBuilder('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper')->setMethods(array('setMainRequestToUriBuilder'))->getMock();
+        $this->uriBuilder = $this->createMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
         $this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
     }
 

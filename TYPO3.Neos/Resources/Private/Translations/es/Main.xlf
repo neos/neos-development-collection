@@ -86,7 +86,7 @@
 			<target xml:lang="es-ES" state="translated">Ocultar</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="es-ES" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar Nuevamente</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
 			<target xml:lang="es-ES" state="needs-translation">into</target></trans-unit>
@@ -546,7 +546,7 @@
 			<target xml:lang="es-ES" state="translated">Ancho</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="es-ES" state="translated">Falta la propiedad requerida: </target><alt-trans><target xml:lang="es-ES">Falta la propiedad requerida:</target></alt-trans></trans-unit>
+			<target xml:lang="es-ES" state="translated">Falta la propiedad requerida: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="es-ES" state="needs-translation">Workspace</target></trans-unit>

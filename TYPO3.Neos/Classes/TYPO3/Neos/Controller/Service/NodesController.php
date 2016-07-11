@@ -19,6 +19,7 @@ use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -51,6 +52,12 @@ class NodesController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
+
+    /**
+     * @Flow\Inject
+     * @var NodePropertyConverterService
+     */
+    protected $nodePropertyConverterService;
 
     /**
      * @var array
@@ -128,18 +135,9 @@ class NodesController extends ActionController
             $this->throwStatus(404);
         }
 
-        $convertedProperties = array();
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            try {
-                $convertedProperties[$propertyName] = $this->propertyMapper->convert($propertyValue, 'string');
-            } catch (\TYPO3\Flow\Property\Exception $exception) {
-                $convertedProperties[$propertyName] = '';
-            }
-        }
-
         $this->view->assignMultiple(array(
             'node' => $node,
-            'convertedNodeProperties' => $convertedProperties
+            'convertedNodeProperties' => $this->nodePropertyConverterService->getPropertiesArray($node)
         ));
     }
 

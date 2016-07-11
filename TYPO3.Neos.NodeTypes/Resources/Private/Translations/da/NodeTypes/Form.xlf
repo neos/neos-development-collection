@@ -14,6 +14,9 @@
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Select the Form identifier</source>
 			<target xml:lang="da">Vælg formular ID</target><alt-trans><target xml:lang="da">Vælg formular</target></alt-trans></trans-unit>
+      <trans-unit id="content.noValidFormIdentifier" xml:space="preserve" approved="yes">
+				<source>Please select a valid Form identifier in the inspector.</source>
+			<target xml:lang="da">Vælg venligst et gyldigt formular-id i inspektøren.</target></trans-unit>
     </body>
   </file>
 </xliff>

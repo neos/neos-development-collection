@@ -2,9 +2,9 @@
 prototype(TYPO3.Neos.NodeTypes:Menu) {
 	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
 
-	startingPoint = ${documentNode}
+	startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
 
-	itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? NULL : q(node).property('selection')}
+	itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? null : q(node).property('selection')}
 
 	entryLevel = ${q(node).property('startLevel')}
 	entryLevel.@process.1 = ${String.toInteger(value)}
@@ -41,12 +41,12 @@ prototype(TYPO3.Neos.NodeTypes:Menu) {
 # Image TS Object
 prototype(TYPO3.Neos.NodeTypes:Image) {
 	maximumWidth = 2560
-	width = NULL
+	width = null
 	maximumHeight = 2560
-	height = NULL
+	height = null
 	imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment')) : ''}
-	allowCropping = FALSE
-	allowUpScaling = FALSE
+	allowCropping = false
+	allowUpScaling = false
 	link.@process.convertUris = TYPO3.Neos:ConvertUris {
 		forceConversion = true
 	}
@@ -63,9 +63,11 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Content) {
 	layout = ${q(node).property('layout')}
 	attributes.class = ${'container columns-' + q(node).property('layout')}
 	columns = TYPO3.TypoScript:Collection {
+		@context.columnLayout = ${q(node).property('layout')}
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 		itemRenderer = TYPO3.Neos.NodeTypes:MultiColumnItem
 		itemName = 'node'
+		iterationName = 'columnIteration'
 	}
 }
 
@@ -100,8 +102,6 @@ prototype(TYPO3.Neos.NodeTypes:Form) {
 		}
 	}
 }
-
-prototype(TYPO3.Neos.NodeTypes:AssetList).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScriptObjects\\AssetListImplementation'
 
 # "Insert content references" TS Object
 prototype(TYPO3.Neos.NodeTypes:ContentReferences) {

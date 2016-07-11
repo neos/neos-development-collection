@@ -43,3 +43,7 @@
 .neos-input-block-level {
   @include input-block-level();
 }
+
+.neos-buffer-below {
+  margin-bottom: $defaultMargin;
+}

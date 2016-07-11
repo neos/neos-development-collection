@@ -47,9 +47,15 @@
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
 			<target xml:lang="de">Auswahl</target></trans-unit>
+      <trans-unit id="properties.startingPoint" xml:space="preserve" approved="yes">
+				<source>Starting Point</source>
+			<target xml:lang="de">Startpunkt</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
 			<target xml:lang="de">Maximale Tiefe</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
+				<source>Empty Menu</source>
+			<target xml:lang="de">Leeres Menü</target></trans-unit>
     </body>
   </file>
 </xliff>
