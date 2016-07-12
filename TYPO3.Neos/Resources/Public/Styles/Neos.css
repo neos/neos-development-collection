@@ -9960,6 +9960,9 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=75);
   opacity: 0.75;
 }
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-dropdown-active:not(.neos-publish-menu-active) {
+  background: repeating-linear-gradient(-45deg, #00a338, #00a338 8px, rgba(255, 135, 0, 0.5) 8px, rgba(255, 135, 0, 0.5) 16px), #00a338;
+}
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .icon-lock {
   line-height: 19px;
 }

@@ -55,6 +55,10 @@
 			@include opacity(.75);
 		}
 
+		&.neos-publish-dropdown-active:not(.neos-publish-menu-active) {
+			background: repeating-linear-gradient(-45deg, $green, $green $relatedMargin, rgba($orange, .5) $relatedMargin, rgba($orange, .5) $defaultMargin), $green;
+		}
+
 		.icon-lock {
 			line-height: ($unit / 2) - 1;
 		}
