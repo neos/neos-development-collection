@@ -108,6 +108,10 @@ class ContentElementWrappingService
     protected function addNodePropertyAttributes(array $attributes, NodeInterface $node)
     {
         foreach (array_keys($node->getNodeType()->getProperties()) as $propertyName) {
+            if ($propertyName[0] === '_' && $propertyName[1] === '_') {
+                // skip fully-private properties
+                continue;
+            }
             $attributes = array_merge($attributes, $this->renderNodePropertyAttribute($node, $propertyName));
         }
 
