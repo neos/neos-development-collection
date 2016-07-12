@@ -141,23 +141,29 @@ define(
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
 				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
 				nodeType = clipboard.nodeType,
-				localXhr = this._prepareXhr();
+				localXhr = this._prepareXhr(),
+				action = 'moveAndRender',
+				args = [
+					clipboard.nodePath,
+					referenceNode.get('nodePath'),
+					position,
+					typoScriptPath
+				];
 
-			var action = clipboard.type === 'cut' ? 'moveAndRender' : 'copyAndRender';
-			LoadingIndicator.start();
-			NodeEndpoint[action].call(
-				that,
-				clipboard.nodePath,
-				referenceNode.get('nodePath'),
-				position,
-				typoScriptPath,
-				'',
-				{
-					xhr: function() {
-						return localXhr;
-					}
+			if (clipboard.type === 'copy') {
+				action = 'copyAndRender';
+				// Add empty node name argument
+				args.push('');
+			}
+
+			args.push({
+				xhr: function() {
+					return localXhr;
 				}
-			).then(
+			});
+
+			LoadingIndicator.start();
+			NodeEndpoint[action].apply(that, args).then(
 				function(result) {
 					if (clipboard.type === 'cut') {
 						that.set('clipboard', null);
@@ -170,12 +176,10 @@ define(
 						}
 					}
 
-					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, clipboard.type === 'cut');
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);
@@ -254,12 +258,10 @@ define(
 				}
 			).then(
 				function(result) {
-					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity);
+					that._insertNode(result, localXhr, nodeType, collection, position, referenceNodeEntity, false);
 				}
 			).fail(
 				function(error) {
-					Notification.error('Failed to perform node action');
-					console.error('Failed to perform node action', error);
 					that._reloadPage();
 				}
 			);
@@ -274,9 +276,10 @@ define(
 		 * @param {object} collection The collection to insert the node into.
 		 * @param {string} position The position to insert the node relative to the reference node
 		 * @param {object} referenceNodeEntity
+		 * @param {boolean} isMoved If the inserted node was moved
 		 * @return {void}
 		 */
-		_insertNode: function(result, xhr, nodeType, collection, position, referenceNodeEntity) {
+		_insertNode: function(result, xhr, nodeType, collection, position, referenceNodeEntity, isMoved) {
 			var rdfaService = vieInstance.service('rdfa'),
 				affectedNodePath = xhr.getResponseHeader('X-Neos-AffectedNodePath');
 			var newElement = $(result).find('[about="' + affectedNodePath + '"]').first();
@@ -324,11 +327,13 @@ define(
 			}
 			CreateJS.refreshEdit($newElement.get(0));
 
-			// Replace existing entity wrapper in case it already exists
-			NodeSelection.replaceEntityWrapper($newElement, true);
+			if (isMoved) {
+				// Replace existing entity wrapper in case it already exists
+				NodeSelection.replaceEntityWrapper($newElement, true);
+			}
 
 			// Select the inserted node
-			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true});
+			NodeSelection.updateSelection($newElement, {scrollToElement: true, deselectEditables: true, selectFirstEditable: !isMoved});
 
 			EventDispatcher.trigger('contentChanged');
 			EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $newElement.get(0)});

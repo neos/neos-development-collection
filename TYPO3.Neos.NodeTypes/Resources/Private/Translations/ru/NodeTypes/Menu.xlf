@@ -47,9 +47,15 @@
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
 			<target xml:lang="ru">Выбор</target></trans-unit>
+      <trans-unit id="properties.startingPoint" xml:space="preserve" approved="yes">
+				<source>Starting Point</source>
+			<target xml:lang="ru">Начальная точка</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
 			<target xml:lang="ru">Максимум уровней</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
+				<source>Empty Menu</source>
+			<target xml:lang="ru">Пустое меню</target></trans-unit>
     </body>
   </file>
 </xliff>

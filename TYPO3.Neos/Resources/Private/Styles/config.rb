@@ -6,6 +6,5 @@ relative_assets = true
 css_dir = "../../Public/Styles"
 sass_dir = "."
 images_dir = "../../Public/Images"
-fonts_dir = "../../Public/Fonts"
 output_style = :expanded
 environment = :production

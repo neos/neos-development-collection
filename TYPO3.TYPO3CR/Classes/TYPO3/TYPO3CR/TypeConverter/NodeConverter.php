@@ -24,10 +24,8 @@ use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeException;
 
@@ -219,8 +217,7 @@ class NodeConverter extends AbstractTypeConverter
                     }
                 break;
                 case 'DateTime':
-                    if ($nodePropertyValue !== '') {
-                        $nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue);
+                    if ($nodePropertyValue !== '' && ($nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue)) !== false) {
                         $nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
                     } else {
                         $nodePropertyValue = null;

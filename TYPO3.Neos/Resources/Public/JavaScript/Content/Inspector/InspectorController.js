@@ -15,7 +15,8 @@ define(
 	'Shared/I18n',
 	'create',
 	'vie',
-	'Shared/EventDispatcher'
+	'Shared/EventDispatcher',
+	'Shared/Notification'
 ], function(
 	Ember,
 	$,
@@ -29,7 +30,8 @@ define(
 	I18n,
 	CreateJS,
 	vie,
-	EventDispatcher
+	EventDispatcher,
+	Notification
 ) {
 
 	/**
@@ -66,6 +68,8 @@ define(
 
 		selectedNode: null,
 		cleanProperties: null,
+		listeners: Ember.Object.create(),
+		registeredEditors: Ember.Object.create(),
 
 		activeTab: 'default',
 
@@ -123,7 +127,8 @@ define(
 				groupsObject,
 				tabsObject,
 				sortedGroupsArray,
-				sortedTabsArray;
+				sortedTabsArray,
+				listeners;
 
 			selectedNodeSchema = NodeSelection.get('selectedNodeSchema');
 			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
@@ -132,6 +137,7 @@ define(
 
 			// properties
 			propertiesArray = [];
+			listeners = Ember.Object.create();
 			for (var property in selectedNodeSchema.properties) {
 				if (selectedNodeSchema.properties.hasOwnProperty(property) && selectedNodeSchema.properties[property]) {
 					var isBoolean = selectedNodeSchema.properties[property].type === 'boolean';
@@ -140,8 +146,26 @@ define(
 						elementId: Ember.generateGuid(),
 						isBoolean: isBoolean
 					}, selectedNodeSchema.properties[property]));
+
+					// we need to register any configured listeners for other properties.
+					if (selectedNodeSchema.properties[property].ui && selectedNodeSchema.properties[property].ui.inspector && selectedNodeSchema.properties[property].ui.inspector.editorListeners) {
+						for (var listenerName in selectedNodeSchema.properties[property].ui.inspector.editorListeners) {
+							var observedProperty = selectedNodeSchema.properties[property].ui.inspector.editorListeners[listenerName].property;
+							var handler = selectedNodeSchema.properties[property].ui.inspector.editorListeners[listenerName].handler;
+							var options = selectedNodeSchema.properties[property].ui.inspector.editorListeners[listenerName].handlerOptions || {};
+							if (!listeners[observedProperty]) {
+								listeners.set(observedProperty, Ember.Object.create());
+							}
+							if (!listeners.get(observedProperty + '.' + property)) {
+								listeners.set(observedProperty + '.' + property, Ember.Object.create());
+							}
+							listeners.set(observedProperty + '.' + property + '.' + listenerName, {handler: handler, options: options});
+						}
+					}
 				}
 			}
+
+			this.set('listeners', listeners);
 
 			sortedPropertiesArray = propertiesArray.sort(function(a, b) {
 				return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
@@ -311,6 +335,8 @@ define(
 				cleanProperties = {},
 				enableTransactionalInspector = true;
 
+			this.set('registeredEditors', Ember.Object.create());
+
 			SecondaryInspectorController.hide();
 			this.set('selectedNode', selectedNode);
 
@@ -330,6 +356,51 @@ define(
 				this.set('nodeProperties', {});
 			}
 		}.observes('nodeSelection.selectedNode').on('init'),
+
+		/**
+		 * To make change listeners between editors work, the editor views are registered via this function, so that the inspector knows about all editors.
+		 */
+		registerPropertyEditor: function(propertyName, editor) {
+			this.set('registeredEditors.' + propertyName, editor);
+		},
+
+		/**
+		 * This is triggered when one of the editors was changed even before the change was applied.
+		 */
+		registerPendingChange: function(propertyName, value) {
+			var registeredListeners;
+
+			registeredListeners = this.get('listeners.' + propertyName);
+			if (!registeredListeners) {
+				return;
+			}
+
+			for (var observerProperty in registeredListeners) {
+				if (registeredListeners.hasOwnProperty(observerProperty)) {
+					var listenersInProperty = registeredListeners.get(observerProperty);
+					for (var listenerName in listenersInProperty) {
+						if (listenersInProperty.hasOwnProperty(listenerName)) {
+							var handlerConfiguration = listenersInProperty[listenerName];
+							this._applyChangeHandler(handlerConfiguration, this.get('registeredEditors.' + observerProperty + '.currentView'), listenerName, propertyName, value);
+						}
+					}
+				}
+			}
+		},
+
+		_applyChangeHandler: function(handlerConfiguration, editor, listenerName, observedProperty, newValue) {
+			require({context: 'neos'}, [handlerConfiguration.handler], function (handlerClass) {
+				Ember.run(function () {
+					var handler = handlerClass.create(handlerConfiguration.options);
+					handler.handle(editor, newValue, observedProperty, listenerName);
+				});
+			}, function () {
+				if (window.console && window.console.error) {
+					window.console.error('Couldn\'t create handler "' + handlerConfiguration.handler + '" assigned to "' + listenerName + '"! Please check your configuration.');
+				}
+				Notification.error('Error in inspector', 'Inspector change handler could not be loaded. See console for further details.');
+			});
+		},
 
 		/**
 		 * We'd like to monitor *every* property change except inline editable ones,
@@ -385,8 +456,8 @@ define(
 				reloadPage = false,
 				selectedNode = this.get('selectedNode'),
 				propertyValuePostprocessPromises = [],
-				propertyPromise;
-
+				propertyPromise,
+				changedAttributes = {};
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
 				var valueOrPromise = that.get('nodeProperties').get(key);
@@ -402,7 +473,7 @@ define(
 
 				propertyValuePostprocessPromises.push(propertyPromise.then(function(value) {
 					if (value !== cleanPropertyValue) {
-						selectedNode.setAttribute(key, value, {validate: false});
+						changedAttributes[key] = value;
 						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadPageIfChanged')) {
 							reloadPage = true;
 						} else if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
@@ -413,6 +484,7 @@ define(
 			});
 
 			Ember.RSVP.all(propertyValuePostprocessPromises).then(function() {
+				selectedNode.setAttributes(changedAttributes, {validate: false});
 				var entity = that.get('selectedNode._vieEntity');
 				if (entity.isValid() !== true) {
 					return;
@@ -442,7 +514,7 @@ define(
 						} else if (reloadElement === true) {
 							if (result && result.data && result.data.collectionContent) {
 								LoadingIndicator.done();
-								var id = entity.id.substring(1, entity.id.length - 1),
+								var id = entity.id.slice(1, -1);
 									$element = $('[about="' + id + '"]').first(),
 									content = $(result.data.collectionContent).find('[about="' + xhr.getResponseHeader('X-Neos-AffectedNodePath') + '"]').first();
 								if (content.length === 0) {
@@ -474,6 +546,8 @@ define(
 				that.set('cleanProperties', cleanProperties);
 				that.set('nodeProperties', Ember.Object.create(cleanProperties));
 				SecondaryInspectorController.hide();
+			}).fail(function(error) {
+				console.error(error);
 			});
 		},
 

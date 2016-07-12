@@ -172,7 +172,7 @@ class ContextFactory implements ContextFactoryInterface
                 }
                 $stringValue = implode('&', $stringParts);
             } else {
-                $stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+                $stringValue = $propertyValue instanceof \DateTimeInterface ? $propertyValue->getTimestamp() : (string)$propertyValue;
             }
             $identifierSource .= ':' . $stringValue;
         }
@@ -208,7 +208,7 @@ class ContextFactory implements ContextFactoryInterface
             }
         }
         if (isset($contextProperties['currentDateTime'])) {
-            if (!$contextProperties['currentDateTime'] instanceof \DateTime) {
+            if (!$contextProperties['currentDateTime'] instanceof \DateTimeInterface) {
                 throw new InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
             }
         }
@@ -228,8 +228,8 @@ class ContextFactory implements ContextFactoryInterface
             if (!isset($contextProperties['dimensions'][$dimensionName])) {
                 throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension "%s" does not exist', $this->contextImplementation, $dimensionName), 1391340781);
             }
-            if (!in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
-                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value %s for dimension %s is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
+            if ($dimensionValue !== null && !in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
+                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value "%s" for dimension "%s" is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
             }
         }
     }

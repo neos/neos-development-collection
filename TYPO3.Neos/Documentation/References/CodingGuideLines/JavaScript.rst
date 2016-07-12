@@ -7,8 +7,8 @@ Generally, we strive to follow the TYPO3 Flow Coding Guidelines as closely as
 possible, with exceptions which make sense in the JavaScript context.
 
 This guideline explains mostly how we want JavaScript code to be formatted;
-and it does **not** deal with the TYPO3 Neos User
-Interface structure. If you want to know more about the TYPO3 Neos User
+and it does **not** deal with the Neos User
+Interface structure. If you want to know more about the Neos User
 Interface architecture, have a look into the "Neos User Interface
 Development" book.
 

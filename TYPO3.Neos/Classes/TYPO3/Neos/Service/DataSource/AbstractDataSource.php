@@ -20,6 +20,7 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
  */
 abstract class AbstractDataSource implements DataSourceInterface
 {
+
     /**
      * The identifier of the operation
      *
@@ -27,6 +28,11 @@ abstract class AbstractDataSource implements DataSourceInterface
      * @api
      */
     protected static $identifier = null;
+
+    /**
+     * @var ControllerContext
+     */
+    protected $controllerContext;
 
     /**
      * @return string the short name of the operation
@@ -38,13 +44,9 @@ abstract class AbstractDataSource implements DataSourceInterface
         if (!is_string(static::$identifier)) {
             throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
         }
+
         return static::$identifier;
     }
-
-    /**
-     * @var ControllerContext
-     */
-    protected $controllerContext;
 
     /**
      * @param ControllerContext $controllerContext

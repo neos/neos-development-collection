@@ -13,7 +13,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
  * Test case for the "Workspace" domain model
@@ -40,7 +39,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
 
-        $mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('add'), array(), '', false);
+        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('add'))->getMock();
         $mockNodeDataRepository->expects($this->once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -55,7 +54,7 @@ class WorkspaceTest extends UnitTestCase
      */
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('countByWorkspace'), array(), '', false);
+        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('countByWorkspace'))->getMock();
 
         $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -78,6 +77,27 @@ class WorkspaceTest extends UnitTestCase
         $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 
         $currentWorkspace->publishNode($mockNode, $targetWorkspace);
+    }
+
+    /**
+     * Bug NEOS-1769: Content Collections disappear when publishing to other workspace than "live"
+     *
+     * Under certain circumstances, content collection nodes will be deleted when publishing a document to a workspace which is based on another workspace.
+     *
+     * @test
+     */
+    public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
+    {
+        $liveWorkspace = new Workspace('live');
+        $workspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->setMethods(array('emitBeforeNodePublishing'))->setConstructorArgs(array('some-campaign'))->getMock();
+        $workspace->setBaseWorkspace($liveWorkspace);
+
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+        $workspace->expects($this->never())->method('emitBeforeNodePublishing');
+
+        $workspace->publishNode($mockNode, $workspace);
     }
 
     /**
@@ -162,11 +182,23 @@ class WorkspaceTest extends UnitTestCase
         $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
-        $node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $node->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
         $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
+    }
+
+    /**
+     * @test
+     */
+    public function isPersonalWorkspaceChecksIfTheWorkspaceNameStartsWithUser()
+    {
+        $liveWorkspace = new Workspace('live');
+        $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
+
+        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
+        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
     }
 }

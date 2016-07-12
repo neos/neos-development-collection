@@ -2,22 +2,36 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'Content/Inspector/Editors/SelectBoxEditor',
+	'Shared/HttpClient',
 	'Shared/I18n'
 ],
 function(
 	$,
 	SelectBoxEditor,
+	HttpClient,
 	I18n
 ) {
 	return SelectBoxEditor.extend({
+		allowEmpty: true,
+
 		init: function() {
-			var that = this,
-				url = $('link[rel="neos-masterplugins"]').attr('href');
+			this._super();
+			var that = this;
 
 			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
-			this._loadValuesFromController(url, function(results) {
-				var values = {}, placeholder, i = 0;
-				values[''] = {};
+			HttpClient.getResource(
+				$('link[rel="neos-masterplugins"]').attr('href'),
+				{
+					data: {
+						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					},
+					dataType: 'json'
+				}
+			).then(function(results) {
+				var values = {},
+					placeholder,
+					i = 0;
 
 				for (var key in results) {
 					if (results[key] === undefined) {
@@ -33,15 +47,14 @@ function(
 					placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
 				} else {
 					placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
-					values = {};
+					values = [];
 				}
+
 				that.setProperties({
 					placeholder: placeholder,
 					values: values
 				});
 			});
-
-			this._super();
 		}
 	});
 });

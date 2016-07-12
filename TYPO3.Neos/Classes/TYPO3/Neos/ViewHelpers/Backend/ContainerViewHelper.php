@@ -81,12 +81,10 @@ class ContainerViewHelper extends AbstractViewHelper
 
         $user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
-        $sites = $this->menuHelper->buildSiteList($this->controllerContext);
-
         $innerView->assignMultiple(array(
             'node' => $node,
-            'modules' => $this->settings['modules'],
-            'sites' => $sites,
+            'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
+            'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
             'user' => $user
         ));
 

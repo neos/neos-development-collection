@@ -43,9 +43,9 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
      */
     public function findAllReturnsResultsInAscendingVersionOrder()
     {
-        $this->repository->add(new MigrationStatus('zyx', 'direction', new \DateTime()));
-        $this->repository->add(new MigrationStatus('abc', 'direction', new \DateTime()));
-        $this->repository->add(new MigrationStatus('mnk', 'direction', new \DateTime()));
+        $this->repository->add(new MigrationStatus('zyx', MigrationStatus::DIRECTION_DOWN, new \DateTime()));
+        $this->repository->add(new MigrationStatus('abc', MigrationStatus::DIRECTION_UP, new \DateTime()));
+        $this->repository->add(new MigrationStatus('mnk', MigrationStatus::DIRECTION_DOWN, new \DateTime()));
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();

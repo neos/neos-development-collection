@@ -11,7 +11,6 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 
@@ -36,7 +35,7 @@ class TypoScriptViewTest extends FunctionalTestCase
      */
     public function setUp()
     {
-        $this->mockFallbackView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
+        $this->mockFallbackView = $this->createMock('TYPO3\Flow\Mvc\View\ViewInterface');
         $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
     }
 

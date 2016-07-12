@@ -26,7 +26,7 @@
 						</div>
 					</div>
 					<div class="neos-control-group">
-						<label class="neos-control-label" for="node-name">{neos:backend.translate(id: 'state', value: 'Default asset collection')}</label>
+						<label class="neos-control-label" for="asset-collection">{neos:backend.translate(id: 'state', value: 'Default asset collection')}</label>
 						<div class="neos-controls">
 							<f:form.select property="assetCollection" id="asset-collection" options="{assetCollections}" optionLabelField="title" prependOptionLabel="None" prependOptionValue="" class="neos-span12" />
 						</div>
@@ -49,48 +49,58 @@
 						<thead>
 							<tr>
 								<th>{neos:backend.translate(id: 'domain', value: 'Domain')}</th>
+								<th class="neos-aCenter">{neos:backend.translate(id: 'primary')}</th>
 							</tr>
 						</thead>
 						<tbody>
 						<f:for each="{domains}" as="domain" key="number">
 							<tr>
 								<td>
-									{domain.hostPattern}
+									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostPattern}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
 									<f:if condition="{domain.active} == 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 									</f:if>
 								</td>
+								<td class="neos-aCenter check">
+									<f:if condition="{domain.active}">
+										<label class="neos-radio">
+											<f:form.radio property="primaryDomain" value="{domain}" checked="{f:if(condition: '{site.primaryDomain} == {domain}', then: 'checked')}" /><span></span>
+										</label>
+									</f:if>
+								</td>
 								<td class="neos-action aRight">
 									<div class="neos-pull-right">
-										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}">
+										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
 										<f:if condition="{domain.active} == 1">
 											<f:then>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
 													<i class="icon-minus-sign icon-white"></i>
 												</button>
 											</f:then>
 											<f:else>
-												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
 													<i class="icon-plus-sign icon-white"></i>
 												</button>
 											</f:else>
 										</f:if>
-										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}-{number}">
+										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}-{number}" data-neos-toggle="tooltip">
 											<i class="icon-trash icon-white"></i>
 										</button>
 										<div class="neos-hide" id="{site.nodeName}-{number}">
-											<div class="neos-modal">
-												<div class="neos-modal-header">
-													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-													<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain.hostPattern}, value: '--Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.')}</div>
-												</div>
-												<div class="neos-modal-footer">
-													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-													<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: {site: site, domain: domain})}" type="submit" class="neos-button-danger neos-button" title="{neos:backend.translate(id: 'deleteConfirm', value: 'Yes, delete it!')}">
-														{neos:backend.translate(id: 'deleteConfirm', value: 'Yes, delete it!')}
-													</button>
+											<div class="neos-modal-centered">
+												<div class="neos-modal-content">
+													<div class="neos-modal-header">
+														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+														<div class="neos-header">{neos:backend.translate(id: 'domain.deleteConfirmQuestion', arguments: {0: domain}, value: 'Do you really want to delete "{domain}"? This action cannot be undone.')}</div>
+													</div>
+													<div class="neos-modal-footer">
+														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+														<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: {site: site, domain: domain})}" type="submit" class="neos-button-danger neos-button" title="{neos:backend.translate(id: 'deleteConfirm', value: 'Yes, delete it!')}">
+															{neos:backend.translate(id: 'deleteConfirm', value: 'Yes, delete it!')}
+														</button>
+													</div>
 												</div>
 											</div>
 											<div class="neos-modal-backdrop neos-in"></div>
@@ -102,7 +112,7 @@
 						</tbody>
 					</table>
 					<div class="neos-pull-right">
-						<f:link.action action="newDomain" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}">{neos:backend.translate(id: 'domain.add', value: 'Add Domain')}</f:link.action>
+						<f:link.action action="newDomain" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}" >{neos:backend.translate(id: 'domain.add', value: 'Add Domain')}</f:link.action>
 					</div>
 				</fieldset>
 			</div>
@@ -114,7 +124,7 @@
 						<tbody>
 							<tr>
 								<th>{neos:backend.translate(id: 'packageKey', value: 'Package Key')}</th>
-								<td>{site.siteResourcesPackageKey}</td>
+								<td><span class="neos-label">{site.siteResourcesPackageKey}</span></td>
 							</tr>
 							<f:if condition="{sitePackageMetaData.title}">
 								<tr>
@@ -146,16 +156,18 @@
 				{neos:backend.translate(id: 'sites.delete', value: 'Delete this site')}
 			</button>
 			<div class="neos-hide" id="{site.nodeName}">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">{neos:backend.translate(id: 'sites.confirmDeleteQuestion', arguments: {0: site.name}, value: 'Do you really want to delete "{site.name}"? This action cannot be undone.')}</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-						<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: {site: site, domain: domain})}" type="submit" class="neos-button neos-button-danger" title="Yes, delete the site">
-							{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete the site')}
-						</button>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'sites.confirmDeleteQuestion', arguments: {0: site.name}, value: 'Do you really want to delete "{site.name}"? This action cannot be undone.')}</div>
+						</div>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+							<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: {site: site, domain: domain})}" type="submit" class="neos-button neos-button-danger" title="Yes, delete the site">
+								{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete the site')}
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>

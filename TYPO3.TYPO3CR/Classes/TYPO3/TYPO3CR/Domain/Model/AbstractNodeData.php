@@ -53,17 +53,17 @@ abstract class AbstractNodeData
     protected $nodeType = 'unstructured';
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $creationDateTime;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $lastModificationDateTime;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $lastPublicationDateTime;
 
@@ -77,14 +77,14 @@ abstract class AbstractNodeData
     /**
      * If set, this node is automatically hidden before the specified date / time
      *
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $hiddenBeforeDateTime;
 
     /**
      * If set, this node is automatically hidden after the specified date / time
      *
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $hiddenAfterDateTime;
 
@@ -98,7 +98,7 @@ abstract class AbstractNodeData
     /**
      * List of role names which are required to access this node at all
      *
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="flow_json_array")
      * @var array<string>
      */
     protected $accessRoles = array();
@@ -264,7 +264,7 @@ abstract class AbstractNodeData
     public function removeProperty($propertyName)
     {
         if ($this->getContentObject() === null) {
-            if (isset($this->properties[$propertyName])) {
+            if (array_key_exists($propertyName, $this->properties)) {
                 unset($this->properties[$propertyName]);
                 $this->addOrUpdate();
             } else {
@@ -397,10 +397,10 @@ abstract class AbstractNodeData
     }
 
     /**
-     * @param \DateTime $lastPublicationDateTime
+     * @param \DateTimeInterface $lastPublicationDateTime
      * @return void
      */
-    public function setLastPublicationDateTime(\DateTime $lastPublicationDateTime = null)
+    public function setLastPublicationDateTime(\DateTimeInterface $lastPublicationDateTime = null)
     {
         $this->lastPublicationDateTime = $lastPublicationDateTime;
     }
@@ -432,10 +432,10 @@ abstract class AbstractNodeData
     /**
      * Sets the date and time when this node becomes potentially visible.
      *
-     * @param \DateTime $dateTime Date before this node should be hidden
+     * @param \DateTimeInterface $dateTime Date before this node should be hidden
      * @return void
      */
-    public function setHiddenBeforeDateTime(\DateTime $dateTime = null)
+    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null)
     {
         if ($this->hiddenBeforeDateTime != $dateTime) {
             $this->hiddenBeforeDateTime = $dateTime;
@@ -456,10 +456,10 @@ abstract class AbstractNodeData
     /**
      * Sets the date and time when this node should be automatically hidden
      *
-     * @param \DateTime $dateTime Date after which this node should be hidden or NULL if no such time was set
+     * @param \DateTimeInterface $dateTime Date after which this node should be hidden or NULL if no such time was set
      * @return void
      */
-    public function setHiddenAfterDateTime(\DateTime $dateTime = null)
+    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null)
     {
         if ($this->hiddenAfterDateTime != $dateTime) {
             $this->hiddenAfterDateTime = $dateTime;

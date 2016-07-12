@@ -18,10 +18,10 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * This can apply two transformations:
  *
- * If newValue is set, the value will be set to this, with any occurences of the currentValuePlaceholder replaced with
+ * If newValue is set, the value will be set to this, with any occurrences of the currentValuePlaceholder replaced with
  * the current value of the property.
  *
- * If search and replace are given, that replacament will be done on the value (after applying the newValue if set).
+ * If search and replace are given, that replacement will be done on the value (after applying the newValue if set).
  */
 class ChangePropertyValue extends AbstractTransformation
 {

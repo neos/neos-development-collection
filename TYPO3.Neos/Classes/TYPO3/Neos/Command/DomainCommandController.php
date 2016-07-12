@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\ValidatorResolver;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
@@ -37,29 +38,54 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     protected $siteRepository;
 
     /**
+     * @var ValidatorResolver
+     * @Flow\Inject
+     */
+    protected $validatorResolver;
+
+    /**
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
      * @param string $hostPattern The host pattern to match on, e.g. "neos.typo3.org"
+     * @param string $scheme The scheme for linking (http/https)
+     * @param integer $port The port for linking (0-49151)
      * @return void
      */
-    public function addCommand($siteNodeName, $hostPattern)
+    public function addCommand($siteNodeName, $hostPattern, $scheme = null, $port = null)
     {
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if (!$site instanceof Site) {
-            $this->outputLine('No site found with nodeName "%s".', array($siteNodeName));
+            $this->outputLine('<error>No site found with nodeName "%s".</error>', array($siteNodeName));
             $this->quit(1);
         }
 
         $domains = $this->domainRepository->findByHostPattern($hostPattern);
         if ($domains->count() > 0) {
-            $this->outputLine('The host pattern "%s" is not unique.', array($hostPattern));
+            $this->outputLine('<error>The host pattern "%s" is not unique.</error>', array($hostPattern));
             $this->quit(1);
         }
 
         $domain = new Domain();
+        if ($scheme !== null) {
+            $domain->setScheme($scheme);
+        }
+        if ($port !== null) {
+            $domain->setPort($port);
+        }
         $domain->setSite($site);
         $domain->setHostPattern($hostPattern);
+
+        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
+        $result = $domainValidator->validate($domain);
+        if ($result->hasErrors()) {
+            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
+                $firstError = array_pop($errors);
+                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
+                $this->quit(1);
+            }
+        }
+
         $this->domainRepository->add($domain);
 
         $this->outputLine('Domain created.');
@@ -93,21 +119,33 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
             array_push($availableDomains, array(
                 'nodeName' => $domain->getSite()->getNodeName(),
                 'hostPattern' => $domain->getHostPattern(),
+                'scheme' => $domain->getScheme(),
+                'port' => $domain->getPort(),
                 'active' => $domain->getActive()
             ));
             if (strlen($domain->getSite()->getNodeName()) > $longestNodeName) {
                 $longestNodeName = strlen($domain->getSite()->getNodeName());
             }
-            if (strlen($domain->getHostPattern()) > $longestHostPattern) {
-                $longestHostPattern = strlen($domain->getHostPattern());
+            if (strlen($domain) > $longestHostPattern) {
+                $longestHostPattern = strlen($domain);
             }
         }
 
         $this->outputLine();
-        $this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Host pattern', $longestHostPattern + 5) . 'State');
-        $this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 14));
+        $this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Domain (Scheme/<b>Host</b>/Port)', $longestHostPattern + 12) . 'State');
+        $this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 12));
         foreach ($availableDomains as $domain) {
-            $this->outputLine(' ' . str_pad($domain['nodeName'], $longestNodeName + 10) . str_pad($domain['hostPattern'], $longestHostPattern + 5) . ($domain['active'] ? 'Active' : 'Inactive'));
+            $this->outputLine(sprintf(
+                ' %s%s%s',
+                str_pad($domain['nodeName'], $longestNodeName + 10),
+                str_pad(
+                    ($domain['scheme'] ? $domain['scheme'] . '://' : '') .
+                    '<b>' . $domain['hostPattern'] . '</b>' .
+                    ($domain['port'] ? ':' . $domain['port'] : ''),
+                    $longestHostPattern + 12
+                ),
+                ($domain['active'] ? 'Active' : 'Inactive')
+            ));
         }
         $this->outputLine();
     }
@@ -122,7 +160,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
@@ -140,7 +178,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
@@ -159,7 +197,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
     {
         $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
         if (!$domain instanceof Domain) {
-            $this->outputLine('Domain not found.');
+            $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 

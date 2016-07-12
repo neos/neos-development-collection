@@ -2,41 +2,48 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 5}">
 	<ul class="neos-thumbnails asset-list">
-		<f:for each="{paginatedAssets}" as="asset">
-			<li class="asset">
-				<f:link.action action="edit" title="{neos:backend.translate(id: 'media.thumbnail.editTitle', arguments:{0:asset.label}, source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
-					<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
-						<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{asset.label}" />
-						<button class="neos-button neos-media-delete" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-toggle="modal" data-target="#asset-{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
-					</div>
-					<span class="neos-caption"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
-				</f:link.action>
-				<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
-					<div class="neos-modal">
-						<div class="neos-modal-header">
-							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0:asset.label}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-							<div>
-								<div class="neos-subheader">
-									<p>
-										{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
-										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-									</p>
-								</div>
+		<f:alias map="{'deleteAssetLabel': '{neos:backend.translate(id: \'media.tooltip.deleteAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'replaceAssetResourceLabel': '{neos:backend.translate(id: \'media.tooltip.replaceAssetResource\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
+			<f:for each="{paginatedAssets}" as="asset">
+				<li class="asset">
+					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
+						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
+							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+						</div>
+					</f:link.action>
+					<div class="neos-img-label">
+						<m:fileTypeIcon file="{asset}" height="32" />
+
+						<div class="neos-dropdown neos-pull-right" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
+							<a class="dropdown-toggle neos-button neos-button-small" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
+								<i class="icon-ellipsis-horizontal"></i>
+							</a>
+							<div class="neos-dropdown-menu-list" role="menu">
+								<ul>
+									<li>
+										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}">
+											<i class="icon-edit icon-white"></i> Edit
+										</f:link.action>
+									</li>
+									<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+										<li>
+											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}">
+												<i class="icon-random icon-white"></i> Replace
+											</f:link.action>
+										</li>
+									</f:security.ifAccess>
+									<li>
+										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
+											<i class="icon-trash icon-white"></i> Delete
+										</a>
+									</li>
+								</ul>
 							</div>
 						</div>
-						<div class="neos-modal-footer">
-							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-							<f:form action="delete" method="post" object="{asset}" objectName="asset" class="neos-inline">
-								<button type="submit" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
-									{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
-								</button>
-							</f:form>
-						</div>
+
+						<span class="neos-caption asset-label" title="{asset.label}"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
 					</div>
-					<div class="neos-modal-backdrop neos-in"></div>
-				</div>
-			</li>
-		</f:for>
+				</li>
+			</f:for>
+		</f:alias>
 	</ul>
 </f:widget.paginate>

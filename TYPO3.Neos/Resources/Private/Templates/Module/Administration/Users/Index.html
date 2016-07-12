@@ -6,54 +6,61 @@
 		<table class="neos-table">
 			<thead>
 				<tr>
-					<th>{neos:backend.translate(id: 'users.name', value: 'Name')}</th>
-					<th>{neos:backend.translate(id: 'users.accountsAndRoles', value: 'Accounts and Roles')}</th>
+					<th><neos:backend.translate id="users.name" source="Modules" package="TYPO3.Neos"/></th>
+					<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="TYPO3.Neos"/></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<f:for each="{users}" key="index" as="user">
 				<tr>
-					<td title="{user.alias}">{user.name}</td>
+					<td>{user.name.fullName}</td>
 					<td>
 						<f:for each="{user.accounts}" as="account">
-							<i class="icon-user icon-white"></i>{account.accountIdentifier} (<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />)
+							<i class="icon-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 						</f:for>
 					</td>
 					<td class="neos-action">
 						<div class="neos-pull-right">
-							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToView', value: 'Click to view')}">
+							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}">
+							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.edit', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
 							<f:if condition="{currentUser} == {user}">
 								<f:then>
-									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.youCannotDeleteYourself', value: 'You are logged in as this user and you cannot delete yourself.')}"><i class="icon-trash icon-white"></i></button>
+									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotDeleteYourself', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#user-{index}">
+									<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#user-{index}" data-neos-toggle="tooltip">
 										<i class="icon-trash icon-white"></i>
 									</button>
 									<div class="neos-hide" id="user-{index}">
-										<div class="neos-modal">
-											<div class="neos-modal-header">
-												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">{neos:backend.translate(id: 'users.deleteModalHeader', value: 'Do you really want to delete the user "{0}"?', arguments: {0: "{user.name}"})}</div>
-												<div>
-													<div class="neos-subheader">
-														<p>{neos:backend.translate(id: 'users.deleteModalBody', value: 'This will delete the user, the related accounts and his personal workspace, including all unpublished content. This operation cannot be undone.')}</p>
+										<div class="neos-modal-centered">
+											<div class="neos-modal-content">
+												<div class="neos-modal-header">
+													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+													<div class="neos-header">
+														<neos:backend.translate id="users.message.reallyDelete" arguments="{0:user.name}" source="Modules" package="TYPO3.Neos"/>
+													</div>
+													<div>
+														<div class="neos-subheader">
+															<p>
+																<neos:backend.translate id="users.message.willBeDeleted" source="Modules" package="TYPO3.Neos"/><br/>
+																<neos:backend.translate id="operationCannotBeUndone" package="TYPO3.Neos"/>
+															</p>
+														</div>
 													</div>
 												</div>
-											</div>
-											<div class="neos-modal-footer">
-												<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-												<f:form action="delete" arguments="{user: user}" class="neos-inline">
-													<button type="submit" class="neos-button neos-button-danger" title="Delete User">
-														{neos:backend.translate(id: 'users.deleteModalConfirm', value: 'Yes, delete the user')}
-													</button>
-												</f:form>
+												<div class="neos-modal-footer">
+													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+													<f:form action="delete" arguments="{user: user}" class="neos-inline">
+														<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}">
+															<neos:backend.translate id="users.message.confirmDelete" source="Modules" package="TYPO3.Neos"/>
+														</button>
+													</f:form>
+												</div>
 											</div>
 										</div>
 										<div class="neos-modal-backdrop neos-in"></div>
@@ -67,6 +74,6 @@
 		</table>
 	</div>
 	<div class="neos-footer">
-		<f:link.action action="new" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.createNew', value: 'Create new user')}">{neos:backend.translate(id: 'users.createNew', value: 'Create new user')}</f:link.action>
+		<f:link.action action="new" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.actions.new.label', source: 'Modules', package: 'TYPO3.Neos')}"><neos:backend.translate id="users.actions.new.label" source="Modules" package="TYPO3.Neos"/></f:link.action>
 	</div>
 </f:section>

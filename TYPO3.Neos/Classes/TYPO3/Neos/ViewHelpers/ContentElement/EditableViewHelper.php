@@ -18,7 +18,8 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
+use TYPO3\Neos\Service\ContentElementEditableService;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
@@ -34,6 +35,8 @@ use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
  */
 class EditableViewHelper extends AbstractTagBasedViewHelper
 {
+    use TypoScriptContextTrait;
+
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -45,6 +48,12 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @var AuthorizationService
      */
     protected $nodeAuthorizationService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentElementEditableService
+     */
+    protected $contentElementEditableService;
 
     /**
      * @return void
@@ -87,19 +96,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
         $this->tag->setContent($content);
 
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
-            return $this->tag->render();
-        }
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            return $this->tag->render();
-        }
-
-        $this->tag->addAttribute('property', 'typo3:' . $property);
-        $this->tag->addAttribute('class', $this->tag->hasAttribute('class') ? 'neos-inline-editable ' . $this->tag->getAttribute('class') : 'neos-inline-editable');
-        return $this->tag->render();
+        return $this->contentElementEditableService->wrapContentProperty($node, $property, $this->tag->render());
     }
 
     /**
@@ -108,13 +105,11 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      */
     protected function getNodeFromTypoScriptContext()
     {
-        $view = $this->viewHelperVariableContainer->getView();
-        if (!$view instanceof TypoScriptAwareViewInterface) {
+        $node = $this->getContextVariable('node');
+        if ($node === null) {
             throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
         }
-        $typoScriptObject = $view->getTypoScriptObject();
-        $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 
-        return $currentContext['node'];
+        return $node;
     }
 }

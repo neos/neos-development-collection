@@ -38,7 +38,7 @@ define(
 		_entitiesBySubject: {},
 
 		nodes: function() {
-			if (this.get('currentlyShownSecondaryAlohaTabs')) {
+			if (this.get('currentlyShownSecondaryAlohaTabs') && $('body').hasClass('neos-inline-editing-active')) {
 				// we show secondary aloha tabs currently, so we *replace* the inspector contents.
 				// we build up a custom-tailored "node type" which can be rendered using the normal
 				// Inspector UI.
@@ -86,7 +86,9 @@ define(
 				nodesWithVirtualNode.addObjects(this.get('_nodes'));
 
 				nodesWithVirtualNode.addObject(Ember.Object.create({
+					nodeLabel: 'Table',
 					nodeType: 'ALOHA-CONTROL',
+					node: nodesWithVirtualNode.get('lastObject'),
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
 					_enableTransactionalInspector: false,
 					attributes: Ember.Object.create(),
@@ -194,6 +196,16 @@ define(
 						var activeEditable = Aloha.getActiveEditable();
 						if (activeEditable) {
 							Aloha.getActiveEditable().blur();
+						}
+
+						if (options.selectFirstEditable === true) {
+							// Activate first editable & select all text
+							var firstEditableElement = $element.find('.neos-inline-editable').first();
+							var firstEditable = Aloha.getEditableHost(firstEditableElement);
+							if (firstEditable) {
+								firstEditable.activate();
+								selection._nativeSelection.selectAllChildren(firstEditableElement.get(0));
+							}
 						}
 					});
 				}
@@ -313,9 +325,27 @@ define(
 			this._createEntityWrapper($element, true);
 		},
 
+		getNode: function(contextPath) {
+			var node = this._entitiesBySubject['<' + contextPath + '>'];
+			if (node) {
+				return node;
+			}
+
+			var element = $('[about="' + contextPath + '"]');
+			if (element) {
+				return this._createEntityWrapper(element);
+			}
+
+			return null;
+		},
+
 		selectedNode: function() {
-			var nodes = this.get('nodes');
-			return nodes.length > 0 ? _.last(nodes) : null;
+			var nodes = this.get('nodes'),
+				selectedNode = nodes.length > 0 ? _.last(nodes) : null;
+			if (selectedNode) {
+				EventDispatcher.triggerExternalEvent('Neos.NodeSelected', 'Node was selected.', {element: selectedNode.$element.get(0), node: selectedNode});
+			}
+			return selectedNode;
 		}.property('nodes'),
 
 		selectedNodeSchema: function() {

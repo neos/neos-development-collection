@@ -95,7 +95,13 @@ By default the following Eel helpers are available in the default context for Ee
 * ``Neos.Array``, exposing ``TYPO3\Neos\TypoScript\Helper\ArrayHelper``
 * ``Neos.Rendering``, exposing ``TYPO3\Neos\TypoScript\Helper\RenderingHelper``
 
+See: :ref:`Eel Helpers Reference`
+
 This is configured via the setting ``TYPO3.TypoScript.defaultContext``.
+
+Additionally, the defaultContext contains the ``request`` object,
+where you have also access to Arguments. e.g.
+``${request.httpRequest.arguments.nameOfYourGetArgument}``
 
 FlowQuery
 =========
@@ -274,3 +280,13 @@ For the latter the behavior is as follows: if the operand is one of the strings
 object, array, int(eger), float, double, bool(ean) or string the value is checked
 for being of the specified type. For any other strings the value is used as
 class name with the PHP instanceof operation to check if the value matches.
+
+Using Multiple Filters
+----------------------
+
+It is possible to combine multiple filters:
+
+``[foo][bar][baz]``
+  All filters have to match (AND)
+``[foo],[bar],[baz]``
+  Only one filter has to match (OR)

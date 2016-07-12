@@ -13,6 +13,7 @@ namespace TYPO3\TypoScript\Core\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Utility\Unicode\Functions;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
 
@@ -52,9 +53,14 @@ class RuntimeContentCache
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TypoScript\Core\Cache\ContentCache
+     * @var ContentCache
      */
     protected $contentCache;
+
+    /**
+     * @var array
+     */
+    protected $tags = [];
 
     /**
      * @param Runtime $runtime
@@ -62,6 +68,36 @@ class RuntimeContentCache
     public function __construct(Runtime $runtime)
     {
         $this->runtime = $runtime;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     * @return void
+     * @throws Exception
+     */
+    public function addTag($key, $value)
+    {
+        $key = trim($key);
+        if ($key === '') {
+            throw new Exception('Tag Key must not be empty', 1448264366);
+        }
+        $value = trim($value);
+        if ($value === '') {
+            throw new Exception('Tag Value must not be empty', 1448264367);
+        }
+        $tag = Functions::ucfirst($key) . 'DynamicTag_' . $value;
+        $this->tags[$tag] = true;
+    }
+
+    /**
+     * @return array
+     */
+    protected function flushTags()
+    {
+        $tags = array_keys($this->tags);
+        $this->tags = [];
+        return $tags;
     }
 
     /**
@@ -243,21 +279,11 @@ class RuntimeContentCache
      */
     protected function buildCacheIdentifierValues($configuration, $typoScriptPath, $tsObject)
     {
-        $cacheIdentifierValues = array();
-        if (isset($configuration['entryIdentifier'])) {
-            if (isset($configuration['entryIdentifier']['__objectType'])) {
-                $cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier', $tsObject);
-            } else {
-                $cacheIdentifierValues = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier<TYPO3.TypoScript:GlobalCacheIdentifiers>', $tsObject);
-            }
-        } else {
-            foreach ($this->runtime->getCurrentContext() as $key => $value) {
-                if (is_string($value) || is_bool($value) || is_integer($value) || $value instanceof CacheAwareInterface) {
-                    $cacheIdentifierValues[$key] = $value;
-                }
-            }
+        $objectType = '<TYPO3.TypoScript:GlobalCacheIdentifiers>';
+        if (isset($configuration['entryIdentifier']['__objectType'])) {
+            $objectType = '<' . $configuration['entryIdentifier']['__objectType'] . '>';
         }
-        return $cacheIdentifierValues;
+        return $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryIdentifier' . $objectType, $tsObject);
     }
 
     /**
@@ -280,10 +306,13 @@ class RuntimeContentCache
                     $cacheTags[] = $tagValue;
                 }
             }
+            foreach ($this->flushTags() as $tagKey => $tagValue) {
+                $cacheTags[] = $tagValue;
+            }
         } else {
             $cacheTags = array(ContentCache::TAG_EVERYTHING);
         }
-        return $cacheTags;
+        return array_unique($cacheTags);
     }
 
     /**

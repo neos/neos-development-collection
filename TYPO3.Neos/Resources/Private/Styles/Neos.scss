@@ -5,8 +5,8 @@
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
-@import "Icons";
 @import "../../Public/Library/fontawesome/scss/font-awesome.scss";
+@import "Icons";
 
 .neos {
 	// CSS Reset
@@ -89,6 +89,7 @@
 	@import "Notifications";
 	@import "Components/LoginDialog";
 	@import "Components/PositionSelector";
+	@import "Components/HelpMessage";
 	@import "Widget/pagination";
 	@import "ContextBar/AlohaLinkEditor";
 	@import "ContextBar/AlohaAddTable";

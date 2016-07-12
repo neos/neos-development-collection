@@ -1,7 +1,7 @@
 /**
  * Root TypoScript template for the {siteName} site
  */
-page = Page {
+page = TYPO3.Neos:Page {
 	head {
 		stylesheets.site = TYPO3.TypoScript:Template {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
@@ -18,13 +18,13 @@ page = Page {
 		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 		sectionName = 'body'
 		parts {
-			menu = Menu
-			breadcrumb = Breadcrumb
+			menu = TYPO3.Neos:Menu
 		}
+
 		// These are your content areas, you can define as many as you want, just name them and the nodePath.
 		content {
 			// The default content section
-			main = PrimaryContent {
+			main = TYPO3.Neos:PrimaryContent {
 				nodePath = 'main'
 			}
 		}

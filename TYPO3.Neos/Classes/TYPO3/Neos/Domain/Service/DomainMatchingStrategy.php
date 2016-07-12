@@ -28,7 +28,7 @@ class DomainMatchingStrategy
      * The domains are sorted by their match exactness.
      * If none really matches an empty array is returned.
      *
-     * @param string $host The host to match against (eg. "localhost" or "www.typo3.org")
+     * @param string $host The host to match against (eg. "localhost" or "www.neos.io")
      * @param array<\TYPO3\Neos\Domain\Model\Domain> $domains The domains to check
      * @return array The matching domains
      */
@@ -39,7 +39,7 @@ class DomainMatchingStrategy
         $hostPartsReverse = array_reverse(explode('.', $host));
 
         foreach ($domains as $domain) {
-            $hostPattern = $domain->getHostPattern();
+            $hostPattern = is_string($domain) ? $domain : $domain->getHostPattern();
 
             if ($host === $hostPattern) {
                 $matchQuality = self::EXACTMATCH;

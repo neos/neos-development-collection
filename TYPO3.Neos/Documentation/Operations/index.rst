@@ -5,3 +5,5 @@ Neos Operations
 
 .. toctree::
 	:maxdepth: 2
+
+	CommandLine

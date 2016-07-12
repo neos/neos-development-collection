@@ -34,7 +34,10 @@ class ConditionsTest extends AbstractTypoScriptObjectTest
             array('conditions/supportForConditionInProcess', 'wrappedValue'),
             array('conditions/supportForConditionInProcessFalse', 'originalValue'),
             array('conditions/supportForConditionInProcessWithAdvancedProcess', 'wrappedValue'),
-            array('conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue')
+            array('conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue'),
+            array('conditions/processorOnSimpleValueWithCondition', null),
+            array('conditions/processorOnExpressionWithCondition', null),
+            array('conditions/processorOnObjectWithCondition', null)
         );
     }
 

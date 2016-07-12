@@ -76,7 +76,7 @@ abstract class NodePaths
 
         $nodePath = $matches['NodePath'];
         $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : null;
+        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : array();
 
         return array(
             'nodePath' => $nodePath,
@@ -92,7 +92,9 @@ abstract class NodePaths
     public static function parseDimensionValueStringToArray($dimensionValueString)
     {
         parse_str($dimensionValueString, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+        $dimensions = array_map(function ($commaSeparatedValues) {
+            return explode(',', $commaSeparatedValues);
+        }, $dimensions);
 
         return $dimensions;
     }

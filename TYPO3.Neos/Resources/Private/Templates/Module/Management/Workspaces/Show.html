@@ -1,0 +1,161 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+</f:section>
+
+<f:section name="content">
+
+	<f:if condition="{siteChanges}">
+		<f:then>
+			<f:form action="publishOrDiscardNodes">
+				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
+				<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+				<br />
+				<div class="neos-row-fluid">
+					<table class="neos-table">
+						<thead>
+							<tr>
+								<th class="check neos-priority1">
+									<label for="check-all" class="neos-checkbox">
+										<input type="checkbox" id="check-all" /><span></span>
+									</label>
+								</th>
+								<th></th>
+								<th class="neos-action"></th>
+							</tr>
+						</thead>
+						<tbody>
+						<f:for each="{siteChanges}" as="site">
+							<f:for each="{site.documents}" key="documentPath" as="document">
+								<tr>
+									<td colspan="2" class="neos-priority1 path-caption">
+										<div class="neos-row-fluid">
+											<div class="neos-span2">
+												{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:
+												<f:render partial="Module/Shared/DocumentBreadcrumb" arguments="{node: document.documentNode, showIcon: true}"></f:render>
+											</div>
+
+											<div class="neos-span2 neos-pull-right neos-aRight">
+												<f:if condition="{document.documentNode.removed}">
+													<f:else>
+														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'TYPO3.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'TYPO3.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="icon-pencil icon-white"></i></button>
+													</f:else>
+												</f:if>
+											</div>
+										</div>
+									</td>
+									<td class="neos-action neos-folder">
+										<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
+									</td>
+								</tr>
+								<f:for each="{document.changes}" key="relativePath" as="change">
+									<tr class="neos-change fold-{document.documentNode.identifier}">
+										<td class="check neos-priority1">
+											<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
+										</td>
+										<td id="change-{change.node.identifier}" {f:render(partial: 'Module/Management/Workspaces/ContentChangeAttributes', arguments: {change: change})} data-neos-toggle="tooltip" data-placement="left" data-container="body">
+											<f:render partial="Module/Management/Workspaces/ContentChangeDiff" arguments="{change: change, contentDimensions: contentDimensions}"/>
+										</td>
+										<td class="neos-action">
+											<f:if condition="{canPublishToBaseWorkspace}">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">
+													<i class="icon-ok icon-white"></i>
+												</button>
+											</f:if>
+											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
+												<i class="icon-trash icon-white"></i>
+											</button>
+										</td>
+									</tr>
+								</f:for>
+							</f:for>
+						</f:for>
+						</tbody>
+					</table>
+				</div>
+				<f:render section="actions" arguments="{_all}" />
+			</f:form>
+
+			<div class="neos-hide" id="discard">
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'TYPO3.Neos')}</div>
+						</div>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
+							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
+								<i class="icon-trash icon-white"></i>
+								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="neos-modal-backdrop neos-in"></div>
+			</div>
+
+			<f:form action="index" id="postHelper" method="post"></f:form>
+
+			<script>
+				(function($) {
+					$('#check-all').change(function() {
+						var value = false;
+						if ($(this).is(':checked')) {
+							value = true;
+							$('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
+						} else {
+							$('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+						}
+						$('tbody input[type="checkbox"]').prop('checked', value);
+					});
+					$('tbody input[type="checkbox"]').change(function() {
+						if ($('tbody input[type="checkbox"]:checked').length > 0) {
+							$('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled')
+						} else {
+							$('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+						}
+					});
+					$('.fold-toggle').click(function() {
+						$(this).toggleClass('icon-chevron-down icon-chevron-up');
+						$('tr.' + $(this).data('toggle')).toggle();
+					});
+				})(jQuery);
+			</script>
+
+		</f:then>
+		<f:else>
+			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+			<p>{neos:backend.translate(id: 'workspaces.thereAreNoUnpublishedChanges', source: 'Modules', package: 'TYPO3.Neos')}</p>
+			<div class="neos-footer">
+				<div class="pull-left">
+					<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'TYPO3.Neos')}</f:link.action>
+				</div>
+			</div>
+		</f:else>
+	</f:if>
+</f:section>
+
+<f:section name="actions">
+	<div class="neos-footer">
+		<div class="pull-left">
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'TYPO3.Neos')}</f:link.action>
+		</div>
+		<div class="pull-right">
+			<f:if condition="{canPublishToBaseWorkspace}">
+				<f:then>
+					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: baseWorkspaceLabel})}</button>
+				</f:then>
+				<f:else>
+					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+					<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+				</f:else>
+			</f:if>
+		</div>
+	</div>
+</f:section>

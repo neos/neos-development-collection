@@ -36,7 +36,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     {
         $messageArray = array(
             'header' => 'An exception was thrown while Neos tried to render your page',
-            'content' => $exception->getMessage(),
+            'content' => htmlspecialchars($exception->getMessage()),
             'stacktrace' => $this->formatTypoScriptPath($typoScriptPath),
             'referenceCode' => $this->formatErrorCodeMessage($referenceCode)
         );

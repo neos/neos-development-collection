@@ -16,11 +16,6 @@
 		.neos-content-dimension-selector-dimensions {
 			display: block;
 		}
-
-		.neos-content-dimension-selector-summary::before {
-			right: 3px;
-			@include rotate(-90deg);
-		}
 	}
 
 	.neos-contentelement-selected & {
@@ -40,17 +35,14 @@
 		@include box-sizing(border-box);
 
 		&::before {
-			content: "›";
-			font-size: 26px;
-			font-weight: normal;
-			display: inline-block;
+			@include fa-icon();
+			content: $fa-var-caret-down;
+			font-size: 14px;
 			position: absolute;
-			top: 0;
-			right: -3px;
+			right: 0;
 			width: $unit;
 			line-height: $unit;
 			text-align: center;
-			@include rotate(90deg);
 		}
 
 		.neos-content-dimension-selector-dimension {
@@ -64,6 +56,8 @@
 				width: $defaultMargin + $relatedMargin;
 				text-align: center;
 				color: $textSubtleLight;
+				font-size: 16px;
+				line-height: 16px;
 			}
 		}
 	}
@@ -88,6 +82,8 @@
 
 			i {
 				width: $defaultMargin + $relatedMargin;
+				font-size: 16px;
+				line-height: 16px;
 			}
 
 			label {

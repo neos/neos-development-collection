@@ -267,7 +267,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * and reads the image if possible
 		 */
 		didInsertElement: function () {
-			var that = this;
 			this._super();
 
 			this.$().find('.neos-inspector-image-thumbnail-inner').css({
@@ -298,19 +297,52 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_mediaBrowserView: null,
 
 		_beforeMediaBrowserIsShown: function () {
-			var that = this;
+			var that = this,
+				value = null;
+
+			try {
+				if (this.get('value')) {
+					value = JSON.parse(this.get('value'));
+				}
+			} catch (exception) {
+				console.log('Invalid JSON value in image editor', this.get('value'));
+			}
+
 			window.Typo3MediaBrowserCallbacks = {
-				assetChosen: function (assetIdentifier) {
+				_assetIdentifier: value && '__identity' in value ? value.__identity : null,
+				_frameLoaded: false,
+				_reloadPreviewImage: function() {
+					var originalPreviewImageResourceUri = that.get('_previewImageUri');
+
 					that._displayImageLoader();
 
 					that.set('_loadPreviewImageHandler', HttpClient.getResource(
-						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
+						that.get('_imageServiceEndpointUri') + '?image=' + this._assetIdentifier,
 						{dataType: 'json'}
 					));
 					that.get('_loadPreviewImageHandler').then(function (result) {
-						that.fileUploaded(result);
+						if (originalPreviewImageResourceUri !== result.previewImageResourceUri) {
+							that.fileUploaded(result);
+						}
 						that._hideImageLoader();
 					});
+				},
+				onLoad: function() {
+					this._frameLoaded = true;
+				},
+				refreshThumbnail: function() {
+					if (this._frameLoaded) {
+						this._reloadPreviewImage();
+					}
+				},
+				assetChosen: function(assetIdentifier) {
+					if (assetIdentifier) {
+						this._assetIdentifier = assetIdentifier;
+						this._reloadPreviewImage();
+					}
+					that.set('mediaBrowserShown', false);
+				},
+				close: function() {
 					that.set('mediaBrowserShown', false);
 				}
 			};
@@ -320,7 +352,14 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_initializeMediaBrowserEditView: function () {
 			this.set('_mediaBrowserEditView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>')
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>'),
+				didInsertElement: function() {
+					this.$().find('iframe').on('load', function(event) {
+						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
+							window.Typo3MediaBrowserCallbacks.onLoad(event);
+						}
+					});
+				}
 			}));
 		},
 
@@ -659,7 +698,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					$image.attr('src', parent.get('_previewImageUri'));
 
 					var update = function (previewImageCoordinates) {
-
 							var imageWidthBeforeChange = parent.get('_finalImageDimensions.width');
 							var imageWidthScalingFactor = previewImageCoordinates.w / parent.get('_cropProperties.width');
 							Ember.beginPropertyChanges();
@@ -675,6 +713,8 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 							parent._updateValue();
 						},
 						settings = {
+							boxWidth: 600,
+							boxHeight: 600,
 							// Triggered when the selection is finished or updated
 							onSelect: update,
 							onChange: update
@@ -1026,7 +1066,14 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_initializeMediaView: function () {
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>'),
+				didInsertElement: function() {
+					this.$().find('iframe').on('load', function(event) {
+						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
+							window.Typo3MediaBrowserCallbacks.onLoad(event);
+						}
+					});
+				}
 			}));
 		},
 

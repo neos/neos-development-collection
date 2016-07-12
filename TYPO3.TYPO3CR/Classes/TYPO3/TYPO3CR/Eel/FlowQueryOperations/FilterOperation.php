@@ -135,6 +135,8 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
                 $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
                 return $operand[0] === '!' ? $isOfType === false : $isOfType;
             }
+        } elseif ($operator === '!instanceof' && $value instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+            return !$this->evaluateOperator($value, 'instanceof', $operand);
         }
         return parent::evaluateOperator($value, $operator, $operand);
     }

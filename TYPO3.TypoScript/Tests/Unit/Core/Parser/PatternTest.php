@@ -48,6 +48,11 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->assertEquals(preg_match($pattern, 'f21oo.b12ar.baz { foo'), 0, 'a confinement with parts after the opening confinement matched');
         $this->assertEquals(preg_match($pattern, '1foo.bar.baz {'), 1, 'a path which contained a number was matched (1)');
         $this->assertEquals(preg_match($pattern, 'foo.1bar.baz {'), 1, 'a path which contained a number was matched (2)');
+        $this->assertEquals(preg_match($pattern, 'foo.1bar.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (1)');
+        $this->assertEquals(preg_match($pattern, 'foo.\'1b@r\'.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (2)');
+        $this->assertEquals(preg_match($pattern, 'foo.1bar."b@r" {'), 1, 'a path which contained a double quoted key was matched (1)');
+        $this->assertEquals(preg_match($pattern, 'foo."1b@r"."b@r" {'), 1, 'a path which contained a double quoted key was matched (2)');
+        $this->assertEquals(preg_match($pattern, 'foo."1b@r".\'b@r\' {'), 1, 'a path which contained a single & double quoted keys was matched');
     }
 
     /**
@@ -95,6 +100,8 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->assertEquals(preg_match($pattern, 'my-object.con-tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a dasherized path.');
         $this->assertEquals(preg_match($pattern, 'my:object.con:tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a colonrized path.');
         $this->assertEquals(preg_match($pattern, 'myObject.10 = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a content array item.');
+        $this->assertEquals(preg_match($pattern, 'myObject.\'b@r\' = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a single quoted key.');
+        $this->assertEquals(preg_match($pattern, 'myObject."b@r" = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a double quoted key.');
     }
 
     /**
@@ -104,6 +111,8 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OBJECTPATH;
         $this->assertEquals(preg_match($pattern, 'foo.bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (1)');
+        $this->assertEquals(preg_match($pattern, 'foo.\'b@r\''), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a single quoted key');
+        $this->assertEquals(preg_match($pattern, 'foo."b@r"'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a double quoted key');
         $this->assertEquals(preg_match($pattern, 'foo.prototype(TYPO3.Foo).bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path with a prototype definition inside (2)');
         $this->assertEquals(preg_match($pattern, 'prototype(TYPO3.Foo)'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path which consists only of a prototype definition (3)');
         $this->assertEquals(preg_match($pattern, 'foo.bar.10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (4)');
@@ -181,6 +190,28 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
             3 => 'Test'
         );
         $this->assertRegexMatches('foo.bar = Test', $pattern, $expected, 'Simple assignment');
+
+        $expected = array(
+            0 => 'foo.\'@bar\' = Test',
+            'ObjectPath' => 'foo.\'@bar\'',
+            1 => 'foo.\'@bar\'',
+            'Operator' => '=',
+            2 => '=',
+            'Value' => 'Test',
+            3 => 'Test'
+        );
+        $this->assertRegexMatches('foo.\'@bar\' = Test', $pattern, $expected, 'Simple assignment with single quoted key');
+
+        $expected = array(
+            0 => 'foo."@bar" = Test',
+            'ObjectPath' => 'foo."@bar"',
+            1 => 'foo."@bar"',
+            'Operator' => '=',
+            2 => '=',
+            'Value' => 'Test',
+            3 => 'Test'
+        );
+        $this->assertRegexMatches('foo."@bar" = Test', $pattern, $expected, 'Simple assignment with double quoted key');
 
         $expected = array(
             0 => 'foo.prototype(TYPO3.Blah).bar = Test',

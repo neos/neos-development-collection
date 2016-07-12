@@ -22,6 +22,7 @@ define(
 	'create',
 	'Shared/Notification',
 	'Shared/HttpClient',
+	'Shared/HttpRestClient',
 	'Content/Components/StorageManager'
 ],
 function(
@@ -41,6 +42,7 @@ function(
 	CreateJS,
 	Notification,
 	HttpClient,
+	HttpRestClient,
 	StorageManager
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
@@ -77,6 +79,7 @@ function(
 		vie: null,
 
 		_activeEntity: null,
+		_loadPageRequest: null,
 
 		_vieOptions: {
 			stanbolUrl: null,
@@ -85,20 +88,60 @@ function(
 
 		$loader: null,
 		spinner: null,
+		httpClientFailureHandling: true,
 
 		bootstrap: function() {
-			var that = this;
-			HttpClient.on('failure', function(xhr, status, message) {
-				if (status === 'abort' || xhr.status === 401) {
-					return;
-				}
-				if (xhr === undefined || xhr.status !== 404) {
-					Notification.error('Server communication ' + status + ': ' + message);
-				} else {
-					that._handlePageNotFoundError(that.getCurrentUri());
-				}
-				LoadingIndicator.done();
-			});
+			var that = this,
+				httpClientFailureHandler = function(xhr, status, statusMessage) {
+					if (that.get('httpClientFailureHandling') === false) {
+						return;
+					}
+					if (status === 'abort' || xhr.status === 401) {
+						return;
+					}
+					if (xhr === undefined || xhr.status !== 404) {
+						console.error(statusMessage, xhr);
+						var errorMessage = '',
+							errorDetails = '';
+						if (xhr.responseJSON && xhr.responseJSON.error) {
+							if (xhr.responseJSON.error.code) {
+								errorMessage += '#' + xhr.responseJSON.error.code + ': ';
+							}
+							errorMessage += xhr.responseJSON.error.message;
+							if (xhr.responseJSON.error.details) {
+								errorDetails += '<br /><br />' + xhr.responseJSON.error.details;
+							}
+							if (xhr.responseJSON.error.referenceCode) {
+								errorDetails += '<br /><br />Reference code: ' + xhr.responseJSON.error.referenceCode;
+							}
+						} else if (xhr.responseText) {
+							var $exception = $(xhr.responseText);
+							if ($exception.has('.Window_Body').length > 0) {
+								errorMessage = $exception.find('.Window_Body p:last').html();
+							} else {
+								errorMessage = $exception.find('.ExceptionSubject').text();
+								errorDetails = '<br /><br />';
+								var $lastExceptionProperty = $exception.find('.ExceptionProperty:last');
+								$exception.find('.ExceptionSubject').parent().contents().each(function() {
+									if (this == $lastExceptionProperty.get(0)) {
+										errorDetails += $(this).text();
+										return false;
+									}
+									if ($(this).is('.ExceptionSubject')) {
+										return;
+									}
+									errorDetails += $(this).is('br') ? '<br /><br />' : $(this).text();
+								});
+							}
+						}
+						Notification.error('Server communication ' + status + ': ' + xhr.status + ' ' + statusMessage, errorMessage + errorDetails);
+					} else if (that.get('_isLoadingPage')) {
+						that._handlePageNotFoundError(that.getCurrentUri());
+					}
+					LoadingIndicator.done();
+				};
+			HttpClient.on('failure', httpClientFailureHandler);
+			HttpRestClient.on('failure', httpClientFailureHandler);
 
 			this.set('vie', vie);
 			if (window.T3.isContentModule) {
@@ -115,7 +158,7 @@ function(
 				this._setPagePosition();
 			}
 
-			this._initializeDropdowns();
+			this._initializeTwitterBootstrap();
 
 			if (window.T3.isContentModule) {
 				this._initializeHistoryManagement();
@@ -177,10 +220,7 @@ function(
 		},
 
 		_initializeVie: function() {
-			var that = this,
-				schemaLoadErrorCallback = function() {
-					console.warn('Error loading schemas.', arguments);
-				};
+			var that = this;
 
 			if (this.get('_vieOptions').stanbolUrl) {
 				vie.use(new vie.StanbolService({
@@ -203,11 +243,9 @@ function(
 							vie.Util.loadSchemaOrg(vie, vieSchema, null);
 							Configuration.set('Schema', nodeTypeSchema.nodeTypes);
 							that._initializeVieAfterSchemaIsLoaded(vie);
-						},
-						schemaLoadErrorCallback
+						}
 					);
-				},
-				schemaLoadErrorCallback
+				}
 			);
 		},
 
@@ -235,8 +273,13 @@ function(
 			CreateJS.initialize();
 		},
 
-		_initializeDropdowns: function() {
+		_initializeTwitterBootstrap: function() {
 			$('.dropdown-toggle', this.rootElement).dropdown();
+			$('html').click(function(e) {
+				if ($(e.target).parents('.neos-popover').length === 0) {
+					$('.neos-popover-toggle').popover('hide');
+				}
+			});
 		},
 
 		_initializeHistoryManagement: function() {
@@ -303,6 +346,12 @@ function(
 				if (href.indexOf('#') !== -1 && href.replace(protocolAndHost, '').split('#')[0] === location.pathname + location.search) {
 					return;
 				}
+
+				// Check if the link is link to a static resource
+				if (href.match(/_Resources\/Persistent/)) {
+					return;
+				}
+
 				// Check if the parent content element is selected if so don't trigger the link
 				if ($this.parents('.neos-contentelement-active').length !== 0) {
 					e.preventDefault();
@@ -347,7 +396,10 @@ function(
 			}
 
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
-			HttpClient.getResource(
+			if (this.get('_loadPageRequest')) {
+				this.get('_loadPageRequest').abort();
+			}
+			this.set('_loadPageRequest', HttpClient.getResource(
 				uri,
 				{
 					xhr: function() {
@@ -365,70 +417,78 @@ function(
 						};
 						return xhr;
 					}
-				}).then(
-					function(htmlString) {
-						var $htmlDom = $($.parseHTML(htmlString)),
-							$documentMetadata = $htmlDom.filter('#neos-document-metadata');
-						if ($documentMetadata.length === 0) {
-							Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
-							that.set('_isLoadingPage', false);
-							LoadingIndicator.done();
-							return;
-						}
-
-						pushUriToHistory();
-
-						// Extract the HTML from the page, starting at (including) #neos-document-metadata until #neos-application.
-						var $newContent = $htmlDom.filter('#neos-document-metadata').nextUntil('#neos-application').andSelf();
-
-						// remove the current HTML content
-						var $neosApplication = $('#neos-application');
-						$neosApplication.prevAll().remove();
-						$('body').prepend($newContent);
-						that.set('_isLoadingPage', false);
-
-						var $insertedContent = $neosApplication.prevAll();
-						var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
-						that._linkInterceptionHandler($links);
-						LoadingIndicator.done();
-
-						$('title').html($htmlDom.filter('title').html());
-						$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
-
-						// TODO: transfer body classes and other possibly important tags from the head section
-
-						that._setPagePosition();
-
-						// Update node selection (will update VIE)
-						NodeSelection.initialize();
-
-						if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
-							// Refresh CreateJS, renders the button bars f.e.
-							CreateJS.enableEdit();
-						}
-
-						// If doing a reload, we highlight the currently active content element again
-						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
-						if ($currentlyActiveContentElement.length === 1) {
-							NodeSelection.updateSelection($currentlyActiveContentElement, {scrollToElement: true});
-						}
-
+				}
+			));
+			this.get('_loadPageRequest').then(
+				function(htmlString) {
+					var $htmlDom = $($.parseHTML(htmlString)),
+						$documentMetadata = $htmlDom.filter('#neos-document-metadata');
+					if ($documentMetadata.length === 0) {
+						Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
+						return;
+					}
 
-						that.trigger('pageLoaded');
-						// Send external event so site JS can act on it
-						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
+					pushUriToHistory();
 
-						if (typeof callback === 'function') {
-							callback();
-						}
-					},
-					function() {
+					// Extract the HTML from the page, starting at (including) #neos-document-metadata until #neos-application.
+					var $newContent = $htmlDom.filter('#neos-document-metadata').nextUntil('#neos-application').andSelf();
+
+					// remove the current HTML content
+					var $neosApplication = $('#neos-application');
+					$neosApplication.prevAll().remove();
+					$('body').prepend($newContent);
+					that.set('_isLoadingPage', false);
+
+					var $insertedContent = $neosApplication.prevAll();
+					var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
+					that._linkInterceptionHandler($links);
+					LoadingIndicator.done();
+
+					$('title').html($htmlDom.filter('title').html());
+					$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
+
+					// TODO: transfer body classes and other possibly important tags from the head section
+
+					that._setPagePosition();
+
+					// Update node selection (will update VIE)
+					NodeSelection.initialize();
+
+					if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+						// Refresh CreateJS, renders the button bars f.e.
+						CreateJS.enableEdit();
+					}
+
+					// If doing a reload, we highlight the currently active content element again
+					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
+					if ($currentlyActiveContentElement.length === 1) {
+						NodeSelection.updateSelection($currentlyActiveContentElement, {scrollToElement: true});
+					}
+
+					that.set('_isLoadingPage', false);
+					LoadingIndicator.done();
+
+					that.trigger('pageLoaded');
+					// Send external event so site JS can act on it
+					EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
+
+					if (typeof callback === 'function') {
+						callback();
+					}
+				},
+				function(request) {
+					if (request.status !== 'abort') {
+						Notification.error('An error occurred.');
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
 					}
-				);
+				}
+			).fail(function(error) {
+				Notification.error('An error occurred.');
+				console.error('An error occurred:', error);
+			});
 		}
 
 	}).create();

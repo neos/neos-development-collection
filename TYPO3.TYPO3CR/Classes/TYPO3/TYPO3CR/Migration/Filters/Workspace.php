@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Filter nodes by node name.
+ * Filter nodes by workspace name.
  */
 class Workspace implements FilterInterface
 {

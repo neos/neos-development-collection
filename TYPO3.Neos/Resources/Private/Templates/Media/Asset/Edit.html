@@ -2,7 +2,7 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="EditImage"/>
 
-<f:section name="Title">Edit view of AssetController</f:section>
+<f:section name="Title">Edit view</f:section>
 
 <f:section name="Content">
 	<f:form method="post" action="update" object="{asset}" objectName="asset">
@@ -55,14 +55,17 @@
 							</f:if>
 							<tr>
 								<th>{neos:backend.translate(id: 'media.metadata.type', source: 'Modules', package: 'TYPO3.Neos')}</th>
-								<td>{asset.resource.mediatype}</td>
+								<td><span class="neos-label">{asset.resource.mediatype}</span></td>
 							</tr>
 							<tr>
 								<th>{neos:backend.translate(id: 'media.metadata.identifier', source: 'Modules', package: 'TYPO3.Neos')}</th>
-								<td>{asset.identifier}</td>
+								<td><span class="neos-label">{asset.identifier}</span></td>
 							</tr>
 						</tbody>
 					</table>
+					<f:if condition="{asset.inUse}">
+						<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'media.relatedNodes', quantity: '{asset.usageCount}', arguments: {0: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+					</f:if>
 				</fieldset>
 			</div>
 			<div class="neos-span6 neos-image-example">
@@ -71,29 +74,42 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
-			<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button">{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+			</f:security.ifAccess>
+			<f:if condition="{asset.inUse}">
+				<f:then>
+					<a title="{neos:backend.translate(id: 'media.deleteRelatedNodes', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+				</f:then>
+				<f:else>
+					<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
+				</f:else>
+			</f:if>
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.saveEditing', source: 'Modules', package: 'TYPO3.Neos')}" />
+
 			<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">
-							{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: asset.label}, source: 'Modules', package: 'TYPO3.Neos')}
-						</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">
+								{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: asset.label}, source: 'Modules', package: 'TYPO3.Neos')}
+							</div>
+							<div>
+								<div class="neos-subheader">
+									<p>
+										{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
-							{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
-						</button>
+						<div class="neos-modal-footer">
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
+								{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="neos-modal-backdrop neos-in"></div>
@@ -107,7 +123,7 @@
 	<label>{neos:backend.translate(id: 'media.preview', source: 'Modules', package: 'TYPO3.Neos')}</label>
 	<div class="neos-preview-image">
 		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-			<m:image asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{asset.label}" class="img-polaroid" />
+			<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
 		</a>
 	</div>
 </f:section>

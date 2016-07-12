@@ -36,6 +36,7 @@ page1.body {
 
 	parts.productCategoryMenu = TYPO3.Neos:Menu {
 		startingPoint = ${q(node).find('products').get(0)}
+		entryLevel = 0
 	}
 
 	content {

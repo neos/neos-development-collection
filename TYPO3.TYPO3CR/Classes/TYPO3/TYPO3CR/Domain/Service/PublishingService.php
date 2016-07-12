@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
@@ -49,6 +50,12 @@ class PublishingService implements PublishingServiceInterface
      * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
 
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
@@ -247,12 +254,17 @@ class PublishingService implements PublishingServiceInterface
      */
     protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = array())
     {
+        $presetsMatchingDimensionValues = $this->contentDimensionPresetSource->findPresetsByTargetValues($dimensionValues);
+        $dimensions = array_map(function ($preset) {
+            return $preset['values'];
+        }, $presetsMatchingDimensionValues);
+
         $contextProperties += array(
             'workspaceName' => $workspace->getName(),
             'inaccessibleContentShown' => true,
             'invisibleContentShown' => true,
             'removedContentShown' => true,
-            'dimensions' => $dimensionValues
+            'dimensions' => $dimensions
         );
 
         return $this->contextFactory->create($contextProperties);

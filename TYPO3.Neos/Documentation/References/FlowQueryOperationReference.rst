@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2015-08-17
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -149,6 +149,33 @@ If arguments are given, these are used to filter the elements before counting.
 filter
 ------
 
+This filter implementation contains specific behavior for use on TYPO3CR
+nodes. It will not evaluate any elements that are not instances of the
+`NodeInterface`.
+
+The implementation changes the behavior of the `instanceof` operator to
+work on node types instead of PHP object types, so that::
+
+	[instanceof TYPO3.Neos.NodeTypes:Page]
+
+will in fact use `isOfType()` on the `NodeType` of context elements to
+filter. This filter allow also to filter the current context by a given
+node. Anything else remains unchanged.
+
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
+:Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: filter`:
+
+filter
+------
+
 Filter operation, limiting the set of objects. The filter expression is
 expected as string argument and used to reduce the context to matching
 elements by checking each value against the filter.
@@ -177,6 +204,9 @@ $=
   Value contains operand (string-based)
 instanceof
   Checks if the value is an instance of the operand
+!instanceof
+  Checks if the value is not an instance of the operand
+
 
 For the latter the behavior is as follows: if the operand is one of the strings
 object, array, int(eger), float, double, bool(ean) or string the value is checked
@@ -185,33 +215,6 @@ classname with the PHP instanceof operation to check if the value matches.
 
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
 :Priority: 1
-:Final: No
-:Returns: void
-
-
-
-
-
-.. _`FlowQuery Operation Reference: filter`:
-
-filter
-------
-
-This filter implementation contains specific behavior for use on TYPO3CR
-nodes. It will not evaluate any elements that are not instances of the
-`NodeInterface`.
-
-The implementation changes the behavior of the `instanceof` operator to
-work on node types instead of PHP object types, so that::
-
-	[instanceof TYPO3.Neos.NodeTypes:Page]
-
-will in fact use `isOfType()` on the `NodeType` of context elements to
-filter. This filter allow also to filter the current context by a given
-node. Anything else remains unchanged.
-
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
-:Priority: 100
 :Final: No
 :Returns: void
 
@@ -443,6 +446,43 @@ context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
 :Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: parents`:
+
+parents
+-------
+
+"parents" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns the parent nodes or only those matching
+the filter expression specified as optional argument.
+
+:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsOperation
+:Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: parentsUntil`:
+
+parentsUntil
+------------
+
+"parentsUntil" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns the parent nodes until the matching parent is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
+
+:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
 :Priority: 100
 :Final: No
 :Returns: void

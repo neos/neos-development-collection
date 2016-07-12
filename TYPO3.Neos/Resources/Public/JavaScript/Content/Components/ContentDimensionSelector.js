@@ -42,6 +42,7 @@ function(
 			this.$('.neos-content-dimension-selector-summary').on('click', function() {
 				that.toggleProperty('isActive');
 			});
+			this.$().find('[data-neos-tooltip]').tooltip();
 		},
 
 		/**
@@ -76,6 +77,9 @@ function(
 		 */
 		_initialize: function() {
 			var that = this;
+			if (this.get('controller.dimensions').length === 0) {
+				return;
+			}
 			Ember.run.next(this, function() {
 				that.$('select').chosen({disable_search_threshold: 10}).change(function(event) {
 					that._updateValue();

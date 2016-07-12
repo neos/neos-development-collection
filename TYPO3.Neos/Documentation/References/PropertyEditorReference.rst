@@ -133,12 +133,14 @@ Options Reference:
 	``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
 	used, they must be loaded beforehand using custom JS code. Default ``text/html``.
 
+.. _property-editor-reference-selectboxeditor:
+
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In case only fixed strings are allowed to be chosen, a select box can be used. Multiple selection is supported as well.
-The most important option is called ``values``, containing the choices which can be made. If wanted, an icon can be displayed
-for each choice by setting the ``icon`` class appropriately.
+In case only fixed entries are allowed to be chosen a select box can be used - multiple selection is supported as well.
+The data for populating the select box can be fetched from a fixed set of entries defined in YAML or a datasource.
+The most important option is called ``values``, containing the choices which can be made. If wanted, an icon can be displayed for each choice by setting the ``icon`` class appropriately.
 
 Basic Example -- simple select box::
 
@@ -209,7 +211,11 @@ for properties of type ``array``. If an empty value is allowed as well, ``allowE
 
 Because selection options shall be fetched from server-side code frequently, the Select Box Editor contains
 support for so-called *data sources*, by setting a ``dataSourceIdentifier``, or optionally a ``dataSourceUri``.
-This helps to provide data to the editing interface without having to define routes, policies or a controller.::
+This helps to provide data to the editing interface without having to define routes, policies or a controller.
+You can provide an array of ``dataSourceAdditionalData`` that will be sent to the data source with each request,
+the key/value pairs can be accessed in the ``$arguments`` array passed to ``getData()``.
+
+.. code-block:: yaml
 
     questions:
       ui:
@@ -219,21 +225,49 @@ This helps to provide data to the editing interface without having to define rou
             dataSourceIdentifier: 'questions'
             # alternatively using a custom uri:
             # dataSourceUri: 'custom-route/end-point'
+            dataSourceAdditionalData:
+              apiKey: 'foo-bar-baz'
 
-See :ref:`data-sources` for more details.
-
-The output of the data source has to be a JSON formatted array matching the ``values`` option. Make sure you sort by
+See :ref:`data-sources` for more details on implementing a *data source* based on Neos conventions. If you are using a
+data source to populate SelectBoxEditor instances it has to be matching the ``values`` option. Make sure you sort by
 group first, if using the grouping option.
 
-Example:
+Example for returning compatible data:
 
 .. code-block:: php
 
-	return json_encode(array(
-		'key' => array('label' => 'Foo', group => 'A', 'icon' => 'icon-key'),
-		'fire' => array('label' => 'Fire', group => 'A', 'icon' => 'icon-fire')
-		'legal' => array('label' => 'Legal', group => 'B', 'icon' => 'icon-legal')
-	));
+  return array(
+      array('value' => 'key', 'label' => 'Foo', 'group' => 'A', 'icon' => 'icon-key'),
+      array('value' => 'fire', 'label' => 'Fire', 'group' => 'A', 'icon' => 'icon-fire'),
+      array('value' => 'legal', 'label' => 'Legal', 'group' => 'B', 'icon' => 'icon-legal')
+  );
+
+If you use the ``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source
+is a JSON formatted array matching the following structure. Make sure you sort by group first, if using the grouping
+option.
+
+Example for compatible data:
+
+.. code-block:: json
+
+  [{
+    "value": "key",
+    "label": "Key",
+    "group": "A",
+    "icon": "icon-key"
+  },
+  {
+    "value": "fire",
+    "label": "Fire",
+    "group": "A",
+    "icon": "icon-fire"
+  },
+  {
+    "value": "legal",
+    "label": "Legal",
+    "group": "B",
+    "icon": "icon-legal"
+  }]
 
 Options Reference:
 
@@ -261,12 +295,19 @@ Options Reference:
 ``multiple`` (boolean)
 	If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
 
+``minimumResultsForSearch`` (integer)
+	The minimum amount of items in the select before showing a search box,
+	if set to ``-1`` the search box will never be shown.
+
 ``dataSourceUri`` (string)
 	If set, this URI will be called for loading the options of the select field.
 
 ``dataSourceIdentifier`` (string)
 	If set, a server-side data source will be called for loading the
 	possible options of the select field.
+
+``dataSourceAdditionalData`` (array)
+	Key/value pairs that will be sent to the server-side data source with every request.
 
 Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -347,13 +388,19 @@ Options Reference:
 ``placeholder`` (string)
 	Placeholder text to be shown if nothing is selected
 
+``startingPoint`` (string)
+	The starting point (node path) for finding possible nodes to create a reference.
+	This allows to search for nodes outside the current site. If not given, nodes
+	will be searched for in the current site. For all nodes outside the current site
+	the node path is shown instead of the url path.
+
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search
 
-Property Type: date ``DateTimeEditor`` -- Date & Time Selection Editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The most important option for ``date`` properties is the ``format``, which is configured like in PHP, as the following
+The most important option for ``DateTime`` properties is the ``format``, which is configured like in PHP, as the following
 examples show:
 
 * ``d-m-Y``: ``05-12-2014`` -- allows to set only the date
@@ -363,7 +410,8 @@ examples show:
 Example::
 
     publishingDate:
-      type: date
+      type: DateTime
+      defaultValue: 'today midnight'
       ui:
         label: 'Publishing Date'
         inspector:
@@ -377,6 +425,11 @@ Options Reference:
 ``format`` (required string)
 	The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N,
 	S, w, a, A, g, G, h, H, i, s. Default ``d-m-Y``.
+
+``defaultValue`` (string)
+  Sets property value, when the node is created. Accepted values are whatever
+  ``strtotime()`` can parse, but it works best with relative formats like
+  ``tomorrow 09:00`` etc. Use ``now`` to set current date and time.
 
 ``placeholder`` (string)
 	The placeholder shown when no date is selected

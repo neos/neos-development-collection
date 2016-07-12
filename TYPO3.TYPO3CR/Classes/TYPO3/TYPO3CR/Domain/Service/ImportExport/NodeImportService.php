@@ -19,7 +19,6 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
 use TYPO3\TYPO3CR\Utility;
 
@@ -298,10 +297,10 @@ class NodeImportService
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['dimensionValues'] = $this->parseDimensionsElement($xmlReader);
                 break;
             case 'properties':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['properties'] = $this->parsePropertiesElement($xmlReader);
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parsePropertiesElement($xmlReader);
                 break;
             case 'accessRoles':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1]['accessRoles'] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parseArrayElements($xmlReader, 'accessRoles');
                 break;
             case 'hiddenBeforeDateTime':
             case 'hiddenAfterDateTime':
@@ -522,6 +521,8 @@ class NodeImportService
     protected function parseEndElement(\XMLReader $reader)
     {
         switch ($reader->name) {
+            case 'hiddenBeforeDateTime':
+            case 'hiddenAfterDateTime':
             case 'creationDateTime':
             case 'lastModificationDateTime':
             case 'lastPublicationDateTime':

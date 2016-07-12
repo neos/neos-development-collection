@@ -200,7 +200,6 @@
 
 			i {
 				margin-right: $tightMargin;
-				line-height: $unit;
 				vertical-align: middle;
 			}
 		}
@@ -395,8 +394,8 @@
 								}
 
 								&::after {
-									@include icon-FontAwesome();
-									content: $arrow-down;
+									@include fa-icon();
+									content: $fa-var-arrow-down;
 									position: absolute;
 									right: $relatedMargin + $tightMargin;
 								}
@@ -487,7 +486,7 @@
 			font-size: 0;
 			margin-left: 0;
 
-			li {
+			> li {
 				margin-left: 0;
 				margin-right: $defaultMargin;
 				@include box-sizing(border-box);
@@ -551,64 +550,25 @@
 
 				.neos-img-container {
 					position: relative;
-					background-color: $grayDarker;
 					padding-bottom: 100%;
 					height: 0;
 					margin-bottom: $relatedMargin * 1.5;
+					background-color: $grayDarker;
+					background-image: url('../Images/ajax-preloader-222222.gif');
+					background-position: center center;
+					background-repeat: no-repeat;
+					overflow: hidden;
 					@include box-sizing(border-box);
-
-					&:hover {
-						.neos-media-delete,
-						&::after {
-							opacity: .9;
-						}
-					}
 
 					&.ui-draggable-dragging {
 						width: 250px;
 						height: 250px;
 					}
 
-					.neos-media-delete {
-						position: absolute;
-						bottom: 0;
-						right: 0;
-						background-color: $grayDark;
-						opacity: .5;
-
-						&:hover {
-							background-color: $warning;
-						}
+					img {
+						background-color: $grayDarker;
+						outline: 3px solid $grayDarker;
 					}
-
-					&::after {
-						@include icon-FontAwesome();
-						content: $move;
-						display: block;
-						position: absolute;
-						left: 0;
-						bottom: 0;
-						width: $unit;
-						height: $unit;
-						background-color: $grayDark;
-						opacity: .5;
-						color: #fff;
-						font-size: 16px;
-						text-align: center;
-						line-height: $unit;
-						cursor: move;
-					}
-				}
-
-				.neos-caption {
-					padding: 0;
-					display: block;
-					font-size: 12px;
-					line-height: 1.2;
-					color: $textSubtleLight;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
 				}
 
 				> a {
@@ -624,7 +584,7 @@
 						text-decoration: none;
 					}
 
-					img {
+					.neos-img-container > img {
 						position: absolute;
 						top: 50%;
 						left: 50%;
@@ -633,6 +593,26 @@
 						width: auto;
 						max-height: 100%;
 						max-width: 100%;
+					}
+				}
+
+				.neos-img-label {
+					padding: 0 0 $defaultMargin $tightMargin;
+					position: relative;
+					font-size: 12px;
+
+					.neos-caption {
+						margin-right: $wideMargin;
+						display: block;
+						line-height: 1.2;
+						color: $textSubtleLight;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					> img {
+						float: left;
 					}
 				}
 			}
@@ -700,6 +680,11 @@
 		}
 	}
 
+	.neos-media-content-help {
+		font-style: italic;
+		padding-bottom: 1em;
+	}
+
 	//Styles for image preview in edit mode
 	.neos-row-fluid [class*="neos-span"].neos-image-example {
 		label {
@@ -711,29 +696,34 @@
 		}
 
 		.neos-preview-image {
-			overflow: hidden;
 			height: 0;
 			padding-bottom: 100%;
-			background: $grayDarker;
 			position: relative;
+			background-color: $grayDarker;
+			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-position: center center;
+			background-repeat: no-repeat;
+			overflow: hidden;
 
 			img {
 				float: none;
 				position: absolute;
 				top: 50%;
 				left: 50%;
+				@include translate(-50%, -50%);
 				width: auto;
 				height: auto;
 				max-width: 100%;
 				max-height: 100%;
 				display: block;
 				margin: 0 auto;
-				@include translate(-50%, -50%);
+				background-color: $grayDarker;
+				outline: 3px solid $grayDarker;
 			}
 		}
 	}
 
-	table.neos-table {
+	table.neos-table.asset-list {
 		th {
 			white-space: nowrap;
 
@@ -763,6 +753,10 @@
 			position: relative;
 			display: inline-block;
 			float: left;
+			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-position: center center;
+			background-repeat: no-repeat;
+			overflow: hidden;
 
 			&[data-content] {
 				cursor: zoom-in;
@@ -773,37 +767,54 @@
 				top: 50%;
 				left: 50%;
 				@include translate(-50%, -50%);
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+				background-color: $grayDarker;
+				outline: 3px solid $grayDarker;
 			}
 		}
 
 		.neos-popover {
 			width: auto;
 			height: auto;
+			border-color: $grayMedium;
+
+			.neos-popover-title {
+				border-color: $grayMedium;
+			}
 
 			.neos-popover-content {
 				width: 250px;
 				height: 250px;
 				position: relative;
 				padding: 0;
+				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-position: center center;
+				background-repeat: no-repeat;
+				overflow: hidden;
+				background-color: $grayDarker;
 
 				img {
 					position: absolute;
 					top: 50%;
 					left: 50%;
 					@include translate(-50%, -50%);
+					width: auto;
+					height: auto;
+					max-width: 100%;
+					max-height: 100%;
+					background-color: $grayDarker;
+					outline: 3px solid $grayDarker;
 				}
 			}
-		}
 
-		.icon-move {
-			float: left;
-			line-height: $unit;
-			padding-left: $relatedMargin + $tightMargin;
-		}
-
-		.tags {
-			.neos-label {
-				background-color: $textSubtle;
+			&.neos-top .neos-arrow {
+				border-top-color: $grayDarker;
+			}
+			&.neos-bottom .neos-arrow {
+				border-bottom-color: $grayDark;
 			}
 		}
 
@@ -812,29 +823,36 @@
 			font-size: 0;
 			text-align: right;
 
+			.neos-dropdown {
+				display: inline-block;
+				font-size: 12px;
+			}
+
 			.neos-modal {
 				text-align: left;
 			}
 		}
 	}
 
-	.draggable-asset {
-		cursor: move;
+	table.neos-info-table i {
+		vertical-align: baseline;
 	}
 
 	&:not(.media-module) {
-		table.neos-table {
+		table.neos-table:not(.neos-no-hover) {
 			tbody tr:hover td {
 				background-color: $blue;
 				cursor: pointer;
+
+				.neos-label {
+					background-color: #fff;
+					color: $blue;
+					text-shadow: none;
+				}
 			}
 
 			.icon-move {
 				cursor: move;
-			}
-
-			.neos-action {
-				display: none;
 			}
 		}
 	}
@@ -913,5 +931,9 @@
 		visibility: hidden;
 		position: absolute;
 		left: -9999px;
+	}
+
+	.fold-toggle {
+		cursor: pointer;
 	}
 }

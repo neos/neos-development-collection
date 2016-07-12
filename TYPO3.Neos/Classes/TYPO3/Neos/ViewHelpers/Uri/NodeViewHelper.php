@@ -12,13 +12,13 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\LinkingService;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
+use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -82,6 +82,8 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  */
 class NodeViewHelper extends AbstractViewHelper
 {
+    use TypoScriptContextTrait;
+
     /**
      * @Flow\Inject
      * @var LinkingService
@@ -107,15 +109,7 @@ class NodeViewHelper extends AbstractViewHelper
     {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
-            $view = $this->viewHelperVariableContainer->getView();
-            if ($view instanceof TypoScriptAwareViewInterface) {
-                /** @var TemplateImplementation $typoScriptObject */
-                $typoScriptObject = $view->getTypoScriptObject();
-                $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
-                if (isset($currentContext[$baseNodeName])) {
-                    $baseNode = $currentContext[$baseNodeName];
-                }
-            }
+            $baseNode = $this->getContextVariable($baseNodeName);
         }
 
         try {
@@ -133,7 +127,9 @@ class NodeViewHelper extends AbstractViewHelper
             );
         } catch (NeosException $exception) {
             $this->systemLogger->logException($exception);
-            return '';
+        } catch (NoMatchingRouteException $exception) {
+            $this->systemLogger->logException($exception);
         }
+        return '';
     }
 }

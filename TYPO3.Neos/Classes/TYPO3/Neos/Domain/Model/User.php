@@ -15,6 +15,7 @@ use TYPO3\Flow\Security\Account;
 use TYPO3\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\UserInterface;
 
 /**
  * Domain Model of a User
@@ -23,7 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @api
  */
-class User extends Person
+class User extends Person implements UserInterface
 {
     /**
      * Preferences of this user
@@ -40,6 +41,16 @@ class User extends Person
     {
         parent::__construct();
         $this->preferences = new UserPreferences();
+    }
+
+    /**
+     * Returns a label which can be used as a human-friendly identifier for this user.
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->getName()->getFullName();
     }
 
     /**

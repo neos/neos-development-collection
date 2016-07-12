@@ -18,6 +18,7 @@ use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Content Context
@@ -60,7 +61,7 @@ class ContentContext extends Context
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
      *
      * @param string $workspaceName Name of the current workspace
-     * @param \DateTime $currentDateTime The current date and time
+     * @param \DateTimeInterface $currentDateTime The current date and time
      * @param array $dimensions Array of dimensions with array of ordered values
      * @param array $targetDimensions Array of dimensions used when creating / modifying content
      * @param boolean $invisibleContentShown If invisible content should be returned in query results
@@ -70,7 +71,7 @@ class ContentContext extends Context
      * @param Domain $currentDomain The current Domain object
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
     {
         parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
         $this->currentSite = $currentSite;
@@ -107,7 +108,7 @@ class ContentContext extends Context
     public function getCurrentSiteNode()
     {
         if ($this->currentSite !== null && $this->currentSiteNode === null) {
-            $siteNodePath = '/sites/' . $this->currentSite->getNodeName();
+            $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $this->currentSite->getNodeName());
             $this->currentSiteNode = $this->getNode($siteNodePath);
             if (!($this->currentSiteNode instanceof NodeInterface)) {
                 $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);

@@ -26,9 +26,9 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
         $this->inject($this->contextFactory, 'now', new \TYPO3\Flow\Utility\Now());
-        $this->inject($this->contextFactory, 'securityContext', $this->getMock('TYPO3\Flow\Security\Context'));
+        $this->inject($this->contextFactory, 'securityContext', $this->createMock('TYPO3\Flow\Security\Context'));
 
-        $mockContentDimensionRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $mockContentDimensionRepository = $this->createMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
         $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }
@@ -38,12 +38,12 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getCurrentDateTimeReturnsACurrentDateAndTime()
     {
-        $now = new \TYPO3\Flow\Utility\Now();
+        $now = new \DateTime();
 
         $context = $this->contextFactory->create(array());
 
         $currentTime = $context->getCurrentDateTime();
-        $this->assertInstanceOf('\DateTime', $currentTime);
+        $this->assertInstanceOf('\DateTimeInterface', $currentTime);
         $this->assertEquals($now->getTimestamp(), $currentTime->getTimestamp(), 1);
     }
 
@@ -53,7 +53,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setDateTimeAllowsForMockingTheCurrentTime()
     {
         $simulatedCurrentTime = new \DateTime();
-        date_add($simulatedCurrentTime, new \DateInterval('P1D'));
+        $simulatedCurrentTime->add(new \DateInterval('P1D'));
 
         $context = $this->contextFactory->create(array('currentDateTime' => $simulatedCurrentTime));
 

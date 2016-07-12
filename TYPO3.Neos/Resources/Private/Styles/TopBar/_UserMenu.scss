@@ -1,31 +1,8 @@
 .neos-user-menu.neos-button-group {
 	font-size: $generalFontSize;
 
-	&.neos-open .neos-button::after {
-		@include rotate(-90deg);
-		left: 2px;
-	}
-
 	.neos-button {
 		background: none;
-		padding-left: $defaultMargin;
-		padding-right: $defaultMargin * 2;
-
-		i {
-			margin-top: 3px;
-		}
-
-		&::after {
-			content: "›";
-			font-size: 26px;
-			font-weight: normal;
-			display: inline-block;
-			position: relative;
-			top: 0;
-			line-height: $unit;
-			@include rotate(90deg);
-			left: 8px;
-			vertical-align: middle;
-		}
+		padding: 0 $defaultMargin;
 	}
 }

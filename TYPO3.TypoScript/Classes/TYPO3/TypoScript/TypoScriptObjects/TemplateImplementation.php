@@ -72,15 +72,6 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
     }
 
     /**
-     * @return \TYPO3\TypoScript\Core\Runtime
-     * @internal
-     */
-    public function getTsRuntime()
-    {
-        return $this->tsRuntime;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return string

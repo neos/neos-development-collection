@@ -69,7 +69,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
         if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
             $isBackend = true;
-            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>', true));
+            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $typoScriptPath));
         }
 
         $fluidView->assignMultiple(array(
@@ -93,8 +93,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
         // FIXME find a better way than using templates as partials
         $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
-        $fluidView->setFormat('html');
         $fluidView->setControllerContext($this->runtime->getControllerContext());
+        $fluidView->setFormat('html');
         return $fluidView;
     }
 }

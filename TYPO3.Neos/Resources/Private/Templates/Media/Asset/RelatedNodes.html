@@ -1,0 +1,147 @@
+{namespace m=TYPO3\Media\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Related nodes</f:section>
+
+<f:section name="Content">
+	<legend>{neos:backend.translate(id: 'media.relatedNodes.referencesTo', source: 'Modules', arguments: {asset: asset.label})}</legend>
+
+	<table class="neos-table neos-no-hover">
+		<thead>
+			<tr>
+				<th>{neos:backend.translate(id: 'document')}</th>
+				<th>{neos:backend.translate(id: 'reference')}</th>
+				<th>&nbsp;</th>
+				<f:if condition="{contentDimensions}">
+					<th>{neos:backend.translate(id: 'contentDimensions')}</th>
+				</f:if>
+				<th>{neos:backend.translate(id: 'workspace')}</th>
+				<th class="neos-aRight">{neos:backend.translate(id: 'lastModification')}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<f:for each="{relatedNodes}" as="site">
+				<f:if condition="{relatedNodes -> f:count()} > 1">
+					<tr class="neos-folder">
+						<td class="neos-priority1" colspan="{f:if(condition: contentDimensions, then: 4, else: 3)}">
+							{neos:backend.translate(id: 'site')}:
+							<span title="{site.site.nodeName}" data-neos-toggle="tooltip">{site.site.name}</span>
+						</td>
+						<td class="neos-priority1 neos-aRight">
+							<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{site.site.nodeName}"></i>
+						</td>
+					</tr>
+				</f:if>
+				<f:for each="{site.documentNodes}" as="documentNode">
+					<tr class="fold-{site.site.nodeName}">
+						<td>
+							<f:if condition="{documentNode.node.nodeType.ui.icon}">
+								<i class="{documentNode.node.nodeType.ui.icon}" title="{f:if(condition: documentNode.node.nodeType.label, then: '{neos:backend.translate(id: documentNode.node.nodeType.label)}', else: documentNode.node.nodeType.name)}" data-neos-toggle="tooltip"></i>
+							</f:if>
+							<f:if condition="{documentNode.node}">
+								<span title="{f:render(partial: '../Module/Shared/DocumentBreadcrumb', arguments: {node: documentNode.node})}" data-neos-toggle="tooltip">{documentNode.node.label}</span>
+							</f:if>
+						</td>
+						<td>
+							<ul>
+								<f:for each="{documentNode.nodes}" as="relatedNode">
+									<li>
+										<f:if condition="{relatedNode.accessible}">
+											<f:then>
+												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
+													<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
+												</f:if>
+												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
+											</f:then>
+											<f:else>
+												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
+													<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
+												</f:if>
+												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
+											</f:else>
+										</f:if>
+									</li>
+								</f:for>
+							</ul>
+						</td>
+						<td>
+							<ul>
+								<f:for each="{documentNode.nodes}" as="relatedNode">
+									<li>
+										<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank"><i class="icon-external-link"></i></neos:link.node>
+									</li>
+								</f:for>
+							</ul>
+						</td>
+						<f:if condition="{contentDimensions}">
+							<td>
+								<ul>
+									<f:for each="{documentNode.nodes}" as="relatedNode">
+										<li>
+											<f:render partial="../Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: relatedNode.nodeData}" />
+										</li>
+									</f:for>
+								</ul>
+							</td>
+						</f:if>
+						<td>
+							<ul>
+								<f:for each="{documentNode.nodes}" as="relatedNode">
+									<li>
+										<f:if condition="{userWorkspace} == {relatedNode.nodeData.workspace}">
+											<f:then>
+												<i class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
+											</f:then>
+											<f:else>
+												<f:if condition="{relatedNode.accessible}">
+													<f:then>
+														<f:if condition="{relatedNode.nodeData.workspace.privateWorkspace}">
+															<f:then>
+																<i class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+															</f:then>
+															<f:else>
+																<i class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+															</f:else>
+														</f:if>
+													</f:then>
+													<f:else>
+														<i class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+													</f:else>
+												</f:if>
+											</f:else>
+										</f:if>
+										<span title="{relatedNode.nodeData.workspace.name}" data-neos-toggle="tooltip">{relatedNode.nodeData.workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+									</li>
+								</f:for>
+							</ul>
+						</td>
+						<td class="neos-aRight">
+							<ul>
+								<f:for each="{documentNode.nodes}" as="relatedNode">
+									<li>
+										<span title="{relatedNode.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip">{relatedNode.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+									</li>
+								</f:for>
+							</ul>
+						</td>
+					</tr>
+				</f:for>
+			</f:for>
+		</tbody>
+	</table>
+
+	<div class="neos-footer">
+		<!-- TODO: Find a nicer way to send the referer for a get request -->
+		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</a>
+	</div>
+
+	<script>
+		(function($) {
+			$('.fold-toggle').click(function() {
+				$(this).toggleClass('icon-chevron-down icon-chevron-up');
+				$('tr.' + $(this).data('toggle')).toggle();
+			});
+		})(jQuery);
+	</script>
+</f:section>

@@ -171,13 +171,6 @@ class BackendRedirectionService
             'inaccessibleContentShown' => true
         );
 
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
         return $this->contextFactory->create($contextProperties);
     }
 
@@ -196,7 +189,8 @@ class BackendRedirectionService
         $workspace = $this->workspaceRepository->findOneByName($workspaceName);
         if ($workspace === null) {
             $liveWorkspace = $this->workspaceRepository->findOneByName('live');
-            $workspace = new Workspace($workspaceName, $liveWorkspace);
+            $owner = $this->userService->getBackendUser();
+            $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
             $this->workspaceRepository->add($workspace);
             $this->persistenceManager->whitelistObject($workspace);
         }

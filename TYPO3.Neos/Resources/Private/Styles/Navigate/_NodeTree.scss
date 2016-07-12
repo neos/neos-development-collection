@@ -59,10 +59,6 @@
 	.chosen-container {
 		.chosen-single {
 			background-color: $grayDark;
-
-			& > div {
-				border-left: 1px solid $grayLight;
-			}
 		}
 
 		.chosen-drop {
@@ -155,7 +151,6 @@
 			&.icon-remove-sign {
 				cursor: pointer;
 				font-size: 16px;
-				top: 1px;
 
 				&:hover {
 					color: $blue;

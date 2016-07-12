@@ -15,7 +15,9 @@ require(
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.T3Configuration.neosJavascriptVersion ? 'bust=' +  window.T3Configuration.neosJavascriptVersion : '',
 		paths: requirePaths,
-		context: 'neos'
+		context: 'neos',
+		waitSeconds: window.T3Configuration.UserInterface.requireJsWaitSeconds
+
 	},
 	[
 		'Library/jquery-with-dependencies',
@@ -28,7 +30,6 @@ require(
 		'Shared/Configuration',
 		'ExternalApi',
 		'Library/underscore',
-		'Shared/HttpClient',
 		'Shared/I18n',
 		'Shared/NodeTypeService',
 		'InlineEditing/PositioningHelper',
@@ -45,9 +46,8 @@ require(
 		Configuration,
 		ExternalApi,
 		_,
-		HttpClient
-		) {
-
+		I18n
+	) {
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
 		/**
@@ -55,9 +55,10 @@ require(
 		 */
 		Ember.RSVP.Promise(function (resolve, reject) {
 			// Get all translations and merge them
-			HttpClient.getResource(Configuration.get('localeInclude')).then(function(labels) {
+			ResourceCache.getItem(Configuration.get('XliffUri')).then(function(labels) {
 				try {
 					$.extend(Ember.I18n.translations, labels);
+					I18n.set('initialized', true);
 				} catch (exception) {
 					if ('localStorage' in window && 'showDevelopmentFeatures' in window.localStorage) {
 						console.error('Could not parse JSON for locale file ' + labels[iterator].substr(5));
@@ -80,7 +81,7 @@ require(
 				});
 			});
 		}, function (reason) {
-			console.log('Neos failed to initialize', reason);
+			console.error('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API

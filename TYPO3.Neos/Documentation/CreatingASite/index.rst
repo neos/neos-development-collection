@@ -18,6 +18,7 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	ContentDimensions
 	MultiSite
 	ContentCache
+	Security
 
 ..  still missing
 	MultipleLanguages
